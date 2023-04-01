@@ -10,6 +10,9 @@
 
   <properties>
     <spring.version>4.2.5.RELEASE</spring.version>
+    <postgresql.version>42.2.5</postgresql.version>
+    <servlet-api-version>2.5</servlet-api-version>
+    <jstl.version>1.2</jstl.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
@@ -30,13 +33,23 @@
       <dependency>
         <groupId>javax.servlet</groupId>
         <artifactId>servlet-api</artifactId>
-        <version>2.5</version>
+        <version>${servlet-api-version}</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>javax.servlet</groupId>
         <artifactId>jstl</artifactId>
-        <version>1.2</version>
+        <version>${jstl.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-jdbc</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.postgresql</groupId>
+        <artifactId>postgresql</artifactId>
+        <version>${postgresql.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
