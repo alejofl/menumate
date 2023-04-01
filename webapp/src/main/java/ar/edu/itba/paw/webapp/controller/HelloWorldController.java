@@ -10,7 +10,7 @@ public class HelloWorldController {
 
     @RequestMapping("/")
     public ModelAndView helloWorld() {
-        final ModelAndView mav = new ModelAndView("helloworld/index");
+        final ModelAndView mav = new ModelAndView("home/index");
         mav.addObject("user", "world");
 
         return mav;

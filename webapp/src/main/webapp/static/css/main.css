@@ -1,3 +1,20 @@
-h2 {
-    color: red;
+body {
+    background-color: #F4F4F4 !important;
+}
+
+.bg-body-tertiary {
+    background-color: #282D2F !important;
+}
+
+main {
+    margin: 8px;
+}
+
+.restaurant-card-img {
+    height: 200px;
+    background: var(--main_image);
+}
+
+.restaurant-card-img:hover {
+    background: var(--hover_image);
 }
