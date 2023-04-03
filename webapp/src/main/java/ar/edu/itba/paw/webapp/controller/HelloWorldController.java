@@ -20,19 +20,17 @@ public class HelloWorldController {
         this.userService = userService;
     }
 
-    @RequestMapping(value = "/profile/{userId}", method = RequestMethod.GET)
-    public ModelAndView helloWorld(@PathVariable("userId") final long userId) {
-        final ModelAndView mav = new ModelAndView("helloworld/index");
-        mav.addObject("user", userService.getUserById(userId).orElseThrow(UserNotFoundException::new));
-        return mav;
+    @RequestMapping("/")
+    public ModelAndView index() {
+        return new ModelAndView("home/index");
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
+    @RequestMapping(value = "/register", method = RequestMethod.GET)
     public ModelAndView registerForm() {
         return new ModelAndView("helloworld/register");
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView register(
             @RequestParam(value = "username", required = true) final String username,
             @RequestParam(value = "password", required = true) final String password
