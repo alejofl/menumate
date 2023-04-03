@@ -37,7 +37,8 @@ bin
 .project
 .settings
 .springBeans
-spring-*/src/main/java/META-INF/MANIFEST.MF
+spring-*/src/main/java/META-INF/MANIFEST.
+webapp/src/main/resources/application.properties
 
 # IDEA artifacts and output dirs
 *.iml
