@@ -10,11 +10,36 @@ main {
     margin: 8px;
 }
 
+.restaurant-feed {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: start;
+    align-content: start;
+    gap: 20px;
+    flex-wrap: wrap;
+    padding: 12px;
+}
+
+.restaurant-card {
+    transition: all .2s ease-in-out;
+    width: 18rem;
+}
+
 .restaurant-card-img {
+    background-size: cover !important;
     height: 200px;
     background: var(--main_image);
 }
 
-.restaurant-card-img:hover {
+.restaurant-card:hover {
+    transform: scale(1.02);
+}
+
+.restaurant-card:hover .restaurant-card-img {
     background: var(--hover_image);
+}
+
+.clickable-object {
+    text-decoration: none !important;
 }

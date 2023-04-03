@@ -7,18 +7,15 @@
 </jsp:include>
 <body>
 <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
-<main style="display: flex;
-    flex-direction: row;
-    gap: 15px;
-    align-items: start;
-    align-content: start;
-    flex-wrap: wrap;">
-    <jsp:include page="/WEB-INF/jsp/components/restaurant_card.jsp">
-        <jsp:param name="name" value="Atuel"/>
-        <jsp:param name="address" value="Atuel 200"/>
-        <jsp:param name="main_image" value="/static/pictures/milanga.jpg"/>
-        <jsp:param name="hover_image" value="/static/pictures/milanga2.jpg"/>
-    </jsp:include>
+<main class="restaurant-feed">
+    <c:forEach var = "i" begin = "1" end = "32">
+        <jsp:include page="/WEB-INF/jsp/components/restaurant_card.jsp">
+            <jsp:param name="name" value="Atuel"/>
+            <jsp:param name="address" value="Atuel 200"/>
+            <jsp:param name="main_image" value="/static/pictures/milanga.jpg"/>
+            <jsp:param name="hover_image" value="/static/pictures/milanga2.jpg"/>
+        </jsp:include>
+    </c:forEach>
 </main>
 </body>
 </html>
