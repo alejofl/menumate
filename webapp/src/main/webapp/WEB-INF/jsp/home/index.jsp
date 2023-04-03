@@ -2,9 +2,11 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt"%>
 
 <html>
-<jsp:include page="/WEB-INF/jsp/head.jsp">
-    <jsp:param name="title" value="Home"/>
-</jsp:include>
+<head>
+    <jsp:include page="/WEB-INF/jsp/components/head.jsp">
+        <jsp:param name="title" value="Home"/>
+    </jsp:include>
+</head>
 <body>
 <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
 <main class="restaurant-feed">
