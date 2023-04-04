@@ -9,6 +9,7 @@
   <name>Menumate</name>
 
   <properties>
+    <javax.mail.version>1.6.2</javax.mail.version>
     <spring.version>4.2.5.RELEASE</spring.version>
     <postgresql.version>42.2.5</postgresql.version>
     <servlet-api-version>2.5</servlet-api-version>
@@ -50,6 +51,16 @@
         <groupId>org.postgresql</groupId>
         <artifactId>postgresql</artifactId>
         <version>${postgresql.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.sun.mail</groupId>
+        <artifactId>javax.mail</artifactId>
+        <version>${javax.mail.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-context-support</artifactId>
+        <version>${spring.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
