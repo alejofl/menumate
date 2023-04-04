@@ -1,3 +1,45 @@
-h2 {
-    color: red;
+body {
+    background-color: #F4F4F4 !important;
+}
+
+.bg-body-tertiary {
+    background-color: #282D2F !important;
+}
+
+main {
+    margin: 8px;
+}
+
+.restaurant-feed {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: start;
+    align-content: start;
+    gap: 20px;
+    flex-wrap: wrap;
+    padding: 12px;
+}
+
+.restaurant-card {
+    transition: all .2s ease-in-out;
+    width: 18rem;
+}
+
+.restaurant-card-img {
+    background-size: cover !important;
+    height: 200px;
+    background: var(--main_image);
+}
+
+.restaurant-card:hover {
+    transform: scale(1.02);
+}
+
+.restaurant-card:hover .restaurant-card-img {
+    background: var(--hover_image);
+}
+
+.clickable-object {
+    text-decoration: none !important;
 }
