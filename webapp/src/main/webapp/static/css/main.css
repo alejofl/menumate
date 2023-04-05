@@ -43,3 +43,41 @@ main {
 .clickable-object {
     text-decoration: none !important;
 }
+
+.error-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    height: 100%;
+}
+
+.error-item {
+    display: flex;
+    justify-content: center;
+}
+
+.flexbox-container {
+    display: flex;
+    justify-content: center;
+}
+
+.flexbox-item {
+    width: 200px;
+    margin: 10px;
+    border: 3px solid #333;
+    background-color: #dfdfdf;
+}
+
+.flexbox-item1 {
+    min-height: 100px;
+}
+
+.flexbox-item2 {
+    min-height: 200px;
+}
+
+.flexbox-item3 {
+    min-height: 300px;
+}

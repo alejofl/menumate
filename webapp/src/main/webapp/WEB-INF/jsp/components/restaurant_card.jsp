@@ -8,7 +8,7 @@
               style="--main_image: url(${param.main_image}); --hover_image: url(${param.hover_image})"
       >
       <div class="card-body">
-        <h5 class="card-title">${param.name}</h5>
+        <h5 class="text">${param.name}</h5>
         <p class="card-text">${param.address}</p>
       </div>
     </div>
