@@ -7,11 +7,16 @@ body {
 }
 
 main {
+    display: flex;
     margin: 8px;
 }
 
+.clickable-object {
+    text-decoration: none !important;
+}
+
+/* HOME */
 .restaurant-feed {
-    display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: start;
@@ -40,6 +45,33 @@ main {
     background: var(--hover_image);
 }
 
-.clickable-object {
-    text-decoration: none !important;
+/* RESTAURANT MENU */
+.categories {
+    display: inline-block;
+    margin: 8px;
+}
+
+.category-item {
+    text-align: start;
+    color: unset;
+    padding: 4px 8px;
+    margin-bottom: 2px;
+}
+
+.category-item.active {
+    background-color: rgba(237, 122, 87, 0.25) !important;
+    color: unset !important;
+}
+
+.category-item:hover {
+    color: unset;
+    background-color: rgba(237, 122, 87, 0.25) !important;
+}
+
+.items {
+    flex-grow: 1;
+}
+
+.cart {
+    flex: 0 0 20%;
 }

@@ -29,6 +29,13 @@ public class HelloWorldController {
         return new ModelAndView("home/index");
     }
 
+    @RequestMapping("/restaurant/{id}")
+    public ModelAndView restaurantMenu(@PathVariable String id) {
+        final ModelAndView mav = new ModelAndView("menu/restaurant_menu");
+        mav.addObject("restaurant_name", "Atuel");
+        return mav;
+    }
+
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public ModelAndView registerForm() {
         return new ModelAndView("helloworld/register");
