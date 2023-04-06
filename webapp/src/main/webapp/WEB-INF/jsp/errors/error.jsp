@@ -33,12 +33,5 @@
 
         </div>
     </div>
-
-<%--    <div class="flexbox-container">--%>
-<%--        <div class="flexbox-item flexbox-item1"></div>--%>
-<%--        <div class="flexbox-item flexbox-item2"></div>--%>
-<%--        <div class="flexbox-item flexbox-item3"></div>--%>
-
-<%--    </div>--%>
 </body>
 </html>
