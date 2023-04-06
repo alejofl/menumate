@@ -13,17 +13,26 @@
     </jsp:include>
 </head>
 <body>
-        <div class="error-container">
-            <div class="error-item">
-                <h1>Error 404.</h1>
-            </div>
-            <div class="error-item">
-                <h2>Page Not Found.</h2>
-            </div>
-            <div class="error-item">
-                <button type="button" class="btn btn-primary btn-lg text-uppercase">Back to home</button>
-            </div>
+    <div class="error-container">
+        <div class="error-image">
+            <img src="/static/pictures/logo.png" alt="MenuMate" height="40">
         </div>
+        <div class="error-message">
+            <h1>Oops! Page not found!</h1>
+        </div>
+        <div class="error-message">
+            <p>We are sorry for the inconvenience. It looks like you're trying to access
+                a page that has been deleted or never existed.</p>
+        </div>
+        <div class="error-image">
+            <a href="/">
+                <button type="button" class="btn btn-primary btn-lg text-uppercase">Back to home</button>
+            </a>
+        </div>
+        <div class="error-item">
+
+        </div>
+    </div>
 
 <%--    <div class="flexbox-container">--%>
 <%--        <div class="flexbox-item flexbox-item1"></div>--%>

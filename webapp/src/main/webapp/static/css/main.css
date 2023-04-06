@@ -53,31 +53,23 @@ main {
     height: 100%;
 }
 
-.error-item {
+.error-image {
+    margin: 1em;
+}
+
+.error-message {
     display: flex;
     justify-content: center;
+    margin: 0.5em;
+    color: #282d2f;
 }
 
-.flexbox-container {
-    display: flex;
-    justify-content: center;
+.btn-primary {
+    background-color: #282d2f !important;
+    border-color: #282d2f !important;
 }
 
-.flexbox-item {
-    width: 200px;
-    margin: 10px;
-    border: 3px solid #333;
-    background-color: #dfdfdf;
-}
-
-.flexbox-item1 {
-    min-height: 100px;
-}
-
-.flexbox-item2 {
-    min-height: 200px;
-}
-
-.flexbox-item3 {
-    min-height: 300px;
+.btn-primary:hover, .btn-primary:active, .btn-primary:visited {
+    background-color:  #ed7a57 !important;
+    border-color: #ed7a57 !important;
 }
