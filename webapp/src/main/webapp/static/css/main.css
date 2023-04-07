@@ -63,6 +63,34 @@ main {
 }
 
 /* RESTAURANT MENU */
+.restaurant-header {
+    height: 12rem;
+}
+
+.restaurant-information {
+    width: 70%;
+    position: relative;
+    bottom: 50px;
+    background-color: white;
+    padding: 2rem;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    height: 12rem;
+}
+
+.restaurant-logo {
+    border-radius: 50%;
+    height: 100%;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+}
+
+.restaurant-information-container {
+    display: flex;
+    justify-content: center;
+}
+
 .categories {
     display: inline-block;
     flex: 0 0 10%;

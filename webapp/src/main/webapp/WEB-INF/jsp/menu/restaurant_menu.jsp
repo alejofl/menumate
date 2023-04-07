@@ -9,6 +9,19 @@
 </head>
 <body>
 <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
+
+<div class="restaurant-header">
+    <img src="/static/pictures/milanga.jpg" class="menu-item-card-img" alt="Milanga">
+</div>
+<div class="restaurant-information-container">
+    <div class="restaurant-information">
+        <img src="/static/pictures/milanga.jpg" alt="${restaurant_name}" class="restaurant-logo">
+        <div>
+            <h1>Atuel</h1>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aut autem cumque ducimus eum expedita nulla, ratione repellat soluta vitae. Doloribus omnis possimus quia temporibus. Assumenda iure modi omnis quos repellat. </p>
+        </div>
+    </div>
+</div>
 <main>
     <div class="categories nav nav-pills small">
         <button class="category-item nav-link active">Appetizers</button>
