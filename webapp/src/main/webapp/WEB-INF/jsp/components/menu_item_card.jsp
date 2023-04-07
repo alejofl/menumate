@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <body>
-  <a class="clickable-object" href="">
+  <a class="clickable-object" href="" data-bs-toggle="modal" data-bs-target="#add-item-to-cart">
     <div class="card menu-item-card">
       <div class="menu-item-card-img-container" style="">
         <img src="/static/pictures/milanga.jpg" class="img-fluid rounded-start menu-item-card-img" alt="Milanga">

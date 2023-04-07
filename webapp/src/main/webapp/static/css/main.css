@@ -1,9 +1,21 @@
+:root {
+    --primary: #ed7a57;
+    --primary-dark: #bd5439;
+    --primary-light: #f39d84;
+    --secondary: #edb026;
+    --secondary-dark: #c49220;
+    --secondary-light: #f3c37d;
+    --dark: #282d2f;
+    --light: #f4f4f4;
+}
+
 body {
-    background-color: #F4F4F4 !important;
+    background-color: var(--light) !important;
 }
 
 .bg-body-tertiary {
-    background-color: #282D2F !important;
+    padding: 16px 48px;
+    background-color: var(--dark) !important;
 }
 
 main {
@@ -13,19 +25,19 @@ main {
 
 .btn-primary {
     --bs-btn-color: #fff;
-    --bs-btn-bg: #ed7a57;
-    --bs-btn-border-color: #ed7a57;
+    --bs-btn-bg: var(--primary);
+    --bs-btn-border-color: var(--primary);
     --bs-btn-hover-color: #fff;
-    --bs-btn-hover-bg: #bd5439;
-    --bs-btn-hover-border-color: #bd5439;
+    --bs-btn-hover-bg: var(--primary-dark);
+    --bs-btn-hover-border-color: var(--primary-dark);
     --bs-btn-focus-shadow-rgb: 49,132,253;
     --bs-btn-active-color: #fff;
-    --bs-btn-active-bg: #bd5439;
-    --bs-btn-active-border-color: #bd5439;
+    --bs-btn-active-bg: var(--primary-dark);
+    --bs-btn-active-border-color: var(--primary-dark);
     --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
     --bs-btn-disabled-color: #fff;
-    --bs-btn-disabled-bg: #f39d84;
-    --bs-btn-disabled-border-color: #f39d84;
+    --bs-btn-disabled-bg: var(--primary-light);
+    --bs-btn-disabled-border-color: var(--primary-light);
 }
 
 .clickable-object {
@@ -174,4 +186,31 @@ main {
 
 .cart .card-body button {
     flex-grow: 1;
+}
+
+#add-item-to-cart .modal-header {
+    background-image: var(--image);
+    background-size: cover;
+    height: 18rem;
+    display: flex;
+    align-items: start;
+}
+
+#add-item-to-cart form {
+    display: flex;
+    gap: 15px;
+}
+
+#add-item-to-cart .input-group {
+    flex: 0 0 30%;
+}
+
+#add-item-to-cart .comment-container {
+    flex-grow: 1;
+}
+
+#checkout .nav {
+    --bs-nav-link-color: var(--secondary);
+    --bs-nav-link-hover-color: var(--secondary-dark);
+    --bs-nav-pills-link-active-bg: var(--secondary);
 }
