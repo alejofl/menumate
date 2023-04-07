@@ -1,5 +1,5 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-
 
 <html>
 <head>
@@ -29,11 +29,23 @@
         <button class="category-item nav-link">Breakfast/Brunch</button>
         <button class="category-item nav-link">Kids Menu</button>
     </div>
-    <div class="items" style="background-color: blue">
-        ${restaurant_name}
+    <div class="items">
+        <c:forEach var = "i" begin = "1" end = "32">
+            <jsp:include page="/WEB-INF/jsp/components/menu_item_card.jsp"/>
+        </c:forEach>
     </div>
-    <div class="cart" style="background-color: green">
-        ${restaurant_name}
+    <div class="cart">
+        <div class="card">
+            <div class="card-header text-muted">My Order</div>
+            <ul class="list-group list-group-flush">
+                <c:forEach var = "i" begin = "1" end = "32">
+                    <jsp:include page="/WEB-INF/jsp/components/cart_item.jsp"/>
+                </c:forEach>
+            </ul>
+            <div class="card-body">
+                <button class="btn btn-primary" type="button">Order Now</button>
+            </div>
+        </div>
     </div>
 </main>
 </body>

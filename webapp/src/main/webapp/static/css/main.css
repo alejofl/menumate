@@ -11,6 +11,23 @@ main {
     margin: 8px;
 }
 
+.btn-primary {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: #ed7a57;
+    --bs-btn-border-color: #ed7a57;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #bd5439;
+    --bs-btn-hover-border-color: #bd5439;
+    --bs-btn-focus-shadow-rgb: 49,132,253;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #bd5439;
+    --bs-btn-active-border-color: #bd5439;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: #f39d84;
+    --bs-btn-disabled-border-color: #f39d84;
+}
+
 .clickable-object {
     text-decoration: none !important;
 }
@@ -48,7 +65,7 @@ main {
 /* RESTAURANT MENU */
 .categories {
     display: inline-block;
-    margin: 8px;
+    flex: 0 0 10%;
 }
 
 .category-item {
@@ -70,8 +87,63 @@ main {
 
 .items {
     flex-grow: 1;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.menu-item-card {
+    max-width: 400px;
+    display: flex;
+    flex-direction: row;
+}
+
+.menu-item-card-img-container {
+    flex: 0 0 35%;
+}
+
+.menu-item-card-img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+
+.menu-item-card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.menu-item-card-body p {
+    margin-bottom: 2px;
+}
+
+.menu-item-card-body h5 {
+    margin-top: 8px;
+    margin-bottom: 0;
 }
 
 .cart {
     flex: 0 0 20%;
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+}
+
+.cart-item-body {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cart .card-body {
+    display: flex;
+}
+
+.cart .card-body button {
+    flex-grow: 1;
 }
