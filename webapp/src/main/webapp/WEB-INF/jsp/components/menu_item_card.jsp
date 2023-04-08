@@ -1,7 +1,16 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <body>
-  <a class="clickable-object" href="" data-bs-toggle="modal" data-bs-target="#add-item-to-cart">
+  <a
+    class="clickable-object menu-item-card-button"
+    href=""
+    data-bs-toggle="modal"
+    data-bs-target="#add-item-to-cart"
+    data-info-image="/static/pictures/milanga.jpg"
+    data-info-title="Cheeseburger"
+    data-info-description="refojgoirtjg"
+    data-info-price="500"
+  >
     <div class="card menu-item-card">
       <div class="menu-item-card-img-container" style="">
         <img src="/static/pictures/milanga.jpg" class="img-fluid rounded-start menu-item-card-img" alt="Milanga">

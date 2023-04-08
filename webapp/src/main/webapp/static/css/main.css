@@ -44,6 +44,11 @@ main {
     text-decoration: none !important;
 }
 
+.clearfix {
+    flex-basis: 100%;
+    margin-bottom: -8px;
+}
+
 /* HOME */
 .restaurant-feed {
     flex-direction: row;
@@ -106,6 +111,9 @@ main {
 .categories {
     display: inline-block;
     flex: 0 0 10%;
+    align-self: start;
+    position: sticky;
+    top: 80px;
 }
 
 .category-item {
@@ -127,11 +135,14 @@ main {
 
 .items {
     flex-grow: 1;
+}
+
+.items-container {
     display: flex;
+    justify-content: center;
     flex-direction: row;
     gap: 20px;
     flex-wrap: wrap;
-    justify-content: center;
 }
 
 .menu-item-card {

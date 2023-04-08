@@ -11,6 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 @Controller
@@ -32,6 +36,19 @@ public class HelloWorldController {
     @RequestMapping("/restaurant/{id}")
     public ModelAndView restaurantMenu(@PathVariable String id) {
         final ModelAndView mav = new ModelAndView("menu/restaurant_menu");
+
+        // FIXME: Temporal way to populate menu
+        String[] categories = {"Category 0", "Category 1", "Category 2", "Category 3", "Category 4", "Category 5", "Category 6", "Category 7", "Category 8", "Category 9"};
+        Map<String, List<String>> menu = new HashMap<>();
+        for (String category : categories) {
+            List<String> list = new ArrayList<>();
+            for (int i = 0; i < 10; i++) {
+                list.add(String.format("%s - Item %d", category, i));
+            }
+            menu.put(category, list);
+        }
+
+        mav.addObject("menu", menu);
         mav.addObject("restaurant_name", "Atuel");
         return mav;
     }

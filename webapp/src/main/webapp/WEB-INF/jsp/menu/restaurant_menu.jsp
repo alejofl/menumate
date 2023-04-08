@@ -1,4 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix = "fn" uri = "http://java.sun.com/jsp/jstl/functions" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <html>
@@ -6,10 +7,10 @@
     <jsp:include page="/WEB-INF/jsp/components/head.jsp">
         <jsp:param name="title" value="${restaurant_name}"/>
     </jsp:include>
+    <script src="/static/js/restaurant_menu.js"></script>
 </head>
 <body>
 <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
-
 <div class="restaurant-header">
     <img src="/static/pictures/milanga.jpg" class="menu-item-card-img" alt="Milanga">
 </div>
@@ -24,39 +25,29 @@
 </div>
 <main>
     <div class="categories nav nav-pills small">
-        <button class="category-item nav-link active">Appetizers</button>
-        <button class="category-item nav-link">Soups and Salads</button>
-        <button class="category-item nav-link">Entrees (Main courses)</button>
-        <button class="category-item nav-link">Sandwiches</button>
-        <button class="category-item nav-link">Burgers</button>
-        <button class="category-item nav-link">Pizza and Pasta</button>
-        <button class="category-item nav-link">Seafood</button>
-        <button class="category-item nav-link">Chicken dishes</button>
-        <button class="category-item nav-link">Beef dishes</button>
-        <button class="category-item nav-link">Pork dishes</button>
-        <button class="category-item nav-link">Vegetarian and Vegan dishes</button>
-        <button class="category-item nav-link">Side dishes</button>
-        <button class="category-item nav-link">Desserts</button>
-        <button class="category-item nav-link">Beverages</button>
-        <button class="category-item nav-link">Alcoholic Beverages</button>
-        <button class="category-item nav-link">Breakfast/Brunch</button>
-        <button class="category-item nav-link">Kids Menu</button>
+        <c:forEach items="${menu.keySet()}" var="category">
+            <button class="category-item nav-link" data-category="${fn:replace(category, " ", "")}">${category}</button>
+        </c:forEach>
     </div>
     <div class="items">
-        <c:forEach var = "i" begin = "1" end = "32">
-            <jsp:include page="/WEB-INF/jsp/components/menu_item_card.jsp"/>
-        </c:forEach>
+        <div class="items-container">
+            <c:forEach items="${menu.entrySet()}" var="entry">
+                <div class="clearfix" id="category-${fn:replace(entry.key, " ", "")}" style="text-align: center">
+                    <h3>${entry.key}</h3>
+                </div>
+                <c:forEach var="item" items="${entry.value}">
+                    <jsp:include page="/WEB-INF/jsp/components/menu_item_card.jsp"/>
+                </c:forEach>
+            </c:forEach>
+        </div>
     </div>
     <div class="cart">
         <div class="card">
             <div class="card-header text-muted">My Order</div>
-            <ul class="list-group list-group-flush">
-                <c:forEach var = "i" begin = "1" end = "32">
-                    <jsp:include page="/WEB-INF/jsp/components/cart_item.jsp"/>
-                </c:forEach>
+            <ul class="list-group list-group-flush" id="cart-container">
             </ul>
             <div class="card-body">
-                <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#checkout">Order Now</button>
+                <button class="btn btn-primary" id="place-order-button" type="button" data-bs-toggle="modal" data-bs-target="#checkout" disabled>Order Now</button>
             </div>
         </div>
     </div>
@@ -65,27 +56,27 @@
 <!-- Add Item To Cart Modal -->
 <div class="modal fade" id="add-item-to-cart" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
+        <div class="modal-content" id="add-item-to-cart-header">
             <div class="modal-header" style="--image: url(/static/pictures/milanga.jpg)">
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <h4>Cheeseburger</h4>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo laudantium libero omnis pariatur quaerat qui quis sunt tempora totam! Distinctio dolorem error modi quia tenetur unde. Corporis eum odit officiis!</p>
+                <h4 id="add-item-to-cart-title">Cheeseburger</h4>
+                <p id="add-item-to-cart-description">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo laudantium libero omnis pariatur quaerat qui quis sunt tempora totam! Distinctio dolorem error modi quia tenetur unde. Corporis eum odit officiis!</p>
                 <hr>
                 <form>
                     <div class="input-group">
-                        <button class="btn btn-secondary" type="button"><i class="bi bi-dash"></i></button>
-                        <input type="number" class="form-control" value="1">
-                        <button class="btn btn-secondary" type="button"><i class="bi bi-plus"></i></button>
+                        <button id="add-item-to-cart-minus" class="btn btn-secondary" type="button"><i class="bi bi-dash"></i></button>
+                        <input id="add-item-to-cart-quantity" type="number" class="form-control" value="1">
+                        <button id="add-item-to-cart-plus" class="btn btn-secondary" type="button"><i class="bi bi-plus"></i></button>
                     </div>
                     <div class="comment-container">
-                        <input id="comment-input" placeholder="Comments" class="form-control">
+                        <input id="add-item-to-cart-comments" placeholder="Comments" class="form-control">
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary">Add Item to Cart ($500)</button>
+                <button type="button" id="add-item-to-cart-add" class="btn btn-primary" data-bs-dismiss="modal">Add Item to Cart ($500)</button>
             </div>
         </div>
     </div>
@@ -97,7 +88,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h1 class="modal-title fs-5">Checkout</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <form>
@@ -136,7 +127,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary">Place Order ($5000)</button>
+                <button type="button" class="btn btn-primary" id="checkout-button">Place Order ($5000)</button>
             </div>
         </div>
     </div>
