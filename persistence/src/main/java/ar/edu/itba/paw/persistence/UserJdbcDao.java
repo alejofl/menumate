@@ -22,6 +22,12 @@ public class UserJdbcDao implements UserDao {
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
+    private RowMapper<User> userRowMapper = (ResultSet rs, int rowNum) -> new User(
+            rs.getLong("userId"),
+            rs.getString("username"),
+            rs.getString("password")
+    );
+
     @Autowired
     public UserJdbcDao(final DataSource ds){
         jdbcTemplate = new JdbcTemplate(ds);
@@ -31,16 +37,7 @@ public class UserJdbcDao implements UserDao {
     }
     @Override
     public Optional<User> getUserById(long id) {
-        List<User> query = jdbcTemplate.query("SELECT * FROM Users WHERE userId = ?", new Object[]{id},
-            (ResultSet rs, int rowNum)  -> {
-                return new User(
-                        rs.getLong("userId"),
-                        rs.getString("username"),
-                        rs.getString("password")
-                );
-            }
-        );
-        return query.stream().findFirst();
+        return jdbcTemplate.query("SELECT * FROM users WHERE userId = ?", userRowMapper, id).stream().findFirst();
     }
 
     @Override
