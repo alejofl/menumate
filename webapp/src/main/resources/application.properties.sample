@@ -3,3 +3,6 @@ database.url=
 database.username=
 database.password=
 
+# Mailing
+mailer.email=
+mailer.password=
