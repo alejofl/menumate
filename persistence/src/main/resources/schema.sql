@@ -40,9 +40,9 @@ CREATE TABLE IF NOT EXISTS categories (
     category_id SERIAL PRIMARY KEY,
     restaurant_id INT REFERENCES restaurants(restaurant_id) ON DELETE CASCADE NOT NULL,
     name VARCHAR(32) NOT NULL,
-    "order" INT NOT NULL,
+    order_num INT NOT NULL,
 
-    UNIQUE(restaurant_id, "order")
+    UNIQUE(restaurant_id, order_num)
 );
 
 CREATE TABLE IF NOT EXISTS products (
