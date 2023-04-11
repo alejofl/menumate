@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS restaurants (
     portrait_2_id INT REFERENCES images(image_id) ON DELETE SET NULL,
     address TEXT,
     description TEXT,
-    is_active BOOLEAN NOT NULL DEFAULT TRUE
+    is_active BOOLEAN DEFAULT TRUE
 );
 
 CREATE TABLE IF NOT EXISTS roles (
