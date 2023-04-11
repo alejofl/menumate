@@ -2,7 +2,8 @@
 
 <html>
 <head>
-    <link href="/static/css/main.css" rel="stylesheet"/>
+    <c:url var="maincssUrl" value="/static/css/main.css"/>
+    <link href="${maincssUrl}" rel="stylesheet"/>
 </head>
 <body>
 <h2>Hello <c:out value="${user.username}" escapeXml="true"/>!</h2>
