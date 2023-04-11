@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS users (
     password VARCHAR(128),
     email VARCHAR(256) UNIQUE NOT NULL,
     image_id INT REFERENCES images(image_id) ON DELETE SET NULL,
-    is_active BOOLEAN NOT NULL DEFAULT FALSE
+    is_active BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS restaurants (
