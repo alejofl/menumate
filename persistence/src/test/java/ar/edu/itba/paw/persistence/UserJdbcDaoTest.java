@@ -23,6 +23,7 @@ public class UserJdbcDaoTest {
     private static final long ID = 1;
     private static final String USERNAME = "pedroIsGreat";
     private static final String PASSWORD = "super12secret34";
+    private static final String EMAIL = "peter@peter.com";
 
     @Autowired
     private DataSource ds;
@@ -43,7 +44,7 @@ public class UserJdbcDaoTest {
     @Test
     public void testFindById() throws SQLException {
         // 1. Preconditions
-        jdbcTemplate.execute("INSERT INTO users (userid, username, password) VALUES (" + ID +", '" + USERNAME + "', '" + PASSWORD + "')");
+        jdbcTemplate.execute("INSERT INTO users (user_id, username, password, email) VALUES (" + ID +", '" + USERNAME + "', '" + PASSWORD + "', '" + EMAIL + "')");
 
         // 2. Execute
         Optional<User> maybeUser = userDao.getUserById(ID);
@@ -53,6 +54,7 @@ public class UserJdbcDaoTest {
         Assert.assertEquals(ID, maybeUser.get().getId());
         Assert.assertEquals(USERNAME, maybeUser.get().getUsername());
         Assert.assertEquals(PASSWORD, maybeUser.get().getPassword());
+        Assert.assertEquals(EMAIL, maybeUser.get().getEmail());
     }
 
     @Test
@@ -71,12 +73,13 @@ public class UserJdbcDaoTest {
         // 1. Preconditions
 
         // 2. Execute
-        User user = userDao.create(USERNAME, PASSWORD);
+        User user = userDao.create("thomas", PASSWORD, "thomas@thomas.com");
 
         // 3. Assertions
         Assert.assertNotNull(user);
-        Assert.assertEquals(USERNAME, user.getUsername());
+        Assert.assertEquals("thomas", user.getUsername());
         Assert.assertEquals(PASSWORD, user.getPassword());
+        Assert.assertEquals("thomas@thomas.com", user.getEmail());
         Assert.assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "users"));
     }
 }

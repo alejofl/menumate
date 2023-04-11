@@ -23,9 +23,10 @@ public class UserJdbcDao implements UserDao {
     private final SimpleJdbcInsert jdbcInsert;
 
     private RowMapper<User> userRowMapper = (ResultSet rs, int rowNum) -> new User(
-            rs.getLong("userId"),
+            rs.getLong("user_id"),
             rs.getString("username"),
-            rs.getString("password")
+            rs.getString("password"),
+            rs.getString("email")
     );
 
     @Autowired
@@ -33,20 +34,21 @@ public class UserJdbcDao implements UserDao {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsert = new SimpleJdbcInsert(ds)
                 .withTableName("Users")
-                .usingGeneratedKeyColumns("userId");
+                .usingGeneratedKeyColumns("user_id");
     }
     @Override
     public Optional<User> getUserById(long id) {
-        return jdbcTemplate.query("SELECT * FROM users WHERE userId = ?", userRowMapper, id).stream().findFirst();
+        return jdbcTemplate.query("SELECT * FROM users WHERE user_id = ?", userRowMapper, id).stream().findFirst();
     }
 
     @Override
-    public User create(String username, String password) {
+    public User create(String username, String password, String email) {
         final Map<String, Object> userData = new HashMap<>();
         userData.put("username", username);
         userData.put("password", password);
+        userData.put("email", email);
 
         final int userId = jdbcInsert.execute(userData);
-        return new User(userId, username, password);
+        return new User(userId, username, password, email);
     }
 }

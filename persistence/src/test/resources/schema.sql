@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS images (
     image_id SERIAL PRIMARY KEY,
-    bytes BYTEA NOT NULL
+    bytes BLOB NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS users (
@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS restaurants (
     portrait_2_id INT REFERENCES images(image_id) ON DELETE SET NULL,
     address TEXT,
     description TEXT,
-    is_active BOOLEAN DEFAULT TRUE
+    is_active BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 CREATE TABLE IF NOT EXISTS roles (
