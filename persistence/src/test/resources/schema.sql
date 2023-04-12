@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS orders (
     order_type_id INT REFERENCES order_types(order_type_id) ON DELETE CASCADE NOT NULL,
     restaurant_id INT REFERENCES restaurants(restaurant_id) ON DELETE CASCADE NOT NULL,
     user_id INT REFERENCES users(user_id) ON DELETE CASCADE NOT NULL,
-    order_date TIMESTAMP NOT NULL,
+    order_date TIMESTAMP DEFAULT now(),
     table_number INT,
     address TEXT
 );
