@@ -51,7 +51,7 @@ public class UserJdbcDaoTest {
 
         // 3. Assertions
         Assert.assertTrue(maybeUser.isPresent());
-        Assert.assertEquals(ID, maybeUser.get().getId());
+        Assert.assertEquals(ID, maybeUser.get().getUserId());
         Assert.assertEquals(USERNAME, maybeUser.get().getUsername());
         Assert.assertEquals(PASSWORD, maybeUser.get().getPassword());
         Assert.assertEquals(EMAIL, maybeUser.get().getEmail());

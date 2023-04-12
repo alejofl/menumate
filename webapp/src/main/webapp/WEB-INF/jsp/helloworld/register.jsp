@@ -6,8 +6,8 @@
 </head>
 <body>
 <h1>Register</h1>
-<c:url var="registerUrl" value="/"/>
-<form action="${registerUrl}" method="post">
+
+<form action="<c:url value="/register"/>" method="post">
     <div>
         <label> Username:
             <input type="text" name="username">
@@ -19,9 +19,13 @@
         </label>
     </div>
     <div>
+        <label> Email:
+            <input type="text" name="email">
+        </label>
+    </div>
+    <div>
         <input type="submit" value="Lets go!"/>
     </div>
-
 </form>
 </body>
 </html>

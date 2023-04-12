@@ -33,7 +33,8 @@ public class UserJdbcDao implements UserDao {
     public UserJdbcDao(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsert = new SimpleJdbcInsert(ds)
-                .withTableName("Users")
+                .withTableName("users")
+                .usingColumns("username", "password", "email", "image_id")
                 .usingGeneratedKeyColumns("user_id");
     }
 
@@ -49,7 +50,7 @@ public class UserJdbcDao implements UserDao {
         userData.put("password", password);
         userData.put("email", email);
 
-        final int userId = jdbcInsert.execute(userData);
+        final long userId = jdbcInsert.executeAndReturnKey(userData).longValue();
         return new User(userId, username, password, email);
     }
 }

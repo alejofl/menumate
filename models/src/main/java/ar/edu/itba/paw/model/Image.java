@@ -17,8 +17,4 @@ public class Image {
     public byte[] getBytes() {
         return bytes;
     }
-
-    public void setBytes(byte[] image) {
-        this.bytes = image;
-    }
 }

@@ -33,55 +33,27 @@ public class Restaurant {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public long getLogoId() {
         return logoId;
-    }
-
-    public void setLogoId(long logoId) {
-        this.logoId = logoId;
     }
 
     public long getPortraitId1() {
         return portraitId1;
     }
 
-    public void setPortraitId1(long portraitId1) {
-        this.portraitId1 = portraitId1;
-    }
-
     public long getPortraitId2() {
         return portraitId2;
-    }
-
-    public void setPortraitId2(long portraitId2) {
-        this.portraitId2 = portraitId2;
     }
 
     public String getAddress() {
         return address;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public Boolean getActive() {
         return isActive;
-    }
-
-    public void setActive(Boolean active) {
-        isActive = active;
     }
 }

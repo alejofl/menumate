@@ -2,13 +2,13 @@ package ar.edu.itba.paw.model;
 
 public class User {
 
-    private long id;
+    private long userId;
     private String username;
     private String password;
     private String email;
 
-    public User(long id, String username, String password, String email) {
-        this.id = id;
+    public User(long userId, String username, String password, String email) {
+        this.userId = userId;
         this.username = username;
         this.password = password;
         this.email = email;
@@ -26,7 +26,7 @@ public class User {
         return email;
     }
 
-    public long getId() {
-        return id;
+    public long getUserId() {
+        return userId;
     }
 }
