@@ -10,6 +10,6 @@ public interface RestaurantService {
 
     Restaurant createRestaurant(String name);
 
-    void deleteRestaurant(long id);
+    boolean deleteRestaurant(long id);
 
 }

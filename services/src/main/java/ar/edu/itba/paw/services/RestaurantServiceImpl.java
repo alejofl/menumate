@@ -29,7 +29,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public void deleteRestaurant(long id) {
-         restaurantDao.deleteRestaurant(id);
+    public boolean deleteRestaurant(long id) {
+        return restaurantDao.deleteRestaurant(id);
     }
 }

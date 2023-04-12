@@ -11,5 +11,5 @@ public interface RestaurantDao {
 
     Restaurant createRestaurant(String name);
 
-    void deleteRestaurant(long id);
+    boolean deleteRestaurant(long id);
 }

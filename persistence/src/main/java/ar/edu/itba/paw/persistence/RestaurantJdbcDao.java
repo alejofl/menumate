@@ -55,7 +55,7 @@ public class RestaurantJdbcDao implements RestaurantDao {
     }
 
     @Override
-    public void deleteRestaurant(long id) {
-        jdbcTemplate.update("DELETE FROM restaurants WHERE restaurant_id = ?", id);
+    public boolean deleteRestaurant(long id) {
+       return jdbcTemplate.update("DELETE FROM restaurants WHERE restaurant_id = ?", id) > 0;
     }
 }

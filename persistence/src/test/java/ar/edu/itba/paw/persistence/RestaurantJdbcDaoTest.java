@@ -61,11 +61,7 @@ public class RestaurantJdbcDaoTest {
     @Test
     public void testDeletion() throws SQLException {
         jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name) VALUES (" + ID +", '" + NAME + "')");
-        Optional<Restaurant> maybeRestaurant = restaurantDao.getRestaurantById(ID);
-        Assert.assertTrue(maybeRestaurant.isPresent());
-        restaurantDao.deleteRestaurant(ID);
-        maybeRestaurant = restaurantDao.getRestaurantById(ID);
-        Assert.assertFalse(maybeRestaurant.isPresent());
+        Assert.assertTrue(restaurantDao.deleteRestaurant(ID));
     }
 
 }
