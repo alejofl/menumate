@@ -15,6 +15,16 @@ public class Restaurant {
         this.name = name;
     }
 
+    public Restaurant(long restaurantId, String name, long logoId, long portrait1Id, long portrait2Id, String address, String description, Boolean isActive) {
+        this(restaurantId, name);
+        this.logoId = logoId;
+        this.portraitId1 = portrait1Id;
+        this.portraitId2 = portrait2Id;
+        this.address = address;
+        this.description = description;
+        this.isActive = isActive;
+    }
+
     public long getRestaurantId() {
         return restaurantId;
     }

@@ -23,7 +23,13 @@ public class RestaurantJdbcDao implements RestaurantDao {
 
     private RowMapper<Restaurant> restaurantRowMapper = (ResultSet rs, int rowNum) -> new Restaurant(
             rs.getLong("restaurant_id"),
-            rs.getString("name")
+            rs.getString("name"),
+            rs.getLong("logo_id"),
+            rs.getLong("portrait_1_id"),
+            rs.getLong("portrait_2_id"),
+            rs.getString("address"),
+            rs.getString("description"),
+            rs.getBoolean("is_active")
     );
 
     @Autowired

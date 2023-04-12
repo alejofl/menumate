@@ -17,6 +17,13 @@ public class Product {
         this.price = price;
     }
 
+    public Product(long productId, long categoryId, String name, double price, String description, long imageId, boolean available) {
+        this(productId, categoryId, name, price);
+        this.description = description;
+        this.imageId = imageId;
+        this.available = available;
+    }
+
     public long getProductId() {
         return productId;
     }

@@ -25,7 +25,10 @@ public class ProductJdbcDao implements ProductDao {
             rs.getLong("product_id"),
             rs.getLong("category_id"),
             rs.getString("name"),
-            rs.getDouble("price")
+            rs.getDouble("price"),
+            rs.getString("description"),
+            rs.getLong("image_id"),
+            rs.getBoolean("available")
     );
 
     @Autowired
