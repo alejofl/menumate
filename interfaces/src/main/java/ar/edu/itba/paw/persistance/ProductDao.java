@@ -9,8 +9,8 @@ public interface ProductDao {
     Product createProduct(long categoryId, String name, double price);
     Optional<Product> findProductById(long productId);
     List<Product> findProductsByCategory(long categoryId);
-    void updateProductPrice(long productId, double price);
-    void updateProductName(long productId, String name);
-    void deleteProduct(long productId);
+    boolean updateProductPrice(long productId, double price);
+    boolean updateProductName(long productId, String name);
+    boolean deleteProduct(long productId);
 
 }

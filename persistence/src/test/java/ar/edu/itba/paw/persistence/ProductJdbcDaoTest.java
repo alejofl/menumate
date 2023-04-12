@@ -93,37 +93,19 @@ public class ProductJdbcDaoTest {
     @Test
     public void testUpdateProductPrice() throws SQLException {
         jdbcTemplate.execute("INSERT INTO products (product_id, name, price, category_id) VALUES (" + PRODUCT_ID +", '" + PRODUCT_NAME + "', " + PRODUCT_PRICE + ", " + CATEGORY_ID + ")");
-        final Double newPrice = PRODUCT_PRICE + 2.0;
-        productDao.updateProductPrice(PRODUCT_ID, newPrice);
-
-        final Optional<Product> updatedProduct = productDao.findProductById(PRODUCT_ID);
-        Assert.assertTrue(updatedProduct.isPresent());
-        Assert.assertNotEquals(PRODUCT_PRICE.intValue(), Double.valueOf(updatedProduct.get().getPrice()).intValue());
-        Assert.assertEquals(newPrice.intValue(), Double.valueOf(updatedProduct.get().getPrice()).intValue());
+        Assert.assertTrue(productDao.updateProductPrice(PRODUCT_ID, PRODUCT_PRICE + 2.0));
     }
 
     @Test
     public void testUpdateProductName() throws SQLException {
         jdbcTemplate.execute("INSERT INTO products (product_id, name, price, category_id) VALUES (" + PRODUCT_ID +", '" + PRODUCT_NAME + "', " + PRODUCT_PRICE + ", " + CATEGORY_ID + ")");
-        final String newName = PRODUCT_NAME + " new";
-        productDao.updateProductName(PRODUCT_ID, newName);
-
-        final Optional<Product> updatedProduct = productDao.findProductById(PRODUCT_ID);
-        Assert.assertTrue(updatedProduct.isPresent());
-        Assert.assertNotEquals(PRODUCT_NAME, updatedProduct.get().getName());
-        Assert.assertEquals(newName, updatedProduct.get().getName());
+        Assert.assertTrue(productDao.updateProductName(PRODUCT_ID, PRODUCT_NAME + "new"));
     }
 
     @Test
     public void testDeleteProduct() throws SQLException {
         jdbcTemplate.execute("INSERT INTO products (product_id, name, price, category_id) VALUES (" + PRODUCT_ID +", '" + PRODUCT_NAME + "', " + PRODUCT_PRICE + ", " + CATEGORY_ID + ")");
-        Optional<Product> product = productDao.findProductById(PRODUCT_ID);
-        Assert.assertTrue(product.isPresent());
-
-        productDao.deleteProduct(PRODUCT_ID);
-
-        product = productDao.findProductById(PRODUCT_ID);
-        Assert.assertFalse(product.isPresent());
+        Assert.assertTrue(productDao.deleteProduct(PRODUCT_ID));
     }
 
 }

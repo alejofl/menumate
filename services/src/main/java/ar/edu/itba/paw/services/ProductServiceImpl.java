@@ -34,17 +34,17 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void updateProductPrice(long productId, double price) {
-        productDao.updateProductPrice(productId, price);
+    public boolean updateProductPrice(long productId, double price) {
+        return productDao.updateProductPrice(productId, price);
     }
 
     @Override
-    public void updateProductName(long productId, String name) {
-        productDao.updateProductName(productId, name);
+    public boolean updateProductName(long productId, String name) {
+        return productDao.updateProductName(productId, name);
     }
 
     @Override
-    public void deleteProduct(long productId) {
-        productDao.deleteProduct(productId);
+    public boolean deleteProduct(long productId) {
+        return productDao.deleteProduct(productId);
     }
 }

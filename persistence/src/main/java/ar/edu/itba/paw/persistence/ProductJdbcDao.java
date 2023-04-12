@@ -60,18 +60,18 @@ public class ProductJdbcDao implements ProductDao {
     }
 
     @Override
-    public void updateProductPrice(long productId, double price) {
-        jdbcTemplate.update("UPDATE products SET price = ? WHERE product_id = ?", price, productId);
+    public boolean updateProductPrice(long productId, double price) {
+        return jdbcTemplate.update("UPDATE products SET price = ? WHERE product_id = ?", price, productId) > 0;
     }
 
     @Override
-    public void updateProductName(long productId, String name) {
-        jdbcTemplate.update("UPDATE products SET name = ? WHERE product_id = ?", name, productId);
+    public boolean updateProductName(long productId, String name) {
+        return jdbcTemplate.update("UPDATE products SET name = ? WHERE product_id = ?", name, productId) > 0;
     }
 
     @Override
-    public void deleteProduct(long productId) {
-        jdbcTemplate.update("DELETE FROM products WHERE product_id = ?", productId);
+    public boolean deleteProduct(long productId) {
+        return jdbcTemplate.update("DELETE FROM products WHERE product_id = ?", productId) > 0;
     }
 
 }
