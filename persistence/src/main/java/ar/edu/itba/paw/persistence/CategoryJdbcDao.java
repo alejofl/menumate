@@ -58,17 +58,17 @@ public class CategoryJdbcDao implements CategoryDao {
     }
 
     @Override
-    public void updateName(long categoryId, String name) {
-        jdbcTemplate.update("UPDATE categories SET name = ? WHERE category_id = ?", name, categoryId);
+    public boolean updateName(long categoryId, String name) {
+        return jdbcTemplate.update("UPDATE categories SET name = ? WHERE category_id = ?", name, categoryId) > 0;
     }
 
     @Override
-    public void updateOrder(long categoryId, long order) {
-        jdbcTemplate.update("UPDATE categories SET order_num = ? WHERE category_id = ?", order, categoryId);
+    public boolean updateOrder(long categoryId, long order) {
+        return jdbcTemplate.update("UPDATE categories SET order_num = ? WHERE category_id = ?", order, categoryId) > 0;
     }
 
     @Override
-    public void deleteCategory(long categoryId) {
-        jdbcTemplate.update("DELETE FROM categories WHERE category_id = ?", categoryId);
+    public boolean deleteCategory(long categoryId) {
+        return jdbcTemplate.update("DELETE FROM categories WHERE category_id = ?", categoryId) > 0;
     }
 }

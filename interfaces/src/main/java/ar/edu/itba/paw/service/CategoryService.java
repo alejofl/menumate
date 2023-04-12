@@ -10,7 +10,7 @@ public interface CategoryService {
         Category createCategory(long restaurantId, String name, long order);
         Optional<Category> getCategoryById(long categoryId);
         List<Category> findByRestaurantId(long restaurantId);
-        void updateName(long categoryId, String name);
-        void updateOrder(long categoryId, long order);
-        void deleteCategory(long categoryId);
+        boolean updateName(long categoryId, String name);
+        boolean updateOrder(long categoryId, long order);
+        boolean deleteCategory(long categoryId);
 }

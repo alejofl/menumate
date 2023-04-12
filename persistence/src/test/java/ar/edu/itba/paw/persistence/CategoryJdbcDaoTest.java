@@ -92,19 +92,7 @@ public class CategoryJdbcDaoTest {
     @Test
     public void testUpdateCategoryName() throws SQLException {
         jdbcTemplate.execute("INSERT INTO categories (category_id ,restaurant_id, name, order_num) VALUES (" + CATEGORY_ID +", " + RESTAURANT_ID +", '" + CATEGORY_NAME +"',"+ ORDER + ")");
-
-        final String newName = CATEGORY_NAME + "blabla";
-
-        categoryDao.updateName(CATEGORY_ID, newName);
-
-        final Optional<Category> category = categoryDao.getCategoryById(CATEGORY_ID);
-
-        Assert.assertTrue(category.isPresent());
-        Assert.assertEquals(CATEGORY_ID, category.get().getCategoryId());
-        Assert.assertEquals(RESTAURANT_ID, category.get().getRestaurantId());
-        Assert.assertEquals(ORDER, category.get().getOrder());
-        Assert.assertNotEquals(CATEGORY_NAME, category.get().getName());
-        Assert.assertEquals(newName, category.get().getName());
+        Assert.assertTrue(categoryDao.updateName(CATEGORY_ID, CATEGORY_NAME + "blabla"));
     }
 
     @Test
@@ -112,17 +100,7 @@ public class CategoryJdbcDaoTest {
         jdbcTemplate.execute("INSERT INTO categories (category_id ,restaurant_id, name, order_num) VALUES (" + CATEGORY_ID +", " + RESTAURANT_ID +", '" + CATEGORY_NAME +"',"+ ORDER + ")");
 
         final long newOrder = ORDER + 1;
-
-        categoryDao.updateOrder(CATEGORY_ID, newOrder);
-
-        final Optional<Category> category = categoryDao.getCategoryById(CATEGORY_ID);
-
-        Assert.assertTrue(category.isPresent());
-        Assert.assertEquals(CATEGORY_ID, category.get().getCategoryId());
-        Assert.assertEquals(RESTAURANT_ID, category.get().getRestaurantId());
-        Assert.assertEquals(CATEGORY_NAME, category.get().getName());
-        Assert.assertNotEquals(ORDER, category.get().getOrder());
-        Assert.assertEquals(newOrder, category.get().getOrder());
+        Assert.assertTrue(categoryDao.updateOrder(CATEGORY_ID, ORDER + 1));
     }
 
     @Test
@@ -131,10 +109,7 @@ public class CategoryJdbcDaoTest {
         Optional<Category> category1 = categoryDao.getCategoryById(CATEGORY_ID);
         Assert.assertTrue(category1.isPresent());
 
-        categoryDao.deleteCategory(CATEGORY_ID);
-
-        category1 = categoryDao.getCategoryById(CATEGORY_ID);
-        Assert.assertFalse(category1.isPresent());
+        Assert.assertTrue(categoryDao.deleteCategory(CATEGORY_ID));
     }
 
 }

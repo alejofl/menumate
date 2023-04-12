@@ -2,7 +2,6 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.model.Category;
 import ar.edu.itba.paw.persistance.CategoryDao;
-import ar.edu.itba.paw.persistance.RestaurantDao;
 import ar.edu.itba.paw.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,17 +35,17 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void updateName(long categoryId, String name) {
-        categoryDao.updateName(categoryId, name);
+    public boolean updateName(long categoryId, String name) {
+        return categoryDao.updateName(categoryId, name);
     }
 
     @Override
-    public void updateOrder(long categoryId, long order) {
-        categoryDao.updateOrder(categoryId, order);
+    public boolean updateOrder(long categoryId, long order) {
+        return categoryDao.updateOrder(categoryId, order);
     }
 
     @Override
-    public void deleteCategory(long categoryId) {
-        categoryDao.deleteCategory(categoryId);
+    public boolean deleteCategory(long categoryId) {
+        return categoryDao.deleteCategory(categoryId);
     }
 }
