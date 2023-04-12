@@ -20,18 +20,18 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Category createCategory(long restaurantId, String name, long order) {
-        return categoryDao.createCategory(restaurantId, name, order);
+    public Category create(long restaurantId, String name, int order) {
+        return categoryDao.create(restaurantId, name, order);
     }
 
     @Override
-    public Optional<Category> getCategoryById(long categoryId) {
-         return categoryDao.getCategoryById(categoryId);
+    public Optional<Category> getById(long categoryId) {
+        return categoryDao.getById(categoryId);
     }
 
     @Override
-    public List<Category> findByRestaurantId(long restaurantId) {
-        return categoryDao.findByRestaurantId(restaurantId);
+    public List<Category> getByRestaurant(long restaurantId) {
+        return categoryDao.getByRestaurantId(restaurantId);
     }
 
     @Override
@@ -40,12 +40,12 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public boolean updateOrder(long categoryId, long order) {
+    public boolean updateOrder(long categoryId, int order) {
         return categoryDao.updateOrder(categoryId, order);
     }
 
     @Override
-    public boolean deleteCategory(long categoryId) {
-        return categoryDao.deleteCategory(categoryId);
+    public boolean delete(long categoryId) {
+        return categoryDao.delete(categoryId);
     }
 }

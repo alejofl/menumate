@@ -44,7 +44,7 @@ public class HelloWorldController {
             @RequestParam(value = "username", required = true) final String username,
             @RequestParam(value = "password", required = true) final String password
     ) {
-        final User user = userService.createUser(username, password);
+        final User user = userService.create(username, password, "ivan.chayer@sabf.org.ar");
         final ModelAndView mav = new ModelAndView("helloworld/index");
         mav.addObject("user", user);
         return mav;

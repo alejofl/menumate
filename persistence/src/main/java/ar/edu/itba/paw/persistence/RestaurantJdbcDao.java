@@ -33,7 +33,7 @@ public class RestaurantJdbcDao implements RestaurantDao {
     );
 
     @Autowired
-    public RestaurantJdbcDao(final DataSource ds){
+    public RestaurantJdbcDao(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsert = new SimpleJdbcInsert(ds)
                 .withTableName("restaurants")
@@ -41,12 +41,12 @@ public class RestaurantJdbcDao implements RestaurantDao {
     }
 
     @Override
-    public Optional<Restaurant> getRestaurantById(long id) {
-        return jdbcTemplate.query("SELECT * FROM restaurants WHERE restaurant_id = ?", restaurantRowMapper, id).stream().findFirst();
+    public Optional<Restaurant> getById(long restaurantId) {
+        return jdbcTemplate.query("SELECT * FROM restaurants WHERE restaurant_id = ?", restaurantRowMapper, restaurantId).stream().findFirst();
     }
 
     @Override
-    public Restaurant createRestaurant(String name) {
+    public Restaurant create(String name) {
         final Map<String, Object> restaurantData = new HashMap<>();
         restaurantData.put("name", name);
 
@@ -55,7 +55,7 @@ public class RestaurantJdbcDao implements RestaurantDao {
     }
 
     @Override
-    public boolean deleteRestaurant(long id) {
-       return jdbcTemplate.update("DELETE FROM restaurants WHERE restaurant_id = ?", id) > 0;
+    public boolean delete(long restaurantId) {
+        return jdbcTemplate.update("DELETE FROM restaurants WHERE restaurant_id = ?", restaurantId) > 0;
     }
 }

@@ -26,38 +26,38 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Optional<Order> findOrderById(long orderId) {
-        return orderDao.findOrderById(orderId);
+    public Optional<Order> getById(long orderId) {
+        return orderDao.getById(orderId);
     }
 
     @Override
-    public List<Order> findOrdersByUserId(long userId, long restaurantId) {
-        return orderDao.findOrdersByUserId(userId, restaurantId);
+    public List<Order> getByUser(long userId, long restaurantId) {
+        return orderDao.getByUser(userId, restaurantId);
     }
 
     @Override
-    public List<Order> findOrdersByRestaurantId(long restaurantId) {
-        return orderDao.findOrdersByRestaurantId(restaurantId);
+    public List<Order> getByRestaurant(long restaurantId) {
+        return orderDao.getByRestaurant(restaurantId);
     }
 
     @Override
-    public List<Order> findByOrdersBetweenDates(LocalDateTime start, LocalDateTime end, long restaurantId) {
-        return orderDao.findByOrdersBetweenDates(start, end, restaurantId);
+    public List<Order> getBetweenDates(long restaurantId, LocalDateTime start, LocalDateTime end) {
+        return orderDao.getByRestaurantBetweenDates(restaurantId, start, end);
     }
 
     @Override
-    public List<Order> findByOrdersAddress(String address, long restaurantId) {
-        return orderDao.findByOrdersAddress(address, restaurantId);
+    public List<Order> getByAddress(long restaurantId, String address) {
+        return orderDao.getByRestaurantAndAddress(restaurantId, address);
     }
 
     @Override
-    public List<Order> findByOrdersTableNumber(int tableNumber, long restaurantId) {
-        return orderDao.findByOrdersTableNumber(tableNumber, restaurantId);
+    public List<Order> getByTableNumber(long restaurantId, int tableNumber) {
+        return orderDao.getByRestaurantAndTableNumber(restaurantId, tableNumber);
     }
 
     @Override
-    public List<Order> findByOrdersTypeId(long orderTypeId, long restaurantId) {
-        return orderDao.findByOrdersTypeId(orderTypeId, restaurantId);
+    public List<Order> getByOrderType(long restaurantId, long orderTypeId) {
+        return orderDao.getByOrderTypeAndRestaurant(restaurantId, orderTypeId);
     }
 
     @Override

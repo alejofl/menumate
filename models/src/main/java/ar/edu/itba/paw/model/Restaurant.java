@@ -10,7 +10,7 @@ public class Restaurant {
     private String description;
     private Boolean isActive;
 
-    public Restaurant(long restaurantId, String name){
+    public Restaurant(long restaurantId, String name) {
         this.restaurantId = restaurantId;
         this.name = name;
     }

@@ -22,7 +22,7 @@ public class User {
         return password;
     }
 
-    public String getEmail(){
+    public String getEmail() {
         return email;
     }
 

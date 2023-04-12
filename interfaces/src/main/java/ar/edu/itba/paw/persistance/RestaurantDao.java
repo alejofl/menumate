@@ -1,15 +1,13 @@
 package ar.edu.itba.paw.persistance;
 
 import ar.edu.itba.paw.model.Restaurant;
-import ar.edu.itba.paw.model.User;
 
 import java.util.Optional;
 
 public interface RestaurantDao {
+    Restaurant create(String name);
 
-    Optional<Restaurant> getRestaurantById(long id);
+    Optional<Restaurant> getById(long restaurantId);
 
-    Restaurant createRestaurant(String name);
-
-    boolean deleteRestaurant(long id);
+    boolean delete(long restaurantId);
 }

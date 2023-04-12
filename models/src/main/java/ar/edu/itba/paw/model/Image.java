@@ -5,7 +5,7 @@ public class Image {
     private final long imageId;
     private byte[] bytes;
 
-    public Image(long imageId, byte[] bytes ) {
+    public Image(long imageId, byte[] bytes) {
         this.imageId = imageId;
         this.bytes = bytes;
     }
@@ -13,6 +13,7 @@ public class Image {
     public long getImageId() {
         return imageId;
     }
+
     public byte[] getBytes() {
         return bytes;
     }

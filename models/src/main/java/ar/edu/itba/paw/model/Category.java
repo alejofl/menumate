@@ -6,7 +6,7 @@ public class Category {
     private String name;
     private long order;
 
-    public Category(long categoryId, long restaurantId, String name, long order){
+    public Category(long categoryId, long restaurantId, String name, long order) {
         this.categoryId = categoryId;
         this.restaurantId = restaurantId;
         this.name = name;

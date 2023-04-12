@@ -18,33 +18,34 @@ public class ProductServiceImpl implements ProductService {
     public ProductServiceImpl(final ProductDao productDao) {
         this.productDao = productDao;
     }
+
     @Override
-    public Product createProduct(long categoryId, String name, double price) {
-        return productDao.createProduct(categoryId, name, price);
+    public Product create(long categoryId, String name, double price) {
+        return productDao.create(categoryId, name, price);
     }
 
     @Override
-    public Optional<Product> findProductById(long productId) {
-        return productDao.findProductById(productId);
+    public Optional<Product> getById(long productId) {
+        return productDao.getById(productId);
     }
 
     @Override
-    public List<Product> findProductsByCategory(long categoryId) {
-        return productDao.findProductsByCategory(categoryId);
+    public List<Product> getByCategory(long categoryId) {
+        return productDao.getByCategory(categoryId);
     }
 
     @Override
-    public boolean updateProductPrice(long productId, double price) {
-        return productDao.updateProductPrice(productId, price);
+    public boolean updatePrice(long productId, double price) {
+        return productDao.updatePrice(productId, price);
     }
 
     @Override
-    public boolean updateProductName(long productId, String name) {
-        return productDao.updateProductName(productId, name);
+    public boolean updateName(long productId, String name) {
+        return productDao.updateName(productId, name);
     }
 
     @Override
-    public boolean deleteProduct(long productId) {
-        return productDao.deleteProduct(productId);
+    public boolean delete(long productId) {
+        return productDao.delete(productId);
     }
 }

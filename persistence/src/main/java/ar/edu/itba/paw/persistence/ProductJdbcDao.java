@@ -32,14 +32,15 @@ public class ProductJdbcDao implements ProductDao {
     );
 
     @Autowired
-    public ProductJdbcDao(final DataSource ds){
+    public ProductJdbcDao(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsert = new SimpleJdbcInsert(ds)
                 .withTableName("products")
                 .usingGeneratedKeyColumns("product_id");
     }
+
     @Override
-    public Product createProduct(long categoryId, String name, double price) {
+    public Product create(long categoryId, String name, double price) {
         final Map<String, Object> productData = new HashMap<>();
         productData.put("category_id", categoryId);
         productData.put("name", name);
@@ -50,27 +51,27 @@ public class ProductJdbcDao implements ProductDao {
     }
 
     @Override
-    public Optional<Product> findProductById(long productId) {
+    public Optional<Product> getById(long productId) {
         return jdbcTemplate.query("SELECT * FROM products WHERE product_id = ?", productRowMapper, productId).stream().findFirst();
     }
 
     @Override
-    public List<Product> findProductsByCategory(long categoryId) {
+    public List<Product> getByCategory(long categoryId) {
         return jdbcTemplate.query("SELECT * FROM products WHERE category_id = ?", productRowMapper, categoryId);
     }
 
     @Override
-    public boolean updateProductPrice(long productId, double price) {
+    public boolean updatePrice(long productId, double price) {
         return jdbcTemplate.update("UPDATE products SET price = ? WHERE product_id = ?", price, productId) > 0;
     }
 
     @Override
-    public boolean updateProductName(long productId, String name) {
+    public boolean updateName(long productId, String name) {
         return jdbcTemplate.update("UPDATE products SET name = ? WHERE product_id = ?", name, productId) > 0;
     }
 
     @Override
-    public boolean deleteProduct(long productId) {
+    public boolean delete(long productId) {
         return jdbcTemplate.update("DELETE FROM products WHERE product_id = ?", productId) > 0;
     }
 

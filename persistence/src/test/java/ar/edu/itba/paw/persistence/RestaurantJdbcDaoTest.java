@@ -40,9 +40,9 @@ public class RestaurantJdbcDaoTest {
 
     @Test
     public void testFindById() throws SQLException {
-        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name) VALUES (" + ID +", '" + NAME + "')");
+        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name) VALUES (" + ID + ", '" + NAME + "')");
 
-        Optional<Restaurant> maybeRestaurant = restaurantDao.getRestaurantById(ID);
+        Optional<Restaurant> maybeRestaurant = restaurantDao.getById(ID);
 
         Assert.assertTrue(maybeRestaurant.isPresent());
         Assert.assertEquals(ID, maybeRestaurant.get().getRestaurantId());
@@ -51,7 +51,7 @@ public class RestaurantJdbcDaoTest {
 
     @Test
     public void testCreation() throws SQLException {
-        Restaurant maybeRestaurnt = restaurantDao.createRestaurant(NAME);
+        Restaurant maybeRestaurnt = restaurantDao.create(NAME);
 
         Assert.assertNotNull(maybeRestaurnt);
         Assert.assertEquals(ID, maybeRestaurnt.getRestaurantId());
@@ -60,8 +60,8 @@ public class RestaurantJdbcDaoTest {
 
     @Test
     public void testDeletion() throws SQLException {
-        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name) VALUES (" + ID +", '" + NAME + "')");
-        Assert.assertTrue(restaurantDao.deleteRestaurant(ID));
+        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name) VALUES (" + ID + ", '" + NAME + "')");
+        Assert.assertTrue(restaurantDao.delete(ID));
     }
 
 }

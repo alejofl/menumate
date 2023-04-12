@@ -30,15 +30,16 @@ public class UserJdbcDao implements UserDao {
     );
 
     @Autowired
-    public UserJdbcDao(final DataSource ds){
+    public UserJdbcDao(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsert = new SimpleJdbcInsert(ds)
                 .withTableName("Users")
                 .usingGeneratedKeyColumns("user_id");
     }
+
     @Override
-    public Optional<User> getUserById(long id) {
-        return jdbcTemplate.query("SELECT * FROM users WHERE user_id = ?", userRowMapper, id).stream().findFirst();
+    public Optional<User> getById(long userId) {
+        return jdbcTemplate.query("SELECT * FROM users WHERE user_id = ?", userRowMapper, userId).stream().findFirst();
     }
 
     @Override

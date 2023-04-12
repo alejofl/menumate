@@ -12,7 +12,7 @@ public class Order {
     private String address;
     private int tableNumber;
 
-    public Order(long orderId, long orderTypeId, long restaurantId, long userId){
+    public Order(long orderId, long orderTypeId, long restaurantId, long userId) {
         this.orderId = orderId;
         this.orderTypeId = orderTypeId;
         this.restaurantId = restaurantId;

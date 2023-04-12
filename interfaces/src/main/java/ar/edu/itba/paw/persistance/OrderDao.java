@@ -7,16 +7,25 @@ import java.util.List;
 import java.util.Optional;
 
 public interface OrderDao {
+    Order create(long orderTypeId, long restaurantId, long userId);
 
-        Order create(long orderTypeId, long restaurantId, long userId);
-        Optional<Order> findOrderById(long orderId);
-        List<Order> findOrdersByUserId(long userId, long restaurantId);
-        List<Order> findByOrdersTypeId(long orderTypeId, long restaurantId);
-        List<Order> findOrdersByRestaurantId(long restaurantId);
-        List<Order> findByOrdersBetweenDates(LocalDateTime start, LocalDateTime end, long restaurantId);
-        List<Order> findByOrdersAddress(String address, long restaurantId);
-        List<Order> findByOrdersTableNumber(int tableNumber, long restaurantId);
-        boolean updateAddress(long orderId, String address);
-        boolean updateTableNumber(long orderId, int tableNumber);
-        boolean delete(long orderId);
+    Optional<Order> getById(long orderId);
+
+    List<Order> getByUser(long userId, long restaurantId);
+
+    List<Order> getByOrderTypeAndRestaurant(long orderTypeId, long restaurantId);
+
+    List<Order> getByRestaurant(long restaurantId);
+
+    List<Order> getByRestaurantBetweenDates(long restaurantId, LocalDateTime start, LocalDateTime end);
+
+    List<Order> getByRestaurantAndAddress(long restaurantId, String address);
+
+    List<Order> getByRestaurantAndTableNumber(long restaurantId, int tableNumber);
+
+    boolean updateAddress(long orderId, String address);
+
+    boolean updateTableNumber(long orderId, int tableNumber);
+
+    boolean delete(long orderId);
 }

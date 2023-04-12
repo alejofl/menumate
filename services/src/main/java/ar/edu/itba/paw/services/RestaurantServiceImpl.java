@@ -19,17 +19,17 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public Optional<Restaurant> getRestaurantById(long id) {
-        return restaurantDao.getRestaurantById(id);
+    public Optional<Restaurant> getById(long restaurantId) {
+        return restaurantDao.getById(restaurantId);
     }
 
     @Override
-    public Restaurant createRestaurant(String name) {
-        return restaurantDao.createRestaurant(name);
+    public Restaurant create(String name) {
+        return restaurantDao.create(name);
     }
 
     @Override
-    public boolean deleteRestaurant(long id) {
-        return restaurantDao.deleteRestaurant(id);
+    public boolean delete(long restaurantId) {
+        return restaurantDao.delete(restaurantId);
     }
 }

@@ -29,7 +29,7 @@ public class CategoryJdbcDao implements CategoryDao {
     );
 
     @Autowired
-    public CategoryJdbcDao(final DataSource ds){
+    public CategoryJdbcDao(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsert = new SimpleJdbcInsert(ds)
                 .withTableName("categories")
@@ -37,7 +37,7 @@ public class CategoryJdbcDao implements CategoryDao {
     }
 
     @Override
-    public Category createCategory(long restaurantId, String name, long order) {
+    public Category create(long restaurantId, String name, int order) {
         final Map<String, Object> categoryData = new HashMap<>();
         categoryData.put("restaurant_id", restaurantId);
         categoryData.put("name", name);
@@ -48,12 +48,12 @@ public class CategoryJdbcDao implements CategoryDao {
     }
 
     @Override
-    public Optional<Category> getCategoryById(long categoryId) {
+    public Optional<Category> getById(long categoryId) {
         return jdbcTemplate.query("SELECT * FROM categories WHERE category_id = ?", categoryRowMapper, categoryId).stream().findFirst();
     }
 
     @Override
-    public List<Category> findByRestaurantId(long restaurantId) {
+    public List<Category> getByRestaurantId(long restaurantId) {
         return jdbcTemplate.query("SELECT * FROM categories WHERE restaurant_id = ?", categoryRowMapper, restaurantId);
     }
 
@@ -63,12 +63,12 @@ public class CategoryJdbcDao implements CategoryDao {
     }
 
     @Override
-    public boolean updateOrder(long categoryId, long order) {
+    public boolean updateOrder(long categoryId, int order) {
         return jdbcTemplate.update("UPDATE categories SET order_num = ? WHERE category_id = ?", order, categoryId) > 0;
     }
 
     @Override
-    public boolean deleteCategory(long categoryId) {
+    public boolean delete(long categoryId) {
         return jdbcTemplate.update("DELETE FROM categories WHERE category_id = ?", categoryId) > 0;
     }
 }

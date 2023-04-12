@@ -43,14 +43,14 @@ public class ProductJdbcDaoTest {
     @Before
     public void setup() {
         jdbcTemplate = new JdbcTemplate(ds);
-        JdbcTestUtils.deleteFromTables(jdbcTemplate,"categories", "restaurants", "products");
-        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name) VALUES (" + RESTAURANT_ID +", '" + RESTAURANT_NAME + "')");
-        jdbcTemplate.execute("INSERT INTO categories (category_id, name, restaurant_id, order_num) VALUES (" + CATEGORY_ID +", '" + CATEGORY_NAME + "', " + RESTAURANT_ID + ", " + ORDER + ")");
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, "categories", "restaurants", "products");
+        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name) VALUES (" + RESTAURANT_ID + ", '" + RESTAURANT_NAME + "')");
+        jdbcTemplate.execute("INSERT INTO categories (category_id, name, restaurant_id, order_num) VALUES (" + CATEGORY_ID + ", '" + CATEGORY_NAME + "', " + RESTAURANT_ID + ", " + ORDER + ")");
     }
 
     @Test
     public void testCreate() throws SQLException {
-        final Product product = productDao.createProduct(CATEGORY_ID, PRODUCT_NAME, PRODUCT_PRICE);
+        final Product product = productDao.create(CATEGORY_ID, PRODUCT_NAME, PRODUCT_PRICE);
 
         Assert.assertNotNull(product);
         Assert.assertEquals(PRODUCT_ID, product.getProductId());
@@ -61,8 +61,8 @@ public class ProductJdbcDaoTest {
 
     @Test
     public void testFindProductById() throws SQLException {
-        jdbcTemplate.execute("INSERT INTO products (product_id, name, price, category_id) VALUES (" + PRODUCT_ID +", '" + PRODUCT_NAME + "', " + PRODUCT_PRICE + ", " + CATEGORY_ID + ")");
-        final Optional<Product> product = productDao.findProductById(PRODUCT_ID);
+        jdbcTemplate.execute("INSERT INTO products (product_id, name, price, category_id) VALUES (" + PRODUCT_ID + ", '" + PRODUCT_NAME + "', " + PRODUCT_PRICE + ", " + CATEGORY_ID + ")");
+        final Optional<Product> product = productDao.getById(PRODUCT_ID);
 
         Assert.assertTrue(product.isPresent());
         Assert.assertEquals(PRODUCT_ID, product.get().getProductId());
@@ -75,10 +75,10 @@ public class ProductJdbcDaoTest {
     public void testFindProductsByCategory() throws SQLException {
 
         for (int i = 1; i < PRODUCTS_NAMES.length + 1; i++) {
-            jdbcTemplate.execute("INSERT INTO products (product_id, name, price, category_id) VALUES (" + i +", '" + PRODUCTS_NAMES[i - 1] + "', " + PRODUCT_PRICE + ", " + CATEGORY_ID + ")");
+            jdbcTemplate.execute("INSERT INTO products (product_id, name, price, category_id) VALUES (" + i + ", '" + PRODUCTS_NAMES[i - 1] + "', " + PRODUCT_PRICE + ", " + CATEGORY_ID + ")");
         }
 
-        final List<Product> products = productDao.findProductsByCategory(CATEGORY_ID);
+        final List<Product> products = productDao.getByCategory(CATEGORY_ID);
 
         Assert.assertNotNull(products);
         Assert.assertEquals(PRODUCTS_NAMES.length, products.size());
@@ -92,20 +92,20 @@ public class ProductJdbcDaoTest {
 
     @Test
     public void testUpdateProductPrice() throws SQLException {
-        jdbcTemplate.execute("INSERT INTO products (product_id, name, price, category_id) VALUES (" + PRODUCT_ID +", '" + PRODUCT_NAME + "', " + PRODUCT_PRICE + ", " + CATEGORY_ID + ")");
-        Assert.assertTrue(productDao.updateProductPrice(PRODUCT_ID, PRODUCT_PRICE + 2.0));
+        jdbcTemplate.execute("INSERT INTO products (product_id, name, price, category_id) VALUES (" + PRODUCT_ID + ", '" + PRODUCT_NAME + "', " + PRODUCT_PRICE + ", " + CATEGORY_ID + ")");
+        Assert.assertTrue(productDao.updatePrice(PRODUCT_ID, PRODUCT_PRICE + 2.0));
     }
 
     @Test
     public void testUpdateProductName() throws SQLException {
-        jdbcTemplate.execute("INSERT INTO products (product_id, name, price, category_id) VALUES (" + PRODUCT_ID +", '" + PRODUCT_NAME + "', " + PRODUCT_PRICE + ", " + CATEGORY_ID + ")");
-        Assert.assertTrue(productDao.updateProductName(PRODUCT_ID, PRODUCT_NAME + "new"));
+        jdbcTemplate.execute("INSERT INTO products (product_id, name, price, category_id) VALUES (" + PRODUCT_ID + ", '" + PRODUCT_NAME + "', " + PRODUCT_PRICE + ", " + CATEGORY_ID + ")");
+        Assert.assertTrue(productDao.updateName(PRODUCT_ID, PRODUCT_NAME + "new"));
     }
 
     @Test
     public void testDeleteProduct() throws SQLException {
-        jdbcTemplate.execute("INSERT INTO products (product_id, name, price, category_id) VALUES (" + PRODUCT_ID +", '" + PRODUCT_NAME + "', " + PRODUCT_PRICE + ", " + CATEGORY_ID + ")");
-        Assert.assertTrue(productDao.deleteProduct(PRODUCT_ID));
+        jdbcTemplate.execute("INSERT INTO products (product_id, name, price, category_id) VALUES (" + PRODUCT_ID + ", '" + PRODUCT_NAME + "', " + PRODUCT_PRICE + ", " + CATEGORY_ID + ")");
+        Assert.assertTrue(productDao.delete(PRODUCT_ID));
     }
 
 }

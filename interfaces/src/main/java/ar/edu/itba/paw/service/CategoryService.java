@@ -6,11 +6,15 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CategoryService {
+    Category create(long restaurantId, String name, int order);
 
-        Category createCategory(long restaurantId, String name, long order);
-        Optional<Category> getCategoryById(long categoryId);
-        List<Category> findByRestaurantId(long restaurantId);
-        boolean updateName(long categoryId, String name);
-        boolean updateOrder(long categoryId, long order);
-        boolean deleteCategory(long categoryId);
+    Optional<Category> getById(long categoryId);
+
+    List<Category> getByRestaurant(long restaurantId);
+
+    boolean updateName(long categoryId, String name);
+
+    boolean updateOrder(long categoryId, int order);
+
+    boolean delete(long categoryId);
 }

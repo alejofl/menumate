@@ -26,7 +26,7 @@ public class ImageJdbcDao implements ImageDao {
     );
 
     @Autowired
-    public ImageJdbcDao(final DataSource ds){
+    public ImageJdbcDao(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsert = new SimpleJdbcInsert(ds)
                 .withTableName("images")
@@ -34,7 +34,7 @@ public class ImageJdbcDao implements ImageDao {
     }
 
     @Override
-    public Image createImage(byte[] bytes) {
+    public Image create(byte[] bytes) {
         final Map<String, Object> imageData = new HashMap<>();
         imageData.put("bytes", bytes);
         final long imageId = jdbcInsert.execute(imageData);
@@ -42,17 +42,17 @@ public class ImageJdbcDao implements ImageDao {
     }
 
     @Override
-    public boolean updateImage(long imageId, byte[] bytes) {
+    public boolean update(long imageId, byte[] bytes) {
         return jdbcTemplate.update("UPDATE images SET bytes = ? WHERE image_id = ?", bytes, imageId) > 0;
     }
 
     @Override
-    public boolean deleteImage(long imageId) {
+    public boolean delete(long imageId) {
         return jdbcTemplate.update("DELETE FROM images WHERE image_id = ?", imageId) > 0;
     }
 
     @Override
-    public Optional<Image> getImageById(long imageId) {
+    public Optional<Image> getById(long imageId) {
         return jdbcTemplate.query("SELECT * FROM images WHERE image_id = ?", imageRowMapper, imageId).stream().findFirst();
     }
 }

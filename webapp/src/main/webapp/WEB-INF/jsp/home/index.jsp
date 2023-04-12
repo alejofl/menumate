@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt" %>
 
 <html>
 <head>
@@ -12,7 +12,7 @@
 <main class="restaurant-feed">
     <c:url var="milanga1Url" value="/static/pictures/milanga.jpg"/>
     <c:url var="milanga2Url" value="/static/pictures/milanga2.jpg"/>
-    <c:forEach var = "i" begin = "1" end = "32">
+    <c:forEach var="i" begin="1" end="32">
         <jsp:include page="/WEB-INF/jsp/components/restaurant_card.jsp">
             <jsp:param name="name" value="Atuel"/>
             <jsp:param name="address" value="Atuel 200"/>

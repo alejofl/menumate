@@ -44,10 +44,10 @@ public class UserJdbcDaoTest {
     @Test
     public void testFindById() throws SQLException {
         // 1. Preconditions
-        jdbcTemplate.execute("INSERT INTO users (user_id, username, password, email) VALUES (" + ID +", '" + USERNAME + "', '" + PASSWORD + "', '" + EMAIL + "')");
+        jdbcTemplate.execute("INSERT INTO users (user_id, username, password, email) VALUES (" + ID + ", '" + USERNAME + "', '" + PASSWORD + "', '" + EMAIL + "')");
 
         // 2. Execute
-        Optional<User> maybeUser = userDao.getUserById(ID);
+        Optional<User> maybeUser = userDao.getById(ID);
 
         // 3. Assertions
         Assert.assertTrue(maybeUser.isPresent());
@@ -62,7 +62,7 @@ public class UserJdbcDaoTest {
         // 1. Preconditions
 
         // 2. Execute
-        Optional<User> maybeUser = userDao.getUserById(ID);
+        Optional<User> maybeUser = userDao.getById(ID);
 
         // 3. Assertions
         Assert.assertFalse(maybeUser.isPresent());

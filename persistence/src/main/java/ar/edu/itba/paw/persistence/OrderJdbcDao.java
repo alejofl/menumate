@@ -34,7 +34,7 @@ public class OrderJdbcDao implements OrderDao {
     );
 
     @Autowired
-    public OrderJdbcDao(final DataSource ds){
+    public OrderJdbcDao(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsert = new SimpleJdbcInsert(ds)
                 .withTableName("orders")
@@ -54,37 +54,37 @@ public class OrderJdbcDao implements OrderDao {
     }
 
     @Override
-    public Optional<Order> findOrderById(long orderId) {
+    public Optional<Order> getById(long orderId) {
         return jdbcTemplate.query("SELECT * FROM orders WHERE order_id = ?", orderRowMapper, orderId).stream().findFirst();
     }
 
     @Override
-    public List<Order> findOrdersByUserId(long userId, long restaurantId) {
+    public List<Order> getByUser(long userId, long restaurantId) {
         return jdbcTemplate.query("SELECT * FROM orders WHERE user_id = ? AND restaurant_id = ?", orderRowMapper, userId, restaurantId);
     }
 
     @Override
-    public List<Order> findOrdersByRestaurantId(long restaurantId) {
+    public List<Order> getByRestaurant(long restaurantId) {
         return jdbcTemplate.query("SELECT * FROM orders WHERE restaurant_id = ?", orderRowMapper, restaurantId);
     }
 
     @Override
-    public List<Order> findByOrdersTypeId(long orderTypeId, long restaurantId) {
+    public List<Order> getByOrderTypeAndRestaurant(long restaurantId, long orderTypeId) {
         return jdbcTemplate.query("SELECT * FROM orders WHERE order_type_id = ? AND restaurant_id = ?", orderRowMapper, orderTypeId, restaurantId);
     }
 
     @Override
-    public List<Order> findByOrdersBetweenDates(LocalDateTime start, LocalDateTime end, long restaurantId) {
+    public List<Order> getByRestaurantBetweenDates(long restaurantId, LocalDateTime start, LocalDateTime end) {
         return jdbcTemplate.query("SELECT * FROM orders WHERE order_date BETWEEN ? AND ? AND restaurant_id = ?", orderRowMapper, Timestamp.valueOf(start), Timestamp.valueOf(end), restaurantId);
     }
 
     @Override
-    public List<Order> findByOrdersAddress(String address, long restaurantId) {
+    public List<Order> getByRestaurantAndAddress(long restaurantId, String address) {
         return jdbcTemplate.query("SELECT * FROM orders WHERE address = ? AND restaurant_id = ?", orderRowMapper, address, restaurantId);
     }
 
     @Override
-    public List<Order> findByOrdersTableNumber(int tableNumber, long restaurantId) {
+    public List<Order> getByRestaurantAndTableNumber(long restaurantId, int tableNumber) {
         return jdbcTemplate.query("SELECT * FROM orders WHERE table_number = ? AND restaurant_id = ?", orderRowMapper, tableNumber, restaurantId);
     }
 

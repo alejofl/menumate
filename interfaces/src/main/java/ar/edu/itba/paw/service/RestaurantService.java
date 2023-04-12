@@ -5,11 +5,10 @@ import ar.edu.itba.paw.model.Restaurant;
 import java.util.Optional;
 
 public interface RestaurantService {
+    Restaurant create(String name);
 
-    Optional<Restaurant> getRestaurantById(long id);
+    Optional<Restaurant> getById(long restaurantId);
 
-    Restaurant createRestaurant(String name);
-
-    boolean deleteRestaurant(long id);
+    boolean delete(long restaurantId);
 
 }
