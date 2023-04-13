@@ -29,14 +29,15 @@ public class ProductJdbcDaoTest {
 
     private JdbcTemplate jdbcTemplate;
 
-    private static final long CATEGORY_ID = 1;
-    private static final String CATEGORY_NAME = "CATEGORY_NAME";
+    private static final long CATEGORY_ID = 581;
+    private static final String CATEGORY_NAME = "Entradas";
     private static final long ORDER = 1;
-    private static final long RESTAURANT_ID = 1;
-    private static final String RESTAURANT_NAME = "RESTAURANT_NAME";
-    private static final long PRODUCT_ID = 1;
-    private static final String PRODUCT_NAME = "PRODUCT_NAME";
-    private static final Double PRODUCT_PRICE = 1.0;
+    private static final long RESTAURANT_ID = 5123;
+    private static final String RESTAURANT_NAME = "Kansas Grill & Bar";
+    private static final long PRODUCT_ID = 912;
+    private static final String PRODUCT_NAME = "Lomito";
+    private static final double PRODUCT_PRICE = 533.55;
+    private static final double PRODUCT_PRICE_DELTA = 0.009;
 
     private static final String[] PRODUCTS_NAMES = {"Product 1", "Product 2", "Product 3", "Product 4"};
 
@@ -53,9 +54,8 @@ public class ProductJdbcDaoTest {
         final Product product = productDao.create(CATEGORY_ID, PRODUCT_NAME, PRODUCT_PRICE);
 
         Assert.assertNotNull(product);
-        Assert.assertEquals(PRODUCT_ID, product.getProductId());
         Assert.assertEquals(PRODUCT_NAME, product.getName());
-        Assert.assertEquals(PRODUCT_PRICE.intValue(), Double.valueOf(product.getPrice()).intValue());
+        Assert.assertEquals(PRODUCT_PRICE, product.getPrice(), PRODUCT_PRICE_DELTA);
         Assert.assertEquals(CATEGORY_ID, product.getCategoryId());
     }
 
@@ -67,14 +67,13 @@ public class ProductJdbcDaoTest {
         Assert.assertTrue(product.isPresent());
         Assert.assertEquals(PRODUCT_ID, product.get().getProductId());
         Assert.assertEquals(PRODUCT_NAME, product.get().getName());
-        Assert.assertEquals(PRODUCT_PRICE.intValue(), Double.valueOf(product.get().getPrice()).intValue());
+        Assert.assertEquals(PRODUCT_PRICE, product.get().getPrice(), PRODUCT_PRICE_DELTA);
         Assert.assertEquals(CATEGORY_ID, product.get().getCategoryId());
     }
 
     @Test
     public void testFindProductsByCategory() throws SQLException {
-
-        for (int i = 1; i < PRODUCTS_NAMES.length + 1; i++) {
+        for (int i = 1; i <= PRODUCTS_NAMES.length; i++) {
             jdbcTemplate.execute("INSERT INTO products (product_id, name, price, category_id) VALUES (" + i + ", '" + PRODUCTS_NAMES[i - 1] + "', " + PRODUCT_PRICE + ", " + CATEGORY_ID + ")");
         }
 
@@ -84,7 +83,7 @@ public class ProductJdbcDaoTest {
         Assert.assertEquals(PRODUCTS_NAMES.length, products.size());
         for (int i = 0; i < PRODUCTS_NAMES.length; i++) {
             Assert.assertEquals(PRODUCTS_NAMES[i], products.get(i).getName());
-            Assert.assertEquals(PRODUCT_PRICE.intValue(), Double.valueOf(products.get(i).getPrice()).intValue());
+            Assert.assertEquals(PRODUCT_PRICE, products.get(i).getPrice(), PRODUCT_PRICE_DELTA);
             Assert.assertEquals(CATEGORY_ID, products.get(i).getCategoryId());
             Assert.assertEquals(i + 1, products.get(i).getProductId());
         }
@@ -99,7 +98,7 @@ public class ProductJdbcDaoTest {
     @Test
     public void testUpdateProductName() throws SQLException {
         jdbcTemplate.execute("INSERT INTO products (product_id, name, price, category_id) VALUES (" + PRODUCT_ID + ", '" + PRODUCT_NAME + "', " + PRODUCT_PRICE + ", " + CATEGORY_ID + ")");
-        Assert.assertTrue(productDao.updateName(PRODUCT_ID, PRODUCT_NAME + "new"));
+        Assert.assertTrue(productDao.updateName(PRODUCT_ID, PRODUCT_NAME + "- v2.0"));
     }
 
     @Test

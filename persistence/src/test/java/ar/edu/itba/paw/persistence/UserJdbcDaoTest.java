@@ -20,7 +20,7 @@ import java.util.Optional;
 @ContextConfiguration(classes = TestConfig.class)
 public class UserJdbcDaoTest {
 
-    private static final long ID = 1;
+    private static final long ID = 791;
     private static final String USERNAME = "pedroIsGreat";
     private static final String PASSWORD = "super12secret34";
     private static final String EMAIL = "peter@peter.com";
@@ -73,13 +73,13 @@ public class UserJdbcDaoTest {
         // 1. Preconditions
 
         // 2. Execute
-        User user = userDao.create("thomas", PASSWORD, "thomas@thomas.com");
+        User user = userDao.create(USERNAME, PASSWORD, EMAIL);
 
         // 3. Assertions
         Assert.assertNotNull(user);
-        Assert.assertEquals("thomas", user.getUsername());
+        Assert.assertEquals(USERNAME, user.getUsername());
         Assert.assertEquals(PASSWORD, user.getPassword());
-        Assert.assertEquals("thomas@thomas.com", user.getEmail());
+        Assert.assertEquals(EMAIL, user.getEmail());
         Assert.assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "users"));
     }
 }

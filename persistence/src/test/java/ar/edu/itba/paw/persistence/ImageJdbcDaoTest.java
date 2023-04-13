@@ -16,6 +16,7 @@ import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.Random;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
@@ -29,7 +30,7 @@ public class ImageJdbcDaoTest {
 
     private JdbcTemplate jdbcTemplate;
 
-    private static final int IMAGE_ID = 1;
+    private static final int IMAGE_ID = 6363;
     private static final byte[] IMG_INFO_1 = new byte[50];
     private static final byte[] IMG_INFO_2 = new byte[100];
 
@@ -37,6 +38,10 @@ public class ImageJdbcDaoTest {
     public void setup() {
         jdbcTemplate = new JdbcTemplate(ds);
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "images");
+
+        Random r = new Random();
+        r.nextBytes(IMG_INFO_1);
+        r.nextBytes(IMG_INFO_2);
     }
 
     @Test
@@ -44,7 +49,6 @@ public class ImageJdbcDaoTest {
         final Image image = imageJdbcDao.create(IMG_INFO_1);
         Assert.assertNotNull(image);
         Assert.assertEquals(IMG_INFO_1, image.getBytes());
-        Assert.assertEquals(IMAGE_ID, image.getImageId());
         Assert.assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "images"));
     }
 
@@ -53,8 +57,11 @@ public class ImageJdbcDaoTest {
         jdbcTemplate.update("INSERT INTO images (image_id, bytes) VALUES (?, ?)", IMAGE_ID, IMG_INFO_1);
 
         Assert.assertTrue(imageJdbcDao.update(IMAGE_ID, IMG_INFO_2));
-        Assert.assertEquals(IMAGE_ID, imageJdbcDao.getById(IMAGE_ID).get().getImageId());
-        Assert.assertTrue(Arrays.equals(IMG_INFO_2, imageJdbcDao.getById(IMAGE_ID).get().getBytes()));
+
+        Optional<Image> maybeImage = imageJdbcDao.getById(IMAGE_ID);
+        Assert.assertTrue(maybeImage.isPresent());
+        Assert.assertEquals(IMAGE_ID, maybeImage.get().getImageId());
+        Assert.assertArrayEquals(IMG_INFO_2, maybeImage.get().getBytes());
     }
 
     @Test
@@ -72,7 +79,6 @@ public class ImageJdbcDaoTest {
         Optional<Image> image = imageJdbcDao.getById(IMAGE_ID);
         Assert.assertTrue(image.isPresent());
         Assert.assertEquals(IMAGE_ID, image.get().getImageId());
-        Assert.assertTrue(Arrays.equals(IMG_INFO_1, imageJdbcDao.getById(IMAGE_ID).get().getBytes()));
+        Assert.assertArrayEquals(IMG_INFO_1, image.get().getBytes());
     }
-
 }

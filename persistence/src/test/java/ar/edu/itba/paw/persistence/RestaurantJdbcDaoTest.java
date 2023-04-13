@@ -20,7 +20,7 @@ import java.util.Optional;
 @ContextConfiguration(classes = TestConfig.class)
 public class RestaurantJdbcDaoTest {
 
-    private static final long ID = 1;
+    private static final long ID = 5123;
     private static final String NAME = "pedros";
 
 
@@ -51,11 +51,10 @@ public class RestaurantJdbcDaoTest {
 
     @Test
     public void testCreation() throws SQLException {
-        Restaurant maybeRestaurnt = restaurantDao.create(NAME);
+        Restaurant restaurant = restaurantDao.create(NAME);
 
-        Assert.assertNotNull(maybeRestaurnt);
-        Assert.assertEquals(ID, maybeRestaurnt.getRestaurantId());
-        Assert.assertEquals(NAME, maybeRestaurnt.getName());
+        Assert.assertNotNull(restaurant);
+        Assert.assertEquals(NAME, restaurant.getName());
     }
 
     @Test
@@ -63,5 +62,4 @@ public class RestaurantJdbcDaoTest {
         jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name) VALUES (" + ID + ", '" + NAME + "')");
         Assert.assertTrue(restaurantDao.delete(ID));
     }
-
 }
