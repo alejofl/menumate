@@ -5,38 +5,49 @@
 <html>
 <head>
     <jsp:include page="/WEB-INF/jsp/components/head.jsp">
-        <jsp:param name="title" value="${restaurant_name}"/>
+        <jsp:param name="title" value="${restaurant.name}"/>
     </jsp:include>
-    <script src="/static/js/restaurant_menu.js"></script>
+    <script src="<c:url value="/static/js/restaurant_menu.js"/>"></script>
 </head>
 <body>
 <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
 <div class="restaurant-header">
-    <img src="/static/pictures/milanga.jpg" class="menu-item-card-img" alt="Milanga">
+    <img src="<c:url value="/static/pictures/milanga.jpg"/>" class="menu-item-card-img" alt="Milanga">
 </div>
 <div class="restaurant-information-container">
     <div class="restaurant-information">
-        <img src="/static/pictures/milanga.jpg" alt="${restaurant_name}" class="restaurant-logo">
+        <img src="<c:url value="/static/pictures/milanga.jpg"/>" alt="${restaurant.name}" class="restaurant-logo">
         <div>
-            <h1>Atuel</h1>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aut autem cumque ducimus eum expedita nulla, ratione repellat soluta vitae. Doloribus omnis possimus quia temporibus. Assumenda iure modi omnis quos repellat. </p>
+            <h1>${restaurant.name}</h1>
+            <c:choose>
+                <c:when test="${not empty restaurant.description}">
+                    <p>${restaurant.description}</p>
+                </c:when>
+                <c:otherwise>
+                    <p><i>Este restaurante no posee una descripción</i></p>
+                </c:otherwise>
+            </c:choose>
         </div>
     </div>
 </div>
 <main>
     <div class="categories nav nav-pills small">
-        <c:forEach items="${menu.keySet()}" var="category">
-            <button class="category-item nav-link" data-category="${fn:replace(category, " ", "")}">${category}</button>
+        <c:forEach items="${menu}" var="entry">
+            <button class="category-item nav-link" data-category="${fn:replace(entry.key.name, " ", "")}">${entry.key.name}</button>
         </c:forEach>
     </div>
     <div class="items">
         <div class="items-container">
-            <c:forEach items="${menu.entrySet()}" var="entry">
-                <div class="clearfix" id="category-${fn:replace(entry.key, " ", "")}" style="text-align: center">
-                    <h3>${entry.key}</h3>
+            <c:forEach items="${menu}" var="entry">
+                <div class="clearfix" id="category-${fn:replace(entry.key.name, " ", "")}" style="text-align: center">
+                    <h3>${entry.key.name}</h3>
                 </div>
-                <c:forEach var="item" items="${entry.value}">
-                    <jsp:include page="/WEB-INF/jsp/components/menu_item_card.jsp"/>
+                <c:forEach var="product" items="${entry.value}">
+                    <jsp:include page="/WEB-INF/jsp/components/menu_item_card.jsp">
+                        <jsp:param name="name" value="${product.name}"/>
+                        <jsp:param name="description" value="${product.description}"/>
+                        <jsp:param name="price" value="${product.price}"/>
+                    </jsp:include>
                 </c:forEach>
             </c:forEach>
         </div>

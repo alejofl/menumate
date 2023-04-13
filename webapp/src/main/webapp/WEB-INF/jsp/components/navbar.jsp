@@ -4,7 +4,7 @@
 <html>
 <body>
 <nav class="navbar navbar-expand-md bg-body-tertiary sticky-top" data-bs-theme="dark">
-    <a class="navbar-brand" href="/">
+    <a class="navbar-brand" href="<c:url value="/"/>">
       <c:url var="logoUrl" value="/static/pictures/logo.png"/>
       <img src="${logoUrl}" alt="MenuMate" height="24">
     </a>
