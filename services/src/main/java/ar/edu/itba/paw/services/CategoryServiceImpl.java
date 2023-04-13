@@ -30,8 +30,8 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<Category> getByRestaurant(long restaurantId) {
-        return categoryDao.getByRestaurantId(restaurantId);
+    public List<Category> getByRestaurantSortedByOrder(long restaurantId) {
+        return categoryDao.getByRestaurantSortedByOrder(restaurantId);
     }
 
     @Override

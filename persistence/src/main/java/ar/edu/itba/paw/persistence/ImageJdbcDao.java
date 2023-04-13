@@ -37,7 +37,7 @@ public class ImageJdbcDao implements ImageDao {
     public Image create(byte[] bytes) {
         final Map<String, Object> imageData = new HashMap<>();
         imageData.put("bytes", bytes);
-        final long imageId = jdbcInsert.execute(imageData);
+        final long imageId = jdbcInsert.executeAndReturnKey(imageData).longValue();
         return new Image(imageId, bytes);
     }
 

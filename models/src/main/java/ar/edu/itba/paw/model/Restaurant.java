@@ -1,8 +1,8 @@
 package ar.edu.itba.paw.model;
 
 public class Restaurant {
-    private long restaurantId;
-    private String name;
+    private final long restaurantId;
+    private final String name;
     private long logoId;
     private long portraitId1;
     private long portraitId2;

@@ -36,6 +36,7 @@ public class ProductJdbcDao implements ProductDao {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsert = new SimpleJdbcInsert(ds)
                 .withTableName("products")
+                .usingColumns("category_id", "name", "price", "description", "image_id")
                 .usingGeneratedKeyColumns("product_id");
     }
 
@@ -46,7 +47,7 @@ public class ProductJdbcDao implements ProductDao {
         productData.put("name", name);
         productData.put("price", price);
 
-        final int productId = jdbcInsert.execute(productData);
+        final long productId = jdbcInsert.executeAndReturnKey(productData).longValue();
         return new Product(productId, categoryId, name, price);
     }
 

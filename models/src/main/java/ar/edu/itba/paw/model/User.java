@@ -2,10 +2,10 @@ package ar.edu.itba.paw.model;
 
 public class User {
 
-    private long userId;
-    private String username;
-    private String password;
-    private String email;
+    private final long userId;
+    private final String username;
+    private final String password;
+    private final String email;
 
     public User(long userId, String username, String password, String email) {
         this.userId = userId;

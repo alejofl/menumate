@@ -3,7 +3,7 @@ package ar.edu.itba.paw.model;
 public class Image {
 
     private final long imageId;
-    private byte[] bytes;
+    private final byte[] bytes;
 
     public Image(long imageId, byte[] bytes) {
         this.imageId = imageId;

@@ -21,7 +21,7 @@ public class RestaurantJdbcDao implements RestaurantDao {
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
-    private RowMapper<Restaurant> restaurantRowMapper = (ResultSet rs, int rowNum) -> new Restaurant(
+    private final RowMapper<Restaurant> restaurantRowMapper = (ResultSet rs, int rowNum) -> new Restaurant(
             rs.getLong("restaurant_id"),
             rs.getString("name"),
             rs.getLong("logo_id"),
@@ -37,6 +37,7 @@ public class RestaurantJdbcDao implements RestaurantDao {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsert = new SimpleJdbcInsert(ds)
                 .withTableName("restaurants")
+                .usingColumns("name", "logo_id", "portrait_1_id", "portrait_2_id", "address", "description")
                 .usingGeneratedKeyColumns("resturant_id");
     }
 
@@ -50,7 +51,7 @@ public class RestaurantJdbcDao implements RestaurantDao {
         final Map<String, Object> restaurantData = new HashMap<>();
         restaurantData.put("name", name);
 
-        final int restaurantId = jdbcInsert.execute(restaurantData);
+        final long restaurantId = jdbcInsert.executeAndReturnKey(restaurantData).longValue();
         return new Restaurant(restaurantId, name);
     }
 

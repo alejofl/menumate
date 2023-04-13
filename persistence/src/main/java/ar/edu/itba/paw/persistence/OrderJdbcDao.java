@@ -38,6 +38,7 @@ public class OrderJdbcDao implements OrderDao {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsert = new SimpleJdbcInsert(ds)
                 .withTableName("orders")
+                .usingColumns("order_type_id", "restaurant_id", "user_id", "table_number", "address")
                 .usingGeneratedKeyColumns("order_id");
     }
 
@@ -48,7 +49,7 @@ public class OrderJdbcDao implements OrderDao {
         orderData.put("order_type_id", orderTypeId);
         orderData.put("restaurant_id", restaurantId);
         orderData.put("user_id", userId);
-        final int orderId = jdbcInsert.execute(orderData);
+        final long orderId = jdbcInsert.executeAndReturnKey(orderData).longValue();
 
         return new Order(orderId, orderTypeId, restaurantId, userId);
     }

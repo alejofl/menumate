@@ -43,7 +43,7 @@ public class CategoryJdbcDao implements CategoryDao {
         categoryData.put("name", name);
         categoryData.put("order_num", order);
 
-        final int categoryId = jdbcInsert.execute(categoryData);
+        final long categoryId = jdbcInsert.executeAndReturnKey(categoryData).longValue();
         return new Category(categoryId, restaurantId, name, order);
     }
 
@@ -53,8 +53,8 @@ public class CategoryJdbcDao implements CategoryDao {
     }
 
     @Override
-    public List<Category> getByRestaurantId(long restaurantId) {
-        return jdbcTemplate.query("SELECT * FROM categories WHERE restaurant_id = ?", categoryRowMapper, restaurantId);
+    public List<Category> getByRestaurantSortedByOrder(long restaurantId) {
+        return jdbcTemplate.query("SELECT * FROM categories WHERE restaurant_id = ? ORDER BY order_num", categoryRowMapper, restaurantId);
     }
 
     @Override

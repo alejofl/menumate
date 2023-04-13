@@ -10,7 +10,7 @@ public interface CategoryDao {
 
     Optional<Category> getById(long categoryId);
 
-    List<Category> getByRestaurantId(long restaurantId);
+    List<Category> getByRestaurantSortedByOrder(long restaurantId);
 
     boolean updateName(long categoryId, String name);
 

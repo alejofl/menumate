@@ -3,8 +3,8 @@ package ar.edu.itba.paw.model;
 public class Category {
     private final long categoryId;
     private final long restaurantId;
-    private String name;
-    private long order;
+    private final String name;
+    private final long order;
 
     public Category(long categoryId, long restaurantId, String name, long order) {
         this.categoryId = categoryId;

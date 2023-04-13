@@ -4,10 +4,10 @@ public class Product {
 
     private final long productId;
     private final long categoryId;
-    private String name;
+    private final String name;
     private String description;
     private long imageId;
-    private double price;
+    private final double price;
     private boolean available;
 
     public Product(long productId, long categoryId, String name, double price) {
@@ -38,10 +38,6 @@ public class Product {
 
     public String getDescription() {
         return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public long getImageId() {

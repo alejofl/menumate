@@ -10,7 +10,7 @@ public interface CategoryService {
 
     Optional<Category> getById(long categoryId);
 
-    List<Category> getByRestaurant(long restaurantId);
+    List<Category> getByRestaurantSortedByOrder(long restaurantId);
 
     boolean updateName(long categoryId, String name);
 

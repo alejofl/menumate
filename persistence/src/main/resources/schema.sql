@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS users
     password  VARCHAR(128),
     email     VARCHAR(256) UNIQUE NOT NULL,
     image_id  INT                 REFERENCES images (image_id) ON DELETE SET NULL,
-    is_active BOOLEAN DEFAULT FALSE
+    is_active BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS restaurants
@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS restaurants
     portrait_2_id INT         REFERENCES images (image_id) ON DELETE SET NULL,
     address       TEXT,
     description   TEXT,
-    is_active     BOOLEAN DEFAULT TRUE
+    is_active     BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 CREATE TABLE IF NOT EXISTS roles
@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS products
     price       DECIMAL(10, 2)                                            NOT NULL,
     description TEXT,
     image_id    INT                                                       REFERENCES images (image_id) ON DELETE SET NULL,
-    available   BOOLEAN DEFAULT TRUE
+    available   BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 CREATE TABLE IF NOT EXISTS order_types
@@ -74,7 +74,7 @@ CREATE TABLE IF NOT EXISTS orders
     order_type_id INT REFERENCES order_types (order_type_id) ON DELETE CASCADE NOT NULL,
     restaurant_id INT REFERENCES restaurants (restaurant_id) ON DELETE CASCADE NOT NULL,
     user_id       INT REFERENCES users (user_id) ON DELETE CASCADE             NOT NULL,
-    order_date    TIMESTAMP DEFAULT now(),
+    order_date    TIMESTAMP NOT NULL DEFAULT now(),
     table_number  INT,
     address       TEXT
 );
