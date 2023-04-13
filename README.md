@@ -1,14 +1,14 @@
 # MenuMate
 
 ## Requirements
-- [Docker](https://www.docker.com/)
+- [Docker](https://www.docker.com/) or [postgresql](https://www.postgresql.org/) 
 - [Maven](https://maven.apache.org/)
 - SDK Corretto-1.8
 - Tomcat 8.5
 
 
 ## Installation
-First, run the Docker container:
+If you dont have postgresql on your machine, just run the Docker container:
 ```sh
 docker-compose up
 ```
@@ -19,7 +19,7 @@ Then, compile the Maven project to download the dependencies:
 mvn compile
 ```
 
-Create a `application.properties` file to add some basic properties. You can copy the `application.properties.sample` file from the repo. 
+The `application.properties` file is crucial to add some basic properties, check that it is in the repo.
 
 Finally, run the application with Tomcat
 
