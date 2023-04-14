@@ -8,7 +8,8 @@ public class Order {
     private final OrderType orderType;
     private final Restaurant restaurant;
     private final User user;
-    private LocalDateTime orderDate;
+    private LocalDateTime dateOrdered;
+    private LocalDateTime dateDelivered;
     private String address;
     private int tableNumber;
 
@@ -19,9 +20,10 @@ public class Order {
         this.user = user;
     }
 
-    public Order(long orderId, OrderType orderType, Restaurant restaurant, User user, LocalDateTime orderDate, String address, int tableNumber) {
+    public Order(long orderId, OrderType orderType, Restaurant restaurant, User user, LocalDateTime dateOrdered, LocalDateTime dateDelivered, String address, int tableNumber) {
         this(orderId, orderType, restaurant, user);
-        this.orderDate = orderDate;
+        this.dateOrdered = dateOrdered;
+        this.dateDelivered = dateDelivered;
         this.address = address;
         this.tableNumber = tableNumber;
     }
@@ -42,8 +44,8 @@ public class Order {
         return user;
     }
 
-    public LocalDateTime getOrderDate() {
-        return orderDate;
+    public LocalDateTime getDateOrdered() {
+        return dateOrdered;
     }
 
     public String getAddress() {

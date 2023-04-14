@@ -11,20 +11,20 @@ CREATE TABLE IF NOT EXISTS users
     password  VARCHAR(128),
     email     VARCHAR(256) UNIQUE NOT NULL,
     image_id  INT                 REFERENCES images (image_id) ON DELETE SET NULL,
-    is_active BOOLEAN NOT NULL DEFAULT FALSE
+    is_active BOOLEAN             NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS restaurants
 (
     restaurant_id SERIAL PRIMARY KEY,
-    name          VARCHAR(32) NOT NULL,
-    email         VARCHAR(256) UNIQUE NOT NULL,
-    logo_id       INT         REFERENCES images (image_id) ON DELETE SET NULL,
-    portrait_1_id INT         REFERENCES images (image_id) ON DELETE SET NULL,
-    portrait_2_id INT         REFERENCES images (image_id) ON DELETE SET NULL,
+    name          VARCHAR(32)  NOT NULL,
+    email         VARCHAR(256) NOT NULL,
+    logo_id       INT          REFERENCES images (image_id) ON DELETE SET NULL,
+    portrait_1_id INT          REFERENCES images (image_id) ON DELETE SET NULL,
+    portrait_2_id INT          REFERENCES images (image_id) ON DELETE SET NULL,
     address       TEXT,
     description   TEXT,
-    is_active     BOOLEAN NOT NULL DEFAULT TRUE
+    is_active     BOOLEAN      NOT NULL DEFAULT TRUE
 );
 
 CREATE TABLE IF NOT EXISTS roles
@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS products
     price       DECIMAL(10, 2)                                            NOT NULL,
     description TEXT,
     image_id    INT                                                       REFERENCES images (image_id) ON DELETE SET NULL,
-    available   BOOLEAN NOT NULL DEFAULT TRUE
+    available   BOOLEAN                                                   NOT NULL DEFAULT TRUE
 );
 
 CREATE TABLE IF NOT EXISTS order_types
@@ -71,19 +71,23 @@ CREATE TABLE IF NOT EXISTS order_types
 
 CREATE TABLE IF NOT EXISTS orders
 (
-    order_id      SERIAL PRIMARY KEY,
-    order_type_id INT REFERENCES order_types (order_type_id) ON DELETE CASCADE NOT NULL,
-    restaurant_id INT REFERENCES restaurants (restaurant_id) ON DELETE CASCADE NOT NULL,
-    user_id       INT REFERENCES users (user_id) ON DELETE CASCADE             NOT NULL,
-    order_date    TIMESTAMP NOT NULL DEFAULT now(),
-    table_number  INT,
-    address       TEXT
+    order_id       SERIAL PRIMARY KEY,
+    order_type_id  INT REFERENCES order_types (order_type_id) ON DELETE CASCADE NOT NULL,
+    restaurant_id  INT REFERENCES restaurants (restaurant_id) ON DELETE CASCADE NOT NULL,
+    user_id        INT REFERENCES users (user_id) ON DELETE CASCADE             NOT NULL,
+    date_ordered   TIMESTAMP                                                    NOT NULL DEFAULT now(),
+    date_delivered TIMESTAMP,
+    address        TEXT,
+    table_number   INT
 );
 
 CREATE TABLE IF NOT EXISTS products_x_order
 (
-    order_id   INT REFERENCES orders (order_id) ON DELETE CASCADE     NOT NULL,
-    product_id INT REFERENCES products (product_id) ON DELETE CASCADE NOT NULL,
+    order_id    INT REFERENCES orders (order_id) ON DELETE CASCADE     NOT NULL,
+    product_id  INT REFERENCES products (product_id) ON DELETE CASCADE NOT NULL,
+    line_number INT                                                    NOT NULL,
+    quantity    INT                                                    NOT NULL CHECK (quantity > 0),
+    description TEXT,
 
-    PRIMARY KEY (order_id, product_id)
+    PRIMARY KEY (order_id, product_id, line_number)
 );

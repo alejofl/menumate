@@ -4,8 +4,14 @@ import ar.edu.itba.paw.model.*;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 class RowMappers {
+
+    static LocalDateTime timestampToLocalDateTimeOrNull(Timestamp timestamp) {
+        return timestamp == null ? null : timestamp.toLocalDateTime();
+    }
 
     static final RowMapper<User> USER_ROW_MAPPER = (ResultSet rs, int rowNum) -> new User(
             rs.getLong("user_id"),
@@ -44,7 +50,8 @@ class RowMappers {
             ORDER_TYPE_ROW_MAPPER.mapRow(rs, rowNum),
             RESTAURANT_ROW_MAPPER.mapRow(rs, rowNum),
             USER_ROW_MAPPER.mapRow(rs, rowNum),
-            rs.getTimestamp("order_date").toLocalDateTime(),
+            timestampToLocalDateTimeOrNull(rs.getTimestamp("order_date_ordered")),
+            timestampToLocalDateTimeOrNull(rs.getTimestamp("order_date_delivered")),
             rs.getString("order_address"),
             rs.getInt("order_table_number")
     );

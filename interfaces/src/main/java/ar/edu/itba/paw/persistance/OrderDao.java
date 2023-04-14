@@ -17,7 +17,7 @@ public interface OrderDao {
 
     List<Order> getByRestaurant(long restaurantId);
 
-    List<Order> getByRestaurantBetweenDates(long restaurantId, LocalDateTime start, LocalDateTime end);
+    List<Order> getByRestaurantOrderedBetweenDates(long restaurantId, LocalDateTime start, LocalDateTime end);
 
     List<Order> getByRestaurantAndAddress(long restaurantId, String address);
 

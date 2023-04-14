@@ -71,7 +71,7 @@ public class OrderJdbcDaoTest {
         Assert.assertEquals(RESTAURANT_ID, order.get().getRestaurant().getRestaurantId());
         Assert.assertEquals(USER_ID, order.get().getUser().getUserId());
         Assert.assertEquals(ORDER_TYPE_ID, order.get().getOrderType().getOrderTypeId());
-        Assert.assertNotNull(order.get().getOrderDate());
+        Assert.assertNotNull(order.get().getDateOrdered());
     }
 
     @Test
@@ -91,7 +91,7 @@ public class OrderJdbcDaoTest {
             Assert.assertEquals(RESTAURANT_ID, orders.get(i).getRestaurant().getRestaurantId());
             Assert.assertEquals(USER_ID, orders.get(i).getUser().getUserId());
             Assert.assertEquals(ORDER_TYPE_ID, orders.get(i).getOrderType().getOrderTypeId());
-            Assert.assertNotNull(orders.get(i).getOrderDate());
+            Assert.assertNotNull(orders.get(i).getDateOrdered());
         }
     }
 
@@ -112,7 +112,7 @@ public class OrderJdbcDaoTest {
             Assert.assertEquals(RESTAURANT_ID, orders.get(i - 1).getRestaurant().getRestaurantId());
             Assert.assertEquals(USER_ID, orders.get(i - 1).getUser().getUserId());
             Assert.assertEquals(ORDER_TYPE_ID, orders.get(i - 1).getOrderType().getOrderTypeId());
-            Assert.assertNotNull(orders.get(i - 1).getOrderDate());
+            Assert.assertNotNull(orders.get(i - 1).getDateOrdered());
         }
     }
 
@@ -133,7 +133,7 @@ public class OrderJdbcDaoTest {
             Assert.assertEquals(RESTAURANT_ID, orders.get(i - 1).getRestaurant().getRestaurantId());
             Assert.assertEquals(USER_ID, orders.get(i - 1).getUser().getUserId());
             Assert.assertEquals(ORDER_TYPE_ID, orders.get(i - 1).getOrderType().getOrderTypeId());
-            Assert.assertNotNull(orders.get(i - 1).getOrderDate());
+            Assert.assertNotNull(orders.get(i - 1).getDateOrdered());
         }
     }
 
@@ -144,7 +144,7 @@ public class OrderJdbcDaoTest {
             jdbcTemplate.execute("INSERT INTO orders (order_id, restaurant_id, user_id, order_type_id) VALUES (" + i + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + ORDER_TYPE_ID + ")");
         }
 
-        List<Order> orders = orderJdbcDao.getByRestaurantBetweenDates(RESTAURANT_ID, LocalDateTime.now().minusYears(1), LocalDateTime.now().plusYears(1));
+        List<Order> orders = orderJdbcDao.getByRestaurantOrderedBetweenDates(RESTAURANT_ID, LocalDateTime.now().minusYears(1), LocalDateTime.now().plusYears(1));
 
         Assert.assertNotNull(orders);
         Assert.assertEquals(iters, orders.size());
@@ -154,7 +154,7 @@ public class OrderJdbcDaoTest {
             Assert.assertEquals(RESTAURANT_ID, orders.get(i - 1).getRestaurant().getRestaurantId());
             Assert.assertEquals(USER_ID, orders.get(i - 1).getUser().getUserId());
             Assert.assertEquals(ORDER_TYPE_ID, orders.get(i - 1).getOrderType().getOrderTypeId());
-            Assert.assertNotNull(orders.get(i - 1).getOrderDate());
+            Assert.assertNotNull(orders.get(i - 1).getDateOrdered());
         }
     }
 
@@ -174,7 +174,7 @@ public class OrderJdbcDaoTest {
             Assert.assertEquals(RESTAURANT_ID, orders.get(i).getRestaurant().getRestaurantId());
             Assert.assertEquals(USER_ID, orders.get(i).getUser().getUserId());
             Assert.assertEquals(ORDER_TYPE_ID, orders.get(i).getOrderType().getOrderTypeId());
-            Assert.assertNotNull(orders.get(i).getOrderDate());
+            Assert.assertNotNull(orders.get(i).getDateOrdered());
             Assert.assertEquals(ADDRESS, orders.get(i).getAddress());
         }
     }
@@ -195,7 +195,7 @@ public class OrderJdbcDaoTest {
             Assert.assertEquals(RESTAURANT_ID, orders.get(i).getRestaurant().getRestaurantId());
             Assert.assertEquals(USER_ID, orders.get(i).getUser().getUserId());
             Assert.assertEquals(ORDER_TYPE_ID, orders.get(i).getOrderType().getOrderTypeId());
-            Assert.assertNotNull(orders.get(i).getOrderDate());
+            Assert.assertNotNull(orders.get(i).getDateOrdered());
             Assert.assertEquals(TABLE_NUMBER, orders.get(i).getTableNumber());
         }
     }

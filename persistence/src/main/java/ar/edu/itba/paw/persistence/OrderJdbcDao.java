@@ -83,9 +83,9 @@ public class OrderJdbcDao implements OrderDao {
     }
 
     @Override
-    public List<Order> getByRestaurantBetweenDates(long restaurantId, LocalDateTime start, LocalDateTime end) {
+    public List<Order> getByRestaurantOrderedBetweenDates(long restaurantId, LocalDateTime start, LocalDateTime end) {
         return jdbcTemplate.query(
-                SelectBase + " WHERE orders.order_date BETWEEN ? AND ? AND orders.restaurant_id = ?",
+                SelectBase + " WHERE orders.date_ordered BETWEEN ? AND ? AND orders.restaurant_id = ?",
                 RowMappers.ORDER_ROW_MAPPER,
                 Timestamp.valueOf(start),
                 Timestamp.valueOf(end),
