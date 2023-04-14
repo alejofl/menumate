@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS products
 (
     product_id  SERIAL PRIMARY KEY,
     category_id INT REFERENCES categories (category_id) ON DELETE CASCADE NOT NULL,
-    name        VARCHAR(32)                                               NOT NULL,
+    name        VARCHAR(128)                                              NOT NULL,
     price       DECIMAL(10, 2)                                            NOT NULL,
     description TEXT,
     image_id    INT                                                       REFERENCES images (image_id) ON DELETE SET NULL,

@@ -23,11 +23,11 @@
               <p class="card-text"><small class="text-body-secondary">${param.description}</small></p>
             </c:when>
             <c:otherwise>
-              <p><i>Este producto no posee una descripción</i></p>
+            <!--<p><i>Este producto no posee una descripción</i></p>-->
             </c:otherwise>
           </c:choose>
         </div>
-        <h5 class="card-title">$500</h5>
+        <h5 class="card-title">$${param.price}</h5>
       </div>
     </div>
   </a>
