@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt" %>
 
 <html>
 <head>
@@ -10,12 +10,16 @@
 <body>
 <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
 <main class="restaurant-feed">
-    <c:forEach var = "i" begin = "1" end = "32">
+    <c:url var="milanga1Url" value="/static/pictures/milanga.jpg"/>
+    <c:url var="milanga2Url" value="/static/pictures/milanga2.jpg"/>
+    <c:forEach items="${restaurants}" var="restaurant">
+        <c:url var="restaurantUrl" value="/restaurants/${restaurant.restaurantId}"/>
         <jsp:include page="/WEB-INF/jsp/components/restaurant_card.jsp">
-            <jsp:param name="name" value="Atuel"/>
-            <jsp:param name="address" value="Atuel 200"/>
-            <jsp:param name="main_image" value="/static/pictures/milanga.jpg"/>
-            <jsp:param name="hover_image" value="/static/pictures/milanga2.jpg"/>
+            <jsp:param name="name" value="${restaurant.name}"/>
+            <jsp:param name="address" value="${restaurant.address}"/>
+            <jsp:param name="main_image" value="${milanga1Url}"/>
+            <jsp:param name="hover_image" value="${milanga2Url}"/>
+            <jsp:param name="link" value="${restaurantUrl}"/>
         </jsp:include>
     </c:forEach>
 </main>

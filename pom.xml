@@ -14,6 +14,9 @@
     <postgresql.version>42.2.5</postgresql.version>
     <servlet-api-version>2.5</servlet-api-version>
     <jstl.version>1.2</jstl.version>
+    <junit.version>4.13.2</junit.version>
+    <mockito.version>2.25.1</mockito.version>
+    <hsqldb.version>2.3.1</hsqldb.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
@@ -21,6 +24,7 @@
 
   <dependencyManagement>
     <dependencies>
+      <!-- Spring dependencies -->
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-webmvc</artifactId>
@@ -32,6 +36,13 @@
         <version>${spring.version}</version>
       </dependency>
       <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-context-support</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+
+      <!-- Servlet dependencies -->
+      <dependency>
         <groupId>javax.servlet</groupId>
         <artifactId>servlet-api</artifactId>
         <version>${servlet-api-version}</version>
@@ -42,6 +53,8 @@
         <artifactId>jstl</artifactId>
         <version>${jstl.version}</version>
       </dependency>
+
+      <!-- Persistence dependencies -->
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-jdbc</artifactId>
@@ -52,15 +65,38 @@
         <artifactId>postgresql</artifactId>
         <version>${postgresql.version}</version>
       </dependency>
+
+      <!-- Mailing dependencies -->
       <dependency>
         <groupId>com.sun.mail</groupId>
         <artifactId>javax.mail</artifactId>
         <version>${javax.mail.version}</version>
       </dependency>
+
+      <!-- Testing dependencies -->
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${junit.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-core</artifactId>
+        <version>${mockito.version}</version>
+        <scope>test</scope>
+      </dependency>
       <dependency>
         <groupId>org.springframework</groupId>
-        <artifactId>spring-context-support</artifactId>
+        <artifactId>spring-test</artifactId>
         <version>${spring.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.hsqldb</groupId>
+        <artifactId>hsqldb</artifactId>
+        <version>${hsqldb.version}</version>
+        <scope>test</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>

@@ -1,17 +1,56 @@
+:root {
+    --primary: #ed7a57;
+    --primary-dark: #bd5439;
+    --primary-light: #f39d84;
+    --secondary: #edb026;
+    --secondary-dark: #c49220;
+    --secondary-light: #f3c37d;
+    --dark: #282d2f;
+    --light: #f4f4f4;
+}
+
 body {
-    background-color: #F4F4F4 !important;
+    background-color: var(--light) !important;
 }
 
 .bg-body-tertiary {
-    background-color: #282D2F !important;
+    padding: 16px 48px;
+    background-color: var(--dark) !important;
 }
 
 main {
+    display: flex;
     margin: 8px;
 }
 
+.btn-primary {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: var(--primary);
+    --bs-btn-border-color: var(--primary);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: var(--primary-dark);
+    --bs-btn-hover-border-color: var(--primary-dark);
+    --bs-btn-focus-shadow-rgb: 49,132,253;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: var(--primary-dark);
+    --bs-btn-active-border-color: var(--primary-dark);
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: var(--primary-light);
+    --bs-btn-disabled-border-color: var(--primary-light);
+}
+
+.clickable-object {
+    text-decoration: none !important;
+}
+
+.clearfix {
+    flex-basis: 100%;
+    margin-bottom: -8px;
+}
+
+/* HOME */
 .restaurant-feed {
-    display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: start;
@@ -70,6 +109,153 @@ main {
 }
 
 .btn-primary:hover, .btn-primary:active, .btn-primary:visited {
-    background-color:  #ed7a57 !important;
+    background-color: #ed7a57 !important;
     border-color: #ed7a57 !important;
+}
+/* RESTAURANT MENU */
+.restaurant-header {
+    height: 12rem;
+}
+
+.restaurant-information {
+    width: 70%;
+    position: relative;
+    bottom: 50px;
+    background-color: white;
+    padding: 2rem;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    height: 12rem;
+}
+
+.restaurant-logo {
+    border-radius: 50%;
+    height: 100%;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+}
+
+.restaurant-information-container {
+    display: flex;
+    justify-content: center;
+}
+
+.categories {
+    display: inline-block;
+    flex: 0 0 10%;
+    align-self: start;
+    position: sticky;
+    top: 80px;
+}
+
+.category-item {
+    text-align: start;
+    color: unset;
+    padding: 4px 8px;
+    margin-bottom: 2px;
+}
+
+.category-item.active {
+    background-color: rgba(237, 122, 87, 0.25) !important;
+    color: unset !important;
+}
+
+.category-item:hover {
+    color: unset;
+    background-color: rgba(237, 122, 87, 0.25) !important;
+}
+
+.items {
+    flex-grow: 1;
+}
+
+.items-container {
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.menu-item-card {
+    max-width: 400px;
+    display: flex;
+    flex-direction: row;
+}
+
+.menu-item-card-img-container {
+    flex: 0 0 35%;
+}
+
+.menu-item-card-img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+
+.menu-item-card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.menu-item-card-body p {
+    margin-bottom: 2px;
+}
+
+.menu-item-card-body h5 {
+    margin-top: 8px;
+    margin-bottom: 0;
+}
+
+.cart {
+    flex: 0 0 20%;
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+}
+
+.cart-item-body {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cart .card-body {
+    display: flex;
+}
+
+.cart .card-body button {
+    flex-grow: 1;
+}
+
+#add-item-to-cart .modal-header {
+    background-image: var(--image);
+    background-size: cover;
+    height: 18rem;
+    display: flex;
+    align-items: start;
+}
+
+#add-item-to-cart form {
+    display: flex;
+    gap: 15px;
+}
+
+#add-item-to-cart .input-group {
+    flex: 0 0 30%;
+}
+
+#add-item-to-cart .comment-container {
+    flex-grow: 1;
+}
+
+#checkout .nav {
+    --bs-nav-link-color: var(--secondary);
+    --bs-nav-link-hover-color: var(--secondary-dark);
+    --bs-nav-pills-link-active-bg: var(--secondary);
+>>>>>>> master
 }
