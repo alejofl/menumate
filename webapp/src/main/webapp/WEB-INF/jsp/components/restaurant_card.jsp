@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <body>
-<a class="clickable-object" href="#">
+<a class="clickable-object" href="${param.link}">
     <div class="card restaurant-card">
         <img
                 class="card-img restaurant-card-img"

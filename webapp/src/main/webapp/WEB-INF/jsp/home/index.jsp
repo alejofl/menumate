@@ -13,11 +13,13 @@
     <c:url var="milanga1Url" value="/static/pictures/milanga.jpg"/>
     <c:url var="milanga2Url" value="/static/pictures/milanga2.jpg"/>
     <c:forEach items="${restaurants}" var="restaurant">
+        <c:url var="restaurantUrl" value="/restaurants/${restaurant.restaurantId}"/>
         <jsp:include page="/WEB-INF/jsp/components/restaurant_card.jsp">
             <jsp:param name="name" value="${restaurant.name}"/>
             <jsp:param name="address" value="${restaurant.address}"/>
             <jsp:param name="main_image" value="${milanga1Url}"/>
             <jsp:param name="hover_image" value="${milanga2Url}"/>
+            <jsp:param name="link" value="${restaurantUrl}"/>
         </jsp:include>
     </c:forEach>
 </main>
