@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.persistance.ImageDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -27,11 +26,10 @@ public class ImageJdbcDao implements ImageDao {
     }
 
     @Override
-    public Image create(byte[] bytes) {
+    public long create(byte[] bytes) {
         final Map<String, Object> imageData = new HashMap<>();
         imageData.put("bytes", bytes);
-        final long imageId = jdbcInsert.executeAndReturnKey(imageData).longValue();
-        return new Image(imageId, bytes);
+        return jdbcInsert.executeAndReturnKey(imageData).longValue();
     }
 
     @Override
@@ -45,7 +43,7 @@ public class ImageJdbcDao implements ImageDao {
     }
 
     @Override
-    public Optional<Image> getById(long imageId) {
+    public Optional<byte[]> getById(long imageId) {
         return jdbcTemplate.query(
                 "SELECT * FROM images WHERE image_id = ?",
                 RowMappers.IMAGE_ROW_MAPPER,
