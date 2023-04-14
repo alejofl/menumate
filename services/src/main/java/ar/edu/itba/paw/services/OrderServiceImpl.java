@@ -37,8 +37,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> getBetweenDates(long restaurantId, LocalDateTime start, LocalDateTime end) {
-        return orderDao.getByRestaurantBetweenDates(restaurantId, start, end);
+    public List<Order> getOrderedBetweenDates(long restaurantId, LocalDateTime start, LocalDateTime end) {
+        return orderDao.getByRestaurantOrderedBetweenDates(restaurantId, start, end);
     }
 
     @Override

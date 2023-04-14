@@ -15,7 +15,7 @@ public interface OrderService {
 
     List<Order> getByRestaurant(long restaurantId);
 
-    List<Order> getBetweenDates(long restaurantId, LocalDateTime start, LocalDateTime end);
+    List<Order> getOrderedBetweenDates(long restaurantId, LocalDateTime start, LocalDateTime end);
 
     List<Order> getByAddress(long restaurantId, String address);
 
