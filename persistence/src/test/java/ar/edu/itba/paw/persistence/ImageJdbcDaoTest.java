@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import org.junit.Assert;
 import org.junit.Before;
@@ -14,7 +13,6 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.Random;
 
@@ -46,9 +44,7 @@ public class ImageJdbcDaoTest {
 
     @Test
     public void testCreateImg() throws SQLException {
-        final Image image = imageJdbcDao.create(IMG_INFO_1);
-        Assert.assertNotNull(image);
-        Assert.assertEquals(IMG_INFO_1, image.getBytes());
+        final long image = imageJdbcDao.create(IMG_INFO_1);
         Assert.assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "images"));
     }
 
@@ -58,10 +54,9 @@ public class ImageJdbcDaoTest {
 
         Assert.assertTrue(imageJdbcDao.update(IMAGE_ID, IMG_INFO_2));
 
-        Optional<Image> maybeImage = imageJdbcDao.getById(IMAGE_ID);
+        Optional<byte[]> maybeImage = imageJdbcDao.getById(IMAGE_ID);
         Assert.assertTrue(maybeImage.isPresent());
-        Assert.assertEquals(IMAGE_ID, maybeImage.get().getImageId());
-        Assert.assertArrayEquals(IMG_INFO_2, maybeImage.get().getBytes());
+        Assert.assertArrayEquals(IMG_INFO_2, maybeImage.get());
     }
 
     @Test
@@ -76,9 +71,8 @@ public class ImageJdbcDaoTest {
     public void testGetImageById() throws SQLException {
         jdbcTemplate.update("INSERT INTO images (image_id, bytes) VALUES (?, ?)", IMAGE_ID, IMG_INFO_1);
 
-        Optional<Image> image = imageJdbcDao.getById(IMAGE_ID);
+        Optional<byte[]> image = imageJdbcDao.getById(IMAGE_ID);
         Assert.assertTrue(image.isPresent());
-        Assert.assertEquals(IMAGE_ID, image.get().getImageId());
-        Assert.assertArrayEquals(IMG_INFO_1, image.get().getBytes());
+        Assert.assertArrayEquals(IMG_INFO_1, image.get());
     }
 }

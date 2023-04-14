@@ -14,10 +14,7 @@ class RowMappers {
             rs.getString("user_email")
     );
 
-    static final RowMapper<Image> IMAGE_ROW_MAPPER = (ResultSet rs, int rowNum) -> new Image(
-            rs.getLong("image_id"),
-            rs.getBytes("bytes")
-    );
+    static final RowMapper<byte[]> IMAGE_ROW_MAPPER = (ResultSet rs, int rowNum) -> rs.getBytes("bytes");
 
     static final RowMapper<Restaurant> RESTAURANT_ROW_MAPPER = (ResultSet rs, int rowNum) -> new Restaurant(
             rs.getLong("restaurant_id"),

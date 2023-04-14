@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.services;
 
-import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.persistance.ImageDao;
 import ar.edu.itba.paw.service.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +13,12 @@ public class ImageServiceImpl implements ImageService {
     private final ImageDao imageDao;
 
     @Autowired
-    public ImageServiceImpl(final ImageDao orderDao) {
-        this.imageDao = orderDao;
+    public ImageServiceImpl(final ImageDao imageDao) {
+        this.imageDao = imageDao;
     }
 
     @Override
-    public Image create(byte[] bytes) {
+    public long create(byte[] bytes) {
         return imageDao.create(bytes);
     }
 
@@ -34,7 +33,7 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public Optional<Image> getById(long imageId) {
+    public Optional<byte[]> getById(long imageId) {
         return imageDao.getById(imageId);
     }
 }
