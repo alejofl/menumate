@@ -15,10 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 public class RestaurantsController {
@@ -39,13 +36,7 @@ public class RestaurantsController {
         final Restaurant restaurant = restaurantService.getById(id).orElseThrow(RestaurantNotFoundException::new);
         mav.addObject("restaurant", restaurant);
 
-        List<Category> categories = categoryService.getByRestaurantSortedByOrder(id);
-
-        List<Pair<Category, List<Product>>> menu = new ArrayList<>();
-        for (Category category : categories) {
-            List<Product> products = productService.getByCategory(category.getCategoryId());
-            menu.add(new Pair<>(category, products));
-        }
+        final List<Pair<Category, List<Product>>> menu = restaurantService.getMenu(id);
         mav.addObject("menu", menu);
 
         return mav;

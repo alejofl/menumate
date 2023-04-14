@@ -13,12 +13,8 @@ import java.util.Optional;
 @Service
 public class OrderServiceImpl implements OrderService {
 
-    private final OrderDao orderDao;
-
     @Autowired
-    public OrderServiceImpl(final OrderDao orderDao) {
-        this.orderDao = orderDao;
-    }
+    private OrderDao orderDao;
 
     @Override
     public Order create(long orderTypeId, long restaurantId, long userId) {

@@ -12,12 +12,8 @@ import java.util.Optional;
 @Service
 public class ProductServiceImpl implements ProductService {
 
-    private final ProductDao productDao;
-
     @Autowired
-    public ProductServiceImpl(final ProductDao productDao) {
-        this.productDao = productDao;
-    }
+    private ProductDao productDao;
 
     @Override
     public Product create(long categoryId, String name, double price) {
