@@ -9,12 +9,9 @@ import java.util.Optional;
 
 @Service
 public class ImageServiceImpl implements ImageService {
-    private ImageDao imageDao;
 
     @Autowired
-    public ImageServiceImpl(final ImageDao imageDao) {
-        this.imageDao = imageDao;
-    }
+    private ImageDao imageDao;
 
     @Override
     public long create(byte[] bytes) {

@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.service.ImageService;
-import ar.edu.itba.paw.webapp.exception.RestaurantNotFoundException;
+import ar.edu.itba.paw.webapp.exception.ImageNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -20,9 +20,9 @@ public class ImageController {
         this.imageService = imageService;
     }
 
-    @RequestMapping("/image/{id:\\d+}")
+    @RequestMapping("/images/{id:\\d+}")
     public ResponseEntity<byte[]> getImage(@PathVariable long id) {
-        byte[] array = imageService.getById(id).orElseThrow(RestaurantNotFoundException::new);
+        byte[] array = imageService.getById(id).orElseThrow(ImageNotFoundException::new);
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-type", MediaType.IMAGE_JPEG_VALUE);
