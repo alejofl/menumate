@@ -14,7 +14,6 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.Random;
 
