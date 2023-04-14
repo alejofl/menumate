@@ -79,6 +79,39 @@ main {
     background: var(--hover_image);
 }
 
+.clickable-object {
+    text-decoration: none !important;
+}
+
+.error-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    height: 100%;
+}
+
+.error-image {
+    margin: 1em;
+}
+
+.error-message {
+    display: flex;
+    justify-content: center;
+    margin: 0.5em;
+    color: #282d2f;
+}
+
+.btn-primary {
+    background-color: #282d2f !important;
+    border-color: #282d2f !important;
+}
+
+.btn-primary:hover, .btn-primary:active, .btn-primary:visited {
+    background-color: #ed7a57 !important;
+    border-color: #ed7a57 !important;
+}
 /* RESTAURANT MENU */
 .restaurant-header {
     height: 12rem;
@@ -224,4 +257,5 @@ main {
     --bs-nav-link-color: var(--secondary);
     --bs-nav-link-hover-color: var(--secondary-dark);
     --bs-nav-pills-link-active-bg: var(--secondary);
+>>>>>>> master
 }
