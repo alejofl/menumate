@@ -12,12 +12,8 @@ import java.util.Optional;
 @Service
 public class CategoryServiceImpl implements CategoryService {
 
-    private final CategoryDao categoryDao;
-
     @Autowired
-    public CategoryServiceImpl(final CategoryDao categoryDao) {
-        this.categoryDao = categoryDao;
-    }
+    private CategoryDao categoryDao;
 
     @Override
     public Category create(long restaurantId, String name, int order) {

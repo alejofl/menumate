@@ -1,23 +1,23 @@
 package ar.edu.itba.paw.services;
 
+import ar.edu.itba.paw.model.Category;
 import ar.edu.itba.paw.model.Product;
+import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.persistance.ProductDao;
 import ar.edu.itba.paw.service.ProductService;
+import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class ProductServiceImpl implements ProductService {
 
-    private final ProductDao productDao;
-
     @Autowired
-    public ProductServiceImpl(final ProductDao productDao) {
-        this.productDao = productDao;
-    }
+    private ProductDao productDao;
 
     @Override
     public Product create(long categoryId, String name, double price) {

@@ -1,6 +1,8 @@
 package ar.edu.itba.paw.service;
 
+import ar.edu.itba.paw.model.Category;
 import ar.edu.itba.paw.model.Product;
+import javafx.util.Pair;
 
 import java.util.List;
 import java.util.Optional;

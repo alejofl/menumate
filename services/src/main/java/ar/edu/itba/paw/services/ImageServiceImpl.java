@@ -11,12 +11,8 @@ import java.util.Optional;
 @Service
 public class ImageServiceImpl implements ImageService {
 
-    private final ImageDao imageDao;
-
     @Autowired
-    public ImageServiceImpl(final ImageDao orderDao) {
-        this.imageDao = orderDao;
-    }
+    private ImageDao imageDao;
 
     @Override
     public Image create(byte[] bytes) {

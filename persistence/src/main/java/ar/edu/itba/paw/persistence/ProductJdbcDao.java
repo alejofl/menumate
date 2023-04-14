@@ -60,6 +60,15 @@ public class ProductJdbcDao implements ProductDao {
     }
 
     @Override
+    public List<Product> getByRestaurantOrderByCategoryOrder(long restaurantId) {
+        return jdbcTemplate.query(
+                SelectBase + " WHERE restaurants.restaurant_id = ? ORDER BY categories.order_num",
+                RowMappers.PRODUCT_ROW_MAPPER,
+                restaurantId
+        );
+    }
+
+    @Override
     public boolean updatePrice(long productId, double price) {
         return jdbcTemplate.update("UPDATE products SET price = ? WHERE product_id = ?", price, productId) > 0;
     }

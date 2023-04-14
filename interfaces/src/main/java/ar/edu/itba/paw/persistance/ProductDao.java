@@ -12,6 +12,8 @@ public interface ProductDao {
 
     List<Product> getByCategory(long categoryId);
 
+    List<Product> getByRestaurantOrderByCategoryOrder(long restaurantId);
+
     boolean updatePrice(long productId, double price);
 
     boolean updateName(long productId, String name);
