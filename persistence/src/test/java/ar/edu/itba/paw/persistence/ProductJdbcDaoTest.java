@@ -56,7 +56,7 @@ public class ProductJdbcDaoTest {
         Assert.assertNotNull(product);
         Assert.assertEquals(PRODUCT_NAME, product.getName());
         Assert.assertEquals(PRODUCT_PRICE, product.getPrice(), PRODUCT_PRICE_DELTA);
-        Assert.assertEquals(CATEGORY_ID, product.getCategoryId());
+        Assert.assertEquals(CATEGORY_ID, product.getCategory().getCategoryId());
     }
 
     @Test
@@ -68,7 +68,7 @@ public class ProductJdbcDaoTest {
         Assert.assertEquals(PRODUCT_ID, product.get().getProductId());
         Assert.assertEquals(PRODUCT_NAME, product.get().getName());
         Assert.assertEquals(PRODUCT_PRICE, product.get().getPrice(), PRODUCT_PRICE_DELTA);
-        Assert.assertEquals(CATEGORY_ID, product.get().getCategoryId());
+        Assert.assertEquals(CATEGORY_ID, product.get().getCategory().getCategoryId());
     }
 
     @Test
@@ -84,7 +84,7 @@ public class ProductJdbcDaoTest {
         for (int i = 0; i < PRODUCTS_NAMES.length; i++) {
             Assert.assertEquals(PRODUCTS_NAMES[i], products.get(i).getName());
             Assert.assertEquals(PRODUCT_PRICE, products.get(i).getPrice(), PRODUCT_PRICE_DELTA);
-            Assert.assertEquals(CATEGORY_ID, products.get(i).getCategoryId());
+            Assert.assertEquals(CATEGORY_ID, products.get(i).getCategory().getCategoryId());
             Assert.assertEquals(i + 1, products.get(i).getProductId());
         }
     }

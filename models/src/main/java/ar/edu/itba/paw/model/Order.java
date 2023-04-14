@@ -5,22 +5,22 @@ import java.time.LocalDateTime;
 public class Order {
 
     private final long orderId;
-    private final long orderTypeId;
-    private final long restaurantId;
-    private final long userId;
+    private final OrderType orderType;
+    private final Restaurant restaurant;
+    private final User user;
     private LocalDateTime orderDate;
     private String address;
     private int tableNumber;
 
-    public Order(long orderId, long orderTypeId, long restaurantId, long userId) {
+    public Order(long orderId, OrderType orderType, Restaurant restaurant, User user) {
         this.orderId = orderId;
-        this.orderTypeId = orderTypeId;
-        this.restaurantId = restaurantId;
-        this.userId = userId;
+        this.orderType = orderType;
+        this.restaurant = restaurant;
+        this.user = user;
     }
 
-    public Order(long orderId, long orderTypeId, long restaurantId, long userId, LocalDateTime orderDate, String address, int tableNumber) {
-        this(orderId, orderTypeId, restaurantId, userId);
+    public Order(long orderId, OrderType orderType, Restaurant restaurant, User user, LocalDateTime orderDate, String address, int tableNumber) {
+        this(orderId, orderType, restaurant, user);
         this.orderDate = orderDate;
         this.address = address;
         this.tableNumber = tableNumber;
@@ -30,16 +30,16 @@ public class Order {
         return orderId;
     }
 
-    public long getOrderTypeId() {
-        return orderTypeId;
+    public OrderType getOrderType() {
+        return orderType;
     }
 
-    public long getRestaurantId() {
-        return restaurantId;
+    public Restaurant getRestaurant() {
+        return restaurant;
     }
 
-    public long getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
     public LocalDateTime getOrderDate() {

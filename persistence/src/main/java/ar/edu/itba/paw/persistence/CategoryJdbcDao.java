@@ -4,12 +4,10 @@ import ar.edu.itba.paw.model.Category;
 import ar.edu.itba.paw.persistance.CategoryDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
-import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,15 +16,10 @@ import java.util.Optional;
 @Repository
 public class CategoryJdbcDao implements CategoryDao {
 
+    private static final String SelectBase = "SELECT " + TableFields.CATEGORIES_FIELDS + ", " + TableFields.RESTAURANTS_FIELDS + " FROM categories JOIN restaurants ON categories.restaurant_id = restaurants.restaurant_id";
+
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
-
-    private final RowMapper<Category> categoryRowMapper = (ResultSet rs, int rowNum) -> new Category(
-            rs.getLong("category_id"),
-            rs.getLong("restaurant_id"),
-            rs.getString("name"),
-            rs.getLong("order_num")
-    );
 
     @Autowired
     public CategoryJdbcDao(final DataSource ds) {
@@ -44,17 +37,25 @@ public class CategoryJdbcDao implements CategoryDao {
         categoryData.put("order_num", order);
 
         final long categoryId = jdbcInsert.executeAndReturnKey(categoryData).longValue();
-        return new Category(categoryId, restaurantId, name, order);
+        return getById(categoryId).get();
     }
 
     @Override
     public Optional<Category> getById(long categoryId) {
-        return jdbcTemplate.query("SELECT * FROM categories WHERE category_id = ?", categoryRowMapper, categoryId).stream().findFirst();
+        return jdbcTemplate.query(
+                SelectBase + " WHERE categories.category_id = ?",
+                RowMappers.CATEGORY_ROW_MAPPER,
+                categoryId
+        ).stream().findFirst();
     }
 
     @Override
     public List<Category> getByRestaurantSortedByOrder(long restaurantId) {
-        return jdbcTemplate.query("SELECT * FROM categories WHERE restaurant_id = ? ORDER BY order_num", categoryRowMapper, restaurantId);
+        return jdbcTemplate.query(
+                SelectBase + " WHERE categories.restaurant_id = ? ORDER BY categories.order_num",
+                RowMappers.CATEGORY_ROW_MAPPER,
+                restaurantId
+        );
     }
 
     @Override

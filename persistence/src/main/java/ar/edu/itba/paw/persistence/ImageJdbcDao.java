@@ -20,11 +20,6 @@ public class ImageJdbcDao implements ImageDao {
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
-    private final RowMapper<Image> imageRowMapper = (ResultSet rs, int rowNum) -> new Image(
-            rs.getLong("image_id"),
-            rs.getBytes("bytes")
-    );
-
     @Autowired
     public ImageJdbcDao(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
@@ -53,6 +48,10 @@ public class ImageJdbcDao implements ImageDao {
 
     @Override
     public Optional<Image> getById(long imageId) {
-        return jdbcTemplate.query("SELECT * FROM images WHERE image_id = ?", imageRowMapper, imageId).stream().findFirst();
+        return jdbcTemplate.query(
+                "SELECT * FROM images WHERE image_id = ?",
+                RowMappers.IMAGE_ROW_MAPPER,
+                imageId
+        ).stream().findFirst();
     }
 }

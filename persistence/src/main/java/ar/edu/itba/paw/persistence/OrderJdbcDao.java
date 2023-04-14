@@ -4,12 +4,10 @@ import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.persistance.OrderDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
-import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -20,18 +18,10 @@ import java.util.Optional;
 @Repository
 public class OrderJdbcDao implements OrderDao {
 
+    private static final String SelectBase = "SELECT " + TableFields.ORDERS_FIELDS + ", " + TableFields.ORDER_TYPES_FIELDS + ", " + TableFields.RESTAURANTS_FIELDS + ", " + TableFields.USERS_FIELDS + " FROM orders JOIN order_types ON orders.order_type_id = order_types.order_type_id JOIN restaurants ON orders.restaurant_id = restaurants.restaurant_id JOIN users on orders.user_id = users.user_id";
+
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
-
-    private final RowMapper<Order> orderRowMapper = (ResultSet rs, int rowNum) -> new Order(
-            rs.getLong("order_id"),
-            rs.getLong("order_type_id"),
-            rs.getLong("restaurant_id"),
-            rs.getLong("user_id"),
-            rs.getTimestamp("order_date").toLocalDateTime(),
-            rs.getString("address"),
-            rs.getInt("table_number")
-    );
 
     @Autowired
     public OrderJdbcDao(final DataSource ds) {
@@ -51,42 +41,76 @@ public class OrderJdbcDao implements OrderDao {
         orderData.put("user_id", userId);
         final long orderId = jdbcInsert.executeAndReturnKey(orderData).longValue();
 
-        return new Order(orderId, orderTypeId, restaurantId, userId);
+        return getById(orderId).get();
     }
 
     @Override
     public Optional<Order> getById(long orderId) {
-        return jdbcTemplate.query("SELECT * FROM orders WHERE order_id = ?", orderRowMapper, orderId).stream().findFirst();
+        return jdbcTemplate.query(
+                SelectBase + " WHERE orders.order_id = ?",
+                RowMappers.ORDER_ROW_MAPPER,
+                orderId
+        ).stream().findFirst();
     }
 
     @Override
     public List<Order> getByUser(long userId, long restaurantId) {
-        return jdbcTemplate.query("SELECT * FROM orders WHERE user_id = ? AND restaurant_id = ?", orderRowMapper, userId, restaurantId);
+        return jdbcTemplate.query(
+                SelectBase + " WHERE orders.user_id = ? AND orders.restaurant_id = ?",
+                RowMappers.ORDER_ROW_MAPPER,
+                userId,
+                restaurantId
+        );
     }
 
     @Override
     public List<Order> getByRestaurant(long restaurantId) {
-        return jdbcTemplate.query("SELECT * FROM orders WHERE restaurant_id = ?", orderRowMapper, restaurantId);
+        return jdbcTemplate.query(
+                SelectBase + " WHERE orders.restaurant_id = ?",
+                RowMappers.ORDER_ROW_MAPPER,
+                restaurantId
+        );
     }
 
     @Override
     public List<Order> getByOrderTypeAndRestaurant(long restaurantId, long orderTypeId) {
-        return jdbcTemplate.query("SELECT * FROM orders WHERE order_type_id = ? AND restaurant_id = ?", orderRowMapper, orderTypeId, restaurantId);
+        return jdbcTemplate.query(
+                SelectBase + " WHERE orders.order_type_id = ? AND orders.restaurant_id = ?",
+                RowMappers.ORDER_ROW_MAPPER,
+                orderTypeId,
+                restaurantId
+        );
     }
 
     @Override
     public List<Order> getByRestaurantBetweenDates(long restaurantId, LocalDateTime start, LocalDateTime end) {
-        return jdbcTemplate.query("SELECT * FROM orders WHERE order_date BETWEEN ? AND ? AND restaurant_id = ?", orderRowMapper, Timestamp.valueOf(start), Timestamp.valueOf(end), restaurantId);
+        return jdbcTemplate.query(
+                SelectBase + " WHERE orders.order_date BETWEEN ? AND ? AND orders.restaurant_id = ?",
+                RowMappers.ORDER_ROW_MAPPER,
+                Timestamp.valueOf(start),
+                Timestamp.valueOf(end),
+                restaurantId
+        );
     }
 
     @Override
     public List<Order> getByRestaurantAndAddress(long restaurantId, String address) {
-        return jdbcTemplate.query("SELECT * FROM orders WHERE address = ? AND restaurant_id = ?", orderRowMapper, address, restaurantId);
+        return jdbcTemplate.query(
+                SelectBase + " WHERE orders.address = ? AND orders.restaurant_id = ?",
+                RowMappers.ORDER_ROW_MAPPER,
+                address,
+                restaurantId
+        );
     }
 
     @Override
     public List<Order> getByRestaurantAndTableNumber(long restaurantId, int tableNumber) {
-        return jdbcTemplate.query("SELECT * FROM orders WHERE table_number = ? AND restaurant_id = ?", orderRowMapper, tableNumber, restaurantId);
+        return jdbcTemplate.query(
+                SelectBase + " WHERE orders.table_number = ? AND orders.restaurant_id = ?",
+                RowMappers.ORDER_ROW_MAPPER,
+                tableNumber,
+                restaurantId
+        );
     }
 
     @Override
@@ -101,6 +125,6 @@ public class OrderJdbcDao implements OrderDao {
 
     @Override
     public boolean delete(long orderId) {
-        return jdbcTemplate.update("DELETE FROM orders WHERE order_id = ?", orderRowMapper, orderId) > 0;
+        return jdbcTemplate.update("DELETE FROM orders WHERE order_id = ?", orderId) > 0;
     }
 }

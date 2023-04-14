@@ -50,7 +50,7 @@ public class CategoryJdbcDaoTest {
         Assert.assertNotNull(category);
         Assert.assertEquals(CATEGORY_NAME, category.getName());
         Assert.assertEquals(ORDER, category.getOrder());
-        Assert.assertEquals(RESTAURANT_ID, category.getRestaurantId());
+        Assert.assertEquals(RESTAURANT_ID, category.getRestaurant().getRestaurantId());
     }
 
     @Test
@@ -62,7 +62,7 @@ public class CategoryJdbcDaoTest {
         Assert.assertEquals(CATEGORY_ID, category.get().getCategoryId());
         Assert.assertEquals(CATEGORY_NAME, category.get().getName());
         Assert.assertEquals(ORDER, category.get().getOrder());
-        Assert.assertEquals(RESTAURANT_ID, category.get().getRestaurantId());
+        Assert.assertEquals(RESTAURANT_ID, category.get().getRestaurant().getRestaurantId());
     }
 
     @Test
@@ -78,7 +78,7 @@ public class CategoryJdbcDaoTest {
             Assert.assertEquals(i + 1, category.get(i).getOrder());
             Assert.assertEquals(i + 1, category.get(i).getCategoryId());
             Assert.assertEquals(categoryNames[i], category.get(i).getName());
-            Assert.assertEquals(RESTAURANT_ID, category.get(i).getRestaurantId());
+            Assert.assertEquals(RESTAURANT_ID, category.get(i).getRestaurant().getRestaurantId());
         }
     }
 

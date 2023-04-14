@@ -4,12 +4,10 @@ import ar.edu.itba.paw.model.Product;
 import ar.edu.itba.paw.persistance.ProductDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
-import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,18 +16,10 @@ import java.util.Optional;
 @Repository
 public class ProductJdbcDao implements ProductDao {
 
+    private static final String SelectBase = "SELECT " + TableFields.PRODUCTS_FIELDS + ", " + TableFields.CATEGORIES_FIELDS + ", " + TableFields.RESTAURANTS_FIELDS + " FROM products JOIN categories ON products.category_id = categories.category_id JOIN restaurants ON categories.restaurant_id = restaurants.restaurant_id";
+
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
-
-    private final RowMapper<Product> productRowMapper = (ResultSet rs, int rowNum) -> new Product(
-            rs.getLong("product_id"),
-            rs.getLong("category_id"),
-            rs.getString("name"),
-            rs.getDouble("price"),
-            rs.getString("description"),
-            rs.getLong("image_id"),
-            rs.getBoolean("available")
-    );
 
     @Autowired
     public ProductJdbcDao(final DataSource ds) {
@@ -48,17 +38,25 @@ public class ProductJdbcDao implements ProductDao {
         productData.put("price", price);
 
         final long productId = jdbcInsert.executeAndReturnKey(productData).longValue();
-        return new Product(productId, categoryId, name, price);
+        return getById(productId).get();
     }
 
     @Override
     public Optional<Product> getById(long productId) {
-        return jdbcTemplate.query("SELECT * FROM products WHERE product_id = ?", productRowMapper, productId).stream().findFirst();
+        return jdbcTemplate.query(
+                SelectBase + " WHERE products.product_id = ?",
+                RowMappers.PRODUCT_ROW_MAPPER,
+                productId
+        ).stream().findFirst();
     }
 
     @Override
     public List<Product> getByCategory(long categoryId) {
-        return jdbcTemplate.query("SELECT * FROM products WHERE category_id = ?", productRowMapper, categoryId);
+        return jdbcTemplate.query(
+                SelectBase + " WHERE products.category_id = ?",
+                RowMappers.PRODUCT_ROW_MAPPER,
+                categoryId
+        );
     }
 
     @Override
