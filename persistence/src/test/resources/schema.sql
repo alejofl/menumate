@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS restaurants
 (
     restaurant_id SERIAL PRIMARY KEY,
     name          VARCHAR(32) NOT NULL,
+    email         VARCHAR(256) UNIQUE NOT NULL,
     logo_id       INT         REFERENCES images (image_id) ON DELETE SET NULL,
     portrait_1_id INT         REFERENCES images (image_id) ON DELETE SET NULL,
     portrait_2_id INT         REFERENCES images (image_id) ON DELETE SET NULL,

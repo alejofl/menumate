@@ -36,6 +36,7 @@ public class OrderJdbcDaoTest {
     private static final Integer[] TABLE_NUMBERS = {1, 2, 3, 4, 5, 6, 10, 10, 10, 11};
     private static final long RESTAURANT_ID = 45123;
     private static final String RESTAURANT_NAME = "EmpanadasMorita";
+    private static final String RESTAURANT_EMAIL = "ivawashere@email.com";
     private static final long USER_ID = 71823;
     private static final String USERNAME = "UsuarioCopado33";
     private static final String PASSWORD = "ElSecretoDeVictoria";
@@ -48,7 +49,7 @@ public class OrderJdbcDaoTest {
     public void setup() {
         jdbcTemplate = new JdbcTemplate(ds);
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "order_types", "restaurants", "users", "orders");
-        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name) VALUES (" + RESTAURANT_ID + ", '" + RESTAURANT_NAME + "')");
+        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email) VALUES (" + RESTAURANT_ID + ", '" + RESTAURANT_NAME + "', '" + RESTAURANT_EMAIL + "')");
         jdbcTemplate.execute("INSERT INTO users (user_id, username, password, email) VALUES (" + USER_ID + ", '" + USERNAME + "', '" + PASSWORD + "', '" + EMAIL + "')");
         jdbcTemplate.execute("INSERT INTO order_types (order_type_id, name) VALUES (" + ORDER_TYPE_ID + ", '" + ORDER_TYPE_NAME + "')");
     }

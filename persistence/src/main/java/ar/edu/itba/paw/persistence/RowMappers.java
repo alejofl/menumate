@@ -19,6 +19,7 @@ class RowMappers {
     static final RowMapper<Restaurant> RESTAURANT_ROW_MAPPER = (ResultSet rs, int rowNum) -> new Restaurant(
             rs.getLong("restaurant_id"),
             rs.getString("restaurant_name"),
+            rs.getString("restaurant_email"),
             rs.getLong("restaurant_logo_id"),
             rs.getLong("restaurant_portrait_1_id"),
             rs.getLong("restaurant_portrait_2_id"),

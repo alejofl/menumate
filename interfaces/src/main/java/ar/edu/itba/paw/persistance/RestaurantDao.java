@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RestaurantDao {
-    Restaurant create(String name);
+    Restaurant create(String name, String email);
 
     Optional<Restaurant> getById(long restaurantId);
 

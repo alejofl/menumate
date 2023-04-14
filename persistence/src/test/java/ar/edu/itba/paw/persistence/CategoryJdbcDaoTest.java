@@ -33,6 +33,7 @@ public class CategoryJdbcDaoTest {
     private static final long RESTAURANT_ID = 79874;
     private static final String CATEGORY_NAME = "Postgres Dulces";
     private static final String RESTAURANT_NAME = "Cafe Mataderos";
+    private static final String RESTAURANT_EMAIL = "pedro@frompedros.com";
     private static final int ORDER = 871293;
     private static final String[] categoryNames = {"Category 1", "Category 2", "Category 3", "Category 4"};
 
@@ -40,7 +41,7 @@ public class CategoryJdbcDaoTest {
     public void setup() {
         jdbcTemplate = new JdbcTemplate(ds);
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "categories", "restaurants");
-        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name) VALUES (" + RESTAURANT_ID + ", '" + RESTAURANT_NAME + "')");
+        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email) VALUES (" + RESTAURANT_ID + ", '" + RESTAURANT_NAME + "', '" + RESTAURANT_EMAIL + "')");
     }
 
     @Test

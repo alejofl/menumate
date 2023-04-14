@@ -34,6 +34,7 @@ public class ProductJdbcDaoTest {
     private static final long ORDER = 1;
     private static final long RESTAURANT_ID = 5123;
     private static final String RESTAURANT_NAME = "Kansas Grill & Bar";
+    private static final String RESTAURANT_EMAIL = "kansas@lovelyrestaurant.com";
     private static final long PRODUCT_ID = 912;
     private static final String PRODUCT_NAME = "Lomito";
     private static final double PRODUCT_PRICE = 533.55;
@@ -45,7 +46,7 @@ public class ProductJdbcDaoTest {
     public void setup() {
         jdbcTemplate = new JdbcTemplate(ds);
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "categories", "restaurants", "products");
-        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name) VALUES (" + RESTAURANT_ID + ", '" + RESTAURANT_NAME + "')");
+        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email) VALUES (" + RESTAURANT_ID + ", '" + RESTAURANT_NAME + "', '" + RESTAURANT_EMAIL + "')");
         jdbcTemplate.execute("INSERT INTO categories (category_id, name, restaurant_id, order_num) VALUES (" + CATEGORY_ID + ", '" + CATEGORY_NAME + "', " + RESTAURANT_ID + ", " + ORDER + ")");
     }
 

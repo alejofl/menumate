@@ -22,7 +22,7 @@ public class RestaurantJdbcDaoTest {
 
     private static final long ID = 5123;
     private static final String NAME = "pedros";
-
+    private static final String EMAIL = "pedros@frompedros.com";
 
     @Autowired
     private DataSource ds;
@@ -40,26 +40,28 @@ public class RestaurantJdbcDaoTest {
 
     @Test
     public void testFindById() throws SQLException {
-        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name) VALUES (" + ID + ", '" + NAME + "')");
+        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email) VALUES (" + ID + ", '" + NAME + "', '" + EMAIL + "')");
 
         Optional<Restaurant> maybeRestaurant = restaurantDao.getById(ID);
 
         Assert.assertTrue(maybeRestaurant.isPresent());
         Assert.assertEquals(ID, maybeRestaurant.get().getRestaurantId());
         Assert.assertEquals(NAME, maybeRestaurant.get().getName());
+        Assert.assertEquals(EMAIL, maybeRestaurant.get().getEmail());
     }
 
     @Test
     public void testCreation() throws SQLException {
-        Restaurant restaurant = restaurantDao.create(NAME);
+        Restaurant restaurant = restaurantDao.create(NAME, EMAIL);
 
         Assert.assertNotNull(restaurant);
         Assert.assertEquals(NAME, restaurant.getName());
+        Assert.assertEquals(EMAIL, restaurant.getEmail());
     }
 
     @Test
     public void testDeletion() throws SQLException {
-        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name) VALUES (" + ID + ", '" + NAME + "')");
+        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email) VALUES (" + ID + ", '" + NAME + "', '" + EMAIL + "')");
         Assert.assertTrue(restaurantDao.delete(ID));
     }
 }
