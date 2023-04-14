@@ -9,11 +9,14 @@ import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 @Repository
 public class RestaurantJdbcDao implements RestaurantDao {
+
+    private static final String SelectBase = "SELECT " + TableFields.RESTAURANTS_FIELDS + " FROM restaurants";
 
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
@@ -30,10 +33,16 @@ public class RestaurantJdbcDao implements RestaurantDao {
     @Override
     public Optional<Restaurant> getById(long restaurantId) {
         return jdbcTemplate.query(
-                "SELECT " + TableFields.RESTAURANTS_FIELDS + " FROM restaurants WHERE restaurant_id = ?",
+                SelectBase + " WHERE restaurant_id = ?",
                 RowMappers.RESTAURANT_ROW_MAPPER,
                 restaurantId
         ).stream().findFirst();
+    }
+
+    @Override
+    public List<Restaurant> getAll() {
+        // TODO: Add limit or paging
+        return jdbcTemplate.query(SelectBase + " WHERE is_active = true", RowMappers.RESTAURANT_ROW_MAPPER);
     }
 
     @Override

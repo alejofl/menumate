@@ -29,6 +29,11 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
+    public List<Restaurant> getAll() {
+        return restaurantDao.getAll();
+    }
+
+    @Override
     public List<Pair<Category, List<Product>>> getMenu(long restaurantId) {
         List<Product> products = productDao.getByRestaurantOrderByCategoryOrder(restaurantId);
 

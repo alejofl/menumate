@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -28,8 +29,7 @@ public class RestaurantsController {
     @Autowired
     private ImageService imageService;
 
-
-    @RequestMapping("/restaurant/{id:\\d+}")
+    @RequestMapping(value = "/restaurants/{id:\\d+}", method = RequestMethod.GET)
     public ModelAndView restaurantMenu(@PathVariable final long id) {
         final ModelAndView mav = new ModelAndView("menu/restaurant_menu");
 

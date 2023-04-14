@@ -1,7 +1,9 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.service.EmailService;
+import ar.edu.itba.paw.service.RestaurantService;
 import ar.edu.itba.paw.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -10,21 +12,29 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.List;
+
 
 @Controller
 public class HomeController {
-    private final UserService userService;
-    private final EmailService emailService;
 
     @Autowired
-    public HomeController(UserService userService, EmailService emailService) {
-        this.userService = userService;
-        this.emailService = emailService;
-    }
+    private UserService userService;
 
-    @RequestMapping("/")
+    @Autowired
+    private EmailService emailService;
+
+    @Autowired
+    private RestaurantService restaurantService;
+
+    @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView index() {
-        return new ModelAndView("home/index");
+        ModelAndView mav = new ModelAndView("home/index");
+
+        final List<Restaurant> restaurants = restaurantService.getAll();
+        mav.addObject("restaurants", restaurants);
+
+        return mav;
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)

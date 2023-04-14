@@ -13,6 +13,8 @@ public interface RestaurantService {
 
     Optional<Restaurant> getById(long restaurantId);
 
+    List<Restaurant> getAll();
+
     List<Pair<Category, List<Product>>> getMenu(long restaurantId);
 
     boolean delete(long restaurantId);
