@@ -40,22 +40,6 @@ class RowMappers {
             rs.getLong("category_order")
     );
 
-    static final RowMapper<OrderType> ORDER_TYPE_ROW_MAPPER = (ResultSet rs, int rowNum) -> new OrderType(
-            rs.getLong("order_type_id"),
-            rs.getString("order_type_name")
-    );
-
-    static final RowMapper<Order> ORDER_ROW_MAPPER = (ResultSet rs, int rowNum) -> new Order(
-            rs.getLong("order_id"),
-            ORDER_TYPE_ROW_MAPPER.mapRow(rs, rowNum),
-            RESTAURANT_ROW_MAPPER.mapRow(rs, rowNum),
-            USER_ROW_MAPPER.mapRow(rs, rowNum),
-            timestampToLocalDateTimeOrNull(rs.getTimestamp("order_date_ordered")),
-            timestampToLocalDateTimeOrNull(rs.getTimestamp("order_date_delivered")),
-            rs.getString("order_address"),
-            rs.getInt("order_table_number")
-    );
-
     static final RowMapper<Product> PRODUCT_ROW_MAPPER = (ResultSet rs, int rowNum) -> new Product(
             rs.getLong("product_id"),
             CATEGORY_ROW_MAPPER.mapRow(rs, rowNum),
@@ -64,5 +48,12 @@ class RowMappers {
             rs.getString("product_description"),
             rs.getLong("product_image_id"),
             rs.getBoolean("product_available")
+    );
+
+    static final RowMapper<OrderItem> ORDER_ITEM_ROW_MAPPER = (ResultSet rs, int rowNum) -> new OrderItem(
+            PRODUCT_ROW_MAPPER.mapRow(rs, rowNum),
+            rs.getInt("order_item_line_number"),
+            rs.getInt("order_item_quantity"),
+            rs.getString("order_item_comment")
     );
 }
