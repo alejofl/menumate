@@ -28,13 +28,4 @@ public class CartItem {
     public void setComment(String comment) {
         this.comment = comment;
     }
-
-    @Override
-    public String toString() {
-        return "CartItem{" +
-                "productId=" + productId +
-                ", quantity=" + quantity +
-                ", comment='" + comment + '\'' +
-                '}';
-    }
 }

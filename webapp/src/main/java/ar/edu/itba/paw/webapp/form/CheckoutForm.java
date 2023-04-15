@@ -1,8 +1,7 @@
 package ar.edu.itba.paw.webapp.form;
 
-import jdk.nashorn.internal.ir.annotations.Ignore;
+import ar.edu.itba.paw.model.OrderType;
 import org.hibernate.validator.constraints.Email;
-
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.Arrays;
@@ -83,18 +82,5 @@ public class CheckoutForm {
 
     public void setCart(List<CartItem> cart) {
         this.cart = cart;
-    }
-
-    @Override
-    public String toString() {
-        return "CheckoutForm{" +
-                "name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                ", tableNumber=" + tableNumber +
-                ", address='" + address + '\'' +
-                ", orderType=" + orderType +
-                ", restaurantId=" + restaurantId +
-                ", cart=" + cart +
-                '}';
     }
 }

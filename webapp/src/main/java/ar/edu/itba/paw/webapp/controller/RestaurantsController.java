@@ -52,12 +52,9 @@ public class RestaurantsController {
         @Valid @ModelAttribute("checkoutForm") final CheckoutForm form,
         final BindingResult errors
     ) {
-        System.out.println("---------------------------------------------------------------------------------------------------------------------------------------------HOLAAAAAAAAAAAAAAAAA");
         if (errors.hasErrors()) {
-            System.out.println(errors);
             return restaurantMenu(id, form);
         }
-        System.out.println(form);
         return new ModelAndView("redirect:/");
     }
 }
