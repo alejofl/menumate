@@ -71,12 +71,12 @@
 <div class="modal fade" id="add-item-to-cart" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content" id="add-item-to-cart-header">
-            <div class="modal-header" style="--image: url(/static/pictures/milanga.jpg)">
+            <div class="modal-header">
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <h4 id="add-item-to-cart-title">Cheeseburger</h4>
-                <p id="add-item-to-cart-description">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo laudantium libero omnis pariatur quaerat qui quis sunt tempora totam! Distinctio dolorem error modi quia tenetur unde. Corporis eum odit officiis!</p>
+                <h4 id="add-item-to-cart-title"></h4>
+                <p id="add-item-to-cart-description"></p>
                 <hr>
                 <form>
                     <div class="input-group">
@@ -144,6 +144,8 @@
                     </div>
                 </div>
                 <div id="checkout-cart-items">
+                    <form:input path="restaurantId" type="hidden" value="${restaurant.restaurantId}"/>
+                    <form:input path="orderType" type="hidden" id="checkout-order-type" value="0"/>
                 </div>
             </div>
             <div class="modal-footer">

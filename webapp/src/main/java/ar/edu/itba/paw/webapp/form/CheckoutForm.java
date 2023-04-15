@@ -1,20 +1,28 @@
 package ar.edu.itba.paw.webapp.form;
 
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.hibernate.validator.constraints.Email;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import java.util.Arrays;
 import java.util.List;
 
 public class CheckoutForm {
 
+    @NotNull
     private String name;
     @Email
+    @NotNull
     private String email;
     @Min(1)
     private int tableNumber;
     private String address;
+    @NotNull
     private OrderType orderType;
+    @NotNull
     private int restaurantId;
+    @NotNull
     private List<CartItem> cart;
 
     public String getEmail() {
@@ -40,6 +48,7 @@ public class CheckoutForm {
     public List<CartItem> getCart() {
         return cart;
     }
+
     public String getName() {
         return name;
     }
@@ -60,8 +69,12 @@ public class CheckoutForm {
         this.address = address;
     }
 
-    public void setOrderType(OrderType orderType) {
-        this.orderType = orderType;
+    public void setOrderType(int orderType) {
+        this.orderType = Arrays
+                .stream(OrderType.values())
+                .filter(order -> order.ordinal() == orderType)
+                .findFirst()
+                .orElse(null);
     }
 
     public void setRestaurantId(int restaurantId) {
@@ -70,5 +83,18 @@ public class CheckoutForm {
 
     public void setCart(List<CartItem> cart) {
         this.cart = cart;
+    }
+
+    @Override
+    public String toString() {
+        return "CheckoutForm{" +
+                "name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", tableNumber=" + tableNumber +
+                ", address='" + address + '\'' +
+                ", orderType=" + orderType +
+                ", restaurantId=" + restaurantId +
+                ", cart=" + cart +
+                '}';
     }
 }

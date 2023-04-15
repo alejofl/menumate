@@ -11,9 +11,10 @@
     data-info-title="${param.product_name}"
     data-info-description="${param.product_description}"
     data-info-price="${param.product_price}"
-    data-info-id="${param.product_productId}">
+    data-info-id="${param.product_productId}"
+  >
     <div class="card menu-item-card">
-      <div class="menu-item-card-img-container" style=.n>
+      <div class="menu-item-card-img-container" style="">
         <img src="<c:url value="/images/${param.product_imageId}"/>" class="img-fluid rounded-start menu-item-card-img" alt="${param.product_name}">
       </div>
       <div class="card-body menu-item-card-body">
@@ -24,11 +25,11 @@
               <p class="card-text"><small class="text-body-secondary">${param.product_description}</small></p>
             </c:when>
             <c:otherwise>
-            <!--<p><i>Este producto no posee una descripción</i></p>-->
+              <p><i>Este producto no posee una descripción</i></p>
             </c:otherwise>
           </c:choose>
         </div>
-        <h5 class="card-title">$${param.price}</h5>
+        <h5 class="card-title">${param.product_price}</h5>
       </div>
     </div>
   </a>
