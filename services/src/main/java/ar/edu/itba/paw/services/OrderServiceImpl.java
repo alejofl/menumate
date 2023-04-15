@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.model.Order;
+import ar.edu.itba.paw.model.OrderItem;
 import ar.edu.itba.paw.model.OrderType;
 import ar.edu.itba.paw.persistance.OrderDao;
 import ar.edu.itba.paw.service.OrderService;
@@ -13,13 +14,40 @@ import java.util.Optional;
 
 @Service
 public class OrderServiceImpl implements OrderService {
-
     @Autowired
     private OrderDao orderDao;
 
     @Override
-    public Order create(OrderType orderType, long restaurantId, long userId) {
-        return orderDao.create(orderType, restaurantId, userId);
+    public Order createDelivery(long restaurantId, long userId, String address, List<OrderItem> items) {
+        return orderDao.create(OrderType.DELIVERY, restaurantId, userId, address, items);
+    }
+
+    @Override
+    public Order createDelivery(long restaurantId, String name, String email, String address, List<OrderItem> items) {
+        long userId = 0; // TODO userService
+        return orderDao.create(OrderType.DELIVERY, restaurantId, userId, address, items);
+    }
+
+    @Override
+    public Order createDineIn(long restaurantId, long userId, int tableNumber, List<OrderItem> items) {
+        return orderDao.create(OrderType.DINE_IN, restaurantId, userId, tableNumber, items);
+    }
+
+    @Override
+    public Order createDineIn(long restaurantId, String name, String email, int tableNumber, List<OrderItem> items) {
+        long userId = 0; // TODO userService
+        return orderDao.create(OrderType.DINE_IN, restaurantId, userId, tableNumber, items);
+    }
+
+    @Override
+    public Order createTakeAway(long restaurantId, long userId, List<OrderItem> items) {
+        return orderDao.create(OrderType.DELIVERY, restaurantId, userId, items);
+    }
+
+    @Override
+    public Order createTakeAway(long restaurantId, String name, String email, List<OrderItem> items) {
+        long userId = 0; // TODO userService
+        return orderDao.create(OrderType.DELIVERY, restaurantId, userId, items);
     }
 
     @Override

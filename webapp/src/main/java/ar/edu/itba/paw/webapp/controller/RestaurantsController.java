@@ -3,10 +3,7 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.model.Category;
 import ar.edu.itba.paw.model.Product;
 import ar.edu.itba.paw.model.Restaurant;
-import ar.edu.itba.paw.service.CategoryService;
-import ar.edu.itba.paw.service.ImageService;
-import ar.edu.itba.paw.service.ProductService;
-import ar.edu.itba.paw.service.RestaurantService;
+import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.webapp.exception.RestaurantNotFoundException;
 import ar.edu.itba.paw.webapp.form.CheckoutForm;
 import javafx.util.Pair;
@@ -27,11 +24,7 @@ public class RestaurantsController {
     @Autowired
     private RestaurantService restaurantService;
     @Autowired
-    private CategoryService categoryService;
-    @Autowired
-    private ProductService productService;
-    @Autowired
-    private ImageService imageService;
+    private OrderService orderService;
 
     @RequestMapping(value = "/restaurants/{id:\\d+}", method = RequestMethod.GET)
     public ModelAndView restaurantMenu(@PathVariable final long id, @ModelAttribute("checkoutForm") final CheckoutForm form) {
@@ -55,6 +48,9 @@ public class RestaurantsController {
         if (errors.hasErrors()) {
             return restaurantMenu(id, form);
         }
+
+//        orderService.create()
+
         return new ModelAndView("redirect:/");
     }
 }

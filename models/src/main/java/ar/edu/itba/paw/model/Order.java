@@ -4,13 +4,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class Order {
-
     private final long orderId;
     private final OrderType orderType;
     private final Restaurant restaurant;
     private final User user;
     private final LocalDateTime dateOrdered;
-
     private final LocalDateTime dateDelivered;
     private final String address;
     private final int tableNumber;

@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistance;
 
 import ar.edu.itba.paw.model.Order;
+import ar.edu.itba.paw.model.OrderItem;
 import ar.edu.itba.paw.model.OrderType;
 
 import java.time.LocalDateTime;
@@ -8,7 +9,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface OrderDao {
-    Order create(OrderType orderType, long restaurantId, long userId);
 
     Optional<Order> getById(long orderId);
 
@@ -29,4 +29,8 @@ public interface OrderDao {
     boolean updateTableNumber(long orderId, int tableNumber);
 
     boolean delete(long orderId);
+
+    Order create(OrderType orderType, long restaurantId, long userId, String address, List<OrderItem> items);
+    Order create(OrderType orderType, long restaurantId, long userId, List<OrderItem> items);
+    Order create(OrderType orderType, long restaurantId, long userId, int tableNumber, List<OrderItem> items);
 }
