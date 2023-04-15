@@ -42,6 +42,11 @@ public class HomeController {
         return new ModelAndView("helloworld/register");
     }
 
+    @RequestMapping(value = "/error", method = RequestMethod.GET)
+    public ModelAndView errorView() {
+        return new ModelAndView("errors/error");
+    }
+
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView register(
             @RequestParam(value = "username", required = true) final String username,

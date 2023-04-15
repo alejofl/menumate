@@ -103,15 +103,6 @@ main {
     color: #282d2f;
 }
 
-.btn-primary {
-    background-color: #282d2f !important;
-    border-color: #282d2f !important;
-}
-
-.btn-primary:hover, .btn-primary:active, .btn-primary:visited {
-    background-color: #ed7a57 !important;
-    border-color: #ed7a57 !important;
-}
 /* RESTAURANT MENU */
 .restaurant-header {
     height: 12rem;
@@ -257,5 +248,4 @@ main {
     --bs-nav-link-color: var(--secondary);
     --bs-nav-link-hover-color: var(--secondary-dark);
     --bs-nav-pills-link-active-bg: var(--secondary);
->>>>>>> master
 }
