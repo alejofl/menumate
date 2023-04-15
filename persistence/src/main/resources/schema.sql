@@ -81,13 +81,13 @@ CREATE TABLE IF NOT EXISTS orders
     table_number   INT
 );
 
-CREATE TABLE IF NOT EXISTS products_x_order
+CREATE TABLE IF NOT EXISTS order_items
 (
     order_id    INT REFERENCES orders (order_id) ON DELETE CASCADE     NOT NULL,
     product_id  INT REFERENCES products (product_id) ON DELETE CASCADE NOT NULL,
     line_number INT                                                    NOT NULL,
     quantity    INT                                                    NOT NULL CHECK (quantity > 0),
-    description TEXT,
+    comment     TEXT,
 
     PRIMARY KEY (order_id, product_id, line_number)
 );

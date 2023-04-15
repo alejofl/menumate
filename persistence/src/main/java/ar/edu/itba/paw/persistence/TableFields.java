@@ -14,4 +14,5 @@ class TableFields {
 
     static final String PRODUCTS_FIELDS = "products.product_id product_id, products.name product_name, products.price product_price, products.description product_description, products.image_id product_image_id, products.available product_available";
 
+    static final String ORDER_ITEMS_FIELDS = "order_items.line_number order_item_line_number, order_items.quantity order_item_quantity, order_items.comment order_item_comment";
 }
