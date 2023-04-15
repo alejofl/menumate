@@ -1,13 +1,14 @@
 package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.Order;
+import ar.edu.itba.paw.model.OrderType;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 public interface OrderService {
-    Order create(long orderTypeId, long restaurantId, long userId);
+    Order create(OrderType orderType, long restaurantId, long userId);
 
     Optional<Order> getById(long orderId);
 
@@ -21,7 +22,7 @@ public interface OrderService {
 
     List<Order> getByTableNumber(long restaurantId, int tableNumber);
 
-    List<Order> getByOrderType(long orderTypeId, long restaurantId);
+    List<Order> getByOrderTypeAndRestaurant(OrderType orderType, long restaurantId);
 
     boolean updateAddress(long orderId, String address);
 

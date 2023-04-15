@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.Order;
+import ar.edu.itba.paw.model.OrderType;
 import ar.edu.itba.paw.persistance.OrderDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -18,7 +19,7 @@ import java.util.Optional;
 @Repository
 public class OrderJdbcDao implements OrderDao {
 
-    private static final String SelectBase = "SELECT " + TableFields.ORDERS_FIELDS + ", " + TableFields.ORDER_TYPES_FIELDS + ", " + TableFields.RESTAURANTS_FIELDS + ", " + TableFields.USERS_FIELDS + ", " + TableFields.ORDER_ITEMS_FIELDS + ", " + TableFields.PRODUCTS_FIELDS + ", " + TableFields.CATEGORIES_FIELDS + " FROM orders JOIN order_types ON orders.order_type_id = order_types.order_type_id JOIN restaurants ON orders.restaurant_id = restaurants.restaurant_id JOIN users on orders.user_id = users.user_id LEFT OUTER JOIN order_items ON orders.order_id = order_items.order_id LEFT OUTER JOIN products ON order_items.product_id = products.product_id LEFT OUTER JOIN categories ON products.category_id = categories.category_id";
+    private static final String SelectBase = "SELECT " + TableFields.ORDERS_FIELDS + ", " + TableFields.RESTAURANTS_FIELDS + ", " + TableFields.USERS_FIELDS + ", " + TableFields.ORDER_ITEMS_FIELDS + ", " + TableFields.PRODUCTS_FIELDS + ", " + TableFields.CATEGORIES_FIELDS + " FROM orders JOIN restaurants ON orders.restaurant_id = restaurants.restaurant_id JOIN users on orders.user_id = users.user_id LEFT OUTER JOIN order_items ON orders.order_id = order_items.order_id LEFT OUTER JOIN products ON order_items.product_id = products.product_id LEFT OUTER JOIN categories ON products.category_id = categories.category_id";
     private static final String SelectEnd = " ORDER BY orders.order_id, order_items.line_number";
 
     private final JdbcTemplate jdbcTemplate;
@@ -29,15 +30,15 @@ public class OrderJdbcDao implements OrderDao {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsert = new SimpleJdbcInsert(ds)
                 .withTableName("orders")
-                .usingColumns("order_type_id", "restaurant_id", "user_id", "table_number", "address")
+                .usingColumns("order_type", "restaurant_id", "user_id", "table_number", "address")
                 .usingGeneratedKeyColumns("order_id");
     }
 
 
     @Override
-    public Order create(long orderTypeId, long restaurantId, long userId) {
+    public Order create(OrderType orderType, long restaurantId, long userId) {
         final Map<String, Object> orderData = new HashMap<>();
-        orderData.put("order_type_id", orderTypeId);
+        orderData.put("order_type", orderType.ordinal());
         orderData.put("restaurant_id", restaurantId);
         orderData.put("user_id", userId);
         final long orderId = jdbcInsert.executeAndReturnKey(orderData).longValue();
@@ -74,11 +75,11 @@ public class OrderJdbcDao implements OrderDao {
     }
 
     @Override
-    public List<Order> getByOrderTypeAndRestaurant(long restaurantId, long orderTypeId) {
+    public List<Order> getByOrderTypeAndRestaurant(OrderType orderType, long restaurantId) {
         return jdbcTemplate.query(
-                SelectBase + " WHERE orders.order_type_id = ? AND orders.restaurant_id = ?" + SelectEnd,
+                SelectBase + " WHERE orders.order_type = ? AND orders.restaurant_id = ?" + SelectEnd,
                 Extractors.ORDER_EXTRACTOR,
-                orderTypeId,
+                orderType.ordinal(),
                 restaurantId
         );
     }

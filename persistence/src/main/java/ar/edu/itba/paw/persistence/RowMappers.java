@@ -40,11 +40,6 @@ class RowMappers {
             rs.getLong("category_order")
     );
 
-    static final RowMapper<OrderType> ORDER_TYPE_ROW_MAPPER = (ResultSet rs, int rowNum) -> new OrderType(
-            rs.getLong("order_type_id"),
-            rs.getString("order_type_name")
-    );
-
     static final RowMapper<Product> PRODUCT_ROW_MAPPER = (ResultSet rs, int rowNum) -> new Product(
             rs.getLong("product_id"),
             CATEGORY_ROW_MAPPER.mapRow(rs, rowNum),

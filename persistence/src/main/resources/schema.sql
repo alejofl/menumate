@@ -63,16 +63,10 @@ CREATE TABLE IF NOT EXISTS products
     available   BOOLEAN                                                   NOT NULL DEFAULT TRUE
 );
 
-CREATE TABLE IF NOT EXISTS order_types
-(
-    order_type_id SERIAL PRIMARY KEY,
-    name          VARCHAR(32) NOT NULL
-);
-
 CREATE TABLE IF NOT EXISTS orders
 (
     order_id       SERIAL PRIMARY KEY,
-    order_type_id  INT REFERENCES order_types (order_type_id) ON DELETE CASCADE NOT NULL,
+    order_type     INT NOT NULL,
     restaurant_id  INT REFERENCES restaurants (restaurant_id) ON DELETE CASCADE NOT NULL,
     user_id        INT REFERENCES users (user_id) ON DELETE CASCADE             NOT NULL,
     date_ordered   TIMESTAMP                                                    NOT NULL DEFAULT now(),

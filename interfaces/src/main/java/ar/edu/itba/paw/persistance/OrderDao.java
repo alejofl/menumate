@@ -1,19 +1,20 @@
 package ar.edu.itba.paw.persistance;
 
 import ar.edu.itba.paw.model.Order;
+import ar.edu.itba.paw.model.OrderType;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 public interface OrderDao {
-    Order create(long orderTypeId, long restaurantId, long userId);
+    Order create(OrderType orderType, long restaurantId, long userId);
 
     Optional<Order> getById(long orderId);
 
     List<Order> getByUser(long userId, long restaurantId);
 
-    List<Order> getByOrderTypeAndRestaurant(long orderTypeId, long restaurantId);
+    List<Order> getByOrderTypeAndRestaurant(OrderType orderType, long restaurantId);
 
     List<Order> getByRestaurant(long restaurantId);
 

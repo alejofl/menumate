@@ -2,6 +2,7 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.model.OrderItem;
+import ar.edu.itba.paw.model.OrderType;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import org.junit.Assert;
 import org.junit.Before;
@@ -42,8 +43,7 @@ public class OrderJdbcDaoTest {
     private static final String USERNAME = "UsuarioCopado33";
     private static final String PASSWORD = "ElSecretoDeVictoria";
     private static final String EMAIL = "usuario@copado.com";
-    private static final long ORDER_TYPE_ID = 1;
-    private static final String ORDER_TYPE_NAME = "Takeout";
+    private static final OrderType ORDER_TYPE = OrderType.DINE_IN;
     private static final long PRODUCT_ID = 212;
     private static final String PRODUCT_NAME = "Pepinito con sal";
     private static final double PRODUCT_PRICE = 533.55;
@@ -55,31 +55,30 @@ public class OrderJdbcDaoTest {
     @Before
     public void setup() {
         jdbcTemplate = new JdbcTemplate(ds);
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, "order_types", "restaurants", "users", "orders");
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, "restaurants", "users", "orders");
         jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email) VALUES (" + RESTAURANT_ID + ", '" + RESTAURANT_NAME + "', '" + RESTAURANT_EMAIL + "')");
         jdbcTemplate.execute("INSERT INTO users (user_id, username, password, email) VALUES (" + USER_ID + ", '" + USERNAME + "', '" + PASSWORD + "', '" + EMAIL + "')");
-        jdbcTemplate.execute("INSERT INTO order_types (order_type_id, name) VALUES (" + ORDER_TYPE_ID + ", '" + ORDER_TYPE_NAME + "')");
         jdbcTemplate.execute("INSERT INTO categories (category_id, restaurant_id, name, order_num) VALUES (" + CATEGORY_ID + ", " + RESTAURANT_ID + ", '" + CATEGORY_NAME + "', " + CATEGORY_ORDER + ")");
         jdbcTemplate.execute("INSERT INTO products(product_id, category_id, name, price) VALUES (" + PRODUCT_ID + ", " + CATEGORY_ID + ", '" + PRODUCT_NAME + "', " + PRODUCT_PRICE + ")");
     }
 
     @Test
     public void testCreation() throws SQLException {
-        Order order = orderJdbcDao.create(ORDER_TYPE_ID, RESTAURANT_ID, USER_ID);
-        Assert.assertEquals(ORDER_TYPE_ID, order.getOrderType().getOrderTypeId());
+        Order order = orderJdbcDao.create(ORDER_TYPE, RESTAURANT_ID, USER_ID);
+        Assert.assertEquals(ORDER_TYPE, order.getOrderType());
         Assert.assertEquals(RESTAURANT_ID, order.getRestaurant().getRestaurantId());
         Assert.assertEquals(USER_ID, order.getUser().getUserId());
     }
 
     @Test
     public void testFindOrdersById() throws SQLException {
-        jdbcTemplate.execute("INSERT INTO orders (order_id, restaurant_id, user_id, order_type_id) VALUES (" + ORDER_ID + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + ORDER_TYPE_ID + ")");
+        jdbcTemplate.execute("INSERT INTO orders (order_id, restaurant_id, user_id, order_type) VALUES (" + ORDER_ID + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + ORDER_TYPE.ordinal() + ")");
         Optional<Order> order = orderJdbcDao.getById(ORDER_ID);
         Assert.assertTrue(order.isPresent());
         Assert.assertEquals(ORDER_ID, order.get().getOrderId());
         Assert.assertEquals(RESTAURANT_ID, order.get().getRestaurant().getRestaurantId());
         Assert.assertEquals(USER_ID, order.get().getUser().getUserId());
-        Assert.assertEquals(ORDER_TYPE_ID, order.get().getOrderType().getOrderTypeId());
+        Assert.assertEquals(ORDER_TYPE, order.get().getOrderType());
         Assert.assertNotNull(order.get().getDateOrdered());
     }
 
@@ -87,7 +86,7 @@ public class OrderJdbcDaoTest {
     public void testFindOrdersByUserId() throws SQLException {
         int iters = 10;
         for (int i = 0; i < iters; i++) {
-            jdbcTemplate.execute("INSERT INTO orders (order_id, restaurant_id, user_id, order_type_id) VALUES (" + i + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + ORDER_TYPE_ID + ")");
+            jdbcTemplate.execute("INSERT INTO orders (order_id, restaurant_id, user_id, order_type) VALUES (" + i + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + ORDER_TYPE.ordinal() + ")");
             for (int j = 0; j < i; j++)
                 jdbcTemplate.execute("INSERT INTO order_items (order_id, product_id, line_number, quantity) VALUES (" + i + ", " + PRODUCT_ID + ", " + (j + 1) + ", " + (j + 2) + ")");
         }
@@ -110,7 +109,7 @@ public class OrderJdbcDaoTest {
             Assert.assertEquals(i, order.getOrderId());
             Assert.assertEquals(RESTAURANT_ID, order.getRestaurant().getRestaurantId());
             Assert.assertEquals(USER_ID, order.getUser().getUserId());
-            Assert.assertEquals(ORDER_TYPE_ID, order.getOrderType().getOrderTypeId());
+            Assert.assertEquals(ORDER_TYPE, order.getOrderType());
             Assert.assertNotNull(order.getDateOrdered());
         }
     }
@@ -119,7 +118,7 @@ public class OrderJdbcDaoTest {
     public void testFindOrdersByRestaurantId() throws SQLException {
         int iters = 10;
         for (int i = 1; i <= iters; i++) {
-            jdbcTemplate.execute("INSERT INTO orders (order_id, restaurant_id, user_id, order_type_id) VALUES (" + i + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + ORDER_TYPE_ID + ")");
+            jdbcTemplate.execute("INSERT INTO orders (order_id, restaurant_id, user_id, order_type) VALUES (" + i + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + ORDER_TYPE.ordinal() + ")");
         }
 
         List<Order> orders = orderJdbcDao.getByRestaurant(RESTAURANT_ID);
@@ -131,7 +130,7 @@ public class OrderJdbcDaoTest {
             Assert.assertEquals(i, orders.get(i - 1).getOrderId());
             Assert.assertEquals(RESTAURANT_ID, orders.get(i - 1).getRestaurant().getRestaurantId());
             Assert.assertEquals(USER_ID, orders.get(i - 1).getUser().getUserId());
-            Assert.assertEquals(ORDER_TYPE_ID, orders.get(i - 1).getOrderType().getOrderTypeId());
+            Assert.assertEquals(ORDER_TYPE, orders.get(i - 1).getOrderType());
             Assert.assertNotNull(orders.get(i - 1).getDateOrdered());
         }
     }
@@ -140,10 +139,10 @@ public class OrderJdbcDaoTest {
     public void testFindOrdersByOrderTypeId() throws SQLException {
         int iters = 10;
         for (int i = 1; i <= iters; i++) {
-            jdbcTemplate.execute("INSERT INTO orders (order_id, restaurant_id, user_id, order_type_id) VALUES (" + i + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + ORDER_TYPE_ID + ")");
+            jdbcTemplate.execute("INSERT INTO orders (order_id, restaurant_id, user_id, order_type) VALUES (" + i + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + ORDER_TYPE.ordinal() + ")");
         }
 
-        List<Order> orders = orderJdbcDao.getByOrderTypeAndRestaurant(RESTAURANT_ID, ORDER_TYPE_ID);
+        List<Order> orders = orderJdbcDao.getByOrderTypeAndRestaurant(ORDER_TYPE, RESTAURANT_ID);
 
         Assert.assertNotNull(orders);
         Assert.assertEquals(iters, orders.size());
@@ -152,7 +151,7 @@ public class OrderJdbcDaoTest {
             Assert.assertEquals(i, orders.get(i - 1).getOrderId());
             Assert.assertEquals(RESTAURANT_ID, orders.get(i - 1).getRestaurant().getRestaurantId());
             Assert.assertEquals(USER_ID, orders.get(i - 1).getUser().getUserId());
-            Assert.assertEquals(ORDER_TYPE_ID, orders.get(i - 1).getOrderType().getOrderTypeId());
+            Assert.assertEquals(ORDER_TYPE, orders.get(i - 1).getOrderType());
             Assert.assertNotNull(orders.get(i - 1).getDateOrdered());
         }
     }
@@ -161,7 +160,7 @@ public class OrderJdbcDaoTest {
     public void testFindOrdersByOrderDate() throws SQLException {
         int iters = 10;
         for (int i = 1; i <= iters; i++) {
-            jdbcTemplate.execute("INSERT INTO orders (order_id, restaurant_id, user_id, order_type_id) VALUES (" + i + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + ORDER_TYPE_ID + ")");
+            jdbcTemplate.execute("INSERT INTO orders (order_id, restaurant_id, user_id, order_type) VALUES (" + i + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + ORDER_TYPE.ordinal() + ")");
         }
 
         List<Order> orders = orderJdbcDao.getByRestaurantOrderedBetweenDates(RESTAURANT_ID, LocalDateTime.now().minusYears(1), LocalDateTime.now().plusYears(1));
@@ -173,7 +172,7 @@ public class OrderJdbcDaoTest {
             Assert.assertEquals(i, orders.get(i - 1).getOrderId());
             Assert.assertEquals(RESTAURANT_ID, orders.get(i - 1).getRestaurant().getRestaurantId());
             Assert.assertEquals(USER_ID, orders.get(i - 1).getUser().getUserId());
-            Assert.assertEquals(ORDER_TYPE_ID, orders.get(i - 1).getOrderType().getOrderTypeId());
+            Assert.assertEquals(ORDER_TYPE, orders.get(i - 1).getOrderType());
             Assert.assertNotNull(orders.get(i - 1).getDateOrdered());
         }
     }
@@ -183,7 +182,7 @@ public class OrderJdbcDaoTest {
         long count = Arrays.stream(ADDRESSES).filter(str -> str.equals(ADDRESS)).count();
 
         for (int i = 1; i <= ADDRESSES.length; i++) {
-            jdbcTemplate.execute("INSERT INTO orders (order_id, restaurant_id, user_id, order_type_id, address) VALUES (" + i + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + ORDER_TYPE_ID + ", '" + ADDRESSES[i - 1] + "')");
+            jdbcTemplate.execute("INSERT INTO orders (order_id, restaurant_id, user_id, order_type, address) VALUES (" + i + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + ORDER_TYPE.ordinal() + ", '" + ADDRESSES[i - 1] + "')");
         }
 
         List<Order> orders = orderJdbcDao.getByRestaurantAndAddress(RESTAURANT_ID, ADDRESS);
@@ -193,7 +192,7 @@ public class OrderJdbcDaoTest {
         for (int i = 0; i < count; i++) {
             Assert.assertEquals(RESTAURANT_ID, orders.get(i).getRestaurant().getRestaurantId());
             Assert.assertEquals(USER_ID, orders.get(i).getUser().getUserId());
-            Assert.assertEquals(ORDER_TYPE_ID, orders.get(i).getOrderType().getOrderTypeId());
+            Assert.assertEquals(ORDER_TYPE, orders.get(i).getOrderType());
             Assert.assertNotNull(orders.get(i).getDateOrdered());
             Assert.assertEquals(ADDRESS, orders.get(i).getAddress());
         }
@@ -204,7 +203,7 @@ public class OrderJdbcDaoTest {
         long count = Arrays.stream(TABLE_NUMBERS).filter(num -> num.equals(TABLE_NUMBER)).count();
 
         for (int i = 1; i < TABLE_NUMBERS.length + 1; i++) {
-            jdbcTemplate.execute("INSERT INTO orders (order_id, restaurant_id, user_id, order_type_id, table_number) VALUES (" + i + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + ORDER_TYPE_ID + ", '" + TABLE_NUMBERS[i - 1] + "')");
+            jdbcTemplate.execute("INSERT INTO orders (order_id, restaurant_id, user_id, order_type, table_number) VALUES (" + i + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + ORDER_TYPE.ordinal() + ", '" + TABLE_NUMBERS[i - 1] + "')");
         }
 
         List<Order> orders = orderJdbcDao.getByRestaurantAndTableNumber(RESTAURANT_ID, TABLE_NUMBER);
@@ -214,7 +213,7 @@ public class OrderJdbcDaoTest {
         for (int i = 0; i < count; i++) {
             Assert.assertEquals(RESTAURANT_ID, orders.get(i).getRestaurant().getRestaurantId());
             Assert.assertEquals(USER_ID, orders.get(i).getUser().getUserId());
-            Assert.assertEquals(ORDER_TYPE_ID, orders.get(i).getOrderType().getOrderTypeId());
+            Assert.assertEquals(ORDER_TYPE, orders.get(i).getOrderType());
             Assert.assertNotNull(orders.get(i).getDateOrdered());
             Assert.assertEquals(TABLE_NUMBER, orders.get(i).getTableNumber());
         }
@@ -222,13 +221,13 @@ public class OrderJdbcDaoTest {
 
     @Test
     public void testUpdateAddress() throws SQLException {
-        jdbcTemplate.execute("INSERT INTO orders (order_id, restaurant_id, user_id, order_type_id, address) VALUES (" + ORDER_ID + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + ORDER_TYPE_ID + ", '" + ADDRESS + "')");
+        jdbcTemplate.execute("INSERT INTO orders (order_id, restaurant_id, user_id, order_type, address) VALUES (" + ORDER_ID + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + ORDER_TYPE.ordinal() + ", '" + ADDRESS + "')");
         Assert.assertTrue(orderJdbcDao.updateAddress(ORDER_ID, "newAddress"));
     }
 
     @Test
     public void testUpdateTableNumber() throws SQLException {
-        jdbcTemplate.execute("INSERT INTO orders (order_id, restaurant_id, user_id, order_type_id, table_number) VALUES (" + ORDER_ID + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + ORDER_TYPE_ID + ", '" + TABLE_NUMBER + "')");
+        jdbcTemplate.execute("INSERT INTO orders (order_id, restaurant_id, user_id, order_type, table_number) VALUES (" + ORDER_ID + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + ORDER_TYPE.ordinal() + ", '" + TABLE_NUMBER + "')");
         Assert.assertTrue(orderJdbcDao.updateTableNumber(ORDER_ID, TABLE_NUMBER + 10));
     }
 }

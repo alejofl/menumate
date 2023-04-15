@@ -35,7 +35,7 @@ class Extractors {
                 }
 
                 orderId = currentOrderId;
-                orderType = RowMappers.ORDER_TYPE_ROW_MAPPER.mapRow(rs, 1);
+                orderType = OrderType.values()[rs.getInt("order_type")];
                 restaurant = RowMappers.RESTAURANT_ROW_MAPPER.mapRow(rs, 1);
                 user = RowMappers.USER_ROW_MAPPER.mapRow(rs, 1);
                 dateOrdered = RowMappers.timestampToLocalDateTimeOrNull(rs.getTimestamp("order_date_ordered"));

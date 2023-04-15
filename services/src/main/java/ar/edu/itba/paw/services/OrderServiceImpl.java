@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.model.Order;
+import ar.edu.itba.paw.model.OrderType;
 import ar.edu.itba.paw.persistance.OrderDao;
 import ar.edu.itba.paw.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +18,8 @@ public class OrderServiceImpl implements OrderService {
     private OrderDao orderDao;
 
     @Override
-    public Order create(long orderTypeId, long restaurantId, long userId) {
-        return orderDao.create(orderTypeId, restaurantId, userId);
+    public Order create(OrderType orderType, long restaurantId, long userId) {
+        return orderDao.create(orderType, restaurantId, userId);
     }
 
     @Override
@@ -52,8 +53,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> getByOrderType(long restaurantId, long orderTypeId) {
-        return orderDao.getByOrderTypeAndRestaurant(restaurantId, orderTypeId);
+    public List<Order> getByOrderTypeAndRestaurant(OrderType orderType, long restaurantId) {
+        return orderDao.getByOrderTypeAndRestaurant(orderType, restaurantId);
     }
 
     @Override
