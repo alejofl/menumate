@@ -65,7 +65,7 @@ public class OrderJdbcDao implements OrderDao {
         for (OrderItem item : items) {
             final Map<String, Object> orderItemData = new HashMap<>();
             orderItemData.put("order_id", orderId);
-            orderItemData.put("product_id", item.getProduct());
+            orderItemData.put("product_id", item.getProduct().getProductId());
             orderItemData.put("line_number", item.getLineNumber());
             orderItemData.put("quantity", item.getQuantity());
             orderItemData.put("comment", item.getComment());
