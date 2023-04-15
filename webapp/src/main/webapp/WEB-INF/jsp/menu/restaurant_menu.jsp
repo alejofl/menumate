@@ -87,13 +87,14 @@
                 </form>
             </div>
             <div class="modal-footer">
+                <input>
                 <button type="button" id="add-item-to-cart-add" class="btn btn-primary" data-bs-dismiss="modal">Add Item to Cart ($500)</button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Checkout Modal -->
+<!-- CheckOut Modal -->
 <div class="modal fade" id="checkout" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
