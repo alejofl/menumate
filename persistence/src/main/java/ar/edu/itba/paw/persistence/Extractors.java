@@ -9,9 +9,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Extractors {
+class Extractors {
 
-    public static final ResultSetExtractor<List<Order>> ORDER_EXTRACTOR = (ResultSet rs) -> {
+    static final ResultSetExtractor<List<Order>> ORDER_EXTRACTOR = (ResultSet rs) -> {
         List<Order> orders = new ArrayList<>();
 
         boolean isFirst = true;
@@ -47,6 +47,7 @@ public class Extractors {
                 isFirst = false;
             }
 
+            rs.getLong("product_id");
             if (!rs.wasNull())
                 items.add(RowMappers.ORDER_ITEM_ROW_MAPPER.mapRow(rs, 1));
         }
