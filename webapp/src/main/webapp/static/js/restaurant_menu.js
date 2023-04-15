@@ -1,4 +1,4 @@
-cart = [];
+let cartIndex = 0;
 
 function changeInputValue(id, value) {
     document.querySelector(`#${id}`).value = value;
@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let cartModalTitle = document.querySelector("#add-item-to-cart-title");
     let cartModalDescription = document.querySelector("#add-item-to-cart-description");
     let cartModalButton = document.querySelector("#add-item-to-cart-add");
+    let cartItemsContainer = document.querySelector("#checkout-cart-items");
 
     // Fill modal for every menu item
     document.querySelectorAll(".menu-item-card-button").forEach((value) => {
@@ -59,7 +60,12 @@ document.addEventListener("DOMContentLoaded", () => {
             "price": cartModalQuantity.value * parseInt(event.target.dataset.infoUnitPrice),
             "comments": cartModalComments.value
         };
-        cart.push(item);
+        cartItemsContainer.innerHTML += `
+            <input type="hidden" name="cart[${cartIndex}].productId" value="${event.target.dataset.infoId}"/>
+            <input type="hidden" name="cart[${cartIndex}].quantity" value="${parseInt(cartModalQuantity.value)}"/>
+            <input type="hidden" name="cart[${cartIndex}].comment" value="${cartModalComments.value}"/>
+        `;
+        cartIndex++;
         document.querySelector("#cart-container").innerHTML += `
             <li class="list-group-item">
                 <div class="cart-item">
@@ -84,10 +90,5 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             value.classList.add("active");
         });
-    });
-
-    // Place Order
-    document.querySelector("#checkout-button").addEventListener("click", () => {
-        // TODO
     });
 });
