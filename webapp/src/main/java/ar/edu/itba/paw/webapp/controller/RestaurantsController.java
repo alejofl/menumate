@@ -2,7 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.service.*;
-import ar.edu.itba.paw.webapp.exception.NoRestaurantFoundException;
+import ar.edu.itba.paw.webapp.exception.IllegalOrderTypeException;
 import ar.edu.itba.paw.webapp.exception.RestaurantNotFoundException;
 import ar.edu.itba.paw.webapp.form.CartItem;
 import ar.edu.itba.paw.webapp.form.CheckoutForm;
@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -29,8 +30,6 @@ public class RestaurantsController {
     private OrderService orderService;
     @Autowired
     private UserService userService;
-    @Autowired
-    private EmailService emailService;
 
     @RequestMapping(value = "/restaurants/{id:\\d+}", method = RequestMethod.GET)
     public ModelAndView restaurantMenu(@PathVariable final long id, @ModelAttribute("checkoutForm") final CheckoutForm form) {
@@ -55,43 +54,42 @@ public class RestaurantsController {
             return restaurantMenu(id, form);
         }
 
-        User user = userService.createIfNotExists(form.getName(), form.getEmail());
+        User user = userService.createIfNotExists(form.getEmail(), form.getName());
 
         List<OrderItem> items = new ArrayList<>();
         for (int i = 0; i < form.getCart().size(); i++) {
             CartItem cartItem = form.getCart().get(i);
             items.add(orderService.createOrderItem(cartItem.getProductId(), i, cartItem.getQuantity(), cartItem.getComment()));
         }
+
+        Order order;
         switch (form.getOrderType()) {
             case DINE_IN:
-                orderService.createDineIn(form.getRestaurantId(), form.getName(), form.getEmail(), form.getTableNumber(), items);
+                order = orderService.createDineIn(form.getRestaurantId(), form.getName(), form.getEmail(), form.getTableNumber(), items);
                 break;
             case TAKEAWAY:
-                orderService.createTakeAway(form.getRestaurantId(), form.getName(), form.getEmail(), items);
+                order = orderService.createTakeAway(form.getRestaurantId(), form.getName(), form.getEmail(), items);
                 break;
             case DELIVERY:
-                orderService.createDelivery(form.getRestaurantId(), form.getName(), form.getEmail(), form.getAddress(), items);
+                order = orderService.createDelivery(form.getRestaurantId(), form.getName(), form.getEmail(), form.getAddress(), items);
                 break;
+            default:
+                throw new IllegalOrderTypeException("Order type not supported");
+        }
+        // FIXME: how do we handle this?
+        try{
+            userService.sendOrderConfirmation(user, order);
+        } catch (MessagingException e) {
+            e.printStackTrace();
         }
 
-        final ModelAndView mav = new ModelAndView("redirect:/thankyou");
-        mav.addObject("userEmail", form.getEmail());
-        mav.addObject("userName", form.getName());
-        mav.addObject("restaurantEmail", restaurantService.getById(form.getRestaurantId()).orElseThrow(NoRestaurantFoundException::new));
+        // restaurantService.sendOrderConfirmation(order, user);
 
-        return mav;
+        return new ModelAndView("redirect:/thankyou");
     }
 
     @RequestMapping("/thankyou")
     public ModelAndView thankYou(HttpServletRequest request) {
-        String userEmail = request.getParameter("userEmail");
-        String userName = request.getParameter("userName");
-        String restaurantEmail = request.getParameter("restaurantEmail");
-        // Send Email to user
-        emailService.sendEmail(userEmail, restaurantEmail, "Pedido recibido", "Gracias por tu pedido, " + userName + "!");
-
-        //Send Email to restaurant
-
         return new ModelAndView("menu/thankyou");
     }
 }

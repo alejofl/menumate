@@ -1,8 +1,6 @@
 package ar.edu.itba.paw.services;
 
-import ar.edu.itba.paw.model.Category;
-import ar.edu.itba.paw.model.Product;
-import ar.edu.itba.paw.model.Restaurant;
+import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.persistance.ProductDao;
 import ar.edu.itba.paw.persistance.RestaurantDao;
 import ar.edu.itba.paw.service.RestaurantService;
@@ -64,5 +62,10 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Override
     public boolean delete(long restaurantId) {
         return restaurantDao.delete(restaurantId);
+    }
+
+    @Override
+    public void sendOrderConfirmation(Order order, User user) {
+        // TODO
     }
 }

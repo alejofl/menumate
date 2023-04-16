@@ -21,6 +21,11 @@
       <artifactId>models</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <!-- Mailing dependencies -->
+    <dependency>
+      <groupId>com.sun.mail</groupId>
+      <artifactId>javax.mail</artifactId>
+    </dependency>
   </dependencies>
 
   <build>

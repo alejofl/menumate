@@ -1,7 +1,9 @@
 package ar.edu.itba.paw.service;
 
+import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.model.User;
 
+import javax.mail.MessagingException;
 import java.util.Optional;
 
 public interface UserService {
@@ -12,4 +14,6 @@ public interface UserService {
     Optional<User> getById(long userId);
 
     User createIfNotExists(String email, String name);
+
+    void sendOrderConfirmation(User user, Order order) throws MessagingException;
 }
