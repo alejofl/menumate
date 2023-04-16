@@ -67,7 +67,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Override
     public double getOrderPrice(Order order) {
         return order.getItems().stream()
-                .mapToDouble(item -> item.getProduct().getPrice())
+                .mapToDouble(item -> item.getProduct().getPrice() * item.getQuantity())
                 .sum();
     }
 }
