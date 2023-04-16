@@ -1,9 +1,15 @@
 package ar.edu.itba.paw.service;
 
+import ar.edu.itba.paw.model.Order;
+import ar.edu.itba.paw.model.Restaurant;
+import ar.edu.itba.paw.model.User;
+
 import javax.mail.MessagingException;
 import java.util.Map;
 
 public interface EmailService {
 
-    void sendMessageUsingThymeleafTemplate(String template, String to, String subject, Map<String, Object> params) throws MessagingException;
+    void sendUserOrderConfirmation(User user, Order order) throws MessagingException;
+
+    void sendRestaurantOrderConfirmation(Restaurant restaurant, Order order) throws MessagingException;
 }

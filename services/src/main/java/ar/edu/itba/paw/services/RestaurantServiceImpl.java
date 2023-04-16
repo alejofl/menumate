@@ -65,7 +65,9 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public void sendOrderConfirmation(Order order, User user) {
-        // TODO
+    public double getOrderPrice(Order order) {
+        return order.getItems().stream()
+                .mapToDouble(item -> item.getProduct().getPrice() * item.getQuantity())
+                .sum();
     }
 }

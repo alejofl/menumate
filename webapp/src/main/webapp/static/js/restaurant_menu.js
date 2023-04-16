@@ -1,4 +1,5 @@
 let cartIndex = 0;
+let cart = [];
 
 function changeInputValue(id, value) {
     document.querySelector(`#${id}`).value = value;
@@ -20,7 +21,8 @@ document.addEventListener("DOMContentLoaded", () => {
             cartModalButton.setAttribute("data-info-unit-price", value.dataset.infoPrice);
             cartModalButton.setAttribute("data-info-title", value.dataset.infoTitle);
             cartModalButton.setAttribute("data-info-id", value.dataset.infoId);
-            cartModalButton.innerHTML = `Add Item to Cart ($${value.dataset.infoPrice})`
+            cartModalButton.innerHTML = `Add Item to Cart ($${value.dataset.infoPrice})`;
+
         });
     });
 
@@ -67,6 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <input type="hidden" name="cart[${cartIndex}].comment" value="${cartModalComments.value}"/>
         `;
         cartIndex++;
+        cart.push(item);
         document.querySelector("#cart-container").innerHTML += `
             <li class="list-group-item">
                 <div class="cart-item">
@@ -79,6 +82,14 @@ document.addEventListener("DOMContentLoaded", () => {
             </li>
         `;
         document.querySelector("#place-order-button").disabled = false;
+    });
+
+    // Place Order Price
+    document.querySelector("#place-order-button").addEventListener("click", (event) => {
+        let price = cart.reduce(function (result, item) {
+            return result + item.price;
+        }, 0);
+        document.querySelector(`#checkout-button`).value = `Place Order ($${price})`;
     });
 
     // Order Type Selector (FIXME this values are hardcoded)
