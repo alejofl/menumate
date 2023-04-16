@@ -28,15 +28,6 @@ public class UserJdbcDao implements UserDao {
     }
 
     @Override
-    public Optional<User> getById(long userId) {
-        return jdbcTemplate.query(
-                "SELECT " + TableFields.USERS_FIELDS + " FROM users WHERE user_id = ?",
-                RowMappers.USER_ROW_MAPPER,
-                userId
-        ).stream().findFirst();
-    }
-
-    @Override
     public User create(String username, String password, String name, String email) {
         final Map<String, Object> userData = new HashMap<>();
         userData.put("username", username);
@@ -47,4 +38,19 @@ public class UserJdbcDao implements UserDao {
         final long userId = jdbcInsert.executeAndReturnKey(userData).longValue();
         return new User(userId, username, password, name, email);
     }
+
+    @Override
+    public Optional<User> getById(long userId) {
+        return jdbcTemplate.query(
+                "SELECT " + TableFields.USERS_FIELDS + " FROM users WHERE user_id = ?",
+                RowMappers.USER_ROW_MAPPER,
+                userId
+        ).stream().findFirst();
+    }
+
+    @Override
+    public Optional<User> getByEmail(String email) {
+        return jdbcTemplate.query("SELECT " + TableFields.USERS_FIELDS + " FROM users WHERE email = ?", RowMappers.USER_ROW_MAPPER, email).stream().findFirst();
+    }
 }
+

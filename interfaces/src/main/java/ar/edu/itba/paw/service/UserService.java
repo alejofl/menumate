@@ -7,6 +7,8 @@ import java.util.Optional;
 public interface UserService {
     User create(String username, String password, String name, String email);
 
+    Optional<User> getByEmail(String email);
+
     Optional<User> getById(long userId);
 
     User createIfNotExists(String email, String name);

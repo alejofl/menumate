@@ -55,6 +55,20 @@ public class UserJdbcDaoTest {
     }
 
     @Test
+    public void testFindByEmail() throws SQLException {
+        jdbcTemplate.execute("INSERT INTO users (user_id, username, password, name, email) VALUES (" + ID + ", '" + USERNAME + "', '" + PASSWORD + "', '" + NAME + "', '" + EMAIL + "')");
+
+        Optional<User> maybeUser = userDao.getByEmail(EMAIL);
+
+        Assert.assertTrue(maybeUser.isPresent());
+        Assert.assertEquals(ID, maybeUser.get().getUserId());
+        Assert.assertEquals(USERNAME, maybeUser.get().getUsername());
+        Assert.assertEquals(PASSWORD, maybeUser.get().getPassword());
+        Assert.assertEquals(NAME, maybeUser.get().getName());
+        Assert.assertEquals(EMAIL, maybeUser.get().getEmail());
+    }
+
+    @Test
     public void testFindByIdDoesNotExist() throws SQLException {
         Optional<User> maybeUser = userDao.getById(ID);
         Assert.assertFalse(maybeUser.isPresent());

@@ -1,10 +1,9 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import ar.edu.itba.paw.model.Category;
-import ar.edu.itba.paw.model.Product;
-import ar.edu.itba.paw.model.Restaurant;
+import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.webapp.exception.RestaurantNotFoundException;
+import ar.edu.itba.paw.webapp.form.CartItem;
 import ar.edu.itba.paw.webapp.form.CheckoutForm;
 import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -25,6 +25,8 @@ public class RestaurantsController {
     private RestaurantService restaurantService;
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private UserService userService;
 
     @RequestMapping(value = "/restaurants/{id:\\d+}", method = RequestMethod.GET)
     public ModelAndView restaurantMenu(@PathVariable final long id, @ModelAttribute("checkoutForm") final CheckoutForm form) {
@@ -41,16 +43,36 @@ public class RestaurantsController {
 
     @RequestMapping(value = "/restaurants/{id:\\d+}", method = RequestMethod.POST)
     public ModelAndView restaurantMenu(
-        @PathVariable final long id,
-        @Valid @ModelAttribute("checkoutForm") final CheckoutForm form,
-        final BindingResult errors
+            @PathVariable final long id,
+            @Valid @ModelAttribute("checkoutForm") final CheckoutForm form,
+            final BindingResult errors
     ) {
         if (errors.hasErrors()) {
             return restaurantMenu(id, form);
         }
 
-//        orderService.create()
+        User user = userService.createIfNotExists(form.getName(), form.getEmail());
+        List<OrderItem> items = new ArrayList<>();
+        for (int i = 0; i < form.getCart().size(); i++) {
+            CartItem cartItem = form.getCart().get(i);
+            items.add(orderService.createOrderItem(cartItem.getProductId(), i, cartItem.getQuantity(), cartItem.getComment()));
+        }
+        switch (form.getOrderType()) {
+            case DINE_IN:
+                orderService.createDineIn(form.getRestaurantId(), form.getName(), form.getEmail(), form.getTableNumber(), items);
+                break;
+            case TAKEAWAY:
+                orderService.createTakeAway(form.getRestaurantId(), form.getName(), form.getEmail(), items);
+                break;
+            case DELIVERY:
+                orderService.createDelivery(form.getRestaurantId(), form.getName(), form.getEmail(), form.getAddress(), items);
+                break;
+        }
+        return thankYou();
+    }
 
-        return new ModelAndView("redirect:/");
+    @RequestMapping("/thankyou")
+    public ModelAndView thankYou() {
+        return new ModelAndView("menu/thankyou");
     }
 }

@@ -15,11 +15,6 @@ public class UserServiceImpl implements UserService {
     private UserDao userDao;
 
     @Override
-    public Optional<User> getById(long userId) {
-        return userDao.getById(userId);
-    }
-
-    @Override
     public User create(String username, String password, String name, String email) {
         // TODO: validate username/ password
         // TODO: send email validation mail
@@ -27,7 +22,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Optional<User> getByEmail(String email) {
+        return userDao.getByEmail(email);
+    }
+
+    @Override
+    public Optional<User> getById(long userId) {
+        return userDao.getById(userId);
+    }
+
+    @Override
     public User createIfNotExists(String email, String name) {
-        return null;
+        Optional<User> user = this.getByEmail(email);
+        return user.orElseGet(() -> this.create(null, null, name, email));
     }
 }

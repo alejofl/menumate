@@ -3,6 +3,7 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.model.OrderItem;
 import ar.edu.itba.paw.model.OrderType;
+import ar.edu.itba.paw.model.Product;
 import ar.edu.itba.paw.persistance.OrderDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -71,25 +72,6 @@ public class OrderJdbcDao implements OrderDao {
             orderItemData.put("comment", item.getComment());
             jdbcInsertOrderItem.execute(orderItemData);
         }
-    }
-
-    // DineIn
-    @Override
-    public Order create(OrderType orderType, long restaurantId, long userId, int tableNumber, List<OrderItem> items) {
-        return this.create(orderType, restaurantId, userId, null, tableNumber, items);
-    }
-
-    // Takeaway
-    @Override
-    public Order create(OrderType orderType, long restaurantId, long userId, List<OrderItem> items) {
-        return this.create(orderType, restaurantId, userId, null, null, items);
-    }
-
-
-    // Delivery
-    @Override
-    public Order create(OrderType orderType, long restaurantId, long userId, String address, List<OrderItem> items) {
-        return this.create(orderType, restaurantId, userId, address, null, items);
     }
 
     @Override
@@ -174,5 +156,29 @@ public class OrderJdbcDao implements OrderDao {
     @Override
     public boolean delete(long orderId) {
         return jdbcTemplate.update("DELETE FROM orders WHERE order_id = ?", orderId) > 0;
+    }
+
+    // DineIn
+    @Override
+    public Order create(OrderType orderType, long restaurantId, long userId, int tableNumber, List<OrderItem> items) {
+        return this.create(orderType, restaurantId, userId, null, tableNumber, items);
+    }
+
+    // Takeaway
+    @Override
+    public Order create(OrderType orderType, long restaurantId, long userId, List<OrderItem> items) {
+        return this.create(orderType, restaurantId, userId, null, null, items);
+    }
+
+
+    // Delivery
+    @Override
+    public Order create(OrderType orderType, long restaurantId, long userId, String address, List<OrderItem> items) {
+        return this.create(orderType, restaurantId, userId, address, null, items);
+    }
+
+    @Override
+    public OrderItem createOrderItem(Product product, int lineNumber, int quantity, String comment) {
+        return new OrderItem(product, lineNumber, quantity, comment);
     }
 }
