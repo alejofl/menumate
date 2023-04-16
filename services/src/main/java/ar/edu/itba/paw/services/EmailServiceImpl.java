@@ -14,10 +14,10 @@ public class EmailServiceImpl implements EmailService {
     private JavaMailSender emailSender;
 
     @Override
-    public void sendEmail(String to, String subject, String body) {
+    public void sendEmail(String to, String from, String subject, String body) {
 
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("somebody@gmail.com");
+        message.setFrom(from);
         message.setTo(to);
         message.setText(body);
         emailSender.send(message);

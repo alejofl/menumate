@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.service.*;
+import ar.edu.itba.paw.webapp.exception.NoRestaurantFoundException;
 import ar.edu.itba.paw.webapp.exception.RestaurantNotFoundException;
 import ar.edu.itba.paw.webapp.form.CartItem;
 import ar.edu.itba.paw.webapp.form.CheckoutForm;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +29,8 @@ public class RestaurantsController {
     private OrderService orderService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private EmailService emailService;
 
     @RequestMapping(value = "/restaurants/{id:\\d+}", method = RequestMethod.GET)
     public ModelAndView restaurantMenu(@PathVariable final long id, @ModelAttribute("checkoutForm") final CheckoutForm form) {
@@ -52,6 +56,7 @@ public class RestaurantsController {
         }
 
         User user = userService.createIfNotExists(form.getName(), form.getEmail());
+
         List<OrderItem> items = new ArrayList<>();
         for (int i = 0; i < form.getCart().size(); i++) {
             CartItem cartItem = form.getCart().get(i);
@@ -68,11 +73,25 @@ public class RestaurantsController {
                 orderService.createDelivery(form.getRestaurantId(), form.getName(), form.getEmail(), form.getAddress(), items);
                 break;
         }
-        return thankYou();
+
+        final ModelAndView mav = new ModelAndView("redirect:/thankyou");
+        mav.addObject("userEmail", form.getEmail());
+        mav.addObject("userName", form.getName());
+        mav.addObject("restaurantEmail", restaurantService.getById(form.getRestaurantId()).orElseThrow(NoRestaurantFoundException::new));
+
+        return mav;
     }
 
     @RequestMapping("/thankyou")
-    public ModelAndView thankYou() {
+    public ModelAndView thankYou(HttpServletRequest request) {
+        String userEmail = request.getParameter("userEmail");
+        String userName = request.getParameter("userName");
+        String restaurantEmail = request.getParameter("restaurantEmail");
+        // Send Email to user
+        emailService.sendEmail(userEmail, restaurantEmail, "Pedido recibido", "Gracias por tu pedido, " + userName + "!");
+
+        //Send Email to restaurant
+
         return new ModelAndView("menu/thankyou");
     }
 }
