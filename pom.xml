@@ -17,9 +17,12 @@
     <junit.version>4.13.2</junit.version>
     <mockito.version>2.25.1</mockito.version>
     <hsqldb.version>2.3.1</hsqldb.version>
+    <thymeleaf.version>3.0.12.RELEASE</thymeleaf.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
+    <javax.validation-api.version>1.0.0.GA</javax.validation-api.version>
+    <org.hibernate-validator.version>4.3.1.Final</org.hibernate-validator.version>
   </properties>
 
   <dependencyManagement>
@@ -72,6 +75,19 @@
         <artifactId>javax.mail</artifactId>
         <version>${javax.mail.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.thymeleaf</groupId>
+        <artifactId>thymeleaf</artifactId>
+        <version>${thymeleaf.version}</version>
+        <scope>compile</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.thymeleaf</groupId>
+        <artifactId>thymeleaf-spring4</artifactId>
+        <version>${thymeleaf.version}</version>
+        <scope>compile</scope>
+      </dependency>
+
 
       <!-- Testing dependencies -->
       <dependency>
@@ -97,6 +113,18 @@
         <artifactId>hsqldb</artifactId>
         <version>${hsqldb.version}</version>
         <scope>test</scope>
+      </dependency>
+
+      <!-- JSR 303 API and implementation -->
+      <dependency>
+        <groupId>javax.validation</groupId>
+        <artifactId>validation-api</artifactId>
+        <version>${javax.validation-api.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-validator</artifactId>
+        <version>${org.hibernate-validator.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

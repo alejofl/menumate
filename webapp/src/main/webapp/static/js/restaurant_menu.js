@@ -1,4 +1,4 @@
-cart = [];
+let cartIndex = 0;
 
 function changeInputValue(id, value) {
     document.querySelector(`#${id}`).value = value;
@@ -9,15 +9,17 @@ document.addEventListener("DOMContentLoaded", () => {
     let cartModalTitle = document.querySelector("#add-item-to-cart-title");
     let cartModalDescription = document.querySelector("#add-item-to-cart-description");
     let cartModalButton = document.querySelector("#add-item-to-cart-add");
+    let cartItemsContainer = document.querySelector("#checkout-cart-items");
 
     // Fill modal for every menu item
     document.querySelectorAll(".menu-item-card-button").forEach((value) => {
         value.addEventListener("click", () => {
-            cartModalHeader.style.setProperty("--image", value.dataset.infoImage);
+            cartModalHeader.style.setProperty("--image", `url(${value.dataset.infoImage})`);
             cartModalTitle.innerHTML = value.dataset.infoTitle;
             cartModalDescription.innerHTML = value.dataset.infoDescription;
             cartModalButton.setAttribute("data-info-unit-price", value.dataset.infoPrice);
             cartModalButton.setAttribute("data-info-title", value.dataset.infoTitle);
+            cartModalButton.setAttribute("data-info-id", value.dataset.infoId);
             cartModalButton.innerHTML = `Add Item to Cart ($${value.dataset.infoPrice})`
         });
     });
@@ -59,7 +61,12 @@ document.addEventListener("DOMContentLoaded", () => {
             "price": cartModalQuantity.value * parseInt(event.target.dataset.infoUnitPrice),
             "comments": cartModalComments.value
         };
-        cart.push(item);
+        cartItemsContainer.innerHTML += `
+            <input type="hidden" name="cart[${cartIndex}].productId" value="${event.target.dataset.infoId}"/>
+            <input type="hidden" name="cart[${cartIndex}].quantity" value="${parseInt(cartModalQuantity.value)}"/>
+            <input type="hidden" name="cart[${cartIndex}].comment" value="${cartModalComments.value}"/>
+        `;
+        cartIndex++;
         document.querySelector("#cart-container").innerHTML += `
             <li class="list-group-item">
                 <div class="cart-item">
@@ -74,6 +81,17 @@ document.addEventListener("DOMContentLoaded", () => {
         document.querySelector("#place-order-button").disabled = false;
     });
 
+    // Order Type Selector (FIXME this values are hardcoded)
+    document.querySelector("#checkout-dinein-tab").addEventListener("click", () => {
+        document.querySelector("#checkout-order-type").value = 0;
+    });
+    document.querySelector("#checkout-takeaway-tab").addEventListener("click", () => {
+        document.querySelector("#checkout-order-type").value = 1;
+    });
+    document.querySelector("#checkout-delivery-tab").addEventListener("click", () => {
+        document.querySelector("#checkout-order-type").value = 2;
+    });
+
     // Auto-Scroll
     document.querySelectorAll(".category-item").forEach((value) => {
         value.addEventListener("click", () => {
@@ -84,10 +102,5 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             value.classList.add("active");
         });
-    });
-
-    // Place Order
-    document.querySelector("#checkout-button").addEventListener("click", () => {
-        // TODO
     });
 });

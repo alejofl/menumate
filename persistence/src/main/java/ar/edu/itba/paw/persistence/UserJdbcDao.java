@@ -23,8 +23,20 @@ public class UserJdbcDao implements UserDao {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsert = new SimpleJdbcInsert(ds)
                 .withTableName("users")
-                .usingColumns("username", "password", "email", "image_id")
+                .usingColumns("username", "password", "name", "email", "image_id")
                 .usingGeneratedKeyColumns("user_id");
+    }
+
+    @Override
+    public User create(String username, String password, String name, String email) {
+        final Map<String, Object> userData = new HashMap<>();
+        userData.put("username", username);
+        userData.put("password", password);
+        userData.put("name", name);
+        userData.put("email", email);
+
+        final long userId = jdbcInsert.executeAndReturnKey(userData).longValue();
+        return new User(userId, username, password, name, email);
     }
 
     @Override
@@ -37,13 +49,8 @@ public class UserJdbcDao implements UserDao {
     }
 
     @Override
-    public User create(String username, String password, String email) {
-        final Map<String, Object> userData = new HashMap<>();
-        userData.put("username", username);
-        userData.put("password", password);
-        userData.put("email", email);
-
-        final long userId = jdbcInsert.executeAndReturnKey(userData).longValue();
-        return new User(userId, username, password, email);
+    public Optional<User> getByEmail(String email) {
+        return jdbcTemplate.query("SELECT " + TableFields.USERS_FIELDS + " FROM users WHERE email = ?", RowMappers.USER_ROW_MAPPER, email).stream().findFirst();
     }
 }
+

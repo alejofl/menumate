@@ -1,9 +1,14 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.model.Order;
+import ar.edu.itba.paw.model.User;
+import ar.edu.itba.paw.model.Product;
+import ar.edu.itba.paw.model.OrderItem;
 import ar.edu.itba.paw.model.OrderType;
 import ar.edu.itba.paw.persistance.OrderDao;
 import ar.edu.itba.paw.service.OrderService;
+import ar.edu.itba.paw.service.ProductService;
+import ar.edu.itba.paw.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,13 +18,54 @@ import java.util.Optional;
 
 @Service
 public class OrderServiceImpl implements OrderService {
-
     @Autowired
     private OrderDao orderDao;
 
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private ProductService productService;
+
+    private long getUserId(String name, String email){
+        return userService.createIfNotExists(name, email).getUserId();
+    }
+
     @Override
-    public Order create(OrderType orderType, long restaurantId, long userId) {
-        return orderDao.create(orderType, restaurantId, userId);
+    public Order createDelivery(long restaurantId, long userId, String address, List<OrderItem> items) {
+        return orderDao.create(OrderType.DELIVERY, restaurantId, userId, address, items);
+    }
+
+    @Override
+    public Order createDelivery(long restaurantId, String name, String email, String address, List<OrderItem> items) {
+        return orderDao.create(OrderType.DELIVERY, restaurantId, getUserId(name, email), address, items);
+    }
+
+    @Override
+    public Order createDineIn(long restaurantId, long userId, int tableNumber, List<OrderItem> items) {
+        return orderDao.create(OrderType.DINE_IN, restaurantId, userId, tableNumber, items);
+    }
+
+    @Override
+    public Order createDineIn(long restaurantId, String name, String email, int tableNumber, List<OrderItem> items) {
+        return orderDao.create(OrderType.DINE_IN, restaurantId, getUserId(name, email), tableNumber, items);
+    }
+
+    @Override
+    public Order createTakeAway(long restaurantId, long userId, List<OrderItem> items) {
+        return orderDao.create(OrderType.DELIVERY, restaurantId, userId, items);
+    }
+
+    @Override
+    public Order createTakeAway(long restaurantId, String name, String email, List<OrderItem> items) {
+        return orderDao.create(OrderType.DELIVERY, restaurantId, getUserId(name, email), items);
+    }
+
+
+    @Override
+    public OrderItem createOrderItem(long productId, int lineNumber, int quantity, String comment) {
+        Product product = productService.getById(productId).orElseThrow(() -> new IllegalArgumentException("Invalid product id"));
+        return orderDao.createOrderItem(product, lineNumber, quantity, comment);
     }
 
     @Override
@@ -71,4 +117,5 @@ public class OrderServiceImpl implements OrderService {
     public boolean delete(long orderId) {
         return orderDao.delete(orderId);
     }
+
 }

@@ -22,9 +22,6 @@ public class HomeController {
     private UserService userService;
 
     @Autowired
-    private EmailService emailService;
-
-    @Autowired
     private RestaurantService restaurantService;
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
@@ -53,14 +50,9 @@ public class HomeController {
             @RequestParam(value = "password", required = true) final String password,
             @RequestParam(value = "email", required = true) final String email
     ) {
-        final User user = userService.create(username, password, email);
+        final User user = userService.create(username, password, "ivan", email);
         final ModelAndView mav = new ModelAndView("helloworld/index");
         mav.addObject("user", user);
         return mav;
-    }
-
-    @RequestMapping(value = "/email")
-    public void email() {
-        emailService.sendEmail("ivan.chayer@sabf.org.ar", "Hello", "Hello World");
     }
 }

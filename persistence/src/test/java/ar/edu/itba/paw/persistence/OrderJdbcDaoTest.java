@@ -1,8 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.model.Order;
-import ar.edu.itba.paw.model.OrderItem;
-import ar.edu.itba.paw.model.OrderType;
+import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import org.junit.Assert;
 import org.junit.Before;
@@ -17,9 +15,10 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
@@ -42,6 +41,7 @@ public class OrderJdbcDaoTest {
     private static final long USER_ID = 71823;
     private static final String USERNAME = "UsuarioCopado33";
     private static final String PASSWORD = "ElSecretoDeVictoria";
+    private static final String NAME = "pepito";
     private static final String EMAIL = "usuario@copado.com";
     private static final OrderType ORDER_TYPE = OrderType.DINE_IN;
     private static final long PRODUCT_ID = 212;
@@ -50,24 +50,127 @@ public class OrderJdbcDaoTest {
     private static final long CATEGORY_ID = 12421;
     private static final String CATEGORY_NAME = "Postgres Dulces";
     private static final int CATEGORY_ORDER = 10;
-
+    private List<OrderItem> orderItemList;
 
     @Before
     public void setup() {
         jdbcTemplate = new JdbcTemplate(ds);
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, "restaurants", "users", "orders");
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, "restaurants", "users", "orders", "products", "categories", "order_items");
         jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email) VALUES (" + RESTAURANT_ID + ", '" + RESTAURANT_NAME + "', '" + RESTAURANT_EMAIL + "')");
-        jdbcTemplate.execute("INSERT INTO users (user_id, username, password, email) VALUES (" + USER_ID + ", '" + USERNAME + "', '" + PASSWORD + "', '" + EMAIL + "')");
+        jdbcTemplate.execute("INSERT INTO users (user_id, username, password, email, name) VALUES (" + USER_ID + ", '" + USERNAME + "', '" + PASSWORD + "', '" + EMAIL + "', '" + NAME + "')");
         jdbcTemplate.execute("INSERT INTO categories (category_id, restaurant_id, name, order_num) VALUES (" + CATEGORY_ID + ", " + RESTAURANT_ID + ", '" + CATEGORY_NAME + "', " + CATEGORY_ORDER + ")");
         jdbcTemplate.execute("INSERT INTO products(product_id, category_id, name, price) VALUES (" + PRODUCT_ID + ", " + CATEGORY_ID + ", '" + PRODUCT_NAME + "', " + PRODUCT_PRICE + ")");
+        orderItemList = new ArrayList<>();
+    }
+
+    private void createRandomItemList(int orderType) {
+
+        Order order = mock(Order.class);
+        when(order.getOrderId()).thenReturn(ORDER_ID);
+        when(order.getOrderType()).thenReturn(OrderType.values()[orderType]);
+        when(order.getRestaurant()).thenReturn(mock(Restaurant.class));
+        when(order.getRestaurant().getRestaurantId()).thenReturn(RESTAURANT_ID);
+        when(order.getUser()).thenReturn(mock(User.class));
+        when(order.getUser().getUserId()).thenReturn(USER_ID);
+        jdbcTemplate.execute("INSERT INTO orders(order_id, order_type, restaurant_id, user_id, address, table_number) VALUES (" + ORDER_ID + ", " + orderType + ", " + RESTAURANT_ID + ", " + USER_ID + ", '" + ADDRESS + "', " + TABLE_NUMBER + ")");
+
+        Category category = mock(Category.class);
+        when(category.getCategoryId()).thenReturn(CATEGORY_ID);
+        when(category.getRestaurant()).thenReturn(mock(Restaurant.class));
+        when(category.getRestaurant().getRestaurantId()).thenReturn(RESTAURANT_ID);
+        for (int i = 0; i < 10; i++) {
+            long product_id = PRODUCT_ID + i + 1;
+            long cateogry_id = CATEGORY_ID;
+            String product_name = PRODUCT_NAME + i + 1;
+            double product_price = PRODUCT_PRICE + i + 1;
+
+            jdbcTemplate.execute("INSERT INTO products(product_id, category_id, name, price) VALUES (" + product_id + ", " + cateogry_id + ", '" + product_name + "', " + product_price + ")");
+            Product product = new Product(product_id, category, product_name, product_price);
+
+            int line_number = i + 1;
+            OrderItem orderItem = new OrderItem(product, line_number, 10, "comment");
+            orderItemList.add(orderItem);
+            jdbcTemplate.execute("INSERT INTO order_items(order_id, product_id, line_number, quantity, comment) VALUES (" + ORDER_ID + ", " + product_id + ", " + line_number + ", " + 10 + ", '" + "comment" + "')");
+        }
     }
 
     @Test
-    public void testCreation() throws SQLException {
-        Order order = orderJdbcDao.create(ORDER_TYPE, RESTAURANT_ID, USER_ID);
+    public void testCreationDineIn() throws SQLException {
+        createRandomItemList(OrderType.DINE_IN.ordinal());
+        Order order = orderJdbcDao.create(ORDER_TYPE, RESTAURANT_ID, USER_ID, TABLE_NUMBER, orderItemList);
         Assert.assertEquals(ORDER_TYPE, order.getOrderType());
         Assert.assertEquals(RESTAURANT_ID, order.getRestaurant().getRestaurantId());
         Assert.assertEquals(USER_ID, order.getUser().getUserId());
+
+        // Testing ordered items
+        List<OrderItem> dataToTest = order.getItems();
+        Assert.assertEquals(orderItemList.size(), dataToTest.size());
+        boolean present = true;
+        for(OrderItem orderItem : orderItemList){
+            Assert.assertTrue(present);
+            present = false;
+            for(OrderItem data : dataToTest){
+                if(orderItem.getProduct().getProductId() == data.getProduct().getProductId()){
+                    Assert.assertEquals(orderItem.getComment(), data.getComment());
+                    Assert.assertEquals(orderItem.getQuantity(), data.getQuantity());
+                    Assert.assertEquals(orderItem.getLineNumber(), data.getLineNumber());
+                    present = true;
+                }
+            }
+        }
+    }
+
+    @Test
+    public void testCreationTakeaway() throws SQLException {
+        createRandomItemList(OrderType.TAKEAWAY.ordinal());
+        Order order = orderJdbcDao.create(ORDER_TYPE, RESTAURANT_ID, USER_ID, orderItemList);
+        Assert.assertEquals(ORDER_TYPE, order.getOrderType());
+        Assert.assertEquals(RESTAURANT_ID, order.getRestaurant().getRestaurantId());
+        Assert.assertEquals(USER_ID, order.getUser().getUserId());
+
+        // Testing ordered items
+        List<OrderItem> dataToTest = order.getItems();
+        Assert.assertEquals(orderItemList.size(), dataToTest.size());
+        boolean present = true;
+        for(OrderItem orderItem : orderItemList){
+            Assert.assertTrue(present);
+            present = false;
+            for(OrderItem data : dataToTest){
+                if(orderItem.getProduct().getProductId() == data.getProduct().getProductId()){
+                    Assert.assertEquals(orderItem.getComment(), data.getComment());
+                    Assert.assertEquals(orderItem.getQuantity(), data.getQuantity());
+                    Assert.assertEquals(orderItem.getLineNumber(), data.getLineNumber());
+                    present = true;
+                }
+            }
+        }
+    }
+
+    @Test
+    public void testCreationDelivery() throws SQLException {
+        createRandomItemList(OrderType.DELIVERY.ordinal());
+        Order order = orderJdbcDao.create(ORDER_TYPE, RESTAURANT_ID, USER_ID, ADDRESS, orderItemList);
+        Assert.assertEquals(ORDER_TYPE, order.getOrderType());
+        Assert.assertEquals(RESTAURANT_ID, order.getRestaurant().getRestaurantId());
+        Assert.assertEquals(USER_ID, order.getUser().getUserId());
+        Assert.assertEquals(ADDRESS, order.getAddress());
+
+        // Testing ordered items
+        List<OrderItem> dataToTest = order.getItems();
+        Assert.assertEquals(orderItemList.size(), dataToTest.size());
+        boolean present = true;
+        for(OrderItem orderItem : orderItemList){
+            Assert.assertTrue(present);
+            present = false;
+            for(OrderItem data : dataToTest){
+                if(orderItem.getProduct().getProductId() == data.getProduct().getProductId()){
+                    Assert.assertEquals(orderItem.getComment(), data.getComment());
+                    Assert.assertEquals(orderItem.getQuantity(), data.getQuantity());
+                    Assert.assertEquals(orderItem.getLineNumber(), data.getLineNumber());
+                    present = true;
+                }
+            }
+        }
     }
 
     @Test

@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix = "fn" uri = "http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <html>
@@ -44,9 +45,11 @@
                 </div>
                 <c:forEach var="product" items="${entry.value}">
                     <jsp:include page="/WEB-INF/jsp/components/menu_item_card.jsp">
-                        <jsp:param name="name" value="${product.name}"/>
-                        <jsp:param name="description" value="${product.description}"/>
-                        <jsp:param name="price" value="${product.price}"/>
+                        <jsp:param name="product_imageId" value="${product.imageId}"/>
+                        <jsp:param name="product_productId" value="${product.productId}"/>
+                        <jsp:param name="product_name" value="${product.name}"/>
+                        <jsp:param name="product_description" value="${product.description}"/>
+                        <jsp:param name="product_price" value="${product.price}"/>
                     </jsp:include>
                 </c:forEach>
             </c:forEach>
@@ -68,12 +71,12 @@
 <div class="modal fade" id="add-item-to-cart" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content" id="add-item-to-cart-header">
-            <div class="modal-header" style="--image: url(/static/pictures/milanga.jpg)">
+            <div class="modal-header">
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <h4 id="add-item-to-cart-title">Cheeseburger</h4>
-                <p id="add-item-to-cart-description">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo laudantium libero omnis pariatur quaerat qui quis sunt tempora totam! Distinctio dolorem error modi quia tenetur unde. Corporis eum odit officiis!</p>
+                <h4 id="add-item-to-cart-title"></h4>
+                <p id="add-item-to-cart-description"></p>
                 <hr>
                 <form>
                     <div class="input-group">
@@ -93,7 +96,7 @@
     </div>
 </div>
 
-<!-- Checkout Modal -->
+<!-- CheckOut Modal -->
 <div class="modal fade" id="checkout" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -101,45 +104,54 @@
                 <h1 class="modal-title fs-5">Checkout</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
+            <c:url value="/restaurants/${restaurant.restaurantId}" var="checkout"/>
+            <form:form modelAttribute="checkoutForm" action="${checkout}" method="post" cssClass="needs-validation" id="checkout-form">
             <div class="modal-body">
-                <form>
-                    <div class="mb-3">
-                        <label for="checkout-name" class="form-label">Name</label>
-                        <input type="text" class="form-control" id="checkout-name">
+                <div class="mb-3">
+                    <form:label path="name" cssClass="form-label">Name</form:label>
+                    <form:input type="text" path="name" cssClass="form-control" id="checkout-name"/>
+                    <form:errors path="name" element="div"/>
+                </div>
+                <div class="mb-3">
+                    <form:label path="email" cssClass="form-label">Email Address</form:label>
+                    <form:input type="email" path="email" cssClass="form-control" id="checkout-email"/>
+                    <form:errors path="email" element="div"/>
+                </div>
+                <nav>
+                    <div class="nav nav-pills nav-fill mb-3" role="tablist">
+                        <button class="nav-link active" id="checkout-dinein-tab" data-bs-toggle="tab" data-bs-target="#checkout-dinein" type="button" role="tab">Dine-In</button>
+                        <button class="nav-link" id="checkout-takeaway-tab" data-bs-toggle="tab" data-bs-target="#checkout-takeaway" type="button" role="tab">Take-Away</button>
+                        <button class="nav-link" id="checkout-delivery-tab" data-bs-toggle="tab" data-bs-target="#checkout-delivery" type="button" role="tab">Delivery</button>
                     </div>
-                    <div class="mb-3">
-                        <label for="checkout-email" class="form-label">Email Address</label>
-                        <input type="email" class="form-control" id="checkout-email">
-                    </div>
-                    <nav>
-                        <div class="nav nav-pills nav-fill mb-3" role="tablist">
-                            <button class="nav-link active" id="checkout-dinein-tab" data-bs-toggle="tab" data-bs-target="#checkout-dinein" type="button" role="tab">Dine-In</button>
-                            <button class="nav-link" id="checkout-takeaway-tab" data-bs-toggle="tab" data-bs-target="#checkout-takeaway" type="button" role="tab">Take-Away</button>
-                            <button class="nav-link" id="checkout-delivery-tab" data-bs-toggle="tab" data-bs-target="#checkout-delivery" type="button" role="tab">Delivery</button>
-                        </div>
-                    </nav>
-                    <div class="tab-content">
-                        <div class="tab-pane fade show active" id="checkout-dinein" role="tabpanel" tabindex="0">
-                            <div class="mb-3">
-                                <label for="checkout-table-number" class="form-label">Table Number</label>
-                                <input type="number" class="form-control" id="checkout-table-number">
-                            </div>
-                        </div>
-                        <div class="tab-pane fade" id="checkout-takeaway" role="tabpanel" tabindex="0">
-                            <p>Your food will be ready for pickup on approximately <strong>20 minutes</strong>.</p>
-                        </div>
-                        <div class="tab-pane fade" id="checkout-delivery" role="tabpanel" tabindex="0">
-                            <div class="mb-3">
-                                <label for="checkout-address" class="form-label">Address</label>
-                                <input type="text" class="form-control" id="checkout-address">
-                            </div>
+                </nav>
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="checkout-dinein" role="tabpanel" tabindex="0">
+                        <div class="mb-3">
+                            <form:label path="tableNumber" cssClass="form-label">Table Number</form:label>
+                            <form:input type="number" path="tableNumber" cssClass="form-control" id="checkout-table-number"/>
+                            <form:errors path="tableNumber" element="div"/>
                         </div>
                     </div>
-                </form>
+                    <div class="tab-pane fade" id="checkout-takeaway" role="tabpanel" tabindex="0">
+                        <p>Your food will be ready for pickup on approximately <strong>20 minutes</strong>.</p>
+                    </div>
+                    <div class="tab-pane fade" id="checkout-delivery" role="tabpanel" tabindex="0">
+                        <div class="mb-3">
+                            <form:label path="address" cssClass="form-label">Address</form:label>
+                            <form:input type="text" path="address" cssClass="form-control" id="checkout-address"/>
+                            <form:errors path="address" element="div"/>
+                        </div>
+                    </div>
+                </div>
+                <div id="checkout-cart-items">
+                    <form:input path="restaurantId" type="hidden" value="${restaurant.restaurantId}"/>
+                    <form:input path="orderType" type="hidden" id="checkout-order-type" value="0"/>
+                </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" id="checkout-button">Place Order ($5000)</button>
+                <input type="submit" class="btn btn-primary" id="checkout-button" value="Place Order ($5000)"/>
             </div>
+            </form:form>
         </div>
     </div>
 </div>

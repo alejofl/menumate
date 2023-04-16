@@ -1,8 +1,6 @@
 package ar.edu.itba.paw.service;
 
-import ar.edu.itba.paw.model.Category;
-import ar.edu.itba.paw.model.Product;
-import ar.edu.itba.paw.model.Restaurant;
+import ar.edu.itba.paw.model.*;
 import javafx.util.Pair;
 
 import java.util.List;
@@ -19,4 +17,5 @@ public interface RestaurantService {
 
     boolean delete(long restaurantId);
 
+    void sendOrderConfirmation(Order order, User user);
 }

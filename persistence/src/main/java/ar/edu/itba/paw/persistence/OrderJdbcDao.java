@@ -1,7 +1,9 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.Order;
+import ar.edu.itba.paw.model.OrderItem;
 import ar.edu.itba.paw.model.OrderType;
+import ar.edu.itba.paw.model.Product;
 import ar.edu.itba.paw.persistance.OrderDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -23,27 +25,53 @@ public class OrderJdbcDao implements OrderDao {
     private static final String SelectEnd = " ORDER BY orders.order_id, order_items.line_number";
 
     private final JdbcTemplate jdbcTemplate;
-    private final SimpleJdbcInsert jdbcInsert;
+    private final SimpleJdbcInsert jdbcInsertOrder;
+    private final SimpleJdbcInsert jdbcInsertOrderItem;
+
 
     @Autowired
     public OrderJdbcDao(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
-        jdbcInsert = new SimpleJdbcInsert(ds)
+        jdbcInsertOrder = new SimpleJdbcInsert(ds)
                 .withTableName("orders")
                 .usingColumns("order_type", "restaurant_id", "user_id", "table_number", "address")
                 .usingGeneratedKeyColumns("order_id");
+        jdbcInsertOrderItem = new SimpleJdbcInsert(ds)
+                .withTableName("order_items")
+                .usingColumns("order_id", "product_id", "line_number", "quantity", "comment");
     }
 
-
-    @Override
-    public Order create(OrderType orderType, long restaurantId, long userId) {
+    private Order create(OrderType orderType, long restaurantId, long userId, String address, Integer tableNumber, List<OrderItem> items) {
         final Map<String, Object> orderData = new HashMap<>();
         orderData.put("order_type", orderType.ordinal());
         orderData.put("restaurant_id", restaurantId);
         orderData.put("user_id", userId);
-        final long orderId = jdbcInsert.executeAndReturnKey(orderData).longValue();
+
+        if (address != null) {
+            orderData.put("address", address);
+        }
+
+        if (tableNumber != null) {
+            orderData.put("tableNumber", tableNumber);
+        }
+
+        final long orderId = jdbcInsertOrder.executeAndReturnKey(orderData).longValue();
+
+        insertItems(items, orderId);
 
         return getById(orderId).get();
+    }
+
+    private void insertItems(List<OrderItem> items, long orderId) {
+        for (OrderItem item : items) {
+            final Map<String, Object> orderItemData = new HashMap<>();
+            orderItemData.put("order_id", orderId);
+            orderItemData.put("product_id", item.getProduct().getProductId());
+            orderItemData.put("line_number", item.getLineNumber());
+            orderItemData.put("quantity", item.getQuantity());
+            orderItemData.put("comment", item.getComment());
+            jdbcInsertOrderItem.execute(orderItemData);
+        }
     }
 
     @Override
@@ -128,5 +156,29 @@ public class OrderJdbcDao implements OrderDao {
     @Override
     public boolean delete(long orderId) {
         return jdbcTemplate.update("DELETE FROM orders WHERE order_id = ?", orderId) > 0;
+    }
+
+    // DineIn
+    @Override
+    public Order create(OrderType orderType, long restaurantId, long userId, int tableNumber, List<OrderItem> items) {
+        return this.create(orderType, restaurantId, userId, null, tableNumber, items);
+    }
+
+    // Takeaway
+    @Override
+    public Order create(OrderType orderType, long restaurantId, long userId, List<OrderItem> items) {
+        return this.create(orderType, restaurantId, userId, null, null, items);
+    }
+
+
+    // Delivery
+    @Override
+    public Order create(OrderType orderType, long restaurantId, long userId, String address, List<OrderItem> items) {
+        return this.create(orderType, restaurantId, userId, address, null, items);
+    }
+
+    @Override
+    public OrderItem createOrderItem(Product product, int lineNumber, int quantity, String comment) {
+        return new OrderItem(product, lineNumber, quantity, comment);
     }
 }

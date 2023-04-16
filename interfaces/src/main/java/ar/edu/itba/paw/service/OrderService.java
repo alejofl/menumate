@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.Order;
+import ar.edu.itba.paw.model.OrderItem;
 import ar.edu.itba.paw.model.OrderType;
 
 import java.time.LocalDateTime;
@@ -8,7 +9,19 @@ import java.util.List;
 import java.util.Optional;
 
 public interface OrderService {
-    Order create(OrderType orderType, long restaurantId, long userId);
+    Order createDelivery(long restaurantId, long userId, String address, List<OrderItem> items);
+
+    Order createDelivery(long restaurantId, String name, String email, String address, List<OrderItem> items);
+
+    Order createDineIn(long restaurantId, long userId, int tableNumber, List<OrderItem> items);
+
+    Order createDineIn(long restaurantId, String name, String email, int tableNumber, List<OrderItem> items);
+
+    Order createTakeAway(long restaurantId, long userId, List<OrderItem> items);
+
+    Order createTakeAway(long restaurantId, String name, String email, List<OrderItem> items);
+
+    OrderItem createOrderItem(long productId, int i, int quantity, String comment);
 
     Optional<Order> getById(long orderId);
 

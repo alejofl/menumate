@@ -17,6 +17,7 @@ class RowMappers {
             rs.getLong("user_id"),
             rs.getString("user_username"),
             rs.getString("user_password"),
+            rs.getString("user_name"),
             rs.getString("user_email")
     );
 
