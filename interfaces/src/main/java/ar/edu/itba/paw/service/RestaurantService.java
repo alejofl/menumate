@@ -17,5 +17,5 @@ public interface RestaurantService {
 
     boolean delete(long restaurantId);
 
-    void sendOrderConfirmation(Order order, User user);
+    double getOrderPrice(Order order);
 }

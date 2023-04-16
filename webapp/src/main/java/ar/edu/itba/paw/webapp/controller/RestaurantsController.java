@@ -30,6 +30,8 @@ public class RestaurantsController {
     private OrderService orderService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private EmailService emailService;
 
     @RequestMapping(value = "/restaurants/{id:\\d+}", method = RequestMethod.GET)
     public ModelAndView restaurantMenu(@PathVariable final long id, @ModelAttribute("checkoutForm") final CheckoutForm form) {
@@ -77,14 +79,15 @@ public class RestaurantsController {
                 throw new IllegalOrderTypeException("Order type not supported");
         }
         // FIXME: how do we handle this?
-        try{
-            userService.sendOrderConfirmation(user, order);
+        try {
+            emailService.sendUserOrderConfirmation(user, order);
+            emailService.sendRestaurantOrderConfirmation(
+                    restaurantService.getById(form.getRestaurantId()).orElseThrow(RestaurantNotFoundException::new),
+                    order
+            );
         } catch (MessagingException e) {
             e.printStackTrace();
         }
-
-        // restaurantService.sendOrderConfirmation(order, user);
-
         return new ModelAndView("redirect:/thankyou");
     }
 

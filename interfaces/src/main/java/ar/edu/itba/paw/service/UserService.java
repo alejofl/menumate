@@ -14,6 +14,4 @@ public interface UserService {
     Optional<User> getById(long userId);
 
     User createIfNotExists(String email, String name);
-
-    void sendOrderConfirmation(User user, Order order) throws MessagingException;
 }

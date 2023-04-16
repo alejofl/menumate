@@ -15,12 +15,8 @@ import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
-
     @Autowired
     private UserDao userDao;
-
-    @Autowired
-    private EmailService emailService;
 
     @Override
     public User create(String username, String password, String name, String email) {
@@ -43,14 +39,5 @@ public class UserServiceImpl implements UserService {
     public User createIfNotExists(String email, String name) {
         Optional<User> user = this.getByEmail(email);
         return user.orElseGet(() -> this.create(null, null, name, email));
-    }
-
-    @Override
-    public void sendOrderConfirmation(User user, Order order) throws MessagingException{
-        final Map<String, Object> params = new HashMap<>();
-        params.put("recipientName", user.getName());
-        params.put("orderId", order.getOrderId());
-        params.put("senderName", order.getRestaurant().getName());
-        emailService.sendMessageUsingThymeleafTemplate("template-thymeleaf", user.getEmail(), "Order confirmation", params);
     }
 }
