@@ -65,19 +65,17 @@ public class RestaurantsController {
         }
 
         Order order;
-        switch (form.getOrderType()) {
-            case DINE_IN:
-                order = orderService.createDineIn(form.getRestaurantId(), form.getName(), form.getEmail(), form.getTableNumber(), items);
-                break;
-            case TAKEAWAY:
-                order = orderService.createTakeAway(form.getRestaurantId(), form.getName(), form.getEmail(), items);
-                break;
-            case DELIVERY:
-                order = orderService.createDelivery(form.getRestaurantId(), form.getName(), form.getEmail(), form.getAddress(), items);
-                break;
-            default:
-                throw new IllegalOrderTypeException("Order type not supported");
+        int orderType = form.getOrderType();
+        if (orderType == OrderType.DINE_IN.ordinal()) {
+            order = orderService.createDineIn(form.getRestaurantId(), form.getName(), form.getEmail(), form.getTableNumber(), items);
+        } else if (orderType == OrderType.TAKEAWAY.ordinal()) {
+            order = orderService.createTakeAway(form.getRestaurantId(), form.getName(), form.getEmail(), items);
+        } else if (orderType == OrderType.DELIVERY.ordinal()) {
+            order = orderService.createDelivery(form.getRestaurantId(), form.getName(), form.getEmail(), form.getAddress(), items);
+        } else {
+            throw new IllegalOrderTypeException("Order type not supported");
         }
+
         // FIXME: how do we handle this?
         try {
             emailService.sendUserOrderConfirmation(user, order);

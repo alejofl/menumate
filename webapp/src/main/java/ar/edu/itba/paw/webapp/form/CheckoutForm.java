@@ -15,11 +15,11 @@ public class CheckoutForm {
     @Email
     @NotNull
     private String email;
-    @Min(1)
+    @Min(0)
     private int tableNumber;
     private String address;
     @NotNull
-    private OrderType orderType;
+    private int orderType;
     @NotNull
     private int restaurantId;
     @NotNull
@@ -37,7 +37,7 @@ public class CheckoutForm {
         return address;
     }
 
-    public OrderType getOrderType() {
+    public int getOrderType() {
         return orderType;
     }
 
@@ -70,11 +70,7 @@ public class CheckoutForm {
     }
 
     public void setOrderType(int orderType) {
-        this.orderType = Arrays
-                .stream(OrderType.values())
-                .filter(order -> order.ordinal() == orderType)
-                .findFirst()
-                .orElse(null);
+        this.orderType = orderType;
     }
 
     public void setRestaurantId(int restaurantId) {

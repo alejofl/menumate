@@ -17,12 +17,14 @@
           <c:url var="homeUrl" value="/"/>
           <a class="nav-link active" aria-current="page" href="${homeUrl}">Home</a>
         </li>
+        <!--
         <li class="nav-item">
           <a class="nav-link disabled" href="#">My Orders</a>
         </li>
         <li class="nav-item">
           <a class="nav-link disabled" href="#">My Profile</a>
         </li>
+        -->
       </ul>
     </div>
 </nav>

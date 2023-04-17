@@ -25,7 +25,7 @@
                     <p>${restaurant.description}</p>
                 </c:when>
                 <c:otherwise>
-                    <p><i>Este restaurante no posee una descripción</i></p>
+                    <p><i>This restaurant does not have a description</i></p>
                 </c:otherwise>
             </c:choose>
         </div>
