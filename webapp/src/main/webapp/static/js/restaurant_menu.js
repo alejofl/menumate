@@ -33,13 +33,13 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelector("#add-item-to-cart-minus").addEventListener("click", () => {
         if (cartModalQuantity.value >= 2) {
             cartModalQuantity.value--;
-            let price = parseInt(cartModalButton.dataset.infoUnitPrice);
+            let price = parseFloat(cartModalButton.dataset.infoUnitPrice);
             cartModalButton.innerHTML = `Add Item to Cart ($${price * cartModalQuantity.value})`
         }
     });
     document.querySelector("#add-item-to-cart-plus").addEventListener("click", () => {
         cartModalQuantity.value++;
-        let price = parseInt(cartModalButton.dataset.infoUnitPrice);
+        let price = parseFloat(cartModalButton.dataset.infoUnitPrice);
         cartModalButton.innerHTML = `Add Item to Cart ($${price * cartModalQuantity.value})`
     });
 
@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let item = {
             "title": event.target.dataset.infoTitle,
             "quantity": cartModalQuantity.value,
-            "price": cartModalQuantity.value * parseInt(event.target.dataset.infoUnitPrice),
+            "price": cartModalQuantity.value * parseFloat(event.target.dataset.infoUnitPrice),
             "comments": cartModalComments.value
         };
         cartItemsContainer.innerHTML += `
