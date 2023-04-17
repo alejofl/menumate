@@ -4,7 +4,7 @@ import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.persistance.ProductDao;
 import ar.edu.itba.paw.persistance.RestaurantDao;
 import ar.edu.itba.paw.service.RestaurantService;
-import javafx.util.Pair;
+import ar.edu.itba.paw.model.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

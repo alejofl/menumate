@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.*;
-import javafx.util.Pair;
+import ar.edu.itba.paw.model.util.Pair;
 
 import java.util.List;
 import java.util.Optional;
