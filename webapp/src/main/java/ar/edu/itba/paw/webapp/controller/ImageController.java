@@ -21,7 +21,7 @@ public class ImageController {
     }
 
     @RequestMapping("/images/{id:\\d+}")
-    public ResponseEntity<byte[]> getImage(@PathVariable long id) {
+    public ResponseEntity<byte[]> getImage(@PathVariable int id) {
         byte[] array = imageService.getById(id).orElseThrow(ImageNotFoundException::new);
 
         HttpHeaders headers = new HttpHeaders();

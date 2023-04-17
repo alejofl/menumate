@@ -30,24 +30,24 @@ public class OrderJdbcDaoTest {
     @Autowired
     private OrderJdbcDao orderJdbcDao;
     private JdbcTemplate jdbcTemplate;
-    private static final long ORDER_ID = 8844;
+    private static final int ORDER_ID = 8844;
     private static final String ADDRESS = "Calle 123";
     private static final int TABLE_NUMBER = 11;
     private static final String[] ADDRESSES = {"Calle 123", "Calle 456", "Calle 789", "Calle 101112", "Calle 131415", "Calle 123"};
     private static final Integer[] TABLE_NUMBERS = {1, 2, 3, 4, 5, 6, 10, 10, 10, 11};
-    private static final long RESTAURANT_ID = 45123;
+    private static final int RESTAURANT_ID = 45123;
     private static final String RESTAURANT_NAME = "EmpanadasMorita";
     private static final String RESTAURANT_EMAIL = "ivawashere@email.com";
-    private static final long USER_ID = 71823;
+    private static final int USER_ID = 71823;
     private static final String USERNAME = "UsuarioCopado33";
     private static final String PASSWORD = "ElSecretoDeVictoria";
     private static final String NAME = "pepito";
     private static final String EMAIL = "usuario@copado.com";
     private static final OrderType ORDER_TYPE = OrderType.DINE_IN;
-    private static final long PRODUCT_ID = 212;
+    private static final int PRODUCT_ID = 212;
     private static final String PRODUCT_NAME = "Pepinito con sal";
     private static final double PRODUCT_PRICE = 533.55;
-    private static final long CATEGORY_ID = 12421;
+    private static final int CATEGORY_ID = 12421;
     private static final String CATEGORY_NAME = "Postgres Dulces";
     private static final int CATEGORY_ORDER = 10;
     private List<OrderItem> orderItemList;
@@ -79,8 +79,8 @@ public class OrderJdbcDaoTest {
         when(category.getRestaurant()).thenReturn(mock(Restaurant.class));
         when(category.getRestaurant().getRestaurantId()).thenReturn(RESTAURANT_ID);
         for (int i = 0; i < 10; i++) {
-            long product_id = PRODUCT_ID + i + 1;
-            long cateogry_id = CATEGORY_ID;
+            int product_id = PRODUCT_ID + i + 1;
+            int cateogry_id = CATEGORY_ID;
             String product_name = PRODUCT_NAME + i + 1;
             double product_price = PRODUCT_PRICE + i + 1;
 
@@ -282,7 +282,7 @@ public class OrderJdbcDaoTest {
 
     @Test
     public void testFindOrdersByAddress() throws SQLException {
-        long count = Arrays.stream(ADDRESSES).filter(str -> str.equals(ADDRESS)).count();
+        int count = (int) Arrays.stream(ADDRESSES).filter(str -> str.equals(ADDRESS)).count();
 
         for (int i = 1; i <= ADDRESSES.length; i++) {
             jdbcTemplate.execute("INSERT INTO orders (order_id, restaurant_id, user_id, order_type, address) VALUES (" + i + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + ORDER_TYPE.ordinal() + ", '" + ADDRESSES[i - 1] + "')");
@@ -303,7 +303,7 @@ public class OrderJdbcDaoTest {
 
     @Test
     public void testFindOrdersByTableNumber() throws SQLException {
-        long count = Arrays.stream(TABLE_NUMBERS).filter(num -> num.equals(TABLE_NUMBER)).count();
+        int count = (int) Arrays.stream(TABLE_NUMBERS).filter(num -> num.equals(TABLE_NUMBER)).count();
 
         for (int i = 1; i < TABLE_NUMBERS.length + 1; i++) {
             jdbcTemplate.execute("INSERT INTO orders (order_id, restaurant_id, user_id, order_type, table_number) VALUES (" + i + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + ORDER_TYPE.ordinal() + ", '" + TABLE_NUMBERS[i - 1] + "')");

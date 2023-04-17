@@ -29,8 +29,8 @@ public class CategoryJdbcDaoTest {
     private CategoryJdbcDao categoryDao;
 
     private JdbcTemplate jdbcTemplate;
-    private static final long CATEGORY_ID = 12421;
-    private static final long RESTAURANT_ID = 79874;
+    private static final int CATEGORY_ID = 12421;
+    private static final int RESTAURANT_ID = 79874;
     private static final String CATEGORY_NAME = "Postgres Dulces";
     private static final String RESTAURANT_NAME = "Cafe Mataderos";
     private static final String RESTAURANT_EMAIL = "pedro@frompedros.com";
@@ -93,7 +93,7 @@ public class CategoryJdbcDaoTest {
     public void testUpdateCategoryOrder() throws SQLException {
         jdbcTemplate.execute("INSERT INTO categories (category_id ,restaurant_id, name, order_num) VALUES (" + CATEGORY_ID + ", " + RESTAURANT_ID + ", '" + CATEGORY_NAME + "'," + ORDER + ")");
 
-        final long newOrder = ORDER + 1;
+        final int newOrder = ORDER + 1;
         Assert.assertTrue(categoryDao.updateOrder(CATEGORY_ID, ORDER + 1));
     }
 

@@ -2,29 +2,29 @@ package ar.edu.itba.paw.model;
 
 public class Product {
 
-    private final long productId;
+    private final int productId;
     private final Category category;
     private final String name;
     private String description;
-    private long imageId;
+    private int imageId;
     private final double price;
     private boolean available;
 
-    public Product(long productId, Category category, String name, double price) {
+    public Product(int productId, Category category, String name, double price) {
         this.productId = productId;
         this.category = category;
         this.name = name;
         this.price = price;
     }
 
-    public Product(long productId, Category category, String name, double price, String description, long imageId, boolean available) {
+    public Product(int productId, Category category, String name, double price, String description, int imageId, boolean available) {
         this(productId, category, name, price);
         this.description = description;
         this.imageId = imageId;
         this.available = available;
     }
 
-    public long getProductId() {
+    public int getProductId() {
         return productId;
     }
 
@@ -40,7 +40,7 @@ public class Product {
         return description;
     }
 
-    public long getImageId() {
+    public int getImageId() {
         return imageId;
     }
 

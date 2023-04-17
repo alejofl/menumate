@@ -31,18 +31,18 @@ public class ProductJdbcDao implements ProductDao {
     }
 
     @Override
-    public Product create(long categoryId, String name, double price) {
+    public Product create(int categoryId, String name, double price) {
         final Map<String, Object> productData = new HashMap<>();
         productData.put("category_id", categoryId);
         productData.put("name", name);
         productData.put("price", price);
 
-        final long productId = jdbcInsert.executeAndReturnKey(productData).longValue();
+        final int productId = jdbcInsert.executeAndReturnKey(productData).intValue();
         return getById(productId).get();
     }
 
     @Override
-    public Optional<Product> getById(long productId) {
+    public Optional<Product> getById(int productId) {
         return jdbcTemplate.query(
                 SelectBase + " WHERE products.product_id = ?",
                 RowMappers.PRODUCT_ROW_MAPPER,
@@ -51,7 +51,7 @@ public class ProductJdbcDao implements ProductDao {
     }
 
     @Override
-    public List<Product> getByCategory(long categoryId) {
+    public List<Product> getByCategory(int categoryId) {
         return jdbcTemplate.query(
                 SelectBase + " WHERE products.category_id = ?",
                 RowMappers.PRODUCT_ROW_MAPPER,
@@ -60,7 +60,7 @@ public class ProductJdbcDao implements ProductDao {
     }
 
     @Override
-    public List<Product> getByRestaurantOrderByCategoryOrder(long restaurantId) {
+    public List<Product> getByRestaurantOrderByCategoryOrder(int restaurantId) {
         return jdbcTemplate.query(
                 SelectBase + " WHERE restaurants.restaurant_id = ? ORDER BY categories.order_num",
                 RowMappers.PRODUCT_ROW_MAPPER,
@@ -69,17 +69,17 @@ public class ProductJdbcDao implements ProductDao {
     }
 
     @Override
-    public boolean updatePrice(long productId, double price) {
+    public boolean updatePrice(int productId, double price) {
         return jdbcTemplate.update("UPDATE products SET price = ? WHERE product_id = ?", price, productId) > 0;
     }
 
     @Override
-    public boolean updateName(long productId, String name) {
+    public boolean updateName(int productId, String name) {
         return jdbcTemplate.update("UPDATE products SET name = ? WHERE product_id = ?", name, productId) > 0;
     }
 
     @Override
-    public boolean delete(long productId) {
+    public boolean delete(int productId) {
         return jdbcTemplate.update("DELETE FROM products WHERE product_id = ?", productId) > 0;
     }
 

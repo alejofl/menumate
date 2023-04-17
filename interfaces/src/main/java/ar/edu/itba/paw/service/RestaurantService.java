@@ -9,13 +9,13 @@ import java.util.Optional;
 public interface RestaurantService {
     Restaurant create(String name, String email);
 
-    Optional<Restaurant> getById(long restaurantId);
+    Optional<Restaurant> getById(int restaurantId);
 
     List<Restaurant> getAll();
 
-    List<Pair<Category, List<Product>>> getMenu(long restaurantId);
+    List<Pair<Category, List<Product>>> getMenu(int restaurantId);
 
-    boolean delete(long restaurantId);
+    boolean delete(int restaurantId);
 
     double getOrderPrice(Order order);
 }

@@ -11,7 +11,7 @@ public interface UserService {
 
     Optional<User> getByEmail(String email);
 
-    Optional<User> getById(long userId);
+    Optional<User> getById(int userId);
 
     User createIfNotExists(String email, String name);
 }

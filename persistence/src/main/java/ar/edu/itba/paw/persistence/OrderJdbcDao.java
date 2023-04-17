@@ -41,7 +41,7 @@ public class OrderJdbcDao implements OrderDao {
                 .usingColumns("order_id", "product_id", "line_number", "quantity", "comment");
     }
 
-    private Order create(OrderType orderType, long restaurantId, long userId, String address, Integer tableNumber, List<OrderItem> items) {
+    private Order create(OrderType orderType, int restaurantId, int userId, String address, Integer tableNumber, List<OrderItem> items) {
         final Map<String, Object> orderData = new HashMap<>();
         orderData.put("order_type", orderType.ordinal());
         orderData.put("restaurant_id", restaurantId);
@@ -55,14 +55,14 @@ public class OrderJdbcDao implements OrderDao {
             orderData.put("tableNumber", tableNumber);
         }
 
-        final long orderId = jdbcInsertOrder.executeAndReturnKey(orderData).longValue();
+        final int orderId = jdbcInsertOrder.executeAndReturnKey(orderData).intValue();
 
         insertItems(items, orderId);
 
         return getById(orderId).get();
     }
 
-    private void insertItems(List<OrderItem> items, long orderId) {
+    private void insertItems(List<OrderItem> items, int orderId) {
         for (OrderItem item : items) {
             final Map<String, Object> orderItemData = new HashMap<>();
             orderItemData.put("order_id", orderId);
@@ -75,7 +75,7 @@ public class OrderJdbcDao implements OrderDao {
     }
 
     @Override
-    public Optional<Order> getById(long orderId) {
+    public Optional<Order> getById(int orderId) {
         return jdbcTemplate.query(
                 SelectBase + " WHERE orders.order_id = ?" + SelectEnd,
                 Extractors.ORDER_EXTRACTOR,
@@ -84,7 +84,7 @@ public class OrderJdbcDao implements OrderDao {
     }
 
     @Override
-    public List<Order> getByUser(long userId, long restaurantId) {
+    public List<Order> getByUser(int userId, int restaurantId) {
         return jdbcTemplate.query(
                 SelectBase + " WHERE orders.user_id = ? AND orders.restaurant_id = ?" + SelectEnd,
                 Extractors.ORDER_EXTRACTOR,
@@ -94,7 +94,7 @@ public class OrderJdbcDao implements OrderDao {
     }
 
     @Override
-    public List<Order> getByRestaurant(long restaurantId) {
+    public List<Order> getByRestaurant(int restaurantId) {
         return jdbcTemplate.query(
                 SelectBase + " WHERE orders.restaurant_id = ?" + SelectEnd,
                 Extractors.ORDER_EXTRACTOR,
@@ -103,7 +103,7 @@ public class OrderJdbcDao implements OrderDao {
     }
 
     @Override
-    public List<Order> getByOrderTypeAndRestaurant(OrderType orderType, long restaurantId) {
+    public List<Order> getByOrderTypeAndRestaurant(OrderType orderType, int restaurantId) {
         return jdbcTemplate.query(
                 SelectBase + " WHERE orders.order_type = ? AND orders.restaurant_id = ?" + SelectEnd,
                 Extractors.ORDER_EXTRACTOR,
@@ -113,7 +113,7 @@ public class OrderJdbcDao implements OrderDao {
     }
 
     @Override
-    public List<Order> getByRestaurantOrderedBetweenDates(long restaurantId, LocalDateTime start, LocalDateTime end) {
+    public List<Order> getByRestaurantOrderedBetweenDates(int restaurantId, LocalDateTime start, LocalDateTime end) {
         return jdbcTemplate.query(
                 SelectBase + " WHERE orders.date_ordered BETWEEN ? AND ? AND orders.restaurant_id = ?" + SelectEnd,
                 Extractors.ORDER_EXTRACTOR,
@@ -124,7 +124,7 @@ public class OrderJdbcDao implements OrderDao {
     }
 
     @Override
-    public List<Order> getByRestaurantAndAddress(long restaurantId, String address) {
+    public List<Order> getByRestaurantAndAddress(int restaurantId, String address) {
         return jdbcTemplate.query(
                 SelectBase + " WHERE orders.address = ? AND orders.restaurant_id = ?" + SelectEnd,
                 Extractors.ORDER_EXTRACTOR,
@@ -134,7 +134,7 @@ public class OrderJdbcDao implements OrderDao {
     }
 
     @Override
-    public List<Order> getByRestaurantAndTableNumber(long restaurantId, int tableNumber) {
+    public List<Order> getByRestaurantAndTableNumber(int restaurantId, int tableNumber) {
         return jdbcTemplate.query(
                 SelectBase + " WHERE orders.table_number = ? AND orders.restaurant_id = ?" + SelectEnd,
                 Extractors.ORDER_EXTRACTOR,
@@ -144,36 +144,36 @@ public class OrderJdbcDao implements OrderDao {
     }
 
     @Override
-    public boolean updateAddress(long orderId, String address) {
+    public boolean updateAddress(int orderId, String address) {
         return jdbcTemplate.update("UPDATE orders SET address = ? WHERE order_id = ?", address, orderId) > 0;
     }
 
     @Override
-    public boolean updateTableNumber(long orderId, int tableNumber) {
+    public boolean updateTableNumber(int orderId, int tableNumber) {
         return jdbcTemplate.update("UPDATE orders SET table_number = ? WHERE order_id = ?", tableNumber, orderId) > 0;
     }
 
     @Override
-    public boolean delete(long orderId) {
+    public boolean delete(int orderId) {
         return jdbcTemplate.update("DELETE FROM orders WHERE order_id = ?", orderId) > 0;
     }
 
     // DineIn
     @Override
-    public Order create(OrderType orderType, long restaurantId, long userId, int tableNumber, List<OrderItem> items) {
+    public Order create(OrderType orderType, int restaurantId, int userId, int tableNumber, List<OrderItem> items) {
         return this.create(orderType, restaurantId, userId, null, tableNumber, items);
     }
 
     // Takeaway
     @Override
-    public Order create(OrderType orderType, long restaurantId, long userId, List<OrderItem> items) {
+    public Order create(OrderType orderType, int restaurantId, int userId, List<OrderItem> items) {
         return this.create(orderType, restaurantId, userId, null, null, items);
     }
 
 
     // Delivery
     @Override
-    public Order create(OrderType orderType, long restaurantId, long userId, String address, List<OrderItem> items) {
+    public Order create(OrderType orderType, int restaurantId, int userId, String address, List<OrderItem> items) {
         return this.create(orderType, restaurantId, userId, address, null, items);
     }
 

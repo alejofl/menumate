@@ -16,32 +16,32 @@ public class CategoryServiceImpl implements CategoryService {
     private CategoryDao categoryDao;
 
     @Override
-    public Category create(long restaurantId, String name, int order) {
+    public Category create(int restaurantId, String name, int order) {
         return categoryDao.create(restaurantId, name, order);
     }
 
     @Override
-    public Optional<Category> getById(long categoryId) {
+    public Optional<Category> getById(int categoryId) {
         return categoryDao.getById(categoryId);
     }
 
     @Override
-    public List<Category> getByRestaurantSortedByOrder(long restaurantId) {
+    public List<Category> getByRestaurantSortedByOrder(int restaurantId) {
         return categoryDao.getByRestaurantSortedByOrder(restaurantId);
     }
 
     @Override
-    public boolean updateName(long categoryId, String name) {
+    public boolean updateName(int categoryId, String name) {
         return categoryDao.updateName(categoryId, name);
     }
 
     @Override
-    public boolean updateOrder(long categoryId, int order) {
+    public boolean updateOrder(int categoryId, int order) {
         return categoryDao.updateOrder(categoryId, order);
     }
 
     @Override
-    public boolean delete(long categoryId) {
+    public boolean delete(int categoryId) {
         return categoryDao.delete(categoryId);
     }
 }

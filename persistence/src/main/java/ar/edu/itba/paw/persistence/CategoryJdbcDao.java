@@ -30,18 +30,18 @@ public class CategoryJdbcDao implements CategoryDao {
     }
 
     @Override
-    public Category create(long restaurantId, String name, int order) {
+    public Category create(int restaurantId, String name, int order) {
         final Map<String, Object> categoryData = new HashMap<>();
         categoryData.put("restaurant_id", restaurantId);
         categoryData.put("name", name);
         categoryData.put("order_num", order);
 
-        final long categoryId = jdbcInsert.executeAndReturnKey(categoryData).longValue();
+        final int categoryId = jdbcInsert.executeAndReturnKey(categoryData).intValue();
         return getById(categoryId).get();
     }
 
     @Override
-    public Optional<Category> getById(long categoryId) {
+    public Optional<Category> getById(int categoryId) {
         return jdbcTemplate.query(
                 SelectBase + " WHERE categories.category_id = ?",
                 RowMappers.CATEGORY_ROW_MAPPER,
@@ -50,7 +50,7 @@ public class CategoryJdbcDao implements CategoryDao {
     }
 
     @Override
-    public List<Category> getByRestaurantSortedByOrder(long restaurantId) {
+    public List<Category> getByRestaurantSortedByOrder(int restaurantId) {
         return jdbcTemplate.query(
                 SelectBase + " WHERE categories.restaurant_id = ? ORDER BY categories.order_num",
                 RowMappers.CATEGORY_ROW_MAPPER,
@@ -59,17 +59,17 @@ public class CategoryJdbcDao implements CategoryDao {
     }
 
     @Override
-    public boolean updateName(long categoryId, String name) {
+    public boolean updateName(int categoryId, String name) {
         return jdbcTemplate.update("UPDATE categories SET name = ? WHERE category_id = ?", name, categoryId) > 0;
     }
 
     @Override
-    public boolean updateOrder(long categoryId, int order) {
+    public boolean updateOrder(int categoryId, int order) {
         return jdbcTemplate.update("UPDATE categories SET order_num = ? WHERE category_id = ?", order, categoryId) > 0;
     }
 
     @Override
-    public boolean delete(long categoryId) {
+    public boolean delete(int categoryId) {
         return jdbcTemplate.update("DELETE FROM categories WHERE category_id = ?", categoryId) > 0;
     }
 }

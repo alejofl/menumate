@@ -29,13 +29,13 @@ public class ProductJdbcDaoTest {
 
     private JdbcTemplate jdbcTemplate;
 
-    private static final long CATEGORY_ID = 581;
+    private static final int CATEGORY_ID = 581;
     private static final String CATEGORY_NAME = "Entradas";
-    private static final long ORDER = 1;
-    private static final long RESTAURANT_ID = 5123;
+    private static final int ORDER = 1;
+    private static final int RESTAURANT_ID = 5123;
     private static final String RESTAURANT_NAME = "Kansas Grill & Bar";
     private static final String RESTAURANT_EMAIL = "kansas@lovelyrestaurant.com";
-    private static final long PRODUCT_ID = 912;
+    private static final int PRODUCT_ID = 912;
     private static final String PRODUCT_NAME = "Lomito";
     private static final double PRODUCT_PRICE = 533.55;
     private static final double PRODUCT_PRICE_DELTA = 0.009;

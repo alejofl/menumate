@@ -35,12 +35,12 @@ public class UserJdbcDao implements UserDao {
         userData.put("name", name);
         userData.put("email", email);
 
-        final long userId = jdbcInsert.executeAndReturnKey(userData).longValue();
+        final int userId = jdbcInsert.executeAndReturnKey(userData).intValue();
         return new User(userId, username, password, name, email);
     }
 
     @Override
-    public Optional<User> getById(long userId) {
+    public Optional<User> getById(int userId) {
         return jdbcTemplate.query(
                 "SELECT " + TableFields.USERS_FIELDS + " FROM users WHERE user_id = ?",
                 RowMappers.USER_ROW_MAPPER,

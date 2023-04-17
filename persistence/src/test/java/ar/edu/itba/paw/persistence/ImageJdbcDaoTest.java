@@ -44,7 +44,7 @@ public class ImageJdbcDaoTest {
 
     @Test
     public void testCreateImg() throws SQLException {
-        final long image = imageJdbcDao.create(IMG_INFO_1);
+        final int image = imageJdbcDao.create(IMG_INFO_1);
         Assert.assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "images"));
     }
 

@@ -20,7 +20,7 @@ import java.util.Optional;
 @ContextConfiguration(classes = TestConfig.class)
 public class UserJdbcDaoTest {
 
-    private static final long ID = 791;
+    private static final int ID = 791;
     private static final String USERNAME = "pedroIsGreat";
     private static final String PASSWORD = "super12secret34";
     private static final String NAME = "Peter Parker";

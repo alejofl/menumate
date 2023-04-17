@@ -27,94 +27,94 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private ProductService productService;
 
-    private long getUserId(String name, String email){
+    private int getUserId(String name, String email){
         return userService.createIfNotExists(name, email).getUserId();
     }
 
     @Override
-    public Order createDelivery(long restaurantId, long userId, String address, List<OrderItem> items) {
+    public Order createDelivery(int restaurantId, int userId, String address, List<OrderItem> items) {
         return orderDao.create(OrderType.DELIVERY, restaurantId, userId, address, items);
     }
 
     @Override
-    public Order createDelivery(long restaurantId, String name, String email, String address, List<OrderItem> items) {
+    public Order createDelivery(int restaurantId, String name, String email, String address, List<OrderItem> items) {
         return orderDao.create(OrderType.DELIVERY, restaurantId, getUserId(name, email), address, items);
     }
 
     @Override
-    public Order createDineIn(long restaurantId, long userId, int tableNumber, List<OrderItem> items) {
+    public Order createDineIn(int restaurantId, int userId, int tableNumber, List<OrderItem> items) {
         return orderDao.create(OrderType.DINE_IN, restaurantId, userId, tableNumber, items);
     }
 
     @Override
-    public Order createDineIn(long restaurantId, String name, String email, int tableNumber, List<OrderItem> items) {
+    public Order createDineIn(int restaurantId, String name, String email, int tableNumber, List<OrderItem> items) {
         return orderDao.create(OrderType.DINE_IN, restaurantId, getUserId(name, email), tableNumber, items);
     }
 
     @Override
-    public Order createTakeAway(long restaurantId, long userId, List<OrderItem> items) {
+    public Order createTakeAway(int restaurantId, int userId, List<OrderItem> items) {
         return orderDao.create(OrderType.DELIVERY, restaurantId, userId, items);
     }
 
     @Override
-    public Order createTakeAway(long restaurantId, String name, String email, List<OrderItem> items) {
+    public Order createTakeAway(int restaurantId, String name, String email, List<OrderItem> items) {
         return orderDao.create(OrderType.DELIVERY, restaurantId, getUserId(name, email), items);
     }
 
 
     @Override
-    public OrderItem createOrderItem(long productId, int lineNumber, int quantity, String comment) {
+    public OrderItem createOrderItem(int productId, int lineNumber, int quantity, String comment) {
         Product product = productService.getById(productId).orElseThrow(() -> new IllegalArgumentException("Invalid product id"));
         return orderDao.createOrderItem(product, lineNumber, quantity, comment);
     }
 
     @Override
-    public Optional<Order> getById(long orderId) {
+    public Optional<Order> getById(int orderId) {
         return orderDao.getById(orderId);
     }
 
     @Override
-    public List<Order> getByUser(long userId, long restaurantId) {
+    public List<Order> getByUser(int userId, int restaurantId) {
         return orderDao.getByUser(userId, restaurantId);
     }
 
     @Override
-    public List<Order> getByRestaurant(long restaurantId) {
+    public List<Order> getByRestaurant(int restaurantId) {
         return orderDao.getByRestaurant(restaurantId);
     }
 
     @Override
-    public List<Order> getOrderedBetweenDates(long restaurantId, LocalDateTime start, LocalDateTime end) {
+    public List<Order> getOrderedBetweenDates(int restaurantId, LocalDateTime start, LocalDateTime end) {
         return orderDao.getByRestaurantOrderedBetweenDates(restaurantId, start, end);
     }
 
     @Override
-    public List<Order> getByAddress(long restaurantId, String address) {
+    public List<Order> getByAddress(int restaurantId, String address) {
         return orderDao.getByRestaurantAndAddress(restaurantId, address);
     }
 
     @Override
-    public List<Order> getByTableNumber(long restaurantId, int tableNumber) {
+    public List<Order> getByTableNumber(int restaurantId, int tableNumber) {
         return orderDao.getByRestaurantAndTableNumber(restaurantId, tableNumber);
     }
 
     @Override
-    public List<Order> getByOrderTypeAndRestaurant(OrderType orderType, long restaurantId) {
+    public List<Order> getByOrderTypeAndRestaurant(OrderType orderType, int restaurantId) {
         return orderDao.getByOrderTypeAndRestaurant(orderType, restaurantId);
     }
 
     @Override
-    public boolean updateAddress(long orderId, String address) {
+    public boolean updateAddress(int orderId, String address) {
         return orderDao.updateAddress(orderId, address);
     }
 
     @Override
-    public boolean updateTableNumber(long orderId, int tableNumber) {
+    public boolean updateTableNumber(int orderId, int tableNumber) {
         return orderDao.updateTableNumber(orderId, tableNumber);
     }
 
     @Override
-    public boolean delete(long orderId) {
+    public boolean delete(int orderId) {
         return orderDao.delete(orderId);
     }
 

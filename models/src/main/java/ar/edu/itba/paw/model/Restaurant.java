@@ -1,23 +1,23 @@
 package ar.edu.itba.paw.model;
 
 public class Restaurant {
-    private final long restaurantId;
+    private final int restaurantId;
     private final String name;
     private final String email;
-    private long logoId;
-    private long portraitId1;
-    private long portraitId2;
+    private int logoId;
+    private int portraitId1;
+    private int portraitId2;
     private String address;
     private String description;
     private Boolean isActive;
 
-    public Restaurant(long restaurantId, String name, String email) {
+    public Restaurant(int restaurantId, String name, String email) {
         this.restaurantId = restaurantId;
         this.name = name;
         this.email = email;
     }
 
-    public Restaurant(long restaurantId, String name, String email, long logoId, long portrait1Id, long portrait2Id, String address, String description, Boolean isActive) {
+    public Restaurant(int restaurantId, String name, String email, int logoId, int portrait1Id, int portrait2Id, String address, String description, Boolean isActive) {
         this(restaurantId, name, email);
         this.logoId = logoId;
         this.portraitId1 = portrait1Id;
@@ -27,7 +27,7 @@ public class Restaurant {
         this.isActive = isActive;
     }
 
-    public long getRestaurantId() {
+    public int getRestaurantId() {
         return restaurantId;
     }
 
@@ -39,15 +39,15 @@ public class Restaurant {
         return email;
     }
 
-    public long getLogoId() {
+    public int getLogoId() {
         return logoId;
     }
 
-    public long getPortraitId1() {
+    public int getPortraitId1() {
         return portraitId1;
     }
 
-    public long getPortraitId2() {
+    public int getPortraitId2() {
         return portraitId2;
     }
 

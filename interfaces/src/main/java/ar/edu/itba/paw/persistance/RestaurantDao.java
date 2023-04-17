@@ -8,9 +8,9 @@ import java.util.Optional;
 public interface RestaurantDao {
     Restaurant create(String name, String email);
 
-    Optional<Restaurant> getById(long restaurantId);
+    Optional<Restaurant> getById(int restaurantId);
 
     List<Restaurant> getAll();
 
-    boolean delete(long restaurantId);
+    boolean delete(int restaurantId);
 }

@@ -1,19 +1,19 @@
 package ar.edu.itba.paw.model;
 
 public class Category {
-    private final long categoryId;
+    private final int categoryId;
     private final Restaurant restaurant;
     private final String name;
-    private final long order;
+    private final int order;
 
-    public Category(long categoryId, Restaurant restaurant, String name, long order) {
+    public Category(int categoryId, Restaurant restaurant, String name, int order) {
         this.categoryId = categoryId;
         this.restaurant = restaurant;
         this.name = name;
         this.order = order;
     }
 
-    public long getCategoryId() {
+    public int getCategoryId() {
         return categoryId;
     }
 
@@ -25,7 +25,7 @@ public class Category {
         return name;
     }
 
-    public long getOrder() {
+    public int getOrder() {
         return order;
     }
 }

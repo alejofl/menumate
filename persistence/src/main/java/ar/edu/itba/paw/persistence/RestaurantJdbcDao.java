@@ -31,7 +31,7 @@ public class RestaurantJdbcDao implements RestaurantDao {
     }
 
     @Override
-    public Optional<Restaurant> getById(long restaurantId) {
+    public Optional<Restaurant> getById(int restaurantId) {
         return jdbcTemplate.query(
                 SelectBase + " WHERE restaurant_id = ?",
                 RowMappers.RESTAURANT_ROW_MAPPER,
@@ -51,12 +51,12 @@ public class RestaurantJdbcDao implements RestaurantDao {
         restaurantData.put("name", name);
         restaurantData.put("email", email);
 
-        final long restaurantId = jdbcInsert.executeAndReturnKey(restaurantData).longValue();
+        final int restaurantId = jdbcInsert.executeAndReturnKey(restaurantData).intValue();
         return new Restaurant(restaurantId, name, email);
     }
 
     @Override
-    public boolean delete(long restaurantId) {
+    public boolean delete(int restaurantId) {
         return jdbcTemplate.update("DELETE FROM restaurants WHERE restaurant_id = ?", restaurantId) > 0;
     }
 }

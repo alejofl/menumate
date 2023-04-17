@@ -9,37 +9,37 @@ import java.util.List;
 import java.util.Optional;
 
 public interface OrderService {
-    Order createDelivery(long restaurantId, long userId, String address, List<OrderItem> items);
+    Order createDelivery(int restaurantId, int userId, String address, List<OrderItem> items);
 
-    Order createDelivery(long restaurantId, String name, String email, String address, List<OrderItem> items);
+    Order createDelivery(int restaurantId, String name, String email, String address, List<OrderItem> items);
 
-    Order createDineIn(long restaurantId, long userId, int tableNumber, List<OrderItem> items);
+    Order createDineIn(int restaurantId, int userId, int tableNumber, List<OrderItem> items);
 
-    Order createDineIn(long restaurantId, String name, String email, int tableNumber, List<OrderItem> items);
+    Order createDineIn(int restaurantId, String name, String email, int tableNumber, List<OrderItem> items);
 
-    Order createTakeAway(long restaurantId, long userId, List<OrderItem> items);
+    Order createTakeAway(int restaurantId, int userId, List<OrderItem> items);
 
-    Order createTakeAway(long restaurantId, String name, String email, List<OrderItem> items);
+    Order createTakeAway(int restaurantId, String name, String email, List<OrderItem> items);
 
-    OrderItem createOrderItem(long productId, int i, int quantity, String comment);
+    OrderItem createOrderItem(int productId, int i, int quantity, String comment);
 
-    Optional<Order> getById(long orderId);
+    Optional<Order> getById(int orderId);
 
-    List<Order> getByUser(long userId, long restaurantId);
+    List<Order> getByUser(int userId, int restaurantId);
 
-    List<Order> getByRestaurant(long restaurantId);
+    List<Order> getByRestaurant(int restaurantId);
 
-    List<Order> getOrderedBetweenDates(long restaurantId, LocalDateTime start, LocalDateTime end);
+    List<Order> getOrderedBetweenDates(int restaurantId, LocalDateTime start, LocalDateTime end);
 
-    List<Order> getByAddress(long restaurantId, String address);
+    List<Order> getByAddress(int restaurantId, String address);
 
-    List<Order> getByTableNumber(long restaurantId, int tableNumber);
+    List<Order> getByTableNumber(int restaurantId, int tableNumber);
 
-    List<Order> getByOrderTypeAndRestaurant(OrderType orderType, long restaurantId);
+    List<Order> getByOrderTypeAndRestaurant(OrderType orderType, int restaurantId);
 
-    boolean updateAddress(long orderId, String address);
+    boolean updateAddress(int orderId, String address);
 
-    boolean updateTableNumber(long orderId, int tableNumber);
+    boolean updateTableNumber(int orderId, int tableNumber);
 
-    boolean delete(long orderId);
+    boolean delete(int orderId);
 }

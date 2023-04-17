@@ -34,7 +34,7 @@ public class RestaurantsController {
     private EmailService emailService;
 
     @RequestMapping(value = "/restaurants/{id:\\d+}", method = RequestMethod.GET)
-    public ModelAndView restaurantMenu(@PathVariable final long id, @ModelAttribute("checkoutForm") final CheckoutForm form) {
+    public ModelAndView restaurantMenu(@PathVariable final int id, @ModelAttribute("checkoutForm") final CheckoutForm form) {
         final ModelAndView mav = new ModelAndView("menu/restaurant_menu");
 
         final Restaurant restaurant = restaurantService.getById(id).orElseThrow(RestaurantNotFoundException::new);
@@ -48,7 +48,7 @@ public class RestaurantsController {
 
     @RequestMapping(value = "/restaurants/{id:\\d+}", method = RequestMethod.POST)
     public ModelAndView restaurantMenu(
-            @PathVariable final long id,
+            @PathVariable final int id,
             @Valid @ModelAttribute("checkoutForm") final CheckoutForm form,
             final BindingResult errors
     ) {

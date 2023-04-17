@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class Order {
-    private final long orderId;
+    private final int orderId;
     private final OrderType orderType;
     private final Restaurant restaurant;
     private final User user;
@@ -14,7 +14,7 @@ public class Order {
     private final int tableNumber;
     private final List<OrderItem> items;
 
-    public Order(long orderId, OrderType orderType, Restaurant restaurant, User user, LocalDateTime dateOrdered, LocalDateTime dateDelivered, String address, int tableNumber, List<OrderItem> items) {
+    public Order(int orderId, OrderType orderType, Restaurant restaurant, User user, LocalDateTime dateOrdered, LocalDateTime dateDelivered, String address, int tableNumber, List<OrderItem> items) {
         this.orderId = orderId;
         this.orderType = orderType;
         this.restaurant = restaurant;
@@ -26,11 +26,11 @@ public class Order {
         this.items = items;
     }
 
-    public Order(long orderId, OrderType orderType, Restaurant restaurant, User user) {
+    public Order(int orderId, OrderType orderType, Restaurant restaurant, User user) {
         this(orderId, orderType, restaurant, user, null, null, null, 1, null);
     }
 
-    public long getOrderId() {
+    public int getOrderId() {
         return orderId;
     }
 

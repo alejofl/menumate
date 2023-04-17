@@ -22,7 +22,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     private ProductDao productDao;
 
     @Override
-    public Optional<Restaurant> getById(long restaurantId) {
+    public Optional<Restaurant> getById(int restaurantId) {
         return restaurantDao.getById(restaurantId);
     }
 
@@ -32,7 +32,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public List<Pair<Category, List<Product>>> getMenu(long restaurantId) {
+    public List<Pair<Category, List<Product>>> getMenu(int restaurantId) {
         List<Product> products = productDao.getByRestaurantOrderByCategoryOrder(restaurantId);
 
         List<Pair<Category, List<Product>>> menu = new ArrayList<>();
@@ -60,7 +60,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public boolean delete(long restaurantId) {
+    public boolean delete(int restaurantId) {
         return restaurantDao.delete(restaurantId);
     }
 

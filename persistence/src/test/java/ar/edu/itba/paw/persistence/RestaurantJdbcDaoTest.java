@@ -20,7 +20,7 @@ import java.util.Optional;
 @ContextConfiguration(classes = TestConfig.class)
 public class RestaurantJdbcDaoTest {
 
-    private static final long ID = 5123;
+    private static final int ID = 5123;
     private static final String NAME = "pedros";
     private static final String EMAIL = "pedros@frompedros.com";
 

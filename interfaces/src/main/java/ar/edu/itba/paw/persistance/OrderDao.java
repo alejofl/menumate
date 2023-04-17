@@ -11,31 +11,31 @@ import java.util.Optional;
 
 public interface OrderDao {
 
-    Optional<Order> getById(long orderId);
+    Optional<Order> getById(int orderId);
 
-    List<Order> getByUser(long userId, long restaurantId);
+    List<Order> getByUser(int userId, int restaurantId);
 
-    List<Order> getByOrderTypeAndRestaurant(OrderType orderType, long restaurantId);
+    List<Order> getByOrderTypeAndRestaurant(OrderType orderType, int restaurantId);
 
-    List<Order> getByRestaurant(long restaurantId);
+    List<Order> getByRestaurant(int restaurantId);
 
-    List<Order> getByRestaurantOrderedBetweenDates(long restaurantId, LocalDateTime start, LocalDateTime end);
+    List<Order> getByRestaurantOrderedBetweenDates(int restaurantId, LocalDateTime start, LocalDateTime end);
 
-    List<Order> getByRestaurantAndAddress(long restaurantId, String address);
+    List<Order> getByRestaurantAndAddress(int restaurantId, String address);
 
-    List<Order> getByRestaurantAndTableNumber(long restaurantId, int tableNumber);
+    List<Order> getByRestaurantAndTableNumber(int restaurantId, int tableNumber);
 
-    boolean updateAddress(long orderId, String address);
+    boolean updateAddress(int orderId, String address);
 
-    boolean updateTableNumber(long orderId, int tableNumber);
+    boolean updateTableNumber(int orderId, int tableNumber);
 
-    boolean delete(long orderId);
+    boolean delete(int orderId);
 
-    Order create(OrderType orderType, long restaurantId, long userId, String address, List<OrderItem> items);
+    Order create(OrderType orderType, int restaurantId, int userId, String address, List<OrderItem> items);
 
-    Order create(OrderType orderType, long restaurantId, long userId, List<OrderItem> items);
+    Order create(OrderType orderType, int restaurantId, int userId, List<OrderItem> items);
 
-    Order create(OrderType orderType, long restaurantId, long userId, int tableNumber, List<OrderItem> items);
+    Order create(OrderType orderType, int restaurantId, int userId, int tableNumber, List<OrderItem> items);
 
     OrderItem createOrderItem(Product product, int lineNumber, int quantity, String comment);
 }

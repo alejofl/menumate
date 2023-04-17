@@ -1,15 +1,15 @@
 package ar.edu.itba.paw.webapp.form;
 
 public class CartItem {
-    private long productId;
+    private int productId;
     private int quantity;
     private String comment;
 
-    public long getProductId() {
+    public int getProductId() {
         return productId;
     }
 
-    public void setProductId(long productId) {
+    public void setProductId(int productId) {
         this.productId = productId;
     }
 
