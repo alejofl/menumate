@@ -65,6 +65,12 @@ main {
     width: 18rem;
 }
 
+.restaurant-card p {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .restaurant-card-img {
     background-size: cover !important;
     height: 200px;
@@ -77,10 +83,6 @@ main {
 
 .restaurant-card:hover .restaurant-card-img {
     background: var(--hover_image);
-}
-
-.clickable-object {
-    text-decoration: none !important;
 }
 
 .error-container {
@@ -170,7 +172,8 @@ main {
 }
 
 .menu-item-card {
-    max-width: 400px;
+    width: 400px;
+    height: 200px;
     display: flex;
     flex-direction: row;
 }
@@ -226,6 +229,7 @@ main {
 #add-item-to-cart .modal-header {
     background-image: var(--image);
     background-size: cover;
+    background-position: center;
     height: 18rem;
     display: flex;
     align-items: start;
@@ -248,4 +252,8 @@ main {
     --bs-nav-link-color: var(--secondary);
     --bs-nav-link-hover-color: var(--secondary-dark);
     --bs-nav-pills-link-active-bg: var(--secondary);
+}
+
+#checkout-form {
+    margin: 0;
 }
