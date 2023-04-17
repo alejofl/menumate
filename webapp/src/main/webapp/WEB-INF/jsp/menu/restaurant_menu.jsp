@@ -13,11 +13,11 @@
 <body>
 <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
 <div class="restaurant-header">
-    <img src="<c:url value="/static/pictures/milanga.jpg"/>" class="menu-item-card-img" alt="Milanga">
+    <img src="<c:url value="/images/${restaurant.portraitId1}"/>" class="menu-item-card-img" alt="${restaurant.name}">
 </div>
 <div class="restaurant-information-container">
     <div class="restaurant-information">
-        <img src="<c:url value="/static/pictures/milanga.jpg"/>" alt="${restaurant.name}" class="restaurant-logo">
+        <img src="<c:url value="/images/${restaurant.logoId}"/>" alt="${restaurant.name}" class="restaurant-logo">
         <div>
             <h1>${restaurant.name}</h1>
             <c:choose>
