@@ -32,15 +32,23 @@
     </div>
 </div>
 <main>
-    <div class="categories nav nav-pills small">
-        <c:forEach items="${menu}" var="entry">
-            <button class="category-item nav-link" data-category="${fn:replace(entry.key.name, " ", "")}">${entry.key.name}</button>
-        </c:forEach>
+    <div class="categories restaurant-menu-sticky-card">
+        <div class="card">
+            <div class="card-header text-muted">Categories</div>
+            <div class="card-body">
+                <div class="nav nav-pills small">
+                    <c:forEach items="${menu}" var="entry">
+                        <button class="category-item nav-link" data-category="${entry.key.categoryId}">${entry.key.name}</button>
+                    </c:forEach>
+                </div>
+            </div>
+        </div>
     </div>
+
     <div class="items">
         <div class="items-container">
             <c:forEach items="${menu}" var="entry">
-                <div class="clearfix" id="category-${fn:replace(entry.key.name, " ", "")}" style="text-align: center">
+                <div class="clearfix" id="category-${entry.key.categoryId}" style="text-align: center">
                     <h3>${entry.key.name}</h3>
                 </div>
                 <c:forEach var="product" items="${entry.value}">
@@ -55,7 +63,7 @@
             </c:forEach>
         </div>
     </div>
-    <div class="cart">
+    <div class="cart restaurant-menu-sticky-card">
         <div class="card">
             <div class="card-header text-muted">My Order</div>
             <ul class="list-group list-group-flush" id="cart-container">

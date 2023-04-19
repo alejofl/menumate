@@ -29,7 +29,7 @@
             </c:otherwise>
           </c:choose>
         </div>
-        <h5 class="card-title">${param.product_price}</h5>
+        <h5 class="card-title">$${param.product_price}</h5>
       </div>
     </div>
   </a>

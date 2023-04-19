@@ -134,12 +134,19 @@ main {
     justify-content: center;
 }
 
-.categories {
+.restaurant-menu-sticky-card {
     display: inline-block;
-    flex: 0 0 10%;
     align-self: start;
     position: sticky;
     top: 80px;
+}
+
+.categories {
+    flex: 0 0 10%;
+}
+
+.categories .nav {
+    display: inline-block;
 }
 
 .category-item {
