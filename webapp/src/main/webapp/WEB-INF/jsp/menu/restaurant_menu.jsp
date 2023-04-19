@@ -89,7 +89,7 @@
                 <form>
                     <div class="input-group">
                         <button id="add-item-to-cart-minus" class="btn btn-secondary" type="button"><i class="bi bi-dash"></i></button>
-                        <input id="add-item-to-cart-quantity" type="number" class="form-control" value="1">
+                        <input id="add-item-to-cart-quantity" type="number" class="form-control" value="1" min="1">
                         <button id="add-item-to-cart-plus" class="btn btn-secondary" type="button"><i class="bi bi-plus"></i></button>
                     </div>
                     <div class="comment-container">

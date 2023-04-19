@@ -46,19 +46,24 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
     });
+    cartModalQuantity.addEventListener("input", (event) => {
+        cartModalButton.disabled = event.target.value === "" || parseInt(event.target.value) === 0;
+    });
 
     // Plus and Minus buttons of Modal
     document.querySelector("#add-item-to-cart-minus").addEventListener("click", () => {
         if (cartModalQuantity.value >= 2) {
             cartModalQuantity.value--;
             let price = parseFloat(cartModalButton.dataset.infoUnitPrice);
-            cartModalButton.innerHTML = `Add Item to Cart ($${price * cartModalQuantity.value})`
+            cartModalButton.innerHTML = `Add Item to Cart ($${price * cartModalQuantity.value})`;
+            cartModalQuantity.dispatchEvent(new Event("input"));
         }
     });
     document.querySelector("#add-item-to-cart-plus").addEventListener("click", () => {
         cartModalQuantity.value++;
         let price = parseFloat(cartModalButton.dataset.infoUnitPrice);
-        cartModalButton.innerHTML = `Add Item to Cart ($${price * cartModalQuantity.value})`
+        cartModalButton.innerHTML = `Add Item to Cart ($${price * cartModalQuantity.value})`;
+        cartModalQuantity.dispatchEvent(new Event("input"));
     });
 
     // Modal dismissal
