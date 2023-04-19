@@ -1,7 +1,14 @@
 package ar.edu.itba.paw.webapp.form;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
 public class CartItem {
+    @NotNull
     private int productId;
+    @Min(1)
+    @Max(100)
     private int quantity;
     private String comment;
 

@@ -29,6 +29,24 @@ document.addEventListener("DOMContentLoaded", () => {
     let cartModalQuantity = document.querySelector("#add-item-to-cart-quantity");
     let cartModalComments = document.querySelector("#add-item-to-cart-comments");
 
+    // Prevent non-number characters in Quantity input
+    cartModalQuantity.addEventListener("keypress", (event) => {
+        if (event.key.length !== 1) {
+            return true;
+        }
+        if (event.target.value.length > 0) {
+            if ("0123456789".indexOf(event.key) === -1) {
+                event.preventDefault();
+                return false;
+            }
+        } else {
+            if ("123456789".indexOf(event.key) === -1) {
+                event.preventDefault();
+                return false;
+            }
+        }
+    });
+
     // Plus and Minus buttons of Modal
     document.querySelector("#add-item-to-cart-minus").addEventListener("click", () => {
         if (cartModalQuantity.value >= 2) {

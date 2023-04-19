@@ -5,12 +5,14 @@ import org.hibernate.validator.constraints.Email;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.Arrays;
 import java.util.List;
 
 public class CheckoutForm {
 
     @NotNull
+    @Size(max=64)
     private String name;
     @Email
     @NotNull
