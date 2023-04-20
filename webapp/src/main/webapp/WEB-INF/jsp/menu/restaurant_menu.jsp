@@ -10,7 +10,7 @@
     </jsp:include>
     <script src="<c:url value="/static/js/restaurant_menu.js"/>"></script>
 </head>
-<body>
+<body data-form-error="${formError}">
 <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
 <div class="restaurant-header">
     <img src="<c:url value="/images/${restaurant.portraitId1}"/>" class="menu-item-card-img" alt="${restaurant.name}">
@@ -113,17 +113,17 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <c:url value="/restaurants/${restaurant.restaurantId}" var="checkout"/>
-            <form:form modelAttribute="checkoutForm" action="${checkout}" method="post" cssClass="needs-validation" id="checkout-form">
+            <form:form modelAttribute="checkoutForm" action="${checkout}" method="post" id="checkout-form">
             <div class="modal-body">
                 <div class="mb-3">
                     <form:label path="name" cssClass="form-label">Name</form:label>
                     <form:input type="text" path="name" cssClass="form-control" id="checkout-name"/>
-                    <form:errors path="name" element="div"/>
+                    <form:errors path="name" element="div" cssClass="form-error"/>
                 </div>
                 <div class="mb-3">
                     <form:label path="email" cssClass="form-label">Email Address</form:label>
                     <form:input type="email" path="email" cssClass="form-control" id="checkout-email"/>
-                    <form:errors path="email" element="div"/>
+                    <form:errors path="email" element="div" cssClass="form-error"/>
                 </div>
                 <nav>
                     <div class="nav nav-pills nav-fill mb-3" role="tablist">
@@ -137,7 +137,7 @@
                         <div class="mb-3">
                             <form:label path="tableNumber" cssClass="form-label">Table Number</form:label>
                             <form:input type="number" path="tableNumber" cssClass="form-control" id="checkout-table-number"/>
-                            <form:errors path="tableNumber" element="div"/>
+                            <form:errors path="tableNumber" element="div" cssClass="form-error"/>
                         </div>
                     </div>
                     <div class="tab-pane fade" id="checkout-takeaway" role="tabpanel" tabindex="0">
@@ -147,7 +147,7 @@
                         <div class="mb-3">
                             <form:label path="address" cssClass="form-label">Address</form:label>
                             <form:input type="text" path="address" cssClass="form-control" id="checkout-address"/>
-                            <form:errors path="address" element="div"/>
+                            <form:errors path="address" element="div" cssClass="form-error"/>
                         </div>
                     </div>
                 </div>

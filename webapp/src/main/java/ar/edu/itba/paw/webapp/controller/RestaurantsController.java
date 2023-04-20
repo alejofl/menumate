@@ -34,7 +34,11 @@ public class RestaurantsController {
     private EmailService emailService;
 
     @RequestMapping(value = "/restaurants/{id:\\d+}", method = RequestMethod.GET)
-    public ModelAndView restaurantMenu(@PathVariable final int id, @ModelAttribute("checkoutForm") final CheckoutForm form) {
+    public ModelAndView restaurantMenu(
+            @PathVariable final int id,
+            @ModelAttribute("checkoutForm") final CheckoutForm form,
+            final Boolean formError
+    ) {
         final ModelAndView mav = new ModelAndView("menu/restaurant_menu");
 
         final Restaurant restaurant = restaurantService.getById(id).orElseThrow(RestaurantNotFoundException::new);
@@ -43,6 +47,7 @@ public class RestaurantsController {
         final List<Pair<Category, List<Product>>> menu = restaurantService.getMenu(id);
         mav.addObject("menu", menu);
 
+        mav.addObject("formError", formError);
         return mav;
     }
 
@@ -53,7 +58,7 @@ public class RestaurantsController {
             final BindingResult errors
     ) {
         if (errors.hasErrors()) {
-            return restaurantMenu(id, form);
+            return restaurantMenu(id, form, true);
         }
 
         User user = userService.createIfNotExists(form.getEmail(), form.getName());

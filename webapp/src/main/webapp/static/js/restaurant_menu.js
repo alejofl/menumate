@@ -12,6 +12,11 @@ document.addEventListener("DOMContentLoaded", () => {
     let cartModalButton = document.querySelector("#add-item-to-cart-add");
     let cartItemsContainer = document.querySelector("#checkout-cart-items");
 
+    // Open Checkout Modal if errors were found
+    if (document.querySelector("body").dataset.formError === "true") {
+        document.querySelector("#place-order-button").dispatchEvent(new Event("click"));
+    }
+
     // Fill modal for every menu item
     document.querySelectorAll(".menu-item-card-button").forEach((value) => {
         value.addEventListener("click", () => {
@@ -22,7 +27,6 @@ document.addEventListener("DOMContentLoaded", () => {
             cartModalButton.setAttribute("data-info-title", value.dataset.infoTitle);
             cartModalButton.setAttribute("data-info-id", value.dataset.infoId);
             cartModalButton.innerHTML = `Add Item to Cart ($${value.dataset.infoPrice})`;
-
         });
     });
 
