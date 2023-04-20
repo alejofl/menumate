@@ -36,7 +36,7 @@ public class UserJdbcDao implements UserDao {
         userData.put("email", email);
 
         final int userId = jdbcInsert.executeAndReturnKey(userData).intValue();
-        return new User(userId, username, password, name, email);
+        return new User(userId, username, name, email);
     }
 
     @Override
@@ -45,6 +45,15 @@ public class UserJdbcDao implements UserDao {
                 "SELECT " + TableFields.USERS_FIELDS + " FROM users WHERE user_id = ?",
                 SimpleRowMappers.USER_ROW_MAPPER,
                 userId
+        ).stream().findFirst();
+    }
+
+    public Optional<User> getByEmailAndPassword(String email, String password) {
+        return jdbcTemplate.query(
+                "SELECT " + TableFields.USERS_FIELDS + " FROM users WHERE email = ? AND password = ?",
+                SimpleRowMappers.USER_ROW_MAPPER,
+                email,
+                password
         ).stream().findFirst();
     }
 

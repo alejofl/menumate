@@ -16,7 +16,6 @@ class SimpleRowMappers {
     static final RowMapper<User> USER_ROW_MAPPER = (ResultSet rs, int rowNum) -> new User(
             rs.getInt("user_id"),
             rs.getString("user_username"),
-            rs.getString("user_password"),
             rs.getString("user_name"),
             rs.getString("user_email")
     );

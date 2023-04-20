@@ -74,7 +74,6 @@ class ReusingRowMappers {
             return new User(
                     pk,
                     rs.getString("user_username"),
-                    rs.getString("user_password"),
                     rs.getString("user_name"),
                     rs.getString("user_email")
             );

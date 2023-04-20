@@ -9,5 +9,7 @@ public interface UserDao {
 
     Optional<User> getById(int userId);
 
+    Optional<User> getByEmailAndPassword(String email, String password);
+
     Optional<User> getByEmail(String email);
 }
