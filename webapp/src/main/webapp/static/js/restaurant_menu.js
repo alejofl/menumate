@@ -5,16 +5,65 @@ function changeInputValue(id, value) {
     document.querySelector(`#${id}`).value = value;
 }
 
+function addItemToFrontCart(title, unitPrice, quantity, comments) {
+    let item = {
+        "title": title,
+        "quantity": quantity,
+        "price": quantity * parseFloat(unitPrice),
+        "comments": comments
+    };
+    cart.push(item);
+    document.querySelector("#cart-container").innerHTML += `
+        <li class="list-group-item">
+            <div class="cart-item">
+                <div class="cart-item-body">
+                    <span class="badge text-bg-secondary">x${item.quantity}</span>
+                    <span>${item.title}</span>
+                </div>
+                <span><strong>$${item.price}</strong></span>
+            </div>
+        </li>
+    `;
+    document.querySelector("#place-order-button").disabled = false;
+}
+
+function selectOrderTypeTab(tab) {
+    document.querySelector(`#checkout-${tab}-tab`).classList.add("active");
+    document.querySelector(`#checkout-${tab}`).classList.add("active", "show");
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     let cartModalHeader = document.querySelector("#add-item-to-cart-header");
     let cartModalTitle = document.querySelector("#add-item-to-cart-title");
     let cartModalDescription = document.querySelector("#add-item-to-cart-description");
     let cartModalButton = document.querySelector("#add-item-to-cart-add");
     let cartItemsContainer = document.querySelector("#checkout-cart-items");
+    let orderType = document.querySelector("#checkout-order-type");
 
     // Open Checkout Modal if errors were found
     if (document.querySelector("body").dataset.formError === "true") {
         document.querySelector("#place-order-button").dispatchEvent(new Event("click"));
+    }
+
+    // Populate cart if errors were found
+    let cartSize = parseInt(document.querySelector("#checkout-cart-items").dataset.cartSize);
+    for (let i = 0; i < cartSize; i++) {
+        let id = document.querySelector(`#cart${i}-productId`).value
+        let quantity = document.querySelector(`#cart${i}-quantity`).value
+        let comments = document.querySelector(`#cart${i}-comment`).value
+        let information = document.querySelector(`.menu-item-card-button[data-info-id="${id}"]`).dataset;
+        console.log(information.infoUnitPrice);
+        console.log(typeof information.infoUnitPrice);
+        addItemToFrontCart(information.infoTitle, information.infoPrice, quantity, comments);
+    }
+
+    // Select Order Type tab automatically
+    if (orderType.value === "0") {
+        selectOrderTypeTab("dinein");
+    } else if (orderType.value === "1") {
+        selectOrderTypeTab("takeaway");
+    } else {
+        selectOrderTypeTab("delivery");
     }
 
     // Fill modal for every menu item
@@ -84,31 +133,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Add item to cart
     cartModalButton.addEventListener("click", (event) => {
-        let item = {
-            "title": event.target.dataset.infoTitle,
-            "quantity": cartModalQuantity.value,
-            "price": cartModalQuantity.value * parseFloat(event.target.dataset.infoUnitPrice),
-            "comments": cartModalComments.value
-        };
         cartItemsContainer.innerHTML += `
             <input type="hidden" name="cart[${cartIndex}].productId" value="${event.target.dataset.infoId}"/>
             <input type="hidden" name="cart[${cartIndex}].quantity" value="${parseInt(cartModalQuantity.value)}"/>
             <input type="hidden" name="cart[${cartIndex}].comment" value="${cartModalComments.value}"/>
         `;
         cartIndex++;
-        cart.push(item);
-        document.querySelector("#cart-container").innerHTML += `
-            <li class="list-group-item">
-                <div class="cart-item">
-                    <div class="cart-item-body">
-                        <span class="badge text-bg-secondary">x${item.quantity}</span>
-                        <span>${item.title}</span>
-                    </div>
-                    <span><strong>$${item.price}</strong></span>
-                </div>
-            </li>
-        `;
-        document.querySelector("#place-order-button").disabled = false;
+        addItemToFrontCart(
+            event.target.dataset.infoTitle,
+            event.target.dataset.infoUnitPrice,
+            cartModalQuantity.value,
+            cartModalComments.value
+        );
     });
 
     // Place Order Price
@@ -121,13 +157,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Order Type Selector (FIXME this values are hardcoded)
     document.querySelector("#checkout-dinein-tab").addEventListener("click", () => {
-        document.querySelector("#checkout-order-type").value = 0;
+        orderType.value = 0;
     });
     document.querySelector("#checkout-takeaway-tab").addEventListener("click", () => {
-        document.querySelector("#checkout-order-type").value = 1;
+        orderType.value = 1;
     });
     document.querySelector("#checkout-delivery-tab").addEventListener("click", () => {
-        document.querySelector("#checkout-order-type").value = 2;
+        orderType.value = 2;
     });
 
     // Auto-Scroll

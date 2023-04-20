@@ -127,13 +127,13 @@
                 </div>
                 <nav>
                     <div class="nav nav-pills nav-fill mb-3" role="tablist">
-                        <button class="nav-link active" id="checkout-dinein-tab" data-bs-toggle="tab" data-bs-target="#checkout-dinein" type="button" role="tab">Dine-In</button>
+                        <button class="nav-link" id="checkout-dinein-tab" data-bs-toggle="tab" data-bs-target="#checkout-dinein" type="button" role="tab">Dine-In</button>
                         <button class="nav-link" id="checkout-takeaway-tab" data-bs-toggle="tab" data-bs-target="#checkout-takeaway" type="button" role="tab">Take-Away</button>
                         <button class="nav-link" id="checkout-delivery-tab" data-bs-toggle="tab" data-bs-target="#checkout-delivery" type="button" role="tab">Delivery</button>
                     </div>
                 </nav>
                 <div class="tab-content">
-                    <div class="tab-pane fade show active" id="checkout-dinein" role="tabpanel" tabindex="0">
+                    <div class="tab-pane fade" id="checkout-dinein" role="tabpanel" tabindex="0">
                         <div class="mb-3">
                             <form:label path="tableNumber" cssClass="form-label">Table Number</form:label>
                             <form:input type="number" path="tableNumber" cssClass="form-control" id="checkout-table-number"/>
@@ -151,9 +151,16 @@
                         </div>
                     </div>
                 </div>
-                <div id="checkout-cart-items">
+                <div id="checkout-cart-additional-info">
                     <form:input path="restaurantId" type="hidden" value="${restaurant.restaurantId}"/>
-                    <form:input path="orderType" type="hidden" id="checkout-order-type" value="0"/>
+                    <form:input path="orderType" type="hidden" id="checkout-order-type"/>
+                </div>
+                <div id="checkout-cart-items" data-cart-size="${fn:length(checkoutForm.cart)}">
+                    <c:forEach items="${checkoutForm.cart}" var="item" varStatus="loop">
+                        <form:input path="cart[${loop.index}].productId" type="hidden" id="cart${loop.index}-productId"/>
+                        <form:input path="cart[${loop.index}].quantity" type="hidden" id="cart${loop.index}-quantity"/>
+                        <form:input path="cart[${loop.index}].comment" type="hidden" id="cart${loop.index}-comment"/>
+                    </c:forEach>
                 </div>
             </div>
             <div class="modal-footer">
