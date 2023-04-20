@@ -43,14 +43,18 @@ public class UserJdbcDao implements UserDao {
     public Optional<User> getById(int userId) {
         return jdbcTemplate.query(
                 "SELECT " + TableFields.USERS_FIELDS + " FROM users WHERE user_id = ?",
-                RowMappers.USER_ROW_MAPPER,
+                SimpleRowMappers.USER_ROW_MAPPER,
                 userId
         ).stream().findFirst();
     }
 
     @Override
     public Optional<User> getByEmail(String email) {
-        return jdbcTemplate.query("SELECT " + TableFields.USERS_FIELDS + " FROM users WHERE email = ?", RowMappers.USER_ROW_MAPPER, email).stream().findFirst();
+        return jdbcTemplate.query(
+                "SELECT " + TableFields.USERS_FIELDS + " FROM users WHERE email = ?",
+                SimpleRowMappers.USER_ROW_MAPPER,
+                email
+        ).stream().findFirst();
     }
 }
 

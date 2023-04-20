@@ -7,7 +7,7 @@ import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
-class RowMappers {
+class SimpleRowMappers {
 
     static LocalDateTime timestampToLocalDateTimeOrNull(Timestamp timestamp) {
         return timestamp == null ? null : timestamp.toLocalDateTime();
@@ -35,6 +35,7 @@ class RowMappers {
             rs.getString("restaurant_description"),
             rs.getBoolean("restaurant_is_active")
     );
+
     static final RowMapper<Category> CATEGORY_ROW_MAPPER = (ResultSet rs, int rowNum) -> new Category(
             rs.getInt("category_id"),
             RESTAURANT_ROW_MAPPER.mapRow(rs, rowNum),

@@ -4,6 +4,7 @@ import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.persistance.RestaurantDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
@@ -34,7 +35,7 @@ public class RestaurantJdbcDao implements RestaurantDao {
     public Optional<Restaurant> getById(int restaurantId) {
         return jdbcTemplate.query(
                 SelectBase + " WHERE restaurant_id = ?",
-                RowMappers.RESTAURANT_ROW_MAPPER,
+                SimpleRowMappers.RESTAURANT_ROW_MAPPER,
                 restaurantId
         ).stream().findFirst();
     }
@@ -42,7 +43,8 @@ public class RestaurantJdbcDao implements RestaurantDao {
     @Override
     public List<Restaurant> getAll() {
         // TODO: Add limit or paging
-        return jdbcTemplate.query(SelectBase + " WHERE is_active = true", RowMappers.RESTAURANT_ROW_MAPPER);
+        RowMapper<Restaurant> rowMapper = ReusingRowMappers.getRestaurantRowMapper();
+        return jdbcTemplate.query(SelectBase + " WHERE is_active = true", rowMapper);
     }
 
     @Override

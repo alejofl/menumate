@@ -4,6 +4,7 @@ import ar.edu.itba.paw.model.Category;
 import ar.edu.itba.paw.persistance.CategoryDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
@@ -44,16 +45,17 @@ public class CategoryJdbcDao implements CategoryDao {
     public Optional<Category> getById(int categoryId) {
         return jdbcTemplate.query(
                 SelectBase + " WHERE categories.category_id = ?",
-                RowMappers.CATEGORY_ROW_MAPPER,
+                SimpleRowMappers.CATEGORY_ROW_MAPPER,
                 categoryId
         ).stream().findFirst();
     }
 
     @Override
     public List<Category> getByRestaurantSortedByOrder(int restaurantId) {
+        RowMapper<Category> rowMapper = ReusingRowMappers.getCategoryRowMapper();
         return jdbcTemplate.query(
                 SelectBase + " WHERE categories.restaurant_id = ? ORDER BY categories.order_num",
-                RowMappers.CATEGORY_ROW_MAPPER,
+                rowMapper,
                 restaurantId
         );
     }

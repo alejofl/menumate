@@ -4,6 +4,7 @@ import ar.edu.itba.paw.model.Product;
 import ar.edu.itba.paw.persistance.ProductDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
@@ -45,25 +46,27 @@ public class ProductJdbcDao implements ProductDao {
     public Optional<Product> getById(int productId) {
         return jdbcTemplate.query(
                 SelectBase + " WHERE products.product_id = ?",
-                RowMappers.PRODUCT_ROW_MAPPER,
+                SimpleRowMappers.PRODUCT_ROW_MAPPER,
                 productId
         ).stream().findFirst();
     }
 
     @Override
     public List<Product> getByCategory(int categoryId) {
+        RowMapper<Product> rowMapper = ReusingRowMappers.getProductRowMapper();
         return jdbcTemplate.query(
                 SelectBase + " WHERE products.category_id = ?",
-                RowMappers.PRODUCT_ROW_MAPPER,
+                rowMapper,
                 categoryId
         );
     }
 
     @Override
     public List<Product> getByRestaurantOrderByCategoryOrder(int restaurantId) {
+        RowMapper<Product> rowMapper = ReusingRowMappers.getProductRowMapper();
         return jdbcTemplate.query(
                 SelectBase + " WHERE restaurants.restaurant_id = ? ORDER BY categories.order_num",
-                RowMappers.PRODUCT_ROW_MAPPER,
+                rowMapper,
                 restaurantId
         );
     }
@@ -82,5 +85,4 @@ public class ProductJdbcDao implements ProductDao {
     public boolean delete(int productId) {
         return jdbcTemplate.update("DELETE FROM products WHERE product_id = ?", productId) > 0;
     }
-
 }

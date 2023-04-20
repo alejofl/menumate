@@ -46,7 +46,7 @@ public class ImageJdbcDao implements ImageDao {
     public Optional<byte[]> getById(int imageId) {
         return jdbcTemplate.query(
                 "SELECT * FROM images WHERE image_id = ?",
-                RowMappers.IMAGE_ROW_MAPPER,
+                SimpleRowMappers.IMAGE_ROW_MAPPER,
                 imageId
         ).stream().findFirst();
     }

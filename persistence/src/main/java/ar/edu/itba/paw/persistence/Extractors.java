@@ -2,6 +2,7 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.*;
 import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.time.LocalDateTime;
@@ -13,6 +14,10 @@ class Extractors {
 
     static final ResultSetExtractor<List<Order>> ORDER_EXTRACTOR = (ResultSet rs) -> {
         List<Order> orders = new ArrayList<>();
+
+        RowMapper<Restaurant> restaurantRowMapper = ReusingRowMappers.getRestaurantRowMapper();
+        RowMapper<User> userRowMapper = ReusingRowMappers.getUserRowMapper();
+        RowMapper<OrderItem> orderItemRowMapper = ReusingRowMappers.getOrderItemRowMapper();
 
         boolean isFirst = true;
 
@@ -36,10 +41,10 @@ class Extractors {
 
                 orderId = currentOrderId;
                 orderType = OrderType.values()[rs.getInt("order_type")];
-                restaurant = RowMappers.RESTAURANT_ROW_MAPPER.mapRow(rs, 1);
-                user = RowMappers.USER_ROW_MAPPER.mapRow(rs, 1);
-                dateOrdered = RowMappers.timestampToLocalDateTimeOrNull(rs.getTimestamp("order_date_ordered"));
-                dateDelivered = RowMappers.timestampToLocalDateTimeOrNull(rs.getTimestamp("order_date_delivered"));
+                restaurant = restaurantRowMapper.mapRow(rs, 1);
+                user = userRowMapper.mapRow(rs, 1);
+                dateOrdered = SimpleRowMappers.timestampToLocalDateTimeOrNull(rs.getTimestamp("order_date_ordered"));
+                dateDelivered = SimpleRowMappers.timestampToLocalDateTimeOrNull(rs.getTimestamp("order_date_delivered"));
                 address = rs.getString("order_address");
                 tableNumber = rs.getInt("order_table_number");
 
@@ -49,7 +54,7 @@ class Extractors {
 
             rs.getInt("product_id");
             if (!rs.wasNull())
-                items.add(RowMappers.ORDER_ITEM_ROW_MAPPER.mapRow(rs, 1));
+                items.add(orderItemRowMapper.mapRow(rs, 1));
         }
 
         if (!isFirst) {
