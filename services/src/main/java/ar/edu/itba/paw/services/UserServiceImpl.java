@@ -1,18 +1,13 @@
 package ar.edu.itba.paw.services;
 
-import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.model.util.Pair;
 import ar.edu.itba.paw.persistance.UserDao;
-import ar.edu.itba.paw.service.EmailService;
 import ar.edu.itba.paw.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.mail.MessagingException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 @Service

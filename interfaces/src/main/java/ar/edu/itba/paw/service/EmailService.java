@@ -5,7 +5,6 @@ import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.model.User;
 
 import javax.mail.MessagingException;
-import java.util.Map;
 
 public interface EmailService {
 
