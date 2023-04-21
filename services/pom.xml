@@ -16,16 +16,6 @@
   <url>http://www.example.com</url>
 
   <dependencies>
-    <!-- Spring dependencies -->
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-context</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-context-support</artifactId>
-    </dependency>
-
     <!-- Internal dependencies -->
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -37,9 +27,37 @@
       <artifactId>interfaces</artifactId>
       <version>${project.version}</version>
     </dependency>
+
+    <!-- Spring dependencies -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context-support</artifactId>
+    </dependency>
+
+    <!-- Security dependencies -->
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-core</artifactId>
+    </dependency>
+
+    <!-- Mailing dependencies -->
     <dependency>
       <groupId>com.sun.mail</groupId>
       <artifactId>javax.mail</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.thymeleaf</groupId>
+      <artifactId>thymeleaf-spring4</artifactId>
+    </dependency>
+
+    <!-- Logging dependencies -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
     </dependency>
 
     <!-- Testing dependencies -->
@@ -51,10 +69,6 @@
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
     </dependency>
-      <dependency>
-          <groupId>org.thymeleaf</groupId>
-          <artifactId>thymeleaf-spring4</artifactId>
-      </dependency>
   </dependencies>
 
   <build>

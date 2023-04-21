@@ -9,20 +9,41 @@
   <name>Menumate</name>
 
   <properties>
-    <javax.mail.version>1.6.2</javax.mail.version>
+    <!-- Spring dependencies -->
     <spring.version>4.2.5.RELEASE</spring.version>
-    <postgresql.version>42.2.5</postgresql.version>
-    <servlet-api-version>2.5</servlet-api-version>
+
+    <!-- Servlet dependencies -->
+    <servlet-api.version>2.5</servlet-api.version>
     <jstl.version>1.2</jstl.version>
+
+    <!-- Validation dependencies -->
+    <!-- NOTE: During class newer versions of the validator packages were used. THESE DO NOT WORK ON THE PAWSERVER -->
+    <validation-api.version>1.0.0.GA</validation-api.version>
+    <hibernate-validator.version>4.3.1.Final</hibernate-validator.version>
+
+    <!-- Security dependencies -->
+    <spring-security.version>4.0.4.RELEASE</spring-security.version>
+
+    <!-- Persistence dependencies -->
+    <postgresql.version>42.2.5</postgresql.version>
+    <slf4j.version>1.7.5</slf4j.version>
+    <logback.version>1.1.2</logback.version>
+
+    <!-- Mailing dependencies-->
+    <javax.mail.version>1.6.2</javax.mail.version>
+    <thymeleaf.version>3.0.12.RELEASE</thymeleaf.version>
+
+    <!-- Logging dependencies -->
+    <logback-ext-spring.version>0.1.1</logback-ext-spring.version>
+
+    <!-- Testing dependencies -->
     <junit.version>4.13.2</junit.version>
     <mockito.version>2.25.1</mockito.version>
     <hsqldb.version>2.3.1</hsqldb.version>
-    <thymeleaf.version>3.0.12.RELEASE</thymeleaf.version>
+
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
-    <javax.validation-api.version>1.0.0.GA</javax.validation-api.version>
-    <org.hibernate-validator.version>4.3.1.Final</org.hibernate-validator.version>
   </properties>
 
   <dependencyManagement>
@@ -48,13 +69,42 @@
       <dependency>
         <groupId>javax.servlet</groupId>
         <artifactId>servlet-api</artifactId>
-        <version>${servlet-api-version}</version>
+        <version>${servlet-api.version}</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>javax.servlet</groupId>
         <artifactId>jstl</artifactId>
         <version>${jstl.version}</version>
+      </dependency>
+
+      <!-- Validation dependencies (JSR 303) -->
+      <dependency>
+        <groupId>javax.validation</groupId>
+        <artifactId>validation-api</artifactId>
+        <version>${validation-api.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-validator</artifactId>
+        <version>${hibernate-validator.version}</version>
+      </dependency>
+
+      <!-- Security dependencies -->
+      <dependency>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-core</artifactId>
+        <version>${spring-security.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-web</artifactId>
+        <version>${spring-security.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-config</artifactId>
+        <version>${spring-security.version}</version>
       </dependency>
 
       <!-- Persistence dependencies -->
@@ -88,6 +138,34 @@
         <scope>compile</scope>
       </dependency>
 
+      <!-- Logging dependencies -->
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${slf4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+        <version>${logback.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-core</artifactId>
+        <version>${logback.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>jcl-over-slf4j</artifactId>
+        <version>${slf4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.logback-extensions</groupId>
+        <artifactId>logback-ext-spring</artifactId>
+        <version>${logback-ext-spring.version}</version>
+        <scope>runtime</scope>
+      </dependency>
+
 
       <!-- Testing dependencies -->
       <dependency>
@@ -113,18 +191,6 @@
         <artifactId>hsqldb</artifactId>
         <version>${hsqldb.version}</version>
         <scope>test</scope>
-      </dependency>
-
-      <!-- JSR 303 API and implementation -->
-      <dependency>
-        <groupId>javax.validation</groupId>
-        <artifactId>validation-api</artifactId>
-        <version>${javax.validation-api.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-validator</artifactId>
-        <version>${org.hibernate-validator.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

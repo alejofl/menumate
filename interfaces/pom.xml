@@ -17,10 +17,12 @@
 
   <dependencies>
     <dependency>
+      <!-- Internal dependencies -->
       <groupId>${project.groupId}</groupId>
       <artifactId>models</artifactId>
       <version>${project.version}</version>
     </dependency>
+
     <!-- Mailing dependencies -->
     <dependency>
       <groupId>com.sun.mail</groupId>
