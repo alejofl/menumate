@@ -26,8 +26,8 @@
         </form:label>
     </div>
     <div>
-        <form:errors path="password" element="p" cssClass="error-message"/>
-        <form:label path="password"> Repeat password:
+        <form:errors path="repeatPassword" element="p" cssClass="error-message"/>
+        <form:label path="repeatPassword"> Repeat password:
             <form:input path="repeatPassword" type="password" placeholder="Repeat password"/>
         </form:label>
     </div>
