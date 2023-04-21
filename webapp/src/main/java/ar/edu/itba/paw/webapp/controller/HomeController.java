@@ -34,9 +34,9 @@ public class HomeController {
         return mav;
     }
 
-    @RequestMapping(value = "/register", method = RequestMethod.GET)
+    @RequestMapping(value = "/auth/register", method = RequestMethod.GET)
     public ModelAndView registerForm() {
-        return new ModelAndView("helloworld/register");
+        return new ModelAndView("auth/register");
     }
 
     @RequestMapping(value = "/error", method = RequestMethod.GET)
@@ -44,14 +44,14 @@ public class HomeController {
         return new ModelAndView("errors/error");
     }
 
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    @RequestMapping(value = "/auth/register", method = RequestMethod.POST)
     public ModelAndView register(
-            @RequestParam(value = "username", required = true) final String username,
+            @RequestParam(value = "email", required = true) final String email,
             @RequestParam(value = "password", required = true) final String password,
-            @RequestParam(value = "email", required = true) final String email
+            @RequestParam(value = "name", required = true) final String name
     ) {
-        final User user = userService.create(username, password, "ivan", email);
-        final ModelAndView mav = new ModelAndView("helloworld/index");
+        final User user = userService.create(email, password, name);
+        final ModelAndView mav = new ModelAndView("helloworld/profile");
         mav.addObject("user", user);
         return mav;
     }

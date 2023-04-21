@@ -2,10 +2,12 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.model.User;
+import ar.edu.itba.paw.model.util.Pair;
 import ar.edu.itba.paw.persistance.UserDao;
 import ar.edu.itba.paw.service.EmailService;
 import ar.edu.itba.paw.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
@@ -18,16 +20,24 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserDao userDao;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Override
-    public User create(String username, String password, String name, String email) {
+    public User create(String email, String password, String name) {
         // TODO: validate username/ password
         // TODO: send email validation mail
-        return userDao.create(username, password, name, email);
+        return userDao.create(email, passwordEncoder.encode(password), name);
     }
 
     @Override
     public Optional<User> getByEmail(String email) {
         return userDao.getByEmail(email);
+    }
+
+    @Override
+    public Optional<Pair<User, String>> getByEmailWithPassword(String email) {
+        return userDao.getByEmailWithPassword(email);
     }
 
     @Override
@@ -38,6 +48,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public User createIfNotExists(String email, String name) {
         Optional<User> user = this.getByEmail(email);
-        return user.orElseGet(() -> this.create(null, null, name, email));
+        return user.orElseGet(() -> this.create(email, null, name));
     }
 }

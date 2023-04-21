@@ -2,14 +2,17 @@ package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.model.User;
+import ar.edu.itba.paw.model.util.Pair;
 
 import javax.mail.MessagingException;
 import java.util.Optional;
 
 public interface UserService {
-    User create(String username, String password, String name, String email);
+    User create(String email, String password, String name);
 
     Optional<User> getByEmail(String email);
+
+    Optional<Pair<User, String>> getByEmailWithPassword(String email);
 
     Optional<User> getById(int userId);
 

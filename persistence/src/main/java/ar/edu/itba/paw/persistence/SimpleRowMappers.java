@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.*;
+import ar.edu.itba.paw.model.util.Pair;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
@@ -15,9 +16,15 @@ class SimpleRowMappers {
 
     static final RowMapper<User> USER_ROW_MAPPER = (ResultSet rs, int rowNum) -> new User(
             rs.getInt("user_id"),
-            rs.getString("user_username"),
+            rs.getString("user_email"),
             rs.getString("user_name"),
-            rs.getString("user_email")
+            rs.getInt("user_image_id"),
+            rs.getBoolean("user_is_active")
+    );
+
+    static final RowMapper<Pair<User, String>> USER_WITH_PASSWORD_ROW_MAPPER = (ResultSet rs, int rowNum) -> new Pair<>(
+            USER_ROW_MAPPER.mapRow(rs, rowNum),
+            rs.getString("password")
     );
 
     static final RowMapper<byte[]> IMAGE_ROW_MAPPER = (ResultSet rs, int rowNum) -> rs.getBytes("bytes");

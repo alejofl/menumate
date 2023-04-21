@@ -21,10 +21,10 @@ import java.util.Optional;
 public class UserJdbcDaoTest {
 
     private static final int ID = 791;
-    private static final String USERNAME = "pedroIsGreat";
+    private static final String EMAIL = "peter@peter.com";
     private static final String PASSWORD = "super12secret34";
     private static final String NAME = "Peter Parker";
-    private static final String EMAIL = "peter@peter.com";
+    private static final boolean IS_ACTIVE = true;
 
     @Autowired
     private DataSource ds;
@@ -42,28 +42,28 @@ public class UserJdbcDaoTest {
 
     @Test
     public void testFindById() throws SQLException {
-        jdbcTemplate.execute("INSERT INTO users (user_id, username, password, name, email) VALUES (" + ID + ", '" + USERNAME + "', '" + PASSWORD + "', '" + NAME + "', '" + EMAIL + "')");
+        jdbcTemplate.execute("INSERT INTO users (user_id, email, password, name, is_active) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + NAME + "', " + IS_ACTIVE + ")");
 
         Optional<User> maybeUser = userDao.getById(ID);
 
         Assert.assertTrue(maybeUser.isPresent());
         Assert.assertEquals(ID, maybeUser.get().getUserId());
-        Assert.assertEquals(USERNAME, maybeUser.get().getUsername());
-        Assert.assertEquals(NAME, maybeUser.get().getName());
         Assert.assertEquals(EMAIL, maybeUser.get().getEmail());
+        Assert.assertEquals(NAME, maybeUser.get().getName());
+        Assert.assertEquals(IS_ACTIVE, maybeUser.get().getIsActive());
     }
 
     @Test
     public void testFindByEmail() throws SQLException {
-        jdbcTemplate.execute("INSERT INTO users (user_id, username, password, name, email) VALUES (" + ID + ", '" + USERNAME + "', '" + PASSWORD + "', '" + NAME + "', '" + EMAIL + "')");
+        jdbcTemplate.execute("INSERT INTO users (user_id, email, password, name, is_active) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + NAME + "', " + IS_ACTIVE + ")");
 
         Optional<User> maybeUser = userDao.getByEmail(EMAIL);
 
         Assert.assertTrue(maybeUser.isPresent());
         Assert.assertEquals(ID, maybeUser.get().getUserId());
-        Assert.assertEquals(USERNAME, maybeUser.get().getUsername());
-        Assert.assertEquals(NAME, maybeUser.get().getName());
         Assert.assertEquals(EMAIL, maybeUser.get().getEmail());
+        Assert.assertEquals(NAME, maybeUser.get().getName());
+        Assert.assertEquals(IS_ACTIVE, maybeUser.get().getIsActive());
     }
 
     @Test
@@ -74,10 +74,9 @@ public class UserJdbcDaoTest {
 
     @Test
     public void testCreate() {
-        User user = userDao.create(USERNAME, PASSWORD, NAME, EMAIL);
+        User user = userDao.create(EMAIL, PASSWORD, NAME);
 
         Assert.assertNotNull(user);
-        Assert.assertEquals(USERNAME, user.getUsername());
         Assert.assertEquals(EMAIL, user.getEmail());
         Assert.assertEquals(NAME, user.getName());
         Assert.assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "users"));

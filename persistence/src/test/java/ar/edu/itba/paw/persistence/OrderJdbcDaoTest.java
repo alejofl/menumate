@@ -38,11 +38,10 @@ public class OrderJdbcDaoTest {
     private static final int RESTAURANT_ID = 45123;
     private static final String RESTAURANT_NAME = "EmpanadasMorita";
     private static final String RESTAURANT_EMAIL = "ivawashere@email.com";
-    private static final int USER_ID = 71823;
-    private static final String USERNAME = "UsuarioCopado33";
-    private static final String PASSWORD = "ElSecretoDeVictoria";
-    private static final String NAME = "pepito";
-    private static final String EMAIL = "usuario@copado.com";
+    private static final int USER_ID = 791;
+    private static final String EMAIL = "peter@peter.com";
+    private static final String PASSWORD = "super12secret34";
+    private static final String NAME = "Peter Parker";
     private static final OrderType ORDER_TYPE = OrderType.DINE_IN;
     private static final int PRODUCT_ID = 212;
     private static final String PRODUCT_NAME = "Pepinito con sal";
@@ -57,7 +56,7 @@ public class OrderJdbcDaoTest {
         jdbcTemplate = new JdbcTemplate(ds);
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "restaurants", "users", "orders", "products", "categories", "order_items");
         jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email) VALUES (" + RESTAURANT_ID + ", '" + RESTAURANT_NAME + "', '" + RESTAURANT_EMAIL + "')");
-        jdbcTemplate.execute("INSERT INTO users (user_id, username, password, email, name) VALUES (" + USER_ID + ", '" + USERNAME + "', '" + PASSWORD + "', '" + EMAIL + "', '" + NAME + "')");
+        jdbcTemplate.execute("INSERT INTO users (user_id, email, password, name) VALUES (" + USER_ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + NAME + "')");
         jdbcTemplate.execute("INSERT INTO categories (category_id, restaurant_id, name, order_num) VALUES (" + CATEGORY_ID + ", " + RESTAURANT_ID + ", '" + CATEGORY_NAME + "', " + CATEGORY_ORDER + ")");
         jdbcTemplate.execute("INSERT INTO products(product_id, category_id, name, price) VALUES (" + PRODUCT_ID + ", " + CATEGORY_ID + ", '" + PRODUCT_NAME + "', " + PRODUCT_PRICE + ")");
         orderItemList = new ArrayList<>();

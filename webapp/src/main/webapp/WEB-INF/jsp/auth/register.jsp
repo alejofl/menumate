@@ -7,10 +7,10 @@
 <body>
 <h1>Register</h1>
 
-<form action="<c:url value="/register"/>" method="post">
+<form action="<c:url value="/auth/register"/>" method="post">
     <div>
-        <label> Username:
-            <input type="text" name="username">
+        <label> Email:
+            <input type="text" name="email">
         </label>
     </div>
     <div>
@@ -19,8 +19,8 @@
         </label>
     </div>
     <div>
-        <label> Email:
-            <input type="text" name="email">
+        <label> Name:
+            <input type="text" name="name">
         </label>
     </div>
     <div>

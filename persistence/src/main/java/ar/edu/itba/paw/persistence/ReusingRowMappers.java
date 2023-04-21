@@ -73,9 +73,10 @@ class ReusingRowMappers {
         public User mapObject(Integer pk, ResultSet rs) throws SQLException {
             return new User(
                     pk,
-                    rs.getString("user_username"),
+                    rs.getString("user_email"),
                     rs.getString("user_name"),
-                    rs.getString("user_email")
+                    rs.getInt("user_image_id"),
+                    rs.getBoolean("user_is_active")
             );
         }
     }

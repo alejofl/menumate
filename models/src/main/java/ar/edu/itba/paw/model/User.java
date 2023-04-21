@@ -3,30 +3,36 @@ package ar.edu.itba.paw.model;
 public class User {
 
     private final int userId;
-    private final String username;
-    private final String name;
     private final String email;
+    private final String name;
+    private final int imageId;
+    private final boolean isActive;
 
-    public User(int userId, String username, String name, String email) {
+    public User(int userId, String email, String name, int imageId, boolean isActive) {
         this.userId = userId;
-        this.username = username;
         this.name = name;
         this.email = email;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getName() {
-        return name;
+        this.imageId = imageId;
+        this.isActive = isActive;
     }
 
     public String getEmail() {
         return email;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public int getUserId() {
         return userId;
+    }
+
+    public int getImageId() {
+        return imageId;
+    }
+
+    public boolean getIsActive() {
+        return isActive;
     }
 }
