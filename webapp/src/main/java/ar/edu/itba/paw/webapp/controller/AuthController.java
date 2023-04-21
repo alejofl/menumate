@@ -39,4 +39,9 @@ public class AuthController {
         mav.addObject("user", user);
         return mav;
     }
+
+    @RequestMapping(value = "/auth/login", method = RequestMethod.GET)
+    public ModelAndView loginForm() {
+        return new ModelAndView("auth/login");
+    }
 }

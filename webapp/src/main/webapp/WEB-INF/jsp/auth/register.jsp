@@ -4,9 +4,8 @@
 <html>
 <head>
     <jsp:include page="/WEB-INF/jsp/components/head.jsp">
-        <jsp:param name="title" value="Home"/>
+        <jsp:param name="title" value="Register"/>
     </jsp:include>
-    <title>Register</title>
 </head>
 <body>
 <h1>Register</h1>
