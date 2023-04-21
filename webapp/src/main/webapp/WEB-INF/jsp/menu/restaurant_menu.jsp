@@ -10,7 +10,7 @@
     </jsp:include>
     <script src="<c:url value="/static/js/restaurant_menu.js"/>"></script>
 </head>
-<body>
+<body data-form-error="${formError}">
 <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
 <div class="restaurant-header">
     <img src="<c:url value="/images/${restaurant.portraitId1}"/>" class="menu-item-card-img" alt="${restaurant.name}">
@@ -89,7 +89,7 @@
                 <form>
                     <div class="input-group">
                         <button id="add-item-to-cart-minus" class="btn btn-secondary" type="button"><i class="bi bi-dash"></i></button>
-                        <input id="add-item-to-cart-quantity" type="number" class="form-control" value="1">
+                        <input id="add-item-to-cart-quantity" type="number" class="form-control" value="1" min="1">
                         <button id="add-item-to-cart-plus" class="btn btn-secondary" type="button"><i class="bi bi-plus"></i></button>
                     </div>
                     <div class="comment-container">
@@ -113,31 +113,31 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <c:url value="/restaurants/${restaurant.restaurantId}" var="checkout"/>
-            <form:form modelAttribute="checkoutForm" action="${checkout}" method="post" cssClass="needs-validation" id="checkout-form">
+            <form:form modelAttribute="checkoutForm" action="${checkout}" method="post" id="checkout-form">
             <div class="modal-body">
                 <div class="mb-3">
                     <form:label path="name" cssClass="form-label">Name</form:label>
                     <form:input type="text" path="name" cssClass="form-control" id="checkout-name"/>
-                    <form:errors path="name" element="div"/>
+                    <form:errors path="name" element="div" cssClass="form-error"/>
                 </div>
                 <div class="mb-3">
                     <form:label path="email" cssClass="form-label">Email Address</form:label>
                     <form:input type="email" path="email" cssClass="form-control" id="checkout-email"/>
-                    <form:errors path="email" element="div"/>
+                    <form:errors path="email" element="div" cssClass="form-error"/>
                 </div>
                 <nav>
                     <div class="nav nav-pills nav-fill mb-3" role="tablist">
-                        <button class="nav-link active" id="checkout-dinein-tab" data-bs-toggle="tab" data-bs-target="#checkout-dinein" type="button" role="tab">Dine-In</button>
+                        <button class="nav-link" id="checkout-dinein-tab" data-bs-toggle="tab" data-bs-target="#checkout-dinein" type="button" role="tab">Dine-In</button>
                         <button class="nav-link" id="checkout-takeaway-tab" data-bs-toggle="tab" data-bs-target="#checkout-takeaway" type="button" role="tab">Take-Away</button>
                         <button class="nav-link" id="checkout-delivery-tab" data-bs-toggle="tab" data-bs-target="#checkout-delivery" type="button" role="tab">Delivery</button>
                     </div>
                 </nav>
                 <div class="tab-content">
-                    <div class="tab-pane fade show active" id="checkout-dinein" role="tabpanel" tabindex="0">
+                    <div class="tab-pane fade" id="checkout-dinein" role="tabpanel" tabindex="0">
                         <div class="mb-3">
                             <form:label path="tableNumber" cssClass="form-label">Table Number</form:label>
                             <form:input type="number" path="tableNumber" cssClass="form-control" id="checkout-table-number"/>
-                            <form:errors path="tableNumber" element="div"/>
+                            <form:errors path="tableNumber" element="div" cssClass="form-error"/>
                         </div>
                     </div>
                     <div class="tab-pane fade" id="checkout-takeaway" role="tabpanel" tabindex="0">
@@ -147,13 +147,20 @@
                         <div class="mb-3">
                             <form:label path="address" cssClass="form-label">Address</form:label>
                             <form:input type="text" path="address" cssClass="form-control" id="checkout-address"/>
-                            <form:errors path="address" element="div"/>
+                            <form:errors path="address" element="div" cssClass="form-error"/>
                         </div>
                     </div>
                 </div>
-                <div id="checkout-cart-items">
+                <div id="checkout-cart-additional-info">
                     <form:input path="restaurantId" type="hidden" value="${restaurant.restaurantId}"/>
-                    <form:input path="orderType" type="hidden" id="checkout-order-type" value="0"/>
+                    <form:input path="orderType" type="hidden" id="checkout-order-type"/>
+                </div>
+                <div id="checkout-cart-items" data-cart-size="${fn:length(checkoutForm.cart)}">
+                    <c:forEach items="${checkoutForm.cart}" var="item" varStatus="loop">
+                        <form:input path="cart[${loop.index}].productId" type="hidden" id="cart${loop.index}-productId"/>
+                        <form:input path="cart[${loop.index}].quantity" type="hidden" id="cart${loop.index}-quantity"/>
+                        <form:input path="cart[${loop.index}].comment" type="hidden" id="cart${loop.index}-comment"/>
+                    </c:forEach>
                 </div>
             </div>
             <div class="modal-footer">
