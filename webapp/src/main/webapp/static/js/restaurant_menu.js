@@ -52,8 +52,6 @@ document.addEventListener("DOMContentLoaded", () => {
         let quantity = document.querySelector(`#cart${i}-quantity`).value
         let comments = document.querySelector(`#cart${i}-comment`).value
         let information = document.querySelector(`.menu-item-card-button[data-info-id="${id}"]`).dataset;
-        console.log(information.infoUnitPrice);
-        console.log(typeof information.infoUnitPrice);
         addItemToFrontCart(information.infoTitle, information.infoPrice, quantity, comments);
     }
 
