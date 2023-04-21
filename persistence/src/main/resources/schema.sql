@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS images
 CREATE TABLE IF NOT EXISTS users
 (
     user_id   SERIAL PRIMARY KEY,
-    email     VARCHAR(256) UNIQUE NOT NULL,
+    email     VARCHAR(320) UNIQUE NOT NULL,
     password  VARCHAR(60),
     name      VARCHAR(48)         NOT NULL,
     image_id  INT                 REFERENCES images (image_id) ON DELETE SET NULL,

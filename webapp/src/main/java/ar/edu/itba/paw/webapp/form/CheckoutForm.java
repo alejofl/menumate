@@ -1,13 +1,11 @@
 package ar.edu.itba.paw.webapp.form;
 
-import ar.edu.itba.paw.model.OrderType;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Arrays;
 import java.util.List;
 
 public class CheckoutForm {
