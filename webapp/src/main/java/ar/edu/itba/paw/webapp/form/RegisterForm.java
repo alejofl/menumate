@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.form;
 
+import ar.edu.itba.paw.webapp.form.validation.EmailNotInUse;
 import ar.edu.itba.paw.webapp.form.validation.RepeatPasswordsMatch;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -12,6 +13,7 @@ public class RegisterForm {
 
     @NotNull
     @Email
+    @EmailNotInUse
     private String email;
 
     @NotNull

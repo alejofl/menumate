@@ -27,18 +27,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Optional<User> getById(int userId) {
+        return userDao.getById(userId);
+    }
+
+    @Override
     public Optional<User> getByEmail(String email) {
         return userDao.getByEmail(email);
     }
 
     @Override
-    public Optional<Pair<User, String>> getByEmailWithPassword(String email) {
-        return userDao.getByEmailWithPassword(email);
+    public boolean isUserEmailRegistered(String email) {
+        return userDao.isUserEmailRegistered(email);
     }
 
     @Override
-    public Optional<User> getById(int userId) {
-        return userDao.getById(userId);
+    public Optional<Pair<User, String>> getByEmailWithPassword(String email) {
+        return userDao.getByEmailWithPassword(email);
     }
 
     @Override
