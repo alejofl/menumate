@@ -36,6 +36,7 @@
             <form:input path="name" type="text" placeholder="Name"/>
         </form:label>
     </div>
+    <form:errors/>
     <div>
         <input type="submit" value="Register!"/>
     </div>
