@@ -153,7 +153,7 @@
                 </div>
                 <div id="checkout-cart-additional-info">
                     <form:input path="restaurantId" type="hidden" value="${restaurant.restaurantId}"/>
-                    <form:input path="orderType" type="hidden" id="checkout-order-type" value="0"/>
+                    <form:input path="orderType" type="hidden" id="checkout-order-type"/>
                 </div>
                 <div id="checkout-cart-items" data-cart-size="${fn:length(checkoutForm.cart)}">
                     <c:forEach items="${checkoutForm.cart}" var="item" varStatus="loop">
