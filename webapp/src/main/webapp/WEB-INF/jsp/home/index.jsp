@@ -9,6 +9,7 @@
 </head>
 <body>
 <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
+<c:if test="${not empty currentUser}"><h3>Hi, <c:out value="${currentUser.name}"/>!</h3></c:if>
 <main class="restaurant-feed">
     <c:forEach items="${restaurants}" var="restaurant">
         <c:url var="restaurantUrl" value="/restaurants/${restaurant.restaurantId}"/>
