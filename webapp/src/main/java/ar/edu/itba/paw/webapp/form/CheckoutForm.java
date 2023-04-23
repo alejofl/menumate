@@ -23,7 +23,7 @@ public class CheckoutForm {
     @Min(0)
     private Integer tableNumber;
 
-    @Size(min = 0, max = 120)
+    @Size(min = 3, max = 120)
     private String address;
 
     @NotNull

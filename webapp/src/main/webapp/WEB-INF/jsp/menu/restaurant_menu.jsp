@@ -153,7 +153,7 @@
                 </div>
                 <div id="checkout-cart-additional-info">
                     <form:input path="restaurantId" type="hidden" value="${restaurant.restaurantId}"/>
-                    <form:input path="orderType" type="hidden" id="checkout-order-type"/>
+                    <form:input path="orderType" type="hidden" id="checkout-order-type" value="0"/>
                 </div>
                 <div id="checkout-cart-items" data-cart-size="${fn:length(checkoutForm.cart)}">
                     <c:forEach items="${checkoutForm.cart}" var="item" varStatus="loop">
@@ -162,6 +162,7 @@
                         <form:input path="cart[${loop.index}].comment" type="hidden" id="cart${loop.index}-comment"/>
                     </c:forEach>
                 </div>
+                <form:errors/>
             </div>
             <div class="modal-footer">
                 <input type="submit" class="btn btn-primary" id="checkout-button" value="Place Order ($5000)"/>

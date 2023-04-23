@@ -7,13 +7,12 @@ import ar.edu.itba.paw.webapp.exception.IllegalOrderTypeException;
 import ar.edu.itba.paw.webapp.exception.RestaurantNotFoundException;
 import ar.edu.itba.paw.webapp.form.CartItem;
 import ar.edu.itba.paw.webapp.form.CheckoutForm;
+import ar.edu.itba.paw.webapp.form.validation.PreProcessingCheckoutFormValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.mail.MessagingException;
@@ -24,14 +23,23 @@ import java.util.List;
 
 @Controller
 public class RestaurantsController {
+
     @Autowired
     private RestaurantService restaurantService;
+
     @Autowired
     private OrderService orderService;
+
     @Autowired
     private UserService userService;
+
     @Autowired
     private EmailService emailService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setValidator(new PreProcessingCheckoutFormValidator(binder.getValidator()));
+    }
 
     @RequestMapping(value = "/restaurants/{id:\\d+}", method = RequestMethod.GET)
     public ModelAndView restaurantMenu(
@@ -61,8 +69,6 @@ public class RestaurantsController {
             return restaurantMenu(id, form, true);
         }
 
-        User user = userService.createIfNotExists(form.getEmail(), form.getName());
-
         List<OrderItem> items = new ArrayList<>();
         for (int i = 0; i < form.getCart().size(); i++) {
             CartItem cartItem = form.getCart().get(i);
@@ -83,7 +89,7 @@ public class RestaurantsController {
 
         // FIXME: how do we handle this?
         try {
-            emailService.sendUserOrderConfirmation(user, order);
+            emailService.sendUserOrderConfirmation(order);
             emailService.sendRestaurantOrderConfirmation(
                     restaurantService.getById(form.getRestaurantId()).orElseThrow(RestaurantNotFoundException::new),
                     order
@@ -95,7 +101,7 @@ public class RestaurantsController {
     }
 
     @RequestMapping("/thankyou")
-    public ModelAndView thankYou(HttpServletRequest request) {
+    public ModelAndView thankYou() {
         return new ModelAndView("menu/thankyou");
     }
 }

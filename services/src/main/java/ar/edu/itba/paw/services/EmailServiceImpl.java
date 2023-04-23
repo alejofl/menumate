@@ -49,15 +49,15 @@ public class EmailServiceImpl implements EmailService {
         sendHtmlMessage(to, subject, htmlBody);
     }
 
-    public void sendUserOrderConfirmation(User user, Order order) throws MessagingException {
+    public void sendUserOrderConfirmation(Order order) throws MessagingException {
         final Map<String, Object> params = new HashMap<>();
-        params.put("recipientName", user.getName());
+        params.put("recipientName", order.getUser().getName());
         params.put("orderId", order.getOrderId());
         params.put("restaurantName", order.getRestaurant().getName());
         params.put("price", restaurantService.getOrderPrice(order));
         this.sendMessageUsingThymeleafTemplate(
                 "user_order_confirmation",
-                user.getEmail(),
+                order.getUser().getEmail(),
                 String.format("MenuMate - %s confirmed your order!", order.getRestaurant().getName()),
                 params
         );

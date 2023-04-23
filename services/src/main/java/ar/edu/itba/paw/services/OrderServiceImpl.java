@@ -27,7 +27,7 @@ public class OrderServiceImpl implements OrderService {
     private ProductService productService;
 
     private int getUserId(String name, String email){
-        return userService.createIfNotExists(name, email).getUserId();
+        return userService.createIfNotExists(email, name).getUserId();
     }
 
     @Override
