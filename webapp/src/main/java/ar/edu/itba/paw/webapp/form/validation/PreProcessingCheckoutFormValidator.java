@@ -28,7 +28,7 @@ public class PreProcessingCheckoutFormValidator implements Validator {
         if (orderType == OrderType.DINE_IN.ordinal()) {
             form.setAddress(null);
             if (form.getTableNumber() == null) {
-                errors.reject("tableNumber", "You must specify a table number");
+                errors.rejectValue("tableNumber", "CheckoutError", "You must specify a table number");
             }
         } else if (orderType == OrderType.TAKEAWAY.ordinal()) {
             form.setAddress(null);
@@ -36,10 +36,10 @@ public class PreProcessingCheckoutFormValidator implements Validator {
         } else if (orderType == OrderType.DELIVERY.ordinal()) {
             form.setTableNumber(null);
             if (form.getAddress() == null) {
-                errors.reject("address", "You must specify an address");
+                errors.rejectValue("address", "CheckoutError", "You must specify an address");
             }
         } else {
-            errors.reject("Invalid orderType");
+            errors.reject("CheckoutError", "Invalid orderType");
         }
     }
 
