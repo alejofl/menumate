@@ -19,7 +19,17 @@ public class HomeController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView index() {
-        ModelAndView mav = new ModelAndView("home/landing");
+        ModelAndView mav = new ModelAndView("home/index");
+
+        final List<Restaurant> restaurants = restaurantService.getAll();
+        mav.addObject("restaurants", restaurants);
+
+        return mav;
+    }
+
+    @RequestMapping(value = "/restaurants", method = RequestMethod.GET)
+    public ModelAndView restaurants() {
+        ModelAndView mav = new ModelAndView("home/restaurants");
 
         final List<Restaurant> restaurants = restaurantService.getAll();
         mav.addObject("restaurants", restaurants);
