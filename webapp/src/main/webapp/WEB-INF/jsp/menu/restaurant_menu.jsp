@@ -162,7 +162,8 @@
                         <form:input path="cart[${loop.index}].comment" type="hidden" id="cart${loop.index}-comment"/>
                     </c:forEach>
                 </div>
-                <form:errors/>
+                <form:errors path="cart"/> <!-- Errors when none or too many items in cart -->
+                <form:errors/> <!-- General errors -->
             </div>
             <div class="modal-footer">
                 <input type="submit" class="btn btn-primary" id="checkout-button" value="Place Order ($5000)"/>
