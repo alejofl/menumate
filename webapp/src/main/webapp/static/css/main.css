@@ -390,3 +390,19 @@ input:has(+ .form-error) {
     align-items: center;
     color: #b6b6b6;
 }
+
+#login-submit {
+    width: 100%;
+}
+
+.login-register-main {
+    background-color: var(--dark);
+    margin: 0;
+    height: calc(100vh - 72px);
+    align-items: center;
+    justify-content: center;
+}
+
+.login-register-card {
+    padding: 1rem;
+}
