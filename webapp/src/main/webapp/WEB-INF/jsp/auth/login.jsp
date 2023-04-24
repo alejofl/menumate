@@ -13,6 +13,11 @@
     <div class="card mb-3 login-register-card" style="width: 25rem;">
         <div class="card-body">
             <h2 class="card-title mb-3">Login</h2>
+            <c:if test="${param.error != null}">
+                <div class="alert alert-danger" role="alert">
+                    The email and/or password provided are incorrect.
+                </div>
+            </c:if>
             <form action="<c:url value="/auth/login"/>" method="post">
                 <div class="mb-3">
                     <label for="login-email" class="form-label">Email address</label>
