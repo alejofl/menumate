@@ -28,7 +28,7 @@
                 </div>
                 <input type="submit" class="btn btn-primary" id="login-submit" value="Login">
             </form>
-            <p class="mt-3">Not have an account? <a href="#">Sign up!</a></p>
+            <p class="mt-3">Not have an account? <a href="<c:url value="/auth/register"/>">Sign up!</a></p>
         </div>
     </div>
 </main>
