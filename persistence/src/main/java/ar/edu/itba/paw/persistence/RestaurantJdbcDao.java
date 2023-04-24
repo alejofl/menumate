@@ -54,8 +54,10 @@ public class RestaurantJdbcDao implements RestaurantDao {
             searchParam.append(token).append("%");
         }
 
-        RowMapper<Restaurant> rowMapper = ReusingRowMappers.getRestaurantRowMapper();
-        return jdbcTemplate.query(SelectBase + " WHERE is_active = true AND LOWER(name) LIKE ?", rowMapper, searchParam.toString());
+        return jdbcTemplate.query(SelectBase + " WHERE is_active = true AND LOWER(name) LIKE ?",
+                SimpleRowMappers.RESTAURANT_ROW_MAPPER,
+                searchParam.toString()
+        );
     }
 
     @Override
