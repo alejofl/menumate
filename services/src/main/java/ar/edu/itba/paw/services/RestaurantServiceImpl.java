@@ -32,6 +32,15 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
+    public List<Restaurant> getSearchResults(String query) {
+        if (query == null) {
+            query = "";
+        }
+        String[] tokens = query.toLowerCase().split(" +");
+        return restaurantDao.getSearchResults(tokens);
+    }
+
+    @Override
     public List<Pair<Category, List<Product>>> getMenu(int restaurantId) {
         List<Product> products = productDao.getByRestaurantOrderByCategoryOrder(restaurantId);
 

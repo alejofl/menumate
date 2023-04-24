@@ -12,5 +12,7 @@ public interface RestaurantDao {
 
     List<Restaurant> getAll();
 
+    List<Restaurant> getSearchResults(String[] tokens);
+
     boolean delete(int restaurantId);
 }

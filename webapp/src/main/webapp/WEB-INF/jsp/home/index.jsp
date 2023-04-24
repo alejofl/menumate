@@ -31,12 +31,10 @@
                 </jsp:include>
             </c:forEach>
         </main>
-        <a href="<c:url value="/restaurants/"/>">
-            <button type="button" class="btn btn-primary btn-lg text-uppercase">More Restaurants</button>
-        </a>
+        <a href="<c:url value="/restaurants"/>" class="btn btn-primary">More Restaurants</a>
     </div>
     <div class="landing-footer">
-        <p class="landing-footer-text">© 2023 MenuMate FLAN Inc. All rights reserved.</p>
+        <small class="landing-footer-text">© 2023 MenuMate FLAN Inc. All rights reserved.</small>
     </div>
 </body>
 </html>
