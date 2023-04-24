@@ -14,8 +14,8 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav">
         <li class="nav-item">
-          <c:url var="homeUrl" value="/"/>
-          <a class="nav-link active" aria-current="page" href="${homeUrl}">Home</a>
+          <c:url var="restaurants" value="/restaurants"/>
+          <a class="nav-link active" aria-current="page" href="${restaurants}">Explore</a>
         </li>
         <!--
         <li class="nav-item">

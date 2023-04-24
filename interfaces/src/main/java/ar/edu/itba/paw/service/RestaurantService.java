@@ -13,6 +13,8 @@ public interface RestaurantService {
 
     List<Restaurant> getAll();
 
+    List<Restaurant> getSearchResults(String query);
+
     List<Pair<Category, List<Product>>> getMenu(int restaurantId);
 
     boolean delete(int restaurantId);

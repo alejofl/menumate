@@ -48,6 +48,17 @@ public class RestaurantJdbcDao implements RestaurantDao {
     }
 
     @Override
+    public List<Restaurant> getSearchResults(String[] tokens) {
+        StringBuilder searchParam = new StringBuilder("%");
+        for (String token : tokens) {
+            searchParam.append(token).append("%");
+        }
+
+        RowMapper<Restaurant> rowMapper = ReusingRowMappers.getRestaurantRowMapper();
+        return jdbcTemplate.query(SelectBase + " WHERE is_active = true AND LOWER(name) LIKE ?", rowMapper, searchParam.toString());
+    }
+
+    @Override
     public Restaurant create(String name, String email) {
         final Map<String, Object> restaurantData = new HashMap<>();
         restaurantData.put("name", name);
