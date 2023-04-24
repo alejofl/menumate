@@ -31,9 +31,6 @@ public class RestaurantsController {
     private OrderService orderService;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private EmailService emailService;
 
     @InitBinder
