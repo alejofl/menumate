@@ -18,7 +18,7 @@ public class EmailNotInUseValidator implements ConstraintValidator<EmailNotInUse
     @Override
     public boolean isValid(String s, ConstraintValidatorContext constraintValidatorContext) {
         if (s == null || s.length() < 3)
-            return false;
+            return true;
 
         return !userService.isUserEmailRegistered(s);
     }
