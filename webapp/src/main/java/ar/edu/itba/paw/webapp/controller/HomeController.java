@@ -28,7 +28,11 @@ public class HomeController {
         ModelAndView mav = new ModelAndView("home/index");
 
         final List<Restaurant> restaurants = restaurantService.getAll();
-        mav.addObject("restaurants", restaurants);
+        int endIndex = 4;
+        if (restaurants.size() < endIndex) {
+            endIndex = restaurants.size();
+        }
+        mav.addObject("restaurants", restaurants.subList(0,endIndex));
 
         return mav;
     }
