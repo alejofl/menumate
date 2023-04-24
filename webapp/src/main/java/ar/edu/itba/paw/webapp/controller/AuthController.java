@@ -35,9 +35,7 @@ public class AuthController {
         }
 
         final User user = userService.create(registerForm.getEmail(), registerForm.getPassword(), registerForm.getName());
-        final ModelAndView mav = new ModelAndView("helloworld/profile");
-        mav.addObject("user", user);
-        return mav;
+        return new ModelAndView("redirect:/auth/login");
     }
 
     @RequestMapping(value = "/auth/login", method = RequestMethod.GET)

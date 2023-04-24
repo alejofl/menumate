@@ -54,7 +54,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .and().rememberMe()
                 .rememberMeParameter("rememberme")
                 .userDetailsService(userDetailsService)
-                // .key("insert-some-cryptographic-salt") // TODO: Generate secure salt with OpenSSL
+                .key("3997D58423B95192E5F38AD7F08870B4A083E69C619FC4564E9F8AB4B64AA5A3")
                 .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(30))
 
                 // Request authorization

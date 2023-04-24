@@ -56,8 +56,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Select Order Type tab automatically
-    if (orderType.value === "0") {
+    if (orderType.value === "0" || orderType.value === "") {
         selectOrderTypeTab("dinein");
+        orderType.value = "0"
     } else if (orderType.value === "1") {
         selectOrderTypeTab("takeaway");
     } else {

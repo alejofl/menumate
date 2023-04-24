@@ -1,16 +1,30 @@
 package ar.edu.itba.paw.webapp.form;
 
+import ar.edu.itba.paw.webapp.form.validation.EmailNotInUse;
+import ar.edu.itba.paw.webapp.form.validation.RepeatPasswordsMatch;
 import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+@RepeatPasswordsMatch
 public class RegisterForm {
+
+    @NotNull
     @Email
+    @EmailNotInUse
     private String email;
 
+    @NotNull
     @Size(min = 8, max = 72)
     private String password;
-    private String repeatPassword; // TODO: Validate that this is equal to password
+
+    @NotNull
+    @NotEmpty
+    private String repeatPassword;
+
+    @NotNull
     @Size(min = 2, max=48)
     private String name;
 

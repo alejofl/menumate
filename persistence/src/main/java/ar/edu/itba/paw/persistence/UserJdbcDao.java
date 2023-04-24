@@ -6,6 +6,7 @@ import ar.edu.itba.paw.persistance.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -48,19 +49,28 @@ public class UserJdbcDao implements UserDao {
         ).stream().findFirst();
     }
 
-    public Optional<Pair<User, String>> getByEmailWithPassword(String email) {
-        return jdbcTemplate.query(
-                "SELECT " + TableFields.USERS_FIELDS + ", password FROM users WHERE email = ?",
-                SimpleRowMappers.USER_WITH_PASSWORD_ROW_MAPPER,
-                email
-        ).stream().findFirst();
-    }
-
     @Override
     public Optional<User> getByEmail(String email) {
         return jdbcTemplate.query(
                 "SELECT " + TableFields.USERS_FIELDS + " FROM users WHERE email = ?",
                 SimpleRowMappers.USER_ROW_MAPPER,
+                email
+        ).stream().findFirst();
+    }
+
+    @Override
+    public boolean isUserEmailRegistered(String email) {
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(
+                "SELECT EXISTS(SELECT 1 FROM users WHERE email = ? AND PASSWORD IS NOT NULL) AS exists",
+                email
+        );
+        return rowSet.next() && rowSet.getBoolean("exists");
+    }
+
+    public Optional<Pair<User, String>> getByEmailWithPassword(String email) {
+        return jdbcTemplate.query(
+                "SELECT " + TableFields.USERS_FIELDS + ", password FROM users WHERE email = ?",
+                SimpleRowMappers.USER_WITH_PASSWORD_ROW_MAPPER,
                 email
         ).stream().findFirst();
     }

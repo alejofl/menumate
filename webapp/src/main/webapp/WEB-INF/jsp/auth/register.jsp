@@ -21,13 +21,13 @@
     <div>
         <form:errors path="password" element="p" cssClass="error-message"/>
         <form:label path="password"> Password:
-            <form:input path="password" type="password" placeholder="Password"/>
+            <form:password path="password" placeholder="Password"/>
         </form:label>
     </div>
     <div>
         <form:errors path="repeatPassword" element="p" cssClass="error-message"/>
         <form:label path="repeatPassword"> Repeat password:
-            <form:input path="repeatPassword" type="password" placeholder="Repeat password"/>
+            <form:password path="repeatPassword" placeholder="Repeat password"/>
         </form:label>
     </div>
     <div>
@@ -36,6 +36,7 @@
             <form:input path="name" type="text" placeholder="Name"/>
         </form:label>
     </div>
+    <form:errors/>
     <div>
         <input type="submit" value="Register!"/>
     </div>

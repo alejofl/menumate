@@ -10,7 +10,9 @@ public interface UserDao {
 
     Optional<User> getById(int userId);
 
-    Optional<Pair<User, String>> getByEmailWithPassword(String email);
-
     Optional<User> getByEmail(String email);
+
+    boolean isUserEmailRegistered(String email);
+
+    Optional<Pair<User, String>> getByEmailWithPassword(String email);
 }

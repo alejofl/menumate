@@ -8,7 +8,7 @@ import javax.mail.MessagingException;
 
 public interface EmailService {
 
-    void sendUserOrderConfirmation(User user, Order order) throws MessagingException;
+    void sendUserOrderConfirmation(Order order) throws MessagingException;
 
     void sendRestaurantOrderConfirmation(Restaurant restaurant, Order order) throws MessagingException;
 }
