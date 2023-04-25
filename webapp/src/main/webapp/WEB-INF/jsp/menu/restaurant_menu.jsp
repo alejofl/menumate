@@ -168,7 +168,7 @@
                 <form:errors/> <!-- General errors -->
             </div>
             <div class="modal-footer">
-                <input type="submit" class="btn btn-primary" id="checkout-button" value="<spring:message code="restaurant.menu.placeorder"/>"/>
+                <input type="submit" class="btn btn-primary" id="checkout-button" data-button-text="<spring:message code="restaurant.menu.placeorder"/>" value=""/>
             </div>
             </form:form>
         </div>

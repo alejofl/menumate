@@ -152,8 +152,8 @@ document.addEventListener("DOMContentLoaded", () => {
         let price = cart.reduce(function (result, item) {
             return result + item.price;
         }, 0);
-        let buttonText = document.querySelector(`#checkout-button`).getAttribute("value");
-        document.querySelector(`#checkout-button`).value = `${buttonText} ($${price})`;
+        let button = document.querySelector(`#checkout-button`);
+        button.value = `${button.dataset.buttonText} ($${price.toFixed(2)})`;
     });
 
     // Order Type Selector (FIXME this values are hardcoded)
