@@ -406,3 +406,7 @@ input:has(+ .form-error) {
 .login-register-card {
     padding: 1rem;
 }
+
+.text-color-white {
+    color: white;
+}
