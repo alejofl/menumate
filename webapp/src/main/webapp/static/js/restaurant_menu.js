@@ -37,6 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let cartModalTitle = document.querySelector("#add-item-to-cart-title");
     let cartModalDescription = document.querySelector("#add-item-to-cart-description");
     let cartModalButton = document.querySelector("#add-item-to-cart-add");
+    let cartModalButtonText = cartModalButton.innerHTML;
     let cartItemsContainer = document.querySelector("#checkout-cart-items");
     let orderType = document.querySelector("#checkout-order-type");
 
@@ -74,7 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
             cartModalButton.setAttribute("data-info-unit-price", value.dataset.infoPrice);
             cartModalButton.setAttribute("data-info-title", value.dataset.infoTitle);
             cartModalButton.setAttribute("data-info-id", value.dataset.infoId);
-            cartModalButton.innerHTML = `Add Item to Cart ($${value.dataset.infoPrice})`;
+            cartModalButton.innerHTML = `${cartModalButtonText} ($${value.dataset.infoPrice})`;
         });
     });
 
@@ -107,14 +108,14 @@ document.addEventListener("DOMContentLoaded", () => {
         if (cartModalQuantity.value >= 2) {
             cartModalQuantity.value--;
             let price = parseFloat(cartModalButton.dataset.infoUnitPrice);
-            cartModalButton.innerHTML = `Add Item to Cart ($${price * cartModalQuantity.value})`;
+            cartModalButton.innerHTML = `${cartModalButtonText} ($${price * cartModalQuantity.value})`;
             cartModalQuantity.dispatchEvent(new Event("input"));
         }
     });
     document.querySelector("#add-item-to-cart-plus").addEventListener("click", () => {
         cartModalQuantity.value++;
         let price = parseFloat(cartModalButton.dataset.infoUnitPrice);
-        cartModalButton.innerHTML = `Add Item to Cart ($${price * cartModalQuantity.value})`;
+        cartModalButton.innerHTML = `${cartModalButtonText} ($${price * cartModalQuantity.value})`;
         cartModalQuantity.dispatchEvent(new Event("input"));
     });
 
@@ -151,7 +152,8 @@ document.addEventListener("DOMContentLoaded", () => {
         let price = cart.reduce(function (result, item) {
             return result + item.price;
         }, 0);
-        document.querySelector(`#checkout-button`).value = `Place Order ($${price})`;
+        let buttonText = document.querySelector(`#checkout-button`).getAttribute("value");
+        document.querySelector(`#checkout-button`).value = `${buttonText} ($${price})`;
     });
 
     // Order Type Selector (FIXME this values are hardcoded)

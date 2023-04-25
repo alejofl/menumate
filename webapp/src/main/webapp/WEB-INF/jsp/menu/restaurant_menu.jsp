@@ -2,9 +2,11 @@
 <%@ taglib prefix = "fn" uri = "http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
 <html>
 <head>
+    <spring:message code="restaurant.menu.comments" var="comments"/>
     <jsp:include page="/WEB-INF/jsp/components/head.jsp">
         <jsp:param name="title" value="${restaurant.name}"/>
     </jsp:include>
@@ -25,7 +27,7 @@
                     <p>${restaurant.description}</p>
                 </c:when>
                 <c:otherwise>
-                    <p><i>This restaurant does not have a description</i></p>
+                    <p><i> <spring:message code="restaurant.menu.nodescription"/></i></p>
                 </c:otherwise>
             </c:choose>
         </div>
@@ -34,7 +36,7 @@
 <main>
     <div class="categories restaurant-menu-sticky-card">
         <div class="card">
-            <div class="card-header text-muted">Categories</div>
+            <div class="card-header text-muted"> <spring:message code="restaurant.menu.categories"/></div>
             <div class="card-body">
                 <div class="nav nav-pills small">
                     <c:forEach items="${menu}" var="entry">
@@ -65,11 +67,11 @@
     </div>
     <div class="cart restaurant-menu-sticky-card">
         <div class="card">
-            <div class="card-header text-muted">My Order</div>
+            <div class="card-header text-muted"><spring:message code="restaurant.menu.myorder"/></div>
             <ul class="list-group list-group-flush" id="cart-container">
             </ul>
             <div class="card-body">
-                <button class="btn btn-primary" id="place-order-button" type="button" data-bs-toggle="modal" data-bs-target="#checkout" disabled>Order Now</button>
+                <button class="btn btn-primary" id="place-order-button" type="button" data-bs-toggle="modal" data-bs-target="#checkout" disabled><spring:message code="restaurant.menu.ordernow"/></button>
             </div>
         </div>
     </div>
@@ -93,12 +95,12 @@
                         <button id="add-item-to-cart-plus" class="btn btn-secondary" type="button"><i class="bi bi-plus"></i></button>
                     </div>
                     <div class="comment-container">
-                        <input id="add-item-to-cart-comments" placeholder="Comments" class="form-control">
+                        <input id="add-item-to-cart-comments" placeholder="${comments}" class="form-control">
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" id="add-item-to-cart-add" class="btn btn-primary" data-bs-dismiss="modal">Add Item to Cart ($500)</button>
+                <button type="button" id="add-item-to-cart-add" class="btn btn-primary" data-bs-dismiss="modal"><spring:message code="restaurant.menu.addtocart"/></button>
             </div>
         </div>
     </div>
@@ -109,43 +111,43 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5">Checkout</h1>
+                <h1 class="modal-title fs-5"><spring:message code="restaurant.menu.checkout"/></h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <c:url value="/restaurants/${restaurant.restaurantId}" var="checkout"/>
             <form:form modelAttribute="checkoutForm" action="${checkout}" method="post" id="checkout-form">
             <div class="modal-body">
                 <div class="mb-3">
-                    <form:label path="name" cssClass="form-label">Name</form:label>
+                    <form:label path="name" cssClass="form-label"><spring:message code="restaurant.menu.form.name"/></form:label>
                     <form:input type="text" path="name" cssClass="form-control" id="checkout-name"/>
                     <form:errors path="name" element="div" cssClass="form-error"/>
                 </div>
                 <div class="mb-3">
-                    <form:label path="email" cssClass="form-label">Email Address</form:label>
+                    <form:label path="email" cssClass="form-label"><spring:message code="restaurant.menu.form.email"/></form:label>
                     <form:input type="email" path="email" cssClass="form-control" id="checkout-email"/>
                     <form:errors path="email" element="div" cssClass="form-error"/>
                 </div>
                 <nav>
                     <div class="nav nav-pills nav-fill mb-3" role="tablist">
-                        <button class="nav-link" id="checkout-dinein-tab" data-bs-toggle="tab" data-bs-target="#checkout-dinein" type="button" role="tab">Dine-In</button>
-                        <button class="nav-link" id="checkout-takeaway-tab" data-bs-toggle="tab" data-bs-target="#checkout-takeaway" type="button" role="tab">Take-Away</button>
-                        <button class="nav-link" id="checkout-delivery-tab" data-bs-toggle="tab" data-bs-target="#checkout-delivery" type="button" role="tab">Delivery</button>
+                        <button class="nav-link" id="checkout-dinein-tab" data-bs-toggle="tab" data-bs-target="#checkout-dinein" type="button" role="tab"><spring:message code="restaurant.menu.form.dinein"/></button>
+                        <button class="nav-link" id="checkout-takeaway-tab" data-bs-toggle="tab" data-bs-target="#checkout-takeaway" type="button" role="tab"><spring:message code="restaurant.menu.form.takeaway"/></button>
+                        <button class="nav-link" id="checkout-delivery-tab" data-bs-toggle="tab" data-bs-target="#checkout-delivery" type="button" role="tab"><spring:message code="restaurant.menu.form.delivery"/></button>
                     </div>
                 </nav>
                 <div class="tab-content">
                     <div class="tab-pane fade" id="checkout-dinein" role="tabpanel" tabindex="0">
                         <div class="mb-3">
-                            <form:label path="tableNumber" cssClass="form-label">Table Number</form:label>
+                            <form:label path="tableNumber" cssClass="form-label"><spring:message code="restaurant.menu.form.tablenumber"/></form:label>
                             <form:input type="number" path="tableNumber" cssClass="form-control" id="checkout-table-number"/>
                             <form:errors path="tableNumber" element="div" cssClass="form-error"/>
                         </div>
                     </div>
                     <div class="tab-pane fade" id="checkout-takeaway" role="tabpanel" tabindex="0">
-                        <p>Your food will be ready for pickup on approximately <strong>20 minutes</strong>.</p>
+                        <p><spring:message code="restaurant.menu.form.takeaway.message"/></p>
                     </div>
                     <div class="tab-pane fade" id="checkout-delivery" role="tabpanel" tabindex="0">
                         <div class="mb-3">
-                            <form:label path="address" cssClass="form-label">Address</form:label>
+                            <form:label path="address" cssClass="form-label"><spring:message code="restaurant.menu.form.address"/></form:label>
                             <form:input type="text" path="address" cssClass="form-control" id="checkout-address"/>
                             <form:errors path="address" element="div" cssClass="form-error"/>
                         </div>
@@ -166,7 +168,7 @@
                 <form:errors/> <!-- General errors -->
             </div>
             <div class="modal-footer">
-                <input type="submit" class="btn btn-primary" id="checkout-button" value="Place Order ($5000)"/>
+                <input type="submit" class="btn btn-primary" id="checkout-button" value="<spring:message code="restaurant.menu.placeorder"/>"/>
             </div>
             </form:form>
         </div>
