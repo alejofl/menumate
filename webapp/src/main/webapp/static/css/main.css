@@ -1,6 +1,8 @@
 :root {
     --primary: #ed7a57;
+    --primary-rgb: 237,122,87;
     --primary-dark: #bd5439;
+    --primary-dark-rgb: 189,84,57;
     --primary-light: #f39d84;
     --secondary: #edb026;
     --secondary-dark: #c49220;
@@ -8,10 +10,29 @@
     --dark: #282d2f;
     --light: #f4f4f4;
     --form-invalid-color: #dc3545;
+
+    --bs-primary: var(--primary);
+    --bs-danger: var(--form-invalid-color);
+    --bs-primary-rgb: var(--primary-rgb);
+    --bs-link-color: var(--primary);
+    --bs-link-hover-color: var(--primary-dark);
+    --bs-link-color-rgb: var(--primary-rgb);
+    --bs-link-hover-color-rgb: var(--primary-dark-rgb);
 }
 
 body {
     background-color: var(--light) !important;
+}
+
+.form-control:focus, .form-check-input:focus {
+    border-color: var(--primary);
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem #ed7a5740;
+}
+
+.form-check-input:checked {
+    background-color: var(--primary);
+    border-color: var(--primary);
 }
 
 .bg-body-tertiary {
@@ -356,12 +377,6 @@ input:has(+ .form-error) {
     .search-form .input-group {
         width: 100%;
     }
-}
-
-.search-input:focus {
-    border-color: var(--primary);
-    outline: 0;
-    box-shadow: 0 0 0 0.25rem #ed7a5740;
 }
 
 #searchForm {
