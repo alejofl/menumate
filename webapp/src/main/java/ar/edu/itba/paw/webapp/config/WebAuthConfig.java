@@ -2,9 +2,11 @@ package ar.edu.itba.paw.webapp.config;
 
 import ar.edu.itba.paw.webapp.auth.AccessValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,7 +16,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.util.FileCopyUtils;
 
+import java.io.InputStreamReader;
 import java.util.concurrent.TimeUnit;
 
 @EnableWebSecurity
@@ -24,6 +28,9 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private UserDetailsService userDetailsService;
+
+    @Value("classpath:remembermekey.txt")
+    private Resource remembermeKey;
 
     @Autowired
     private AccessValidator accessValidator;
@@ -59,7 +66,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .and().rememberMe()
                 .rememberMeParameter("rememberme")
                 .userDetailsService(userDetailsService)
-                .key("3997D58423B95192E5F38AD7F08870B4A083E69C619FC4564E9F8AB4B64AA5A3")
+                .key(FileCopyUtils.copyToString(new InputStreamReader(remembermeKey.getInputStream())))
                 .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(30))
 
                 // Request authorization
@@ -70,6 +77,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
                 // Disable csrf rules
                 .and().csrf().disable();
+
     }
 
     @Override
