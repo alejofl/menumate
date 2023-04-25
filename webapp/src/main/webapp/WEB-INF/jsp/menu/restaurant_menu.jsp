@@ -117,16 +117,27 @@
             <c:url value="/restaurants/${restaurant.restaurantId}" var="checkout"/>
             <form:form modelAttribute="checkoutForm" action="${checkout}" method="post" id="checkout-form">
             <div class="modal-body">
-                <div class="mb-3">
-                    <form:label path="name" cssClass="form-label"><spring:message code="restaurant.menu.form.name"/></form:label>
-                    <form:input type="text" path="name" cssClass="form-control" id="checkout-name"/>
-                    <form:errors path="name" element="div" cssClass="form-error"/>
-                </div>
-                <div class="mb-3">
-                    <form:label path="email" cssClass="form-label"><spring:message code="restaurant.menu.form.email"/></form:label>
-                    <form:input type="email" path="email" cssClass="form-control" id="checkout-email"/>
-                    <form:errors path="email" element="div" cssClass="form-error"/>
-                </div>
+                <c:choose>
+                    <c:when test="${currentUser != null}">
+                        <div class="mb-4">
+                            <h5><spring:message code="restaurant.menu.form.user" arguments="${currentUser.name}"/></h5>
+                            <form:input type="hidden" path="name" cssClass="form-control" id="checkout-name" value="${currentUser.name}"/>
+                            <form:input type="hidden" path="email" cssClass="form-control" id="checkout-email" value="${currentUser.email}"/>
+                        </div>
+                    </c:when>
+                    <c:otherwise>
+                        <div class="mb-3">
+                            <form:label path="name" cssClass="form-label"><spring:message code="restaurant.menu.form.name"/></form:label>
+                            <form:input type="text" path="name" cssClass="form-control" id="checkout-name"/>
+                            <form:errors path="name" element="div" cssClass="form-error"/>
+                        </div>
+                        <div class="mb-3">
+                            <form:label path="email" cssClass="form-label"><spring:message code="restaurant.menu.form.email"/></form:label>
+                            <form:input type="email" path="email" cssClass="form-control" id="checkout-email"/>
+                            <form:errors path="email" element="div" cssClass="form-error"/>
+                        </div>
+                    </c:otherwise>
+                </c:choose>
                 <nav>
                     <div class="nav nav-pills nav-fill mb-3" role="tablist">
                         <button class="nav-link" id="checkout-dinein-tab" data-bs-toggle="tab" data-bs-target="#checkout-dinein" type="button" role="tab"><spring:message code="restaurant.menu.form.dinein"/></button>

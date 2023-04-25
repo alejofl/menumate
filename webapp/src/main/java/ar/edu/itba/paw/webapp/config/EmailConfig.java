@@ -8,6 +8,7 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.env.Environment;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.spring4.SpringTemplateEngine;
@@ -18,6 +19,7 @@ import org.thymeleaf.templateresolver.ITemplateResolver;
 import java.util.Properties;
 
 @EnableWebMvc
+@EnableAsync
 @PropertySource("classpath:application.properties")
 @Configuration
 public class EmailConfig {

@@ -7,6 +7,7 @@ import ar.edu.itba.paw.service.RestaurantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -48,6 +49,7 @@ public class EmailServiceImpl implements EmailService {
         sendHtmlMessage(to, subject, htmlBody);
     }
 
+    @Async
     public void sendUserOrderConfirmation(Order order) throws MessagingException {
         final Map<String, Object> params = new HashMap<>();
         params.put("recipientName", order.getUser().getName());
@@ -62,6 +64,7 @@ public class EmailServiceImpl implements EmailService {
         );
     }
 
+    @Async
     public void sendRestaurantOrderConfirmation(Restaurant restaurant, Order order) throws MessagingException {
         final Map<String, Object> params = new HashMap<>();
         params.put("userName", order.getUser().getName());
