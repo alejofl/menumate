@@ -1,12 +1,9 @@
 package ar.edu.itba.paw.webapp.form.validation;
 
 import ar.edu.itba.paw.model.OrderType;
-import ar.edu.itba.paw.webapp.form.CartItem;
 import ar.edu.itba.paw.webapp.form.CheckoutForm;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-
-import java.util.List;
 
 public class PreProcessingCheckoutFormValidator implements Validator {
 

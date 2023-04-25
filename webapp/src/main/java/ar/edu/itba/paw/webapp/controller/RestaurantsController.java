@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.mail.MessagingException;
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
@@ -100,5 +99,10 @@ public class RestaurantsController {
     @RequestMapping("/thankyou")
     public ModelAndView thankYou() {
         return new ModelAndView("menu/thankyou");
+    }
+
+    @RequestMapping(value = "/restaurants/{id:\\d+}/edit", method = RequestMethod.GET)
+    public ModelAndView restaurantEdit(@PathVariable final int id) {
+        return thankYou(); // TODO: Implement. This is just a placeholder
     }
 }
