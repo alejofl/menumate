@@ -2,11 +2,14 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
 <html>
 <head>
+    <spring:message code="restaurants.title" var="home"/>
+    <spring:message code="restaurants.search.placeholder" var="placeholder"/>
     <jsp:include page="/WEB-INF/jsp/components/head.jsp">
-        <jsp:param name="title" value="Home"/>
+        <jsp:param name="title" value="${home}"/>
     </jsp:include>
 </head>
 <body>
@@ -15,10 +18,10 @@
     <form:form modelAttribute="searchForm" action="${search}" method="get">
         <div class="input-group flex-nowrap">
             <span class="input-group-text search-input"><i class="bi bi-search"></i></span>
-            <form:input type="text" path="search" cssClass="form-control search-input" placeholder="Search your favourite restaurant..."/>
+            <form:input type="text" path="search" cssClass="form-control search-input" placeholder="${placeholder}"/>
             <form:errors path="search" element="div" cssClass="form-error invalid-tooltip"/>
         </div>
-        <input type="submit" class="btn btn-primary" value="Search">
+        <input type="submit" class="btn btn-primary" value='<spring:message code="restaurants.search"/>'>
     </form:form>
     <main class="restaurant-feed">
         <c:forEach items="${restaurants}" var="restaurant">
@@ -36,7 +39,7 @@
         <c:if test="${fn:length(restaurants) == 0}">
             <div class="empty-results">
                 <h1><i class="bi bi-slash-circle"></i></h1>
-                <p>No results for the given query.</p>
+                <p>  <spring:message code="restaurants.search.noresult"/></p>
             </div>
         </c:if>
     </main>

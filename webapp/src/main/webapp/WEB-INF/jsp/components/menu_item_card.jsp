@@ -1,5 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+
 <html>
 <body>
   <a
@@ -25,7 +27,7 @@
               <p class="card-text"><small class="text-body-secondary">${param.product_description}</small></p>
             </c:when>
             <c:otherwise>
-              <p><i>Este producto no posee una descripción</i></p>
+              <p><i><spring:message code="menuitem.product.nodescription"/></i></p>
             </c:otherwise>
           </c:choose>
         </div>
