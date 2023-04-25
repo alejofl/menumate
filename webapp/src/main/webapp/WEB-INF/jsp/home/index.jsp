@@ -1,10 +1,12 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
 <html>
 <head>
+    <spring:message code="index.home" var="home"/>
     <jsp:include page="/WEB-INF/jsp/components/head.jsp">
-        <jsp:param name="title" value="Home"/>
+        <jsp:param name="title" value="${home}"/>
     </jsp:include>
 </head>
 <body>
@@ -12,11 +14,11 @@
     <div class="landing-container">
         <img src="/static/pictures/food.jpg" class="img-fluid landing-img">
         <div class="landing-img-container">
-            <p class="landing-text">Order whatever you want, whenever you want and however you want!</p>
+            <p class="landing-text"><spring:message code="index.landingtext"/></p>
         </div>
     </div>
     <div class="landing-restaurants">
-        <p class="landing-restaurants-title">Restaurants</p>
+        <p class="landing-restaurants-title"><spring:message code="index.restaurant.title"/></p>
         <main class="restaurant-feed">
             <c:forEach items="${restaurants}" var="restaurant">
                 <c:url var="restaurantUrl" value="/restaurants/${restaurant.restaurantId}"/>
@@ -31,10 +33,10 @@
                 </jsp:include>
             </c:forEach>
         </main>
-        <a href="<c:url value="/restaurants"/>" class="btn btn-primary">More Restaurants</a>
+        <a href="<c:url value="/restaurants"/>" class="btn btn-primary"><spring:message code="index.restaurant.button"/></a>
     </div>
     <div class="landing-footer">
-        <small class="landing-footer-text">© 2023 MenuMate FLAN Inc. All rights reserved.</small>
+        <small class="landing-footer-text"><spring:message code="copyright"/></small>
     </div>
 </body>
 </html>
