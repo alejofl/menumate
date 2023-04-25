@@ -48,9 +48,6 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(final HttpSecurity http) throws Exception {
         http.sessionManagement()
-                // Invalid session URL
-                .invalidSessionUrl("/auth/login")
-
                 // Login logic
                 .and().formLogin()
                 .loginPage("/auth/login")
@@ -60,7 +57,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 // Logout logic
                 .and().logout()
                 .logoutUrl("/auth/logout")
-                .logoutSuccessUrl("/auth/login")
+                .logoutSuccessUrl("/")
 
                 // Remember me logic
                 .and().rememberMe()
@@ -77,7 +74,6 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
                 // Disable csrf rules
                 .and().csrf().disable();
-
     }
 
     @Override
