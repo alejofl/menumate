@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
 <html>
 <body>
@@ -15,7 +16,7 @@
         <ul class="navbar-nav">
             <li class="nav-item">
                 <c:url var="restaurants" value="/restaurants"/>
-                <a class="nav-link active" aria-current="page" href="${restaurants}">Explore</a>
+                <a class="nav-link active" aria-current="page" href="${restaurants}"><spring:message code="navbar.explore"/></a>
             </li>
             <!--
             <li class="nav-item">
