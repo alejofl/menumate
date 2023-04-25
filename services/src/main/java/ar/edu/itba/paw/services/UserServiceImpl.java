@@ -20,10 +20,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User create(String email, String password, String name) {
-        // TODO: validate username/ password
         // TODO: send email validation mail
-        password = password == null ? null : passwordEncoder.encode(password);
-        return userDao.create(email, password, name);
+        if (isUserEmailRegistered(email)) {
+            throw new IllegalStateException();
+        }
+        if (password == null) {
+            return userDao.create(email, null, name);
+        } else {
+            return userDao.update(email, passwordEncoder.encode(password), name);
+        }
     }
 
     @Override

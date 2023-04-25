@@ -41,6 +41,13 @@ public class UserJdbcDao implements UserDao {
     }
 
     @Override
+    public User update(String email, String password, String name) {
+        int userId = getByEmail(email).get().getUserId();
+        jdbcTemplate.update("UPDATE users SET password = ?, name = ? WHERE user_id = ?", password, name, userId);
+        return getByEmail(email).get();
+    }
+
+    @Override
     public Optional<User> getById(int userId) {
         return jdbcTemplate.query(
                 "SELECT " + TableFields.USERS_FIELDS + " FROM users WHERE user_id = ?",
