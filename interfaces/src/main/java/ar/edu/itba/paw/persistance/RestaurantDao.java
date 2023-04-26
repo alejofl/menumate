@@ -10,9 +10,9 @@ public interface RestaurantDao {
 
     Optional<Restaurant> getById(int restaurantId);
 
-    List<Restaurant> getAll();
+    List<Restaurant> getActive(int pageNumber, int pageSize);
 
-    List<Restaurant> getSearchResults(String[] tokens);
+    List<Restaurant> getSearchResults(String[] tokens, int pageNumber, int pageSize);
 
     boolean delete(int restaurantId);
 }

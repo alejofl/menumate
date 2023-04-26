@@ -26,12 +26,9 @@ public class HomeController {
     public ModelAndView index() {
         ModelAndView mav = new ModelAndView("home/index");
 
-        final List<Restaurant> restaurants = restaurantService.getAll();
-        int endIndex = 4;
-        if (restaurants.size() < endIndex) {
-            endIndex = restaurants.size();
-        }
-        mav.addObject("restaurants", restaurants.subList(0,endIndex));
+        final int maxRestaurants = 4;
+        final List<Restaurant> restaurants = restaurantService.getActive(1, maxRestaurants);
+        mav.addObject("restaurants", restaurants);
 
         return mav;
     }
@@ -47,12 +44,13 @@ public class HomeController {
             mav.addObject("restaurants", new ArrayList<Restaurant>());
         }
 
-        final List<Restaurant> restaurants = restaurantService.getSearchResults(form.getSearch());
+        final List<Restaurant> restaurants = restaurantService.getSearchResults(form.getSearch(), form.getPageOrDefault(), form.getSizeOrDefault());
         mav.addObject("restaurants", restaurants);
 
         return mav;
     }
 
+    // TODO: Remove or move to a separate controller
     @RequestMapping(value = "/error", method = RequestMethod.GET)
     public ModelAndView errorView() {
         return new ModelAndView("errors/error");

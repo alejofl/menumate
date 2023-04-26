@@ -41,22 +41,31 @@ public class RestaurantJdbcDao implements RestaurantDao {
     }
 
     @Override
-    public List<Restaurant> getAll() {
-        // TODO: Add limit or paging
-        RowMapper<Restaurant> rowMapper = ReusingRowMappers.getRestaurantRowMapper();
-        return jdbcTemplate.query(SelectBase + " WHERE is_active = true", rowMapper);
+    public List<Restaurant> getActive(int pageNumber, int pageSize) {
+        pageNumber--;
+        RowMapper<Restaurant> rowMapper = SimpleRowMappers.RESTAURANT_ROW_MAPPER;
+        return jdbcTemplate.query(
+                SelectBase + " WHERE is_active = true ORDER BY restaurant_id LIMIT ? OFFSET ?",
+                rowMapper,
+                pageSize,
+                pageNumber * pageSize
+        );
     }
 
     @Override
-    public List<Restaurant> getSearchResults(String[] tokens) {
+    public List<Restaurant> getSearchResults(String[] tokens, int pageNumber, int pageSize) {
+        pageNumber--;
         StringBuilder searchParam = new StringBuilder("%");
         for (String token : tokens) {
             searchParam.append(token).append("%");
         }
 
-        return jdbcTemplate.query(SelectBase + " WHERE is_active = true AND LOWER(name) LIKE ?",
+        return jdbcTemplate.query(
+                SelectBase + " WHERE is_active = true AND LOWER(name) LIKE ? ORDER BY restaurant_id LIMIT ? OFFSET ?",
                 SimpleRowMappers.RESTAURANT_ROW_MAPPER,
-                searchParam.toString()
+                searchParam.toString(),
+                pageSize,
+                pageNumber * pageSize
         );
     }
 

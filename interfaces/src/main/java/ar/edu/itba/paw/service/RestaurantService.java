@@ -11,9 +11,9 @@ public interface RestaurantService {
 
     Optional<Restaurant> getById(int restaurantId);
 
-    List<Restaurant> getAll();
+    List<Restaurant> getActive(int pageNumber, int pageSize);
 
-    List<Restaurant> getSearchResults(String query);
+    List<Restaurant> getSearchResults(String query, int pageNumber, int pageSize);
 
     List<Pair<Category, List<Product>>> getMenu(int restaurantId);
 

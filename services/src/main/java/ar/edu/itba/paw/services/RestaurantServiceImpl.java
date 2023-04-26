@@ -27,17 +27,17 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public List<Restaurant> getAll() {
-        return restaurantDao.getAll();
+    public List<Restaurant> getActive(int pageNumber, int pageSize) {
+        return restaurantDao.getActive(pageNumber, pageSize);
     }
 
     @Override
-    public List<Restaurant> getSearchResults(String query) {
+    public List<Restaurant> getSearchResults(String query, int pageNumber, int pageSize) {
         if (query == null) {
             query = "";
         }
         String[] tokens = query.toLowerCase().split(" +");
-        return restaurantDao.getSearchResults(tokens);
+        return restaurantDao.getSearchResults(tokens, pageNumber, pageSize);
     }
 
     @Override
