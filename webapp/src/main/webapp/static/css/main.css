@@ -30,7 +30,7 @@ body {
     box-shadow: 0 0 0 0.25rem #ed7a5740;
 }
 
-.form-check-input:checked {
+.form-check-input:checked, .active>.page-link, .page-link.active {
     background-color: var(--primary);
     border-color: var(--primary);
 }

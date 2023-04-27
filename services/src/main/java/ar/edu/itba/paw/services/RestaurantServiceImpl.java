@@ -32,12 +32,26 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
+    public int getActiveCount() {
+        return restaurantDao.getActiveCount();
+    }
+
+    @Override
     public List<Restaurant> getSearchResults(String query, int pageNumber, int pageSize) {
         if (query == null) {
             query = "";
         }
         String[] tokens = query.toLowerCase().split(" +");
         return restaurantDao.getSearchResults(tokens, pageNumber, pageSize);
+    }
+
+    @Override
+    public int getSearchResultsCount(String query) {
+        if (query == null) {
+            query = "";
+        }
+        String[] tokens = query.toLowerCase().split(" +");
+        return restaurantDao.getSearchResultsCount(tokens);
     }
 
     @Override

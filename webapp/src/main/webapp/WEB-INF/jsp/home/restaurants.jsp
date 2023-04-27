@@ -3,6 +3,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <html>
 <head>
@@ -27,6 +28,7 @@
             <form:input type="text" path="search" cssClass="form-control search-input" placeholder="${placeholder}"/>
             <form:errors path="search" element="div" cssClass="form-error invalid-tooltip"/>
         </div>
+        <form:input type="hidden" path="page" value="1"/>
         <input type="submit" class="btn btn-primary" value='<spring:message code="restaurants.search"/>'>
     </form:form>
     <main class="restaurant-feed">
@@ -49,5 +51,26 @@
             </div>
         </c:if>
     </main>
+    <nav class="d-flex justify-content-center">
+        <ul class="pagination">
+            <fmt:formatNumber var="pageDivision" value="${restaurantCount / searchForm.size}" maxFractionDigits="0"/>
+            <fmt:parseNumber var="pageRemainder" value="${restaurantCount % searchForm.size == 0 ? 0 : 1}"/>
+            <c:set var="pageCount" value="${pageDivision + pageRemainder}"/>
+
+            <li class="page-item">
+                <a class="page-link ${searchForm.page == 1 ? "disabled" : ""}" href="<c:url value="/restaurants?search=${searchForm.search}&page=${searchForm.page - 1}&size=${searchForm.size}"/>" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <c:forEach begin="1" end="${pageCount}" var="pageNo">
+                <li class="page-item ${pageNo == searchForm.page ? "active" : ""}"><a class="page-link" href="<c:url value="/restaurants?search=${searchForm.search}&page=${pageNo}&size=${searchForm.size}"/>">${pageNo}</a></li>
+            </c:forEach>
+            <li class="page-item">
+                <a class="page-link ${searchForm.page == pageCount ? "disabled" : ""}" href="<c:url value="/restaurants?search=${searchForm.search}&page=${searchForm.page + 1}&size=${searchForm.size}"/>" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
 </body>
 </html>

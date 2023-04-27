@@ -13,7 +13,11 @@ public interface RestaurantService {
 
     List<Restaurant> getActive(int pageNumber, int pageSize);
 
+    int getActiveCount();
+
     List<Restaurant> getSearchResults(String query, int pageNumber, int pageSize);
+
+    int getSearchResultsCount(String query);
 
     List<Pair<Category, List<Product>>> getMenu(int restaurantId);
 

@@ -42,11 +42,12 @@ public class HomeController {
         if (errors.hasErrors()) {
             mav.addObject("error", Boolean.TRUE);
             form.setSearch(null);
-            form.setPage(null);
-            form.setSize(null);
+            form.setPage(1);
+            form.setSize(12);
         }
 
         final List<Restaurant> restaurants = restaurantService.getSearchResults(form.getSearch(), form.getPageOrDefault(), form.getSizeOrDefault());
+        mav.addObject("restaurantCount", restaurantService.getSearchResultsCount(form.getSearch()));
         mav.addObject("restaurants", restaurants);
 
         return mav;

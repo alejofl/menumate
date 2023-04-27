@@ -12,7 +12,11 @@ public interface RestaurantDao {
 
     List<Restaurant> getActive(int pageNumber, int pageSize);
 
+    int getActiveCount();
+
     List<Restaurant> getSearchResults(String[] tokens, int pageNumber, int pageSize);
+
+    int getSearchResultsCount(String[] tokens);
 
     boolean delete(int restaurantId);
 }

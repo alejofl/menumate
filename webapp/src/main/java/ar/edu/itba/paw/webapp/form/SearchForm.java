@@ -8,10 +8,10 @@ public class SearchForm {
     private String search;
 
     @Min(1)
-    private Integer page;
+    private Integer page = 1;
 
     @Min(1)
-    private Integer size;
+    private Integer size = 12;
 
     public String getSearch() {
         return search;

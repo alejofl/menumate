@@ -53,6 +53,14 @@ public class RestaurantJdbcDao implements RestaurantDao {
     }
 
     @Override
+    public int getActiveCount() {
+        return jdbcTemplate.query(
+                "SELECT count(restaurant_id) AS count FROM restaurants WHERE is_active = true",
+                (rs, i) -> rs.getInt("count")
+        ).get(0);
+    }
+
+    @Override
     public List<Restaurant> getSearchResults(String[] tokens, int pageNumber, int pageSize) {
         pageNumber--;
         StringBuilder searchParam = new StringBuilder("%");
@@ -67,6 +75,20 @@ public class RestaurantJdbcDao implements RestaurantDao {
                 pageSize,
                 pageNumber * pageSize
         );
+    }
+
+    @Override
+    public int getSearchResultsCount(String[] tokens) {
+        StringBuilder searchParam = new StringBuilder("%");
+        for (String token : tokens) {
+            searchParam.append(token).append("%");
+        }
+
+        return jdbcTemplate.query(
+                "SELECT count(restaurant_id) AS count FROM restaurants WHERE is_active = true AND LOWER(name) LIKE ?",
+                (rs, i) -> rs.getInt("count"),
+                searchParam.toString()
+        ).get(0);
     }
 
     @Override
