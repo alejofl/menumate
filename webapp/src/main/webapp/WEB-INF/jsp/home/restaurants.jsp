@@ -14,6 +14,12 @@
 </head>
 <body>
     <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
+    <c:if test="${error}">
+        <div class="alert alert-danger" role="alert">
+            <h1><i class="bi bi-slash-circle"></i></h1>
+            <p><spring:message code="restaurants.search.error"/></p>
+        </div>
+    </c:if>
     <c:url var="search" value="/restaurants"/>
     <form:form modelAttribute="searchForm" action="${search}" method="get">
         <div class="input-group flex-nowrap">

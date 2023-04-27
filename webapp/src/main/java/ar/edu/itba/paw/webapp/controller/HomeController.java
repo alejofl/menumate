@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -41,7 +40,10 @@ public class HomeController {
         ModelAndView mav = new ModelAndView("home/restaurants");
 
         if (errors.hasErrors()) {
-            mav.addObject("restaurants", new ArrayList<Restaurant>());
+            mav.addObject("error", Boolean.TRUE);
+            form.setSearch(null);
+            form.setPage(null);
+            form.setSize(null);
         }
 
         final List<Restaurant> restaurants = restaurantService.getSearchResults(form.getSearch(), form.getPageOrDefault(), form.getSizeOrDefault());
