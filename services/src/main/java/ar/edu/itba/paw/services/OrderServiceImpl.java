@@ -52,12 +52,12 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order createTakeAway(int restaurantId, int userId, List<OrderItem> items) {
-        return orderDao.create(OrderType.DELIVERY, restaurantId, userId, items);
+        return orderDao.create(OrderType.TAKEAWAY, restaurantId, userId, items);
     }
 
     @Override
     public Order createTakeAway(int restaurantId, String name, String email, List<OrderItem> items) {
-        return orderDao.create(OrderType.DELIVERY, restaurantId, getUserId(name, email), items);
+        return orderDao.create(OrderType.TAKEAWAY, restaurantId, getUserId(name, email), items);
     }
 
 

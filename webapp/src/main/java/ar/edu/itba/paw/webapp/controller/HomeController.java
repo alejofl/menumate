@@ -58,9 +58,4 @@ public class HomeController {
     public ModelAndView errorView() {
         return new ModelAndView("errors/error");
     }
-
-    @RequestMapping("/restaurants/order")
-    public ModelAndView restaurantOrder() {
-        return new ModelAndView("menu/restaurant_orders");
-    }
 }
