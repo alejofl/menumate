@@ -193,7 +193,7 @@ public class OrderJdbcDaoTest {
                 jdbcTemplate.execute("INSERT INTO order_items (order_id, product_id, line_number, quantity) VALUES (" + i + ", " + PRODUCT_ID + ", " + (j + 1) + ", " + (j + 2) + ")");
         }
 
-        List<Order> orders = orderJdbcDao.getByUser(USER_ID, RESTAURANT_ID);
+        List<Order> orders = orderJdbcDao.getByUser(USER_ID);
 
         Assert.assertNotNull(orders);
         Assert.assertEquals(iters, orders.size());
