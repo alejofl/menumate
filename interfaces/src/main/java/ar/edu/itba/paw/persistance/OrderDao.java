@@ -4,6 +4,7 @@ import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.model.OrderItem;
 import ar.edu.itba.paw.model.OrderType;
 import ar.edu.itba.paw.model.Product;
+import ar.edu.itba.paw.model.util.PaginatedResult;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,17 +14,17 @@ public interface OrderDao {
 
     Optional<Order> getById(int orderId);
 
-    List<Order> getByUser(int userId);
+    PaginatedResult<Order> getByUser(int userId, int pageNumber, int pageSize);
 
-    List<Order> getByOrderTypeAndRestaurant(OrderType orderType, int restaurantId);
+    PaginatedResult<Order> getByRestaurant(int restaurantId, int pageNumber, int pageSize);
 
-    List<Order> getByRestaurant(int restaurantId);
+    /*List<Order> getByOrderTypeAndRestaurant(OrderType orderType, int restaurantId);
 
     List<Order> getByRestaurantOrderedBetweenDates(int restaurantId, LocalDateTime start, LocalDateTime end);
 
     List<Order> getByRestaurantAndAddress(int restaurantId, String address);
 
-    List<Order> getByRestaurantAndTableNumber(int restaurantId, int tableNumber);
+    List<Order> getByRestaurantAndTableNumber(int restaurantId, int tableNumber);*/
 
     boolean updateAddress(int orderId, String address);
 

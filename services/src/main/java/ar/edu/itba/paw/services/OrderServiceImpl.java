@@ -4,6 +4,7 @@ import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.model.Product;
 import ar.edu.itba.paw.model.OrderItem;
 import ar.edu.itba.paw.model.OrderType;
+import ar.edu.itba.paw.model.util.PaginatedResult;
 import ar.edu.itba.paw.persistance.OrderDao;
 import ar.edu.itba.paw.service.OrderService;
 import ar.edu.itba.paw.service.ProductService;
@@ -73,16 +74,16 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> getByUser(int userId) {
-        return orderDao.getByUser(userId);
+    public PaginatedResult<Order> getByUser(int userId, int pageNumber, int pageSize) {
+        return orderDao.getByUser(userId, pageNumber, pageSize);
     }
 
     @Override
-    public List<Order> getByRestaurant(int restaurantId) {
-        return orderDao.getByRestaurant(restaurantId);
+    public PaginatedResult<Order> getByRestaurant(int restaurantId, int pageNumber, int pageSize) {
+        return orderDao.getByRestaurant(restaurantId, pageNumber, pageSize);
     }
 
-    @Override
+    /*@Override
     public List<Order> getOrderedBetweenDates(int restaurantId, LocalDateTime start, LocalDateTime end) {
         return orderDao.getByRestaurantOrderedBetweenDates(restaurantId, start, end);
     }
@@ -100,7 +101,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<Order> getByOrderTypeAndRestaurant(OrderType orderType, int restaurantId) {
         return orderDao.getByOrderTypeAndRestaurant(orderType, restaurantId);
-    }
+    }*/
 
     @Override
     public boolean updateAddress(int orderId, String address) {
