@@ -1,8 +1,8 @@
 package ar.edu.itba.paw.persistance;
 
 import ar.edu.itba.paw.model.Restaurant;
+import ar.edu.itba.paw.model.util.PaginatedResult;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface RestaurantDao {
@@ -10,13 +10,11 @@ public interface RestaurantDao {
 
     Optional<Restaurant> getById(int restaurantId);
 
-    List<Restaurant> getActive(int pageNumber, int pageSize);
+    PaginatedResult<Restaurant> getActive(int pageNumber, int pageSize);
 
-    int getActiveCount();
+    int countActive();
 
-    List<Restaurant> getSearchResults(String[] tokens, int pageNumber, int pageSize);
-
-    int getSearchResultsCount(String[] tokens);
+    PaginatedResult<Restaurant> getSearchResults(String[] tokens, int pageNumber, int pageSize);
 
     boolean delete(int restaurantId);
 }

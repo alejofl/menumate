@@ -53,10 +53,6 @@
     </main>
     <nav class="d-flex justify-content-center">
         <ul class="pagination">
-            <fmt:formatNumber var="pageDivision" value="${restaurantCount / searchForm.size}" maxFractionDigits="0"/>
-            <fmt:parseNumber var="pageRemainder" value="${restaurantCount % searchForm.size == 0 ? 0 : 1}"/>
-            <c:set var="pageCount" value="${pageDivision + pageRemainder}"/>
-
             <li class="page-item">
                 <a class="page-link ${searchForm.page == 1 ? "disabled" : ""}" href="<c:url value="/restaurants?search=${searchForm.search}&page=${searchForm.page - 1}&size=${searchForm.size}"/>" aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>

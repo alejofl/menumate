@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.model.*;
+import ar.edu.itba.paw.model.util.PaginatedResult;
 import ar.edu.itba.paw.persistance.ProductDao;
 import ar.edu.itba.paw.persistance.RestaurantDao;
 import ar.edu.itba.paw.service.RestaurantService;
@@ -27,31 +28,22 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public List<Restaurant> getActive(int pageNumber, int pageSize) {
+    public PaginatedResult<Restaurant> getActive(int pageNumber, int pageSize) {
         return restaurantDao.getActive(pageNumber, pageSize);
     }
 
     @Override
     public int getActiveCount() {
-        return restaurantDao.getActiveCount();
+        return restaurantDao.countActive();
     }
 
     @Override
-    public List<Restaurant> getSearchResults(String query, int pageNumber, int pageSize) {
-        if (query == null) {
+    public PaginatedResult<Restaurant> getSearchResults(String query, int pageNumber, int pageSize) {
+        if (query == null)
             query = "";
-        }
+
         String[] tokens = query.toLowerCase().split(" +");
         return restaurantDao.getSearchResults(tokens, pageNumber, pageSize);
-    }
-
-    @Override
-    public int getSearchResultsCount(String query) {
-        if (query == null) {
-            query = "";
-        }
-        String[] tokens = query.toLowerCase().split(" +");
-        return restaurantDao.getSearchResultsCount(tokens);
     }
 
     @Override

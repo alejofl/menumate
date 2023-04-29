@@ -4,14 +4,17 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 
 public class SearchForm {
+    public final static int DEFAULT_PAGE_NUMBER = 1;
+    public final static int DEFAULT_PAGE_SIZE = 12;
+
     @Size(max=120)
     private String search;
 
     @Min(1)
-    private Integer page = 1;
+    private Integer page;
 
     @Min(1)
-    private Integer size = 12;
+    private Integer size;
 
     public String getSearch() {
         return search;
@@ -26,7 +29,7 @@ public class SearchForm {
     }
 
     public int getPageOrDefault() {
-        return page == null ? 1 : page;
+        return page == null ? DEFAULT_PAGE_NUMBER : page;
     }
 
     public void setPage(Integer page) {
@@ -38,7 +41,7 @@ public class SearchForm {
     }
 
     public int getSizeOrDefault() {
-        return size == null ? 20 : size;
+        return size == null ? DEFAULT_PAGE_SIZE : size;
     }
 
 

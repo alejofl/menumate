@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.Restaurant;
+import ar.edu.itba.paw.model.util.PaginatedResult;
 import ar.edu.itba.paw.service.RestaurantService;
 import ar.edu.itba.paw.webapp.form.SearchForm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +27,8 @@ public class HomeController {
         ModelAndView mav = new ModelAndView("home/index");
 
         final int maxRestaurants = 4;
-        final List<Restaurant> restaurants = restaurantService.getActive(1, maxRestaurants);
-        mav.addObject("restaurants", restaurants);
+        final PaginatedResult<Restaurant> results = restaurantService.getActive(1, maxRestaurants);
+        mav.addObject("restaurants", results.getResult());
 
         return mav;
     }
@@ -42,13 +43,14 @@ public class HomeController {
         if (errors.hasErrors()) {
             mav.addObject("error", Boolean.TRUE);
             form.setSearch(null);
-            form.setPage(1);
-            form.setSize(12);
+            form.setPage(null);
+            form.setSize(null);
         }
 
-        final List<Restaurant> restaurants = restaurantService.getSearchResults(form.getSearch(), form.getPageOrDefault(), form.getSizeOrDefault());
-        mav.addObject("restaurantCount", restaurantService.getSearchResultsCount(form.getSearch()));
-        mav.addObject("restaurants", restaurants);
+        final PaginatedResult<Restaurant> results = restaurantService.getSearchResults(form.getSearch(), form.getPageOrDefault(), form.getSizeOrDefault());
+        mav.addObject("restaurants", results.getResult());
+        mav.addObject("restaurantCount", results.getTotalCount());
+        mav.addObject("pageCount", results.getTotalPageCount());
 
         return mav;
     }
