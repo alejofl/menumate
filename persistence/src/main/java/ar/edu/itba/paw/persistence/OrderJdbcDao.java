@@ -4,7 +4,6 @@ import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.model.OrderItem;
 import ar.edu.itba.paw.model.OrderType;
 import ar.edu.itba.paw.model.Product;
-import ar.edu.itba.paw.model.util.PaginatedResult;
 import ar.edu.itba.paw.persistance.OrderDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -24,7 +23,6 @@ public class OrderJdbcDao implements OrderDao {
 
     private static final String SelectBase = "SELECT " + TableFields.ORDERS_FIELDS + ", " + TableFields.RESTAURANTS_FIELDS + ", " + TableFields.USERS_FIELDS + ", " + TableFields.ORDER_ITEMS_FIELDS + ", " + TableFields.PRODUCTS_FIELDS + ", " + TableFields.CATEGORIES_FIELDS + " FROM orders JOIN restaurants ON orders.restaurant_id = restaurants.restaurant_id JOIN users on orders.user_id = users.user_id LEFT OUTER JOIN order_items ON orders.order_id = order_items.order_id LEFT OUTER JOIN products ON order_items.product_id = products.product_id LEFT OUTER JOIN categories ON products.category_id = categories.category_id";
     private static final String SelectEndOrderById = " ORDER BY orders.order_id, order_items.line_number";
-    private static final String SelectEndOrderByDate = " ORDER BY orders.date_ordered, order_items.line_number";
 
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsertOrder;
@@ -86,47 +84,27 @@ public class OrderJdbcDao implements OrderDao {
     }
 
     @Override
-    public PaginatedResult<Order> getByUser(int userId, int pageNumber, int pageSize) {
-        List<Order> results = jdbcTemplate.query(
-                SelectBase + " WHERE orders.user_id = ?" + SelectEndOrderByDate,
+    public List<Order> getByUser(int userId) {
+        return jdbcTemplate.query(
+                SelectBase + " WHERE orders.user_id = ?" + SelectEndOrderById,
                 Extractors.ORDER_EXTRACTOR,
-                userId,
-                pageSize,
-                pageNumber * pageSize
-        );
-
-        int count = jdbcTemplate.query(
-                "SELECT count(*) AS count FROM orders WHERE orders.user_id = ?",
-                SimpleRowMappers.COUNT_ROW_MAPPER,
                 userId
-        ).get(0);
-
-        return new PaginatedResult(results, pageNumber, pageSize, count);
+        );
     }
 
     @Override
-    public PaginatedResult<Order> getByRestaurant(int restaurantId, int pageNumber, int pageSize) {
-        List<Order> results = jdbcTemplate.query(
-                SelectBase + " WHERE orders.restaurant_id = ?" + SelectEndOrderByDate + " LIMIT ? OFFSET ?",
+    public List<Order> getByRestaurant(int restaurantId) {
+        return jdbcTemplate.query(
+                SelectBase + " WHERE orders.restaurant_id = ?" + SelectEndOrderById,
                 Extractors.ORDER_EXTRACTOR,
-                restaurantId,
-                pageSize,
-                pageNumber * pageSize
-        );
-
-        int count = jdbcTemplate.query(
-                "SELECT count(*) AS count FROM orders WHERE orders.restaurant_id = ?",
-                SimpleRowMappers.COUNT_ROW_MAPPER,
                 restaurantId
-        ).get(0);
-
-        return new PaginatedResult<>(results, pageNumber, pageSize, count);
+        );
     }
 
-    /*@Override
+    @Override
     public List<Order> getByOrderTypeAndRestaurant(OrderType orderType, int restaurantId) {
         return jdbcTemplate.query(
-                SelectBase + " WHERE orders.order_type = ? AND orders.restaurant_id = ?" + SelectEndOrderByDate,
+                SelectBase + " WHERE orders.order_type = ? AND orders.restaurant_id = ?" + SelectEndOrderById,
                 Extractors.ORDER_EXTRACTOR,
                 orderType.ordinal(),
                 restaurantId
@@ -136,7 +114,7 @@ public class OrderJdbcDao implements OrderDao {
     @Override
     public List<Order> getByRestaurantOrderedBetweenDates(int restaurantId, LocalDateTime start, LocalDateTime end) {
         return jdbcTemplate.query(
-                SelectBase + " WHERE orders.date_ordered BETWEEN ? AND ? AND orders.restaurant_id = ?" + SelectEndOrderByDate,
+                SelectBase + " WHERE orders.date_ordered BETWEEN ? AND ? AND orders.restaurant_id = ?" + SelectEndOrderById,
                 Extractors.ORDER_EXTRACTOR,
                 Timestamp.valueOf(start),
                 Timestamp.valueOf(end),
@@ -147,7 +125,7 @@ public class OrderJdbcDao implements OrderDao {
     @Override
     public List<Order> getByRestaurantAndAddress(int restaurantId, String address) {
         return jdbcTemplate.query(
-                SelectBase + " WHERE orders.address = ? AND orders.restaurant_id = ?" + SelectEndOrderByDate,
+                SelectBase + " WHERE orders.address = ? AND orders.restaurant_id = ?" + SelectEndOrderById,
                 Extractors.ORDER_EXTRACTOR,
                 address,
                 restaurantId
@@ -157,12 +135,12 @@ public class OrderJdbcDao implements OrderDao {
     @Override
     public List<Order> getByRestaurantAndTableNumber(int restaurantId, int tableNumber) {
         return jdbcTemplate.query(
-                SelectBase + " WHERE orders.table_number = ? AND orders.restaurant_id = ?" + SelectEndOrderByDate,
+                SelectBase + " WHERE orders.table_number = ? AND orders.restaurant_id = ?" + SelectEndOrderById,
                 Extractors.ORDER_EXTRACTOR,
                 tableNumber,
                 restaurantId
         );
-    }*/
+    }
 
     @Override
     public boolean updateAddress(int orderId, String address) {

@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.*;
-import ar.edu.itba.paw.model.util.PaginatedResult;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import org.junit.Assert;
 import org.junit.Before;
@@ -194,8 +193,7 @@ public class OrderJdbcDaoTest {
                 jdbcTemplate.execute("INSERT INTO order_items (order_id, product_id, line_number, quantity) VALUES (" + i + ", " + PRODUCT_ID + ", " + (j + 1) + ", " + (j + 2) + ")");
         }
 
-        // TODO: Test paging
-        List<Order> orders = orderJdbcDao.getByUser(USER_ID, 0, iters * iters).getResult();
+        List<Order> orders = orderJdbcDao.getByUser(USER_ID);
 
         Assert.assertNotNull(orders);
         Assert.assertEquals(iters, orders.size());
@@ -225,7 +223,7 @@ public class OrderJdbcDaoTest {
             jdbcTemplate.execute("INSERT INTO orders (order_id, restaurant_id, user_id, order_type) VALUES (" + i + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + ORDER_TYPE.ordinal() + ")");
         }
 
-        List<Order> orders = orderJdbcDao.getByRestaurant(RESTAURANT_ID, 0, iters * iters).getResult();
+        List<Order> orders = orderJdbcDao.getByRestaurant(RESTAURANT_ID);
 
         Assert.assertNotNull(orders);
         Assert.assertEquals(iters, orders.size());
@@ -239,7 +237,7 @@ public class OrderJdbcDaoTest {
         }
     }
 
-    /*@Test
+    @Test
     public void testFindOrdersByOrderTypeId() throws SQLException {
         int iters = 10;
         for (int i = 1; i <= iters; i++) {
@@ -321,7 +319,7 @@ public class OrderJdbcDaoTest {
             Assert.assertNotNull(orders.get(i).getDateOrdered());
             Assert.assertEquals(TABLE_NUMBER, orders.get(i).getTableNumber());
         }
-    }*/
+    }
 
     @Test
     public void testUpdateAddress() throws SQLException {

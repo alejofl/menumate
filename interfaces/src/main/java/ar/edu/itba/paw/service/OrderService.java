@@ -3,7 +3,6 @@ package ar.edu.itba.paw.service;
 import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.model.OrderItem;
 import ar.edu.itba.paw.model.OrderType;
-import ar.edu.itba.paw.model.util.PaginatedResult;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,17 +25,17 @@ public interface OrderService {
 
     Optional<Order> getById(int orderId);
 
-    PaginatedResult<Order> getByUser(int userId, int pageNumber, int pageSize);
+    List<Order> getByUser(int userId);
 
-    PaginatedResult<Order> getByRestaurant(int restaurantId, int pageNumber, int pageSize);
+    List<Order> getByRestaurant(int restaurantId);
 
-    /*List<Order> getOrderedBetweenDates(int restaurantId, LocalDateTime start, LocalDateTime end);
+    List<Order> getOrderedBetweenDates(int restaurantId, LocalDateTime start, LocalDateTime end);
 
     List<Order> getByAddress(int restaurantId, String address);
 
     List<Order> getByTableNumber(int restaurantId, int tableNumber);
 
-    List<Order> getByOrderTypeAndRestaurant(OrderType orderType, int restaurantId);*/
+    List<Order> getByOrderTypeAndRestaurant(OrderType orderType, int restaurantId);
 
     boolean updateAddress(int orderId, String address);
 
