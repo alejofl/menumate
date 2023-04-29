@@ -28,8 +28,8 @@
                     <tbody>
                     <c:forEach items="${orders}" var="order">
                         <tr>
-                            <td>Hola</td>
-                            <td>random</td>
+                            <td><c:out value="${order.orderId}"> </c:out></td>
+                            <td><c:out value="${order.address}"> </c:out></td>
                             <td>data</td>
                             <td>placeholder</td>
                             <td>text</td>
