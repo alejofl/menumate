@@ -86,7 +86,7 @@ public class RestaurantJdbcDao implements RestaurantDao {
 
         return jdbcTemplate.query(
                 "SELECT count(restaurant_id) AS count FROM restaurants WHERE is_active = true AND LOWER(name) LIKE ?",
-                (rs, i) -> rs.getInt("count"),
+                SimpleRowMappers.COUNT_ROW_MAPPER,
                 searchParam.toString()
         ).get(0);
     }

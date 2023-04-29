@@ -14,6 +14,8 @@ class SimpleRowMappers {
         return timestamp == null ? null : timestamp.toLocalDateTime();
     }
 
+    static final RowMapper<Integer> COUNT_ROW_MAPPER = (rs, i) -> rs.getInt("count");
+
     static final RowMapper<User> USER_ROW_MAPPER = (ResultSet rs, int rowNum) -> new User(
             rs.getInt("user_id"),
             rs.getString("user_email"),
