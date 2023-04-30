@@ -1,5 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <html>
 <head>
@@ -14,11 +16,16 @@
 </div>
 <main class="restaurant-feed">
     <c:forEach var="order" items="${orders}">
+        <%-- This os a workaround to make LocalDateTime formattable --%>
+        <fmt:parseDate value="${order.dateOrdered}" pattern="yyyy-MM-dd'T'HH:mm:ss" var="parsedDateOrdered" type="both"/>
+        <fmt:formatDate pattern="yyyy-MM-dd HH:mm" value="${parsedDateOrdered}" var="dateOrdered"/>
+
         <jsp:include page="/WEB-INF/jsp/components/order_card.jsp">
             <jsp:param name="id" value="${order.orderId}"/>
-            <jsp:param name="restaurant" value="${order.restaurant}"/>
-            <jsp:param name="dateOrdered" value="${order.dateOrdered}"/>
-            <jsp:param name="productQuantity" value="${order.items.size}"/>
+            <jsp:param name="restaurantLogoId" value="${order.restaurant.logoId}"/>
+            <jsp:param name="restaurantName" value="${order.restaurant.name}"/>
+            <jsp:param name="dateOrdered" value="${dateOrdered}"/>
+            <jsp:param name="productQuantity" value="${fn:length(order.items)}"/>
             <jsp:param name="price" value="${order.price}"/>
             <jsp:param name="orderType" value="${order.orderType}"/>
         </jsp:include>
