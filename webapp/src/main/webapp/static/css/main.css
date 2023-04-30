@@ -71,6 +71,16 @@ main {
     margin-bottom: -8px;
 }
 
+.page-title {
+    text-align: center;
+    padding-top: 30px;
+}
+
+.page-title h1 {
+    font-size: 30px;
+    font-weight: bold;
+}
+
 /* HOME */
 .restaurant-feed {
     flex-direction: row;
@@ -99,7 +109,7 @@ main {
     background: var(--main_image);
 }
 
-.restaurant-card:hover {
+.restaurant-card:hover, .order-card:hover{
     transform: scale(1.02);
 }
 
@@ -424,4 +434,42 @@ input:has(+ .form-error) {
 
 .text-color-white {
     color: white;
+}
+
+.order-card {
+    transition: all .2s ease-in-out;
+    width: 15rem;
+}
+
+.order-card img {
+    border-radius: 50%;
+    height: 100%;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+    margin-right: 12px;
+}
+
+.order-card i {
+    color: var(--primary);
+    margin-right: 8px;
+}
+
+.order-card-restaurant {
+    display: flex;
+    align-items: center;
+    height: 5rem;
+}
+
+.order-card .card-footer {
+    text-align: center;
+    color: white;
+    background-color: var(--secondary);
+}
+
+.order-card .list-group {
+    border: none;
+}
+
+.order-card .list-group-item {
+    border: none;
 }

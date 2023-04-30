@@ -66,4 +66,9 @@ public class Order {
         return items;
     }
 
+    public double getPrice() {
+        return items.stream()
+                .mapToDouble(item -> item.getProduct().getPrice() * item.getQuantity())
+                .sum();
+    }
 }

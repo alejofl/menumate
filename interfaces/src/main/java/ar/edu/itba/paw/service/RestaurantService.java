@@ -22,6 +22,4 @@ public interface RestaurantService {
     List<Pair<Category, List<Product>>> getMenu(int restaurantId);
 
     boolean delete(int restaurantId);
-
-    double getOrderPrice(Order order);
 }
