@@ -462,8 +462,8 @@ input:has(+ .form-error) {
 
 .order-card .card-footer {
     text-align: center;
-    color: white;
-    background-color: var(--secondary);
+    color: var(--secondary);
+    background-color: #edb02640;
 }
 
 .order-card .list-group {

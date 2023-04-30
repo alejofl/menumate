@@ -1,6 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
 
 <html>
@@ -11,14 +12,16 @@
                 <div class="order-card-restaurant">
                     <img src="<c:url value="/images/${param.restaurantLogoId}"/>" alt="${param.restaurantName}">
                     <div>
-                        <small class="text-muted">Order #<c:out value="${param.id}"/></small>
+                        <small class="text-muted"><spring:message code="userorders.ordernumber" arguments="${param.id}"/></small>
                         <h5 class="card-title mb-0"><c:out value="${param.restaurantName}"/></h5>
                     </div>
                 </div>
             </div>
             <ul class="list-group list-group-flush">
+                <fmt:parseNumber var="quantity" type="number" value="${param.productQuantity}" />
+
                 <li class="list-group-item"><i class="bi bi-calendar-event"></i> <c:out value="${param.dateOrdered}"/></li>
-                <li class="list-group-item"><i class="bi bi-cart"></i> <c:out value="${param.productQuantity}"/> products</li>
+                <li class="list-group-item"><i class="bi bi-cart"></i> <spring:message code="userorders.productquantity" arguments="${quantity}"/></li>
                 <li class="list-group-item"><i class="bi bi-cash-stack"></i> $<c:out value="${param.price}"/></li>
             </ul>
             <div class="card-footer">
