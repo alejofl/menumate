@@ -12,6 +12,7 @@ public class CartItem {
 
     @Min(1)
     @Max(100)
+    @NotNull
     private Integer quantity;
 
     @Size(min = 0, max = 120)

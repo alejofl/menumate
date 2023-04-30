@@ -22,7 +22,7 @@ import java.util.Optional;
 public class OrderJdbcDao implements OrderDao {
 
     private static final String SelectBase = "SELECT " + TableFields.ORDERS_FIELDS + ", " + TableFields.RESTAURANTS_FIELDS + ", " + TableFields.USERS_FIELDS + ", " + TableFields.ORDER_ITEMS_FIELDS + ", " + TableFields.PRODUCTS_FIELDS + ", " + TableFields.CATEGORIES_FIELDS + " FROM orders JOIN restaurants ON orders.restaurant_id = restaurants.restaurant_id JOIN users on orders.user_id = users.user_id LEFT OUTER JOIN order_items ON orders.order_id = order_items.order_id LEFT OUTER JOIN products ON order_items.product_id = products.product_id LEFT OUTER JOIN categories ON products.category_id = categories.category_id";
-    private static final String SelectEnd = " ORDER BY orders.order_id, order_items.line_number";
+    private static final String SelectEndOrderById = " ORDER BY orders.order_id, order_items.line_number";
 
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsertOrder;
@@ -77,26 +77,25 @@ public class OrderJdbcDao implements OrderDao {
     @Override
     public Optional<Order> getById(int orderId) {
         return jdbcTemplate.query(
-                SelectBase + " WHERE orders.order_id = ?" + SelectEnd,
+                SelectBase + " WHERE orders.order_id = ?" + SelectEndOrderById,
                 Extractors.ORDER_EXTRACTOR,
                 orderId
         ).stream().findFirst();
     }
 
     @Override
-    public List<Order> getByUser(int userId, int restaurantId) {
+    public List<Order> getByUser(int userId) {
         return jdbcTemplate.query(
-                SelectBase + " WHERE orders.user_id = ? AND orders.restaurant_id = ?" + SelectEnd,
+                SelectBase + " WHERE orders.user_id = ?" + SelectEndOrderById,
                 Extractors.ORDER_EXTRACTOR,
-                userId,
-                restaurantId
+                userId
         );
     }
 
     @Override
     public List<Order> getByRestaurant(int restaurantId) {
         return jdbcTemplate.query(
-                SelectBase + " WHERE orders.restaurant_id = ?" + SelectEnd,
+                SelectBase + " WHERE orders.restaurant_id = ?" + SelectEndOrderById,
                 Extractors.ORDER_EXTRACTOR,
                 restaurantId
         );
@@ -105,7 +104,7 @@ public class OrderJdbcDao implements OrderDao {
     @Override
     public List<Order> getByOrderTypeAndRestaurant(OrderType orderType, int restaurantId) {
         return jdbcTemplate.query(
-                SelectBase + " WHERE orders.order_type = ? AND orders.restaurant_id = ?" + SelectEnd,
+                SelectBase + " WHERE orders.order_type = ? AND orders.restaurant_id = ?" + SelectEndOrderById,
                 Extractors.ORDER_EXTRACTOR,
                 orderType.ordinal(),
                 restaurantId
@@ -115,7 +114,7 @@ public class OrderJdbcDao implements OrderDao {
     @Override
     public List<Order> getByRestaurantOrderedBetweenDates(int restaurantId, LocalDateTime start, LocalDateTime end) {
         return jdbcTemplate.query(
-                SelectBase + " WHERE orders.date_ordered BETWEEN ? AND ? AND orders.restaurant_id = ?" + SelectEnd,
+                SelectBase + " WHERE orders.date_ordered BETWEEN ? AND ? AND orders.restaurant_id = ?" + SelectEndOrderById,
                 Extractors.ORDER_EXTRACTOR,
                 Timestamp.valueOf(start),
                 Timestamp.valueOf(end),
@@ -126,7 +125,7 @@ public class OrderJdbcDao implements OrderDao {
     @Override
     public List<Order> getByRestaurantAndAddress(int restaurantId, String address) {
         return jdbcTemplate.query(
-                SelectBase + " WHERE orders.address = ? AND orders.restaurant_id = ?" + SelectEnd,
+                SelectBase + " WHERE orders.address = ? AND orders.restaurant_id = ?" + SelectEndOrderById,
                 Extractors.ORDER_EXTRACTOR,
                 address,
                 restaurantId
@@ -136,7 +135,7 @@ public class OrderJdbcDao implements OrderDao {
     @Override
     public List<Order> getByRestaurantAndTableNumber(int restaurantId, int tableNumber) {
         return jdbcTemplate.query(
-                SelectBase + " WHERE orders.table_number = ? AND orders.restaurant_id = ?" + SelectEnd,
+                SelectBase + " WHERE orders.table_number = ? AND orders.restaurant_id = ?" + SelectEndOrderById,
                 Extractors.ORDER_EXTRACTOR,
                 tableNumber,
                 restaurantId

@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.Restaurant;
+import ar.edu.itba.paw.model.util.PaginatedResult;
 import ar.edu.itba.paw.persistance.RestaurantDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -27,7 +28,7 @@ public class RestaurantJdbcDao implements RestaurantDao {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsert = new SimpleJdbcInsert(ds)
                 .withTableName("restaurants")
-                .usingColumns("name", "email", "logo_id", "portrait_1_id", "portrait_2_id", "address", "description")
+                .usingColumns("name", "email", "owner_user_id", "logo_id", "portrait_1_id", "portrait_2_id", "address", "description")
                 .usingGeneratedKeyColumns("resturant_id");
     }
 
@@ -41,61 +42,61 @@ public class RestaurantJdbcDao implements RestaurantDao {
     }
 
     @Override
-    public List<Restaurant> getActive(int pageNumber, int pageSize) {
+    public PaginatedResult<Restaurant> getActive(int pageNumber, int pageSize) {
         pageNumber--;
         RowMapper<Restaurant> rowMapper = SimpleRowMappers.RESTAURANT_ROW_MAPPER;
-        return jdbcTemplate.query(
+        List<Restaurant> results = jdbcTemplate.query(
                 SelectBase + " WHERE is_active = true ORDER BY restaurant_id LIMIT ? OFFSET ?",
                 rowMapper,
                 pageSize,
                 pageNumber * pageSize
         );
+
+        int count = countActive();
+
+        return new PaginatedResult<>(results, pageNumber, pageSize, count);
     }
 
     @Override
-    public int getActiveCount() {
+    public int countActive() {
         return jdbcTemplate.query(
-                "SELECT count(restaurant_id) AS count FROM restaurants WHERE is_active = true",
-                (rs, i) -> rs.getInt("count")
+                "SELECT count(*) AS count FROM restaurants WHERE is_active = true",
+                SimpleRowMappers.COUNT_ROW_MAPPER
         ).get(0);
     }
 
     @Override
-    public List<Restaurant> getSearchResults(String[] tokens, int pageNumber, int pageSize) {
+    public PaginatedResult<Restaurant> getSearchResults(String[] tokens, int pageNumber, int pageSize) {
         pageNumber--;
         StringBuilder searchParam = new StringBuilder("%");
         for (String token : tokens) {
             searchParam.append(token).append("%");
         }
+        String search = searchParam.toString();
 
-        return jdbcTemplate.query(
+        List<Restaurant> results = jdbcTemplate.query(
                 SelectBase + " WHERE is_active = true AND LOWER(name) LIKE ? ORDER BY restaurant_id LIMIT ? OFFSET ?",
                 SimpleRowMappers.RESTAURANT_ROW_MAPPER,
-                searchParam.toString(),
+                search,
                 pageSize,
                 pageNumber * pageSize
         );
-    }
 
-    @Override
-    public int getSearchResultsCount(String[] tokens) {
-        StringBuilder searchParam = new StringBuilder("%");
-        for (String token : tokens) {
-            searchParam.append(token).append("%");
-        }
-
-        return jdbcTemplate.query(
-                "SELECT count(restaurant_id) AS count FROM restaurants WHERE is_active = true AND LOWER(name) LIKE ?",
-                (rs, i) -> rs.getInt("count"),
-                searchParam.toString()
+        int count = jdbcTemplate.query(
+                "SELECT count(*) AS count FROM restaurants WHERE is_active = true AND LOWER(name) LIKE ?",
+                SimpleRowMappers.COUNT_ROW_MAPPER,
+                search
         ).get(0);
+
+        return new PaginatedResult<>(results, pageNumber, pageSize, count);
     }
 
     @Override
-    public Restaurant create(String name, String email) {
+    public Restaurant create(int ownerUserId, String name, String email) {
         final Map<String, Object> restaurantData = new HashMap<>();
         restaurantData.put("name", name);
         restaurantData.put("email", email);
+        restaurantData.put("owner_user_id", ownerUserId);
 
         final int restaurantId = jdbcInsert.executeAndReturnKey(restaurantData).intValue();
         return new Restaurant(restaurantId, name, email);

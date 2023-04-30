@@ -13,7 +13,7 @@ public interface OrderDao {
 
     Optional<Order> getById(int orderId);
 
-    List<Order> getByUser(int userId, int restaurantId);
+    List<Order> getByUser(int userId);
 
     List<Order> getByOrderTypeAndRestaurant(OrderType orderType, int restaurantId);
 

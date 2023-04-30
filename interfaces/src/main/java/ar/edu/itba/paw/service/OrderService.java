@@ -25,7 +25,7 @@ public interface OrderService {
 
     Optional<Order> getById(int orderId);
 
-    List<Order> getByUser(int userId, int restaurantId);
+    List<Order> getByUser(int userId);
 
     List<Order> getByRestaurant(int restaurantId);
 
