@@ -23,6 +23,10 @@ public class RestaurantJdbcDaoTest {
     private static final int ID = 5123;
     private static final String NAME = "pedros";
     private static final String EMAIL = "pedros@frompedros.com";
+    private static final int USER_ID = 791;
+    private static final String USER_EMAIL = "peter@peter.com";
+    private static final String USER_PASSWORD = "super12secret34";
+    private static final String USER_NAME = "Peter Parker";
 
     @Autowired
     private DataSource ds;
@@ -35,12 +39,13 @@ public class RestaurantJdbcDaoTest {
     @Before
     public void setup() {
         jdbcTemplate = new JdbcTemplate(ds);
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, "restaurants");
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, "restaurants", "users");
+        jdbcTemplate.execute("INSERT INTO users (user_id, email, password, name) VALUES (" + USER_ID + ", '" + USER_EMAIL + "', '" + USER_PASSWORD + "', '" + USER_NAME + "')");
     }
 
     @Test
     public void testFindById() throws SQLException {
-        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email) VALUES (" + ID + ", '" + NAME + "', '" + EMAIL + "')");
+        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, owner_user_id) VALUES (" + ID + ", '" + NAME + "', '" + EMAIL + "', " + USER_ID + ")");
 
         Optional<Restaurant> maybeRestaurant = restaurantDao.getById(ID);
 
@@ -61,7 +66,7 @@ public class RestaurantJdbcDaoTest {
 
     @Test
     public void testDeletion() throws SQLException {
-        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email) VALUES (" + ID + ", '" + NAME + "', '" + EMAIL + "')");
+        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, owner_user_id) VALUES (" + ID + ", '" + NAME + "', '" + EMAIL + "', " + USER_ID + ")");
         Assert.assertTrue(restaurantDao.delete(ID));
     }
 }

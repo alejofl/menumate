@@ -31,6 +31,10 @@ public class ProductJdbcDaoTest {
 
     private static final int CATEGORY_ID = 581;
     private static final String CATEGORY_NAME = "Entradas";
+    private static final int USER_ID = 791;
+    private static final String USER_EMAIL = "peter@peter.com";
+    private static final String USER_PASSWORD = "super12secret34";
+    private static final String USER_NAME = "Peter Parker";
     private static final int ORDER = 1;
     private static final int RESTAURANT_ID = 5123;
     private static final String RESTAURANT_NAME = "Kansas Grill & Bar";
@@ -45,8 +49,9 @@ public class ProductJdbcDaoTest {
     @Before
     public void setup() {
         jdbcTemplate = new JdbcTemplate(ds);
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, "categories", "restaurants", "products");
-        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email) VALUES (" + RESTAURANT_ID + ", '" + RESTAURANT_NAME + "', '" + RESTAURANT_EMAIL + "')");
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, "categories", "restaurants", "products", "users");
+        jdbcTemplate.execute("INSERT INTO users (user_id, email, password, name) VALUES (" + USER_ID + ", '" + USER_EMAIL + "', '" + USER_PASSWORD + "', '" + USER_NAME + "')");
+        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, owner_user_id) VALUES (" + RESTAURANT_ID + ", '" + RESTAURANT_NAME + "', '" + RESTAURANT_EMAIL + "', " + USER_ID + ")");
         jdbcTemplate.execute("INSERT INTO categories (category_id, name, restaurant_id, order_num) VALUES (" + CATEGORY_ID + ", '" + CATEGORY_NAME + "', " + RESTAURANT_ID + ", " + ORDER + ")");
     }
 

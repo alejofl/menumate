@@ -30,39 +30,44 @@ public class CategoryJdbcDaoTest {
 
     private JdbcTemplate jdbcTemplate;
     private static final int CATEGORY_ID = 12421;
+    private static final int USER_ID = 791;
+    private static final String USER_EMAIL = "peter@peter.com";
+    private static final String USER_PASSWORD = "super12secret34";
+    private static final String USER_NAME = "Peter Parker";
     private static final int RESTAURANT_ID = 79874;
     private static final String CATEGORY_NAME = "Postgres Dulces";
     private static final String RESTAURANT_NAME = "Cafe Mataderos";
     private static final String RESTAURANT_EMAIL = "pedro@frompedros.com";
-    private static final int ORDER = 871293;
+    private static final int ORDER_NUM = 1293;
     private static final String[] categoryNames = {"Category 1", "Category 2", "Category 3", "Category 4"};
 
     @Before
     public void setup() {
         jdbcTemplate = new JdbcTemplate(ds);
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, "categories", "restaurants");
-        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email) VALUES (" + RESTAURANT_ID + ", '" + RESTAURANT_NAME + "', '" + RESTAURANT_EMAIL + "')");
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, "categories", "restaurants", "users");
+        jdbcTemplate.execute("INSERT INTO users (user_id, email, password, name) VALUES (" + USER_ID + ", '" + USER_EMAIL + "', '" + USER_PASSWORD + "', '" + USER_NAME + "')");
+        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, owner_user_id) VALUES (" + RESTAURANT_ID + ", '" + RESTAURANT_NAME + "', '" + RESTAURANT_EMAIL + "', " + USER_ID + ")");
     }
 
     @Test
     public void testCreate() throws SQLException {
-        final Category category = categoryDao.create(RESTAURANT_ID, CATEGORY_NAME, ORDER);
+        final Category category = categoryDao.create(RESTAURANT_ID, CATEGORY_NAME, ORDER_NUM);
 
         Assert.assertNotNull(category);
         Assert.assertEquals(CATEGORY_NAME, category.getName());
-        Assert.assertEquals(ORDER, category.getOrder());
+        Assert.assertEquals(ORDER_NUM, category.getOrder());
         Assert.assertEquals(RESTAURANT_ID, category.getRestaurant().getRestaurantId());
     }
 
     @Test
     public void testGetCategoryById() throws SQLException {
-        jdbcTemplate.execute("INSERT INTO categories (category_id, name, restaurant_id, order_num) VALUES (" + CATEGORY_ID + ", '" + CATEGORY_NAME + "', " + RESTAURANT_ID + ", " + ORDER + ")");
+        jdbcTemplate.execute("INSERT INTO categories (category_id, name, restaurant_id, order_num) VALUES (" + CATEGORY_ID + ", '" + CATEGORY_NAME + "', " + RESTAURANT_ID + ", " + ORDER_NUM + ")");
         final Optional<Category> category = categoryDao.getById(CATEGORY_ID);
 
         Assert.assertTrue(category.isPresent());
         Assert.assertEquals(CATEGORY_ID, category.get().getCategoryId());
         Assert.assertEquals(CATEGORY_NAME, category.get().getName());
-        Assert.assertEquals(ORDER, category.get().getOrder());
+        Assert.assertEquals(ORDER_NUM, category.get().getOrder());
         Assert.assertEquals(RESTAURANT_ID, category.get().getRestaurant().getRestaurantId());
     }
 
@@ -85,21 +90,21 @@ public class CategoryJdbcDaoTest {
 
     @Test
     public void testUpdateCategoryName() throws SQLException {
-        jdbcTemplate.execute("INSERT INTO categories (category_id ,restaurant_id, name, order_num) VALUES (" + CATEGORY_ID + ", " + RESTAURANT_ID + ", '" + CATEGORY_NAME + "'," + ORDER + ")");
+        jdbcTemplate.execute("INSERT INTO categories (category_id ,restaurant_id, name, order_num) VALUES (" + CATEGORY_ID + ", " + RESTAURANT_ID + ", '" + CATEGORY_NAME + "'," + ORDER_NUM + ")");
         Assert.assertTrue(categoryDao.updateName(CATEGORY_ID, CATEGORY_NAME + "blabla"));
     }
 
     @Test
     public void testUpdateCategoryOrder() throws SQLException {
-        jdbcTemplate.execute("INSERT INTO categories (category_id ,restaurant_id, name, order_num) VALUES (" + CATEGORY_ID + ", " + RESTAURANT_ID + ", '" + CATEGORY_NAME + "'," + ORDER + ")");
+        jdbcTemplate.execute("INSERT INTO categories (category_id ,restaurant_id, name, order_num) VALUES (" + CATEGORY_ID + ", " + RESTAURANT_ID + ", '" + CATEGORY_NAME + "'," + ORDER_NUM + ")");
 
-        final int newOrder = ORDER + 1;
-        Assert.assertTrue(categoryDao.updateOrder(CATEGORY_ID, ORDER + 1));
+        final int newOrder = ORDER_NUM + 1;
+        Assert.assertTrue(categoryDao.updateOrder(CATEGORY_ID, ORDER_NUM + 1));
     }
 
     @Test
     public void testDeleteCategory() throws SQLException {
-        jdbcTemplate.execute("INSERT INTO categories (category_id ,restaurant_id, name, order_num) VALUES (" + CATEGORY_ID + ", " + RESTAURANT_ID + ", '" + CATEGORY_NAME + "'," + ORDER + ")");
+        jdbcTemplate.execute("INSERT INTO categories (category_id ,restaurant_id, name, order_num) VALUES (" + CATEGORY_ID + ", " + RESTAURANT_ID + ", '" + CATEGORY_NAME + "'," + ORDER_NUM + ")");
 
         Optional<Category> category1 = categoryDao.getById(CATEGORY_ID);
         Assert.assertTrue(category1.isPresent());
