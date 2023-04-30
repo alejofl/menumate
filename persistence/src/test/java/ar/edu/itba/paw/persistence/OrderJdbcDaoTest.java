@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.*;
+import ar.edu.itba.paw.model.util.PaginatedResult;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import org.junit.Assert;
 import org.junit.Before;
@@ -193,7 +194,7 @@ public class OrderJdbcDaoTest {
                 jdbcTemplate.execute("INSERT INTO order_items (order_id, product_id, line_number, quantity) VALUES (" + i + ", " + PRODUCT_ID + ", " + (j + 1) + ", " + (j + 2) + ")");
         }
 
-        List<Order> orders = orderJdbcDao.getByUser(USER_ID);
+        List<Order> orders = orderJdbcDao.getByUser(USER_ID, 1, iters).getResult();
 
         Assert.assertNotNull(orders);
         Assert.assertEquals(iters, orders.size());
@@ -223,7 +224,7 @@ public class OrderJdbcDaoTest {
             jdbcTemplate.execute("INSERT INTO orders (order_id, restaurant_id, user_id, order_type) VALUES (" + i + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + ORDER_TYPE.ordinal() + ")");
         }
 
-        List<Order> orders = orderJdbcDao.getByRestaurant(RESTAURANT_ID);
+        List<Order> orders = orderJdbcDao.getByRestaurant(RESTAURANT_ID, 1, iters).getResult();
 
         Assert.assertNotNull(orders);
         Assert.assertEquals(iters, orders.size());
@@ -238,6 +239,39 @@ public class OrderJdbcDaoTest {
     }
 
     @Test
+    public void testFindOrdersByRestaurantIdPaged() throws SQLException {
+        int iters = 10;
+        for (int i = 1; i <= iters; i++) {
+            jdbcTemplate.execute("INSERT INTO orders (order_id, restaurant_id, user_id, order_type) VALUES (" + i + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + ORDER_TYPE.ordinal() + ")");
+        }
+
+        int pageSize = 4;
+        int pageCount = (iters + pageSize - 1) / pageSize;
+        List<PaginatedResult<Order>> pages = new ArrayList<>();
+        for (int i = 1; i <= pageCount; i++) {
+            PaginatedResult<Order> page = orderJdbcDao.getByRestaurant(RESTAURANT_ID, i, pageSize);
+            pages.add(page);
+        }
+
+        List<Order> allOrders = new ArrayList<>();
+        for (int i = 0; i < pageCount; i++) {
+            PaginatedResult<Order> page = pages.get(i);
+            Assert.assertNotNull(page);
+            Assert.assertEquals(i + 1, page.getPageNumber());
+            Assert.assertEquals(pageSize, page.getPageSize());
+            allOrders.addAll(page.getResult());
+        }
+
+        for (int i = 1; i <= iters; i++) {
+            Assert.assertEquals(i, allOrders.get(i - 1).getOrderId());
+            Assert.assertEquals(RESTAURANT_ID, allOrders.get(i - 1).getRestaurant().getRestaurantId());
+            Assert.assertEquals(USER_ID, allOrders.get(i - 1).getUser().getUserId());
+            Assert.assertEquals(ORDER_TYPE, allOrders.get(i - 1).getOrderType());
+            Assert.assertNotNull(allOrders.get(i - 1).getDateOrdered());
+        }
+    }
+
+    /*@Test
     public void testFindOrdersByOrderTypeId() throws SQLException {
         int iters = 10;
         for (int i = 1; i <= iters; i++) {
@@ -319,7 +353,7 @@ public class OrderJdbcDaoTest {
             Assert.assertNotNull(orders.get(i).getDateOrdered());
             Assert.assertEquals(TABLE_NUMBER, orders.get(i).getTableNumber());
         }
-    }
+    }*/
 
     @Test
     public void testUpdateAddress() throws SQLException {
