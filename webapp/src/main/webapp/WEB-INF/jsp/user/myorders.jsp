@@ -48,6 +48,13 @@
             <jsp:param name="orderType" value="${orderType}"/>
         </jsp:include>
     </c:forEach>
+
+    <c:if test="${fn:length(orders) == 0}">
+        <div class="empty-results">
+            <h1><i class="bi bi-slash-circle"></i></h1>
+            <p>  <spring:message code="userorders.noorders"/></p>
+        </div>
+    </c:if>
 </main>
 </body>
 </html>
