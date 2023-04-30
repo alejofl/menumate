@@ -51,7 +51,7 @@ class SimpleRowMappers {
 
         int ordinal = rs.getInt("role_level");
         RestaurantRoleLevel[] values = RestaurantRoleLevel.values();
-        if (rs.wasNull() || ordinal < 0 || ordinal > values.length)
+        if (rs.wasNull() || ordinal < 0 || ordinal >= values.length)
             return null;
         return values[ordinal];
     };
