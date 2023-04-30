@@ -13,6 +13,9 @@
 </head>
 <body>
 <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
+<c:if test="${error}">
+    <jsp:include page="/WEB-INF/jsp/components/param_error.jsp"/>
+</c:if>
 <div class="page-title">
     <h1><spring:message code="userorders.title"/></h1>
 </div>
@@ -56,5 +59,52 @@
         </div>
     </c:if>
 </main>
+
+<c:choose>
+    <c:when test="${empty param.page}">
+        <c:set var="currentPage" value="1"/>
+    </c:when>
+    <c:otherwise>
+        <c:set var="currentPage" value="${param.page}"/>
+    </c:otherwise>
+</c:choose>
+<c:choose>
+    <c:when test="${empty param.size}">
+        <c:set var="currentSize" value="20"/>
+    </c:when>
+    <c:otherwise>
+        <c:set var="currentSize" value="${param.size}"/>
+    </c:otherwise>
+</c:choose>
+
+<nav class="d-flex justify-content-center">
+    <ul class="pagination">
+        <li class="page-item">
+            <c:url value="/orders" var="previousUrl">
+                <c:param name="page" value="${currentPage - 1}"/>
+                <c:param name="size" value="${currentSize}"/>
+            </c:url>
+            <a class="page-link ${currentPage == 1 ? "disabled" : ""}" href="${previousUrl}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        <c:forEach begin="1" end="${pageCount}" var="pageNo">
+            <c:url value="/orders" var="pageUrl">
+                <c:param name="page" value="${pageNo}"/>
+                <c:param name="size" value="${currentSize}"/>
+            </c:url>
+            <li class="page-item ${pageNo == currentPage ? "active" : ""}"><a class="page-link" href="${pageUrl}">${pageNo}</a></li>
+        </c:forEach>
+        <li class="page-item">
+            <c:url value="/orders" var="nextUrl">
+                <c:param name="page" value="${currentPage + 1}"/>
+                <c:param name="size" value="${currentSize}"/>
+            </c:url>
+            <a class="page-link ${currentPage == pageCount ? "disabled" : ""}" href="${nextUrl}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+    </ul>
+</nav>
 </body>
 </html>
