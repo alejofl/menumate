@@ -28,7 +28,7 @@ public class UserController {
         return mav;
     }
 
-    @RequestMapping(value = "/orders/{id:\\d}", method = RequestMethod.GET)
+    @RequestMapping(value = "/orders/{id:\\d+}", method = RequestMethod.GET)
     public ModelAndView order(@PathVariable int id) {
         ModelAndView mav = new ModelAndView("user/order");
         mav.addObject("order", orderService.getById(id).orElseThrow(IllegalArgumentException::new));
