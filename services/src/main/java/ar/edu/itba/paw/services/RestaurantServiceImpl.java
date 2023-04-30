@@ -78,11 +78,4 @@ public class RestaurantServiceImpl implements RestaurantService {
     public boolean delete(int restaurantId) {
         return restaurantDao.delete(restaurantId);
     }
-
-    @Override
-    public double getOrderPrice(Order order) {
-        return order.getItems().stream()
-                .mapToDouble(item -> item.getProduct().getPrice() * item.getQuantity())
-                .sum();
-    }
 }

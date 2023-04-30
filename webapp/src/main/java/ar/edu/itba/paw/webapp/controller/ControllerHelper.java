@@ -26,4 +26,16 @@ public class ControllerHelper {
 
         return null;
     }
+
+    // FIXME A better alternative would be to return the User object, but with that approach, NullPointerException is thrown due to userService not being injected
+    public static String getCurrentUserEmail() {
+        final Object userDetails = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (userDetails instanceof PawAuthUserDetails) {
+            PawAuthUserDetails pawAuthUserDetails = (PawAuthUserDetails) userDetails;
+            return pawAuthUserDetails.getUsername();
+        }
+
+        return null;
+    }
 }

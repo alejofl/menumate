@@ -55,7 +55,7 @@ public class EmailServiceImpl implements EmailService {
         params.put("recipientName", order.getUser().getName());
         params.put("orderId", order.getOrderId());
         params.put("restaurantName", order.getRestaurant().getName());
-        params.put("price", restaurantService.getOrderPrice(order));
+        params.put("price", order.getPrice());
         this.sendMessageUsingThymeleafTemplate(
                 "user_order_confirmation",
                 order.getUser().getEmail(),
@@ -70,7 +70,7 @@ public class EmailServiceImpl implements EmailService {
         params.put("userName", order.getUser().getName());
         params.put("orderId", order.getOrderId());
         params.put("items", order.getItems());
-        params.put("price", restaurantService.getOrderPrice(order));
+        params.put("price", order.getPrice());
         this.sendMessageUsingThymeleafTemplate(
                 "restaurant_order_confirmation",
                 restaurant.getEmail(),
