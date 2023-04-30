@@ -43,13 +43,13 @@ public class RestaurantJdbcDao implements RestaurantDao {
 
     @Override
     public PaginatedResult<Restaurant> getActive(int pageNumber, int pageSize) {
-        pageNumber--;
+        int pageIdx = pageNumber - 1;
         RowMapper<Restaurant> rowMapper = SimpleRowMappers.RESTAURANT_ROW_MAPPER;
         List<Restaurant> results = jdbcTemplate.query(
                 SelectBase + " WHERE is_active = true ORDER BY restaurant_id LIMIT ? OFFSET ?",
                 rowMapper,
                 pageSize,
-                pageNumber * pageSize
+                pageIdx * pageSize
         );
 
         int count = countActive();
@@ -60,14 +60,14 @@ public class RestaurantJdbcDao implements RestaurantDao {
     @Override
     public int countActive() {
         return jdbcTemplate.query(
-                "SELECT count(*) AS count FROM restaurants WHERE is_active = true",
+                "SELECT COUNT(*) AS c FROM restaurants WHERE is_active = true",
                 SimpleRowMappers.COUNT_ROW_MAPPER
         ).get(0);
     }
 
     @Override
     public PaginatedResult<Restaurant> getSearchResults(String[] tokens, int pageNumber, int pageSize) {
-        pageNumber--;
+        int pageIdx = pageNumber - 1;
         StringBuilder searchParam = new StringBuilder("%");
         for (String token : tokens) {
             searchParam.append(token).append("%");
@@ -79,11 +79,11 @@ public class RestaurantJdbcDao implements RestaurantDao {
                 SimpleRowMappers.RESTAURANT_ROW_MAPPER,
                 search,
                 pageSize,
-                pageNumber * pageSize
+                pageIdx * pageSize
         );
 
         int count = jdbcTemplate.query(
-                "SELECT count(*) AS count FROM restaurants WHERE is_active = true AND LOWER(name) LIKE ?",
+                "SELECT count(*) AS c FROM restaurants WHERE is_active = true AND LOWER(name) LIKE ?",
                 SimpleRowMappers.COUNT_ROW_MAPPER,
                 search
         ).get(0);
