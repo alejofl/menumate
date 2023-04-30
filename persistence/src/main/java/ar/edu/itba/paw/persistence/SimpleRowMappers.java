@@ -45,6 +45,10 @@ class SimpleRowMappers {
     );
 
     static final RowMapper<RestaurantRoleLevel> RESTAURANT_ROLE_LEVEL_ROW_MAPPER = (ResultSet rs, int rowNum) -> {
+        // If the is_owner is set to null in the result set, getBoolean returns false, so no need to worry here.
+        if (rs.getBoolean("is_owner"))
+            return RestaurantRoleLevel.OWNER;
+
         int ordinal = rs.getInt("role_level");
         RestaurantRoleLevel[] values = RestaurantRoleLevel.values();
         if (rs.wasNull() || ordinal < 0 || ordinal > values.length)
