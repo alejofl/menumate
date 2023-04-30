@@ -1,0 +1,112 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
+<html>
+<head>
+    <spring:message code="userorders.ordernumber" arguments="${order.orderId}" var="title"/>
+    <jsp:include page="/WEB-INF/jsp/components/head.jsp">
+        <jsp:param name="title" value="${title}"/>
+    </jsp:include></head>
+<body>
+<jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
+<main class="order-details">
+    <div class="card order-details-card">
+        <img src="/images/${order.restaurant.portraitId1}" class="card-img-top" alt="${order.restaurant.name}">
+        <div class="card-body">
+            <div class="order-details-card-restaurant">
+                <img src="<c:url value="/images/${order.restaurant.logoId}"/>" alt="${order.restaurant.name}">
+                <div>
+                    <small class="text-muted"><spring:message code="userorders.ordernumber" arguments="${order.orderId}"/></small>
+                    <h3 class="card-title mb-0"><c:out value="${order.restaurant.name}"/></h3>
+                    <hr>
+                    <%-- This os a workaround to make LocalDateTime formattable --%>
+                    <fmt:parseDate value="${order.dateOrdered}" pattern="yyyy-MM-dd'T'HH:mm:ss" var="parsedDateOrdered" type="both"/>
+                    <fmt:formatDate pattern="dd MMMM yyyy - HH:mm" value="${parsedDateOrdered}" var="dateOrdered"/>
+                    <i class="bi bi-calendar-event"></i> <c:out value="${dateOrdered}"/>
+                </div>
+            </div>
+            <div>
+                <h4><spring:message code="userorders.yourorder"/></h4>
+                <table class="table">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col"><spring:message code="userorders.product"/></th>
+                            <th scope="col"><spring:message code="userorders.quantity"/></th>
+                            <th scope="col"><spring:message code="userorders.price"/></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach var="item" items="${order.items}">
+                            <tr>
+                                <th scope="row">${item.lineNumber}</th>
+                                <td>${item.product.name}</td>
+                                <td>${item.quantity}</td>
+                                <td>$${item.product.price * item.quantity}</td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="3"><spring:message code="userorders.total"/></th>
+                            <th>$${order.price}</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <div>
+                <h4>More Details</h4>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex align-items-center">
+                        <i class="bi bi-card-list me-3"></i>
+                        <div>
+                            <small class="text-muted"><spring:message code="userorders.ordertype"/></small>
+                            <p class="mb-0">
+                                <c:choose>
+                                    <c:when test="${order.orderType.ordinal() == 0}">
+                                        <spring:message code="restaurant.menu.form.dinein"/>
+                                    </c:when>
+                                    <c:when test="${order.orderType.ordinal() == 1}">
+                                        <spring:message code="restaurant.menu.form.takeaway"/>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <spring:message code="restaurant.menu.form.delivery"/>
+                                    </c:otherwise>
+                                </c:choose>
+                            </p>
+                        </div>
+                    </li>
+                    <c:choose>
+                        <c:when test="${order.orderType.ordinal() == 0}">
+                            <li class="list-group-item d-flex align-items-center">
+                                <i class="bi bi-hash me-3"></i>
+                                <div>
+                                    <small class="text-muted"><spring:message code="restaurant.menu.form.tablenumber"/></small>
+                                    <p class="mb-0">
+                                        <c:out value="${order.tableNumber}"/>
+                                    </p>
+                                </div>
+                            </li>
+                        </c:when>
+                        <c:when test="${order.orderType.ordinal() == 2}">
+                            <li class="list-group-item d-flex align-items-center">
+                                <i class="bi bi-geo-alt me-3"></i>
+                                <div>
+                                    <small class="text-muted"><spring:message code="restaurant.menu.form.address"/></small>
+                                    <p class="mb-0">
+                                        <c:out value="${order.address}"/>
+                                    </p>
+                                </div>
+                            </li>
+                        </c:when>
+                    </c:choose>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <a type="button" class="btn btn-primary" href="<c:url value="/restaurants/${order.restaurant.restaurantId}"/>"><spring:message code="userorders.neworder"/></a>
+</main>
+</body>
+</html>

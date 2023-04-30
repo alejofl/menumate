@@ -449,7 +449,7 @@ input:has(+ .form-error) {
     margin-right: 12px;
 }
 
-.order-card i {
+.order-card i, .order-details-card i {
     color: var(--primary);
     margin-right: 8px;
 }
@@ -476,4 +476,59 @@ input:has(+ .form-error) {
 
 .dropdown-item:active {
     background-color: var(--primary);
+}
+
+.order-details-card {
+    width: 40%;
+}
+
+@media (max-width: 1200px) {
+    .order-details-card {
+        width: 60%;
+    }
+}
+
+@media (max-width: 768px) {
+    .order-details-card {
+        width: 80%;
+    }
+}
+
+.order-details-card > img {
+    max-height: 12rem;
+    object-fit: cover;
+}
+
+.order-details-card-restaurant {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 10rem;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.order-details-card-restaurant > img {
+    border-radius: 50%;
+    height: 100%;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+}
+
+.order-details-card-restaurant > div {
+    width: 100%;
+}
+
+.order-details-card hr {
+    margin: 0.8rem 0;
+}
+
+.order-details-card table tfoot th {
+    border: 0;
+}
+
+.order-details {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
 }

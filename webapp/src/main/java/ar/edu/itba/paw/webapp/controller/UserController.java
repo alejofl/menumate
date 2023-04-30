@@ -5,6 +5,7 @@ import ar.edu.itba.paw.service.OrderService;
 import ar.edu.itba.paw.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -24,6 +25,13 @@ public class UserController {
         ModelAndView mav = new ModelAndView("user/myorders");
         User currentUser = userService.getByEmail(ControllerHelper.getCurrentUserEmail()).orElse(null);
         mav.addObject("orders", orderService.getByUser(currentUser.getUserId()));
+        return mav;
+    }
+
+    @RequestMapping(value = "/orders/{id:\\d}", method = RequestMethod.GET)
+    public ModelAndView order(@PathVariable int id) {
+        ModelAndView mav = new ModelAndView("user/order");
+        mav.addObject("order", orderService.getById(id).orElseThrow(IllegalArgumentException::new));
         return mav;
     }
 }
