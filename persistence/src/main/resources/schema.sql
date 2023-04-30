@@ -6,12 +6,13 @@ CREATE TABLE IF NOT EXISTS images
 
 CREATE TABLE IF NOT EXISTS users
 (
-    user_id   SERIAL PRIMARY KEY,
-    email     VARCHAR(320) UNIQUE NOT NULL,
-    password  VARCHAR(60),
-    name      VARCHAR(48) NOT NULL,
-    image_id  INT REFERENCES images (image_id) ON DELETE SET NULL,
-    is_active BOOLEAN NOT NULL DEFAULT FALSE
+    user_id     SERIAL PRIMARY KEY,
+    email       VARCHAR(320) UNIQUE NOT NULL,
+    password    VARCHAR(60),
+    name        VARCHAR(48) NOT NULL,
+    date_joined TIMESTAMP NOT NULL DEFAULT now(),
+    image_id    INT REFERENCES images (image_id) ON DELETE SET NULL,
+    is_active   BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS restaurants
@@ -20,6 +21,7 @@ CREATE TABLE IF NOT EXISTS restaurants
     name          VARCHAR(50) NOT NULL,
     email         VARCHAR(256) NOT NULL,
     owner_user_id INT REFERENCES users (user_id) ON DELETE CASCADE NOT NULL,
+    date_created  TIMESTAMP NOT NULL DEFAULT now(),
     logo_id       INT REFERENCES images (image_id) ON DELETE SET NULL,
     portrait_1_id INT REFERENCES images (image_id) ON DELETE SET NULL,
     portrait_2_id INT REFERENCES images (image_id) ON DELETE SET NULL,
