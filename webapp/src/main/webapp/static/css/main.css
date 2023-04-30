@@ -473,3 +473,7 @@ input:has(+ .form-error) {
 .order-card .list-group-item {
     border: none;
 }
+
+.dropdown-item:active {
+    background-color: var(--primary);
+}
