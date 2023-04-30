@@ -57,7 +57,7 @@ public class RestaurantJdbcDaoTest {
 
     @Test
     public void testCreation() throws SQLException {
-        Restaurant restaurant = restaurantDao.create(NAME, EMAIL);
+        Restaurant restaurant = restaurantDao.create(USER_ID, NAME, EMAIL);
 
         Assert.assertNotNull(restaurant);
         Assert.assertEquals(NAME, restaurant.getName());
