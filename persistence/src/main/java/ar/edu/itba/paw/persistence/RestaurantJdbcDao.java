@@ -28,7 +28,7 @@ public class RestaurantJdbcDao implements RestaurantDao {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsert = new SimpleJdbcInsert(ds)
                 .withTableName("restaurants")
-                .usingColumns("name", "email", "logo_id", "portrait_1_id", "portrait_2_id", "address", "description")
+                .usingColumns("name", "email", "owner_user_id", "logo_id", "portrait_1_id", "portrait_2_id", "address", "description")
                 .usingGeneratedKeyColumns("resturant_id");
     }
 
@@ -92,10 +92,11 @@ public class RestaurantJdbcDao implements RestaurantDao {
     }
 
     @Override
-    public Restaurant create(String name, String email) {
+    public Restaurant create(int ownerUserId, String name, String email) {
         final Map<String, Object> restaurantData = new HashMap<>();
         restaurantData.put("name", name);
         restaurantData.put("email", email);
+        restaurantData.put("owner_user_id", ownerUserId);
 
         final int restaurantId = jdbcInsert.executeAndReturnKey(restaurantData).intValue();
         return new Restaurant(restaurantId, name, email);

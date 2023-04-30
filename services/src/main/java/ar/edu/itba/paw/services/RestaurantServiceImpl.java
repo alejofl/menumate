@@ -70,8 +70,8 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public Restaurant create(String name, String email) {
-        return restaurantDao.create(name, email);
+    public Restaurant create(int ownerUserId, String name, String email) {
+        return restaurantDao.create(ownerUserId, name, email);
     }
 
     @Override
