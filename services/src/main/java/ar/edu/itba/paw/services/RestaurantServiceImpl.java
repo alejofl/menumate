@@ -4,6 +4,7 @@ import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.util.PaginatedResult;
 import ar.edu.itba.paw.persistance.ProductDao;
 import ar.edu.itba.paw.persistance.RestaurantDao;
+import ar.edu.itba.paw.service.ImageService;
 import ar.edu.itba.paw.service.RestaurantService;
 import ar.edu.itba.paw.model.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,9 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Autowired
     private ProductDao productDao;
+
+    @Autowired
+    private ImageService imageService;
 
     @Override
     public Optional<Restaurant> getById(int restaurantId) {
@@ -70,8 +74,12 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public Restaurant create(int ownerUserId, String name, String email) {
-        return restaurantDao.create(ownerUserId, name, email);
+    public int create(String name, String description, String address, User owner, byte[] logo, byte[] portrait1, byte[] portrait2) {
+        int logoKey = imageService.create(logo);
+        int portrait1Key = imageService.create(portrait1);
+        int portrait2Key = imageService.create(portrait2);
+
+        return restaurantDao.create(name, description, address, owner.getEmail(), owner.getUserId(), logoKey, portrait1Key, portrait2Key);
     }
 
     @Override

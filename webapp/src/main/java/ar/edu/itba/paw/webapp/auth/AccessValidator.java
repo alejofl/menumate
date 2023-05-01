@@ -1,9 +1,12 @@
 package ar.edu.itba.paw.webapp.auth;
 
 import ar.edu.itba.paw.model.Order;
+import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.service.OrderService;
+import ar.edu.itba.paw.service.RestaurantService;
 import ar.edu.itba.paw.webapp.controller.ControllerUtils;
 import ar.edu.itba.paw.webapp.exception.OrderNotFoundException;
+import ar.edu.itba.paw.webapp.exception.RestaurantNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,9 +18,13 @@ public class AccessValidator {
     @Autowired
     OrderService orderService;
 
-    public boolean checkEditRestaurant(HttpServletRequest request, int id) {
-        // TODO: Implement. This is just a placeholder.
-        return id % 2 == 0;
+    @Autowired
+    RestaurantService restaurantService;
+
+    public boolean checkRestaurantOwner(HttpServletRequest request, int id) {
+        // TODO change this to use Restaurant Roles Table
+        Restaurant restaurant = restaurantService.getById(id).orElseThrow(RestaurantNotFoundException::new);
+        return restaurant.getEmail().equals(ControllerUtils.getCurrentUserEmail());
     }
 
     public boolean checkOrderOwner(HttpServletRequest request, int id) {

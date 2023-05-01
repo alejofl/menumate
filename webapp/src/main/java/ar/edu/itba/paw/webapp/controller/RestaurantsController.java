@@ -48,6 +48,9 @@ public class RestaurantsController {
         final Restaurant restaurant = restaurantService.getById(id).orElseThrow(RestaurantNotFoundException::new);
         mav.addObject("restaurant", restaurant);
 
+        // TODO change this to use Restaurant Roles Table
+        mav.addObject("owner", restaurant.getEmail().equals(ControllerUtils.getCurrentUserEmail()));
+
         final List<Pair<Category, List<Product>>> menu = restaurantService.getMenu(id);
         mav.addObject("menu", menu);
 
