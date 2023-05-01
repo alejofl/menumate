@@ -46,7 +46,7 @@
             </div>
             <div class="mb-3">
                 <form:label path="portrait2" cssClass="form-label"><spring:message code="createrestaurant.form.portrait2"/></form:label>
-                <form:input path="portrait2" type="file" cssClass="form-control" id="create-restaurant-portrait1" accept="image/*"/>
+                <form:input path="portrait2" type="file" cssClass="form-control" id="create-restaurant-portrait2" accept="image/*"/>
                 <form:errors path="portrait2" element="div" cssClass="form-error"/>
             </div>
             <div class="mt-4">
