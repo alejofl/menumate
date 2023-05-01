@@ -4,6 +4,7 @@ import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.model.util.PaginatedResult;
 import ar.edu.itba.paw.service.OrderService;
+import ar.edu.itba.paw.service.RestaurantService;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.form.CreateRestaurantForm;
 import ar.edu.itba.paw.webapp.exception.OrderNotFoundException;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import java.io.IOException;
 
 @Controller
 public class UserController {
@@ -25,6 +27,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private RestaurantService restaurantService;
 
     @RequestMapping(value = "/orders", method = RequestMethod.GET)
     public ModelAndView myOrders(
@@ -64,12 +69,23 @@ public class UserController {
     public ModelAndView createRestaurantForm(
             @Valid @ModelAttribute("createRestaurantForm") final CreateRestaurantForm form,
             final BindingResult errors
-    ) {
+    ) throws IOException {
         // TODO recover images when errors occur on other field
         if (errors.hasErrors()) {
             return createRestaurant(form);
         }
 
+        int restaurantId = restaurantService.create(
+                form.getName(),
+                form.getDescription(),
+                form.getAddress(),
+                ControllerUtils.getCurrentUserOrThrow(userService),
+                form.getLogo().getBytes(),
+                form.getPortrait1().getBytes(),
+                form.getPortrait2().getBytes()
+        );
+
+        System.out.println("JFEWJFOIERJFIOERJIGJERIOGERIOGNVTFRNGRTJGIORJTGIOVJRTIOGJTRIOGJR" + restaurantId);
         return new ModelAndView("redirect:/thankyou");
     }
 }

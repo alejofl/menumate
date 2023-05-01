@@ -6,7 +6,7 @@ import ar.edu.itba.paw.model.util.PaginatedResult;
 import java.util.Optional;
 
 public interface RestaurantDao {
-    Restaurant create(int ownerUserId, String name, String email);
+    int create(String name, String description, String address, String email, int userId, int logoKey, int portrait1Kay, int portrait2Key);
 
     Optional<Restaurant> getById(int restaurantId);
 
