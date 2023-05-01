@@ -68,9 +68,11 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
                 // Request authorization
                 .and().authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/restaurants/{id:\\d+}/edit").access("@accessValidator.checkEditRestaurant(request, #id)")
+                .antMatchers("/restaurants/{id:\\d+}/edit").access("@accessValidator.checkRestaurantOwner(request, #id)")
+                .antMatchers("/restaurants/{id:\\d+}/orders").access("@accessValidator.checkRestaurantOwner(request, #id)")
                 .antMatchers("/orders/{id:\\d+}").access("@accessValidator.checkOrderOwner(request, #id)")
                 .antMatchers("/orders/**").authenticated()
+                .antMatchers("/restaurants/create").authenticated()
                 .antMatchers("/**").permitAll()
                 .and().exceptionHandling().accessDeniedPage("/error")
 

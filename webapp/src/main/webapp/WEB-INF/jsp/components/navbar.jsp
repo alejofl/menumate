@@ -38,7 +38,7 @@
                             <li><span class="dropdown-item-text"><c:out value="${currentUser.name}"/></span></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="<c:url value="/orders"/>"><spring:message code="navbar.myorders"/></a></li>
-                            <li><a class="dropdown-item" href="#"><spring:message code="navbar.createrestaurant"/></a></li>
+                            <li><a class="dropdown-item" href="<c:url value="/restaurants/create"/>"><spring:message code="navbar.createrestaurant"/></a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="<c:url value="/auth/logout"/>"><spring:message code="navbar.logout"/></a></li>
                         </ul>
