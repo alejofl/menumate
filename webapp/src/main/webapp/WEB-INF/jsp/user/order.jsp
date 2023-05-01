@@ -64,17 +64,7 @@
                         <div>
                             <small class="text-muted"><spring:message code="userorders.ordertype"/></small>
                             <p class="mb-0">
-                                <c:choose>
-                                    <c:when test="${order.orderType.ordinal() == 0}">
-                                        <spring:message code="restaurant.menu.form.dinein"/>
-                                    </c:when>
-                                    <c:when test="${order.orderType.ordinal() == 1}">
-                                        <spring:message code="restaurant.menu.form.takeaway"/>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <spring:message code="restaurant.menu.form.delivery"/>
-                                    </c:otherwise>
-                                </c:choose>
+                                <spring:message code="restaurants.menu.form.${order.orderType.messageCode}"/>
                             </p>
                         </div>
                     </li>
