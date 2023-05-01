@@ -3,7 +3,7 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.util.Pair;
 import ar.edu.itba.paw.service.*;
-import ar.edu.itba.paw.webapp.exception.IllegalOrderTypeException;
+import ar.edu.itba.paw.webapp.exception.InvalidOrderTypeException;
 import ar.edu.itba.paw.webapp.exception.RestaurantNotFoundException;
 import ar.edu.itba.paw.webapp.form.CartItem;
 import ar.edu.itba.paw.webapp.form.CheckoutForm;
@@ -80,7 +80,7 @@ public class RestaurantsController {
         } else if (orderType == OrderType.DELIVERY.ordinal()) {
             order = orderService.createDelivery(form.getRestaurantId(), form.getName(), form.getEmail(), form.getAddress(), items);
         } else {
-            throw new IllegalOrderTypeException("Order type not supported");
+            throw new InvalidOrderTypeException("Order type not supported");
         }
 
         // FIXME: how do we handle this?
