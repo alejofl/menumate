@@ -2,6 +2,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <html>
 <head>
     <spring:message code="restaurant.menu.comments" var="comments"/>
@@ -16,10 +17,10 @@
     <div class="card">
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table">
+                <table class="table table-hover">
                     <thead>
                     <tr>
-                        <th scope="col">Order ID</th>
+                        <th scope="col">ID</th>
                         <th scope="col">Order Type</th>
                         <th scope="col">Table Number</th>
                         <th scope="col">Address</th>
@@ -33,9 +34,18 @@
                                 data-bs-toggle="modal"
                                 data-bs-target="#order-details"
                                 data-order-id="${order.orderId}"
-                                data-order-items="${order.items}"
+                                <c:forEach items="${order.items}" var="item">
+                                    data-order-item-${item.lineNumber}-line-number="${item.lineNumber}"
+                                    data-order-item-${item.lineNumber}-comment="${item.comment}"
+                                    data-order-item-${item.lineNumber}-product-name="${item.product.name}"
+                                    data-order-item-${item.lineNumber}-product-price="${item.product.price}"
+                                    data-order-item-${item.lineNumber}-quantity="${item.quantity}"
+                                </c:forEach>
+                                data-order-items-quantity="${fn:length(order.items)}"
                             >
-                                <td><c:out value="${order.orderId}"> </c:out></td>
+                                <fmt:parseDate value="${order.dateOrdered}" pattern="yyyy-MM-dd'T'HH:mm:ss" var="parsedDateOrdered" type="both"/>
+                                <fmt:formatDate pattern="yyyy-MM-dd HH:mm" value="${parsedDateOrdered}" var="dateOrdered"/>
+                                <td class="text-center"><c:out value="${order.orderId}"> </c:out></td>
                                 <c:choose>
                                     <c:when test="${order.orderType == 'DINE_IN'}">
                                         <td>Dine In</td>
@@ -53,7 +63,7 @@
                                         <td><c:out value="${order.address}"> </c:out></td>
                                     </c:when>
                                 </c:choose>
-                                <td><c:out value="${order.dateOrdered}"></c:out></td>
+                                <td><c:out value="${dateOrdered}"></c:out></td>
                             </tr>
                     </c:forEach>
                     </tbody>
@@ -63,14 +73,25 @@
     </div>
 
     <div class="modal fade" id="order-details" tabindex="-1">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="order-title"></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p id="order-items"></p>
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Product Name</th>
+                            <th scope="col">Comment</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Product Price</th>
+                        </tr>
+                        </thead>
+                        <tbody id="order-items"></tbody>
+                    </table>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

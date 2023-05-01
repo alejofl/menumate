@@ -27,7 +27,10 @@ public class UserServiceImpl implements UserService {
         if (password == null) {
             return userDao.create(email, null, name);
         } else {
-            return userDao.update(email, passwordEncoder.encode(password), name);
+            if (getByEmail(email).isPresent()) {
+                return userDao.update(email, passwordEncoder.encode(password), name);
+            }
+            return userDao.create(email, passwordEncoder.encode(password), name);
         }
     }
 

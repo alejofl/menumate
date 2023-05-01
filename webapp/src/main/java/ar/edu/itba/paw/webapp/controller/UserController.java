@@ -2,44 +2,67 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.model.OrderType;
+import ar.edu.itba.paw.model.User;
+import ar.edu.itba.paw.model.util.PaginatedResult;
 import ar.edu.itba.paw.service.OrderService;
+import ar.edu.itba.paw.service.UserService;
+import ar.edu.itba.paw.webapp.exception.OrderNotFoundException;
+import ar.edu.itba.paw.webapp.form.PagingForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.time.LocalDateTime;
+import javax.validation.Valid;
 import java.util.Comparator;
 import java.util.List;
 
-
 @Controller
 public class UserController {
+    private static final int DEFAULT_ORDERS_PAGE_SIZE = 20;
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private UserService userService;
+
     @RequestMapping(value = "/orders", method = RequestMethod.GET)
-    public ModelAndView myOrders() {
+    public ModelAndView myOrders(
+            @Valid final PagingForm paging,
+            final BindingResult errors
+    ) {
         ModelAndView mav = new ModelAndView("user/myorders");
+
+        if (errors.hasErrors()) {
+            mav.addObject("error", Boolean.TRUE);
+            paging.clear();
+        }
+
+        User currentUser = ControllerUtils.getCurrentUserOrThrow(userService);
+        PaginatedResult<Order> orders = orderService.getByUser(currentUser.getUserId(), paging.getPageOrDefault(), paging.getSizeOrDefault(DEFAULT_ORDERS_PAGE_SIZE));
+        mav.addObject("orders", orders.getResult());
+        mav.addObject("orderCount", orders.getTotalCount());
+        mav.addObject("pageCount", orders.getTotalPageCount());
         return mav;
     }
 
-    @RequestMapping(value = "/restaurants/order", method = RequestMethod.GET)
-    public ModelAndView restaurantOrder() {
+    @RequestMapping(value = "/orders/{id:\\d+}", method = RequestMethod.GET)
+    public ModelAndView order(@PathVariable int id) {
+        ModelAndView mav = new ModelAndView("user/order");
+        mav.addObject("order", orderService.getById(id).orElseThrow(OrderNotFoundException::new));
+        return mav;
+    }
 
-        List<Order> orders = orderService.getByOrderTypeAndRestaurant(OrderType.DINE_IN, 3);
-        orders.addAll(orderService.getByOrderTypeAndRestaurant(OrderType.TAKEAWAY, 3));
-        orders.addAll(orderService.getByOrderTypeAndRestaurant(OrderType.DELIVERY, 3));
-        orders.sort(new Comparator<Order>() {
-            @Override
-            public int compare(Order o1, Order o2) {
-                return o2.getDateOrdered().compareTo(o1.getDateOrdered());
-            }
-        });
+    @RequestMapping(value = "/restaurants/{id:\\d+}/orders", method = RequestMethod.GET)
+    public ModelAndView restaurantOrder(@PathVariable int id) {
+
+        PaginatedResult<Order> orders = orderService.getByRestaurant(id, 1, 10);
         ModelAndView mav = new ModelAndView("menu/restaurant_orders");
-        mav.addObject("orders", orders);
+        mav.addObject("orders", orders.getResult());
+        mav.addObject("orderCount", orders.getTotalCount());
+        mav.addObject("pageCount", orders.getTotalPageCount());
         return mav;
     }
 }
-
