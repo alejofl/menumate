@@ -85,7 +85,6 @@ public class UserController {
                 form.getPortrait2().getBytes()
         );
 
-        System.out.println("JFEWJFOIERJFIOERJIGJERIOGERIOGNVTFRNGRTJGIORJTGIOVJRTIOGJTRIOGJR" + restaurantId);
-        return new ModelAndView("redirect:/thankyou");
+        return new ModelAndView(String.format("redirect:/restaurants/%d", restaurantId));
     }
 }
