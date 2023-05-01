@@ -6,15 +6,33 @@ package ar.edu.itba.paw.model;
  * lower the number the more permissions the role has.
  */
 public enum RestaurantRoleLevel {
-    /** Has full permissions over the restaurant. */
-    OWNER(),
+    /**
+     * Has full permissions over the restaurant.
+     */
+    OWNER("owner"),
 
-    /** Can edit the restaurant and assign roles. */
-    ADMIN(),
+    /**
+     * Can edit the restaurant and assign roles.
+     */
+    ADMIN("admin"),
 
-    /** Cannot edit the restaurant, but can assign handler roles. */
-    MANAGER(),
+    /**
+     * Cannot edit the restaurant, but can assign handler roles.
+     */
+    MANAGER("manager"),
 
-    /** Can view and handle orders (e.g. mark as delivered). */
-    ORDER_HANDLER()
+    /**
+     * Can view and handle orders (e.g. mark as delivered).
+     */
+    ORDER_HANDLER("orderhandler");
+
+    private final String messageCode;
+
+    RestaurantRoleLevel(final String messageCode) {
+        this.messageCode = messageCode;
+    }
+
+    public String getMessageCode() {
+        return messageCode;
+    }
 }

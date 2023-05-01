@@ -13,11 +13,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
-import java.util.List;
 
 
 @Controller
 public class HomeController {
+    private static final int DEFAULT_SEARCH_PAGE_SIZE = 12;
 
     @Autowired
     private RestaurantService restaurantService;
@@ -42,12 +42,10 @@ public class HomeController {
 
         if (errors.hasErrors()) {
             mav.addObject("error", Boolean.TRUE);
-            form.setSearch(null);
-            form.setPage(null);
-            form.setSize(null);
+            form.clear();
         }
 
-        final PaginatedResult<Restaurant> results = restaurantService.getSearchResults(form.getSearch(), form.getPageOrDefault(), form.getSizeOrDefault());
+        final PaginatedResult<Restaurant> results = restaurantService.getSearchResults(form.getSearch(), form.getPageOrDefault(), form.getSizeOrDefault(DEFAULT_SEARCH_PAGE_SIZE));
         mav.addObject("restaurants", results.getResult());
         mav.addObject("restaurantCount", results.getTotalCount());
         mav.addObject("pageCount", results.getTotalPageCount());

@@ -2,10 +2,8 @@ package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.model.OrderItem;
-import ar.edu.itba.paw.model.OrderType;
 import ar.edu.itba.paw.model.util.PaginatedResult;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
