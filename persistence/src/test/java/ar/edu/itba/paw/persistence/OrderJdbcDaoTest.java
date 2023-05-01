@@ -15,7 +15,6 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.mockito.Mockito.mock;

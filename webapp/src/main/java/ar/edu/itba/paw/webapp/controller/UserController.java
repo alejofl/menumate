@@ -6,7 +6,6 @@ import ar.edu.itba.paw.model.util.PaginatedResult;
 import ar.edu.itba.paw.service.OrderService;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.exception.OrderNotFoundException;
-import ar.edu.itba.paw.webapp.exception.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.PagingForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
