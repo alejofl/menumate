@@ -23,7 +23,6 @@ public class RestaurantJdbcDao implements RestaurantDao {
 
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert restaurantJdbcInsert;
-    private final SimpleJdbcInsert rolesJdbcInsert;
 
     @Autowired
     public RestaurantJdbcDao(final DataSource ds) {
@@ -32,9 +31,6 @@ public class RestaurantJdbcDao implements RestaurantDao {
                 .withTableName("restaurants")
                 .usingColumns("name", "email", "owner_user_id", "logo_id", "portrait_1_id", "portrait_2_id", "address", "description")
                 .usingGeneratedKeyColumns("restaurant_id");
-        rolesJdbcInsert = new SimpleJdbcInsert(ds)
-                .withTableName("restaurant_roles")
-                .usingColumns("user_id", "restaurant_id", "role_level");
     }
 
     @Override
@@ -107,15 +103,7 @@ public class RestaurantJdbcDao implements RestaurantDao {
         restaurantData.put("portrait_1_id", portrait1Kay);
         restaurantData.put("portrait_2_id", portrait2Key);
         restaurantData.put("owner_user_id", userId);
-        final int restaurantId = restaurantJdbcInsert.executeAndReturnKey(restaurantData).intValue();
-
-        final Map<String, Object> rolesData = new HashMap<>();
-        rolesData.put("user_id", userId);
-        rolesData.put("restaurant_id", restaurantId);
-        rolesData.put("role_level", RestaurantRoleLevel.OWNER.ordinal());
-        rolesJdbcInsert.execute(rolesData);
-
-        return restaurantId;
+        return restaurantJdbcInsert.executeAndReturnKey(restaurantData).intValue();
     }
 
     @Override
