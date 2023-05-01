@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -68,9 +67,9 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
                 // Request authorization
                 .and().authorizeRequests()
-                .antMatchers("/restaurants/{id:\\d+}/edit").access("@accessValidator.checkRestaurantOwner(request, #id)")
-                .antMatchers("/restaurants/{id:\\d+}/orders").access("@accessValidator.checkRestaurantOwner(request, #id)")
-                .antMatchers("/orders/{id:\\d+}").access("@accessValidator.checkOrderOwner(request, #id)")
+                .antMatchers("/restaurants/{restaurant_id:\\d+}/edit").access("@accessValidator.checkRestaurantAdmin(request, #restaurant_id)")
+                .antMatchers("/restaurants/{restaurant_id:\\d+}/orders").access("@accessValidator.checkRestaurantOrderHandler(request, #restaurant_id)")
+                .antMatchers("/orders/{order_id:\\d+}").access("@accessValidator.checkOrderOwner(request, #order_id)")
                 .antMatchers("/orders/**").authenticated()
                 .antMatchers("/restaurants/create").authenticated()
                 .antMatchers("/**").permitAll()
