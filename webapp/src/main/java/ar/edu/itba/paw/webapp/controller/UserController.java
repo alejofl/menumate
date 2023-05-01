@@ -5,15 +5,14 @@ import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.model.util.PaginatedResult;
 import ar.edu.itba.paw.service.OrderService;
 import ar.edu.itba.paw.service.UserService;
+import ar.edu.itba.paw.webapp.form.CreateRestaurantForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
-import java.sql.SQLOutput;
-import java.util.List;
 
 @Controller
 public class UserController {
@@ -49,5 +48,25 @@ public class UserController {
         ModelAndView mav = new ModelAndView("user/order");
         mav.addObject("order", orderService.getById(id).orElseThrow(IllegalArgumentException::new));
         return mav;
+    }
+
+    @RequestMapping(value = "/restaurants/create", method = RequestMethod.GET)
+    public ModelAndView createRestaurant(
+            @ModelAttribute("createRestaurantForm") final CreateRestaurantForm form
+    ) {
+        return new ModelAndView("user/create_restaurant");
+    }
+
+    @RequestMapping(value = "/restaurants/create", method = RequestMethod.POST)
+    public ModelAndView createRestaurantForm(
+            @Valid @ModelAttribute("createRestaurantForm") final CreateRestaurantForm form,
+            final BindingResult errors
+    ) {
+        // TODO recover images when errors occur on other field
+        if (errors.hasErrors()) {
+            return createRestaurant(form);
+        }
+
+        return new ModelAndView("redirect:/thankyou");
     }
 }
