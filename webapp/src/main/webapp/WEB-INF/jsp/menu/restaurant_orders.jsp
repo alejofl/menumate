@@ -14,34 +14,37 @@
 <body>
 <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
 <main>
-    <div class="card">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                    <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Order Type</th>
-                        <th scope="col">Table Number</th>
-                        <th scope="col">Address</th>
-                        <th scope="col">Time Ordered</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <c:forEach items="${orders}" var="order">
+    <div class="restaurant-orders">
+        <h1>Orders</h1>
+        <div class="card w-75">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Order Type</th>
+                            <th scope="col">Table Number</th>
+                            <th scope="col">Address</th>
+                            <th scope="col">Time Ordered</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <c:forEach items="${orders}" var="order">
                             <tr
-                                class="clickable-object clickable-row"
-                                data-bs-toggle="modal"
-                                data-bs-target="#order-details"
-                                data-order-id="${order.orderId}"
-                                <c:forEach items="${order.items}" var="item">
-                                    data-order-item-${item.lineNumber}-line-number="${item.lineNumber}"
-                                    data-order-item-${item.lineNumber}-comment="${item.comment}"
-                                    data-order-item-${item.lineNumber}-product-name="${item.product.name}"
-                                    data-order-item-${item.lineNumber}-product-price="${item.product.price}"
-                                    data-order-item-${item.lineNumber}-quantity="${item.quantity}"
-                                </c:forEach>
-                                data-order-items-quantity="${fn:length(order.items)}"
+                                    class="clickable-object clickable-row"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#order-details"
+                                    data-order-id="${order.orderId}"
+                                    <c:forEach items="${order.items}" var="item">
+                                        data-order-item-${item.lineNumber}-line-number="${item.lineNumber}"
+                                        data-order-item-${item.lineNumber}-comment="${item.comment}"
+                                        data-order-item-${item.lineNumber}-product-name="${item.product.name}"
+                                        data-order-item-${item.lineNumber}-product-price="${item.product.price}"
+                                        data-order-item-${item.lineNumber}-quantity="${item.quantity}"
+                                    </c:forEach>
+                                    data-order-items-quantity="${fn:length(order.items)}"
+                                    data-order-total-price="${order.price}"
                             >
                                 <fmt:parseDate value="${order.dateOrdered}" pattern="yyyy-MM-dd'T'HH:mm:ss" var="parsedDateOrdered" type="both"/>
                                 <fmt:formatDate pattern="yyyy-MM-dd HH:mm" value="${parsedDateOrdered}" var="dateOrdered"/>
@@ -65,15 +68,16 @@
                                 </c:choose>
                                 <td><c:out value="${dateOrdered}"></c:out></td>
                             </tr>
-                    </c:forEach>
-                    </tbody>
-                </table>
+                        </c:forEach>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 
     <div class="modal fade" id="order-details" tabindex="-1">
-        <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-dialog modal-dialog-scrollable modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="order-title"></h5>
@@ -86,7 +90,7 @@
                             <th scope="col">#</th>
                             <th scope="col">Product Name</th>
                             <th scope="col">Comment</th>
-                            <th scope="col">Quantity</th>
+                            <th scope="col" class="text-center">Quantity</th>
                             <th scope="col">Product Price</th>
                         </tr>
                         </thead>
@@ -94,8 +98,7 @@
                     </table>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <p id="order-total-price" style="font-weight: bold"></p>
                 </div>
             </div>
         </div>

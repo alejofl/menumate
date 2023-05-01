@@ -23,10 +23,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     <td>${items[i].productName}</td>
                     <td>${items[i].comment}</td>
                     <td class="text-center">${items[i].quantity}</td>
-                    <td>${items[i].productPrice}</td>
+                    <td>$${items[i].productPrice}</td>
                 </tr>
               `;
           }
+          document.querySelector("#order-total-price").innerHTML = `Total Price: $` + element.dataset.orderTotalPrice;
           console.log(items)
       });
    });

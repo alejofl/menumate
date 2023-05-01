@@ -532,3 +532,11 @@ input:has(+ .form-error) {
     align-items: center;
     gap: 12px;
 }
+
+.restaurant-orders {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}

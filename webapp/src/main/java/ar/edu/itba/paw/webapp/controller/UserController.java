@@ -58,7 +58,7 @@ public class UserController {
     @RequestMapping(value = "/restaurants/{id:\\d+}/orders", method = RequestMethod.GET)
     public ModelAndView restaurantOrder(@PathVariable int id) {
 
-        PaginatedResult<Order> orders = orderService.getByRestaurant(id, 1, 10);
+        PaginatedResult<Order> orders = orderService.getByRestaurant(id, 1, 2);
         ModelAndView mav = new ModelAndView("menu/restaurant_orders");
         mav.addObject("orders", orders.getResult());
         mav.addObject("orderCount", orders.getTotalCount());
