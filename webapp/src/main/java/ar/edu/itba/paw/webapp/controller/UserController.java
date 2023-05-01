@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -26,7 +28,15 @@ public class UserController {
     @RequestMapping(value = "/restaurants/order", method = RequestMethod.GET)
     public ModelAndView restaurantOrder() {
 
-        List<Order> orders = orderService.getByOrderTypeAndRestaurant(OrderType.DELIVERY, 3);
+        List<Order> orders = orderService.getByOrderTypeAndRestaurant(OrderType.DINE_IN, 3);
+        orders.addAll(orderService.getByOrderTypeAndRestaurant(OrderType.TAKEAWAY, 3));
+        orders.addAll(orderService.getByOrderTypeAndRestaurant(OrderType.DELIVERY, 3));
+        orders.sort(new Comparator<Order>() {
+            @Override
+            public int compare(Order o1, Order o2) {
+                return o2.getDateOrdered().compareTo(o1.getDateOrdered());
+            }
+        });
         ModelAndView mav = new ModelAndView("menu/restaurant_orders");
         mav.addObject("orders", orders);
         return mav;
