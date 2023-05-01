@@ -33,11 +33,11 @@ public class AccessValidator {
         if (currentUser == null)
             return false;
 
-        Optional<RestaurantRoleLevel> roleLevel = rolesService.getRole(0, restaurant_id);
+        Optional<RestaurantRoleLevel> roleLevel = rolesService.getRole(currentUser.getUserId(), restaurant_id);
         if (!roleLevel.isPresent())
             return false;
 
-        return roleLevel.get().ordinal() >= minimumRoleLevel.ordinal();
+        return roleLevel.get().ordinal() <= minimumRoleLevel.ordinal();
     }
 
     public boolean checkRestaurantOwner(HttpServletRequest request, int restaurant_id) {
