@@ -20,7 +20,7 @@
 <div class="restaurant-information-container">
     <div class="restaurant-information">
         <img src="<c:url value="/images/${restaurant.logoId}"/>" alt="${restaurant.name}" class="restaurant-logo">
-        <div>
+        <div style="flex-grow: 1;">
             <h1>${restaurant.name}</h1>
             <c:choose>
                 <c:when test="${not empty restaurant.description}">
@@ -31,6 +31,12 @@
                 </c:otherwise>
             </c:choose>
         </div>
+        <c:if test="${owner}">
+            <div class="d-flex flex-column gap-2">
+                <a class="btn btn-secondary" href="<c:url value="/restaurants/${restaurant.restaurantId}/edit"/>" role="button">Edit Menu</a>
+                <a class="btn btn-secondary" href="<c:url value="/restaurants/${restaurant.restaurantId}/orders"/>" role="button">See Orders</a>
+            </div>
+        </c:if>
     </div>
 </div>
 <main>
