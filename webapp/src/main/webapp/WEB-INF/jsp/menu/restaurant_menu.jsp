@@ -31,12 +31,15 @@
                 </c:otherwise>
             </c:choose>
         </div>
-        <c:if test="${owner}">
-            <div class="d-flex flex-column gap-2">
+        <div class="d-flex flex-column gap-2">
+            <c:if test="${admin}">
                 <a class="btn btn-secondary" href="<c:url value="/restaurants/${restaurant.restaurantId}/edit"/>" role="button"><spring:message code="restaurant.menu.editmenu"/></a>
+            </c:if>
+            <c:if test="${order_viewer}">
                 <a class="btn btn-secondary" href="<c:url value="/restaurants/${restaurant.restaurantId}/orders"/>" role="button"><spring:message code="restaurant.menu.seeorders"/></a>
-            </div>
-        </c:if>
+            </c:if>
+        </div>
+
     </div>
 </div>
 <main>
