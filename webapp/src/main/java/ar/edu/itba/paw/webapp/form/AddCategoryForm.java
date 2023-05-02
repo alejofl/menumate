@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.form;
 
+import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.Min;
@@ -10,7 +11,7 @@ public class AddCategoryForm {
     @NotNull
     private Integer restaurantId;
 
-    @NotNull
+    @NotBlank
     @Size(max=50)
     private String name;
 

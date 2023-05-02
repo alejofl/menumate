@@ -121,6 +121,9 @@ public class UserController {
         final List<Pair<Category, List<Product>>> menu = restaurantService.getMenu(id);
         mav.addObject("menu", menu);
 
+        mav.addObject("addProductErrors", addProductErrors);
+        mav.addObject("addCategoryErrors", addCategoryErrors);
+
         return mav;
     }
 
@@ -128,10 +131,10 @@ public class UserController {
     public ModelAndView addProductToRestaurant(
             @PathVariable final int id,
             @Valid @ModelAttribute("addProductForm") final AddProductForm addProductForm,
+            final BindingResult errors,
             @ModelAttribute("addCategoryForm") final AddCategoryForm addCategoryForm,
             @ModelAttribute("deleteProductForm") final DeleteProductForm deleteProductForm,
-            @ModelAttribute("deleteCategoryForm") final DeleteCategoryForm deleteCategoryForm,
-            final BindingResult errors
+            @ModelAttribute("deleteCategoryForm") final DeleteCategoryForm deleteCategoryForm
     ) throws IOException {
         if (errors.hasErrors()) {
             return editRestaurant(id, addProductForm, addCategoryForm, deleteProductForm, deleteCategoryForm, true, false);
@@ -153,9 +156,9 @@ public class UserController {
             @PathVariable final int id,
             @ModelAttribute("addProductForm") final AddProductForm addProductForm,
             @Valid @ModelAttribute("addCategoryForm") final AddCategoryForm addCategoryForm,
+            final BindingResult errors,
             @ModelAttribute("deleteProductForm") final DeleteProductForm deleteProductForm,
-            @ModelAttribute("deleteCategoryForm") final DeleteCategoryForm deleteCategoryForm,
-            final BindingResult errors
+            @ModelAttribute("deleteCategoryForm") final DeleteCategoryForm deleteCategoryForm
     ) {
         if (errors.hasErrors()) {
             return editRestaurant(id, addProductForm, addCategoryForm, deleteProductForm, deleteCategoryForm, false, true);
@@ -172,8 +175,8 @@ public class UserController {
             @ModelAttribute("addProductForm") final AddProductForm addProductForm,
             @ModelAttribute("addCategoryForm") final AddCategoryForm addCategoryForm,
             @Valid @ModelAttribute("deleteProductForm") final DeleteProductForm deleteProductForm,
-            @ModelAttribute("deleteCategoryForm") final DeleteCategoryForm deleteCategoryForm,
-            final BindingResult errors
+            final BindingResult errors,
+            @ModelAttribute("deleteCategoryForm") final DeleteCategoryForm deleteCategoryForm
     ) {
         if (errors.hasErrors()) {
             throw new IllegalStateException();

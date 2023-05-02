@@ -12,7 +12,7 @@
     </jsp:include></head>
     <script src="<c:url value="/static/js/edit_menu.js"/>"></script>
 </head>
-<body>
+<body data-add-category-errors="${addCategoryErrors}" data-add-product-errors="${addProductErrors}" data-category-id="${addProductErrors ? addProductForm.categoryId : ""}">
 <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
 <div class="restaurant-header">
     <img src="<c:url value="/images/${restaurant.portraitId1}"/>" class="menu-item-card-img" alt="${restaurant.name}">
@@ -71,7 +71,7 @@
                         </div>
                     </div>
                 </c:forEach>
-                <a class="add-product-button" type="button" class="clickable-object" data-bs-toggle="modal" data-bs-target="#add-item-modal" data-category-id="${entry.key.categoryId}">
+                <a class="add-product-button clickable-object" type="button" data-bs-toggle="modal" data-bs-target="#add-item-modal" data-category-id="${entry.key.categoryId}">
                     <div class="card add-item-card edit-menu-add">
                         <div class="card-body d-flex justify-content-center align-items-center">
                             <i class="bi bi-plus-circle-fill"></i>
@@ -80,7 +80,7 @@
                 </a>
             </div>
         </c:forEach>
-        <a type="button" class="clickable-object" data-bs-toggle="modal" data-bs-target="#add-category-modal">
+        <a type="button" class="clickable-object" id="add-category-button" data-bs-toggle="modal" data-bs-target="#add-category-modal">
             <div class="card my-4 edit-menu-add">
                 <div class="card-body d-flex justify-content-center align-items-center">
                     <i class="bi bi-plus-circle-fill"></i>
