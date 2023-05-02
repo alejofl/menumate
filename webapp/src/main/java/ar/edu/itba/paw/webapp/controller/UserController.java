@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.Order;
+import ar.edu.itba.paw.model.OrderType;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.model.util.PaginatedResult;
 import ar.edu.itba.paw.service.OrderService;
@@ -55,6 +56,18 @@ public class UserController {
     public ModelAndView order(@PathVariable int id) {
         ModelAndView mav = new ModelAndView("user/order");
         mav.addObject("order", orderService.getById(id).orElseThrow(OrderNotFoundException::new));
+        return mav;
+    }
+
+    @RequestMapping(value = "/restaurants/{id:\\d+}/orders", method = RequestMethod.GET)
+    public ModelAndView restaurantOrder(@Valid final PagingForm paging, @PathVariable int id) {
+
+        PaginatedResult<Order> orders = orderService.getByRestaurant(id, paging.getPageOrDefault(), paging.getSizeOrDefault(DEFAULT_ORDERS_PAGE_SIZE));
+        ModelAndView mav = new ModelAndView("menu/restaurant_orders");
+        mav.addObject("orders", orders.getResult());
+        mav.addObject("orderCount", orders.getTotalCount());
+        mav.addObject("pageCount", orders.getTotalPageCount());
+        mav.addObject ("id", id);
         return mav;
     }
 

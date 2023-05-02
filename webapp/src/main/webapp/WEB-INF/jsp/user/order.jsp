@@ -64,7 +64,7 @@
                         <div>
                             <small class="text-muted"><spring:message code="userorders.ordertype"/></small>
                             <p class="mb-0">
-                                <spring:message code="restaurants.menu.form.${order.orderType.messageCode}"/>
+                                <spring:message code="restaurant.menu.form.${order.orderType.messageCode}"/>
                             </p>
                         </div>
                     </li>

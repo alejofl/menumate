@@ -544,6 +544,14 @@ input:has(+ .form-error), textarea:has(+ .form-error) {
     gap: 12px;
 }
 
+.restaurant-orders {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
 .create-restaurant {
     padding: 1rem;
     gap: 20px;
