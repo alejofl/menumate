@@ -30,8 +30,8 @@
                     <input type="password" class="form-control" name="password" id="login-password">
                 </div>
                 <div class="mb-3 form-check">
-                    <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                    <label class="form-check-label" for="exampleCheck1"><spring:message code="login.rememberme"/></label>
+                    <input type="checkbox" class="form-check-input" name="rememberme">
+                    <label class="form-check-label"><spring:message code="login.rememberme"/></label>
                 </div>
                 <input type="submit" class="btn btn-primary" id="login-submit" value='<spring:message code="login"/>'>
             </form>
