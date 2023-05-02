@@ -35,4 +35,11 @@ public enum RestaurantRoleLevel {
     public String getMessageCode() {
         return messageCode;
     }
+
+    /**
+     * Returns whether this RestaurantRoleLevel has a certain permission level or better.
+     */
+    public boolean hasPermissionOf(RestaurantRoleLevel level) {
+        return this.ordinal() <= level.ordinal();
+    }
 }

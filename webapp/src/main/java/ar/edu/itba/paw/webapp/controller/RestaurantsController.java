@@ -19,6 +19,7 @@ import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class RestaurantsController {
@@ -55,11 +56,12 @@ public class RestaurantsController {
         mav.addObject("restaurant", restaurant);
 
         User currentUser = ControllerUtils.getCurrentUserOrNull(userService);
+        Optional<RestaurantRoleLevel> level;
         boolean admin = false;
         boolean order_viewer = false;
-        if (currentUser != null) {
-            admin = rolesService.doesUserHaveRole(currentUser.getUserId(), id, RestaurantRoleLevel.ADMIN);
-            order_viewer = rolesService.doesUserHaveRole(currentUser.getUserId(), id, RestaurantRoleLevel.ORDER_HANDLER);
+        if (currentUser != null && (level = rolesService.getRole(currentUser.getUserId(), id)).isPresent()) {
+            admin = level.get().hasPermissionOf(RestaurantRoleLevel.ADMIN);
+            order_viewer = level.get().hasPermissionOf(RestaurantRoleLevel.ORDER_HANDLER);
         }
         mav.addObject("admin", admin);
         mav.addObject("order_viewer", order_viewer);

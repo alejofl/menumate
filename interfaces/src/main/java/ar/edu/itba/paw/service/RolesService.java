@@ -22,6 +22,6 @@ public interface RolesService {
         if (!roleLevel.isPresent())
             return false;
 
-        return roleLevel.get().ordinal() <= minimumRoleLevel.ordinal();
+        return roleLevel.get().hasPermissionOf(minimumRoleLevel);
     }
 }
