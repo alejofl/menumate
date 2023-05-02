@@ -32,6 +32,12 @@ public class RestaurantsController {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private RolesService rolesService;
+
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         binder.setValidator(new PreProcessingCheckoutFormValidator(binder.getValidator()));
@@ -48,8 +54,15 @@ public class RestaurantsController {
         final Restaurant restaurant = restaurantService.getById(id).orElseThrow(RestaurantNotFoundException::new);
         mav.addObject("restaurant", restaurant);
 
-        // TODO change this to use Restaurant Roles Table
-        mav.addObject("owner", restaurant.getEmail().equals(ControllerUtils.getCurrentUserEmail()));
+        User currentUser = ControllerUtils.getCurrentUserOrNull(userService);
+        boolean admin = false;
+        boolean order_viewer = false;
+        if (currentUser != null) {
+            admin = rolesService.doesUserHaveRole(currentUser.getUserId(), id, RestaurantRoleLevel.ADMIN);
+            order_viewer = rolesService.doesUserHaveRole(currentUser.getUserId(), id, RestaurantRoleLevel.ORDER_HANDLER);
+        }
+        mav.addObject("admin", admin);
+        mav.addObject("order_viewer", order_viewer);
 
         final List<Pair<Category, List<Product>>> menu = restaurantService.getMenu(id);
         mav.addObject("menu", menu);
@@ -102,10 +115,5 @@ public class RestaurantsController {
     @RequestMapping("/thankyou")
     public ModelAndView thankYou() {
         return new ModelAndView("menu/thankyou");
-    }
-
-    @RequestMapping(value = "/restaurants/{id:\\d+}/edit", method = RequestMethod.GET)
-    public ModelAndView restaurantEdit(@PathVariable final int id) {
-        return thankYou(); // TODO: Implement. This is just a placeholder
     }
 }

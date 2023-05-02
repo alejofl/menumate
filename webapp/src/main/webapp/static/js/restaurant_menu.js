@@ -100,7 +100,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
     cartModalQuantity.addEventListener("input", (event) => {
-        cartModalButton.disabled = event.target.value === "" || parseInt(event.target.value) === 0;
+        cartModalButton.disabled = event.target.value === "" || parseInt(event.target.value) === 0 || parseInt(event.target.value) < 1;
     });
 
     // Plus and Minus buttons of Modal

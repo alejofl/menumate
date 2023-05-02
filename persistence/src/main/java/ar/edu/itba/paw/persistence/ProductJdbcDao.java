@@ -32,10 +32,12 @@ public class ProductJdbcDao implements ProductDao {
     }
 
     @Override
-    public Product create(int categoryId, String name, double price) {
+    public Product create(int categoryId, String name, String description, int imageId, double price) {
         final Map<String, Object> productData = new HashMap<>();
         productData.put("category_id", categoryId);
         productData.put("name", name);
+        productData.put("description", description);
+        productData.put("image_id", imageId);
         productData.put("price", price);
 
         final int productId = jdbcInsert.executeAndReturnKey(productData).intValue();

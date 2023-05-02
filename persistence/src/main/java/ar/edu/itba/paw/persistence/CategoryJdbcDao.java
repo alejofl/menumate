@@ -31,11 +31,16 @@ public class CategoryJdbcDao implements CategoryDao {
     }
 
     @Override
-    public Category create(int restaurantId, String name, int order) {
+    public Category create(int restaurantId, String name) {
         final Map<String, Object> categoryData = new HashMap<>();
         categoryData.put("restaurant_id", restaurantId);
         categoryData.put("name", name);
-        categoryData.put("order_num", order);
+        int order = jdbcTemplate.query(
+                "SELECT MAX(order_num) AS m FROM categories WHERE restaurant_id = ?",
+                ((rs, rowNum) -> rs.getInt("m")),
+                restaurantId
+        ).get(0);
+        categoryData.put("order_num", order + 1);
 
         final int categoryId = jdbcInsert.executeAndReturnKey(categoryData).intValue();
         return getById(categoryId).get();

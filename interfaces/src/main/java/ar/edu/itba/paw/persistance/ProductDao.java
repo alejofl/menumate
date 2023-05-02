@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProductDao {
-    Product create(int categoryId, String name, double price);
+    Product create(int categoryId, String name, String description, int imageId, double price);
 
     Optional<Product> getById(int productId);
 

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CategoryDao {
-    Category create(int restaurantId, String name, int order);
+    Category create(int restaurantId, String name);
 
     Optional<Category> getById(int categoryId);
 
