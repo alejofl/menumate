@@ -1,3 +1,7 @@
+function changeInputValue(id, value) {
+    document.querySelector(`#${id}`).value = value;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     let addProductFormCategoryId = document.querySelector("#add-product-form-category-id");
     let deleteProductFormProductId = document.querySelector("#delete-product-form-product-id");
@@ -13,6 +17,17 @@ document.addEventListener("DOMContentLoaded", () => {
     } else if (document.querySelector("body").dataset.addCategoryErrors === "true") {
         document.querySelector("#add-category-button").dispatchEvent(new Event("click"));
     }
+
+    // Modal dismissal
+    document.querySelector("#add-item-modal").addEventListener("hidden.bs.modal", () => {
+        changeInputValue("add-item-modal-name", "");
+        changeInputValue("add-item-modal-description", "");
+        changeInputValue("add-item-modal-price", "");
+        changeInputValue("add-item-modal-image", "");
+    });
+    document.querySelector("#add-category-modal").addEventListener("hidden.bs.modal", () => {
+        changeInputValue("add-category-modal-name", "");
+    });
 
     document.querySelectorAll(".add-product-button").forEach(element => {
         element.addEventListener("click", (event) => {

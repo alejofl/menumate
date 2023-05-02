@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.form;
 
 import ar.edu.itba.paw.webapp.form.validation.Image;
+import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -12,7 +13,7 @@ public class AddProductForm {
     @NotNull
     private Integer categoryId;
 
-    @NotNull
+    @NotBlank
     @Size(max=150)
     private String productName;
 

@@ -112,12 +112,12 @@
                     </div>
                     <div class="mb-3">
                         <form:label path="price" cssClass="form-label">Price</form:label>
-                        <form:input path="price" type="number" cssClass="form-control" id="add-item-modal-price"/>
+                        <form:input path="price" step="0.01" min="0" type="number" cssClass="form-control" id="add-item-modal-price"/>
                         <form:errors path="price" element="div" cssClass="form-error"/>
                     </div>
                     <div class="mb-3">
                         <form:label path="image" cssClass="form-label">Product Image</form:label>
-                        <form:input path="image" type="file" cssClass="form-control" id="create-restaurant-logo" accept="image/*"/>
+                        <form:input path="image" type="file" cssClass="form-control" id="add-item-modal-image" accept="image/*"/>
                         <form:errors path="image" element="div" cssClass="form-error"/>
                     </div>
                 </div>

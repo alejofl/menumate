@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.form;
 
 import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.Valid;
@@ -11,13 +12,11 @@ import java.util.List;
 
 public class CheckoutForm {
 
-    @NotNull
-    @NotEmpty
+    @NotBlank
     @Size(max = 48)
     private String name;
 
-    @NotNull
-    @NotEmpty
+    @NotBlank
     @Email
     private String email;
 
@@ -33,7 +32,7 @@ public class CheckoutForm {
     @NotNull
     private Integer restaurantId;
 
-    @NotNull
+    @NotEmpty
     @Size(min = 1, max = 500)
     @Valid
     private List<CartItem> cart;
