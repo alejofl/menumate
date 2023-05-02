@@ -16,6 +16,8 @@ class SimpleRowMappers {
 
     static final RowMapper<Integer> COUNT_ROW_MAPPER = (rs, i) -> rs.getInt("c");
 
+    static final RowMapper<Integer> MAX_ROW_MAPPER = (rs, i) -> rs.getInt("m");
+
     static final RowMapper<User> USER_ROW_MAPPER = (ResultSet rs, int rowNum) -> new User(
             rs.getInt("user_id"),
             rs.getString("user_email"),

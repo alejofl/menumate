@@ -37,7 +37,7 @@ public class CategoryJdbcDao implements CategoryDao {
         categoryData.put("name", name);
         int order = jdbcTemplate.query(
                 "SELECT MAX(order_num) AS m FROM categories WHERE restaurant_id = ?",
-                ((rs, rowNum) -> rs.getInt("m")),
+                SimpleRowMappers.MAX_ROW_MAPPER,
                 restaurantId
         ).get(0);
         categoryData.put("order_num", order + 1);
