@@ -4,22 +4,22 @@
 
 <html>
 <head>
-    <spring:message code="404.title" var="title"/>
+    <spring:message code="403.title" var="title"/>
     <jsp:include page="/WEB-INF/jsp/components/head.jsp">
         <jsp:param name="title" value="${title}"/>
     </jsp:include>
 </head>
 <body>
-    <h1 class="error-number">404</h1>
+    <h1 class="error-number">403</h1>
     <div class="error-container">
         <div class="error-image">
             <img src="<c:url value="/static/pictures/logo.png"/>" alt="MenuMate" height="40">
         </div>
         <div class="error-message">
-            <h1><spring:message code="404.error"/></h1>
+            <h1><spring:message code="403.error"/></h1>
         </div>
         <div class="error-message">
-            <p><spring:message code="404.description"/></p>
+            <p><spring:message code="403.description"/></p>
         </div>
         <div class="error-image">
             <a href="<c:url value="/"/>">

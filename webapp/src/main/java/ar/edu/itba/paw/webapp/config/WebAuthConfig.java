@@ -74,7 +74,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/orders/**").authenticated()
                 .antMatchers("/restaurants/create").authenticated()
                 .antMatchers("/**").permitAll()
-                .and().exceptionHandling().accessDeniedPage("/error")
+                .and().exceptionHandling().accessDeniedPage("/403")
 
                 // Disable csrf rules
                 .and().csrf().disable();
