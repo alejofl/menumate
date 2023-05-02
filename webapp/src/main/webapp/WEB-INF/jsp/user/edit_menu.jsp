@@ -32,7 +32,7 @@
             </c:choose>
         </div>
         <div class="d-flex flex-column gap-2">
-            <a class="btn btn-primary" href="<c:url value="/restaurants/${restaurant.restaurantId}"/>" role="button">Done</a>
+            <a class="btn btn-primary" href="<c:url value="/restaurants/${restaurant.restaurantId}"/>" role="button"><spring:message code="editmenu.done"/></a>
             <a class="btn btn-secondary disabled" href="<c:url value="/restaurants/${restaurant.restaurantId}/orders"/>" role="button"><spring:message code="restaurant.menu.seeorders"/></a>
         </div>
     </div>
@@ -94,36 +94,36 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5">Add Product</h1>
+                <h1 class="modal-title fs-5"><spring:message code="editmenu.addproduct.modal.title"/></h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <c:url value="/restaurants/${restaurant.restaurantId}/edit/add_product" var="addProductFormUrl"/>
             <form:form cssClass="mb-0" modelAttribute="addProductForm" action="${addProductFormUrl}" method="post" id="add-product-form" enctype="multipart/form-data">
                 <div class="modal-body">
                     <div class="mb-3">
-                        <form:label path="productName" cssClass="form-label">Name</form:label>
+                        <form:label path="productName" cssClass="form-label"><spring:message code="editmenu.addproduct.form.name"/></form:label>
                         <form:input path="productName" type="text" cssClass="form-control" id="add-item-modal-name"/>
                         <form:errors path="productName" element="div" cssClass="form-error"/>
                     </div>
                     <div class="mb-3">
-                        <form:label path="description" class="form-label">Description</form:label>
+                        <form:label path="description" class="form-label"><spring:message code="editmenu.addproduct.form.description"/></form:label>
                         <textarea class="form-control" name="description" id="add-item-modal-description" rows="3"></textarea>
                         <form:errors path="description" element="div" cssClass="form-error"/>
                     </div>
                     <div class="mb-3">
-                        <form:label path="price" cssClass="form-label">Price</form:label>
+                        <form:label path="price" cssClass="form-label"><spring:message code="editmenu.addproduct.form.price"/></form:label>
                         <form:input path="price" step="0.01" min="0" type="number" cssClass="form-control" id="add-item-modal-price"/>
                         <form:errors path="price" element="div" cssClass="form-error"/>
                     </div>
                     <div class="mb-3">
-                        <form:label path="image" cssClass="form-label">Product Image</form:label>
+                        <form:label path="image" cssClass="form-label"><spring:message code="editmenu.addproduct.form.image"/></form:label>
                         <form:input path="image" type="file" cssClass="form-control" id="add-item-modal-image" accept="image/*"/>
                         <form:errors path="image" element="div" cssClass="form-error"/>
                     </div>
                 </div>
                 <input type="hidden" name="categoryId" id="add-product-form-category-id">
                 <div class="modal-footer">
-                    <input type="submit" class="btn btn-primary" value="Add">
+                    <input type="submit" class="btn btn-primary" value="<spring:message code="editmenu.form.add"/>">
                 </div>
             </form:form>
         </div>
@@ -134,20 +134,20 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5">Add Category</h1>
+                <h1 class="modal-title fs-5"><spring:message code="editmenu.addcategory.modal.title"/></h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <c:url value="/restaurants/${restaurant.restaurantId}/edit/add_category" var="addCategoryFormUrl"/>
             <form:form cssClass="mb-0" modelAttribute="addCategoryForm" action="${addCategoryFormUrl}" method="post" id="add-category-form">
                 <div class="modal-body">
                     <div class="mb-3">
-                        <form:label path="name" cssClass="form-label">Name</form:label>
+                        <form:label path="name" cssClass="form-label"><spring:message code="editmenu.addcategory.form.name"/></form:label>
                         <form:input path="name" type="text" cssClass="form-control" id="add-category-modal-name"/>
                         <form:errors path="name" element="div" cssClass="form-error"/>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <input type="submit" class="btn btn-primary" value="Add">
+                    <input type="submit" class="btn btn-primary" value="<spring:message code="editmenu.form.add"/>">
                 </div>
                 <input type="hidden" name="restaurantId" id="add-category-form-restaurant-id" value="${restaurant.restaurantId}">
             </form:form>
@@ -162,14 +162,14 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <h1 class="modal-title fs-5">Are you sure you want to delete the category?</h1>
+                <h1 class="modal-title fs-5"><spring:message code="editmenu.deletecategory.modal.title"/></h1>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><spring:message code="editmenu.form.no"/></button>
                 <c:url value="/restaurants/${restaurant.restaurantId}/edit/delete_category" var="deleteCategoryFormUrl"/>
                 <form:form cssClass="m-0" modelAttribute="deleteCategoryForm" action="${deleteCategoryFormUrl}" method="post" id="delete-category-form">
                     <input type="hidden" name="categoryId" id="delete-category-form-category-id">
-                    <input type="submit" class="btn btn-danger" value="Yes">
+                    <input type="submit" class="btn btn-danger" value="<spring:message code="editmenu.form.yes"/>">
                 </form:form>
             </div>
         </div>
@@ -183,14 +183,14 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <h1 class="modal-title fs-5">Are you sure you want to delete the product?</h1>
+                <h1 class="modal-title fs-5"><spring:message code="editmenu.deleteproduct.modal.title"/></h1>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><spring:message code="editmenu.form.no"/></button>
                 <c:url value="/restaurants/${restaurant.restaurantId}/edit/delete_product" var="deleteProductFormUrl"/>
                 <form:form cssClass="m-0" modelAttribute="deleteProductForm" action="${deleteProductFormUrl}" method="post" id="delete-product-form">
                     <input type="hidden" name="productId" id="delete-product-form-product-id">
-                    <input type="submit" class="btn btn-danger" value="Yes">
+                    <input type="submit" class="btn btn-danger" value="<spring:message code="editmenu.form.yes"/>">
                 </form:form>
             </div>
         </div>

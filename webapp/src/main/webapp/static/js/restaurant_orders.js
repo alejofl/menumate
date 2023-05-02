@@ -2,7 +2,7 @@
 document.addEventListener("DOMContentLoaded", () => {
    document.querySelectorAll('.clickable-row').forEach(element => {
       element.addEventListener('click', event => {
-          document.querySelector("#order-title").innerHTML = `Order ID: ` + element.dataset.orderId;
+          document.querySelector("#order-title").innerHTML = element.dataset.orderId;
           let itemsQuantity = parseInt(element.dataset.orderItemsQuantity);
           let items = [];
           for(let i = 0 ; i < itemsQuantity; i++ ) {
@@ -27,8 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 </tr>
               `;
           }
-          document.querySelector("#order-total-price").innerHTML = `Total Price: $` + element.dataset.orderTotalPrice;
-          console.log(items)
+          document.querySelector("#order-total-price").innerHTML = `$${element.dataset.orderTotalPrice}`;
       });
    });
 });
