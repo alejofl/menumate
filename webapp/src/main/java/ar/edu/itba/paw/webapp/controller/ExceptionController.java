@@ -11,13 +11,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 
 @ControllerAdvice
 public class ExceptionController {
-    @ExceptionHandler({
-            ImageNotFoundException.class,
-            OrderNotFoundException.class,
-            ResourceNotFoundException.class,
-            RestaurantNotFoundException.class,
-            UserNotFoundException.class
-    })
+    @ExceptionHandler({ResourceNotFoundException.class})
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
     public ModelAndView resourceNotFound() {
         return new ModelAndView("errors/404");

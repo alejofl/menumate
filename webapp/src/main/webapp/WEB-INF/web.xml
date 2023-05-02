@@ -36,7 +36,7 @@ http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
     <error-page>
         <error-code>404</error-code>
-        <location>/WEB-INF/jsp/errors/500.jsp</location>
+        <location>/WEB-INF/jsp/errors/404.jsp</location>
     </error-page>
     <error-page>
         <error-code>500</error-code>

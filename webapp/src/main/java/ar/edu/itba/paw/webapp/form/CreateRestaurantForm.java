@@ -4,18 +4,19 @@ import ar.edu.itba.paw.webapp.form.validation.Image;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 public class CreateRestaurantForm {
-    @NotEmpty
+    @NotNull
     @Size(max = 50)
     private String name;
 
-    @NotEmpty
+    @NotNull
     @Size(max = 120)
     private String address;
 
-    @NotEmpty
+    @NotNull
     @Size(max = 1024)
     private String description;
 
