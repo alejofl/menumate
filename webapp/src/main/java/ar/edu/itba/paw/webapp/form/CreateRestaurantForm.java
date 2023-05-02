@@ -14,11 +14,11 @@ public class CreateRestaurantForm {
     private String name;
 
     @NotBlank
-    @Size(max = 120)
+    @Size(max = 200)
     private String address;
 
     @NotBlank
-    @Size(max = 1024)
+    @Size(max = 300)
     private String description;
 
     @Image
