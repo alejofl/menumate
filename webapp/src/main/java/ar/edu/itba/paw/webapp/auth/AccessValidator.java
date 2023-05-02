@@ -28,36 +28,32 @@ public class AccessValidator {
     @Autowired
     private RolesService rolesService;
 
-    public boolean checkRestaurantRole(HttpServletRequest request, int restaurant_id, RestaurantRoleLevel minimumRoleLevel) {
+    public boolean checkRestaurantRole(HttpServletRequest request, int restaurantId, RestaurantRoleLevel minimumRoleLevel) {
         User currentUser = ControllerUtils.getCurrentUserOrNull(userService);
         if (currentUser == null)
             return false;
 
-        Optional<RestaurantRoleLevel> roleLevel = rolesService.getRole(currentUser.getUserId(), restaurant_id);
-        if (!roleLevel.isPresent())
-            return false;
-
-        return roleLevel.get().ordinal() <= minimumRoleLevel.ordinal();
+        return rolesService.doesUserHaveRole(currentUser.getUserId(), restaurantId, minimumRoleLevel);
     }
 
-    public boolean checkRestaurantOwner(HttpServletRequest request, int restaurant_id) {
-        return checkRestaurantRole(request, restaurant_id, RestaurantRoleLevel.OWNER);
+    public boolean checkRestaurantOwner(HttpServletRequest request, int restaurantId) {
+        return checkRestaurantRole(request, restaurantId, RestaurantRoleLevel.OWNER);
     }
 
-    public boolean checkRestaurantAdmin(HttpServletRequest request, int restaurant_id) {
-        return checkRestaurantRole(request, restaurant_id, RestaurantRoleLevel.ADMIN);
+    public boolean checkRestaurantAdmin(HttpServletRequest request, int restaurantId) {
+        return checkRestaurantRole(request, restaurantId, RestaurantRoleLevel.ADMIN);
     }
 
-    public boolean checkRestaurantManager(HttpServletRequest request, int restaurant_id) {
-        return checkRestaurantRole(request, restaurant_id, RestaurantRoleLevel.MANAGER);
+    public boolean checkRestaurantManager(HttpServletRequest request, int restaurantId) {
+        return checkRestaurantRole(request, restaurantId, RestaurantRoleLevel.MANAGER);
     }
 
-    public boolean checkRestaurantOrderHandler(HttpServletRequest request, int restaurant_id) {
-        return checkRestaurantRole(request, restaurant_id, RestaurantRoleLevel.ORDER_HANDLER);
+    public boolean checkRestaurantOrderHandler(HttpServletRequest request, int restaurantId) {
+        return checkRestaurantRole(request, restaurantId, RestaurantRoleLevel.ORDER_HANDLER);
     }
 
-    public boolean checkOrderOwner(HttpServletRequest request, int order_id) {
-        Order order = orderService.getById(order_id).orElseThrow(OrderNotFoundException::new);
+    public boolean checkOrderOwner(HttpServletRequest request, int orderId) {
+        Order order = orderService.getById(orderId).orElseThrow(OrderNotFoundException::new);
         return order.getUser().getEmail().equals(ControllerUtils.getCurrentUserEmail());
     }
 }

@@ -16,4 +16,12 @@ public interface RolesService {
      * @return True if the operation was successful
      */
     boolean setRole(int userId, int restaurantId, RestaurantRoleLevel roleLevel);
+
+    default boolean doesUserHaveRole(int userId, int restaurantId, RestaurantRoleLevel minimumRoleLevel) {
+        Optional<RestaurantRoleLevel> roleLevel = getRole(userId, restaurantId);
+        if (!roleLevel.isPresent())
+            return false;
+
+        return roleLevel.get().ordinal() <= minimumRoleLevel.ordinal();
+    }
 }
