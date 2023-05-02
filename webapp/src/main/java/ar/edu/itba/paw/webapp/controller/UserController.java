@@ -56,13 +56,14 @@ public class UserController {
     }
 
     @RequestMapping(value = "/restaurants/{id:\\d+}/orders", method = RequestMethod.GET)
-    public ModelAndView restaurantOrder(@PathVariable int id) {
+    public ModelAndView restaurantOrder(@Valid final PagingForm paging, @PathVariable int id) {
 
-        PaginatedResult<Order> orders = orderService.getByRestaurant(id, 1, 2);
+        PaginatedResult<Order> orders = orderService.getByRestaurant(id, paging.getPageOrDefault(), paging.getSizeOrDefault(DEFAULT_ORDERS_PAGE_SIZE));
         ModelAndView mav = new ModelAndView("menu/restaurant_orders");
         mav.addObject("orders", orders.getResult());
         mav.addObject("orderCount", orders.getTotalCount());
         mav.addObject("pageCount", orders.getTotalPageCount());
+        mav.addObject ("id", id);
         return mav;
     }
 }
