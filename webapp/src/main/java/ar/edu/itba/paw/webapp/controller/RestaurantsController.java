@@ -103,9 +103,4 @@ public class RestaurantsController {
     public ModelAndView thankYou() {
         return new ModelAndView("menu/thankyou");
     }
-
-    @RequestMapping(value = "/restaurants/{id:\\d+}/edit", method = RequestMethod.GET)
-    public ModelAndView restaurantEdit(@PathVariable final int id) {
-        return thankYou(); // TODO: Implement. This is just a placeholder
-    }
 }

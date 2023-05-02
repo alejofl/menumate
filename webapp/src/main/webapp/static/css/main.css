@@ -10,6 +10,7 @@
     --dark: #282d2f;
     --light: #f4f4f4;
     --form-invalid-color: #dc3545;
+    --gray: #c9c9c9;
 
     --bs-primary: var(--primary);
     --bs-danger: var(--form-invalid-color);
@@ -566,4 +567,27 @@ input:has(+ .form-error), textarea:has(+ .form-error) {
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+.edit-menu-item-container {
+    display: flex;
+    justify-content: start;
+    flex-direction: row;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.edit-menu-add {
+    background-color: transparent;
+    border: 5px dashed var(--gray);
+}
+
+.edit-menu-add i {
+    font-size: 2rem;
+    color: var(--gray);
+}
+
+.add-item-card {
+    width: 200px;
+    height: 200px;
 }

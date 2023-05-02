@@ -2,6 +2,7 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.model.Product;
 import ar.edu.itba.paw.persistance.ProductDao;
+import ar.edu.itba.paw.service.ImageService;
 import ar.edu.itba.paw.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,9 +16,13 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductDao productDao;
 
+    @Autowired
+    private ImageService imageService;
+
     @Override
-    public Product create(int categoryId, String name, double price) {
-        return productDao.create(categoryId, name, price);
+    public Product create(int categoryId, String name, String description, byte[] image, double price) {
+        int imageKey = imageService.create(image);
+        return productDao.create(categoryId, name, description, imageKey, price);
     }
 
     @Override

@@ -33,8 +33,8 @@
         </div>
         <c:if test="${owner}">
             <div class="d-flex flex-column gap-2">
-                <a class="btn btn-secondary" href="<c:url value="/restaurants/${restaurant.restaurantId}/edit"/>" role="button">Edit Menu</a>
-                <a class="btn btn-secondary" href="<c:url value="/restaurants/${restaurant.restaurantId}/orders"/>" role="button">See Orders</a>
+                <a class="btn btn-secondary" href="<c:url value="/restaurants/${restaurant.restaurantId}/edit"/>" role="button"><spring:message code="restaurant.menu.editmenu"/></a>
+                <a class="btn btn-secondary" href="<c:url value="/restaurants/${restaurant.restaurantId}/orders"/>" role="button"><spring:message code="restaurant.menu.seeorders"/></a>
             </div>
         </c:if>
     </div>

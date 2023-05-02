@@ -4,7 +4,9 @@ import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.util.PaginatedResult;
 import ar.edu.itba.paw.persistance.ProductDao;
 import ar.edu.itba.paw.persistance.RestaurantDao;
+import ar.edu.itba.paw.service.CategoryService;
 import ar.edu.itba.paw.service.ImageService;
+import ar.edu.itba.paw.service.ProductService;
 import ar.edu.itba.paw.service.RestaurantService;
 import ar.edu.itba.paw.model.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +23,13 @@ public class RestaurantServiceImpl implements RestaurantService {
     private RestaurantDao restaurantDao;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductService productService;
 
     @Autowired
     private ImageService imageService;
+
+    @Autowired
+    private CategoryService categoryService;
 
     @Override
     public Optional<Restaurant> getById(int restaurantId) {
@@ -52,24 +57,29 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public List<Pair<Category, List<Product>>> getMenu(int restaurantId) {
-        List<Product> products = productDao.getByRestaurantOrderByCategoryOrder(restaurantId);
+//        List<Product> products = productDao.getByRestaurantOrderByCategoryOrder(restaurantId);
+//
+//        List<Pair<Category, List<Product>>> menu = new ArrayList<>();
+//        Category currentCategory = null;
+//        List<Product> currentList = null;
+//        for (Product product : products) {
+//            if (currentCategory == null || currentCategory.getCategoryId() != product.getCategory().getCategoryId()) {
+//                if (currentCategory != null)
+//                    menu.add(new Pair<>(currentCategory, currentList));
+//                currentCategory = product.getCategory();
+//                currentList = new ArrayList<>();
+//            }
+//            currentList.add(product);
+//        }
+//
+//        if (currentCategory != null)
+//            menu.add(new Pair<>(currentCategory, currentList));
 
+        List<Category> categories = categoryService.getByRestaurantSortedByOrder(restaurantId);
         List<Pair<Category, List<Product>>> menu = new ArrayList<>();
-        Category currentCategory = null;
-        List<Product> currentList = null;
-        for (Product product : products) {
-            if (currentCategory == null || currentCategory.getCategoryId() != product.getCategory().getCategoryId()) {
-                if (currentCategory != null)
-                    menu.add(new Pair<>(currentCategory, currentList));
-                currentCategory = product.getCategory();
-                currentList = new ArrayList<>();
-            }
-            currentList.add(product);
+        for (Category category : categories) {
+            menu.add(new Pair<>(category, productService.getByCategory(category.getCategoryId())));
         }
-
-        if (currentCategory != null)
-            menu.add(new Pair<>(currentCategory, currentList));
-
         return menu;
     }
 

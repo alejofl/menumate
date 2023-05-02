@@ -1,15 +1,12 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import ar.edu.itba.paw.model.Order;
-import ar.edu.itba.paw.model.OrderType;
-import ar.edu.itba.paw.model.User;
+import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.util.PaginatedResult;
-import ar.edu.itba.paw.service.OrderService;
-import ar.edu.itba.paw.service.RestaurantService;
-import ar.edu.itba.paw.service.UserService;
-import ar.edu.itba.paw.webapp.form.CreateRestaurantForm;
+import ar.edu.itba.paw.model.util.Pair;
+import ar.edu.itba.paw.service.*;
+import ar.edu.itba.paw.webapp.exception.RestaurantNotFoundException;
+import ar.edu.itba.paw.webapp.form.*;
 import ar.edu.itba.paw.webapp.exception.OrderNotFoundException;
-import ar.edu.itba.paw.webapp.form.PagingForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -18,6 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.List;
 
 @Controller
 public class UserController {
@@ -31,6 +29,12 @@ public class UserController {
 
     @Autowired
     private RestaurantService restaurantService;
+
+    @Autowired
+    private CategoryService categoryService;
+
+    @Autowired
+    private ProductService productService;
 
     @RequestMapping(value = "/orders", method = RequestMethod.GET)
     public ModelAndView myOrders(
@@ -61,7 +65,6 @@ public class UserController {
 
     @RequestMapping(value = "/restaurants/{id:\\d+}/orders", method = RequestMethod.GET)
     public ModelAndView restaurantOrder(@Valid final PagingForm paging, @PathVariable int id) {
-
         PaginatedResult<Order> orders = orderService.getByRestaurant(id, paging.getPageOrDefault(), paging.getSizeOrDefault(DEFAULT_ORDERS_PAGE_SIZE));
         ModelAndView mav = new ModelAndView("menu/restaurant_orders");
         mav.addObject("orders", orders.getResult());
@@ -99,5 +102,103 @@ public class UserController {
         );
 
         return new ModelAndView(String.format("redirect:/restaurants/%d", restaurantId));
+    }
+
+    @RequestMapping(value = "/restaurants/{id:\\d+}/edit", method = RequestMethod.GET)
+    public ModelAndView editRestaurant(
+            @PathVariable final int id,
+            @ModelAttribute("addProductForm") final AddProductForm addProductForm,
+            @ModelAttribute("addCategoryForm") final AddCategoryForm addCategoryForm,
+            @ModelAttribute("deleteProductForm") final DeleteProductForm deleteProductForm,
+            @ModelAttribute("deleteCategoryForm") final DeleteCategoryForm deleteCategoryForm,
+            final Boolean addProductErrors,
+            final Boolean addCategoryErrors
+    ) {
+        ModelAndView mav = new ModelAndView("user/edit_menu");
+
+        final Restaurant restaurant = restaurantService.getById(id).orElseThrow(RestaurantNotFoundException::new);
+        mav.addObject("restaurant", restaurant);
+        final List<Pair<Category, List<Product>>> menu = restaurantService.getMenu(id);
+        mav.addObject("menu", menu);
+
+        return mav;
+    }
+
+    @RequestMapping(value = "/restaurants/{id:\\d+}/edit/add_product", method = RequestMethod.POST)
+    public ModelAndView addProductToRestaurant(
+            @PathVariable final int id,
+            @Valid @ModelAttribute("addProductForm") final AddProductForm addProductForm,
+            @ModelAttribute("addCategoryForm") final AddCategoryForm addCategoryForm,
+            @ModelAttribute("deleteProductForm") final DeleteProductForm deleteProductForm,
+            @ModelAttribute("deleteCategoryForm") final DeleteCategoryForm deleteCategoryForm,
+            final BindingResult errors
+    ) throws IOException {
+        if (errors.hasErrors()) {
+            return editRestaurant(id, addProductForm, addCategoryForm, deleteProductForm, deleteCategoryForm, true, false);
+        }
+
+        productService.create(
+                addProductForm.getCategoryId(),
+                addProductForm.getProductName(),
+                addProductForm.getDescription(),
+                addProductForm.getImage().getBytes(),
+                addProductForm.getPrice()
+        );
+
+        return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
+    }
+
+    @RequestMapping(value = "/restaurants/{id:\\d+}/edit/add_category", method = RequestMethod.POST)
+    public ModelAndView addCategoryToRestaurant(
+            @PathVariable final int id,
+            @ModelAttribute("addProductForm") final AddProductForm addProductForm,
+            @Valid @ModelAttribute("addCategoryForm") final AddCategoryForm addCategoryForm,
+            @ModelAttribute("deleteProductForm") final DeleteProductForm deleteProductForm,
+            @ModelAttribute("deleteCategoryForm") final DeleteCategoryForm deleteCategoryForm,
+            final BindingResult errors
+    ) {
+        if (errors.hasErrors()) {
+            return editRestaurant(id, addProductForm, addCategoryForm, deleteProductForm, deleteCategoryForm, false, true);
+        }
+
+        categoryService.create(addCategoryForm.getRestaurantId(), addCategoryForm.getName(), addCategoryForm.getOrder());
+
+        return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
+    }
+
+    @RequestMapping(value = "/restaurants/{id:\\d+}/edit/delete_product", method = RequestMethod.POST)
+    public ModelAndView deleteProductForRestaurant(
+            @PathVariable final int id,
+            @ModelAttribute("addProductForm") final AddProductForm addProductForm,
+            @ModelAttribute("addCategoryForm") final AddCategoryForm addCategoryForm,
+            @Valid @ModelAttribute("deleteProductForm") final DeleteProductForm deleteProductForm,
+            @ModelAttribute("deleteCategoryForm") final DeleteCategoryForm deleteCategoryForm,
+            final BindingResult errors
+    ) {
+        if (errors.hasErrors()) {
+            throw new IllegalStateException();
+        }
+
+        productService.delete(deleteProductForm.getProductId());
+
+        return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
+    }
+
+    @RequestMapping(value = "/restaurants/{id:\\d+}/edit/delete_category", method = RequestMethod.POST)
+    public ModelAndView deleteCategoryForRestaurant(
+            @PathVariable final int id,
+            @ModelAttribute("addProductForm") final AddProductForm addProductForm,
+            @ModelAttribute("addCategoryForm") final AddCategoryForm addCategoryForm,
+            @ModelAttribute("deleteProductForm") final DeleteProductForm deleteProductForm,
+            @Valid @ModelAttribute("deleteCategoryForm") final DeleteCategoryForm deleteCategoryForm,
+            final BindingResult errors
+    ) {
+        if (errors.hasErrors()) {
+            throw new IllegalStateException();
+        }
+
+        categoryService.delete(deleteCategoryForm.getCategoryId());
+
+        return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
     }
 }
