@@ -52,10 +52,4 @@ public class HomeController {
 
         return mav;
     }
-
-    // TODO: Remove or move to a separate controller
-    @RequestMapping(value = "/error", method = RequestMethod.GET)
-    public ModelAndView errorView() {
-        return new ModelAndView("errors/error");
-    }
 }

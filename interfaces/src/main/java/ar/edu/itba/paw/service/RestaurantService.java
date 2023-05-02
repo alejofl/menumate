@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RestaurantService {
-    Restaurant create(int ownerUserId, String name, String email);
+    int create(String name, String description, String address, User owner, byte[] logo, byte[] portrait1, byte[] portrait2);
 
     Optional<Restaurant> getById(int restaurantId);
 

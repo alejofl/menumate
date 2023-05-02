@@ -12,7 +12,7 @@
 <body>
     <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
     <div class="landing-container">
-        <img src="/static/pictures/food.jpg" class="img-fluid landing-img">
+        <img src="<c:url value="/static/pictures/food.jpg"/>" class="img-fluid landing-img">
         <div class="landing-img-container">
             <p class="landing-text"><spring:message code="index.landingtext"/></p>
         </div>

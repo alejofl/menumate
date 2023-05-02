@@ -34,6 +34,15 @@ http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
         <load-on-startup>1</load-on-startup>
     </servlet>
 
+    <error-page>
+        <error-code>404</error-code>
+        <location>/WEB-INF/jsp/errors/500.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>500</error-code>
+        <location>/WEB-INF/jsp/errors/500.jsp</location>
+    </error-page>
+
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
         <url-pattern>/</url-pattern>

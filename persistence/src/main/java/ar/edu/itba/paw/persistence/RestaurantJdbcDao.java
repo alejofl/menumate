@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.Restaurant;
+import ar.edu.itba.paw.model.RestaurantRoleLevel;
 import ar.edu.itba.paw.model.util.PaginatedResult;
 import ar.edu.itba.paw.persistance.RestaurantDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,15 +22,15 @@ public class RestaurantJdbcDao implements RestaurantDao {
     private static final String SelectBase = "SELECT " + TableFields.RESTAURANTS_FIELDS + " FROM restaurants";
 
     private final JdbcTemplate jdbcTemplate;
-    private final SimpleJdbcInsert jdbcInsert;
+    private final SimpleJdbcInsert restaurantJdbcInsert;
 
     @Autowired
     public RestaurantJdbcDao(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
-        jdbcInsert = new SimpleJdbcInsert(ds)
+        restaurantJdbcInsert = new SimpleJdbcInsert(ds)
                 .withTableName("restaurants")
                 .usingColumns("name", "email", "owner_user_id", "logo_id", "portrait_1_id", "portrait_2_id", "address", "description")
-                .usingGeneratedKeyColumns("resturant_id");
+                .usingGeneratedKeyColumns("restaurant_id");
     }
 
     @Override
@@ -92,14 +93,17 @@ public class RestaurantJdbcDao implements RestaurantDao {
     }
 
     @Override
-    public Restaurant create(int ownerUserId, String name, String email) {
+    public int create(String name, String description, String address, String email, int userId, int logoKey, int portrait1Kay, int portrait2Key) {
         final Map<String, Object> restaurantData = new HashMap<>();
         restaurantData.put("name", name);
+        restaurantData.put("description", description);
+        restaurantData.put("address", address);
         restaurantData.put("email", email);
-        restaurantData.put("owner_user_id", ownerUserId);
-
-        final int restaurantId = jdbcInsert.executeAndReturnKey(restaurantData).intValue();
-        return new Restaurant(restaurantId, name, email);
+        restaurantData.put("logo_id", logoKey);
+        restaurantData.put("portrait_1_id", portrait1Kay);
+        restaurantData.put("portrait_2_id", portrait2Key);
+        restaurantData.put("owner_user_id", userId);
+        return restaurantJdbcInsert.executeAndReturnKey(restaurantData).intValue();
     }
 
     @Override
