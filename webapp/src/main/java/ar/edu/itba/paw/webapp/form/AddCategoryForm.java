@@ -14,10 +14,6 @@ public class AddCategoryForm {
     @Size(max=50)
     private String name;
 
-    @NotNull
-    @Min(0)
-    private Integer order;
-
     public Integer getRestaurantId() {
         return restaurantId;
     }
@@ -32,13 +28,5 @@ public class AddCategoryForm {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Integer getOrder() {
-        return order;
-    }
-
-    public void setOrder(int order) {
-        this.order = order;
     }
 }

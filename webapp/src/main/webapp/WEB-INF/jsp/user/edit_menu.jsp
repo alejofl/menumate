@@ -149,7 +149,6 @@
                 <div class="modal-footer">
                     <input type="submit" class="btn btn-primary" value="Add">
                 </div>
-                <input type="hidden" name="order" value="${fn:length(menu) + 1}">
                 <input type="hidden" name="restaurantId" id="add-category-form-restaurant-id" value="${restaurant.restaurantId}">
             </form:form>
         </div>

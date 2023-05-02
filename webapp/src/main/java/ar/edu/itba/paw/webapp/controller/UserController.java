@@ -161,7 +161,7 @@ public class UserController {
             return editRestaurant(id, addProductForm, addCategoryForm, deleteProductForm, deleteCategoryForm, false, true);
         }
 
-        categoryService.create(addCategoryForm.getRestaurantId(), addCategoryForm.getName(), addCategoryForm.getOrder());
+        categoryService.create(addCategoryForm.getRestaurantId(), addCategoryForm.getName());
 
         return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
     }
