@@ -23,10 +23,11 @@ public class RolesJdbcDao implements RolesDao {
     @Override
     public Optional<RestaurantRoleLevel> getRole(int userId, int restaurantId) {
         List<RestaurantRoleLevel> result = jdbcTemplate.query(
-                "SELECT (SELECT role_level FROM restaurant_roles WHERE restaurant_id = ? AND user_id = ?) AS role_level, EXISTS(SELECT * FROM restaurants WHERE owner_user_id = ?) AS is_owner",
+                "SELECT (SELECT role_level FROM restaurant_roles WHERE restaurant_id = ? AND user_id = ?) AS role_level, EXISTS(SELECT * FROM restaurants WHERE restaurant_id = ? AND owner_user_id = ?) AS is_owner",
                 SimpleRowMappers.RESTAURANT_ROLE_LEVEL_ROW_MAPPER,
                 restaurantId,
                 userId,
+                restaurantId,
                 userId
         );
 
