@@ -67,7 +67,10 @@ CREATE TABLE IF NOT EXISTS orders
     restaurant_id  INT REFERENCES restaurants (restaurant_id) ON DELETE CASCADE NOT NULL,
     user_id        INT REFERENCES users (user_id) ON DELETE CASCADE NOT NULL,
     date_ordered   TIMESTAMP NOT NULL DEFAULT now(),
-    date_delivered TIMESTAMP,
+    date_confirmed TIMESTAMP DEFAULT NULL,
+    date_ready     TIMESTAMP DEFAULT NULL,
+    date_delivered TIMESTAMP DEFAULT NULL,
+    date_canceled  TIMESTAMP DEFAULT NULL,
     address        VARCHAR(300),
     table_number   SMALLINT
 );

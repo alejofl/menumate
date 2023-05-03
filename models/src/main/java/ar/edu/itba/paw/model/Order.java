@@ -9,25 +9,27 @@ public class Order {
     private final Restaurant restaurant;
     private final User user;
     private final LocalDateTime dateOrdered;
+    private final LocalDateTime dateConfirmed;
+    private final LocalDateTime dateReady;
     private final LocalDateTime dateDelivered;
+    private final LocalDateTime dateCanceled;
     private final String address;
     private final int tableNumber;
     private final List<OrderItem> items;
 
-    public Order(int orderId, OrderType orderType, Restaurant restaurant, User user, LocalDateTime dateOrdered, LocalDateTime dateDelivered, String address, int tableNumber, List<OrderItem> items) {
+    public Order(int orderId, OrderType orderType, Restaurant restaurant, User user, LocalDateTime dateOrdered, LocalDateTime dateConfirmed, LocalDateTime dateReady, LocalDateTime dateDelivered, LocalDateTime dateCanceled, String address, int tableNumber, List<OrderItem> items) {
         this.orderId = orderId;
         this.orderType = orderType;
         this.restaurant = restaurant;
         this.user = user;
         this.dateOrdered = dateOrdered;
+        this.dateConfirmed = dateConfirmed;
+        this.dateReady = dateReady;
         this.dateDelivered = dateDelivered;
+        this.dateCanceled = dateCanceled;
         this.address = address;
         this.tableNumber = tableNumber;
         this.items = items;
-    }
-
-    public Order(int orderId, OrderType orderType, Restaurant restaurant, User user) {
-        this(orderId, orderType, restaurant, user, null, null, null, 1, null);
     }
 
     public int getOrderId() {

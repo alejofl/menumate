@@ -26,7 +26,10 @@ class Extractors {
         Restaurant restaurant = null;
         User user = null;
         LocalDateTime dateOrdered = null;
+        LocalDateTime dateConfirmed = null;
+        LocalDateTime dateReady = null;
         LocalDateTime dateDelivered = null;
+        LocalDateTime dateCanceled = null;
         String address = null;
         int tableNumber = 0;
         List<OrderItem> items = null;
@@ -35,8 +38,8 @@ class Extractors {
             int currentOrderId = rs.getInt("order_id");
             if (isFirst || orderId != currentOrderId) {
                 if (!isFirst) {
-                    orders.add(new Order(orderId, orderType, restaurant, user, dateOrdered, dateDelivered, address,
-                            tableNumber, Collections.unmodifiableList(items)));
+                    orders.add(new Order(orderId, orderType, restaurant, user, dateOrdered, dateConfirmed, dateReady,
+                            dateDelivered, dateCanceled, address, tableNumber, Collections.unmodifiableList(items)));
                 }
 
                 orderId = currentOrderId;
@@ -44,7 +47,10 @@ class Extractors {
                 restaurant = restaurantRowMapper.mapRow(rs, 1);
                 user = userRowMapper.mapRow(rs, 1);
                 dateOrdered = SimpleRowMappers.timestampToLocalDateTimeOrNull(rs.getTimestamp("order_date_ordered"));
+                dateConfirmed = SimpleRowMappers.timestampToLocalDateTimeOrNull(rs.getTimestamp("order_date_confirmed"));
+                dateReady = SimpleRowMappers.timestampToLocalDateTimeOrNull(rs.getTimestamp("order_date_ready"));
                 dateDelivered = SimpleRowMappers.timestampToLocalDateTimeOrNull(rs.getTimestamp("order_date_delivered"));
+                dateCanceled = SimpleRowMappers.timestampToLocalDateTimeOrNull(rs.getTimestamp("order_date_canceled"));
                 address = rs.getString("order_address");
                 tableNumber = rs.getInt("order_table_number");
 
@@ -58,8 +64,8 @@ class Extractors {
         }
 
         if (!isFirst) {
-            orders.add(new Order(orderId, orderType, restaurant, user, dateOrdered, dateDelivered, address,
-                    tableNumber, Collections.unmodifiableList(items)));
+            orders.add(new Order(orderId, orderType, restaurant, user, dateOrdered, dateConfirmed, dateReady,
+                    dateDelivered, dateCanceled, address, tableNumber, Collections.unmodifiableList(items)));
         }
 
         return orders;
