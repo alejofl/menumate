@@ -13,7 +13,7 @@
 <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
 <main class="order-details">
     <div class="card order-details-card">
-        <img src="/images/${order.restaurant.portraitId1}" class="card-img-top" alt="${order.restaurant.name}">
+        <img src="<c:url value="/images/${order.restaurant.portraitId1}"/>" class="card-img-top" alt="${order.restaurant.name}">
         <div class="card-body">
             <div class="order-details-card-restaurant">
                 <img src="<c:url value="/images/${order.restaurant.logoId}"/>" alt="${order.restaurant.name}">
