@@ -37,11 +37,11 @@
                                     data-bs-target="#order-details"
                                     data-order-id="${order.orderId}"
                                     <c:forEach items="${order.items}" var="item">
-                                        data-order-item-${item.lineNumber}-line-number="${item.lineNumber}"
-                                        data-order-item-${item.lineNumber}-comment="${item.comment}"
-                                        data-order-item-${item.lineNumber}-product-name="${item.product.name}"
-                                        data-order-item-${item.lineNumber}-product-price="${item.product.price}"
-                                        data-order-item-${item.lineNumber}-quantity="${item.quantity}"
+                                        data-order-item-${item.lineNumber}-line-number="<c:out value="${item.lineNumber}"/>"
+                                        data-order-item-${item.lineNumber}-comment="<c:out value="${item.comment}"/>"
+                                        data-order-item-${item.lineNumber}-product-name="<c:out value="${item.product.name}"/>"
+                                        data-order-item-${item.lineNumber}-product-price="<c:out value="${item.product.price}"/>"
+                                        data-order-item-${item.lineNumber}-quantity="<c:out value="${item.quantity}"/>"
                                     </c:forEach>
                                     data-order-items-quantity="${fn:length(order.items)}"
                                     data-order-total-price="${order.price}"
