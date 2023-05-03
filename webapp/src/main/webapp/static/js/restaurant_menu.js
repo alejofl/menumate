@@ -5,6 +5,14 @@ function changeInputValue(id, value) {
     document.querySelector(`#${id}`).value = value;
 }
 
+function updatePlaceOrderButtonPrice() {
+    let price = cart.reduce(function (result, item) {
+        return result + item.price;
+    }, 0);
+    let button = document.querySelector(`#checkout-button`);
+    button.value = `${button.dataset.buttonText} ($${price.toFixed(2)})`;
+}
+
 function addItemToFrontCart(title, unitPrice, quantity, comments) {
     let item = {
         "title": title,
@@ -55,6 +63,8 @@ document.addEventListener("DOMContentLoaded", () => {
         let information = document.querySelector(`.menu-item-card-button[data-info-id="${id}"]`).dataset;
         addItemToFrontCart(information.infoTitle, information.infoPrice, quantity, comments);
     }
+    cartIndex = cartSize;
+    updatePlaceOrderButtonPrice();
 
     // Select Order Type tab automatically
     if (orderType.value === "0" || orderType.value === "") {
@@ -149,11 +159,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Place Order Price
     document.querySelector("#place-order-button").addEventListener("click", (event) => {
-        let price = cart.reduce(function (result, item) {
-            return result + item.price;
-        }, 0);
-        let button = document.querySelector(`#checkout-button`);
-        button.value = `${button.dataset.buttonText} ($${price.toFixed(2)})`;
+        updatePlaceOrderButtonPrice();
     });
 
     // Order Type Selector (FIXME this values are hardcoded)
