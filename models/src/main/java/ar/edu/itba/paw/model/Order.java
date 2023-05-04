@@ -85,6 +85,6 @@ public class Order {
             return OrderStatus.READY;
         if (dateConfirmed != null)
             return OrderStatus.CONFIRMED;
-        return OrderStatus.ORDERED;
+        return OrderStatus.PENDING;
     }
 }

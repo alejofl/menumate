@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.model;
 
 public enum OrderStatus {
-    ORDERED("ordered"),
+    PENDING("pending"),
     REJECTED("rejected"),
     CANCELLED("cancelled"),
     CONFIRMED("confirmed"),
