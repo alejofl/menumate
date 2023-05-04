@@ -153,7 +153,7 @@ public class OrderJdbcDao implements OrderDao {
         );
 
         int count = jdbcTemplate.query(
-                "SELECT COUNT(*) AS c FROM orders WHERE restaurant_id = ?",
+                "SELECT COUNT(*) AS c FROM orders WHERE restaurant_id = ? AND " + getCondStringForOrderStatus(orderStatus),
                 SimpleRowMappers.COUNT_ROW_MAPPER,
                 restaurantId
         ).get(0);
