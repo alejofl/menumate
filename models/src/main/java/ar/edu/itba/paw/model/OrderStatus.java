@@ -25,4 +25,8 @@ public enum OrderStatus {
     public boolean happensBeforeOrIs(OrderStatus status) {
         return this.ordinal() <= status.ordinal();
     }
+
+    public boolean isCancelledOrRejected() {
+        return this == OrderStatus.CANCELLED || this == OrderStatus.REJECTED;
+    }
 }

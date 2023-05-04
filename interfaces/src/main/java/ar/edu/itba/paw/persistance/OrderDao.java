@@ -31,11 +31,11 @@ public interface OrderDao {
 
     boolean delete(int orderId);
 
-    Order create(OrderType orderType, int restaurantId, int userId, String address, List<OrderItem> items);
+    Order createDelivery(int restaurantId, int userId, String address, List<OrderItem> items);
 
-    Order create(OrderType orderType, int restaurantId, int userId, List<OrderItem> items);
+    Order createTakeaway(int restaurantId, int userId, List<OrderItem> items);
 
-    Order create(OrderType orderType, int restaurantId, int userId, int tableNumber, List<OrderItem> items);
+    Order createDineIn(int restaurantId, int userId, int tableNumber, List<OrderItem> items);
 
     OrderItem createOrderItem(Product product, int lineNumber, int quantity, String comment);
 }

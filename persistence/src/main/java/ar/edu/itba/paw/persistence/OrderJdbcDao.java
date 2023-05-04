@@ -166,12 +166,20 @@ public class OrderJdbcDao implements OrderDao {
 
     @Override
     public boolean updateAddress(int orderId, String address) {
-        return jdbcTemplate.update("UPDATE orders SET address = ? WHERE order_id = ?", address, orderId) > 0;
+        return jdbcTemplate.update(
+                "UPDATE orders SET address = ? WHERE order_id = ? AND order_type = " + OrderType.DELIVERY.ordinal(),
+                address,
+                orderId
+        ) > 0;
     }
 
     @Override
     public boolean updateTableNumber(int orderId, int tableNumber) {
-        return jdbcTemplate.update("UPDATE orders SET table_number = ? WHERE order_id = ?", tableNumber, orderId) > 0;
+        return jdbcTemplate.update(
+                "UPDATE orders SET table_number = ? WHERE order_id = ? AND order_type = " + OrderType.DINE_IN.ordinal(),
+                tableNumber,
+                orderId
+        ) > 0;
     }
 
     @Override
@@ -179,23 +187,20 @@ public class OrderJdbcDao implements OrderDao {
         return jdbcTemplate.update("DELETE FROM orders WHERE order_id = ?", orderId) > 0;
     }
 
-    // DineIn
     @Override
-    public Order create(OrderType orderType, int restaurantId, int userId, int tableNumber, List<OrderItem> items) {
-        return this.create(orderType, restaurantId, userId, null, tableNumber, items);
+    public Order createDineIn(int restaurantId, int userId, int tableNumber, List<OrderItem> items) {
+        return this.create(OrderType.DINE_IN, restaurantId, userId, null, tableNumber, items);
     }
 
-    // Takeaway
     @Override
-    public Order create(OrderType orderType, int restaurantId, int userId, List<OrderItem> items) {
-        return this.create(orderType, restaurantId, userId, null, null, items);
+    public Order createTakeaway(int restaurantId, int userId, List<OrderItem> items) {
+        return this.create(OrderType.TAKEAWAY, restaurantId, userId, null, null, items);
     }
 
 
-    // Delivery
     @Override
-    public Order create(OrderType orderType, int restaurantId, int userId, String address, List<OrderItem> items) {
-        return this.create(orderType, restaurantId, userId, address, null, items);
+    public Order createDelivery(int restaurantId, int userId, String address, List<OrderItem> items) {
+        return this.create(OrderType.DELIVERY, restaurantId, userId, address, null, items);
     }
 
     @Override

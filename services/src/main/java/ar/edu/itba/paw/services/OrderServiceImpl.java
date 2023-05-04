@@ -26,38 +26,38 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private ProductService productService;
 
-    private int getUserId(String name, String email){
+    private int getOrCreateUserId(String name, String email) {
         return userService.createIfNotExists(email, name).getUserId();
     }
 
     @Override
     public Order createDelivery(int restaurantId, int userId, String address, List<OrderItem> items) {
-        return orderDao.create(OrderType.DELIVERY, restaurantId, userId, address, items);
+        return orderDao.createDelivery(restaurantId, userId, address, items);
     }
 
     @Override
     public Order createDelivery(int restaurantId, String name, String email, String address, List<OrderItem> items) {
-        return orderDao.create(OrderType.DELIVERY, restaurantId, getUserId(name, email), address, items);
+        return orderDao.createDelivery(restaurantId, getOrCreateUserId(name, email), address, items);
     }
 
     @Override
     public Order createDineIn(int restaurantId, int userId, int tableNumber, List<OrderItem> items) {
-        return orderDao.create(OrderType.DINE_IN, restaurantId, userId, tableNumber, items);
+        return orderDao.createDineIn(restaurantId, userId, tableNumber, items);
     }
 
     @Override
     public Order createDineIn(int restaurantId, String name, String email, int tableNumber, List<OrderItem> items) {
-        return orderDao.create(OrderType.DINE_IN, restaurantId, getUserId(name, email), tableNumber, items);
+        return orderDao.createDineIn(restaurantId, getOrCreateUserId(name, email), tableNumber, items);
     }
 
     @Override
     public Order createTakeAway(int restaurantId, int userId, List<OrderItem> items) {
-        return orderDao.create(OrderType.TAKEAWAY, restaurantId, userId, items);
+        return orderDao.createTakeaway(restaurantId, userId, items);
     }
 
     @Override
     public Order createTakeAway(int restaurantId, String name, String email, List<OrderItem> items) {
-        return orderDao.create(OrderType.TAKEAWAY, restaurantId, getUserId(name, email), items);
+        return orderDao.createTakeaway(restaurantId, getOrCreateUserId(name, email), items);
     }
 
 

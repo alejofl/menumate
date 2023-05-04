@@ -96,7 +96,7 @@ public class OrderJdbcDaoTest {
     @Test
     public void testCreationDineIn() throws SQLException {
         createRandomItemList(OrderType.DINE_IN.ordinal());
-        Order order = orderJdbcDao.create(ORDER_TYPE, RESTAURANT_ID, USER_ID, TABLE_NUMBER, orderItemList);
+        Order order = orderJdbcDao.createDineIn(RESTAURANT_ID, USER_ID, TABLE_NUMBER, orderItemList);
         Assert.assertEquals(ORDER_TYPE, order.getOrderType());
         Assert.assertEquals(RESTAURANT_ID, order.getRestaurant().getRestaurantId());
         Assert.assertEquals(USER_ID, order.getUser().getUserId());
@@ -122,8 +122,8 @@ public class OrderJdbcDaoTest {
     @Test
     public void testCreationTakeaway() throws SQLException {
         createRandomItemList(OrderType.TAKEAWAY.ordinal());
-        Order order = orderJdbcDao.create(ORDER_TYPE, RESTAURANT_ID, USER_ID, orderItemList);
-        Assert.assertEquals(ORDER_TYPE, order.getOrderType());
+        Order order = orderJdbcDao.createTakeaway(RESTAURANT_ID, USER_ID, orderItemList);
+        Assert.assertEquals(OrderType.TAKEAWAY, order.getOrderType());
         Assert.assertEquals(RESTAURANT_ID, order.getRestaurant().getRestaurantId());
         Assert.assertEquals(USER_ID, order.getUser().getUserId());
 
@@ -148,8 +148,8 @@ public class OrderJdbcDaoTest {
     @Test
     public void testCreationDelivery() throws SQLException {
         createRandomItemList(OrderType.DELIVERY.ordinal());
-        Order order = orderJdbcDao.create(ORDER_TYPE, RESTAURANT_ID, USER_ID, ADDRESS, orderItemList);
-        Assert.assertEquals(ORDER_TYPE, order.getOrderType());
+        Order order = orderJdbcDao.createDelivery(RESTAURANT_ID, USER_ID, ADDRESS, orderItemList);
+        Assert.assertEquals(OrderType.DELIVERY, order.getOrderType());
         Assert.assertEquals(RESTAURANT_ID, order.getRestaurant().getRestaurantId());
         Assert.assertEquals(USER_ID, order.getUser().getUserId());
         Assert.assertEquals(ADDRESS, order.getAddress());
@@ -356,7 +356,7 @@ public class OrderJdbcDaoTest {
 
     @Test
     public void testUpdateAddress() throws SQLException {
-        jdbcTemplate.execute("INSERT INTO orders (order_id, restaurant_id, user_id, order_type, address) VALUES (" + ORDER_ID + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + ORDER_TYPE.ordinal() + ", '" + ADDRESS + "')");
+        jdbcTemplate.execute("INSERT INTO orders (order_id, restaurant_id, user_id, order_type, address) VALUES (" + ORDER_ID + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + OrderType.DELIVERY.ordinal() + ", '" + ADDRESS + "')");
         Assert.assertTrue(orderJdbcDao.updateAddress(ORDER_ID, "newAddress"));
     }
 
