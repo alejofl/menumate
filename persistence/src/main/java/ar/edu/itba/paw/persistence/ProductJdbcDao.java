@@ -17,7 +17,7 @@ import java.util.Optional;
 @Repository
 public class ProductJdbcDao implements ProductDao {
 
-    private static final String SelectBase = "SELECT " + TableFields.PRODUCTS_FIELDS + ", " + TableFields.CATEGORIES_FIELDS + ", " + TableFields.RESTAURANTS_FIELDS + " FROM products JOIN categories ON products.category_id = categories.category_id JOIN restaurants ON categories.restaurant_id = restaurants.restaurant_id";
+    private static final String SELECT_BASE = "SELECT " + TableFields.PRODUCTS_FIELDS + ", " + TableFields.CATEGORIES_FIELDS + ", " + TableFields.RESTAURANTS_FIELDS + " FROM products JOIN categories ON products.category_id = categories.category_id JOIN restaurants ON categories.restaurant_id = restaurants.restaurant_id";
 
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
@@ -47,7 +47,7 @@ public class ProductJdbcDao implements ProductDao {
     @Override
     public Optional<Product> getById(int productId) {
         return jdbcTemplate.query(
-                SelectBase + " WHERE products.product_id = ?",
+                SELECT_BASE + " WHERE products.product_id = ?",
                 SimpleRowMappers.PRODUCT_ROW_MAPPER,
                 productId
         ).stream().findFirst();
@@ -57,7 +57,7 @@ public class ProductJdbcDao implements ProductDao {
     public List<Product> getByCategory(int categoryId) {
         RowMapper<Product> rowMapper = ReusingRowMappers.getProductRowMapper();
         return jdbcTemplate.query(
-                SelectBase + " WHERE products.category_id = ?",
+                SELECT_BASE + " WHERE products.category_id = ?",
                 rowMapper,
                 categoryId
         );
@@ -67,7 +67,7 @@ public class ProductJdbcDao implements ProductDao {
     public List<Product> getByRestaurantOrderByCategoryOrder(int restaurantId) {
         RowMapper<Product> rowMapper = ReusingRowMappers.getProductRowMapper();
         return jdbcTemplate.query(
-                SelectBase + " WHERE restaurants.restaurant_id = ? ORDER BY categories.order_num",
+                SELECT_BASE + " WHERE restaurants.restaurant_id = ? ORDER BY categories.order_num",
                 rowMapper,
                 restaurantId
         );

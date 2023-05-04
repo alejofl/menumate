@@ -16,28 +16,28 @@ import java.util.Optional;
 
 @Repository
 public class OrderJdbcDao implements OrderDao {
-    private static final String SelectFullBase = "SELECT " + TableFields.ORDERS_FIELDS + ", " + TableFields.RESTAURANTS_FIELDS + ", " + TableFields.USERS_FIELDS + ", " + TableFields.ORDER_ITEMS_FIELDS + ", " + TableFields.PRODUCTS_FIELDS + ", " + TableFields.CATEGORIES_FIELDS + " FROM orders JOIN restaurants ON orders.restaurant_id = restaurants.restaurant_id JOIN users on orders.user_id = users.user_id LEFT OUTER JOIN order_items ON orders.order_id = order_items.order_id LEFT OUTER JOIN products ON order_items.product_id = products.product_id LEFT OUTER JOIN categories ON products.category_id = categories.category_id";
-    private static final String SelectFullEndOrderById = " ORDER BY orders.order_id, order_items.line_number";
+    private static final String SELECT_FULL_BASE = "SELECT " + TableFields.ORDERS_FIELDS + ", " + TableFields.RESTAURANTS_FIELDS + ", " + TableFields.USERS_FIELDS + ", " + TableFields.ORDER_ITEMS_FIELDS + ", " + TableFields.PRODUCTS_FIELDS + ", " + TableFields.CATEGORIES_FIELDS + " FROM orders JOIN restaurants ON orders.restaurant_id = restaurants.restaurant_id JOIN users on orders.user_id = users.user_id LEFT OUTER JOIN order_items ON orders.order_id = order_items.order_id LEFT OUTER JOIN products ON order_items.product_id = products.product_id LEFT OUTER JOIN categories ON products.category_id = categories.category_id";
+    private static final String SELECT_FULL_END_ORDER_BY_ID = " ORDER BY orders.order_id, order_items.line_number";
 
-    private static final String IsPendingCond = "(date_confirmed IS NULL AND date_cancelled IS NULL)";
-    private static final String IsConfirmedCond = "(date_confirmed IS NOT NULL AND date_ready IS NULL AND date_cancelled IS NULL)";
-    private static final String IsReadyCond = "(date_ready IS NOT NULL AND date_delivered IS NULL AND date_cancelled IS NULL)";
-    private static final String IsDeliveredCond = "date_delivered IS NOT NULL";
-    private static final String IsCancelledCond = "date_cancelled IS NOT NULL";
-    private static final String IsClosedCond = "(" + IsDeliveredCond + " OR " + IsCancelledCond + ")";
+    private static final String IS_PENDING_COND = "(date_confirmed IS NULL AND date_cancelled IS NULL)";
+    private static final String IS_CONFIRMED_COND = "(date_confirmed IS NOT NULL AND date_ready IS NULL AND date_cancelled IS NULL)";
+    private static final String IS_READY_COND = "(date_ready IS NOT NULL AND date_delivered IS NULL AND date_cancelled IS NULL)";
+    private static final String IS_DELIVERED_COND = "date_delivered IS NOT NULL";
+    private static final String IS_CANCELLED_COND = "date_cancelled IS NOT NULL";
+    private static final String IS_CLOSED_COND = "(" + IS_DELIVERED_COND + " OR " + IS_CANCELLED_COND + ")";
 
     private static String getCondStringForOrderStatus(OrderStatus status) {
         switch (status) {
             case PENDING:
-                return IsPendingCond;
+                return IS_PENDING_COND;
             case CONFIRMED:
-                return IsConfirmedCond;
+                return IS_CONFIRMED_COND;
             case READY:
-                return IsReadyCond;
+                return IS_READY_COND;
             case DELIVERED:
-                return IsDeliveredCond;
+                return IS_DELIVERED_COND;
             default:
-                return IsCancelledCond;
+                return IS_CANCELLED_COND;
         }
     }
 
@@ -95,7 +95,7 @@ public class OrderJdbcDao implements OrderDao {
     @Override
     public Optional<Order> getById(int orderId) {
         return jdbcTemplate.query(
-                SelectFullBase + " WHERE orders.order_id = ?" + SelectFullEndOrderById,
+                SELECT_FULL_BASE + " WHERE orders.order_id = ?" + SELECT_FULL_END_ORDER_BY_ID,
                 Extractors.ORDER_EXTRACTOR,
                 orderId
         ).stream().findFirst();
@@ -105,7 +105,7 @@ public class OrderJdbcDao implements OrderDao {
     public PaginatedResult<Order> getByUser(int userId, int pageNumber, int pageSize) {
         int pageIdx = pageNumber - 1;
         List<Order> results = jdbcTemplate.query(
-                "WITH orders AS (SELECT * FROM orders WHERE user_id = ? LIMIT ? OFFSET ?) " + SelectFullBase + SelectFullEndOrderById,
+                "WITH orders AS (SELECT * FROM orders WHERE user_id = ? LIMIT ? OFFSET ?) " + SELECT_FULL_BASE + SELECT_FULL_END_ORDER_BY_ID,
                 Extractors.ORDER_EXTRACTOR,
                 userId,
                 pageSize,
@@ -125,7 +125,7 @@ public class OrderJdbcDao implements OrderDao {
     public PaginatedResult<Order> getByRestaurant(int restaurantId, int pageNumber, int pageSize) {
         int pageIdx = pageNumber - 1;
         List<Order> results = jdbcTemplate.query(
-                "WITH orders AS (SELECT * FROM orders WHERE restaurant_id = ? LIMIT ? OFFSET ?) " + SelectFullBase + SelectFullEndOrderById,
+                "WITH orders AS (SELECT * FROM orders WHERE restaurant_id = ? LIMIT ? OFFSET ?) " + SELECT_FULL_BASE + SELECT_FULL_END_ORDER_BY_ID,
                 Extractors.ORDER_EXTRACTOR,
                 restaurantId,
                 pageSize,
@@ -145,7 +145,7 @@ public class OrderJdbcDao implements OrderDao {
     public PaginatedResult<Order> getByRestaurant(int restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus) {
         int pageIdx = pageNumber - 1;
         List<Order> results = jdbcTemplate.query(
-                "WITH orders AS (SELECT * FROM orders WHERE restaurant_id = ? AND " + getCondStringForOrderStatus(orderStatus) + " LIMIT ? OFFSET ?) " + SelectFullBase + SelectFullEndOrderById,
+                "WITH orders AS (SELECT * FROM orders WHERE restaurant_id = ? AND " + getCondStringForOrderStatus(orderStatus) + " LIMIT ? OFFSET ?) " + SELECT_FULL_BASE + SELECT_FULL_END_ORDER_BY_ID,
                 Extractors.ORDER_EXTRACTOR,
                 restaurantId,
                 pageSize,
@@ -164,7 +164,7 @@ public class OrderJdbcDao implements OrderDao {
     @Override
     public boolean markAsConfirmed(int orderId) {
         return jdbcTemplate.update(
-                "UPDATE orders SET date_confirmed = now() WHERE order_id = ? AND " + IsPendingCond,
+                "UPDATE orders SET date_confirmed = now() WHERE order_id = ? AND " + IS_PENDING_COND,
                 orderId
         ) > 0;
     }
@@ -172,7 +172,7 @@ public class OrderJdbcDao implements OrderDao {
     @Override
     public boolean markAsReady(int orderId) {
         return jdbcTemplate.update(
-                "UPDATE orders SET date_ready = now() WHERE order_id = ? AND " + IsConfirmedCond,
+                "UPDATE orders SET date_ready = now() WHERE order_id = ? AND " + IS_CONFIRMED_COND,
                 orderId
         ) > 0;
     }
@@ -180,7 +180,7 @@ public class OrderJdbcDao implements OrderDao {
     @Override
     public boolean markAsDelivered(int orderId) {
         return jdbcTemplate.update(
-                "UPDATE orders SET date_delivered = now() WHERE order_id = ? AND " + IsReadyCond,
+                "UPDATE orders SET date_delivered = now() WHERE order_id = ? AND " + IS_READY_COND,
                 orderId
         ) > 0;
     }
@@ -188,7 +188,7 @@ public class OrderJdbcDao implements OrderDao {
     @Override
     public boolean markAsCancelled(int orderId) {
         return jdbcTemplate.update(
-                "UPDATE orders SET date_cancelled = now() WHERE order_id = ? AND NOT(" + IsCancelledCond + ") AND NOT(" + IsDeliveredCond + ")",
+                "UPDATE orders SET date_cancelled = now() WHERE order_id = ? AND NOT(" + IS_CANCELLED_COND + ") AND NOT(" + IS_DELIVERED_COND + ")",
                 orderId
         ) > 0;
     }
@@ -196,7 +196,7 @@ public class OrderJdbcDao implements OrderDao {
     @Override
     public boolean updateAddress(int orderId, String address) {
         return jdbcTemplate.update(
-                "UPDATE orders SET address = ? WHERE order_id = ? AND order_type = " + OrderType.DELIVERY.ordinal() + " AND NOT(" + IsClosedCond + ")",
+                "UPDATE orders SET address = ? WHERE order_id = ? AND order_type = " + OrderType.DELIVERY.ordinal() + " AND NOT(" + IS_CLOSED_COND + ")",
                 address,
                 orderId
         ) > 0;
@@ -205,7 +205,7 @@ public class OrderJdbcDao implements OrderDao {
     @Override
     public boolean updateTableNumber(int orderId, int tableNumber) {
         return jdbcTemplate.update(
-                "UPDATE orders SET table_number = ? WHERE order_id = ? AND order_type = " + OrderType.DINE_IN.ordinal() + " AND NOT(" + IsClosedCond + ")",
+                "UPDATE orders SET table_number = ? WHERE order_id = ? AND order_type = " + OrderType.DINE_IN.ordinal() + " AND NOT(" + IS_CLOSED_COND + ")",
                 tableNumber,
                 orderId
         ) > 0;
