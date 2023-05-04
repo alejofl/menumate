@@ -20,8 +20,15 @@ import java.util.Optional;
 @Repository
 public class OrderJdbcDao implements OrderDao {
 
-    private static final String SelectBase = "SELECT " + TableFields.ORDERS_FIELDS + ", " + TableFields.RESTAURANTS_FIELDS + ", " + TableFields.USERS_FIELDS + ", " + TableFields.ORDER_ITEMS_FIELDS + ", " + TableFields.PRODUCTS_FIELDS + ", " + TableFields.CATEGORIES_FIELDS + " FROM orders JOIN restaurants ON orders.restaurant_id = restaurants.restaurant_id JOIN users on orders.user_id = users.user_id LEFT OUTER JOIN order_items ON orders.order_id = order_items.order_id LEFT OUTER JOIN products ON order_items.product_id = products.product_id LEFT OUTER JOIN categories ON products.category_id = categories.category_id";
-    private static final String SelectEndOrderById = " ORDER BY orders.order_id, order_items.line_number";
+    private static final String SelectFullBase = "SELECT " + TableFields.ORDERS_FIELDS + ", " + TableFields.RESTAURANTS_FIELDS + ", " + TableFields.USERS_FIELDS + ", " + TableFields.ORDER_ITEMS_FIELDS + ", " + TableFields.PRODUCTS_FIELDS + ", " + TableFields.CATEGORIES_FIELDS + " FROM orders JOIN restaurants ON orders.restaurant_id = restaurants.restaurant_id JOIN users on orders.user_id = users.user_id LEFT OUTER JOIN order_items ON orders.order_id = order_items.order_id LEFT OUTER JOIN products ON order_items.product_id = products.product_id LEFT OUTER JOIN categories ON products.category_id = categories.category_id";
+    private static final String SelectFullEndOrderById = " ORDER BY orders.order_id, order_items.line_number";
+
+    private static final String SelectOrdersOnlyBase = "SELECT " + TableFields.ORDERS_FIELDS + " FROM orders";
+    private static final String IsPendingCond = "date_confirmed IS NULL AND date_cancelled IS NULL";
+    private static final String IsConfirmedCond = "date_confirmed IS NOT NULL AND date_ready IS NULL AND date_cancelled IS NULL";
+    private static final String IsReadyCond = "date_ready IS NOT NULL AND date_delivered IS NULL AND date_cancelled IS NULL";
+    private static final String IsDeliveredCond = "date_delivered IS NOT NULL";
+    private static final String IsCancelledCond = "date_cancelled IS NOT NULL";
 
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsertOrder;
@@ -77,7 +84,7 @@ public class OrderJdbcDao implements OrderDao {
     @Override
     public Optional<Order> getById(int orderId) {
         return jdbcTemplate.query(
-                SelectBase + " WHERE orders.order_id = ?" + SelectEndOrderById,
+                SelectFullBase + " WHERE orders.order_id = ?" + SelectFullEndOrderById,
                 Extractors.ORDER_EXTRACTOR,
                 orderId
         ).stream().findFirst();
@@ -87,7 +94,7 @@ public class OrderJdbcDao implements OrderDao {
     public PaginatedResult<Order> getByUser(int userId, int pageNumber, int pageSize) {
         int pageIdx = pageNumber - 1;
         List<Order> results = jdbcTemplate.query(
-                "WITH orders AS (SELECT * FROM orders LIMIT ? OFFSET ?) " + SelectBase + " WHERE orders.user_id = ?" + SelectEndOrderById,
+                "WITH orders AS (SELECT * FROM orders LIMIT ? OFFSET ?) " + SelectFullBase + " WHERE orders.user_id = ?" + SelectFullEndOrderById,
                 Extractors.ORDER_EXTRACTOR,
                 pageSize,
                 pageIdx * pageSize,
@@ -107,7 +114,7 @@ public class OrderJdbcDao implements OrderDao {
     public PaginatedResult<Order> getByRestaurant(int restaurantId, int pageNumber, int pageSize) {
         int pageIdx = pageNumber - 1;
         List<Order> results = jdbcTemplate.query(
-                "WITH orders AS (SELECT * FROM orders LIMIT ? OFFSET ?) " + SelectBase + " WHERE orders.restaurant_id = ?" + SelectEndOrderById,
+                "WITH orders AS (SELECT * FROM orders LIMIT ? OFFSET ?) " + SelectFullBase + " WHERE orders.restaurant_id = ?" + SelectFullEndOrderById,
                 Extractors.ORDER_EXTRACTOR,
                 pageSize,
                 pageIdx * pageSize,
@@ -126,7 +133,7 @@ public class OrderJdbcDao implements OrderDao {
     @Override
     public boolean markAsConfirmed(int orderId) {
         return jdbcTemplate.update(
-                "UPDATE orders SET date_confirmed = now() WHERE order_id = ? AND date_confirmed IS NULL AND date_ready IS NULL AND date_delivered IS NULL AND date_cancelled IS NULL",
+                "UPDATE orders SET date_confirmed = now() WHERE order_id = ? AND " + IsPendingCond,
                 orderId
         ) > 0;
     }
@@ -134,7 +141,7 @@ public class OrderJdbcDao implements OrderDao {
     @Override
     public boolean markAsReady(int orderId) {
         return jdbcTemplate.update(
-                "UPDATE orders SET date_confirmed = now() WHERE order_id = ? AND date_confirmed IS NOT NULL AND date_ready IS NULL AND date_delivered IS NULL AND date_cancelled IS NULL",
+                "UPDATE orders SET date_ready = now() WHERE order_id = ? AND " + IsConfirmedCond,
                 orderId
         ) > 0;
     }
@@ -142,7 +149,7 @@ public class OrderJdbcDao implements OrderDao {
     @Override
     public boolean markAsDelivered(int orderId) {
         return jdbcTemplate.update(
-                "UPDATE orders SET date_confirmed = now() WHERE order_id = ? AND date_confirmed IS NOT NULL AND date_ready IS NOT NULL AND date_delivered IS NULL AND date_cancelled IS NULL",
+                "UPDATE orders SET date_delivered = now() WHERE order_id = ? AND " + IsReadyCond,
                 orderId
         ) > 0;
     }
@@ -150,7 +157,7 @@ public class OrderJdbcDao implements OrderDao {
     @Override
     public boolean markAsCancelled(int orderId) {
         return jdbcTemplate.update(
-                "UPDATE orders SET date_confirmed = now() WHERE order_id = ? AND date_delivered IS NOT NULL AND date_cancelled IS NULL",
+                "UPDATE orders SET date_cancelled = now() WHERE order_id = ? AND NOT(" + IsCancelledCond + ") AND NOT(" + IsDeliveredCond + ")",
                 orderId
         ) > 0;
     }
