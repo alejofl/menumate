@@ -30,13 +30,13 @@ public interface OrderService {
 
     PaginatedResult<Order> getByRestaurant(int restaurantId, int pageNumber, int pageSize);
 
-    /*List<Order> getOrderedBetweenDates(int restaurantId, LocalDateTime start, LocalDateTime end);
+    boolean markAsConfirmed(int orderId);
 
-    List<Order> getByAddress(int restaurantId, String address);
+    boolean markAsReady(int orderId);
 
-    List<Order> getByTableNumber(int restaurantId, int tableNumber);
+    boolean markAsDelivered(int orderId);
 
-    List<Order> getByOrderTypeAndRestaurant(OrderType orderType, int restaurantId);*/
+    boolean markAsCancelled(int orderId);
 
     boolean updateAddress(int orderId, String address);
 

@@ -82,25 +82,25 @@ public class OrderServiceImpl implements OrderService {
         return orderDao.getByRestaurant(restaurantId, pageNumber, pageSize);
     }
 
-    /*@Override
-    public List<Order> getOrderedBetweenDates(int restaurantId, LocalDateTime start, LocalDateTime end) {
-        return orderDao.getByRestaurantOrderedBetweenDates(restaurantId, start, end);
+    @Override
+    public boolean markAsConfirmed(int orderId) {
+        return orderDao.markAsConfirmed(orderId);
     }
 
     @Override
-    public List<Order> getByAddress(int restaurantId, String address) {
-        return orderDao.getByRestaurantAndAddress(restaurantId, address);
+    public boolean markAsReady(int orderId) {
+        return orderDao.markAsReady(orderId);
     }
 
     @Override
-    public List<Order> getByTableNumber(int restaurantId, int tableNumber) {
-        return orderDao.getByRestaurantAndTableNumber(restaurantId, tableNumber);
+    public boolean markAsDelivered(int orderId) {
+        return orderDao.markAsDelivered(orderId);
     }
 
     @Override
-    public List<Order> getByOrderTypeAndRestaurant(OrderType orderType, int restaurantId) {
-        return orderDao.getByOrderTypeAndRestaurant(orderType, restaurantId);
-    }*/
+    public boolean markAsCancelled(int orderId) {
+        return orderDao.markAsCancelled(orderId);
+    }
 
     @Override
     public boolean updateAddress(int orderId, String address) {

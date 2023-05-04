@@ -123,46 +123,37 @@ public class OrderJdbcDao implements OrderDao {
         return new PaginatedResult<>(results, pageNumber, pageSize, count);
     }
 
-    /*@Override
-    public List<Order> getByOrderTypeAndRestaurant(OrderType orderType, int restaurantId) {
-        return jdbcTemplate.query(
-                SelectBase + " WHERE orders.order_type = ? AND orders.restaurant_id = ?" + SelectEndOrderById,
-                Extractors.ORDER_EXTRACTOR,
-                orderType.ordinal(),
-                restaurantId
-        );
+    @Override
+    public boolean markAsConfirmed(int orderId) {
+        return jdbcTemplate.update(
+                "UPDATE orders SET date_confirmed = now() WHERE order_id = ? AND date_confirmed IS NULL AND date_ready IS NULL AND date_delivered IS NULL AND date_cancelled IS NULL",
+                orderId
+        ) > 0;
     }
 
     @Override
-    public List<Order> getByRestaurantOrderedBetweenDates(int restaurantId, LocalDateTime start, LocalDateTime end) {
-        return jdbcTemplate.query(
-                SelectBase + " WHERE orders.date_ordered BETWEEN ? AND ? AND orders.restaurant_id = ?" + SelectEndOrderById,
-                Extractors.ORDER_EXTRACTOR,
-                Timestamp.valueOf(start),
-                Timestamp.valueOf(end),
-                restaurantId
-        );
+    public boolean markAsReady(int orderId) {
+        return jdbcTemplate.update(
+                "UPDATE orders SET date_confirmed = now() WHERE order_id = ? AND date_confirmed IS NOT NULL AND date_ready IS NULL AND date_delivered IS NULL AND date_cancelled IS NULL",
+                orderId
+        ) > 0;
     }
 
     @Override
-    public List<Order> getByRestaurantAndAddress(int restaurantId, String address) {
-        return jdbcTemplate.query(
-                SelectBase + " WHERE orders.address = ? AND orders.restaurant_id = ?" + SelectEndOrderById,
-                Extractors.ORDER_EXTRACTOR,
-                address,
-                restaurantId
-        );
+    public boolean markAsDelivered(int orderId) {
+        return jdbcTemplate.update(
+                "UPDATE orders SET date_confirmed = now() WHERE order_id = ? AND date_confirmed IS NOT NULL AND date_ready IS NOT NULL AND date_delivered IS NULL AND date_cancelled IS NULL",
+                orderId
+        ) > 0;
     }
 
     @Override
-    public List<Order> getByRestaurantAndTableNumber(int restaurantId, int tableNumber) {
-        return jdbcTemplate.query(
-                SelectBase + " WHERE orders.table_number = ? AND orders.restaurant_id = ?" + SelectEndOrderById,
-                Extractors.ORDER_EXTRACTOR,
-                tableNumber,
-                restaurantId
-        );
-    }*/
+    public boolean markAsCancelled(int orderId) {
+        return jdbcTemplate.update(
+                "UPDATE orders SET date_confirmed = now() WHERE order_id = ? AND date_delivered IS NOT NULL AND date_cancelled IS NULL",
+                orderId
+        ) > 0;
+    }
 
     @Override
     public boolean updateAddress(int orderId, String address) {

@@ -17,13 +17,13 @@ public interface OrderDao {
 
     PaginatedResult<Order> getByRestaurant(int restaurantId, int pageNumber, int pageSize);
 
-    /*List<Order> getByOrderTypeAndRestaurant(OrderType orderType, int restaurantId);
+    boolean markAsConfirmed(int orderId);
 
-    List<Order> getByRestaurantOrderedBetweenDates(int restaurantId, LocalDateTime start, LocalDateTime end);
+    boolean markAsReady(int orderId);
 
-    List<Order> getByRestaurantAndAddress(int restaurantId, String address);
+    boolean markAsDelivered(int orderId);
 
-    List<Order> getByRestaurantAndTableNumber(int restaurantId, int tableNumber);*/
+    boolean markAsCancelled(int orderId);
 
     boolean updateAddress(int orderId, String address);
 
