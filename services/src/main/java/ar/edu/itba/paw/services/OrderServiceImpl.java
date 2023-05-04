@@ -1,9 +1,6 @@
 package ar.edu.itba.paw.services;
 
-import ar.edu.itba.paw.model.Order;
-import ar.edu.itba.paw.model.Product;
-import ar.edu.itba.paw.model.OrderItem;
-import ar.edu.itba.paw.model.OrderType;
+import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.util.PaginatedResult;
 import ar.edu.itba.paw.persistance.OrderDao;
 import ar.edu.itba.paw.service.OrderService;
@@ -80,6 +77,11 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public PaginatedResult<Order> getByRestaurant(int restaurantId, int pageNumber, int pageSize) {
         return orderDao.getByRestaurant(restaurantId, pageNumber, pageSize);
+    }
+
+    @Override
+    public PaginatedResult<Order> getByRestaurant(int restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus) {
+        return orderDao.getByRestaurant(restaurantId, pageNumber, pageSize, orderStatus);
     }
 
     @Override

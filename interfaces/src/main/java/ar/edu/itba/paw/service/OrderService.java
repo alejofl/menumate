@@ -2,6 +2,7 @@ package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.model.OrderItem;
+import ar.edu.itba.paw.model.OrderStatus;
 import ar.edu.itba.paw.model.OrderType;
 import ar.edu.itba.paw.model.util.PaginatedResult;
 
@@ -29,6 +30,8 @@ public interface OrderService {
     PaginatedResult<Order> getByUser(int userId, int pageNumber, int pageSize);
 
     PaginatedResult<Order> getByRestaurant(int restaurantId, int pageNumber, int pageSize);
+
+    PaginatedResult<Order> getByRestaurant(int restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus);
 
     boolean markAsConfirmed(int orderId);
 

@@ -1,9 +1,6 @@
 package ar.edu.itba.paw.persistance;
 
-import ar.edu.itba.paw.model.Order;
-import ar.edu.itba.paw.model.OrderItem;
-import ar.edu.itba.paw.model.OrderType;
-import ar.edu.itba.paw.model.Product;
+import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.util.PaginatedResult;
 
 import java.util.List;
@@ -16,6 +13,8 @@ public interface OrderDao {
     PaginatedResult<Order> getByUser(int userId, int pageNumber, int pageSize);
 
     PaginatedResult<Order> getByRestaurant(int restaurantId, int pageNumber, int pageSize);
+
+    PaginatedResult<Order> getByRestaurant(int restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus);
 
     boolean markAsConfirmed(int orderId);
 
