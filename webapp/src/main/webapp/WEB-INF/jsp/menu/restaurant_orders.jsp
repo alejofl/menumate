@@ -14,61 +14,196 @@
 <body>
 <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
 <main>
-    <div class="restaurant-orders">
+
+    <div class="restaurant-orders-view">
         <h1><spring:message code="restaurantorders.orders"/></h1>
-        <div class="card w-75">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                        <tr>
-                            <th scope="col"><spring:message code="restaurantorders.table.id"/></th>
-                            <th scope="col"><spring:message code="restaurantorders.table.order_type"/></th>
-                            <th scope="col"><spring:message code="restaurantorders.table.table_number"/></th>
-                            <th scope="col"><spring:message code="restaurantorders.table.address"/></th>
-                            <th scope="col"><spring:message code="restaurantorders.table.order_date"/></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <c:forEach items="${orders}" var="order">
-                            <tr
-                                    class="clickable-object clickable-row"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#order-details"
-                                    data-order-id="${order.orderId}"
-                                    <c:forEach items="${order.items}" var="item">
-                                        data-order-item-${item.lineNumber}-line-number="<c:out value="${item.lineNumber}"/>"
-                                        data-order-item-${item.lineNumber}-comment="<c:out value="${item.comment}"/>"
-                                        data-order-item-${item.lineNumber}-product-name="<c:out value="${item.product.name}"/>"
-                                        data-order-item-${item.lineNumber}-product-price="<c:out value="${item.product.price}"/>"
-                                        data-order-item-${item.lineNumber}-quantity="<c:out value="${item.quantity}"/>"
+
+        <nav>
+            <div class="nav nav-pills nav-fill mb-3" role="tablist">
+                <button class="nav-link" id="orders-ordered" data-bs-toggle="tab" data-bs-target="#orders-ordered-table" type="button" role="tab">Ordered</button>
+                <button class="nav-link" id="orders-confirmed" data-bs-toggle="tab" data-bs-target="#orders-confirmed-table" type="button" role="tab">Confirmed</button>
+                <button class="nav-link" id="orders-ready" data-bs-toggle="tab" data-bs-target="#orders-confirmed-ready" type="button" role="tab">Ready</button>
+            </div>
+        </nav>
+        <div class="tab-content">
+            <div class="tab-pane fade" id="orders-ordered-table" role="tabpanel" tabindex="0">
+                <div class="mb-3">
+                    <div class="card w-100">
+                        <div class="restaurant-orders-table">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col"><spring:message code="restaurantorders.table.id"/></th>
+                                        <th scope="col"><spring:message code="restaurantorders.table.order_type"/></th>
+                                        <th scope="col"><spring:message code="restaurantorders.table.table_number"/></th>
+                                        <th scope="col"><spring:message code="restaurantorders.table.address"/></th>
+                                        <th scope="col"><spring:message code="restaurantorders.table.order_date"/></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <c:forEach items="${orders}" var="order">
+                                        <tr
+                                                class="clickable-object clickable-row"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#order-details"
+                                                data-order-id="${order.orderId}"
+                                                <c:forEach items="${order.items}" var="item">
+                                                    data-order-item-${item.lineNumber}-line-number="<c:out value="${item.lineNumber}"/>"
+                                                    data-order-item-${item.lineNumber}-comment="<c:out value="${item.comment}"/>"
+                                                    data-order-item-${item.lineNumber}-product-name="<c:out value="${item.product.name}"/>"
+                                                    data-order-item-${item.lineNumber}-product-price="<c:out value="${item.product.price}"/>"
+                                                    data-order-item-${item.lineNumber}-quantity="<c:out value="${item.quantity}"/>"
+                                                </c:forEach>
+                                                data-order-items-quantity="${fn:length(order.items)}"
+                                                data-order-total-price="${order.price}"
+                                        >
+                                            <fmt:parseDate value="${order.dateOrdered}" pattern="yyyy-MM-dd'T'HH:mm:ss" var="parsedDateOrdered" type="both"/>
+                                            <fmt:formatDate pattern="yyyy-MM-dd HH:mm" value="${parsedDateOrdered}" var="dateOrdered"/>
+                                            <td class="text-center"><c:out value="${order.orderId}"/></td>
+                                            <td><spring:message code="restaurant.menu.form.${order.orderType.messageCode}"/></td>
+                                            <c:choose>
+                                                <c:when test="${order.orderType == 'DINE_IN'}">
+                                                    <td><c:out value="${order.tableNumber}"/></td>
+                                                    <td>-</td>
+                                                </c:when>
+                                                <c:when test="${order.orderType == 'TAKEAWAY'}">
+                                                    <td>-</td>
+                                                    <td>-</td>
+                                                </c:when>
+                                                <c:when test="${order.orderType == 'DELIVERY'}">
+                                                    <td>-</td>
+                                                    <td><c:out value="${order.address}"/></td>
+                                                </c:when>
+                                            </c:choose>
+                                            <td><c:out value="${dateOrdered}"/></td>
+                                        </tr>
                                     </c:forEach>
-                                    data-order-items-quantity="${fn:length(order.items)}"
-                                    data-order-total-price="${order.price}"
-                            >
-                                <fmt:parseDate value="${order.dateOrdered}" pattern="yyyy-MM-dd'T'HH:mm:ss" var="parsedDateOrdered" type="both"/>
-                                <fmt:formatDate pattern="yyyy-MM-dd HH:mm" value="${parsedDateOrdered}" var="dateOrdered"/>
-                                <td class="text-center"><c:out value="${order.orderId}"/></td>
-                                <td><spring:message code="restaurant.menu.form.${order.orderType.messageCode}"/></td>
-                                <c:choose>
-                                    <c:when test="${order.orderType == 'DINE_IN'}">
-                                        <td><c:out value="${order.tableNumber}"/></td>
-                                        <td>-</td>
-                                    </c:when>
-                                    <c:when test="${order.orderType == 'TAKEAWAY'}">
-                                        <td>-</td>
-                                        <td>-</td>
-                                    </c:when>
-                                    <c:when test="${order.orderType == 'DELIVERY'}">
-                                        <td>-</td>
-                                        <td><c:out value="${order.address}"/></td>
-                                    </c:when>
-                                </c:choose>
-                                <td><c:out value="${dateOrdered}"/></td>
-                            </tr>
-                        </c:forEach>
-                        </tbody>
-                    </table>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="orders-confirmed-table" role="tabpanel" tabindex="0">
+                <div class="mb-3">
+                    <div class="card w-100">
+                        <div class="restaurant-orders-table">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col"><spring:message code="restaurantorders.table.id"/></th>
+                                        <th scope="col"><spring:message code="restaurantorders.table.order_type"/></th>
+                                        <th scope="col"><spring:message code="restaurantorders.table.table_number"/></th>
+                                        <th scope="col"><spring:message code="restaurantorders.table.address"/></th>
+                                        <th scope="col"><spring:message code="restaurantorders.table.order_date"/></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <c:forEach items="${orders}" var="order">
+                                        <tr
+                                                class="clickable-object clickable-row"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#order-details"
+                                                data-order-id="${order.orderId}"
+                                                <c:forEach items="${order.items}" var="item">
+                                                    data-order-item-${item.lineNumber}-line-number="<c:out value="${item.lineNumber}"/>"
+                                                    data-order-item-${item.lineNumber}-comment="<c:out value="${item.comment}"/>"
+                                                    data-order-item-${item.lineNumber}-product-name="<c:out value="${item.product.name}"/>"
+                                                    data-order-item-${item.lineNumber}-product-price="<c:out value="${item.product.price}"/>"
+                                                    data-order-item-${item.lineNumber}-quantity="<c:out value="${item.quantity}"/>"
+                                                </c:forEach>
+                                                data-order-items-quantity="${fn:length(order.items)}"
+                                                data-order-total-price="${order.price}"
+                                        >
+                                            <fmt:parseDate value="${order.dateOrdered}" pattern="yyyy-MM-dd'T'HH:mm:ss" var="parsedDateOrdered" type="both"/>
+                                            <fmt:formatDate pattern="yyyy-MM-dd HH:mm" value="${parsedDateOrdered}" var="dateOrdered"/>
+                                            <td class="text-center"><c:out value="${order.orderId}"/></td>
+                                            <td><spring:message code="restaurant.menu.form.${order.orderType.messageCode}"/></td>
+                                            <c:choose>
+                                                <c:when test="${order.orderType == 'DINE_IN'}">
+                                                    <td><c:out value="${order.tableNumber}"/></td>
+                                                    <td>-</td>
+                                                </c:when>
+                                                <c:when test="${order.orderType == 'TAKEAWAY'}">
+                                                    <td>-</td>
+                                                    <td>-</td>
+                                                </c:when>
+                                                <c:when test="${order.orderType == 'DELIVERY'}">
+                                                    <td>-</td>
+                                                    <td><c:out value="${order.address}"/></td>
+                                                </c:when>
+                                            </c:choose>
+                                            <td><c:out value="${dateOrdered}"/></td>
+                                        </tr>
+                                    </c:forEach>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade w-100" id="orders-confirmed-ready" role="tabpanel" tabindex="0">
+                <div class="mb-3">
+                    <div class="card w-100">
+                        <div class="restaurant-orders-table">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col"><spring:message code="restaurantorders.table.id"/></th>
+                                        <th scope="col"><spring:message code="restaurantorders.table.order_type"/></th>
+                                        <th scope="col"><spring:message code="restaurantorders.table.table_number"/></th>
+                                        <th scope="col"><spring:message code="restaurantorders.table.address"/></th>
+                                        <th scope="col"><spring:message code="restaurantorders.table.order_date"/></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <c:forEach items="${orders}" var="order">
+                                        <tr
+                                                class="clickable-object clickable-row"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#order-details"
+                                                data-order-id="${order.orderId}"
+                                                <c:forEach items="${order.items}" var="item">
+                                                    data-order-item-${item.lineNumber}-line-number="<c:out value="${item.lineNumber}"/>"
+                                                    data-order-item-${item.lineNumber}-comment="<c:out value="${item.comment}"/>"
+                                                    data-order-item-${item.lineNumber}-product-name="<c:out value="${item.product.name}"/>"
+                                                    data-order-item-${item.lineNumber}-product-price="<c:out value="${item.product.price}"/>"
+                                                    data-order-item-${item.lineNumber}-quantity="<c:out value="${item.quantity}"/>"
+                                                </c:forEach>
+                                                data-order-items-quantity="${fn:length(order.items)}"
+                                                data-order-total-price="${order.price}"
+                                        >
+                                            <fmt:parseDate value="${order.dateOrdered}" pattern="yyyy-MM-dd'T'HH:mm:ss" var="parsedDateOrdered" type="both"/>
+                                            <fmt:formatDate pattern="yyyy-MM-dd HH:mm" value="${parsedDateOrdered}" var="dateOrdered"/>
+                                            <td class="text-center"><c:out value="${order.orderId}"/></td>
+                                            <td><spring:message code="restaurant.menu.form.${order.orderType.messageCode}"/></td>
+                                            <c:choose>
+                                                <c:when test="${order.orderType == 'DINE_IN'}">
+                                                    <td><c:out value="${order.tableNumber}"/></td>
+                                                    <td>-</td>
+                                                </c:when>
+                                                <c:when test="${order.orderType == 'TAKEAWAY'}">
+                                                    <td>-</td>
+                                                    <td>-</td>
+                                                </c:when>
+                                                <c:when test="${order.orderType == 'DELIVERY'}">
+                                                    <td>-</td>
+                                                    <td><c:out value="${order.address}"/></td>
+                                                </c:when>
+                                            </c:choose>
+                                            <td><c:out value="${dateOrdered}"/></td>
+                                        </tr>
+                                    </c:forEach>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -101,6 +236,7 @@
             </div>
         </div>
     </div>
+
 </main>
 
 <c:choose>
