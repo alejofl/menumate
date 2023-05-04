@@ -29,7 +29,7 @@ class Extractors {
         LocalDateTime dateConfirmed = null;
         LocalDateTime dateReady = null;
         LocalDateTime dateDelivered = null;
-        LocalDateTime dateCanceled = null;
+        LocalDateTime dateCancelled = null;
         String address = null;
         int tableNumber = 0;
         List<OrderItem> items = null;
@@ -39,7 +39,7 @@ class Extractors {
             if (isFirst || orderId != currentOrderId) {
                 if (!isFirst) {
                     orders.add(new Order(orderId, orderType, restaurant, user, dateOrdered, dateConfirmed, dateReady,
-                            dateDelivered, dateCanceled, address, tableNumber, Collections.unmodifiableList(items)));
+                            dateDelivered, dateCancelled, address, tableNumber, Collections.unmodifiableList(items)));
                 }
 
                 orderId = currentOrderId;
@@ -50,7 +50,7 @@ class Extractors {
                 dateConfirmed = SimpleRowMappers.timestampToLocalDateTimeOrNull(rs.getTimestamp("order_date_confirmed"));
                 dateReady = SimpleRowMappers.timestampToLocalDateTimeOrNull(rs.getTimestamp("order_date_ready"));
                 dateDelivered = SimpleRowMappers.timestampToLocalDateTimeOrNull(rs.getTimestamp("order_date_delivered"));
-                dateCanceled = SimpleRowMappers.timestampToLocalDateTimeOrNull(rs.getTimestamp("order_date_canceled"));
+                dateCancelled = SimpleRowMappers.timestampToLocalDateTimeOrNull(rs.getTimestamp("order_date_cancelled"));
                 address = rs.getString("order_address");
                 tableNumber = rs.getInt("order_table_number");
 
@@ -65,7 +65,7 @@ class Extractors {
 
         if (!isFirst) {
             orders.add(new Order(orderId, orderType, restaurant, user, dateOrdered, dateConfirmed, dateReady,
-                    dateDelivered, dateCanceled, address, tableNumber, Collections.unmodifiableList(items)));
+                    dateDelivered, dateCancelled, address, tableNumber, Collections.unmodifiableList(items)));
         }
 
         return orders;

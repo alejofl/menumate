@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS orders
     date_confirmed TIMESTAMP DEFAULT NULL,
     date_ready     TIMESTAMP DEFAULT NULL,
     date_delivered TIMESTAMP DEFAULT NULL,
-    date_canceled  TIMESTAMP DEFAULT NULL,
+    date_cancelled TIMESTAMP DEFAULT NULL,
     address        VARCHAR(300),
     table_number   SMALLINT
 );

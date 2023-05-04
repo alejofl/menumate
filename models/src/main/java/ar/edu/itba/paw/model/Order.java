@@ -73,4 +73,18 @@ public class Order {
                 .mapToDouble(item -> item.getProduct().getPrice() * item.getQuantity())
                 .sum();
     }
+
+    public OrderStatus getOrderStatus() {
+        if (dateCanceled != null) {
+            return dateConfirmed == null ? OrderStatus.REJECTED : OrderStatus.CANCELLED;
+        }
+
+        if (dateDelivered != null)
+            return OrderStatus.DELIVERED;
+        if (dateReady != null)
+            return OrderStatus.READY;
+        if (dateConfirmed != null)
+            return OrderStatus.CONFIRMED;
+        return OrderStatus.ORDERED;
+    }
 }
