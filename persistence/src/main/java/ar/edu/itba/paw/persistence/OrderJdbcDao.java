@@ -5,6 +5,7 @@ import ar.edu.itba.paw.model.util.PaginatedResult;
 import ar.edu.itba.paw.persistance.OrderDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
@@ -18,6 +19,9 @@ import java.util.Optional;
 public class OrderJdbcDao implements OrderDao {
     private static final String SELECT_FULL_BASE = "SELECT " + TableFields.ORDERS_FIELDS + ", " + TableFields.RESTAURANTS_FIELDS + ", " + TableFields.USERS_FIELDS + ", " + TableFields.ORDER_ITEMS_FIELDS + ", " + TableFields.PRODUCTS_FIELDS + ", " + TableFields.CATEGORIES_FIELDS + " FROM orders JOIN restaurants ON orders.restaurant_id = restaurants.restaurant_id JOIN users on orders.user_id = users.user_id LEFT OUTER JOIN order_items ON orders.order_id = order_items.order_id LEFT OUTER JOIN products ON order_items.product_id = products.product_id LEFT OUTER JOIN categories ON products.category_id = categories.category_id";
     private static final String SELECT_FULL_END_ORDER_BY_ID = " ORDER BY orders.order_id, order_items.line_number";
+
+    private static final String SELECT_ITEMLESS_BASE = "SELECT " + TableFields.ORDERS_FIELDS + ", " + TableFields.RESTAURANTS_FIELDS + ", " + TableFields.USERS_FIELDS + ", COUNT(*) AS order_item_count, SUM(order_items.quantity*products.price) as order_price FROM orders JOIN restaurants ON orders.restaurant_id = restaurants.restaurant_id JOIN users on orders.user_id = users.user_id LEFT OUTER JOIN order_items ON orders.order_id = order_items.order_id LEFT OUTER JOIN products ON order_items.product_id = products.product_id";
+    private static final String SELECT_ITEMLESS_END = " GROUP BY orders.order_id, restaurants.restaurant_id, users.user_id";
 
     private static final String IS_PENDING_COND = "(date_confirmed IS NULL AND date_cancelled IS NULL)";
     private static final String IS_CONFIRMED_COND = "(date_confirmed IS NOT NULL AND date_ready IS NULL AND date_cancelled IS NULL)";
@@ -102,11 +106,42 @@ public class OrderJdbcDao implements OrderDao {
     }
 
     @Override
+    public Optional<OrderItemless> getByIdExcludeItems(int orderId) {
+        return jdbcTemplate.query(
+                SELECT_ITEMLESS_BASE + " WHERE orders.order_id = ?" + SELECT_ITEMLESS_END,
+                SimpleRowMappers.ORDER_ITEMLESS_ROW_MAPPER,
+                orderId
+        ).stream().findFirst();
+    }
+
+    @Override
     public PaginatedResult<Order> getByUser(int userId, int pageNumber, int pageSize) {
         int pageIdx = pageNumber - 1;
         List<Order> results = jdbcTemplate.query(
                 "WITH orders AS (SELECT * FROM orders WHERE user_id = ? LIMIT ? OFFSET ?) " + SELECT_FULL_BASE + SELECT_FULL_END_ORDER_BY_ID,
                 Extractors.ORDER_EXTRACTOR,
+                userId,
+                pageSize,
+                pageIdx * pageSize
+        );
+
+        int count = jdbcTemplate.query(
+                "SELECT COUNT(*) AS c FROM orders WHERE user_id = ?",
+                SimpleRowMappers.COUNT_ROW_MAPPER,
+                userId
+        ).get(0);
+
+        return new PaginatedResult<>(results, pageNumber, pageSize, count);
+    }
+
+    @Override
+    public PaginatedResult<OrderItemless> getByUserExcludeItems(int userId, int pageNumber, int pageSize) {
+        int pageIdx = pageNumber - 1;
+        RowMapper<OrderItemless> rowMapper = ReusingRowMappers.getOrderItemlessReusingRowMapper();
+
+        List<OrderItemless> results = jdbcTemplate.query(
+                "WITH orders AS (SELECT * FROM orders WHERE user_id = ? LIMIT ? OFFSET ?) " + SELECT_ITEMLESS_BASE + SELECT_ITEMLESS_END,
+                rowMapper,
                 userId,
                 pageSize,
                 pageIdx * pageSize
@@ -142,11 +177,55 @@ public class OrderJdbcDao implements OrderDao {
     }
 
     @Override
+    public PaginatedResult<OrderItemless> getByRestaurantExcludeItems(int restaurantId, int pageNumber, int pageSize) {
+        int pageIdx = pageNumber - 1;
+        RowMapper<OrderItemless> rowMapper = ReusingRowMappers.getOrderItemlessReusingRowMapper();
+
+        List<OrderItemless> results = jdbcTemplate.query(
+                "WITH orders AS (SELECT * FROM orders WHERE restaurant_id = ? LIMIT ? OFFSET ?) " + SELECT_ITEMLESS_BASE + SELECT_ITEMLESS_END,
+                rowMapper,
+                restaurantId,
+                pageSize,
+                pageIdx * pageSize
+        );
+
+        int count = jdbcTemplate.query(
+                "SELECT COUNT(*) AS c FROM orders WHERE restaurant_id = ?",
+                SimpleRowMappers.COUNT_ROW_MAPPER,
+                restaurantId
+        ).get(0);
+
+        return new PaginatedResult<>(results, pageNumber, pageSize, count);
+    }
+
+    @Override
     public PaginatedResult<Order> getByRestaurant(int restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus) {
         int pageIdx = pageNumber - 1;
         List<Order> results = jdbcTemplate.query(
                 "WITH orders AS (SELECT * FROM orders WHERE restaurant_id = ? AND " + getCondStringForOrderStatus(orderStatus) + " LIMIT ? OFFSET ?) " + SELECT_FULL_BASE + SELECT_FULL_END_ORDER_BY_ID,
                 Extractors.ORDER_EXTRACTOR,
+                restaurantId,
+                pageSize,
+                pageIdx * pageSize
+        );
+
+        int count = jdbcTemplate.query(
+                "SELECT COUNT(*) AS c FROM orders WHERE restaurant_id = ? AND " + getCondStringForOrderStatus(orderStatus),
+                SimpleRowMappers.COUNT_ROW_MAPPER,
+                restaurantId
+        ).get(0);
+
+        return new PaginatedResult<>(results, pageNumber, pageSize, count);
+    }
+
+    @Override
+    public PaginatedResult<OrderItemless> getByRestaurantExcludeItems(int restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus) {
+        int pageIdx = pageNumber - 1;
+        RowMapper<OrderItemless> rowMapper = ReusingRowMappers.getOrderItemlessReusingRowMapper();
+
+        List<OrderItemless> results = jdbcTemplate.query(
+                "WITH orders AS (SELECT * FROM orders WHERE restaurant_id = ? AND " + getCondStringForOrderStatus(orderStatus) + " LIMIT ? OFFSET ?) " + SELECT_ITEMLESS_BASE + SELECT_ITEMLESS_END,
+                rowMapper,
                 restaurantId,
                 pageSize,
                 pageIdx * pageSize
