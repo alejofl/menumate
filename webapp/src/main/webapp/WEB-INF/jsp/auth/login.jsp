@@ -16,9 +16,18 @@
         <div class="card-body">
             <h2 class="card-title mb-3">${login}</h2>
             <c:if test="${param.error != null}">
-                <div class="alert alert-danger" role="alert">
-                    <spring:message code="login.invalidcredentials"/>
-                </div>
+                <c:choose>
+                    <c:when test="${param.error=='not_verified'}">
+                        <div class="alert alert-danger" role="alert">
+                            <spring:message code="login.notVerified"/>
+                        </div>
+                    </c:when>
+                    <c:otherwise>
+                        <div class="alert alert-danger" role="alert">
+                            <spring:message code="login.invalidcredentials"/>
+                        </div>
+                    </c:otherwise>
+                </c:choose>
             </c:if>
             <form action="<c:url value="/auth/login"/>" method="post">
                 <div class="mb-3">
