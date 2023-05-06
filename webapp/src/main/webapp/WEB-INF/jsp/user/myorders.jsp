@@ -32,7 +32,7 @@
             <jsp:param name="restaurantLogoId" value="${order.restaurant.logoId}"/>
             <jsp:param name="restaurantName" value="${order.restaurant.name}"/>
             <jsp:param name="dateOrdered" value="${dateOrdered}"/>
-            <jsp:param name="productQuantity" value="${fn:length(order.items)}"/>
+            <jsp:param name="productQuantity" value="${order.itemCount}"/>
             <jsp:param name="price" value="${order.price}"/>
             <jsp:param name="orderType" value="${orderType}"/>
         </jsp:include>

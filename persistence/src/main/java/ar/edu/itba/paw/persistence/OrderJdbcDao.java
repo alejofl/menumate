@@ -140,7 +140,7 @@ public class OrderJdbcDao implements OrderDao {
         RowMapper<OrderItemless> rowMapper = ReusingRowMappers.getOrderItemlessReusingRowMapper();
 
         List<OrderItemless> results = jdbcTemplate.query(
-                "WITH orders AS (SELECT * FROM orders WHERE user_id = ? LIMIT ? OFFSET ?) " + SELECT_ITEMLESS_BASE + SELECT_ITEMLESS_END,
+                SELECT_ITEMLESS_BASE + " WHERE orders.user_id = ? " + SELECT_ITEMLESS_END + " LIMIT ? OFFSET ?",
                 rowMapper,
                 userId,
                 pageSize,
@@ -182,7 +182,7 @@ public class OrderJdbcDao implements OrderDao {
         RowMapper<OrderItemless> rowMapper = ReusingRowMappers.getOrderItemlessReusingRowMapper();
 
         List<OrderItemless> results = jdbcTemplate.query(
-                "WITH orders AS (SELECT * FROM orders WHERE restaurant_id = ? LIMIT ? OFFSET ?) " + SELECT_ITEMLESS_BASE + SELECT_ITEMLESS_END,
+                SELECT_ITEMLESS_BASE + " WHERE orders.restaurant_id = ? " + SELECT_ITEMLESS_END + " LIMIT ? OFFSET ?",
                 rowMapper,
                 restaurantId,
                 pageSize,
@@ -224,7 +224,7 @@ public class OrderJdbcDao implements OrderDao {
         RowMapper<OrderItemless> rowMapper = ReusingRowMappers.getOrderItemlessReusingRowMapper();
 
         List<OrderItemless> results = jdbcTemplate.query(
-                "WITH orders AS (SELECT * FROM orders WHERE restaurant_id = ? AND " + getCondStringForOrderStatus(orderStatus) + " LIMIT ? OFFSET ?) " + SELECT_ITEMLESS_BASE + SELECT_ITEMLESS_END,
+                SELECT_ITEMLESS_BASE + " WHERE orders.restaurant_id = ? AND " + getCondStringForOrderStatus(orderStatus) + " " + SELECT_ITEMLESS_END + " LIMIT ? OFFSET ?",
                 rowMapper,
                 restaurantId,
                 pageSize,
