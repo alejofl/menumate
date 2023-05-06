@@ -13,7 +13,6 @@
     <script src="<c:url value="/static/js/restaurant_orders.js"/>"></script>
 </head>
 <body>
-<%--<meta http-equiv="refresh" content="5" />--%>
 
 <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
 
@@ -22,12 +21,12 @@
         <h1><spring:message code="restaurantorders.orders"/></h1>
         <nav>
             <div class="nav nav-pills nav-fill mb-3" role="tablist">
-                <a class="nav-link" type="button" href="<c:url value="/restaurants/${id}/orders/pending"/>">Pending</a>
-                <a class="nav-link" type="button" href="<c:url value="/restaurants/${id}/orders/confirmed"/>">Confirmed</a>
-                <a class="nav-link" type="button" href="<c:url value="/restaurants/${id}/orders/ready"/>">Ready</a>
+                <a class="nav-link btn-primary" type="button" href="<c:url value="/restaurants/${id}/orders/pending"/>">Pending</a>
+                <a class="nav-link btn-primary" type="button" href="<c:url value="/restaurants/${id}/orders/confirmed"/>">Confirmed</a>
+                <a class="nav-link btn-primary" type="button" href="<c:url value="/restaurants/${id}/orders/ready"/>">Ready</a>
+                <a class="nav-link btn-primary" type="button" href="<c:url value="/restaurants/${id}/orders/delivered"/>">Delivered</a>
             </div>
         </nav>
-
         <div class="table-responsive">
             <table class="table table-hover">
                 <thead>
@@ -107,12 +106,11 @@
                 </div>
                 <div class="modal-footer">
                     <c:url value="/restaurants/${id}/orders/$1/$2" var="changeStatus"/>
-                    <a href="${changeStatus}" type="button" class="btn btn-primary" id="change-order-button" data-base-url="${changeStatus}"></a>
+                    <a href="" type="button" class="btn btn-primary" id="change-order-button" data-base-url="${changeStatus}"></a>
                 </div>
             </div>
         </div>
     </div>
-
 </main>
 
 <c:choose>

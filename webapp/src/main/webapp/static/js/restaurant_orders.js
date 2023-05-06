@@ -37,10 +37,12 @@ document.addEventListener("DOMContentLoaded", () => {
               let url = changeStatusButton.dataset.baseUrl.replace('$1', element.dataset.orderId).replace('$2', `ready`);
               changeStatusButton.href = url;
               changeStatusButton.innerHTML = `Ready`;
-          } else {
+          } else if (orderStatus === 'ready') {
               let url = changeStatusButton.dataset.baseUrl.replace('$1', element.dataset.orderId).replace('$2', `deliver`);
               changeStatusButton.href = url;
               changeStatusButton.innerHTML = `Deliver`;
+          } else {
+              changeStatusButton.remove();
           }
       });
    });

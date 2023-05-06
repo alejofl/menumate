@@ -88,6 +88,23 @@ public class RestaurantOrdersController {
         return restaurantOrders(id, paging.getPageOrDefault(), paging.getSizeOrDefault(DEFAULT_ORDERS_PAGE_SIZE), OrderStatus.READY);
     }
 
+    @RequestMapping(value = "/restaurants/{id:\\d+}/orders/delivered", method = RequestMethod.GET)
+    public ModelAndView restaurantOrdersDelivered(
+            @Valid final PagingForm paging,
+            final BindingResult errors,
+            @PathVariable final int id
+    ) {
+
+        if (errors.hasErrors()) {
+            ModelAndView mav = new ModelAndView("menu/restaurant_orders");
+            mav.addObject("error", Boolean.TRUE);
+            paging.clear();
+            return mav;
+        }
+
+        return restaurantOrders(id, paging.getPageOrDefault(), paging.getSizeOrDefault(DEFAULT_ORDERS_PAGE_SIZE), OrderStatus.DELIVERED);
+    }
+
     @RequestMapping(value = "/restaurants/{id:\\d+}/orders", method = RequestMethod.GET)
     public ModelAndView restaurantOrders(@PathVariable final int id) {
         return new ModelAndView(String.format("redirect:/restaurants/%d/orders/pending", id));
