@@ -1,9 +1,6 @@
 package ar.edu.itba.paw.webapp.auth;
 
-import ar.edu.itba.paw.model.Order;
-import ar.edu.itba.paw.model.Restaurant;
-import ar.edu.itba.paw.model.RestaurantRoleLevel;
-import ar.edu.itba.paw.model.User;
+import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.service.OrderService;
 import ar.edu.itba.paw.service.RolesService;
 import ar.edu.itba.paw.service.UserService;
@@ -53,7 +50,7 @@ public class AccessValidator {
     }
 
     public boolean checkOrderOwner(HttpServletRequest request, int orderId) {
-        Order order = orderService.getById(orderId).orElseThrow(OrderNotFoundException::new);
+        OrderItemless order = orderService.getByIdExcludeItems(orderId).orElseThrow(OrderNotFoundException::new);
         return order.getUser().getEmail().equals(ControllerUtils.getCurrentUserEmail());
     }
 }

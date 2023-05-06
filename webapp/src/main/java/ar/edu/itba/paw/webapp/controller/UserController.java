@@ -49,7 +49,7 @@ public class UserController {
         }
 
         User currentUser = ControllerUtils.getCurrentUserOrThrow(userService);
-        PaginatedResult<Order> orders = orderService.getByUser(currentUser.getUserId(), paging.getPageOrDefault(), paging.getSizeOrDefault(DEFAULT_ORDERS_PAGE_SIZE));
+        PaginatedResult<OrderItemless> orders = orderService.getByUserExcludeItems(currentUser.getUserId(), paging.getPageOrDefault(), paging.getSizeOrDefault(DEFAULT_ORDERS_PAGE_SIZE));
         mav.addObject("orders", orders.getResult());
         mav.addObject("orderCount", orders.getTotalCount());
         mav.addObject("pageCount", orders.getTotalPageCount());

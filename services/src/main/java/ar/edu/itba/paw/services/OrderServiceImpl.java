@@ -70,8 +70,18 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public Optional<OrderItemless> getByIdExcludeItems(int orderId) {
+        return orderDao.getByIdExcludeItems(orderId);
+    }
+
+    @Override
     public PaginatedResult<Order> getByUser(int userId, int pageNumber, int pageSize) {
         return orderDao.getByUser(userId, pageNumber, pageSize);
+    }
+
+    @Override
+    public PaginatedResult<OrderItemless> getByUserExcludeItems(int userId, int pageNumber, int pageSize) {
+        return orderDao.getByUserExcludeItems(userId, pageNumber, pageSize);
     }
 
     @Override
@@ -80,8 +90,18 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public PaginatedResult<OrderItemless> getByRestaurantExcludeItems(int restaurantId, int pageNumber, int pageSize) {
+        return orderDao.getByRestaurantExcludeItems(restaurantId, pageNumber, pageSize);
+    }
+
+    @Override
     public PaginatedResult<Order> getByRestaurant(int restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus) {
         return orderDao.getByRestaurant(restaurantId, pageNumber, pageSize, orderStatus);
+    }
+
+    @Override
+    public PaginatedResult<OrderItemless> getByRestaurantExcludeItems(int restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus) {
+        return orderDao.getByRestaurantExcludeItems(restaurantId, pageNumber, pageSize, orderStatus);
     }
 
     @Override

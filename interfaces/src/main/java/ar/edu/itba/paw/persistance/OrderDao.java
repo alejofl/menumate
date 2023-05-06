@@ -8,13 +8,22 @@ import java.util.Optional;
 
 public interface OrderDao {
 
+
     Optional<Order> getById(int orderId);
+
+    Optional<OrderItemless> getByIdExcludeItems(int orderId);
 
     PaginatedResult<Order> getByUser(int userId, int pageNumber, int pageSize);
 
+    PaginatedResult<OrderItemless> getByUserExcludeItems(int userId, int pageNumber, int pageSize);
+
     PaginatedResult<Order> getByRestaurant(int restaurantId, int pageNumber, int pageSize);
 
+    PaginatedResult<OrderItemless> getByRestaurantExcludeItems(int restaurantId, int pageNumber, int pageSize);
+
     PaginatedResult<Order> getByRestaurant(int restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus);
+
+    PaginatedResult<OrderItemless> getByRestaurantExcludeItems(int restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus);
 
     boolean markAsConfirmed(int orderId);
 

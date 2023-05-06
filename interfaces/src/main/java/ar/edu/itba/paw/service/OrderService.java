@@ -2,11 +2,10 @@ package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.model.OrderItem;
+import ar.edu.itba.paw.model.OrderItemless;
 import ar.edu.itba.paw.model.OrderStatus;
-import ar.edu.itba.paw.model.OrderType;
 import ar.edu.itba.paw.model.util.PaginatedResult;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,11 +26,19 @@ public interface OrderService {
 
     Optional<Order> getById(int orderId);
 
+    Optional<OrderItemless> getByIdExcludeItems(int orderId);
+
     PaginatedResult<Order> getByUser(int userId, int pageNumber, int pageSize);
+
+    PaginatedResult<OrderItemless> getByUserExcludeItems(int userId, int pageNumber, int pageSize);
 
     PaginatedResult<Order> getByRestaurant(int restaurantId, int pageNumber, int pageSize);
 
+    PaginatedResult<OrderItemless> getByRestaurantExcludeItems(int restaurantId, int pageNumber, int pageSize);
+
     PaginatedResult<Order> getByRestaurant(int restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus);
+
+    PaginatedResult<OrderItemless> getByRestaurantExcludeItems(int restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus);
 
     boolean markAsConfirmed(int orderId);
 
