@@ -1,3 +1,7 @@
+function selectOrderTypeTab(tab) {
+    // document.querySelector(`#orders-${tab}-table`).classList.add("active");
+    document.querySelector(`#orders-${tab}`).classList.add("active", "show");
+}
 
 document.addEventListener("DOMContentLoaded", () => {
    document.querySelectorAll('.clickable-row').forEach(element => {
@@ -30,4 +34,29 @@ document.addEventListener("DOMContentLoaded", () => {
           document.querySelector("#order-total-price").innerHTML = `$${element.dataset.orderTotalPrice}`;
       });
    });
+
+    let orderStatus = document.querySelector("#order-status");
+    // Select Order Type tab automatically
+    if (orderStatus.value === "PENDING" || orderStatus.value === "") {
+        selectOrderTypeTab("ordered");
+        orderStatus.value = "PENDING"
+    } else if (orderStatus.value === "CONFIRMED") {
+        selectOrderTypeTab("confirmed");
+    } else {
+        selectOrderTypeTab("ready");
+    }
+
+    // Order Type Selector (FIXME this values are hardcoded)
+    document.querySelector("#orders-ordered").addEventListener("click", () => {
+        orderStatus.value = 'PENDING';
+        console.log(orderStatus.value);
+    });
+    document.querySelector("#orders-confirmed").addEventListener("click", () => {
+        orderStatus.value = 'CONFIRMED';
+        console.log(orderStatus.value);
+    });
+    document.querySelector("#orders-ready").addEventListener("click", () => {
+        orderStatus.value = 'READY';
+        console.log(orderStatus.value);
+    });
 });
