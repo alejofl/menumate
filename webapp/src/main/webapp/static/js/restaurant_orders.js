@@ -1,12 +1,8 @@
-function selectOrderTypeTab(tab) {
-    // document.querySelector(`#orders-${tab}-table`).classList.add("active");
-    document.querySelector(`#orders-${tab}`).classList.add("active", "show");
-}
-
 document.addEventListener("DOMContentLoaded", () => {
    document.querySelectorAll('.clickable-row').forEach(element => {
       element.addEventListener('click', event => {
           document.querySelector("#order-title").innerHTML = element.dataset.orderId;
+          let orderStatus = element.dataset.orderStatus;
           let itemsQuantity = parseInt(element.dataset.orderItemsQuantity);
           let items = [];
           for(let i = 0 ; i < itemsQuantity; i++ ) {
@@ -32,31 +28,21 @@ document.addEventListener("DOMContentLoaded", () => {
               `;
           }
           document.querySelector("#order-total-price").innerHTML = `$${element.dataset.orderTotalPrice}`;
+          let changeStatusButton = document.querySelector("#change-order-button");
+          if (orderStatus === 'pending') {
+              let url = changeStatusButton.dataset.baseUrl.replace('$1', element.dataset.orderId).replace('$2', `confirm`);
+              changeStatusButton.href = url;
+              changeStatusButton.innerHTML = `Confirm`;
+          } else if (orderStatus === 'confirmed') {
+              let url = changeStatusButton.dataset.baseUrl.replace('$1', element.dataset.orderId).replace('$2', `ready`);
+              changeStatusButton.href = url;
+              changeStatusButton.innerHTML = `Ready`;
+          } else {
+              let url = changeStatusButton.dataset.baseUrl.replace('$1', element.dataset.orderId).replace('$2', `deliver`);
+              changeStatusButton.href = url;
+              changeStatusButton.innerHTML = `Deliver`;
+          }
       });
    });
 
-    let orderStatus = document.querySelector("#order-status");
-    // Select Order Type tab automatically
-    if (orderStatus.value === "PENDING" || orderStatus.value === "") {
-        selectOrderTypeTab("ordered");
-        orderStatus.value = "PENDING"
-    } else if (orderStatus.value === "CONFIRMED") {
-        selectOrderTypeTab("confirmed");
-    } else {
-        selectOrderTypeTab("ready");
-    }
-
-    // Order Type Selector (FIXME this values are hardcoded)
-    document.querySelector("#orders-ordered").addEventListener("click", () => {
-        orderStatus.value = 'PENDING';
-        console.log(orderStatus.value);
-    });
-    document.querySelector("#orders-confirmed").addEventListener("click", () => {
-        orderStatus.value = 'CONFIRMED';
-        console.log(orderStatus.value);
-    });
-    document.querySelector("#orders-ready").addEventListener("click", () => {
-        orderStatus.value = 'READY';
-        console.log(orderStatus.value);
-    });
 });
