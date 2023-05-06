@@ -19,11 +19,11 @@ document.addEventListener("DOMContentLoaded", () => {
           for(let i = 0 ; i < itemsQuantity; i++ ) {
               document.querySelector("#order-items").innerHTML += `
                 <tr>
-                    <td>${i}</td>
-                    <td>${items[i].productName}</td>
-                    <td>${items[i].comment}</td>
+                    <td class="text-start">${i}</td>
+                    <td class="text-center">${items[i].productName}</td>
+                    <td class="text-center">${items[i].comment}</td>
                     <td class="text-center">${items[i].quantity}</td>
-                    <td>$${items[i].productPrice}</td>
+                    <td class="text-end">$${items[i].productPrice}</td>
                 </tr>
               `;
           }

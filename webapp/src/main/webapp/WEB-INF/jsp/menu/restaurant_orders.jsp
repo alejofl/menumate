@@ -27,18 +27,18 @@
                 <a class="nav-link btn-primary" type="button" href="<c:url value="/restaurants/${id}/orders/delivered"/>">Delivered</a>
             </div>
         </nav>
-        <div class="table-responsive">
+        <div class="table-responsive w-75">
             <table class="table table-hover">
-                <thead>
+                <thead class="table-light">
                 <tr>
-                    <th scope="col"><spring:message code="restaurantorders.table.id"/></th>
-                    <th scope="col"><spring:message code="restaurantorders.table.order_type"/></th>
-                    <th scope="col"><spring:message code="restaurantorders.table.table_number"/></th>
-                    <th scope="col"><spring:message code="restaurantorders.table.address"/></th>
-                    <th scope="col"><spring:message code="restaurantorders.table.order_date"/></th>
+                    <th class="text-start" scope="col"><spring:message code="restaurantorders.table.id"/></th>
+                    <th class="text-center" scope="col"><spring:message code="restaurantorders.table.order_type"/></th>
+                    <th class="text-center" scope="col"><spring:message code="restaurantorders.table.table_number"/></th>
+                    <th class="text-center" scope="col"><spring:message code="restaurantorders.table.address"/></th>
+                    <th class="text-end" scope="col"><spring:message code="restaurantorders.table.order_date"/></th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody class="table-striped">
                 <c:forEach items="${orders}" var="order">
                     <tr
                             class="clickable-object clickable-row"
@@ -58,23 +58,23 @@
                     >
                         <fmt:parseDate value="${order.dateOrdered}" pattern="yyyy-MM-dd'T'HH:mm:ss" var="parsedDateOrdered" type="both"/>
                         <fmt:formatDate pattern="yyyy-MM-dd HH:mm" value="${parsedDateOrdered}" var="dateOrdered"/>
-                        <td class="text-center"><c:out value="${order.orderId}"/></td>
-                        <td><spring:message code="restaurant.menu.form.${order.orderType.messageCode}"/></td>
+                        <td class="text-start"><c:out value="${order.orderId}"/></td>
+                        <td class="text-center"><spring:message code="restaurant.menu.form.${order.orderType.messageCode}"/></td>
                         <c:choose>
                             <c:when test="${order.orderType == 'DINE_IN'}">
-                                <td><c:out value="${order.tableNumber}"/></td>
-                                <td>-</td>
+                                <td class="text-center"><c:out value="${order.tableNumber}"/></td>
+                                <td class="text-center">-</td>
                             </c:when>
                             <c:when test="${order.orderType == 'TAKEAWAY'}">
-                                <td>-</td>
-                                <td>-</td>
+                                <td class="text-center">-</td>
+                                <td class="text-center">-</td>
                             </c:when>
                             <c:when test="${order.orderType == 'DELIVERY'}">
-                                <td>-</td>
-                                <td><c:out value="${order.address}"/></td>
+                                <td class="text-center">-</td>
+                                <td class="text-center"><c:out value="${order.address}"/></td>
                             </c:when>
                         </c:choose>
-                        <td><c:out value="${dateOrdered}"/></td>
+                        <td class="text-end"><c:out value="${dateOrdered}"/></td>
                     </tr>
                 </c:forEach>
                 </tbody>
@@ -83,7 +83,7 @@
     </div>
 
     <div class="modal fade" id="order-details" tabindex="-1">
-        <div class="modal-dialog modal-dialog-scrollable modal-xl">
+        <div class="modal-dialog modal-dialog-scrollable modal-xl modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title"><spring:message code="restaurantorders.orderid"/><span id="order-title"></span></h5>
@@ -91,14 +91,14 @@
                 </div>
                 <div class="modal-body">
                     <table class="table table-hover">
-                        <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col"><spring:message code="restaurantorders.modal.product_name"/></th>
-                            <th scope="col"><spring:message code="restaurantorders.modal.comments"/></th>
-                            <th scope="col" class="text-center"><spring:message code="restaurantorders.modal.quantity"/></th>
-                            <th scope="col"><spring:message code="restaurantorders.modal.product_price"/></th>
-                        </tr>
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col" class="text-start">#</th>
+                                <th scope="col" class="text-center"><spring:message code="restaurantorders.modal.product_name"/></th>
+                                <th scope="col" class="text-center"><spring:message code="restaurantorders.modal.comments"/></th>
+                                <th scope="col" class="text-center"><spring:message code="restaurantorders.modal.quantity"/></th>
+                                <th scope="col" class="text-end"><spring:message code="restaurantorders.modal.product_price"/></th>
+                            </tr>
                         </thead>
                         <tbody id="order-items"></tbody>
                     </table>
