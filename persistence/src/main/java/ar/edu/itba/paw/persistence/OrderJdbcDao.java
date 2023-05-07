@@ -273,6 +273,35 @@ public class OrderJdbcDao implements OrderDao {
     }
 
     @Override
+    public boolean setOrderStatus(int orderId, OrderStatus orderStatus) {
+        String sql;
+        switch (orderStatus) {
+            case PENDING:
+                sql = "UPDATE orders SET date_confirmed=NULL, date_ready=NULL, date_delivered=NULL, date_cancelled=NULL WHERE order_id=?";
+                break;
+            case REJECTED:
+                sql = "UPDATE orders SET date_confirmed=NULL, date_ready=NULL, date_delivered=NULL, date_cancelled=COALESCE(date_cancelled, now()) WHERE order_id=?";
+                break;
+            case CANCELLED:
+                sql = "UPDATE orders SET date_delivered=NULL, date_cancelled=COALESCE(date_cancelled, now()) WHERE order_id=?";
+                break;
+            case CONFIRMED:
+                sql = "UPDATE orders SET date_confirmed=COALESCE(date_confirmed, now()), date_ready=NULL, date_delivered=NULL, date_cancelled=NULL WHERE order_id=?";
+                break;
+            case READY:
+                sql = "UPDATE orders SET date_confirmed=COALESCE(date_confirmed, now()), date_ready=COALESCE(date_ready, now()), date_delivered=NULL, date_cancelled=NULL WHERE order_id=?";
+                break;
+            case DELIVERED:
+                sql = "UPDATE orders SET date_confirmed=COALESCE(date_confirmed, now()), date_ready=COALESCE(date_ready, now()), date_delivered=COALESCE(date_delivered, now()), date_cancelled=NULL WHERE order_id=?";
+                break;
+            default:
+                throw new IllegalArgumentException("No such OrderType enum constant");
+        }
+
+        return jdbcTemplate.update(sql) > 0;
+    }
+
+    @Override
     public boolean updateAddress(int orderId, String address) {
         return jdbcTemplate.update(
                 "UPDATE orders SET address = ? WHERE order_id = ? AND order_type = " + OrderType.DELIVERY.ordinal() + " AND NOT(" + IS_CLOSED_COND + ")",

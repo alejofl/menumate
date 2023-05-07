@@ -125,6 +125,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public boolean setOrderStatus(int orderId, OrderStatus orderStatus) {
+        return orderDao.setOrderStatus(orderId, orderStatus);
+    }
+
+    @Override
     public boolean updateAddress(int orderId, String address) {
         return orderDao.updateAddress(orderId, address);
     }
