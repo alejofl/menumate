@@ -57,7 +57,7 @@
                 </table>
             </div>
             <div>
-                <h4>More Details</h4>
+                <h4><spring:message code="restaurantorders.moredetails"/></h4>
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item d-flex align-items-center">
                         <i class="bi bi-card-list me-3"></i>

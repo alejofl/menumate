@@ -24,16 +24,16 @@
     <nav>
         <ul class="nav nav-pills nav-fill mb-3">
             <li class="nav-item">
-                <a class="nav-link ${status == "pending" ? "active" : ""}" aria-current="page" href="<c:url value="/restaurants/${id}/orders/pending"/>">Pending</a>
+                <a class="nav-link ${status == "pending" ? "active" : ""}" aria-current="page" href="<c:url value="/restaurants/${id}/orders/pending"/>"><spring:message code="restaurantorders.pending"/></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link ${status == "confirmed" ? "active" : ""}" aria-current="page" href="<c:url value="/restaurants/${id}/orders/confirmed"/>">Confirmed</a>
+                <a class="nav-link ${status == "confirmed" ? "active" : ""}" aria-current="page" href="<c:url value="/restaurants/${id}/orders/confirmed"/>"><spring:message code="restaurantorders.confirmed"/></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link ${status == "ready" ? "active" : ""}" aria-current="page" href="<c:url value="/restaurants/${id}/orders/ready"/>">Ready</a>
+                <a class="nav-link ${status == "ready" ? "active" : ""}" aria-current="page" href="<c:url value="/restaurants/${id}/orders/ready"/>"><spring:message code="restaurantorders.ready"/></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link ${status == "delivered" ? "active" : ""}" aria-current="page" href="<c:url value="/restaurants/${id}/orders/delivered"/>">Delivered</a>
+                <a class="nav-link ${status == "delivered" ? "active" : ""}" aria-current="page" href="<c:url value="/restaurants/${id}/orders/delivered"/>"><spring:message code="restaurantorders.delivered"/></a>
             </li>
         </ul>
     </nav>
@@ -56,12 +56,12 @@
                         data-bs-target="#order-details"
                         data-order-type="${order.orderType.ordinal()}"
                         data-order-id="${order.orderId}"
-                        <c:forEach items="${order.items}" var="item">
-                            data-order-item-${item.lineNumber}-line-number="<c:out value="${item.lineNumber}"/>"
-                            data-order-item-${item.lineNumber}-comment="<c:out value="${item.comment}"/>"
-                            data-order-item-${item.lineNumber}-product-name="<c:out value="${item.product.name}"/>"
-                            data-order-item-${item.lineNumber}-product-price="<c:out value="${item.product.price}"/>"
-                            data-order-item-${item.lineNumber}-quantity="<c:out value="${item.quantity}"/>"
+                        <c:forEach items="${order.items}" var="item" varStatus="loop">
+                            data-order-item-${loop.index}-line-number="<c:out value="${item.lineNumber}"/>"
+                            data-order-item-${loop.index}-comment="<c:out value="${item.comment}"/>"
+                            data-order-item-${loop.index}-product-name="<c:out value="${item.product.name}"/>"
+                            data-order-item-${loop.index}-product-price="<c:out value="${item.product.price}"/>"
+                            data-order-item-${loop.index}-quantity="<c:out value="${item.quantity}"/>"
                         </c:forEach>
                         data-order-items-quantity="${fn:length(order.items)}"
                         data-order-total-price="${order.price}"
@@ -104,7 +104,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <h4>Order Items</h4>
+                <h4><spring:message code="restaurantorders.orderitems"/></h4>
                 <table class="table table-hover">
                     <thead class="table-light">
                     <tr>
@@ -117,12 +117,12 @@
                     </thead>
                     <tbody id="order-items"></tbody>
                 </table>
-                <h4>More Details</h4>
+                <h4><spring:message code="restaurantorders.moredetails"/></h4>
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item d-flex align-items-center">
                         <i class="bi bi-person me-3"></i>
                         <div>
-                            <small class="text-muted">Customer</small>
+                            <small class="text-muted"><spring:message code="restaurantorders.customer"/></small>
                             <p class="mb-0" id="order-details-customer">
                             </p>
                         </div>
@@ -183,22 +183,22 @@
             <c:if test="${status != 'delivered'}">
                 <div class="modal-footer">
                     <form action="<c:url value="/orders/$1/cancel"/>" method="post" id="cancel-order-form">
-                        <button type="submit" class="btn btn-danger">Cancel</button>
+                        <button type="submit" class="btn btn-danger"><spring:message code="restaurantorders.cancel"/></button>
                     </form>
                     <c:choose>
                         <c:when test="${status == 'pending'}">
                             <form action="<c:url value="/orders/$1/confirm"/>" method="post" id="change-order-status-form">
-                                <button type="submit" class="btn btn-primary">Confirm</button>
+                                <button type="submit" class="btn btn-primary"><spring:message code="restaurantorders.confirm"/></button>
                             </form>
                         </c:when>
                         <c:when test="${status == 'confirmed'}">
                             <form action="<c:url value="/orders/$1/ready"/>" method="post" id="change-order-status-form">
-                                <button type="submit" class="btn btn-primary">Ready</button>
+                                <button type="submit" class="btn btn-primary"><spring:message code="restaurantorders.ready.action"/></button>
                             </form>
                         </c:when>
                         <c:when test="${status == 'ready'}">
                             <form action="<c:url value="/orders/$1/deliver"/>" method="post" id="change-order-status-form">
-                                <button type="submit" class="btn btn-primary">Deliver</button>
+                                <button type="submit" class="btn btn-primary"><spring:message code="restaurantorders.deliver"/></button>
                             </form>
                         </c:when>
                     </c:choose>
