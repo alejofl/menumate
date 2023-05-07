@@ -23,9 +23,20 @@ public class RestaurantOrdersController {
     @Autowired
     private OrderService orderService;
 
-    private ModelAndView restaurantOrders(int id, int page, int size, OrderStatus orderStatus) {
+    private ModelAndView restaurantOrders(
+            final PagingForm paging,
+            final BindingResult errors,
+            final int id,
+            final OrderStatus orderStatus
+    ) {
+        if (errors.hasErrors()) {
+            ModelAndView mav = new ModelAndView("menu/restaurant_orders");
+            mav.addObject("error", Boolean.TRUE);
+            paging.clear();
+            return mav;
+        }
 
-        PaginatedResult<Order> orders = orderService.getByRestaurant(id, page, size, orderStatus);
+        PaginatedResult<Order> orders = orderService.getByRestaurant(id, paging.getPageOrDefault(), paging.getSizeOrDefault(DEFAULT_ORDERS_PAGE_SIZE), orderStatus);
 
         ModelAndView mav = new ModelAndView("menu/restaurant_orders");
 
@@ -43,15 +54,7 @@ public class RestaurantOrdersController {
             final BindingResult errors,
             @PathVariable final int id
     ) {
-
-        if (errors.hasErrors()) {
-            ModelAndView mav = new ModelAndView("menu/restaurant_orders");
-            mav.addObject("error", Boolean.TRUE);
-            paging.clear();
-            return mav;
-        }
-
-        return restaurantOrders(id, paging.getPageOrDefault(), paging.getSizeOrDefault(DEFAULT_ORDERS_PAGE_SIZE), OrderStatus.PENDING);
+        return restaurantOrders(paging, errors, id, OrderStatus.PENDING);
     }
 
     @RequestMapping(value = "/restaurants/{id:\\d+}/orders/confirmed", method = RequestMethod.GET)
@@ -60,15 +63,7 @@ public class RestaurantOrdersController {
             final BindingResult errors,
             @PathVariable final int id
     ) {
-
-        if (errors.hasErrors()) {
-            ModelAndView mav = new ModelAndView("menu/restaurant_orders");
-            mav.addObject("error", Boolean.TRUE);
-            paging.clear();
-            return mav;
-        }
-
-        return restaurantOrders(id, paging.getPageOrDefault(), paging.getSizeOrDefault(DEFAULT_ORDERS_PAGE_SIZE), OrderStatus.CONFIRMED);
+        return restaurantOrders(paging, errors, id, OrderStatus.CONFIRMED);
     }
 
     @RequestMapping(value = "/restaurants/{id:\\d+}/orders/ready", method = RequestMethod.GET)
@@ -77,15 +72,7 @@ public class RestaurantOrdersController {
             final BindingResult errors,
             @PathVariable final int id
     ) {
-
-        if (errors.hasErrors()) {
-            ModelAndView mav = new ModelAndView("menu/restaurant_orders");
-            mav.addObject("error", Boolean.TRUE);
-            paging.clear();
-            return mav;
-        }
-
-        return restaurantOrders(id, paging.getPageOrDefault(), paging.getSizeOrDefault(DEFAULT_ORDERS_PAGE_SIZE), OrderStatus.READY);
+        return restaurantOrders(paging, errors, id, OrderStatus.READY);
     }
 
     @RequestMapping(value = "/restaurants/{id:\\d+}/orders/delivered", method = RequestMethod.GET)
@@ -94,15 +81,7 @@ public class RestaurantOrdersController {
             final BindingResult errors,
             @PathVariable final int id
     ) {
-
-        if (errors.hasErrors()) {
-            ModelAndView mav = new ModelAndView("menu/restaurant_orders");
-            mav.addObject("error", Boolean.TRUE);
-            paging.clear();
-            return mav;
-        }
-
-        return restaurantOrders(id, paging.getPageOrDefault(), paging.getSizeOrDefault(DEFAULT_ORDERS_PAGE_SIZE), OrderStatus.DELIVERED);
+        return restaurantOrders(paging, errors, id, OrderStatus.DELIVERED);
     }
 
     @RequestMapping(value = "/restaurants/{id:\\d+}/orders", method = RequestMethod.GET)
