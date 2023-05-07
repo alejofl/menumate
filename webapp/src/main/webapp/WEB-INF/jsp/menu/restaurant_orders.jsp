@@ -22,12 +22,20 @@
 </div>
 <main class="restaurant-orders-view">
     <nav>
-        <div class="nav nav-pills nav-fill mb-3" role="tablist">
-            <a class="nav-link btn-primary" type="button" href="<c:url value="/restaurants/${id}/orders/pending"/>">Pending</a>
-            <a class="nav-link btn-primary" type="button" href="<c:url value="/restaurants/${id}/orders/confirmed"/>">Confirmed</a>
-            <a class="nav-link btn-primary" type="button" href="<c:url value="/restaurants/${id}/orders/ready"/>">Ready</a>
-            <a class="nav-link btn-primary" type="button" href="<c:url value="/restaurants/${id}/orders/delivered"/>">Delivered</a>
-        </div>
+        <ul class="nav nav-pills nav-fill mb-3">
+            <li class="nav-item">
+                <a class="nav-link ${status == "pending" ? "active" : ""}" aria-current="page" href="<c:url value="/restaurants/${id}/orders/pending"/>">Pending</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link ${status == "confirmed" ? "active" : ""}" aria-current="page" href="<c:url value="/restaurants/${id}/orders/confirmed"/>">Confirmed</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link ${status == "ready" ? "active" : ""}" aria-current="page" href="<c:url value="/restaurants/${id}/orders/ready"/>">Ready</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link ${status == "delivered" ? "active" : ""}" aria-current="page" href="<c:url value="/restaurants/${id}/orders/delivered"/>">Delivered</a>
+            </li>
+        </ul>
     </nav>
     <div class="table-responsive w-75">
         <table class="table table-hover restaurant-orders-table">
