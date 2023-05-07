@@ -13,106 +13,175 @@
     <script src="<c:url value="/static/js/restaurant_orders.js"/>"></script>
 </head>
 <body>
-
 <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
-
-<main>
-    <div class="restaurant-orders-view">
-        <h1><spring:message code="restaurantorders.orders"/></h1>
-        <nav>
-            <div class="nav nav-pills nav-fill mb-3" role="tablist">
-                <a class="nav-link btn-primary" type="button" href="<c:url value="/restaurants/${id}/orders/pending"/>">Pending</a>
-                <a class="nav-link btn-primary" type="button" href="<c:url value="/restaurants/${id}/orders/confirmed"/>">Confirmed</a>
-                <a class="nav-link btn-primary" type="button" href="<c:url value="/restaurants/${id}/orders/ready"/>">Ready</a>
-                <a class="nav-link btn-primary" type="button" href="<c:url value="/restaurants/${id}/orders/delivered"/>">Delivered</a>
-            </div>
-        </nav>
-        <div class="table-responsive w-75">
-            <table class="table table-hover">
-                <thead class="table-light">
-                <tr>
-                    <th class="text-start" scope="col"><spring:message code="restaurantorders.table.id"/></th>
-                    <th class="text-center" scope="col"><spring:message code="restaurantorders.table.order_type"/></th>
-                    <th class="text-center" scope="col"><spring:message code="restaurantorders.table.table_number"/></th>
-                    <th class="text-center" scope="col"><spring:message code="restaurantorders.table.address"/></th>
-                    <th class="text-end" scope="col"><spring:message code="restaurantorders.table.order_date"/></th>
+<c:if test="${error}">
+    <jsp:include page="/WEB-INF/jsp/components/param_error.jsp"/>
+</c:if>
+<div class="page-title">
+    <h1><spring:message code="restaurantorders.orders"/></h1>
+</div>
+<main class="restaurant-orders-view">
+    <nav>
+        <div class="nav nav-pills nav-fill mb-3" role="tablist">
+            <a class="nav-link btn-primary" type="button" href="<c:url value="/restaurants/${id}/orders/pending"/>">Pending</a>
+            <a class="nav-link btn-primary" type="button" href="<c:url value="/restaurants/${id}/orders/confirmed"/>">Confirmed</a>
+            <a class="nav-link btn-primary" type="button" href="<c:url value="/restaurants/${id}/orders/ready"/>">Ready</a>
+            <a class="nav-link btn-primary" type="button" href="<c:url value="/restaurants/${id}/orders/delivered"/>">Delivered</a>
+        </div>
+    </nav>
+    <div class="table-responsive w-75">
+        <table class="table table-hover restaurant-orders-table">
+            <thead class="table-light">
+            <tr>
+                <th class="text-start" scope="col"><spring:message code="restaurantorders.table.id"/></th>
+                <th class="text-center" scope="col"><spring:message code="restaurantorders.table.order_type"/></th>
+                <th class="text-center" scope="col"><spring:message code="restaurantorders.table.table_number"/></th>
+                <th class="text-center" scope="col"><spring:message code="restaurantorders.table.address"/></th>
+                <th class="text-end" scope="col"><spring:message code="restaurantorders.table.order_date"/></th>
+            </tr>
+            </thead>
+            <tbody class="table-striped">
+            <c:forEach items="${orders}" var="order">
+                <tr
+                        class="clickable-object clickable-row"
+                        data-bs-toggle="modal"
+                        data-bs-target="#order-details"
+<%--                        data-order-status="${order.orderStatus.}"--%>
+                        data-order-type="${order.orderType.ordinal()}"
+                        data-order-id="${order.orderId}"
+                        <c:forEach items="${order.items}" var="item">
+                            data-order-item-${item.lineNumber}-line-number="<c:out value="${item.lineNumber}"/>"
+                            data-order-item-${item.lineNumber}-comment="<c:out value="${item.comment}"/>"
+                            data-order-item-${item.lineNumber}-product-name="<c:out value="${item.product.name}"/>"
+                            data-order-item-${item.lineNumber}-product-price="<c:out value="${item.product.price}"/>"
+                            data-order-item-${item.lineNumber}-quantity="<c:out value="${item.quantity}"/>"
+                        </c:forEach>
+                        data-order-items-quantity="${fn:length(order.items)}"
+                        data-order-total-price="${order.price}"
+                        data-order-customer-name="<c:out value="${order.user.name}"/>"
+                        data-order-customer-email="<c:out value="${order.user.email}"/>"
+                        data-order-table-number="<c:out value="${order.tableNumber}"/>"
+                        data-order-address="<c:out value="${order.address}"/>"
+                >
+                    <fmt:parseDate value="${order.dateOrdered}" pattern="yyyy-MM-dd'T'HH:mm:ss" var="parsedDateOrdered" type="both"/>
+                    <fmt:formatDate pattern="yyyy-MM-dd HH:mm" value="${parsedDateOrdered}" var="dateOrdered"/>
+                    <td class="text-start"><c:out value="${order.orderId}"/></td>
+                    <td class="text-center"><spring:message code="restaurant.menu.form.${order.orderType.messageCode}"/></td>
+                    <c:choose>
+                        <c:when test="${order.orderType == 'DINE_IN'}">
+                            <td class="text-center"><c:out value="${order.tableNumber}"/></td>
+                            <td class="text-center">-</td>
+                        </c:when>
+                        <c:when test="${order.orderType == 'TAKEAWAY'}">
+                            <td class="text-center">-</td>
+                            <td class="text-center">-</td>
+                        </c:when>
+                        <c:when test="${order.orderType == 'DELIVERY'}">
+                            <td class="text-center">-</td>
+                            <td class="text-center"><c:out value="${order.address}"/></td>
+                        </c:when>
+                    </c:choose>
+                    <td class="text-end"><c:out value="${dateOrdered}"/></td>
                 </tr>
-                </thead>
-                <tbody class="table-striped">
-                <c:forEach items="${orders}" var="order">
-                    <tr
-                            class="clickable-object clickable-row"
-                            data-bs-toggle="modal"
-                            data-bs-target="#order-details"
-                            data-order-status="${order.orderStatus.messageCode}"
-                            data-order-id="${order.orderId}"
-                            <c:forEach items="${order.items}" var="item">
-                                data-order-item-${item.lineNumber}-line-number="<c:out value="${item.lineNumber}"/>"
-                                data-order-item-${item.lineNumber}-comment="<c:out value="${item.comment}"/>"
-                                data-order-item-${item.lineNumber}-product-name="<c:out value="${item.product.name}"/>"
-                                data-order-item-${item.lineNumber}-product-price="<c:out value="${item.product.price}"/>"
-                                data-order-item-${item.lineNumber}-quantity="<c:out value="${item.quantity}"/>"
-                            </c:forEach>
-                            data-order-items-quantity="${fn:length(order.items)}"
-                            data-order-total-price="${order.price}"
-                    >
-                        <fmt:parseDate value="${order.dateOrdered}" pattern="yyyy-MM-dd'T'HH:mm:ss" var="parsedDateOrdered" type="both"/>
-                        <fmt:formatDate pattern="yyyy-MM-dd HH:mm" value="${parsedDateOrdered}" var="dateOrdered"/>
-                        <td class="text-start"><c:out value="${order.orderId}"/></td>
-                        <td class="text-center"><spring:message code="restaurant.menu.form.${order.orderType.messageCode}"/></td>
-                        <c:choose>
-                            <c:when test="${order.orderType == 'DINE_IN'}">
-                                <td class="text-center"><c:out value="${order.tableNumber}"/></td>
-                                <td class="text-center">-</td>
-                            </c:when>
-                            <c:when test="${order.orderType == 'TAKEAWAY'}">
-                                <td class="text-center">-</td>
-                                <td class="text-center">-</td>
-                            </c:when>
-                            <c:when test="${order.orderType == 'DELIVERY'}">
-                                <td class="text-center">-</td>
-                                <td class="text-center"><c:out value="${order.address}"/></td>
-                            </c:when>
-                        </c:choose>
-                        <td class="text-end"><c:out value="${dateOrdered}"/></td>
-                    </tr>
-                </c:forEach>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <div class="modal fade" id="order-details" tabindex="-1">
-        <div class="modal-dialog modal-dialog-scrollable modal-xl modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title"><spring:message code="restaurantorders.orderid"/><span id="order-title"></span></h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <table class="table table-hover">
-                        <thead class="table-light">
-                            <tr>
-                                <th scope="col" class="text-start">#</th>
-                                <th scope="col" class="text-center"><spring:message code="restaurantorders.modal.product_name"/></th>
-                                <th scope="col" class="text-center"><spring:message code="restaurantorders.modal.comments"/></th>
-                                <th scope="col" class="text-center"><spring:message code="restaurantorders.modal.quantity"/></th>
-                                <th scope="col" class="text-end"><spring:message code="restaurantorders.modal.product_price"/></th>
-                            </tr>
-                        </thead>
-                        <tbody id="order-items"></tbody>
-                    </table>
-                    <p style="font-weight: bold"><spring:message code="restaurantorders.modal.total"/> <span id="order-total-price"></span></p>
-                </div>
-                <div class="modal-footer">
-                    <c:url value="/restaurants/${id}/orders/$1/$2" var="changeStatus"/>
-                    <a href="" type="button" class="btn btn-primary" id="change-order-button" data-base-url="${changeStatus}"></a>
-                </div>
-            </div>
-        </div>
+            </c:forEach>
+            </tbody>
+        </table>
     </div>
 </main>
 
+<div class="modal fade" id="order-details" tabindex="-1">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><spring:message code="restaurantorders.orderid"/><span id="order-title"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h4>Order Items</h4>
+                <table class="table table-hover">
+                    <thead class="table-light">
+                    <tr>
+                        <th scope="col" class="text-start">#</th>
+                        <th scope="col" class="text-center"><spring:message code="restaurantorders.modal.product_name"/></th>
+                        <th scope="col" class="text-center"><spring:message code="restaurantorders.modal.comments"/></th>
+                        <th scope="col" class="text-center"><spring:message code="restaurantorders.modal.quantity"/></th>
+                        <th scope="col" class="text-end"><spring:message code="restaurantorders.modal.product_price"/></th>
+                    </tr>
+                    </thead>
+                    <tbody id="order-items"></tbody>
+                </table>
+                <h4>More Details</h4>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex align-items-center">
+                        <i class="bi bi-person me-3"></i>
+                        <div>
+                            <small class="text-muted">Customer</small>
+                            <p class="mb-0" id="order-details-customer">
+                            </p>
+                        </div>
+                    </li>
+                    <li class="list-group-item d-flex align-items-center order-details-0-data">
+                        <i class="bi bi-card-list me-3"></i>
+                        <div>
+                            <small class="text-muted"><spring:message code="userorders.ordertype"/></small>
+                            <p class="mb-0">
+                                <spring:message code="restaurant.menu.form.dinein"/>
+                            </p>
+                        </div>
+                    </li>
+                    <li class="list-group-item d-flex align-items-center order-details-0-data">
+                        <i class="bi bi-hash me-3"></i>
+                        <div>
+                            <small class="text-muted"><spring:message code="restaurant.menu.form.tablenumber"/></small>
+                            <p class="mb-0" id="order-details-table-number">
+                            </p>
+                        </div>
+                    </li>
+                    <li class="list-group-item d-flex align-items-center order-details-1-data">
+                        <i class="bi bi-card-list me-3"></i>
+                        <div>
+                            <small class="text-muted"><spring:message code="userorders.ordertype"/></small>
+                            <p class="mb-0">
+                                <spring:message code="restaurant.menu.form.takeaway"/>
+                            </p>
+                        </div>
+                    </li>
+                    <li class="list-group-item d-flex align-items-center order-details-2-data">
+                        <i class="bi bi-card-list me-3"></i>
+                        <div>
+                            <small class="text-muted"><spring:message code="userorders.ordertype"/></small>
+                            <p class="mb-0">
+                                <spring:message code="restaurant.menu.form.delivery"/>
+                            </p>
+                        </div>
+                    </li>
+                    <li class="list-group-item d-flex align-items-center order-details-2-data">
+                        <i class="bi bi-geo-alt me-3"></i>
+                        <div>
+                            <small class="text-muted"><spring:message code="restaurant.menu.form.address"/></small>
+                            <p class="mb-0" id="order-details-address">
+                            </p>
+                        </div>
+                    </li>
+                    <li class="list-group-item d-flex align-items-center">
+                        <i class="bi bi-cash me-3"></i>
+                        <div>
+                            <small class="text-muted"><spring:message code="restaurantorders.modal.total"/></small>
+                            <p class="mb-0" id="order-total-price">
+                            </p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <c:url value="/orders/$1/$2" var="changeStatus"/>
+                <a href="" type="button" class="btn btn-primary" id="change-order-button" data-base-url="${changeStatus}"></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%-- PAGINATION --%>
 <c:choose>
     <c:when test="${empty param.page}">
         <c:set var="currentPage" value="1"/>

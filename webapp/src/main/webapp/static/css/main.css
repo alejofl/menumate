@@ -461,7 +461,7 @@ input:has(+ .form-error), textarea:has(+ .form-error) {
     margin-right: 12px;
 }
 
-.order-card i, .order-details-card i {
+.order-card i, .order-details-card i, #order-details i {
     color: var(--primary);
     margin-right: 8px;
 }
@@ -593,16 +593,13 @@ input:has(+ .form-error), textarea:has(+ .form-error) {
 }
 
 .restaurant-orders-view {
-    display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     width: 100%;
 }
 
-.restaurant-orders-table {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+.restaurant-orders-table tr {
+    height: 50px;
+    vertical-align: middle;
 }
