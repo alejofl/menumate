@@ -33,6 +33,8 @@ public interface OrderDao {
 
     boolean markAsCancelled(int orderId);
 
+    boolean setOrderStatus(int orderId, OrderStatus orderStatus);
+
     boolean updateAddress(int orderId, String address);
 
     boolean updateTableNumber(int orderId, int tableNumber);
