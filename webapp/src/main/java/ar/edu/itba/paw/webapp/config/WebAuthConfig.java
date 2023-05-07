@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -67,10 +68,13 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
                 // Request authorization
                 .and().authorizeRequests()
-                .antMatchers("/restaurants/{restaurant_id:\\d+}/edit").access("@accessValidator.checkRestaurantAdmin(request, #restaurant_id)")
-                .antMatchers("/restaurants/{restaurant_id:\\d+}/orders").access("@accessValidator.checkRestaurantOrderHandler(request, #restaurant_id)")
-                .antMatchers("/orders/{order_id:\\d+}").access("@accessValidator.checkOrderOwner(request, #order_id)")
-                .antMatchers("/orders/**").authenticated()
+                .antMatchers("/restaurants/{restaurant_id:\\d+}/edit").access("@accessValidator.checkRestaurantAdmin(#restaurant_id)")
+                .antMatchers(HttpMethod.GET, "/restaurants/{restaurant_id:\\d+}/orders").access("@accessValidator.checkRestaurantOrderHandler(#restaurant_id)")
+                .antMatchers(HttpMethod.GET, "/orders/{order_id:\\d+}/**").access("@accessValidator.checkOrderOwnerOrHandler(#order_id)")
+                .antMatchers(HttpMethod.POST, "/orders/{order_id:\\d+}/pending").access("@accessValidator.checkOrderHandler(#order_id)")
+                .antMatchers(HttpMethod.POST, "/orders/{order_id:\\d+}/confirmed").access("@accessValidator.checkOrderHandler(#order_id)")
+                .antMatchers(HttpMethod.POST, "/orders/{order_id:\\d+}/ready").access("@accessValidator.checkOrderHandler(#order_id)")
+                .antMatchers(HttpMethod.POST, "/orders/{order_id:\\d+}/delivered").access("@accessValidator.checkOrderHandler(#order_id)")
                 .antMatchers("/restaurants/create").authenticated()
                 .antMatchers("/**").permitAll()
                 .and().exceptionHandling().accessDeniedPage("/403")

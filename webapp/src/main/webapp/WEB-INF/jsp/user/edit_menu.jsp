@@ -107,7 +107,7 @@
                     </div>
                     <div class="mb-3">
                         <form:label path="description" class="form-label"><spring:message code="editmenu.addproduct.form.description"/></form:label>
-                        <textarea class="form-control" name="description" id="add-item-modal-description" rows="3"></textarea>
+                        <form:textarea class="form-control" path="description" id="add-item-modal-description" rows="3"/>
                         <form:errors path="description" element="div" cssClass="form-error"/>
                     </div>
                     <div class="mb-3">
