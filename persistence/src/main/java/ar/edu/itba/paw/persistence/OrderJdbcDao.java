@@ -10,10 +10,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Repository
 public class OrderJdbcDao implements OrderDao {
@@ -84,16 +81,20 @@ public class OrderJdbcDao implements OrderDao {
     }
 
     private void insertItems(List<OrderItem> items, int orderId) {
-        final Map<String, Object> orderItemData = new HashMap<>();
-        for (OrderItem item : items) {
-            orderItemData.clear();
-            orderItemData.put("order_id", orderId);
-            orderItemData.put("product_id", item.getProduct().getProductId());
-            orderItemData.put("line_number", item.getLineNumber());
-            orderItemData.put("quantity", item.getQuantity());
-            orderItemData.put("comment", item.getComment());
-            jdbcInsertOrderItem.execute(orderItemData);
+        final Map<String, Object>[] orderItemDatas = new Map[items.size()];
+
+        for (int i = 0; i < items.size(); i++) {
+            OrderItem item = items.get(i);
+            Map<String, Object> map = new HashMap<>();
+            map.put("order_id", orderId);
+            map.put("product_id", item.getProduct().getProductId());
+            map.put("line_number", i + 1);
+            map.put("quantity", item.getQuantity());
+            map.put("comment", item.getComment());
+            orderItemDatas[i] = map;
         }
+
+        jdbcInsertOrderItem.executeBatch(orderItemDatas);
     }
 
     @Override
