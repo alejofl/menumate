@@ -25,7 +25,7 @@ public class AccessValidator {
     @Autowired
     private RolesService rolesService;
 
-    public boolean checkRestaurantRole(HttpServletRequest request, int restaurantId, RestaurantRoleLevel minimumRoleLevel) {
+    public boolean checkRestaurantRole(int restaurantId, RestaurantRoleLevel minimumRoleLevel) {
         User currentUser = ControllerUtils.getCurrentUserOrNull(userService);
         if (currentUser == null)
             return false;
@@ -33,24 +33,34 @@ public class AccessValidator {
         return rolesService.doesUserHaveRole(currentUser.getUserId(), restaurantId, minimumRoleLevel);
     }
 
-    public boolean checkRestaurantOwner(HttpServletRequest request, int restaurantId) {
-        return checkRestaurantRole(request, restaurantId, RestaurantRoleLevel.OWNER);
+    public boolean checkRestaurantOwner(int restaurantId) {
+        return checkRestaurantRole(restaurantId, RestaurantRoleLevel.OWNER);
     }
 
-    public boolean checkRestaurantAdmin(HttpServletRequest request, int restaurantId) {
-        return checkRestaurantRole(request, restaurantId, RestaurantRoleLevel.ADMIN);
+    public boolean checkRestaurantAdmin(int restaurantId) {
+        return checkRestaurantRole(restaurantId, RestaurantRoleLevel.ADMIN);
     }
 
-    public boolean checkRestaurantManager(HttpServletRequest request, int restaurantId) {
-        return checkRestaurantRole(request, restaurantId, RestaurantRoleLevel.MANAGER);
+    public boolean checkRestaurantManager(int restaurantId) {
+        return checkRestaurantRole(restaurantId, RestaurantRoleLevel.MANAGER);
     }
 
-    public boolean checkRestaurantOrderHandler(HttpServletRequest request, int restaurantId) {
-        return checkRestaurantRole(request, restaurantId, RestaurantRoleLevel.ORDER_HANDLER);
+    public boolean checkRestaurantOrderHandler(int restaurantId) {
+        return checkRestaurantRole(restaurantId, RestaurantRoleLevel.ORDER_HANDLER);
     }
 
-    public boolean checkOrderOwner(HttpServletRequest request, int orderId) {
-        OrderItemless order = orderService.getByIdExcludeItems(orderId).orElseThrow(OrderNotFoundException::new);
-        return order.getUser().getEmail().equals(ControllerUtils.getCurrentUserEmail());
+    public boolean checkOrderOwner(int orderId) {
+        OrderItemless order = orderService.getByIdExcludeItems(orderId).orElse(null);
+        return order != null && order.getUser().getEmail().equals(ControllerUtils.getCurrentUserEmail());
+    }
+
+    public boolean checkOrderHandler(int orderId) {
+        OrderItemless order = orderService.getByIdExcludeItems(orderId).orElse(null);
+        return order != null && checkRestaurantOrderHandler(order.getRestaurant().getRestaurantId());
+    }
+
+    public boolean checkOrderOwnerOrHandler(int orderId) {
+        OrderItemless order = orderService.getByIdExcludeItems(orderId).orElse(null);
+        return order != null && (order.getUser().getEmail().equals(ControllerUtils.getCurrentUserEmail()) || checkRestaurantOrderHandler(order.getRestaurant().getRestaurantId()));
     }
 }
