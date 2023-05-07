@@ -44,23 +44,8 @@ document.addEventListener("DOMContentLoaded", () => {
               });
           }
 
-          let orderStatus = element.dataset.orderStatus;
-          let changeStatusButton = document.querySelector("#change-order-button");
-          if (orderStatus === "0") {
-              let url = changeStatusButton.dataset.baseUrl.replace("$1", element.dataset.orderId).replace("$2", `confirm`);
-              changeStatusButton.href = url;
-              changeStatusButton.innerHTML = `Confirm`;
-          } else if (orderStatus === "1") {
-              let url = changeStatusButton.dataset.baseUrl.replace("$1", element.dataset.orderId).replace("$2", `ready`);
-              changeStatusButton.href = url;
-              changeStatusButton.innerHTML = `Ready`;
-          } else if (orderStatus === "2") {
-              let url = changeStatusButton.dataset.baseUrl.replace("$1", element.dataset.orderId).replace("$2", `deliver`);
-              changeStatusButton.href = url;
-              changeStatusButton.innerHTML = `Deliver`;
-          } else {
-              changeStatusButton.remove();
-          }
+          document.querySelector("#cancel-order-form").action = document.querySelector("#cancel-order-form").action.replace("$1", element.dataset.orderId);
+          document.querySelector("#change-order-status-form").action = document.querySelector("#change-order-status-form").action.replace("$1", element.dataset.orderId);
       });
    });
 

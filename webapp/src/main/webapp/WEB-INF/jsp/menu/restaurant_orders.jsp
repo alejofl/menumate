@@ -14,7 +14,7 @@
 </head>
 <body>
 <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
-<c:if test="${error}">
+<c:if test="${error || param.error == '1'}">
     <jsp:include page="/WEB-INF/jsp/components/param_error.jsp"/>
 </c:if>
 <div class="page-title">
@@ -46,7 +46,6 @@
                         class="clickable-object clickable-row"
                         data-bs-toggle="modal"
                         data-bs-target="#order-details"
-<%--                        data-order-status="${order.orderStatus.}"--%>
                         data-order-type="${order.orderType.ordinal()}"
                         data-order-id="${order.orderId}"
                         <c:forEach items="${order.items}" var="item">
@@ -173,10 +172,30 @@
                     </li>
                 </ul>
             </div>
-            <div class="modal-footer">
-                <c:url value="/orders/$1/$2" var="changeStatus"/>
-                <a href="" type="button" class="btn btn-primary" id="change-order-button" data-base-url="${changeStatus}"></a>
-            </div>
+            <c:if test="${status != 'delivered'}">
+                <div class="modal-footer">
+                    <form action="<c:url value="/orders/$1/cancel"/>" method="post" id="cancel-order-form">
+                        <button type="submit" class="btn btn-danger">Cancel</button>
+                    </form>
+                    <c:choose>
+                        <c:when test="${status == 'pending'}">
+                            <form action="<c:url value="/orders/$1/confirm"/>" method="post" id="change-order-status-form">
+                                <button type="submit" class="btn btn-primary">Confirm</button>
+                            </form>
+                        </c:when>
+                        <c:when test="${status == 'confirmed'}">
+                            <form action="<c:url value="/orders/$1/ready"/>" method="post" id="change-order-status-form">
+                                <button type="submit" class="btn btn-primary">Ready</button>
+                            </form>
+                        </c:when>
+                        <c:when test="${status == 'ready'}">
+                            <form action="<c:url value="/orders/$1/deliver"/>" method="post" id="change-order-status-form">
+                                <button type="submit" class="btn btn-primary">Deliver</button>
+                            </form>
+                        </c:when>
+                    </c:choose>
+                </div>
+            </c:if>
         </div>
     </div>
 </div>
@@ -202,7 +221,7 @@
 <nav class="d-flex justify-content-center">
     <ul class="pagination">
         <li class="page-item">
-            <c:url value="/restaurants/${id}/orders" var="previousUrl">
+            <c:url value="/restaurants/${id}/orders/${status}" var="previousUrl">
                 <c:param name="page" value="${currentPage - 1}"/>
                 <c:param name="size" value="${currentSize}"/>
             </c:url>
@@ -211,14 +230,14 @@
             </a>
         </li>
         <c:forEach begin="1" end="${pageCount}" var="pageNo">
-            <c:url value="/restaurants/${id}/orders" var="pageUrl">
+            <c:url value="/restaurants/${id}/orders/${status}" var="pageUrl">
                 <c:param name="page" value="${pageNo}"/>
                 <c:param name="size" value="${currentSize}"/>
             </c:url>
             <li class="page-item ${pageNo == currentPage ? "active" : ""}"><a class="page-link" href="${pageUrl}">${pageNo}</a></li>
         </c:forEach>
         <li class="page-item">
-            <c:url value="/restaurants/${id}/orders" var="nextUrl">
+            <c:url value="/restaurants/${id}/orders/${status}" var="nextUrl">
                 <c:param name="page" value="${currentPage + 1}"/>
                 <c:param name="size" value="${currentSize}"/>
             </c:url>

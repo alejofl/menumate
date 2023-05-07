@@ -4,6 +4,7 @@ import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.model.OrderStatus;
 import ar.edu.itba.paw.model.util.PaginatedResult;
 import ar.edu.itba.paw.service.OrderService;
+import ar.edu.itba.paw.webapp.exception.OrderNotFoundException;
 import ar.edu.itba.paw.webapp.form.PagingForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -41,6 +42,7 @@ public class RestaurantOrdersController {
         ModelAndView mav = new ModelAndView("menu/restaurant_orders");
 
         mav.addObject("orders", orders.getResult());
+        mav.addObject("status", orderStatus.getMessageCode());
         mav.addObject("orderCount", orders.getTotalCount());
         mav.addObject("pageCount", orders.getTotalPageCount());
         mav.addObject("id", id);
@@ -89,21 +91,31 @@ public class RestaurantOrdersController {
         return new ModelAndView(String.format("redirect:/restaurants/%d/orders/pending", id));
     }
 
-    @RequestMapping(value = "/restaurants/{restaurantId:\\d+}/orders/{orderId:\\d+}/confirm", method = RequestMethod.GET)
-    public ModelAndView confirmOrder(@PathVariable final int restaurantId, @PathVariable final int orderId) {
-        orderService.markAsConfirmed(orderId);
-        return new ModelAndView(String.format("redirect:/restaurants/%d/orders/pending", restaurantId));
+    @RequestMapping(value = "/orders/{orderId:\\d+}/confirm", method = RequestMethod.POST)
+    public ModelAndView confirmOrder(@PathVariable final int orderId) {
+        Order order = orderService.getById(orderId).orElseThrow(OrderNotFoundException::new);
+        boolean success = orderService.markAsConfirmed(orderId);
+        return new ModelAndView(String.format("redirect:/restaurants/%d/orders/pending%s", order.getRestaurant().getRestaurantId(), success ? "" : "?error=1"));
     }
 
-    @RequestMapping(value = "/restaurants/{restaurantId:\\d+}/orders/{orderId:\\d+}/ready", method = RequestMethod.GET)
-    public ModelAndView readyOrder(@PathVariable final int restaurantId, @PathVariable final int orderId) {
-        orderService.markAsReady(orderId);
-        return new ModelAndView(String.format("redirect:/restaurants/%d/orders/confirmed", restaurantId));
+    @RequestMapping(value = "/orders/{orderId:\\d+}/ready", method = RequestMethod.POST)
+    public ModelAndView readyOrder(@PathVariable final int orderId) {
+        Order order = orderService.getById(orderId).orElseThrow(OrderNotFoundException::new);
+        boolean success = orderService.markAsReady(orderId);
+        return new ModelAndView(String.format("redirect:/restaurants/%d/orders/confirmed%s", order.getRestaurant().getRestaurantId(), success ? "" : "?error=1"));
     }
 
-    @RequestMapping(value = "/restaurants/{restaurantId:\\d+}/orders/{orderId:\\d+}/deliver", method = RequestMethod.GET)
-    public ModelAndView deliverOrder(@PathVariable final int restaurantId, @PathVariable final int orderId) {
-        orderService.markAsDelivered(orderId);
-        return new ModelAndView(String.format("redirect:/restaurants/%d/orders/deliver", restaurantId));
+    @RequestMapping(value = "/orders/{orderId:\\d+}/deliver", method = RequestMethod.POST)
+    public ModelAndView deliverOrder(@PathVariable final int orderId) {
+        Order order = orderService.getById(orderId).orElseThrow(OrderNotFoundException::new);
+        boolean success = orderService.markAsDelivered(orderId);
+        return new ModelAndView(String.format("redirect:/restaurants/%d/orders/ready%s", order.getRestaurant().getRestaurantId(), success ? "" : "?error=1"));
+    }
+
+    @RequestMapping(value = "/orders/{orderId:\\d+}/cancel", method = RequestMethod.POST)
+    public ModelAndView cancelOrder(@PathVariable final int orderId) {
+        Order order = orderService.getById(orderId).orElseThrow(OrderNotFoundException::new);
+        boolean success = orderService.markAsCancelled(orderId);
+        return new ModelAndView(String.format("redirect:/restaurants/%d/orders/pending%s", order.getRestaurant().getRestaurantId(), success ? "" : "?error=1"));
     }
 }
