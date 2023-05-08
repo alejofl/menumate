@@ -14,3 +14,5 @@
 <c:url var="maincssUrl" value="/static/css/main.css"/>
 <link rel="stylesheet" href="${maincssUrl}">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.4/font/bootstrap-icons.css">
+<c:url var="mainJSUrl" value="/static/js/main.js"/>
+<script src="${mainJSUrl}"></script>
