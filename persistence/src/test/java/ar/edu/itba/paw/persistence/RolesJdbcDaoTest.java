@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.RestaurantRoleLevel;
-import ar.edu.itba.paw.persistance.RolesDao;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import org.junit.Assert;
 import org.junit.Before;
@@ -41,7 +40,7 @@ public class RolesJdbcDaoTest {
     private DataSource ds;
 
     @Autowired
-    private RolesDao rolesDao;
+    private RolesJdbcDao rolesDao;
 
     private JdbcTemplate jdbcTemplate;
 
@@ -94,5 +93,31 @@ public class RolesJdbcDaoTest {
 
         Assert.assertTrue(role.isPresent());
         Assert.assertEquals(ROLE, role.get());
+    }
+
+    @Test
+    public void testHasRoleWhenOwner() {
+        Assert.assertTrue(rolesDao.doesUserHaveRole(OWNER_ID, RESTAURANT_ID1, RestaurantRoleLevel.OWNER));
+        Assert.assertTrue(rolesDao.doesUserHaveRole(OWNER_ID, RESTAURANT_ID1, RestaurantRoleLevel.ADMIN));
+        Assert.assertTrue(rolesDao.doesUserHaveRole(OWNER_ID, RESTAURANT_ID1, RestaurantRoleLevel.MANAGER));
+        Assert.assertTrue(rolesDao.doesUserHaveRole(OWNER_ID, RESTAURANT_ID1, RestaurantRoleLevel.ORDER_HANDLER));
+    }
+
+    @Test
+    public void testHasRoleWhenNothing() {
+        Assert.assertFalse(rolesDao.doesUserHaveRole(USER_ID, RESTAURANT_ID1, RestaurantRoleLevel.OWNER));
+        Assert.assertFalse(rolesDao.doesUserHaveRole(USER_ID, RESTAURANT_ID1, RestaurantRoleLevel.ADMIN));
+        Assert.assertFalse(rolesDao.doesUserHaveRole(USER_ID, RESTAURANT_ID1, RestaurantRoleLevel.MANAGER));
+        Assert.assertFalse(rolesDao.doesUserHaveRole(USER_ID, RESTAURANT_ID1, RestaurantRoleLevel.ORDER_HANDLER));
+    }
+
+    @Test
+    public void testHasRoleWhenManager() {
+        jdbcTemplate.execute("INSERT INTO restaurant_roles (user_id, restaurant_id, role_level) VALUES (" + USER_ID + ", " + RESTAURANT_ID1 + ", " + RestaurantRoleLevel.MANAGER.ordinal() + ")");
+
+        Assert.assertFalse(rolesDao.doesUserHaveRole(USER_ID, RESTAURANT_ID1, RestaurantRoleLevel.OWNER));
+        Assert.assertFalse(rolesDao.doesUserHaveRole(USER_ID, RESTAURANT_ID1, RestaurantRoleLevel.ADMIN));
+        Assert.assertTrue(rolesDao.doesUserHaveRole(USER_ID, RESTAURANT_ID1, RestaurantRoleLevel.MANAGER));
+        Assert.assertTrue(rolesDao.doesUserHaveRole(USER_ID, RESTAURANT_ID1, RestaurantRoleLevel.ORDER_HANDLER));
     }
 }

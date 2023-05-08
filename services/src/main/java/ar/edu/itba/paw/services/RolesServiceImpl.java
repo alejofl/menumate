@@ -23,4 +23,9 @@ public class RolesServiceImpl implements RolesService {
     public boolean setRole(int userId, int restaurantId, RestaurantRoleLevel level) {
         return rolesDao.setRole(userId, restaurantId, level);
     }
+
+    @Override
+    public boolean doesUserHaveRole(int userId, int restaurantId, RestaurantRoleLevel minimumRoleLevel) {
+        return rolesDao.doesUserHaveRole(userId, restaurantId, minimumRoleLevel);
+    }
 }

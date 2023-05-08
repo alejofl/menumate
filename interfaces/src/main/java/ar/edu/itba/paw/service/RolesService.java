@@ -17,11 +17,8 @@ public interface RolesService {
      */
     boolean setRole(int userId, int restaurantId, RestaurantRoleLevel roleLevel);
 
-    default boolean doesUserHaveRole(int userId, int restaurantId, RestaurantRoleLevel minimumRoleLevel) {
-        Optional<RestaurantRoleLevel> roleLevel = getRole(userId, restaurantId);
-        if (!roleLevel.isPresent())
-            return false;
-
-        return roleLevel.get().hasPermissionOf(minimumRoleLevel);
-    }
+    /**
+     * Returns whether a given user has a given role level or higher at a given restaurant.
+     */
+    boolean doesUserHaveRole(int userId, int restaurantId, RestaurantRoleLevel minimumRoleLevel);
 }

@@ -16,4 +16,9 @@ public interface RolesDao {
      * @return True if the operation was successful
      */
     boolean setRole(int userId, int restaurantId, RestaurantRoleLevel roleLevel);
+
+    /**
+     * Returns whether a given user has a given role level or higher at a given restaurant.
+     */
+    boolean doesUserHaveRole(int userId, int restaurantId, RestaurantRoleLevel minimumRoleLevel);
 }

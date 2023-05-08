@@ -4,6 +4,7 @@ import ar.edu.itba.paw.model.RestaurantRoleLevel;
 import ar.edu.itba.paw.persistance.RolesDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -46,5 +47,24 @@ public class RolesJdbcDao implements RolesDao {
                 level.ordinal()
         );
         return rowsAffected != 0;
+    }
+
+    @Override
+    public boolean doesUserHaveRole(int userId, int restaurantId, RestaurantRoleLevel minimumRoleLevel) {
+        if (minimumRoleLevel == RestaurantRoleLevel.OWNER) {
+            SqlRowSet result = jdbcTemplate.queryForRowSet(
+                    "SELECT EXISTS(SELECT * FROM restaurants WHERE restaurant_id = ? AND owner_user_id = ?) AS is_owner",
+                    restaurantId,
+                    userId
+            );
+
+            return result.next() && result.getBoolean("is_owner");
+        }
+
+        Optional<RestaurantRoleLevel> roleLevel = getRole(userId, restaurantId);
+        if (!roleLevel.isPresent())
+            return false;
+
+        return roleLevel.get().hasPermissionOf(minimumRoleLevel);
     }
 }
