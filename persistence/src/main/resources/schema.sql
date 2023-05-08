@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS restaurant_roles
 (
     user_id       INT REFERENCES users (user_id) ON DELETE CASCADE NOT NULL,
     restaurant_id INT REFERENCES restaurants (restaurant_id) ON DELETE CASCADE NOT NULL,
-    role_level    SMALLINT NOT NULL,
+    role_level    SMALLINT NOT NULL CHECK (role_level > 0),
 
     PRIMARY KEY (user_id, restaurant_id)
 );
@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS order_items
 (
     order_id    INT REFERENCES orders (order_id) ON DELETE CASCADE NOT NULL,
     product_id  INT REFERENCES products (product_id) ON DELETE CASCADE NOT NULL,
-    line_number SMALLINT NOT NULL,
+    line_number SMALLINT NOT NULL CHECK (line_number > 0),
     quantity    SMALLINT NOT NULL CHECK (quantity > 0),
     comment     VARCHAR(120),
 
