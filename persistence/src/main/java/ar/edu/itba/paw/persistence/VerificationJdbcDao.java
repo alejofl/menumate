@@ -15,7 +15,7 @@ import java.util.UUID;
 @Repository
 public class VerificationJdbcDao implements VerificationDao {
 
-    private static final Integer TOKEN_DURATION_DAYS = 2;
+    private static final Integer TOKEN_DURATION_DAYS = 1;
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
@@ -60,6 +60,15 @@ public class VerificationJdbcDao implements VerificationDao {
     @Override
     public boolean deleteVerificationToken(String email) {
         return jdbcTemplate.update("DELETE FROM user_verification_codes WHERE email = ?", email) > 0;
+    }
+
+    @Override
+    public boolean verificationTokenIsStaled(String email){
+        Pair<Optional<String>, LocalDateTime> tokenInfo = getTokenInfo(email);
+        if(tokenInfo == null || !tokenInfo.getKey().isPresent()){
+            return true;
+        }
+        return tokenInfo.getValue().isBefore(LocalDateTime.now());
     }
 
 }

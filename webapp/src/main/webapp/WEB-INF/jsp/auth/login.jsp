@@ -22,6 +22,11 @@
                             <spring:message code="login.notVerified"/>
                         </div>
                     </c:when>
+                    <c:when test="${param.error=='mailer_error'}">
+                        <div class="alert alert-danger" role="alert">
+                            <spring:message code="login.mailerError"/>
+                        </div>
+                    </c:when>
                     <c:otherwise>
                         <div class="alert alert-danger" role="alert">
                             <spring:message code="login.invalidcredentials"/>

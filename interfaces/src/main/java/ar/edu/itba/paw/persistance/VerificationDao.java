@@ -9,4 +9,6 @@ public interface VerificationDao {
     void deleteStaledVerificationTokens();
 
     boolean deleteVerificationToken(String email);
+
+    boolean verificationTokenIsStaled(String email);
 }

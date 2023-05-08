@@ -30,7 +30,7 @@ public class PawUserDetailsService implements UserDetailsService {
         boolean isActive = userAndPassword.getKey().getIsActive();
 
         if (!isActive)
-            throw new UserNotVerifiedException("User exists but is not verified");
+            throw new UserNotVerifiedException("User exists but is not verified", email);
 
         if (userPassword == null)
             throw new UsernameNotFoundException("User exists but is not consolidated");

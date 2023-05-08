@@ -30,6 +30,11 @@ public class VerificationServiceImpl implements VerificationService {
     }
 
     @Override
+    public boolean verificationTokenIsStaled(String email) {
+        return verificationDao.verificationTokenIsStaled(email);
+    }
+
+    @Override
     public boolean deleteVerificationToken(String email) {
         return verificationDao.deleteVerificationToken(email);
     }
