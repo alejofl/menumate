@@ -3,12 +3,14 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.util.PaginatedResult;
 import ar.edu.itba.paw.persistance.OrderDao;
+import ar.edu.itba.paw.service.EmailService;
 import ar.edu.itba.paw.service.OrderService;
 import ar.edu.itba.paw.service.ProductService;
 import ar.edu.itba.paw.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +24,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private EmailService emailService;
 
     private int getOrCreateUserId(String name, String email) {
         return userService.createIfNotExists(email, name).getUserId();
@@ -106,22 +111,54 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public boolean markAsConfirmed(int orderId) {
-        return orderDao.markAsConfirmed(orderId);
+        boolean success = orderDao.markAsConfirmed(orderId);
+        if (success) {
+            try {
+                emailService.sendOrderConfirmation(this.getById(orderId).get());
+            } catch (MessagingException e) {
+                e.printStackTrace();
+            }
+        }
+        return success;
     }
 
     @Override
     public boolean markAsReady(int orderId) {
-        return orderDao.markAsReady(orderId);
+        boolean success = orderDao.markAsReady(orderId);
+        if (success) {
+            try {
+                emailService.sendOrderReady(this.getById(orderId).get());
+            } catch (MessagingException e) {
+                e.printStackTrace();
+            }
+        }
+        return success;
     }
 
     @Override
     public boolean markAsDelivered(int orderId) {
-        return orderDao.markAsDelivered(orderId);
+        boolean success = orderDao.markAsDelivered(orderId);
+        if (success) {
+            try {
+                emailService.sendOrderDelivered(this.getById(orderId).get());
+            } catch (MessagingException e) {
+                e.printStackTrace();
+            }
+        }
+        return success;
     }
 
     @Override
     public boolean markAsCancelled(int orderId) {
-        return orderDao.markAsCancelled(orderId);
+        boolean success = orderDao.markAsCancelled(orderId);
+        if (success) {
+            try {
+                emailService.sendOrderCancelled(this.getById(orderId).get());
+            } catch (MessagingException e) {
+                e.printStackTrace();
+            }
+        }
+        return success;
     }
 
     @Override
