@@ -29,6 +29,20 @@
                     </c:otherwise>
                 </c:choose>
             </c:if>
+            <c:if test="${param.verify != null}">
+                <c:choose>
+                    <c:when test="${param.verify=='verified'}">
+                        <div class="alert alert-success" role="alert">
+                            <spring:message code="login.verify.verified"/>
+                        </div>
+                    </c:when>
+                    <c:otherwise>
+                        <div class="alert alert-success" role="alert">
+                            <spring:message code="login.verify.emailed"/>
+                        </div>
+                    </c:otherwise>
+                </c:choose>
+            </c:if>
             <form action="<c:url value="/auth/login"/>" method="post">
                 <div class="mb-3">
                     <label for="login-email" class="form-label"><spring:message code="login.email"/></label>

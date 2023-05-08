@@ -59,4 +59,10 @@ public class UserServiceImpl implements UserService {
         Optional<User> user = this.getByEmail(email);
         return user.orElseGet(() -> this.create(email, null, name));
     }
+
+    @Override
+    public boolean verifyAccount(String email) {
+        return userDao.verifyAccount(email);
+    }
+
 }

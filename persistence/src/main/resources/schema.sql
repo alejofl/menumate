@@ -15,6 +15,15 @@ CREATE TABLE IF NOT EXISTS users
     is_active   BOOLEAN NOT NULL DEFAULT FALSE
 );
 
+CREATE TABLE IF NOT EXISTS user_verification_codes
+(
+    email   VARCHAR(320),
+    code    VARCHAR(8) NOT NULL,
+    expires TIMESTAMP NOT NULL,
+
+    PRIMARY KEY (email)
+    );
+
 CREATE TABLE IF NOT EXISTS restaurants
 (
     restaurant_id SERIAL PRIMARY KEY,

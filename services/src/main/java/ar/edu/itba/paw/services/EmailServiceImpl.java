@@ -136,4 +136,16 @@ public class EmailServiceImpl implements EmailService {
                 params
         );
     }
+
+    @Override
+    public void sendUserVerificationEmail(String baseUrl, String email, String token) throws MessagingException {
+        final Map<String, Object> params = new HashMap<>();
+        params.put("link", baseUrl + "/auth/verify?token=" + token + "&email=" + email);
+        this.sendMessageUsingThymeleafTemplate(
+                "user_verification",
+                email,
+                "MenuMate - Verify your account",
+                params
+        );
+    }
 }
