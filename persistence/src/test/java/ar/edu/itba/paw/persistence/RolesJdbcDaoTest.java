@@ -1,7 +1,8 @@
-package ar.edu.itba.paw.persistence.config;
+package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.RestaurantRoleLevel;
 import ar.edu.itba.paw.persistance.RolesDao;
+import ar.edu.itba.paw.persistence.config.TestConfig;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,6 +34,8 @@ public class RolesJdbcDaoTest {
     private static final String RESTAURANT_NAME2 = "La Mejor Pizza";
     private static final String RESTAURANT_EMAIL2 = "pizzeria@pizza.com";
     private static final RestaurantRoleLevel ROLE = RestaurantRoleLevel.MANAGER;
+    private static final int USER_ID_NONE = 1234;
+    private static final int RESTAURANT_ID_NONE = 1234;
 
     @Autowired
     private DataSource ds;
@@ -53,8 +56,26 @@ public class RolesJdbcDaoTest {
     }
 
     @Test
-    public void testGetRoleWhenNone() {
+    public void testGetNoRoleOnNonexistingUserNonexistingRestaurant() {
+        Assert.assertFalse(rolesDao.getRole(USER_ID_NONE, RESTAURANT_ID_NONE).isPresent());
+    }
+
+    @Test
+    public void testGetNoRoleOnNonexistingUser() {
+        Assert.assertFalse(rolesDao.getRole(USER_ID_NONE, RESTAURANT_ID1).isPresent());
+        Assert.assertFalse(rolesDao.getRole(USER_ID_NONE, RESTAURANT_ID2).isPresent());
+    }
+
+    @Test
+    public void testGetNoRoleOnNonexistingRestaurant() {
+        Assert.assertFalse(rolesDao.getRole(USER_ID, RESTAURANT_ID_NONE).isPresent());
+        Assert.assertFalse(rolesDao.getRole(OWNER_ID, RESTAURANT_ID_NONE).isPresent());
+    }
+
+    @Test
+    public void testGetNoRole() {
         Assert.assertFalse(rolesDao.getRole(USER_ID, RESTAURANT_ID1).isPresent());
+        Assert.assertFalse(rolesDao.getRole(USER_ID, RESTAURANT_ID2).isPresent());
     }
 
     @Test
