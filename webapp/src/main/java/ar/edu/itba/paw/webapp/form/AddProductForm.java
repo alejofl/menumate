@@ -2,12 +2,10 @@ package ar.edu.itba.paw.webapp.form;
 
 import ar.edu.itba.paw.webapp.form.validation.Image;
 import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
+import java.math.BigDecimal;
 
 public class AddProductForm {
     @NotNull
@@ -24,8 +22,9 @@ public class AddProductForm {
     private MultipartFile image;
 
     @NotNull
-    @Min(0)
-    private Double price;
+    @DecimalMin(value = "0", inclusive = true)
+    @Digits(integer = 8, fraction = 2)
+    private BigDecimal price;
 
     public Integer getCategoryId() {
         return categoryId;
@@ -59,11 +58,11 @@ public class AddProductForm {
         this.image = image;
     }
 
-    public Double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 }

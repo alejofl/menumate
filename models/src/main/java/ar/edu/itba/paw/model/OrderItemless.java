@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class OrderItemless {
@@ -15,9 +16,9 @@ public class OrderItemless {
     private final String address;
     private final int tableNumber;
     private final int itemCount;
-    private final double price;
+    private final BigDecimal price;
 
-    public OrderItemless(int orderId, OrderType orderType, Restaurant restaurant, User user, LocalDateTime dateOrdered,LocalDateTime dateConfirmed, LocalDateTime dateReady, LocalDateTime dateDelivered, LocalDateTime dateCanceled, String address, int tableNumber, int itemCount, double price) {
+    public OrderItemless(int orderId, OrderType orderType, Restaurant restaurant, User user, LocalDateTime dateOrdered,LocalDateTime dateConfirmed, LocalDateTime dateReady, LocalDateTime dateDelivered, LocalDateTime dateCanceled, String address, int tableNumber, int itemCount, BigDecimal price) {
         this.orderId = orderId;
         this.orderType = orderType;
         this.restaurant = restaurant;
@@ -81,7 +82,7 @@ public class OrderItemless {
         return itemCount;
     }
 
-    public double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 

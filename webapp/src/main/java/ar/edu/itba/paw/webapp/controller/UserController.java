@@ -4,6 +4,7 @@ import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.util.PaginatedResult;
 import ar.edu.itba.paw.model.util.Pair;
 import ar.edu.itba.paw.service.*;
+import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.exception.RestaurantNotFoundException;
 import ar.edu.itba.paw.webapp.form.*;
 import ar.edu.itba.paw.webapp.exception.OrderNotFoundException;
@@ -48,8 +49,7 @@ public class UserController {
             paging.clear();
         }
 
-        User currentUser = ControllerUtils.getCurrentUserOrThrow(userService);
-        PaginatedResult<OrderItemless> orders = orderService.getByUserExcludeItems(currentUser.getUserId(), paging.getPageOrDefault(), paging.getSizeOrDefault(DEFAULT_ORDERS_PAGE_SIZE));
+        PaginatedResult<OrderItemless> orders = orderService.getByUserExcludeItems(ControllerUtils.getCurrentUserIdOrThrow(), paging.getPageOrDefault(), paging.getSizeOrDefault(DEFAULT_ORDERS_PAGE_SIZE));
         mav.addObject("orders", orders.getResult());
         mav.addObject("orderCount", orders.getTotalCount());
         mav.addObject("pageCount", orders.getTotalPageCount());
@@ -80,11 +80,13 @@ public class UserController {
             return createRestaurant(form);
         }
 
+        PawAuthUserDetails userDetails = ControllerUtils.getCurrentUserDetailsOrThrow();
         int restaurantId = restaurantService.create(
                 form.getName(),
                 form.getDescription(),
                 form.getAddress(),
-                ControllerUtils.getCurrentUserOrThrow(userService),
+                userDetails.getUsername(),
+                userDetails.getUserId(),
                 form.getLogo().getBytes(),
                 form.getPortrait1().getBytes(),
                 form.getPortrait2().getBytes()

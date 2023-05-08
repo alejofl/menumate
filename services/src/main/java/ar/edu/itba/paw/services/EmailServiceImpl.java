@@ -3,7 +3,6 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.service.EmailService;
-import ar.edu.itba.paw.service.RestaurantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;

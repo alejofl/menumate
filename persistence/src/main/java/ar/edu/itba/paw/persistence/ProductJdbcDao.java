@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +33,7 @@ public class ProductJdbcDao implements ProductDao {
     }
 
     @Override
-    public Product create(int categoryId, String name, String description, int imageId, double price) {
+    public Product create(int categoryId, String name, String description, int imageId, BigDecimal price) {
         final Map<String, Object> productData = new HashMap<>();
         productData.put("category_id", categoryId);
         productData.put("name", name);
@@ -74,7 +75,7 @@ public class ProductJdbcDao implements ProductDao {
     }
 
     @Override
-    public boolean updatePrice(int productId, double price) {
+    public boolean updatePrice(int productId, BigDecimal price) {
         return jdbcTemplate.update("UPDATE products SET price = ? WHERE product_id = ?", price, productId) > 0;
     }
 

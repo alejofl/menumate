@@ -299,7 +299,7 @@ public class OrderJdbcDao implements OrderDao {
                 throw new IllegalArgumentException("No such OrderType enum constant");
         }
 
-        return jdbcTemplate.update(sql) > 0;
+        return jdbcTemplate.update(sql, orderId) > 0;
     }
 
     @Override

@@ -22,12 +22,14 @@ public class PawUserDetailsService implements UserDetailsService {
         final Pair<User, String> userAndPassword = us.getByEmailWithPassword(email)
                 .orElseThrow(() -> new UsernameNotFoundException("No user for email " + email));
 
+
+        int userId = userAndPassword.getKey().getUserId();
         String userEmail = userAndPassword.getKey().getEmail();
         String userPassword = userAndPassword.getValue();
 
         if (userPassword == null)
             throw new UsernameNotFoundException("User exists but is not consolidated");
 
-        return new PawAuthUserDetails(userEmail, userPassword, new ArrayList<>());
+        return new PawAuthUserDetails(userId, userEmail, userPassword, new ArrayList<>());
     }
 }

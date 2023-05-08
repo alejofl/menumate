@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
-import java.util.Optional;
-
 @ControllerAdvice
 public class ControllerHelper {
 
@@ -16,11 +14,6 @@ public class ControllerHelper {
 
     @ModelAttribute("currentUser")
     public User addCurrentUser() {
-        String email = ControllerUtils.getCurrentUserEmail();
-        Optional<User> user;
-        if (email == null || !(user = userService.getByEmail(email)).isPresent())
-            return null;
-
-        return user.get();
+        return ControllerUtils.getCurrentUserOrNull(userService);
     }
 }

@@ -55,11 +55,11 @@ public class RestaurantsController {
         final Restaurant restaurant = restaurantService.getById(id).orElseThrow(RestaurantNotFoundException::new);
         mav.addObject("restaurant", restaurant);
 
-        User currentUser = ControllerUtils.getCurrentUserOrNull(userService);
+        Integer currentUserId = ControllerUtils.getCurrentUserIdOrNull();
         Optional<RestaurantRoleLevel> level;
         boolean admin = false;
         boolean order_viewer = false;
-        if (currentUser != null && (level = rolesService.getRole(currentUser.getUserId(), id)).isPresent()) {
+        if (currentUserId != null && (level = rolesService.getRole(currentUserId, id)).isPresent()) {
             admin = level.get().hasPermissionOf(RestaurantRoleLevel.ADMIN);
             order_viewer = level.get().hasPermissionOf(RestaurantRoleLevel.ORDER_HANDLER);
         }
@@ -73,7 +73,7 @@ public class RestaurantsController {
         return mav;
     }
 
-    @RequestMapping(value = "/restaurants/{id:\\d+}", method = RequestMethod.POST)
+    @RequestMapping(value = "/restaurants/{id:\\d+}/orders", method = RequestMethod.POST)
     public ModelAndView restaurantMenu(
             @PathVariable final int id,
             @Valid @ModelAttribute("checkoutForm") final CheckoutForm form,
