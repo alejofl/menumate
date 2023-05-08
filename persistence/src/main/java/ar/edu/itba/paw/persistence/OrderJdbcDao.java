@@ -70,7 +70,7 @@ public class OrderJdbcDao implements OrderDao {
         }
 
         if (tableNumber != null) {
-            orderData.put("tableNumber", tableNumber);
+            orderData.put("table_number", tableNumber);
         }
 
         final int orderId = jdbcInsertOrder.executeAndReturnKey(orderData).intValue();

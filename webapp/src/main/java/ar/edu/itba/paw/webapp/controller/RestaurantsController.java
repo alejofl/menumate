@@ -85,6 +85,8 @@ public class RestaurantsController {
 
         List<OrderItem> items = new ArrayList<>();
         for (int i = 0; i < form.getCart().size(); i++) {
+            // NOTE: The order item ID doesn't matter here; the orderService.createXxx functions will put their own
+            // line number values on the items on insertion.
             CartItem cartItem = form.getCart().get(i);
             items.add(orderService.createOrderItem(cartItem.getProductId(), i, cartItem.getQuantity(), cartItem.getComment()));
         }
