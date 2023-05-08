@@ -100,7 +100,7 @@ public class CategoryJdbcDaoTest {
         jdbcTemplate.execute("INSERT INTO categories (category_id ,restaurant_id, name, order_num) VALUES (" + CATEGORY_ID + ", " + RESTAURANT_ID + ", '" + CATEGORY_NAME + "'," + ORDER_NUM + ")");
 
         final int newOrder = ORDER_NUM + 1;
-        Assert.assertTrue(categoryDao.updateOrder(CATEGORY_ID, ORDER_NUM + 1));
+        Assert.assertTrue(categoryDao.updateOrder(CATEGORY_ID, newOrder));
     }
 
     @Test

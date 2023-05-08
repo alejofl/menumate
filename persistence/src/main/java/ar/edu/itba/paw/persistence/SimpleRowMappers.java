@@ -69,7 +69,7 @@ class SimpleRowMappers {
             rs.getInt("product_id"),
             CATEGORY_ROW_MAPPER.mapRow(rs, rowNum),
             rs.getString("product_name"),
-            rs.getDouble("product_price"),
+            rs.getBigDecimal("product_price"),
             rs.getString("product_description"),
             rs.getInt("product_image_id"),
             rs.getBoolean("product_available")
@@ -88,7 +88,7 @@ class SimpleRowMappers {
             rs.getString("order_address"),
             rs.getInt("order_table_number"),
             rs.getInt("order_item_count"),
-            rs.getDouble("order_price")
+            rs.getBigDecimal("order_price")
     );
 
     static final RowMapper<OrderItem> ORDER_ITEM_ROW_MAPPER = (ResultSet rs, int rowNum) -> new OrderItem(

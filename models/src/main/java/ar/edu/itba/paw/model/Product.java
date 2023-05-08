@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.model;
 
+import java.math.BigDecimal;
+
 public class Product {
 
     private final int productId;
@@ -7,17 +9,17 @@ public class Product {
     private final String name;
     private String description;
     private int imageId;
-    private final double price;
+    private final BigDecimal price;
     private boolean available;
 
-    public Product(int productId, Category category, String name, double price) {
+    public Product(int productId, Category category, String name, BigDecimal price) {
         this.productId = productId;
         this.category = category;
         this.name = name;
         this.price = price;
     }
 
-    public Product(int productId, Category category, String name, double price, String description, int imageId, boolean available) {
+    public Product(int productId, Category category, String name, BigDecimal price, String description, int imageId, boolean available) {
         this(productId, category, name, price);
         this.description = description;
         this.imageId = imageId;
@@ -44,7 +46,7 @@ public class Product {
         return imageId;
     }
 
-    public double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 

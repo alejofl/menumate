@@ -13,6 +13,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
 
 import javax.sql.DataSource;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
@@ -41,8 +42,7 @@ public class ProductJdbcDaoTest {
     private static final String RESTAURANT_EMAIL = "kansas@lovelyrestaurant.com";
     private static final int PRODUCT_ID = 912;
     private static final String PRODUCT_NAME = "Lomito";
-    private static final double PRODUCT_PRICE = 533.55;
-    private static final double PRODUCT_PRICE_DELTA = 0.009;
+    private static final BigDecimal PRODUCT_PRICE = new BigDecimal("533.55");
 
     private static final String[] PRODUCTS_NAMES = {"Product 1", "Product 2", "Product 3", "Product 4"};
 
@@ -74,7 +74,7 @@ public class ProductJdbcDaoTest {
         Assert.assertTrue(product.isPresent());
         Assert.assertEquals(PRODUCT_ID, product.get().getProductId());
         Assert.assertEquals(PRODUCT_NAME, product.get().getName());
-        Assert.assertEquals(PRODUCT_PRICE, product.get().getPrice(), PRODUCT_PRICE_DELTA);
+        Assert.assertEquals(PRODUCT_PRICE, product.get().getPrice());
         Assert.assertEquals(CATEGORY_ID, product.get().getCategory().getCategoryId());
     }
 
@@ -90,7 +90,7 @@ public class ProductJdbcDaoTest {
         Assert.assertEquals(PRODUCTS_NAMES.length, products.size());
         for (int i = 0; i < PRODUCTS_NAMES.length; i++) {
             Assert.assertEquals(PRODUCTS_NAMES[i], products.get(i).getName());
-            Assert.assertEquals(PRODUCT_PRICE, products.get(i).getPrice(), PRODUCT_PRICE_DELTA);
+            Assert.assertEquals(PRODUCT_PRICE, products.get(i).getPrice());
             Assert.assertEquals(CATEGORY_ID, products.get(i).getCategory().getCategoryId());
             Assert.assertEquals(i + 1, products.get(i).getProductId());
         }
@@ -99,7 +99,7 @@ public class ProductJdbcDaoTest {
     @Test
     public void testUpdateProductPrice() throws SQLException {
         jdbcTemplate.execute("INSERT INTO products (product_id, name, price, category_id) VALUES (" + PRODUCT_ID + ", '" + PRODUCT_NAME + "', " + PRODUCT_PRICE + ", " + CATEGORY_ID + ")");
-        Assert.assertTrue(productDao.updatePrice(PRODUCT_ID, PRODUCT_PRICE + 2.0));
+        Assert.assertTrue(productDao.updatePrice(PRODUCT_ID, PRODUCT_PRICE.add(BigDecimal.valueOf(2))));
     }
 
     @Test

@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -15,10 +16,14 @@ public class Order extends OrderItemless {
         return items;
     }
 
-    private static double calculatePrice(Iterable<OrderItem> items) {
-        double price = 0;
-        for (OrderItem i : items)
-            price += i.getQuantity() * i.getProduct().getPrice();
-        return price;
+    private static BigDecimal calculatePrice(Iterable<OrderItem> items) {
+        BigDecimal orderPrice = BigDecimal.ZERO;
+        for (OrderItem item : items) {
+            BigDecimal quantity = BigDecimal.valueOf(item.getQuantity());
+            BigDecimal productPrice = item.getProduct().getPrice();
+            orderPrice = orderPrice.add(productPrice.multiply(quantity));
+        }
+
+        return orderPrice;
     }
 }

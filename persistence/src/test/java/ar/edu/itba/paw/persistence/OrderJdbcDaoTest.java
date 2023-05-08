@@ -14,6 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
 
 import javax.sql.DataSource;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -45,7 +46,7 @@ public class OrderJdbcDaoTest {
     private static final OrderType ORDER_TYPE = OrderType.DINE_IN;
     private static final int PRODUCT_ID = 212;
     private static final String PRODUCT_NAME = "Pepinito con sal";
-    private static final double PRODUCT_PRICE = 533.55;
+    private static final BigDecimal PRODUCT_PRICE = new BigDecimal("533.55");
     private static final int CATEGORY_ID = 12421;
     private static final String CATEGORY_NAME = "Postgres Dulces";
     private static final int CATEGORY_ORDER = 10;
@@ -81,7 +82,7 @@ public class OrderJdbcDaoTest {
             int product_id = PRODUCT_ID + i + 1;
             int cateogry_id = CATEGORY_ID;
             String product_name = PRODUCT_NAME + i + 1;
-            double product_price = PRODUCT_PRICE + i + 1;
+            BigDecimal product_price = PRODUCT_PRICE.add(BigDecimal.valueOf(i + 1));
 
             jdbcTemplate.execute("INSERT INTO products(product_id, category_id, name, price) VALUES (" + product_id + ", " + cateogry_id + ", '" + product_name + "', " + product_price + ")");
             Product product = new Product(product_id, category, product_name, product_price);

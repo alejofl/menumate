@@ -7,6 +7,7 @@ import ar.edu.itba.paw.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,7 +21,7 @@ public class ProductServiceImpl implements ProductService {
     private ImageService imageService;
 
     @Override
-    public Product create(int categoryId, String name, String description, byte[] image, double price) {
+    public Product create(int categoryId, String name, String description, byte[] image, BigDecimal price) {
         int imageKey = imageService.create(image);
         return productDao.create(categoryId, name, description, imageKey, price);
     }
@@ -36,7 +37,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public boolean updatePrice(int productId, double price) {
+    public boolean updatePrice(int productId, BigDecimal price) {
         return productDao.updatePrice(productId, price);
     }
 

@@ -146,7 +146,7 @@ class ReusingRowMappers {
             return new Product(pk,
                     categoryRowMapper.mapRow(rs, 1),
                     rs.getString("product_name"),
-                    rs.getDouble("product_price"),
+                    rs.getBigDecimal("product_price"),
                     rs.getString("product_description"),
                     rs.getInt("product_image_id"),
                     rs.getBoolean("product_available")
@@ -183,7 +183,7 @@ class ReusingRowMappers {
                     rs.getString("order_address"),
                     rs.getInt("order_table_number"),
                     rs.getInt("order_item_count"),
-                    rs.getDouble("order_price")
+                    rs.getBigDecimal("order_price")
             );
         }
     }
