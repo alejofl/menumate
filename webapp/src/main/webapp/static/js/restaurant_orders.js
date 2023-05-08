@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
           for(let i = 0 ; i < itemsQuantity; i++ ) {
               document.querySelector("#order-items").innerHTML += `
                 <tr>
-                    <td class="text-start">${i}</td>
+                    <td class="text-start">${items[i].lineNumber}</td>
                     <td class="text-center">${items[i].productName}</td>
                     <td class="text-center">${items[i].comment}</td>
                     <td class="text-center">${items[i].quantity}</td>
