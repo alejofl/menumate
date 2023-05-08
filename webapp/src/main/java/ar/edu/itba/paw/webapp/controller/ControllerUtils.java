@@ -7,6 +7,10 @@ import ar.edu.itba.paw.webapp.exception.UserNotFoundException;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 public class ControllerUtils {
+    private ControllerUtils() {
+        
+    }
+
     /**
      * Returns the currently logged-in user's details, or null of no user is logged in.
      */
@@ -55,6 +59,7 @@ public class ControllerUtils {
 
     /**
      * Gets the currently logged-in user, or null if there's no such user.
+     *
      * @param userService The UserService instance to get the user from.
      */
     public static User getCurrentUserOrNull(UserService userService) {
@@ -64,6 +69,7 @@ public class ControllerUtils {
 
     /**
      * Gets the currently logged-in user, or throws an UserNotFoundException if there's no such user.
+     *
      * @param userService The UserService instance to get the user from.
      */
     public static User getCurrentUserOrThrow(UserService userService) {
