@@ -84,12 +84,12 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public int create(String name, String description, String address, User owner, byte[] logo, byte[] portrait1, byte[] portrait2) {
+    public int create(String name, String description, String address, String email, int ownerUserId, byte[] logo, byte[] portrait1, byte[] portrait2) {
         int logoKey = imageService.create(logo);
         int portrait1Key = imageService.create(portrait1);
         int portrait2Key = imageService.create(portrait2);
 
-        return restaurantDao.create(name, description, address, owner.getEmail(), owner.getUserId(), logoKey, portrait1Key, portrait2Key);
+        return restaurantDao.create(name, description, address, email, ownerUserId, logoKey, portrait1Key, portrait2Key);
     }
 
     @Override

@@ -16,11 +16,6 @@ public class ControllerHelper {
 
     @ModelAttribute("currentUser")
     public User addCurrentUser() {
-        String email = ControllerUtils.getCurrentUserEmail();
-        Optional<User> user;
-        if (email == null || !(user = userService.getByEmail(email)).isPresent())
-            return null;
-
-        return user.get();
+        return ControllerUtils.getCurrentUserOrNull(userService);
     }
 }

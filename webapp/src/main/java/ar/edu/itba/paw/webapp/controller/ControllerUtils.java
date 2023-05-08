@@ -8,17 +8,49 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 public class ControllerUtils {
     /**
-     * Returns the currently logged-in user's email, or null of no user is logged in.
+     * Returns the currently logged-in user's details, or null of no user is logged in.
      */
-    public static String getCurrentUserEmail() {
+    public static PawAuthUserDetails getCurrentUserDetailsOrNull() {
+        final Object userDetails = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return userDetails instanceof PawAuthUserDetails ? (PawAuthUserDetails) userDetails : null;
+    }
+
+    /**
+     * Returns the currently logged-in user's details, or throws an UserNotFoundException if there's no such user.
+     */
+    public static PawAuthUserDetails getCurrentUserDetailsOrThrow() {
         final Object userDetails = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (userDetails instanceof PawAuthUserDetails) {
-            PawAuthUserDetails pawAuthUserDetails = (PawAuthUserDetails) userDetails;
-            return pawAuthUserDetails.getUsername();
-        }
+        if (userDetails instanceof PawAuthUserDetails)
+            return (PawAuthUserDetails) userDetails;
 
-        return null;
+        throw new UserNotFoundException();
+    }
+
+    /**
+     * Returns the currently logged-in user's email, or null of no user is logged in.
+     */
+    public static String getCurrentUserEmailOrNull() {
+        PawAuthUserDetails details = getCurrentUserDetailsOrNull();
+        return details == null ? null : details.getUsername();
+    }
+
+    /**
+     * Returns the currently logged-in user's userId, or null of no user is logged in.
+     */
+    public static Integer getCurrentUserIdOrNull() {
+        PawAuthUserDetails details = getCurrentUserDetailsOrNull();
+        return details == null ? null : details.getUserId();
+    }
+
+    /**
+     * Returns the currently logged-in user's userId, or throws an UserNotFoundException if there's no such user.
+     */
+    public static int getCurrentUserIdOrThrow() {
+        PawAuthUserDetails details = getCurrentUserDetailsOrNull();
+        if (details == null)
+            throw new UserNotFoundException();
+        return details.getUserId();
     }
 
     /**
@@ -26,7 +58,8 @@ public class ControllerUtils {
      * @param userService The UserService instance to get the user from.
      */
     public static User getCurrentUserOrNull(UserService userService) {
-        return userService.getByEmail(getCurrentUserEmail()).orElse(null);
+        PawAuthUserDetails details = getCurrentUserDetailsOrNull();
+        return details == null ? null : userService.getById(details.getUserId()).orElse(null);
     }
 
     /**
@@ -34,6 +67,7 @@ public class ControllerUtils {
      * @param userService The UserService instance to get the user from.
      */
     public static User getCurrentUserOrThrow(UserService userService) {
-        return userService.getByEmail(getCurrentUserEmail()).orElseThrow(UserNotFoundException::new);
+        PawAuthUserDetails details = getCurrentUserDetailsOrThrow();
+        return userService.getById(details.getUserId()).orElseThrow(UserNotFoundException::new);
     }
 }

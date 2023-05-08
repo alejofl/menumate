@@ -5,13 +5,8 @@ import ar.edu.itba.paw.service.OrderService;
 import ar.edu.itba.paw.service.RolesService;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.controller.ControllerUtils;
-import ar.edu.itba.paw.webapp.exception.OrderNotFoundException;
-import ar.edu.itba.paw.webapp.exception.RestaurantNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.Optional;
 
 @Component
 public class AccessValidator {
@@ -26,11 +21,11 @@ public class AccessValidator {
     private RolesService rolesService;
 
     public boolean checkRestaurantRole(int restaurantId, RestaurantRoleLevel minimumRoleLevel) {
-        User currentUser = ControllerUtils.getCurrentUserOrNull(userService);
-        if (currentUser == null)
+        Integer currentUserId = ControllerUtils.getCurrentUserIdOrNull();
+        if (currentUserId == null)
             return false;
 
-        return rolesService.doesUserHaveRole(currentUser.getUserId(), restaurantId, minimumRoleLevel);
+        return rolesService.doesUserHaveRole(currentUserId, restaurantId, minimumRoleLevel);
     }
 
     public boolean checkRestaurantOwner(int restaurantId) {
@@ -51,7 +46,8 @@ public class AccessValidator {
 
     public boolean checkOrderOwner(int orderId) {
         OrderItemless order = orderService.getByIdExcludeItems(orderId).orElse(null);
-        return order != null && order.getUser().getEmail().equals(ControllerUtils.getCurrentUserEmail());
+        PawAuthUserDetails currentUserDetails = ControllerUtils.getCurrentUserDetailsOrNull();
+        return order != null && currentUserDetails != null && order.getUser().getUserId() == currentUserDetails.getUserId();
     }
 
     public boolean checkOrderHandler(int orderId) {
@@ -61,6 +57,7 @@ public class AccessValidator {
 
     public boolean checkOrderOwnerOrHandler(int orderId) {
         OrderItemless order = orderService.getByIdExcludeItems(orderId).orElse(null);
-        return order != null && (order.getUser().getEmail().equals(ControllerUtils.getCurrentUserEmail()) || checkRestaurantOrderHandler(order.getRestaurant().getRestaurantId()));
+        PawAuthUserDetails currentUserDetails = ControllerUtils.getCurrentUserDetailsOrNull();
+        return order != null && currentUserDetails != null && (order.getUser().getUserId() == currentUserDetails.getUserId() || checkRestaurantOrderHandler(order.getRestaurant().getRestaurantId()));
     }
 }
