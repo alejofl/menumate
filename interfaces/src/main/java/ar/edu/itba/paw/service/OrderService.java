@@ -2,10 +2,10 @@ package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.model.OrderItem;
-import ar.edu.itba.paw.model.OrderType;
+import ar.edu.itba.paw.model.OrderItemless;
+import ar.edu.itba.paw.model.OrderStatus;
 import ar.edu.itba.paw.model.util.PaginatedResult;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,17 +26,29 @@ public interface OrderService {
 
     Optional<Order> getById(int orderId);
 
+    Optional<OrderItemless> getByIdExcludeItems(int orderId);
+
     PaginatedResult<Order> getByUser(int userId, int pageNumber, int pageSize);
+
+    PaginatedResult<OrderItemless> getByUserExcludeItems(int userId, int pageNumber, int pageSize);
 
     PaginatedResult<Order> getByRestaurant(int restaurantId, int pageNumber, int pageSize);
 
-    /*List<Order> getOrderedBetweenDates(int restaurantId, LocalDateTime start, LocalDateTime end);
+    PaginatedResult<OrderItemless> getByRestaurantExcludeItems(int restaurantId, int pageNumber, int pageSize);
 
-    List<Order> getByAddress(int restaurantId, String address);
+    PaginatedResult<Order> getByRestaurant(int restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus);
 
-    List<Order> getByTableNumber(int restaurantId, int tableNumber);
+    PaginatedResult<OrderItemless> getByRestaurantExcludeItems(int restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus);
 
-    List<Order> getByOrderTypeAndRestaurant(OrderType orderType, int restaurantId);*/
+    boolean markAsConfirmed(int orderId);
+
+    boolean markAsReady(int orderId);
+
+    boolean markAsDelivered(int orderId);
+
+    boolean markAsCancelled(int orderId);
+
+    boolean setOrderStatus(int orderId, OrderStatus orderStatus);
 
     boolean updateAddress(int orderId, String address);
 

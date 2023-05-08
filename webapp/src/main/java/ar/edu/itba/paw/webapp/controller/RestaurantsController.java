@@ -102,9 +102,10 @@ public class RestaurantsController {
         }
 
         // FIXME: how do we handle this?
+        // FIXME: we should move this to the orderService
         try {
-            emailService.sendUserOrderConfirmation(order);
-            emailService.sendRestaurantOrderConfirmation(
+            emailService.sendOrderReceivalForUser(order);
+            emailService.sendOrderReceivalForRestaurant(
                     restaurantService.getById(form.getRestaurantId()).orElseThrow(RestaurantNotFoundException::new),
                     order
             );

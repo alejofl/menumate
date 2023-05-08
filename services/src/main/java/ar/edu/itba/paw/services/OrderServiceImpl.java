@@ -1,17 +1,16 @@
 package ar.edu.itba.paw.services;
 
-import ar.edu.itba.paw.model.Order;
-import ar.edu.itba.paw.model.Product;
-import ar.edu.itba.paw.model.OrderItem;
-import ar.edu.itba.paw.model.OrderType;
+import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.util.PaginatedResult;
 import ar.edu.itba.paw.persistance.OrderDao;
+import ar.edu.itba.paw.service.EmailService;
 import ar.edu.itba.paw.service.OrderService;
 import ar.edu.itba.paw.service.ProductService;
 import ar.edu.itba.paw.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,38 +25,41 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private ProductService productService;
 
-    private int getUserId(String name, String email){
+    @Autowired
+    private EmailService emailService;
+
+    private int getOrCreateUserId(String name, String email) {
         return userService.createIfNotExists(email, name).getUserId();
     }
 
     @Override
     public Order createDelivery(int restaurantId, int userId, String address, List<OrderItem> items) {
-        return orderDao.create(OrderType.DELIVERY, restaurantId, userId, address, items);
+        return orderDao.createDelivery(restaurantId, userId, address, items);
     }
 
     @Override
     public Order createDelivery(int restaurantId, String name, String email, String address, List<OrderItem> items) {
-        return orderDao.create(OrderType.DELIVERY, restaurantId, getUserId(name, email), address, items);
+        return orderDao.createDelivery(restaurantId, getOrCreateUserId(name, email), address, items);
     }
 
     @Override
     public Order createDineIn(int restaurantId, int userId, int tableNumber, List<OrderItem> items) {
-        return orderDao.create(OrderType.DINE_IN, restaurantId, userId, tableNumber, items);
+        return orderDao.createDineIn(restaurantId, userId, tableNumber, items);
     }
 
     @Override
     public Order createDineIn(int restaurantId, String name, String email, int tableNumber, List<OrderItem> items) {
-        return orderDao.create(OrderType.DINE_IN, restaurantId, getUserId(name, email), tableNumber, items);
+        return orderDao.createDineIn(restaurantId, getOrCreateUserId(name, email), tableNumber, items);
     }
 
     @Override
     public Order createTakeAway(int restaurantId, int userId, List<OrderItem> items) {
-        return orderDao.create(OrderType.TAKEAWAY, restaurantId, userId, items);
+        return orderDao.createTakeaway(restaurantId, userId, items);
     }
 
     @Override
     public Order createTakeAway(int restaurantId, String name, String email, List<OrderItem> items) {
-        return orderDao.create(OrderType.TAKEAWAY, restaurantId, getUserId(name, email), items);
+        return orderDao.createTakeaway(restaurantId, getOrCreateUserId(name, email), items);
     }
 
 
@@ -73,8 +75,18 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public Optional<OrderItemless> getByIdExcludeItems(int orderId) {
+        return orderDao.getByIdExcludeItems(orderId);
+    }
+
+    @Override
     public PaginatedResult<Order> getByUser(int userId, int pageNumber, int pageSize) {
         return orderDao.getByUser(userId, pageNumber, pageSize);
+    }
+
+    @Override
+    public PaginatedResult<OrderItemless> getByUserExcludeItems(int userId, int pageNumber, int pageSize) {
+        return orderDao.getByUserExcludeItems(userId, pageNumber, pageSize);
     }
 
     @Override
@@ -82,25 +94,77 @@ public class OrderServiceImpl implements OrderService {
         return orderDao.getByRestaurant(restaurantId, pageNumber, pageSize);
     }
 
-    /*@Override
-    public List<Order> getOrderedBetweenDates(int restaurantId, LocalDateTime start, LocalDateTime end) {
-        return orderDao.getByRestaurantOrderedBetweenDates(restaurantId, start, end);
+    @Override
+    public PaginatedResult<OrderItemless> getByRestaurantExcludeItems(int restaurantId, int pageNumber, int pageSize) {
+        return orderDao.getByRestaurantExcludeItems(restaurantId, pageNumber, pageSize);
     }
 
     @Override
-    public List<Order> getByAddress(int restaurantId, String address) {
-        return orderDao.getByRestaurantAndAddress(restaurantId, address);
+    public PaginatedResult<Order> getByRestaurant(int restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus) {
+        return orderDao.getByRestaurant(restaurantId, pageNumber, pageSize, orderStatus);
     }
 
     @Override
-    public List<Order> getByTableNumber(int restaurantId, int tableNumber) {
-        return orderDao.getByRestaurantAndTableNumber(restaurantId, tableNumber);
+    public PaginatedResult<OrderItemless> getByRestaurantExcludeItems(int restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus) {
+        return orderDao.getByRestaurantExcludeItems(restaurantId, pageNumber, pageSize, orderStatus);
     }
 
     @Override
-    public List<Order> getByOrderTypeAndRestaurant(OrderType orderType, int restaurantId) {
-        return orderDao.getByOrderTypeAndRestaurant(orderType, restaurantId);
-    }*/
+    public boolean markAsConfirmed(int orderId) {
+        boolean success = orderDao.markAsConfirmed(orderId);
+        if (success) {
+            try {
+                emailService.sendOrderConfirmation(this.getById(orderId).get());
+            } catch (MessagingException e) {
+                e.printStackTrace();
+            }
+        }
+        return success;
+    }
+
+    @Override
+    public boolean markAsReady(int orderId) {
+        boolean success = orderDao.markAsReady(orderId);
+        if (success) {
+            try {
+                emailService.sendOrderReady(this.getById(orderId).get());
+            } catch (MessagingException e) {
+                e.printStackTrace();
+            }
+        }
+        return success;
+    }
+
+    @Override
+    public boolean markAsDelivered(int orderId) {
+        boolean success = orderDao.markAsDelivered(orderId);
+        if (success) {
+            try {
+                emailService.sendOrderDelivered(this.getById(orderId).get());
+            } catch (MessagingException e) {
+                e.printStackTrace();
+            }
+        }
+        return success;
+    }
+
+    @Override
+    public boolean markAsCancelled(int orderId) {
+        boolean success = orderDao.markAsCancelled(orderId);
+        if (success) {
+            try {
+                emailService.sendOrderCancelled(this.getById(orderId).get());
+            } catch (MessagingException e) {
+                e.printStackTrace();
+            }
+        }
+        return success;
+    }
+
+    @Override
+    public boolean setOrderStatus(int orderId, OrderStatus orderStatus) {
+        return orderDao.setOrderStatus(orderId, orderStatus);
+    }
 
     @Override
     public boolean updateAddress(int orderId, String address) {

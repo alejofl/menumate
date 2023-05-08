@@ -75,6 +75,22 @@ class SimpleRowMappers {
             rs.getBoolean("product_available")
     );
 
+    static final RowMapper<OrderItemless> ORDER_ITEMLESS_ROW_MAPPER = (ResultSet rs, int rowNum) -> new OrderItemless(
+            rs.getInt("order_id"),
+            OrderType.values()[rs.getInt("order_type")],
+            RESTAURANT_ROW_MAPPER.mapRow(rs, rowNum),
+            USER_ROW_MAPPER.mapRow(rs, rowNum),
+            timestampToLocalDateTimeOrNull(rs.getTimestamp("order_date_ordered")),
+            timestampToLocalDateTimeOrNull(rs.getTimestamp("order_date_confirmed")),
+            timestampToLocalDateTimeOrNull(rs.getTimestamp("order_date_ready")),
+            timestampToLocalDateTimeOrNull(rs.getTimestamp("order_date_delivered")),
+            timestampToLocalDateTimeOrNull(rs.getTimestamp("order_date_cancelled")),
+            rs.getString("order_address"),
+            rs.getInt("order_table_number"),
+            rs.getInt("order_item_count"),
+            rs.getDouble("order_price")
+    );
+
     static final RowMapper<OrderItem> ORDER_ITEM_ROW_MAPPER = (ResultSet rs, int rowNum) -> new OrderItem(
             PRODUCT_ROW_MAPPER.mapRow(rs, rowNum),
             rs.getInt("order_item_line_number"),

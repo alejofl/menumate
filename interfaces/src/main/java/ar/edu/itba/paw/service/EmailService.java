@@ -7,7 +7,15 @@ import javax.mail.MessagingException;
 
 public interface EmailService {
 
-    void sendUserOrderConfirmation(Order order) throws MessagingException;
+    void sendOrderReceivalForUser(Order order) throws MessagingException;
 
-    void sendRestaurantOrderConfirmation(Restaurant restaurant, Order order) throws MessagingException;
+    void sendOrderReceivalForRestaurant(Restaurant restaurant, Order order) throws MessagingException;
+
+    void sendOrderConfirmation(Order order) throws MessagingException;
+
+    void sendOrderReady(Order order) throws MessagingException;
+
+    void sendOrderDelivered(Order order) throws MessagingException;
+
+    void sendOrderCancelled(Order order) throws MessagingException;
 }

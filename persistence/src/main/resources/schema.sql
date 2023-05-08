@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS products
     product_id  SERIAL PRIMARY KEY,
     category_id INT REFERENCES categories (category_id) ON DELETE CASCADE NOT NULL,
     name        VARCHAR(150) NOT NULL,
-    price       DECIMAL(10, 2) NOT NULL,
+    price       DECIMAL(10, 2) NOT NULL CHECK (price > 0),
     description VARCHAR(300),
     image_id    INT REFERENCES images (image_id) ON DELETE SET NULL,
     available   BOOLEAN NOT NULL DEFAULT TRUE
@@ -67,7 +67,10 @@ CREATE TABLE IF NOT EXISTS orders
     restaurant_id  INT REFERENCES restaurants (restaurant_id) ON DELETE CASCADE NOT NULL,
     user_id        INT REFERENCES users (user_id) ON DELETE CASCADE NOT NULL,
     date_ordered   TIMESTAMP NOT NULL DEFAULT now(),
-    date_delivered TIMESTAMP,
+    date_confirmed TIMESTAMP DEFAULT NULL,
+    date_ready     TIMESTAMP DEFAULT NULL,
+    date_delivered TIMESTAMP DEFAULT NULL,
+    date_cancelled TIMESTAMP DEFAULT NULL,
     address        VARCHAR(300),
     table_number   SMALLINT
 );

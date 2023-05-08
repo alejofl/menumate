@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.Restaurant;
-import ar.edu.itba.paw.model.RestaurantRoleLevel;
 import ar.edu.itba.paw.model.util.PaginatedResult;
 import ar.edu.itba.paw.persistance.RestaurantDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,7 @@ import java.util.Optional;
 @Repository
 public class RestaurantJdbcDao implements RestaurantDao {
 
-    private static final String SelectBase = "SELECT " + TableFields.RESTAURANTS_FIELDS + " FROM restaurants";
+    private static final String SELECT_BASE = "SELECT " + TableFields.RESTAURANTS_FIELDS + " FROM restaurants";
 
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert restaurantJdbcInsert;
@@ -36,7 +35,7 @@ public class RestaurantJdbcDao implements RestaurantDao {
     @Override
     public Optional<Restaurant> getById(int restaurantId) {
         return jdbcTemplate.query(
-                SelectBase + " WHERE restaurant_id = ?",
+                SELECT_BASE + " WHERE restaurant_id = ?",
                 SimpleRowMappers.RESTAURANT_ROW_MAPPER,
                 restaurantId
         ).stream().findFirst();
@@ -47,7 +46,7 @@ public class RestaurantJdbcDao implements RestaurantDao {
         int pageIdx = pageNumber - 1;
         RowMapper<Restaurant> rowMapper = SimpleRowMappers.RESTAURANT_ROW_MAPPER;
         List<Restaurant> results = jdbcTemplate.query(
-                SelectBase + " WHERE is_active = true ORDER BY restaurant_id LIMIT ? OFFSET ?",
+                SELECT_BASE + " WHERE is_active = true ORDER BY restaurant_id LIMIT ? OFFSET ?",
                 rowMapper,
                 pageSize,
                 pageIdx * pageSize
@@ -76,7 +75,7 @@ public class RestaurantJdbcDao implements RestaurantDao {
         String search = searchParam.toString();
 
         List<Restaurant> results = jdbcTemplate.query(
-                SelectBase + " WHERE is_active = true AND LOWER(name) LIKE ? ORDER BY restaurant_id LIMIT ? OFFSET ?",
+                SELECT_BASE + " WHERE is_active = true AND LOWER(name) LIKE ? ORDER BY restaurant_id LIMIT ? OFFSET ?",
                 SimpleRowMappers.RESTAURANT_ROW_MAPPER,
                 search,
                 pageSize,

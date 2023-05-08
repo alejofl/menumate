@@ -362,7 +362,7 @@ main {
     flex-grow: 1;
 }
 
-#checkout .nav {
+#checkout .nav, .restaurant-orders-view .nav {
     --bs-nav-link-color: var(--secondary);
     --bs-nav-link-hover-color: var(--secondary-dark);
     --bs-nav-pills-link-active-bg: var(--secondary);
@@ -461,7 +461,7 @@ input:has(+ .form-error), textarea:has(+ .form-error) {
     margin-right: 12px;
 }
 
-.order-card i, .order-details-card i {
+.order-card i, .order-details-card i, #order-details i {
     color: var(--primary);
     margin-right: 8px;
 }
@@ -590,4 +590,16 @@ input:has(+ .form-error), textarea:has(+ .form-error) {
 .add-item-card {
     width: 200px;
     height: 200px;
+}
+
+.restaurant-orders-view {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.restaurant-orders-table tr {
+    height: 50px;
+    vertical-align: middle;
 }

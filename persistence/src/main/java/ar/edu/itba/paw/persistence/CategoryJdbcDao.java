@@ -17,7 +17,7 @@ import java.util.Optional;
 @Repository
 public class CategoryJdbcDao implements CategoryDao {
 
-    private static final String SelectBase = "SELECT " + TableFields.CATEGORIES_FIELDS + ", " + TableFields.RESTAURANTS_FIELDS + " FROM categories JOIN restaurants ON categories.restaurant_id = restaurants.restaurant_id";
+    private static final String SELECT_BASE = "SELECT " + TableFields.CATEGORIES_FIELDS + ", " + TableFields.RESTAURANTS_FIELDS + " FROM categories JOIN restaurants ON categories.restaurant_id = restaurants.restaurant_id";
 
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
@@ -49,7 +49,7 @@ public class CategoryJdbcDao implements CategoryDao {
     @Override
     public Optional<Category> getById(int categoryId) {
         return jdbcTemplate.query(
-                SelectBase + " WHERE categories.category_id = ?",
+                SELECT_BASE + " WHERE categories.category_id = ?",
                 SimpleRowMappers.CATEGORY_ROW_MAPPER,
                 categoryId
         ).stream().findFirst();
@@ -59,7 +59,7 @@ public class CategoryJdbcDao implements CategoryDao {
     public List<Category> getByRestaurantSortedByOrder(int restaurantId) {
         RowMapper<Category> rowMapper = ReusingRowMappers.getCategoryRowMapper();
         return jdbcTemplate.query(
-                SelectBase + " WHERE categories.restaurant_id = ? ORDER BY categories.order_num",
+                SELECT_BASE + " WHERE categories.restaurant_id = ? ORDER BY categories.order_num",
                 rowMapper,
                 restaurantId
         );

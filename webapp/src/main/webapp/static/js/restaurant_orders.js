@@ -1,8 +1,8 @@
-
 document.addEventListener("DOMContentLoaded", () => {
-   document.querySelectorAll('.clickable-row').forEach(element => {
-      element.addEventListener('click', event => {
+   document.querySelectorAll(".clickable-row").forEach(element => {
+      element.addEventListener("click", event => {
           document.querySelector("#order-title").innerHTML = element.dataset.orderId;
+          
           let itemsQuantity = parseInt(element.dataset.orderItemsQuantity);
           let items = [];
           for(let i = 0 ; i < itemsQuantity; i++ ) {
@@ -19,15 +19,34 @@ document.addEventListener("DOMContentLoaded", () => {
           for(let i = 0 ; i < itemsQuantity; i++ ) {
               document.querySelector("#order-items").innerHTML += `
                 <tr>
-                    <td>${i}</td>
-                    <td>${items[i].productName}</td>
-                    <td>${items[i].comment}</td>
+                    <td class="text-start">${items[i].lineNumber}</td>
+                    <td class="text-center">${items[i].productName}</td>
+                    <td class="text-center">${items[i].comment}</td>
                     <td class="text-center">${items[i].quantity}</td>
-                    <td>$${items[i].productPrice}</td>
+                    <td class="text-end">$${items[i].productPrice}</td>
                 </tr>
               `;
           }
+
+          document.querySelector("#order-details-customer").innerHTML = `${element.dataset.orderCustomerName} &lt;<a href="mailto:${element.dataset.orderCustomerEmail}">${element.dataset.orderCustomerEmail}</a>&gt;`
           document.querySelector("#order-total-price").innerHTML = `$${element.dataset.orderTotalPrice}`;
+          document.querySelector("#order-details-table-number").innerHTML = `${element.dataset.orderTableNumber}`;
+          document.querySelector("#order-details-address").innerHTML = `${element.dataset.orderAddress}`;
+
+          let orderType = parseInt(element.dataset.orderType);
+          for (let i = 0; i < 3; i++) {
+              document.querySelectorAll(`.order-details-${i}-data`).forEach(e => {
+                  if (i !== orderType) {
+                      e.classList.replace("d-flex", "d-none");
+                  } else {
+                      e.classList.replace("d-none", "d-flex");
+                  }
+              });
+          }
+
+          document.querySelector("#cancel-order-form").action = document.querySelector("#cancel-order-form").action.replace("$1", element.dataset.orderId);
+          document.querySelector("#change-order-status-form").action = document.querySelector("#change-order-status-form").action.replace("$1", element.dataset.orderId);
       });
    });
+
 });

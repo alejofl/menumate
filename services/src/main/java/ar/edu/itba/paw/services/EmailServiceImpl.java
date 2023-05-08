@@ -21,9 +21,6 @@ import java.util.Map;
 @Service
 public class EmailServiceImpl implements EmailService {
     @Autowired
-    private RestaurantService restaurantService;
-
-    @Autowired
     private JavaMailSender emailSender;
 
     @Autowired
@@ -50,14 +47,46 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Async
-    public void sendUserOrderConfirmation(Order order) throws MessagingException {
+    @Override
+    public void sendOrderReceivalForUser(Order order) throws MessagingException {
         final Map<String, Object> params = new HashMap<>();
         params.put("recipientName", order.getUser().getName());
         params.put("orderId", order.getOrderId());
         params.put("restaurantName", order.getRestaurant().getName());
         params.put("price", order.getPrice());
         this.sendMessageUsingThymeleafTemplate(
-                "user_order_confirmation",
+                "user_order_received",
+                order.getUser().getEmail(),
+                String.format("MenuMate - %s received your order!", order.getRestaurant().getName()),
+                params
+        );
+    }
+
+    @Async
+    @Override
+    public void sendOrderReceivalForRestaurant(Restaurant restaurant, Order order) throws MessagingException {
+        final Map<String, Object> params = new HashMap<>();
+        params.put("userName", order.getUser().getName());
+        params.put("orderId", order.getOrderId());
+        params.put("items", order.getItems());
+        params.put("price", order.getPrice());
+        this.sendMessageUsingThymeleafTemplate(
+                "restaurant_order_received",
+                restaurant.getEmail(),
+                "MenuMate - New order received.",
+                params
+        );
+    }
+
+    @Async
+    @Override
+    public void sendOrderConfirmation(Order order) throws MessagingException {
+        final Map<String, Object> params = new HashMap<>();
+        params.put("recipientName", order.getUser().getName());
+        params.put("orderId", order.getOrderId());
+        params.put("restaurantName", order.getRestaurant().getName());
+        this.sendMessageUsingThymeleafTemplate(
+                "user_order_confirmed",
                 order.getUser().getEmail(),
                 String.format("MenuMate - %s confirmed your order!", order.getRestaurant().getName()),
                 params
@@ -65,16 +94,46 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Async
-    public void sendRestaurantOrderConfirmation(Restaurant restaurant, Order order) throws MessagingException {
+    @Override
+    public void sendOrderReady(Order order) throws MessagingException {
         final Map<String, Object> params = new HashMap<>();
-        params.put("userName", order.getUser().getName());
+        params.put("recipientName", order.getUser().getName());
         params.put("orderId", order.getOrderId());
-        params.put("items", order.getItems());
-        params.put("price", order.getPrice());
+        params.put("restaurantName", order.getRestaurant().getName());
         this.sendMessageUsingThymeleafTemplate(
-                "restaurant_order_confirmation",
-                restaurant.getEmail(),
-                "MenuMate - New order received.",
+                "user_order_ready",
+                order.getUser().getEmail(),
+                String.format("MenuMate - %s has your order ready!", order.getRestaurant().getName()),
+                params
+        );
+    }
+
+    @Async
+    @Override
+    public void sendOrderDelivered(Order order) throws MessagingException {
+        final Map<String, Object> params = new HashMap<>();
+        params.put("recipientName", order.getUser().getName());
+        params.put("orderId", order.getOrderId());
+        params.put("restaurantName", order.getRestaurant().getName());
+        this.sendMessageUsingThymeleafTemplate(
+                "user_order_delivered",
+                order.getUser().getEmail(),
+                String.format("MenuMate - Your order from %s has been delivered.", order.getRestaurant().getName()),
+                params
+        );
+    }
+
+    @Async
+    @Override
+    public void sendOrderCancelled(Order order) throws MessagingException {
+        final Map<String, Object> params = new HashMap<>();
+        params.put("recipientName", order.getUser().getName());
+        params.put("orderId", order.getOrderId());
+        params.put("restaurantName", order.getRestaurant().getName());
+        this.sendMessageUsingThymeleafTemplate(
+                "user_order_cancelled",
+                order.getUser().getEmail(),
+                String.format("MenuMate - Your order from %s has been cancelled.", order.getRestaurant().getName()),
                 params
         );
     }
