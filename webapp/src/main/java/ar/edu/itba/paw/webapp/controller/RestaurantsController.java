@@ -73,7 +73,7 @@ public class RestaurantsController {
         return mav;
     }
 
-    @RequestMapping(value = "/restaurants/{id:\\d+}", method = RequestMethod.POST)
+    @RequestMapping(value = "/restaurants/{id:\\d+}/orders", method = RequestMethod.POST)
     public ModelAndView restaurantMenu(
             @PathVariable final int id,
             @Valid @ModelAttribute("checkoutForm") final CheckoutForm form,

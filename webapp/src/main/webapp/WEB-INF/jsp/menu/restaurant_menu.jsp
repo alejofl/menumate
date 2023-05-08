@@ -123,7 +123,7 @@
                 <h1 class="modal-title fs-5"><spring:message code="restaurant.menu.checkout"/></h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <c:url value="/restaurants/${restaurant.restaurantId}" var="checkout"/>
+            <c:url value="/restaurants/${restaurant.restaurantId}/orders" var="checkout"/>
             <form:form modelAttribute="checkoutForm" action="${checkout}" method="post" id="checkout-form">
             <div class="modal-body">
                 <c:choose>
