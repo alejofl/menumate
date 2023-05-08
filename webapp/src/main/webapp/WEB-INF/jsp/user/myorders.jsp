@@ -86,7 +86,7 @@
                 <c:param name="page" value="${currentPage + 1}"/>
                 <c:param name="size" value="${currentSize}"/>
             </c:url>
-            <a class="page-link ${currentPage == pageCount ? "disabled" : ""}" href="${nextUrl}" aria-label="Next">
+            <a class="page-link ${(currentPage == pageCount || pageCount == 0) ? "disabled" : ""}" href="${nextUrl}" aria-label="Next">
                 <span aria-hidden="true">&raquo;</span>
             </a>
         </li>
