@@ -4,6 +4,7 @@ import ar.edu.itba.paw.model.util.Pair;
 import ar.edu.itba.paw.persistance.VerificationDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
@@ -31,21 +32,36 @@ public class VerificationJdbcDao implements VerificationDao {
         return LocalDateTime.now().plusDays(TOKEN_DURATION_DAYS);
     }
 
-    private Pair<Optional<String>, LocalDateTime> getTokenInfo(String email){
-        return jdbcTemplate.queryForObject("SELECT code, expires FROM user_verification_codes WHERE email = ?", (rs, rowNum) -> new Pair<>(Optional.ofNullable(rs.getString("code")), rs.getTimestamp("expires").toLocalDateTime()), email);
+    private static final RowMapper<Pair<Optional<String>, LocalDateTime>> TOKEN_ROW_MAPPER = (rs, rowNum) ->
+            new Pair<>(
+                    Optional.ofNullable(rs.getString("code")),
+                    rs.getTimestamp("expires").toLocalDateTime()
+            );
+
+    private Pair<Optional<String>, LocalDateTime> getTokenInfo(String email) {
+        return jdbcTemplate.queryForObject(
+                "SELECT code, expires FROM user_verification_codes WHERE email = ?",
+                TOKEN_ROW_MAPPER,
+                email
+        );
     }
+
     @Override
-    public String generateVerificationToken(String email){
-        String token = UUID.randomUUID().toString().substring(0,8);
-        jdbcTemplate.update("INSERT INTO user_verification_codes (email, code, expires) VALUES (?, ?, ?) " +
-                "ON CONFLICT (email) DO UPDATE SET code=excluded.code, expires = excluded.expires",
-                email, token, generateTokenExpirationDate());
+    public String generateVerificationToken(String email) {
+        String token = UUID.randomUUID().toString().substring(0, 8);
+        jdbcTemplate.update(
+                "INSERT INTO user_verification_codes (email, code, expires) VALUES (?, ?, ?) ON CONFLICT (email) DO UPDATE SET code = excluded.code, expires = excluded.expires",
+                email,
+                token,
+                generateTokenExpirationDate()
+        );
         return token;
     }
+
     @Override
-    public boolean verificationTokenIsValid(String email, String token){
+    public boolean verificationTokenIsValid(String email, String token) {
         Pair<Optional<String>, LocalDateTime> tokenInfo = getTokenInfo(email);
-        if(tokenInfo == null || !tokenInfo.getKey().isPresent()){
+        if (tokenInfo == null || !tokenInfo.getKey().isPresent()) {
             return false;
         }
         String storedToken = tokenInfo.getKey().get();
@@ -53,8 +69,8 @@ public class VerificationJdbcDao implements VerificationDao {
     }
 
     @Override
-    public void deleteStaledVerificationTokens(){
-        jdbcTemplate.update("DELETE FROM user_verification_codes WHERE expires < now()");
+    public void deleteStaledVerificationTokens() {
+        jdbcTemplate.update("DELETE FROM user_verification_codes WHERE expires <= now()");
     }
 
     @Override
@@ -63,9 +79,9 @@ public class VerificationJdbcDao implements VerificationDao {
     }
 
     @Override
-    public boolean verificationTokenIsStaled(String email){
+    public boolean verificationTokenIsStaled(String email) {
         Pair<Optional<String>, LocalDateTime> tokenInfo = getTokenInfo(email);
-        if(tokenInfo == null || !tokenInfo.getKey().isPresent()){
+        if (tokenInfo == null || !tokenInfo.getKey().isPresent()) {
             return true;
         }
         return tokenInfo.getValue().isBefore(LocalDateTime.now());

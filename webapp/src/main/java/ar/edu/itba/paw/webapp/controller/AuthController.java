@@ -62,14 +62,14 @@ public class AuthController {
 
     @RequestMapping(value = "/auth/verify", method = RequestMethod.GET)
     public ModelAndView verifyUser(@RequestParam("token") String token, @RequestParam("email") String email) {
-         if(verificationService.verificationTokenIsValid(email, token)) {
-                Optional<User> user = userService.getByEmail(email);
-                if(user.isPresent()) {
-                    userService.verifyAccount(user.get().getEmail());
-                    verificationService.deleteVerificationToken(email);
-                    return new ModelAndView("redirect:/auth/login?verify=verified");
-                }
-         }
+        if (verificationService.verificationTokenIsValid(email, token)) {
+            Optional<User> user = userService.getByEmail(email);
+            if (user.isPresent()) {
+                userService.verifyAccount(user.get().getEmail());
+                verificationService.deleteVerificationToken(email);
+                return new ModelAndView("redirect:/auth/login?verify=verified");
+            }
+        }
         return new ModelAndView("redirect:/auth/register?error=invalid_token_or_user");
     }
 }

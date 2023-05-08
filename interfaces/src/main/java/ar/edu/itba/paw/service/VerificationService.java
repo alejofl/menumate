@@ -8,7 +8,5 @@ public interface VerificationService {
 
     boolean deleteVerificationToken(String email);
 
-    void deleteStaledVerificationTokens();
-
     boolean verificationTokenIsStaled(String email);
 }

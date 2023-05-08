@@ -23,7 +23,6 @@ public class VerificationServiceImpl implements VerificationService {
         return verificationDao.verificationTokenIsValid(email, token);
     }
 
-    @Override
     @Scheduled(cron = "0 0 0 * * ?")
     public void deleteStaledVerificationTokens() {
         verificationDao.deleteStaledVerificationTokens();
