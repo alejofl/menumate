@@ -34,7 +34,7 @@ public class CustomAuthenticationEntryPoint extends SimpleUrlAuthenticationFailu
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         if (exception.getCause() instanceof UserNotVerifiedException) {
             UserNotVerifiedException e = (UserNotVerifiedException) exception.getCause();
-            if(verificationService.verificationTokenIsStaled(e.getEmail())) {
+            if (!verificationService.hasActiveVerificationToken(e.getEmail())) {
                 String baseUrl = request.getRequestURL().toString().replace(request.getRequestURI(), request.getContextPath());
                 String token = verificationService.generateVerificationToken(e.getEmail());
                 try {
@@ -49,6 +49,7 @@ public class CustomAuthenticationEntryPoint extends SimpleUrlAuthenticationFailu
         } else {
             setDefaultFailureUrl(LOGIN_URL + INVALID_CREDENTIALS_ERROR);
         }
+
         super.onAuthenticationFailure(request, response, exception);
     }
 }

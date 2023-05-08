@@ -19,22 +19,17 @@ public class VerificationServiceImpl implements VerificationService {
     }
 
     @Override
-    public boolean verificationTokenIsValid(String email, String token) {
-        return verificationDao.verificationTokenIsValid(email, token);
+    public boolean verifyAndDeleteToken(String email, String token) {
+        return verificationDao.verifyAndDeleteToken(email, token);
+    }
+
+    @Override
+    public boolean hasActiveVerificationToken(String email) {
+        return verificationDao.hasActiveVerificationToken(email);
     }
 
     @Scheduled(cron = "0 0 0 * * ?")
     public void deleteStaledVerificationTokens() {
         verificationDao.deleteStaledVerificationTokens();
-    }
-
-    @Override
-    public boolean verificationTokenIsStaled(String email) {
-        return verificationDao.verificationTokenIsStaled(email);
-    }
-
-    @Override
-    public boolean deleteVerificationToken(String email) {
-        return verificationDao.deleteVerificationToken(email);
     }
 }

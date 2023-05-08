@@ -5,6 +5,8 @@ import ar.edu.itba.paw.service.EmailService;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.service.VerificationService;
 import ar.edu.itba.paw.webapp.form.RegisterForm;
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -17,7 +19,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.mail.MessagingException;
 import javax.validation.Valid;
-import java.util.Optional;
 
 @Controller
 public class AuthController {
@@ -61,15 +62,12 @@ public class AuthController {
     }
 
     @RequestMapping(value = "/auth/verify", method = RequestMethod.GET)
-    public ModelAndView verifyUser(@RequestParam("token") String token, @RequestParam("email") String email) {
-        if (verificationService.verificationTokenIsValid(email, token)) {
-            Optional<User> user = userService.getByEmail(email);
-            if (user.isPresent()) {
-                userService.verifyAccount(user.get().getEmail());
-                verificationService.deleteVerificationToken(email);
-                return new ModelAndView("redirect:/auth/login?verify=verified");
-            }
-        }
+    public ModelAndView verifyUser(
+            @RequestParam(value = "token", required = true) @Length(min = 8, max = 8) final String token,
+            @RequestParam(value = "email", required = true) @Email final String email
+    ) {
+        if (verificationService.verifyAndDeleteToken(email, token))
+            return new ModelAndView("redirect:/auth/login?verify=verified");
         return new ModelAndView("redirect:/auth/register?error=invalid_token_or_user");
     }
 }

@@ -81,9 +81,5 @@ public class UserJdbcDao implements UserDao {
                 email
         ).stream().findFirst();
     }
-
-    public boolean verifyAccount(String email) {
-        return jdbcTemplate.update("UPDATE users SET is_active = true WHERE email = ?", email) > 0;
-    }
 }
 

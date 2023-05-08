@@ -17,6 +17,4 @@ public interface UserService {
     Optional<Pair<User, String>> getByEmailWithPassword(String email);
 
     User createIfNotExists(String email, String name);
-
-    boolean verifyAccount(String email);
 }

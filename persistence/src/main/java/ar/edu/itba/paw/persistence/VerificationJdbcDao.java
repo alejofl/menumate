@@ -32,20 +32,6 @@ public class VerificationJdbcDao implements VerificationDao {
         return LocalDateTime.now().plusDays(TOKEN_DURATION_DAYS);
     }
 
-    private static final RowMapper<Pair<Optional<String>, LocalDateTime>> TOKEN_ROW_MAPPER = (rs, rowNum) ->
-            new Pair<>(
-                    Optional.ofNullable(rs.getString("code")),
-                    rs.getTimestamp("expires").toLocalDateTime()
-            );
-
-    private Pair<Optional<String>, LocalDateTime> getTokenInfo(String email) {
-        return jdbcTemplate.queryForObject(
-                "SELECT code, expires FROM user_verification_codes WHERE email = ?",
-                TOKEN_ROW_MAPPER,
-                email
-        );
-    }
-
     @Override
     public String generateVerificationToken(String email) {
         String token = UUID.randomUUID().toString().substring(0, 8);
@@ -59,13 +45,21 @@ public class VerificationJdbcDao implements VerificationDao {
     }
 
     @Override
-    public boolean verificationTokenIsValid(String email, String token) {
-        Pair<Optional<String>, LocalDateTime> tokenInfo = getTokenInfo(email);
-        if (tokenInfo == null || !tokenInfo.getKey().isPresent()) {
-            return false;
+    public boolean verifyAndDeleteToken(String email, String token) {
+        boolean success = jdbcTemplate.update(
+                "DELETE FROM user_verification_codes WHERE email = ? AND code = ? AND expires>now()",
+                email,
+                token
+        ) > 0;
+
+        if (success) {
+            return jdbcTemplate.update(
+                    "UPDATE users SET is_active = true WHERE email = ?",
+                    email
+            ) > 0;
         }
-        String storedToken = tokenInfo.getKey().get();
-        return storedToken.equals(token) && !tokenInfo.getValue().isBefore(LocalDateTime.now());
+
+        return false;
     }
 
     @Override
@@ -73,18 +67,17 @@ public class VerificationJdbcDao implements VerificationDao {
         jdbcTemplate.update("DELETE FROM user_verification_codes WHERE expires <= now()");
     }
 
-    @Override
-    public boolean deleteVerificationToken(String email) {
-        return jdbcTemplate.update("DELETE FROM user_verification_codes WHERE email = ?", email) > 0;
-    }
+    private static final RowMapper<LocalDateTime> TOKEN_EXPIRES_ROW_MAPPER =
+            (rs, rowNum) -> rs.getTimestamp("expires").toLocalDateTime();
 
     @Override
-    public boolean verificationTokenIsStaled(String email) {
-        Pair<Optional<String>, LocalDateTime> tokenInfo = getTokenInfo(email);
-        if (tokenInfo == null || !tokenInfo.getKey().isPresent()) {
-            return true;
-        }
-        return tokenInfo.getValue().isBefore(LocalDateTime.now());
-    }
+    public boolean hasActiveVerificationToken(String email) {
+        Optional<LocalDateTime> tokenInfo = jdbcTemplate.query(
+                "SELECT expires FROM user_verification_codes WHERE email = ?",
+                TOKEN_EXPIRES_ROW_MAPPER,
+                email
+        ).stream().findFirst();
 
+        return tokenInfo.isPresent() && tokenInfo.get().isAfter(LocalDateTime.now());
+    }
 }

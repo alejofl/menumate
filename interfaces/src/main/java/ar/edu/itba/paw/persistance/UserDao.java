@@ -17,6 +17,4 @@ public interface UserDao {
     boolean isUserEmailRegistered(String email);
 
     Optional<Pair<User, String>> getByEmailWithPassword(String email);
-
-    boolean verifyAccount(String email);
 }
