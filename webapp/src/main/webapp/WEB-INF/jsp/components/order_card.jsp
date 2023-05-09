@@ -20,12 +20,13 @@
             <ul class="list-group list-group-flush">
                 <fmt:parseNumber var="quantity" type="number" value="${param.productQuantity}" />
 
+                <li class="list-group-item"><i class="bi bi-card-list"></i> <c:out value="${param.orderType}"/></li>
                 <li class="list-group-item"><i class="bi bi-calendar-event"></i> <c:out value="${param.dateOrdered}"/></li>
                 <li class="list-group-item"><i class="bi bi-cart"></i> <spring:message code="userorders.productquantity" arguments="${quantity}"/></li>
                 <li class="list-group-item"><i class="bi bi-cash-stack"></i> $<c:out value="${param.price}"/></li>
             </ul>
             <div class="card-footer">
-                <c:out value="${param.orderType}"/>
+                <spring:message code="orderstatus.order"/> <spring:message code="orderstatus.singular.${param.orderStatus}"/>
             </div>
         </div>
     </a>

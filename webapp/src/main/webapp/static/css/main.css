@@ -25,6 +25,10 @@ body {
     background-color: var(--light) !important;
 }
 
+.progress {
+    --bs-progress-bar-bg: var(--primary);
+}
+
 .form-control:focus, .form-check-input:focus {
     border-color: var(--primary);
     outline: 0;
@@ -602,4 +606,10 @@ input:has(+ .form-error), textarea:has(+ .form-error) {
 .restaurant-orders-table tr {
     height: 50px;
     vertical-align: middle;
+}
+
+.circle-order-status {
+    width: 20px;
+    height: 20px;
+    background-color: var(--primary);
 }
