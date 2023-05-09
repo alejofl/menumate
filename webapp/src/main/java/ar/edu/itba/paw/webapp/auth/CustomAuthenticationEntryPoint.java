@@ -1,6 +1,8 @@
 package ar.edu.itba.paw.webapp.auth;
 
+import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.service.EmailService;
+import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.service.VerificationService;
 import ar.edu.itba.paw.webapp.exception.UserNotVerifiedException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Optional;
 
 
 @Component
@@ -24,6 +27,9 @@ public class CustomAuthenticationEntryPoint extends SimpleUrlAuthenticationFailu
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private UserService userService;
+
     private static final String LOGIN_URL = "/auth/login";
     private static final String VERIFY_EMAIL_ERROR = "?verify=emailed";
     private static final String NOT_VERIFIED_ERROR = "?error=not_verified";
@@ -34,11 +40,12 @@ public class CustomAuthenticationEntryPoint extends SimpleUrlAuthenticationFailu
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         if (exception.getCause() instanceof UserNotVerifiedException) {
             UserNotVerifiedException e = (UserNotVerifiedException) exception.getCause();
-            if (!verificationService.hasActiveVerificationToken(e.getEmail())) {
+            if (!verificationService.hasActiveVerificationToken(e.getUserId())) {
                 String baseUrl = request.getRequestURL().toString().replace(request.getRequestURI(), request.getContextPath());
-                String token = verificationService.generateVerificationToken(e.getEmail());
+                String token = verificationService.generateVerificationToken(e.getUserId());
                 try {
-                    emailService.sendUserVerificationEmail(baseUrl, e.getEmail(), token);
+                    String userEmail = userService.getById(e.getUserId()).get().getEmail();
+                    emailService.sendUserVerificationEmail(baseUrl, userEmail, token);
                     setDefaultFailureUrl(LOGIN_URL + VERIFY_EMAIL_ERROR);
                 } catch (MessagingException ex) {
                     setDefaultFailureUrl(LOGIN_URL + MAILER_ERROR);

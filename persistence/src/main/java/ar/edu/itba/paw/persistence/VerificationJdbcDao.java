@@ -38,23 +38,12 @@ public class VerificationJdbcDao implements VerificationDao {
     }
 
     @Override
-    public String generateVerificationToken(final String email) {
-        // FIXME: Use ControllerUtils to recieve userId instead of email
-        Optional<Long> userId = jdbcTemplate.query(
-                "SELECT user_id FROM users WHERE email = ?",
-                TOKEN_USER_ID_ROW_MAPPER,
-                email
-        ).stream().findFirst();
-
-        if (!userId.isPresent()) {
-            return null;
-        }
-
+    public String generateVerificationToken(final int userId) {
         String token = UUID.randomUUID().toString().substring(0, 32);
         jdbcTemplate.update(
                 "INSERT INTO user_verification_codes (code, user_id, expires) VALUES (?, ?, ?) ON CONFLICT (code, user_id) DO UPDATE SET code = excluded.code, expires = excluded.expires",
                 token,
-                userId.get(),
+                userId,
                 generateTokenExpirationDate()
         );
         return token;
@@ -94,22 +83,11 @@ public class VerificationJdbcDao implements VerificationDao {
     }
 
     @Override
-    public boolean hasActiveVerificationToken(final String email) {
-        // FIXME: Use ControllerUtils to recieve userId instead of email
-        Optional<Long> userId = jdbcTemplate.query(
-                "SELECT user_id FROM users WHERE email = ?",
-                TOKEN_USER_ID_ROW_MAPPER,
-                email
-        ).stream().findFirst();
-
-        if(!userId.isPresent()) {
-            return false;
-        }
-
+    public boolean hasActiveVerificationToken(final int userId) {
         Optional<LocalDateTime> tokenInfo = jdbcTemplate.query(
                 "SELECT expires FROM user_verification_codes WHERE user_id = ?",
                 TOKEN_EXPIRES_ROW_MAPPER,
-                userId.get()
+                userId
         ).stream().findFirst();
 
         return tokenInfo.isPresent() && tokenInfo.get().isAfter(LocalDateTime.now());
