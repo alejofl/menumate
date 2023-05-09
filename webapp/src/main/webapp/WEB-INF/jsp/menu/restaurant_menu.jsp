@@ -12,7 +12,7 @@
     </jsp:include>
     <script src="<c:url value="/static/js/restaurant_menu.js"/>"></script>
 </head>
-<body data-form-error="${formError}">
+<body data-form-error="${formError}" data-qr="${param.qr == 1}">
 <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
 <div class="restaurant-header">
     <img src="<c:url value="/images/${restaurant.portraitId1}"/>" class="menu-item-card-img" alt="${restaurant.name}">
@@ -123,7 +123,7 @@
                 <h1 class="modal-title fs-5"><spring:message code="restaurant.menu.checkout"/></h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <c:url value="/restaurants/${restaurant.restaurantId}/orders" var="checkout"/>
+            <c:url value="/restaurants/${restaurant.restaurantId}${param.qr == 1 ? '?qr=1' : ''}" var="checkout"/>
             <form:form modelAttribute="checkoutForm" action="${checkout}" method="post" id="checkout-form">
             <div class="modal-body">
                 <c:choose>
@@ -148,34 +148,50 @@
                     </c:otherwise>
                 </c:choose>
                 <nav>
-                    <div class="nav nav-pills nav-fill mb-3" role="tablist">
-                        <button class="nav-link" id="checkout-dinein-tab" data-bs-toggle="tab" data-bs-target="#checkout-dinein" type="button" role="tab"><spring:message code="restaurant.menu.form.dinein"/></button>
-                        <button class="nav-link" id="checkout-takeaway-tab" data-bs-toggle="tab" data-bs-target="#checkout-takeaway" type="button" role="tab"><spring:message code="restaurant.menu.form.takeaway"/></button>
-                        <button class="nav-link" id="checkout-delivery-tab" data-bs-toggle="tab" data-bs-target="#checkout-delivery" type="button" role="tab"><spring:message code="restaurant.menu.form.delivery"/></button>
-                    </div>
+                    <c:if test="${param.qr != 1}">
+                        <div class="nav nav-pills nav-fill mb-3" role="tablist">
+                            <button class="nav-link" id="checkout-takeaway-tab" data-bs-toggle="tab" data-bs-target="#checkout-takeaway" type="button" role="tab"><spring:message code="restaurant.menu.form.takeaway"/></button>
+                            <button class="nav-link" id="checkout-delivery-tab" data-bs-toggle="tab" data-bs-target="#checkout-delivery" type="button" role="tab"><spring:message code="restaurant.menu.form.delivery"/></button>
+                        </div>
+                    </c:if>
                 </nav>
                 <div class="tab-content">
-                    <div class="tab-pane fade" id="checkout-dinein" role="tabpanel" tabindex="0">
-                        <div class="mb-3">
-                            <form:label path="tableNumber" cssClass="form-label"><spring:message code="restaurant.menu.form.tablenumber"/></form:label>
-                            <form:input type="number" path="tableNumber" cssClass="form-control" id="checkout-table-number" min="1" max="${restaurant.maxTables}"/>
-                            <form:errors path="tableNumber" element="div" cssClass="form-error"/>
-                        </div>
-                    </div>
-                    <div class="tab-pane fade" id="checkout-takeaway" role="tabpanel" tabindex="0">
-                        <p><spring:message code="restaurant.menu.form.takeaway.message"/></p>
-                    </div>
-                    <div class="tab-pane fade" id="checkout-delivery" role="tabpanel" tabindex="0">
-                        <div class="mb-3">
-                            <form:label path="address" cssClass="form-label"><spring:message code="restaurant.menu.form.address"/></form:label>
-                            <form:input type="text" path="address" cssClass="form-control" id="checkout-address"/>
-                            <form:errors path="address" element="div" cssClass="form-error"/>
-                        </div>
-                    </div>
+                    <c:choose>
+                        <c:when test="${param.qr == 1}">
+                            <div class="tab-pane fade active show" id="checkout-dinein" role="tabpanel" tabindex="0">
+                                <div class="mb-3">
+                                    <form:label path="tableNumber" cssClass="form-label"><spring:message code="restaurant.menu.form.tablenumber"/></form:label>
+                                    <form:input type="number" path="tableNumber" cssClass="form-control" id="checkout-table-number" min="1" max="${restaurant.maxTables}"/>
+                                    <form:errors path="tableNumber" element="div" cssClass="form-error"/>
+                                    <form:errors element="div" cssClass="form-error"/> <!-- General errors -->
+                                </div>
+                            </div>
+                        </c:when>
+                        <c:otherwise>
+                            <div class="tab-pane fade" id="checkout-takeaway" role="tabpanel" tabindex="0">
+                                <p><spring:message code="restaurant.menu.form.takeaway.message"/></p>
+                            </div>
+                            <div class="tab-pane fade" id="checkout-delivery" role="tabpanel" tabindex="0">
+                                <div class="mb-3">
+                                    <form:label path="address" cssClass="form-label"><spring:message code="restaurant.menu.form.address"/></form:label>
+                                    <form:input type="text" path="address" cssClass="form-control" id="checkout-address"/>
+                                    <form:errors path="address" element="div" cssClass="form-error"/>
+                                    <form:errors element="div" cssClass="form-error"/> <!-- General errors -->
+                                </div>
+                            </div>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
                 <div id="checkout-cart-additional-info">
                     <form:input path="restaurantId" type="hidden" value="${restaurant.restaurantId}"/>
-                    <form:input path="orderType" type="hidden" id="checkout-order-type"/>
+                    <c:choose>
+                        <c:when test="${param.qr == 1}">
+                            <form:input path="orderType" type="hidden" id="checkout-order-type" value="0"/>
+                        </c:when>
+                        <c:otherwise>
+                            <form:input path="orderType" type="hidden" id="checkout-order-type"/>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
                 <div id="checkout-cart-items" data-cart-size="${fn:length(checkoutForm.cart)}">
                     <c:forEach items="${checkoutForm.cart}" var="item" varStatus="loop">
@@ -185,7 +201,9 @@
                     </c:forEach>
                 </div>
                 <form:errors path="cart"/> <!-- Errors when none or too many items in cart -->
-                <form:errors/> <!-- General errors -->
+                <div class="d-flex align-items-center justify-content-center">
+                    <small><spring:message code="restaurant.menu.payment"/></small>
+                </div>
             </div>
             <div class="modal-footer">
                 <input type="submit" class="btn btn-primary" id="checkout-button" data-button-text="<spring:message code="restaurant.menu.placeorder"/>" value=""/>
@@ -195,5 +213,32 @@
     </div>
 </div>
 
+<div class="toast-container p-3 bottom-0 end-0 position-fixed">
+    <c:choose>
+        <c:when test="${param.qr == 1}">
+            <div class="toast" role="alert" id="dine-in-toast" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <c:url var="toastUrl" value="/restaurants/${restaurant.restaurantId}"/>
+                        <spring:message code="restaurant.menu.dineintoast" arguments="${toastUrl}"/>
+                    </div>
+                    <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </c:when>
+        <c:otherwise>
+            <div class="toast" role="alert" id="delivery-toast" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <c:url var="toastUrl" value="/restaurants/${restaurant.restaurantId}?qr=1"/>
+                        <spring:message code="restaurant.menu.deliverytoast" arguments="${toastUrl}"/>
+                    </div>
+                    <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </c:otherwise>
+    </c:choose>
+
+</div>
 </body>
 </html>
