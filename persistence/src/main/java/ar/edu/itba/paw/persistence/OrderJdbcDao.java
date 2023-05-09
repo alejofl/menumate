@@ -16,6 +16,7 @@ import java.util.*;
 public class OrderJdbcDao implements OrderDao {
     private static final String SELECT_FULL_BASE = "SELECT " + TableFields.ORDERS_FIELDS + ", " + TableFields.RESTAURANTS_FIELDS + ", " + TableFields.USERS_FIELDS + ", " + TableFields.ORDER_ITEMS_FIELDS + ", " + TableFields.PRODUCTS_FIELDS + ", " + TableFields.CATEGORIES_FIELDS + " FROM orders JOIN restaurants ON orders.restaurant_id = restaurants.restaurant_id JOIN users on orders.user_id = users.user_id LEFT OUTER JOIN order_items ON orders.order_id = order_items.order_id LEFT OUTER JOIN products ON order_items.product_id = products.product_id LEFT OUTER JOIN categories ON products.category_id = categories.category_id";
     private static final String SELECT_FULL_END_ORDER_BY_ID = " ORDER BY orders.order_id, order_items.line_number";
+    private static final String SELECT_FULL_END_ORDER_BY_DATE = " ORDER BY orders.date_ordered, orders.order_id, order_items.line_number";
 
     private static final String SELECT_ITEMLESS_BASE = "SELECT " + TableFields.ORDERS_FIELDS + ", " + TableFields.RESTAURANTS_FIELDS + ", " + TableFields.USERS_FIELDS + ", COUNT(*) AS order_item_count, SUM(order_items.quantity*products.price) as order_price FROM orders JOIN restaurants ON orders.restaurant_id = restaurants.restaurant_id JOIN users on orders.user_id = users.user_id LEFT OUTER JOIN order_items ON orders.order_id = order_items.order_id LEFT OUTER JOIN products ON order_items.product_id = products.product_id";
     private static final String SELECT_ITEMLESS_END = " GROUP BY orders.order_id, restaurants.restaurant_id, users.user_id";
@@ -119,7 +120,7 @@ public class OrderJdbcDao implements OrderDao {
     public PaginatedResult<Order> getByUser(int userId, int pageNumber, int pageSize) {
         int pageIdx = pageNumber - 1;
         List<Order> results = jdbcTemplate.query(
-                "WITH orders AS (SELECT * FROM orders WHERE user_id = ? LIMIT ? OFFSET ?) " + SELECT_FULL_BASE + SELECT_FULL_END_ORDER_BY_ID,
+                "WITH orders AS (SELECT * FROM orders WHERE user_id = ? LIMIT ? OFFSET ?) " + SELECT_FULL_BASE + SELECT_FULL_END_ORDER_BY_DATE,
                 Extractors.ORDER_EXTRACTOR,
                 userId,
                 pageSize,
@@ -161,7 +162,7 @@ public class OrderJdbcDao implements OrderDao {
     public PaginatedResult<Order> getByRestaurant(int restaurantId, int pageNumber, int pageSize) {
         int pageIdx = pageNumber - 1;
         List<Order> results = jdbcTemplate.query(
-                "WITH orders AS (SELECT * FROM orders WHERE restaurant_id = ? LIMIT ? OFFSET ?) " + SELECT_FULL_BASE + SELECT_FULL_END_ORDER_BY_ID,
+                "WITH orders AS (SELECT * FROM orders WHERE restaurant_id = ? LIMIT ? OFFSET ?) " + SELECT_FULL_BASE + SELECT_FULL_END_ORDER_BY_DATE,
                 Extractors.ORDER_EXTRACTOR,
                 restaurantId,
                 pageSize,
@@ -203,7 +204,7 @@ public class OrderJdbcDao implements OrderDao {
     public PaginatedResult<Order> getByRestaurant(int restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus) {
         int pageIdx = pageNumber - 1;
         List<Order> results = jdbcTemplate.query(
-                "WITH orders AS (SELECT * FROM orders WHERE restaurant_id = ? AND " + getCondStringForOrderStatus(orderStatus) + " LIMIT ? OFFSET ?) " + SELECT_FULL_BASE + SELECT_FULL_END_ORDER_BY_ID,
+                "WITH orders AS (SELECT * FROM orders WHERE restaurant_id = ? AND " + getCondStringForOrderStatus(orderStatus) + " LIMIT ? OFFSET ?) " + SELECT_FULL_BASE + SELECT_FULL_END_ORDER_BY_DATE,
                 Extractors.ORDER_EXTRACTOR,
                 restaurantId,
                 pageSize,
