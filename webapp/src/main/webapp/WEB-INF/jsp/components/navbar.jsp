@@ -32,13 +32,13 @@
                 <div class="text-color-white">
                     <div class="dropdown">
                         <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-person-circle"></i>
+                            <i class="bi bi-person-circle"></i> <c:out value="${currentUser.name}"/>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><span class="dropdown-item-text"><c:out value="${currentUser.name}"/></span></li>
+                            <li><a class="dropdown-item" href="<c:url value="/user/orders"/>"><spring:message code="navbar.myorders"/></a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="<c:url value="/orders"/>"><spring:message code="navbar.myorders"/></a></li>
                             <li><a class="dropdown-item" href="<c:url value="/restaurants/create"/>"><spring:message code="navbar.createrestaurant"/></a></li>
+                            <li><a class="dropdown-item" href="<c:url value="/user/restaurants"/>"><spring:message code="navbar.myrestaurants"/></a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="<c:url value="/auth/logout"/>"><spring:message code="navbar.logout"/></a></li>
                         </ul>

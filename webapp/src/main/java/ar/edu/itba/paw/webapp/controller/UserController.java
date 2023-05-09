@@ -20,8 +20,6 @@ import java.util.List;
 
 @Controller
 public class UserController {
-    private static final int DEFAULT_ORDERS_PAGE_SIZE = 20;
-
     @Autowired
     private OrderService orderService;
 
@@ -37,7 +35,7 @@ public class UserController {
     @Autowired
     private ProductService productService;
 
-    @RequestMapping(value = "/orders", method = RequestMethod.GET)
+    @RequestMapping(value = "/user/orders", method = RequestMethod.GET)
     public ModelAndView myOrders(
             @Valid final PagingForm paging,
             final BindingResult errors
@@ -49,10 +47,30 @@ public class UserController {
             paging.clear();
         }
 
-        PaginatedResult<OrderItemless> orders = orderService.getByUserExcludeItems(ControllerUtils.getCurrentUserIdOrThrow(), paging.getPageOrDefault(), paging.getSizeOrDefault(DEFAULT_ORDERS_PAGE_SIZE));
+        PaginatedResult<OrderItemless> orders = orderService.getByUserExcludeItems(ControllerUtils.getCurrentUserIdOrThrow(), paging.getPageOrDefault(), paging.getSizeOrDefault(ControllerUtils.DEFAULT_ORDERS_PAGE_SIZE));
         mav.addObject("orders", orders.getResult());
         mav.addObject("orderCount", orders.getTotalCount());
         mav.addObject("pageCount", orders.getTotalPageCount());
+        return mav;
+    }
+
+    @RequestMapping(value = "/user/restaurants", method = RequestMethod.GET)
+    public ModelAndView myRestaurants(
+            @Valid final PagingForm paging,
+            final BindingResult errors
+    ) {
+        ModelAndView mav = new ModelAndView("user/myrestaurants");
+
+        if (errors.hasErrors()) {
+            mav.addObject("error", Boolean.TRUE);
+            paging.clear();
+        }
+
+        // FIXME Change to restaurants for user with role and pendingOrders
+        PaginatedResult<Restaurant> restaurants = restaurantService.getSearchResults("", paging.getPageOrDefault(), paging.getSizeOrDefault(ControllerUtils.DEFAULT_RESTAURANT_PAGE_SIZE));
+        mav.addObject("restaurants", restaurants.getResult());
+        mav.addObject("restaurantCount", restaurants.getTotalCount());
+        mav.addObject("pageCount", restaurants.getTotalPageCount());
         return mav;
     }
 

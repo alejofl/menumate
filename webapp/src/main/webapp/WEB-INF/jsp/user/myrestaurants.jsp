@@ -6,7 +6,7 @@
 
 <html>
 <head>
-    <spring:message var="title" code="userorders.title"/>
+    <spring:message var="title" code="navbar.myrestaurants"/>
     <jsp:include page="/WEB-INF/jsp/components/head.jsp">
         <jsp:param name="title" value="${title}"/>
     </jsp:include>
@@ -16,29 +16,33 @@
 <c:if test="${error}">
     <jsp:include page="/WEB-INF/jsp/components/param_error.jsp"/>
 </c:if>
-<div class="page-title">
-    <h1><spring:message code="userorders.title"/></h1>
+<div class="page-title mb-4">
+    <h1><spring:message code="navbar.myrestaurants"/></h1>
 </div>
 <main class="restaurant-feed">
-    <c:forEach var="order" items="${orders}">
-        <%-- This os a workaround to make LocalDateTime formattable --%>
-        <fmt:parseDate value="${order.dateOrdered}" pattern="yyyy-MM-dd'T'HH:mm:ss" var="parsedDateOrdered" type="both"/>
-        <fmt:formatDate pattern="yyyy-MM-dd HH:mm" value="${parsedDateOrdered}" var="dateOrdered"/>
-
-        <spring:message var="orderType" code="restaurant.menu.form.${order.orderType.messageCode}"/>
-
-        <jsp:include page="/WEB-INF/jsp/components/order_card.jsp">
-            <jsp:param name="id" value="${order.orderId}"/>
-            <jsp:param name="restaurantLogoId" value="${order.restaurant.logoId}"/>
-            <jsp:param name="restaurantName" value="${order.restaurant.name}"/>
-            <jsp:param name="dateOrdered" value="${dateOrdered}"/>
-            <jsp:param name="productQuantity" value="${order.itemCount}"/>
-            <jsp:param name="price" value="${order.price}"/>
-            <jsp:param name="orderType" value="${orderType}"/>
-        </jsp:include>
+    <c:forEach var="restaurant" items="${restaurants}">
+        <a class="clickable-object position-relative" href="<c:out value="/restaurants/${restaurant.restaurantId}"/>">
+            <div class="card restaurant-card">
+                <img
+                        class="card-img restaurant-card-img"
+                        style="--main_image: url(<c:out value="/images/${restaurant.portraitId1}"/>); --hover_image: url(<c:out value="/images/${restaurant.portraitId2}"/>)"
+                >
+                <div class="card-body">
+                    <h5 class="card-title">${restaurant.name}</h5>
+                    <p class="card-text">${restaurant.address}</p>
+                </div>
+            </div>
+            <h4>
+                <%-- FIXME change pendingOrders after updating queryset --%>
+                <span class="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-${restaurant.pendingOrders == 0 ? "success" : "danger"}">
+                    <spring:message code="restaurantorders.pending" var="pending"/>
+                    ${restaurant.pendingOrders} ${fn:toLowerCase(pending)}
+                </span>
+            </h4>
+        </a>
     </c:forEach>
 
-    <c:if test="${fn:length(orders) == 0}">
+    <c:if test="${fn:length(restaurants) == 0}">
         <div class="empty-results">
             <h1><i class="bi bi-slash-circle"></i></h1>
             <p>  <spring:message code="userorders.noorders"/></p>
@@ -66,7 +70,7 @@
 <nav class="d-flex justify-content-center">
     <ul class="pagination">
         <li class="page-item">
-            <c:url value="/user/orders" var="previousUrl">
+            <c:url value="/user/restaurants" var="previousUrl">
                 <c:param name="page" value="${currentPage - 1}"/>
                 <c:param name="size" value="${currentSize}"/>
             </c:url>
@@ -75,14 +79,14 @@
             </a>
         </li>
         <c:forEach begin="1" end="${pageCount}" var="pageNo">
-            <c:url value="/user/orders" var="pageUrl">
+            <c:url value="/user/restaurants" var="pageUrl">
                 <c:param name="page" value="${pageNo}"/>
                 <c:param name="size" value="${currentSize}"/>
             </c:url>
             <li class="page-item ${pageNo == currentPage ? "active" : ""}"><a class="page-link" href="${pageUrl}">${pageNo}</a></li>
         </c:forEach>
         <li class="page-item">
-            <c:url value="/user/orders" var="nextUrl">
+            <c:url value="/user/restaurants" var="nextUrl">
                 <c:param name="page" value="${currentPage + 1}"/>
                 <c:param name="size" value="${currentSize}"/>
             </c:url>
