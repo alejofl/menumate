@@ -1,13 +1,17 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.RestaurantRoleLevel;
+import ar.edu.itba.paw.model.User;
+import ar.edu.itba.paw.model.util.Pair;
 import ar.edu.itba.paw.persistance.RolesDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.sql.ResultSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -66,5 +70,27 @@ public class RolesJdbcDao implements RolesDao {
             return false;
 
         return roleLevel.get().hasPermissionOf(minimumRoleLevel);
+    }
+
+    private static final RowMapper<Pair<User, RestaurantRoleLevel>> USER_ROLE_ROW_MAPPER = (ResultSet rs, int rowNum) -> new Pair<>(
+            SimpleRowMappers.USER_ROW_MAPPER.mapRow(rs, rowNum),
+            RestaurantRoleLevel.values()[rs.getInt("role_level")]
+    );
+
+    private static final String GET_BY_RESTAURANT_SQL =
+            "WITH roles_grouped AS (SELECT user_id, restaurant_id, role_level FROM restaurant_roles" +
+                    " UNION SELECT restaurants.owner_user_id, restaurant_id, " + RestaurantRoleLevel.OWNER.ordinal() +
+                    " FROM restaurants) SELECT " + TableFields.USERS_FIELDS + ", roles_grouped.role_level" +
+                    " FROM roles_grouped JOIN users ON roles_grouped.user_id = users.user_id" +
+                    " WHERE roles_grouped.restaurant_id = ? ORDER BY role_level";
+
+
+    @Override
+    public List<Pair<User, RestaurantRoleLevel>> getByRestaurant(int restaurantId) {
+        return jdbcTemplate.query(
+                GET_BY_RESTAURANT_SQL,
+                USER_ROLE_ROW_MAPPER,
+                restaurantId
+        );
     }
 }
