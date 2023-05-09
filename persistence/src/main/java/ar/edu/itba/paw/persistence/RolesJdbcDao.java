@@ -105,12 +105,10 @@ public class RolesJdbcDao implements RolesDao {
     private static final String GET_BY_USER_SQL =
             "WITH roles_grouped AS (SELECT user_id, restaurant_id, role_level FROM restaurant_roles" +
                     " UNION SELECT restaurants.owner_user_id, restaurant_id, " + RestaurantRoleLevel.OWNER.ordinal() +
-                    " FROM restaurants), orders AS (SELECT * FROM orders WHERE NOT(" + OrderJdbcDao.IS_CLOSED_COND +
-                    ")) SELECT " + TableFields.RESTAURANTS_FIELDS + ", roles_grouped.role_level, COUNT(orders.order_id) AS order_count" +
+                    " FROM restaurants) SELECT " + TableFields.RESTAURANTS_FIELDS + ", roles_grouped.role_level," +
+                    " (SELECT COUNT(*) FROM orders WHERE orders.restaurant_id = restaurants.restaurant_id AND " + OrderJdbcDao.IS_IN_PROGRESS_COND + ") AS order_count" +
                     " FROM roles_grouped JOIN restaurants ON roles_grouped.restaurant_id = restaurants.restaurant_id" +
-                    " LEFT OUTER JOIN orders ON restaurants.restaurant_id = orders.restaurant_id" +
-                    " WHERE roles_grouped.user_id = ?" +
-                    " GROUP BY restaurants.restaurant_id, role_level ORDER BY order_count DESC";
+                    " WHERE roles_grouped.user_id = ? ORDER BY order_count DESC";
 
     @Override
     public List<Triplet<Restaurant, RestaurantRoleLevel, Integer>> getByUser(int userId) {

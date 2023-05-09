@@ -27,8 +27,8 @@ public class OrderJdbcDao implements OrderDao {
     private static final String IS_DELIVERED_COND = "date_delivered IS NOT NULL";
     private static final String IS_CANCELLED_COND = "date_cancelled IS NOT NULL";
 
-    private static final String IS_IN_PROGRESS_COND = "(" + IS_PENDING_COND + " OR " + IS_CONFIRMED_COND + " OR " + IS_READY_COND + ")";
-    static final String IS_CLOSED_COND = "(" + IS_DELIVERED_COND + " OR " + IS_CANCELLED_COND + ")";
+    static final String IS_IN_PROGRESS_COND = "(date_delivered IS NULL AND date_cancelled IS NULL)";
+    static final String IS_CLOSED_COND = "(date_delivered IS NOT NULL OR date_cancelled IS NOT NULL)";
 
     private static String getCondStringForOrderStatus(OrderStatus status) {
         switch (status) {
