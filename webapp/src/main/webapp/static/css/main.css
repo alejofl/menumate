@@ -286,28 +286,14 @@ main {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-}
-
-.landing-img {
-    width: 100%;
-    object-fit: cover;
-    max-height: 700px;
-    overflow: hidden;
-    background-color: black;
-    filter: brightness(50%);
-}
-
-.landing-img-container {
-    position: absolute;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
+    max-height: 500px;
+    height: 100vh;
+    background-size: cover;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(/static/pictures/food.jpg);
 }
 
 .landing-text {
     color: var(--light);
-    padding: 10rem;
     font-size: 50px;
     font-weight: bold;
     text-align: center;
@@ -407,6 +393,7 @@ input:has(+ .form-error), textarea:has(+ .form-error) {
 
 #searchForm {
     padding: 1rem;
+    width: 100%;
     display: flex;
     justify-content: center;
 }

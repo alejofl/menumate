@@ -12,10 +12,8 @@
 <body>
     <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
     <div class="landing-container">
-        <img src="<c:url value="/static/pictures/food.jpg"/>" class="img-fluid landing-img">
-        <div class="landing-img-container">
-            <p class="landing-text"><spring:message code="index.landingtext"/></p>
-        </div>
+        <p class="landing-text"><spring:message code="index.landingtext"/></p>
+        <jsp:include page="/WEB-INF/jsp/components/search.jsp"/>
     </div>
     <div class="landing-restaurants">
         <p class="landing-restaurants-title"><spring:message code="index.restaurant.title"/></p>

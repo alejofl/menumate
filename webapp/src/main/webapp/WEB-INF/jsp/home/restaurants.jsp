@@ -8,7 +8,6 @@
 <html>
 <head>
     <spring:message code="restaurants.title" var="home"/>
-    <spring:message code="restaurants.search.placeholder" var="placeholder"/>
     <jsp:include page="/WEB-INF/jsp/components/head.jsp">
         <jsp:param name="title" value="${home}"/>
     </jsp:include>
@@ -18,16 +17,7 @@
     <c:if test="${error}">
         <jsp:include page="/WEB-INF/jsp/components/param_error.jsp"/>
     </c:if>
-    <c:url var="search" value="/restaurants"/>
-    <form:form modelAttribute="searchForm" action="${search}" method="get">
-        <div class="input-group flex-nowrap">
-            <span class="input-group-text search-input"><i class="bi bi-search"></i></span>
-            <form:input type="text" path="search" cssClass="form-control search-input" placeholder="${placeholder}"/>
-            <form:errors path="search" element="div" cssClass="form-error invalid-tooltip"/>
-        </div>
-        <form:input type="hidden" path="page" value="1"/>
-        <input type="submit" class="btn btn-primary" value='<spring:message code="restaurants.search"/>'>
-    </form:form>
+    <jsp:include page="/WEB-INF/jsp/components/search.jsp"/>
     <main class="restaurant-feed">
         <c:forEach items="${restaurants}" var="restaurant">
             <c:url var="restaurantUrl" value="/restaurants/${restaurant.restaurantId}"/>

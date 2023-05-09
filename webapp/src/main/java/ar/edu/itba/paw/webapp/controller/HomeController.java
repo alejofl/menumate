@@ -21,7 +21,9 @@ public class HomeController {
     private RestaurantService restaurantService;
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public ModelAndView index() {
+    public ModelAndView index(
+            @ModelAttribute("searchForm") final SearchForm form
+    ) {
         ModelAndView mav = new ModelAndView("home/index");
 
         final int maxRestaurants = 4;
