@@ -50,9 +50,9 @@ public class UserController {
 
         PaginatedResult<OrderItemless> orders;
         if (status.equals("in progress")) {
-            orders = orderService.getInProgressByUserExcludeItems(ControllerUtils.getCurrentUserIdOrThrow(), paging.getPageOrDefault(), paging.getSizeOrDefault(DEFAULT_ORDERS_PAGE_SIZE));
+            orders = orderService.getInProgressByUserExcludeItems(ControllerUtils.getCurrentUserIdOrThrow(), paging.getPageOrDefault(), paging.getSizeOrDefault(ControllerUtils.DEFAULT_ORDERS_PAGE_SIZE));
         } else {
-            orders = orderService.getByUserExcludeItems(ControllerUtils.getCurrentUserIdOrThrow(), paging.getPageOrDefault(), paging.getSizeOrDefault(DEFAULT_ORDERS_PAGE_SIZE));
+            orders = orderService.getByUserExcludeItems(ControllerUtils.getCurrentUserIdOrThrow(), paging.getPageOrDefault(), paging.getSizeOrDefault(ControllerUtils.DEFAULT_ORDERS_PAGE_SIZE));
         }
 
         mav.addObject("orders", orders.getResult());
