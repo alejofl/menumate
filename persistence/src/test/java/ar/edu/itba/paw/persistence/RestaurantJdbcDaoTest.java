@@ -21,6 +21,7 @@ import java.util.Optional;
 public class RestaurantJdbcDaoTest {
 
     private static final int ID = 5123;
+    private static final int MAX_TABLES = 20;
     private static final String NAME = "pedros";
     private static final String EMAIL = "pedros@frompedros.com";
     private static final int USER_ID = 791;
@@ -45,7 +46,7 @@ public class RestaurantJdbcDaoTest {
 
     @Test
     public void testFindById() throws SQLException {
-        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, owner_user_id) VALUES (" + ID + ", '" + NAME + "', '" + EMAIL + "', " + USER_ID + ")");
+        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, owner_user_id, max_tables) VALUES (" + ID + ", '" + NAME + "', '" + EMAIL + "', " + USER_ID + ", " + MAX_TABLES + ")");
 
         Optional<Restaurant> maybeRestaurant = restaurantDao.getById(ID);
 
@@ -67,7 +68,7 @@ public class RestaurantJdbcDaoTest {
 
     @Test
     public void testDeletion() throws SQLException {
-        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, owner_user_id) VALUES (" + ID + ", '" + NAME + "', '" + EMAIL + "', " + USER_ID + ")");
+        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, owner_user_id, max_tables) VALUES (" + ID + ", '" + NAME + "', '" + EMAIL + "', " + USER_ID + ", " + MAX_TABLES + ")");
         Assert.assertTrue(restaurantDao.delete(ID));
     }
 }

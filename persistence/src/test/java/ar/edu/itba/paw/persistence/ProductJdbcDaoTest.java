@@ -21,15 +21,6 @@ import java.util.Optional;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
 public class ProductJdbcDaoTest {
-
-    @Autowired
-    private DataSource ds;
-
-    @Autowired
-    private ProductJdbcDao productDao;
-
-    private JdbcTemplate jdbcTemplate;
-
     private static final int CATEGORY_ID = 581;
     private static final String CATEGORY_NAME = "Entradas";
     private static final int USER_ID = 791;
@@ -40,18 +31,27 @@ public class ProductJdbcDaoTest {
     private static final int RESTAURANT_ID = 5123;
     private static final String RESTAURANT_NAME = "Kansas Grill & Bar";
     private static final String RESTAURANT_EMAIL = "kansas@lovelyrestaurant.com";
+    private static final int MAX_TABLES = 20;
     private static final int PRODUCT_ID = 912;
     private static final String PRODUCT_NAME = "Lomito";
     private static final BigDecimal PRODUCT_PRICE = new BigDecimal("533.55");
 
     private static final String[] PRODUCTS_NAMES = {"Product 1", "Product 2", "Product 3", "Product 4"};
 
+    @Autowired
+    private DataSource ds;
+
+    @Autowired
+    private ProductJdbcDao productDao;
+
+    private JdbcTemplate jdbcTemplate;
+
     @Before
     public void setup() {
         jdbcTemplate = new JdbcTemplate(ds);
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "categories", "restaurants", "products", "users");
         jdbcTemplate.execute("INSERT INTO users (user_id, email, password, name) VALUES (" + USER_ID + ", '" + USER_EMAIL + "', '" + USER_PASSWORD + "', '" + USER_NAME + "')");
-        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, owner_user_id) VALUES (" + RESTAURANT_ID + ", '" + RESTAURANT_NAME + "', '" + RESTAURANT_EMAIL + "', " + USER_ID + ")");
+        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, owner_user_id, max_tables) VALUES (" + RESTAURANT_ID + ", '" + RESTAURANT_NAME + "', '" + RESTAURANT_EMAIL + "', " + USER_ID + ", " + MAX_TABLES + ")");
         jdbcTemplate.execute("INSERT INTO categories (category_id, name, restaurant_id, order_num) VALUES (" + CATEGORY_ID + ", '" + CATEGORY_NAME + "', " + RESTAURANT_ID + ", " + ORDER + ")");
     }
 

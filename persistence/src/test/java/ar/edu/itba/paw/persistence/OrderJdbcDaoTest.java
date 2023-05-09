@@ -24,13 +24,6 @@ import static org.mockito.Mockito.when;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
 public class OrderJdbcDaoTest {
-
-    @Autowired
-    private DataSource ds;
-
-    @Autowired
-    private OrderJdbcDao orderJdbcDao;
-    private JdbcTemplate jdbcTemplate;
     private static final int ORDER_ID = 8844;
     private static final String ADDRESS = "Calle 123";
     private static final int TABLE_NUMBER = 11;
@@ -39,6 +32,7 @@ public class OrderJdbcDaoTest {
     private static final int RESTAURANT_ID = 45123;
     private static final String RESTAURANT_NAME = "EmpanadasMorita";
     private static final String RESTAURANT_EMAIL = "ivawashere@email.com";
+    private static final int MAX_TABLES = 20;
     private static final int USER_ID = 791;
     private static final String EMAIL = "peter@peter.com";
     private static final String PASSWORD = "super12secret34";
@@ -52,12 +46,19 @@ public class OrderJdbcDaoTest {
     private static final int CATEGORY_ORDER = 10;
     private List<OrderItem> orderItemList;
 
+    @Autowired
+    private DataSource ds;
+
+    @Autowired
+    private OrderJdbcDao orderJdbcDao;
+    private JdbcTemplate jdbcTemplate;
+
     @Before
     public void setup() {
         jdbcTemplate = new JdbcTemplate(ds);
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "restaurants", "users", "orders", "products", "categories", "order_items");
         jdbcTemplate.execute("INSERT INTO users (user_id, email, password, name) VALUES (" + USER_ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + NAME + "')");
-        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, owner_user_id) VALUES (" + RESTAURANT_ID + ", '" + RESTAURANT_NAME + "', '" + RESTAURANT_EMAIL + "', " + USER_ID + ")");
+        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, owner_user_id, max_tables) VALUES (" + RESTAURANT_ID + ", '" + RESTAURANT_NAME + "', '" + RESTAURANT_EMAIL + "', " + USER_ID + ", " + MAX_TABLES + ")");
         jdbcTemplate.execute("INSERT INTO categories (category_id, restaurant_id, name, order_num) VALUES (" + CATEGORY_ID + ", " + RESTAURANT_ID + ", '" + CATEGORY_NAME + "', " + CATEGORY_ORDER + ")");
         jdbcTemplate.execute("INSERT INTO products(product_id, category_id, name, price) VALUES (" + PRODUCT_ID + ", " + CATEGORY_ID + ", '" + PRODUCT_NAME + "', " + PRODUCT_PRICE + ")");
         orderItemList = new ArrayList<>();

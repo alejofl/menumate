@@ -20,15 +20,6 @@ import java.util.Optional;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
 public class CategoryJdbcDaoTest {
-
-
-    @Autowired
-    private DataSource ds;
-
-    @Autowired
-    private CategoryJdbcDao categoryDao;
-
-    private JdbcTemplate jdbcTemplate;
     private static final int CATEGORY_ID = 12421;
     private static final int USER_ID = 791;
     private static final String USER_EMAIL = "peter@peter.com";
@@ -38,15 +29,24 @@ public class CategoryJdbcDaoTest {
     private static final String CATEGORY_NAME = "Postgres Dulces";
     private static final String RESTAURANT_NAME = "Cafe Mataderos";
     private static final String RESTAURANT_EMAIL = "pedro@frompedros.com";
+    private static final int MAX_TABLES = 20;
     private static final int ORDER_NUM = 1293;
     private static final String[] categoryNames = {"Category 1", "Category 2", "Category 3", "Category 4"};
+
+    @Autowired
+    private DataSource ds;
+
+    @Autowired
+    private CategoryJdbcDao categoryDao;
+
+    private JdbcTemplate jdbcTemplate;
 
     @Before
     public void setup() {
         jdbcTemplate = new JdbcTemplate(ds);
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "categories", "restaurants", "users");
         jdbcTemplate.execute("INSERT INTO users (user_id, email, password, name) VALUES (" + USER_ID + ", '" + USER_EMAIL + "', '" + USER_PASSWORD + "', '" + USER_NAME + "')");
-        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, owner_user_id) VALUES (" + RESTAURANT_ID + ", '" + RESTAURANT_NAME + "', '" + RESTAURANT_EMAIL + "', " + USER_ID + ")");
+        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, owner_user_id, max_tables) VALUES (" + RESTAURANT_ID + ", '" + RESTAURANT_NAME + "', '" + RESTAURANT_EMAIL + "', " + USER_ID + ", " + MAX_TABLES + ")");
     }
 
     /* FIXME update to match implementation
