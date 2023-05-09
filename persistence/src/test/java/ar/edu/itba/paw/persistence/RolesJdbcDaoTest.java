@@ -1,8 +1,10 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.model.RestaurantRoleLevel;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.model.util.Pair;
+import ar.edu.itba.paw.model.util.Triplet;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import org.junit.Assert;
 import org.junit.Before;
@@ -15,6 +17,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
 
 import javax.sql.DataSource;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -139,5 +142,30 @@ public class RolesJdbcDaoTest {
         Assert.assertEquals(1, result.size());
         Assert.assertEquals(RestaurantRoleLevel.OWNER, result.get(0).getValue());
         Assert.assertEquals(OWNER_ID, result.get(0).getKey().getUserId());
+    }
+
+    @Test
+    public void testGetByUserNone() {
+        List<Triplet<Restaurant, RestaurantRoleLevel, Integer>> result = rolesDao.getByUser(USER_ID);
+
+        Assert.assertEquals(0, result.size());
+    }
+
+    @Test
+    public void testGetByUserWhenOwner() {
+        List<Triplet<Restaurant, RestaurantRoleLevel, Integer>> result = rolesDao.getByUser(OWNER_ID);
+
+        Assert.assertEquals(2, result.size());
+
+        int[] restaurantsExpected = new int[] {RESTAURANT_ID1, RESTAURANT_ID2};
+        int[] restaurantsGot = new int[] {result.get(0).getX().getRestaurantId(), result.get(1).getX().getRestaurantId()};
+        Arrays.sort(restaurantsGot);
+        Arrays.sort(restaurantsExpected);
+        Assert.assertArrayEquals(restaurantsExpected, restaurantsGot);
+
+        Assert.assertEquals(RestaurantRoleLevel.OWNER, result.get(0).getY());
+        Assert.assertEquals(RestaurantRoleLevel.OWNER, result.get(1).getY());
+        Assert.assertEquals(0, result.get(0).getZ().intValue());
+        Assert.assertEquals(0, result.get(1).getZ().intValue());
     }
 }

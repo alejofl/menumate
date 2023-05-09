@@ -1,8 +1,10 @@
 package ar.edu.itba.paw.services;
 
+import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.model.RestaurantRoleLevel;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.model.util.Pair;
+import ar.edu.itba.paw.model.util.Triplet;
 import ar.edu.itba.paw.persistance.RolesDao;
 import ar.edu.itba.paw.service.RolesService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,5 +37,10 @@ public class RolesServiceImpl implements RolesService {
     @Override
     public List<Pair<User, RestaurantRoleLevel>> getByRestaurant(int restaurantId) {
         return rolesDao.getByRestaurant(restaurantId);
+    }
+
+    @Override
+    public List<Triplet<Restaurant, RestaurantRoleLevel, Integer>> getByUser(int userId) {
+        return rolesDao.getByUser(userId);
     }
 }
