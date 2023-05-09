@@ -37,10 +37,10 @@ public class UserController {
     @Autowired
     private ProductService productService;
 
-    @RequestMapping(value = "/orders", method = RequestMethod.GET)
-    public ModelAndView myOrders(
+    private ModelAndView myOrders(
             @Valid final PagingForm paging,
-            final BindingResult errors
+            final BindingResult errors,
+            final String status
     ) {
         ModelAndView mav = new ModelAndView("user/myorders");
 
@@ -49,11 +49,40 @@ public class UserController {
             paging.clear();
         }
 
-        PaginatedResult<OrderItemless> orders = orderService.getByUserExcludeItems(ControllerUtils.getCurrentUserIdOrThrow(), paging.getPageOrDefault(), paging.getSizeOrDefault(DEFAULT_ORDERS_PAGE_SIZE));
+        PaginatedResult<OrderItemless> orders;
+        if (status.equals("in progress")) {
+            orders = orderService.getInProgressByUserExcludeItems(ControllerUtils.getCurrentUserIdOrThrow(), paging.getPageOrDefault(), paging.getSizeOrDefault(DEFAULT_ORDERS_PAGE_SIZE));
+        } else {
+            orders = orderService.getByUserExcludeItems(ControllerUtils.getCurrentUserIdOrThrow(), paging.getPageOrDefault(), paging.getSizeOrDefault(DEFAULT_ORDERS_PAGE_SIZE));
+        }
+
         mav.addObject("orders", orders.getResult());
         mav.addObject("orderCount", orders.getTotalCount());
         mav.addObject("pageCount", orders.getTotalPageCount());
+        mav.addObject("status", status);
+
         return mav;
+    }
+
+    @RequestMapping(value = "/user/orders", method = RequestMethod.GET)
+    public ModelAndView myOrders() {
+        return new ModelAndView("redirect:/user/orders/pending");
+    }
+
+    @RequestMapping(value = "/user/orders/pending", method = RequestMethod.GET)
+    public ModelAndView myOrdersPending(
+            @Valid final PagingForm paging,
+            final BindingResult errors
+    ) {
+        return myOrders(paging, errors, "in progress");
+    }
+
+    @RequestMapping(value = "/user/orders/all", method = RequestMethod.GET)
+    public ModelAndView myOrdersAll(
+            @Valid final PagingForm paging,
+            final BindingResult errors
+    ) {
+        return myOrders(paging, errors, "all");
     }
 
     @RequestMapping(value = "/orders/{id:\\d+}", method = RequestMethod.GET)

@@ -90,6 +90,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public PaginatedResult<OrderItemless> getInProgressByUserExcludeItems(int userId, int pageNumber, int pageSize) {
+        return orderDao.getInProgressByUserExcludeItems(userId, pageNumber, pageSize);
+    }
+
+    @Override
     public PaginatedResult<Order> getByRestaurant(int restaurantId, int pageNumber, int pageSize) {
         return orderDao.getByRestaurant(restaurantId, pageNumber, pageSize);
     }

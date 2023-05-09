@@ -26,6 +26,8 @@ public class OrderJdbcDao implements OrderDao {
     private static final String IS_READY_COND = "(date_ready IS NOT NULL AND date_delivered IS NULL AND date_cancelled IS NULL)";
     private static final String IS_DELIVERED_COND = "date_delivered IS NOT NULL";
     private static final String IS_CANCELLED_COND = "date_cancelled IS NOT NULL";
+
+    private static final String IS_IN_PROGRESS_COND = "(" + IS_PENDING_COND + " OR " + IS_CONFIRMED_COND + " OR " + IS_READY_COND + ")";
     static final String IS_CLOSED_COND = "(" + IS_DELIVERED_COND + " OR " + IS_CANCELLED_COND + ")";
 
     private static String getCondStringForOrderStatus(OrderStatus status) {
@@ -143,6 +145,28 @@ public class OrderJdbcDao implements OrderDao {
 
         List<OrderItemless> results = jdbcTemplate.query(
                 SELECT_ITEMLESS_BASE + " WHERE orders.user_id = ? " + SELECT_ITEMLESS_END + " LIMIT ? OFFSET ?",
+                rowMapper,
+                userId,
+                pageSize,
+                pageIdx * pageSize
+        );
+
+        int count = jdbcTemplate.query(
+                "SELECT COUNT(*) AS c FROM orders WHERE user_id = ?",
+                SimpleRowMappers.COUNT_ROW_MAPPER,
+                userId
+        ).get(0);
+
+        return new PaginatedResult<>(results, pageNumber, pageSize, count);
+    }
+
+    @Override
+    public PaginatedResult<OrderItemless> getInProgressByUserExcludeItems(int userId, int pageNumber, int pageSize) {
+        int pageIdx = pageNumber - 1;
+        RowMapper<OrderItemless> rowMapper = ReusingRowMappers.getOrderItemlessReusingRowMapper();
+
+        List<OrderItemless> results = jdbcTemplate.query(
+                SELECT_ITEMLESS_BASE + " WHERE orders.user_id = ? AND " + IS_IN_PROGRESS_COND + " " + SELECT_ITEMLESS_END + " LIMIT ? OFFSET ?",
                 rowMapper,
                 userId,
                 pageSize,

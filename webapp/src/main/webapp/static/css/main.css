@@ -366,7 +366,7 @@ main {
     flex-grow: 1;
 }
 
-#checkout .nav, .restaurant-orders-view .nav {
+#checkout .nav, .restaurant-orders-view .nav, .my-orders-nav .nav {
     --bs-nav-link-color: var(--secondary);
     --bs-nav-link-hover-color: var(--secondary-dark);
     --bs-nav-pills-link-active-bg: var(--secondary);
