@@ -32,6 +32,8 @@ public interface OrderService {
 
     PaginatedResult<OrderItemless> getByUserExcludeItems(int userId, int pageNumber, int pageSize);
 
+    PaginatedResult<OrderItemless> getInProgressByUserExcludeItems(int userId, int pageNumber, int pageSize);
+
     PaginatedResult<Order> getByRestaurant(int restaurantId, int pageNumber, int pageSize);
 
     PaginatedResult<OrderItemless> getByRestaurantExcludeItems(int restaurantId, int pageNumber, int pageSize);

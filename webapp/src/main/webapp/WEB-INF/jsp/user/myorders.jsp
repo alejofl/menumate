@@ -19,6 +19,18 @@
 <div class="page-title">
     <h1><spring:message code="userorders.title"/></h1>
 </div>
+<div class="my-orders-nav d-flex pt-2 justify-content-center">
+    <nav>
+        <ul class="nav nav-pills nav-fill mb-3">
+            <li class="nav-item">
+                <a class="nav-link ${status == "in progress" ? "active" : ""}" aria-current="page" href="<c:url value="/user/orders/pending"/>"><spring:message code="userorders.inprogress"/></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link ${status == "all" ? "active" : ""}" aria-current="page" href="<c:url value="/user/orders/all"/>"><spring:message code="userorders.all"/></a>
+            </li>
+        </ul>
+    </nav>
+</div>
 <main class="restaurant-feed">
     <c:forEach var="order" items="${orders}">
         <%-- This os a workaround to make LocalDateTime formattable --%>
