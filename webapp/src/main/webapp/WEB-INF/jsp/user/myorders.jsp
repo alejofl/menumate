@@ -79,7 +79,7 @@
 <nav class="d-flex justify-content-center">
     <ul class="pagination">
         <li class="page-item">
-            <c:url value="/orders" var="previousUrl">
+            <c:url value="/user/orders" var="previousUrl">
                 <c:param name="page" value="${currentPage - 1}"/>
                 <c:param name="size" value="${currentSize}"/>
             </c:url>
@@ -88,14 +88,14 @@
             </a>
         </li>
         <c:forEach begin="1" end="${pageCount}" var="pageNo">
-            <c:url value="/orders" var="pageUrl">
+            <c:url value="/user/orders" var="pageUrl">
                 <c:param name="page" value="${pageNo}"/>
                 <c:param name="size" value="${currentSize}"/>
             </c:url>
             <li class="page-item ${pageNo == currentPage ? "active" : ""}"><a class="page-link" href="${pageUrl}">${pageNo}</a></li>
         </c:forEach>
         <li class="page-item">
-            <c:url value="/orders" var="nextUrl">
+            <c:url value="/user/orders" var="nextUrl">
                 <c:param name="page" value="${currentPage + 1}"/>
                 <c:param name="size" value="${currentSize}"/>
             </c:url>

@@ -17,8 +17,6 @@ import javax.validation.Valid;
 
 @Controller
 public class HomeController {
-    private static final int DEFAULT_SEARCH_PAGE_SIZE = 12;
-
     @Autowired
     private RestaurantService restaurantService;
 
@@ -45,7 +43,7 @@ public class HomeController {
             form.clear();
         }
 
-        final PaginatedResult<Restaurant> results = restaurantService.getSearchResults(form.getSearch(), form.getPageOrDefault(), form.getSizeOrDefault(DEFAULT_SEARCH_PAGE_SIZE));
+        final PaginatedResult<Restaurant> results = restaurantService.getSearchResults(form.getSearch(), form.getPageOrDefault(), form.getSizeOrDefault(ControllerUtils.DEFAULT_SEARCH_PAGE_SIZE));
         mav.addObject("restaurants", results.getResult());
         mav.addObject("restaurantCount", results.getTotalCount());
         mav.addObject("pageCount", results.getTotalPageCount());

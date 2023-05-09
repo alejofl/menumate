@@ -7,6 +7,10 @@ import ar.edu.itba.paw.webapp.exception.UserNotFoundException;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 public class ControllerUtils {
+    static final int DEFAULT_ORDERS_PAGE_SIZE = 20;
+    static final int DEFAULT_SEARCH_PAGE_SIZE = 12;
+    static final int DEFAULT_RESTAURANT_PAGE_SIZE = 12;
+
     private ControllerUtils() {
         
     }

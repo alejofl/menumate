@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.util.PaginatedResult;
 import ar.edu.itba.paw.model.util.Pair;
+import ar.edu.itba.paw.model.util.Triplet;
 import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.exception.RestaurantNotFoundException;
@@ -20,13 +21,11 @@ import java.util.List;
 
 @Controller
 public class UserController {
-    private static final int DEFAULT_ORDERS_PAGE_SIZE = 20;
-
     @Autowired
     private OrderService orderService;
 
     @Autowired
-    private UserService userService;
+    private RolesService rolesService;
 
     @Autowired
     private RestaurantService restaurantService;
@@ -51,9 +50,9 @@ public class UserController {
 
         PaginatedResult<OrderItemless> orders;
         if (status.equals("in progress")) {
-            orders = orderService.getInProgressByUserExcludeItems(ControllerUtils.getCurrentUserIdOrThrow(), paging.getPageOrDefault(), paging.getSizeOrDefault(DEFAULT_ORDERS_PAGE_SIZE));
+            orders = orderService.getInProgressByUserExcludeItems(ControllerUtils.getCurrentUserIdOrThrow(), paging.getPageOrDefault(), paging.getSizeOrDefault(ControllerUtils.DEFAULT_ORDERS_PAGE_SIZE));
         } else {
-            orders = orderService.getByUserExcludeItems(ControllerUtils.getCurrentUserIdOrThrow(), paging.getPageOrDefault(), paging.getSizeOrDefault(DEFAULT_ORDERS_PAGE_SIZE));
+            orders = orderService.getByUserExcludeItems(ControllerUtils.getCurrentUserIdOrThrow(), paging.getPageOrDefault(), paging.getSizeOrDefault(ControllerUtils.DEFAULT_ORDERS_PAGE_SIZE));
         }
 
         mav.addObject("orders", orders.getResult());
@@ -61,6 +60,14 @@ public class UserController {
         mav.addObject("pageCount", orders.getTotalPageCount());
         mav.addObject("status", status);
 
+        return mav;
+    }
+
+    @RequestMapping(value = "/user/restaurants", method = RequestMethod.GET)
+    public ModelAndView myRestaurants() {
+        ModelAndView mav = new ModelAndView("user/myrestaurants");
+        List<Triplet<Restaurant, RestaurantRoleLevel, Integer>> restaurants = rolesService.getByUser(ControllerUtils.getCurrentUserIdOrThrow());
+        mav.addObject("restaurants", restaurants);
         return mav;
     }
 
