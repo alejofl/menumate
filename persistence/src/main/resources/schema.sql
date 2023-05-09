@@ -15,6 +15,15 @@ CREATE TABLE IF NOT EXISTS users
     is_active   BOOLEAN NOT NULL DEFAULT FALSE
 );
 
+CREATE TABLE IF NOT EXISTS user_verification_codes
+(
+    code    VARCHAR(32) PRIMARY KEY,
+    user_id INT UNIQUE REFERENCES users (user_id) ON DELETE CASCADE NOT NULL,
+    expires TIMESTAMP NOT NULL,
+
+    UNIQUE (code, user_id)
+    );
+
 CREATE TABLE IF NOT EXISTS restaurants
 (
     restaurant_id SERIAL PRIMARY KEY,

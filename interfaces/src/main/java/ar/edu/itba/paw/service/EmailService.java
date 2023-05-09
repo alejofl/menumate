@@ -2,6 +2,7 @@ package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.model.Restaurant;
+import ar.edu.itba.paw.model.User;
 
 import javax.mail.MessagingException;
 
@@ -18,4 +19,6 @@ public interface EmailService {
     void sendOrderDelivered(Order order) throws MessagingException;
 
     void sendOrderCancelled(Order order) throws MessagingException;
+
+    void sendUserVerificationEmail(String baseUrl, String email, String token) throws MessagingException;
 }

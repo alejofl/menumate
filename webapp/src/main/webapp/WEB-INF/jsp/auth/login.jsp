@@ -16,9 +16,37 @@
         <div class="card-body">
             <h2 class="card-title mb-3">${login}</h2>
             <c:if test="${param.error != null}">
-                <div class="alert alert-danger" role="alert">
-                    <spring:message code="login.invalidcredentials"/>
-                </div>
+                <c:choose>
+                    <c:when test="${param.error=='not_verified'}">
+                        <div class="alert alert-danger" role="alert">
+                            <spring:message code="login.notVerified"/>
+                        </div>
+                    </c:when>
+                    <c:when test="${param.error=='mailer_error'}">
+                        <div class="alert alert-danger" role="alert">
+                            <spring:message code="login.mailerError"/>
+                        </div>
+                    </c:when>
+                    <c:otherwise>
+                        <div class="alert alert-danger" role="alert">
+                            <spring:message code="login.invalidcredentials"/>
+                        </div>
+                    </c:otherwise>
+                </c:choose>
+            </c:if>
+            <c:if test="${param.verify != null}">
+                <c:choose>
+                    <c:when test="${param.verify=='verified'}">
+                        <div class="alert alert-success" role="alert">
+                            <spring:message code="login.verify.verified"/>
+                        </div>
+                    </c:when>
+                    <c:otherwise>
+                        <div class="alert alert-success" role="alert">
+                            <spring:message code="login.verify.emailed"/>
+                        </div>
+                    </c:otherwise>
+                </c:choose>
             </c:if>
             <form action="<c:url value="/auth/login"/>" method="post">
                 <div class="mb-3">

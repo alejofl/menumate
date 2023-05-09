@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.config;
 
 import ar.edu.itba.paw.webapp.auth.AccessValidator;
+import ar.edu.itba.paw.webapp.auth.CustomAuthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -35,6 +36,9 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private AccessValidator accessValidator;
 
+    @Autowired
+    private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -49,7 +53,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     public void configure(final HttpSecurity http) throws Exception {
         http.sessionManagement()
                 // Login logic
-                .and().formLogin()
+                .and().formLogin().failureHandler(customAuthenticationEntryPoint)
                 .loginPage("/auth/login")
                 .usernameParameter("email").passwordParameter("password")
                 .defaultSuccessUrl("/", false)
@@ -79,7 +83,8 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/orders/{order_id:\\d+}/cancel").access("@accessValidator.checkOrderHandler(#order_id)")
                 .antMatchers("/restaurants/create").authenticated()
                 .antMatchers("/**").permitAll()
-                .and().exceptionHandling().accessDeniedPage("/403")
+                .and().exceptionHandling()
+                .accessDeniedPage("/403")
 
                 // Disable csrf rules
                 .and().csrf().disable();
