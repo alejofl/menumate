@@ -158,7 +158,7 @@
                     <div class="tab-pane fade" id="checkout-dinein" role="tabpanel" tabindex="0">
                         <div class="mb-3">
                             <form:label path="tableNumber" cssClass="form-label"><spring:message code="restaurant.menu.form.tablenumber"/></form:label>
-                            <form:input type="number" path="tableNumber" cssClass="form-control" id="checkout-table-number"/>
+                            <form:input type="number" path="tableNumber" cssClass="form-control" id="checkout-table-number" min="1" max="${restaurant.maxTables}"/>
                             <form:errors path="tableNumber" element="div" cssClass="form-error"/>
                         </div>
                     </div>

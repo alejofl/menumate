@@ -36,7 +36,7 @@
             </div>
             <div class="mb-3">
                 <form:label path="maxTables" cssClass="form-label"><spring:message code="createrestaurant.form.maxtables"/></form:label>
-                <form:input type="number" path="maxTables" class="form-control" id="create-restaurant-description" rows="3"/>
+                <form:input type="number" path="maxTables" class="form-control" id="create-restaurant-max-tables"/>
                 <form:errors path="maxTables" element="div" cssClass="form-error"/>
             </div>
             <div class="mb-3">
