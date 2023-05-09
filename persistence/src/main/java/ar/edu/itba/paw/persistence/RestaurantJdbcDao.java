@@ -92,16 +92,17 @@ public class RestaurantJdbcDao implements RestaurantDao {
     }
 
     @Override
-    public int create(String name, String description, String address, String email, int ownerUserId, int logoKey, int portrait1Kay, int portrait2Key) {
+    public int create(String name, String email, int ownerUserId, String description, String address, int maxTables, int logoKey, int portrait1Kay, int portrait2Key) {
         final Map<String, Object> restaurantData = new HashMap<>();
         restaurantData.put("name", name);
+        restaurantData.put("email", email);
+        restaurantData.put("owner_user_id", ownerUserId);
         restaurantData.put("description", description);
         restaurantData.put("address", address);
-        restaurantData.put("email", email);
+        restaurantData.put("max_tables", maxTables);
         restaurantData.put("logo_id", logoKey);
         restaurantData.put("portrait_1_id", portrait1Kay);
         restaurantData.put("portrait_2_id", portrait2Key);
-        restaurantData.put("owner_user_id", ownerUserId);
         return restaurantJdbcInsert.executeAndReturnKey(restaurantData).intValue();
     }
 

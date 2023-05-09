@@ -22,11 +22,12 @@ CREATE TABLE IF NOT EXISTS restaurants
     email         VARCHAR(320) NOT NULL,
     owner_user_id INT REFERENCES users (user_id) ON DELETE CASCADE NOT NULL,
     date_created  TIMESTAMP NOT NULL DEFAULT now(),
+    address       VARCHAR(200),
+    description   VARCHAR(300),
+    max_tables    INT NOT NULL CHECK (max_tables > 0),
     logo_id       INT REFERENCES images (image_id) ON DELETE SET NULL,
     portrait_1_id INT REFERENCES images (image_id) ON DELETE SET NULL,
     portrait_2_id INT REFERENCES images (image_id) ON DELETE SET NULL,
-    address       VARCHAR(200),
-    description   VARCHAR(300),
     is_active     BOOLEAN NOT NULL DEFAULT TRUE
 );
 

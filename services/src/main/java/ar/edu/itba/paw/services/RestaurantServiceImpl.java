@@ -31,6 +31,15 @@ public class RestaurantServiceImpl implements RestaurantService {
     private CategoryService categoryService;
 
     @Override
+    public int create(String name, String email, int ownerUserId, String description, String address, int maxTables, byte[] logo, byte[] portrait1, byte[] portrait2) {
+        int logoKey = imageService.create(logo);
+        int portrait1Key = imageService.create(portrait1);
+        int portrait2Key = imageService.create(portrait2);
+
+        return restaurantDao.create(name, email, ownerUserId, description, address, maxTables, logoKey, portrait1Key, portrait2Key);
+    }
+
+    @Override
     public Optional<Restaurant> getById(int restaurantId) {
         return restaurantDao.getById(restaurantId);
     }
@@ -80,15 +89,6 @@ public class RestaurantServiceImpl implements RestaurantService {
             menu.add(new Pair<>(category, productService.getByCategory(category.getCategoryId())));
         }
         return menu;
-    }
-
-    @Override
-    public int create(String name, String description, String address, String email, int ownerUserId, byte[] logo, byte[] portrait1, byte[] portrait2) {
-        int logoKey = imageService.create(logo);
-        int portrait1Key = imageService.create(portrait1);
-        int portrait2Key = imageService.create(portrait2);
-
-        return restaurantDao.create(name, description, address, email, ownerUserId, logoKey, portrait1Key, portrait2Key);
     }
 
     @Override

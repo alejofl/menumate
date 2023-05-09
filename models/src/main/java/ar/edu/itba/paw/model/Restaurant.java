@@ -4,26 +4,24 @@ public class Restaurant {
     private final int restaurantId;
     private final String name;
     private final String email;
-    private int logoId;
-    private int portraitId1;
-    private int portraitId2;
-    private String address;
-    private String description;
-    private Boolean isActive;
+    private final int logoId;
+    private final int portraitId1;
+    private final int portraitId2;
+    private final String address;
+    private final String description;
+    private final int maxTables;
+    private final boolean isActive;
 
-    public Restaurant(int restaurantId, String name, String email) {
+    public Restaurant(int restaurantId, String name, String email, int logoId, int portrait1Id, int portrait2Id, String address, String description, int maxTables, boolean isActive) {
         this.restaurantId = restaurantId;
         this.name = name;
         this.email = email;
-    }
-
-    public Restaurant(int restaurantId, String name, String email, int logoId, int portrait1Id, int portrait2Id, String address, String description, Boolean isActive) {
-        this(restaurantId, name, email);
         this.logoId = logoId;
         this.portraitId1 = portrait1Id;
         this.portraitId2 = portrait2Id;
         this.address = address;
         this.description = description;
+        this.maxTables = maxTables;
         this.isActive = isActive;
     }
 
@@ -59,7 +57,11 @@ public class Restaurant {
         return description;
     }
 
-    public Boolean getActive() {
+    public int getMaxTables() {
+        return maxTables;
+    }
+
+    public boolean getIsActive() {
         return isActive;
     }
 }

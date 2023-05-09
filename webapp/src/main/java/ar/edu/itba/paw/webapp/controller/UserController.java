@@ -83,10 +83,11 @@ public class UserController {
         PawAuthUserDetails userDetails = ControllerUtils.getCurrentUserDetailsOrThrow();
         int restaurantId = restaurantService.create(
                 form.getName(),
-                form.getDescription(),
-                form.getAddress(),
                 userDetails.getUsername(),
                 userDetails.getUserId(),
+                form.getDescription(),
+                form.getAddress(),
+                form.getMaxTables(),
                 form.getLogo().getBytes(),
                 form.getPortrait1().getBytes(),
                 form.getPortrait2().getBytes()

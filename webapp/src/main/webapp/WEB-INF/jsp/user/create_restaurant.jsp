@@ -35,6 +35,11 @@
                 <form:errors path="description" element="div" cssClass="form-error"/>
             </div>
             <div class="mb-3">
+                <form:label path="maxTables" cssClass="form-label"><spring:message code="createrestaurant.form.maxtables"/></form:label>
+                <form:input type="number" path="maxTables" class="form-control" id="create-restaurant-description" rows="3"/>
+                <form:errors path="maxTables" element="div" cssClass="form-error"/>
+            </div>
+            <div class="mb-3">
                 <form:label path="logo" cssClass="form-label"><spring:message code="createrestaurant.form.logo"/></form:label>
                 <form:input path="logo" type="file" cssClass="form-control" id="create-restaurant-logo" accept="image/*"/>
                 <form:errors path="logo" element="div" cssClass="form-error"/>

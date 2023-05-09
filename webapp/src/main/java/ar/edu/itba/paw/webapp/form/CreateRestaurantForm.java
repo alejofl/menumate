@@ -4,6 +4,8 @@ import ar.edu.itba.paw.webapp.form.validation.Image;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 public class CreateRestaurantForm {
@@ -18,6 +20,10 @@ public class CreateRestaurantForm {
     @NotBlank
     @Size(max = 300)
     private String description;
+
+    @NotNull
+    @Min(1)
+    private Integer maxTables;
 
     @Image
     private MultipartFile logo;
@@ -50,6 +56,14 @@ public class CreateRestaurantForm {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Integer getMaxTables() {
+        return maxTables;
+    }
+
+    public void setMaxTables(Integer maxTables) {
+        this.maxTables = maxTables;
     }
 
     public MultipartFile getLogo() {
