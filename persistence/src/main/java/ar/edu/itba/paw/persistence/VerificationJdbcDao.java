@@ -41,7 +41,7 @@ public class VerificationJdbcDao implements VerificationDao {
     public String generateVerificationToken(final int userId) {
         String token = UUID.randomUUID().toString().substring(0, 32);
         jdbcTemplate.update(
-                "INSERT INTO user_verification_codes (code, user_id, expires) VALUES (?, ?, ?) ON CONFLICT (code, user_id) DO UPDATE SET code = excluded.code, expires = excluded.expires",
+                "INSERT INTO user_verification_codes (code, user_id, expires) VALUES (?, ?, ?) ON CONFLICT (user_id) DO UPDATE SET code=excluded.code, expires = excluded.expires",
                 token,
                 userId,
                 generateTokenExpirationDate()

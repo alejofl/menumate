@@ -64,6 +64,10 @@
                 <input type="submit" class="btn btn-primary" id="login-submit" value='<spring:message code="login"/>'>
             </form>
             <p class="mt-3"><spring:message code="login.notregistered"/> <a href="<c:url value="/auth/register"/>"><spring:message code="login.signup"/></a></p>
+            <p class="mt-3" style="text-align:center; font-size: 10px;">
+                <a href="<c:url value="/auth/forgot-password"/>"><spring:message code="login.forgotpassword"/></a> |
+                <a href="<c:url value="/auth/verify"/>"><spring:message code="login.sendverificationcode"/></a>
+            </p>
         </div>
     </div>
 </main>
