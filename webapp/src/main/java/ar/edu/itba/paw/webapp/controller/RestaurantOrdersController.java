@@ -86,6 +86,15 @@ public class RestaurantOrdersController {
         return restaurantOrders(paging, errors, id, OrderStatus.DELIVERED);
     }
 
+    @RequestMapping(value = "/restaurants/{id:\\d+}/orders/cancelled", method = RequestMethod.GET)
+    public ModelAndView restaurantOrdersCancelled(
+            @Valid final PagingForm paging,
+            final BindingResult errors,
+            @PathVariable final int id
+    ) {
+        return restaurantOrders(paging, errors, id, OrderStatus.CANCELLED);
+    }
+
     @RequestMapping(value = "/restaurants/{id:\\d+}/orders", method = RequestMethod.GET)
     public ModelAndView restaurantOrders(@PathVariable final int id) {
         return new ModelAndView(String.format("redirect:/restaurants/%d/orders/pending", id));
