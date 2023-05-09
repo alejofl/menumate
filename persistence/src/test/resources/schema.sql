@@ -17,9 +17,11 @@ CREATE TABLE IF NOT EXISTS users
 
 CREATE TABLE IF NOT EXISTS user_verification_codes
 (
-    email   VARCHAR(320) PRIMARY KEY REFERENCES users(email),
-    code    VARCHAR(8) NOT NULL,
-    expires TIMESTAMP NOT NULL
+    code    VARCHAR(32) PRIMARY KEY,
+    user_id INT UNIQUE REFERENCES users (user_id) ON DELETE CASCADE NOT NULL,
+    expires TIMESTAMP NOT NULL,
+
+    UNIQUE (code, user_id)
 );
 
 CREATE TABLE IF NOT EXISTS restaurants

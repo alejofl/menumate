@@ -48,6 +48,7 @@ public class AuthController {
         }
 
         final User user = userService.create(registerForm.getEmail(), registerForm.getPassword(), registerForm.getName());
+        // FIXME: use user_id
         String token = verificationService.generateVerificationToken(user.getEmail());
         String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
         emailService.sendUserVerificationEmail(baseUrl, user.getEmail(), token);
@@ -63,10 +64,9 @@ public class AuthController {
 
     @RequestMapping(value = "/auth/verify", method = RequestMethod.GET)
     public ModelAndView verifyUser(
-            @RequestParam(value = "token", required = true) @Length(min = 8, max = 8) final String token,
-            @RequestParam(value = "email", required = true) @Email final String email
+            @RequestParam(value = "token", required = true) @Length(min = 8, max = 8) final String token
     ) {
-        if (verificationService.verifyAndDeleteToken(email, token))
+        if (verificationService.verifyAndDeleteToken(token))
             return new ModelAndView("redirect:/auth/login?verify=verified");
         return new ModelAndView("redirect:/auth/register?error=invalid_token_or_user");
     }

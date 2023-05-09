@@ -14,17 +14,17 @@ public class VerificationServiceImpl implements VerificationService {
     private VerificationDao verificationDao;
 
     @Override
-    public String generateVerificationToken(String email) {
+    public String generateVerificationToken(final String email) {
         return verificationDao.generateVerificationToken(email);
     }
 
     @Override
-    public boolean verifyAndDeleteToken(String email, String token) {
-        return verificationDao.verifyAndDeleteToken(email, token);
+    public boolean verifyAndDeleteToken(final String token) {
+        return verificationDao.verifyAndDeleteToken(token);
     }
 
     @Override
-    public boolean hasActiveVerificationToken(String email) {
+    public boolean hasActiveVerificationToken(final String email) {
         return verificationDao.hasActiveVerificationToken(email);
     }
 

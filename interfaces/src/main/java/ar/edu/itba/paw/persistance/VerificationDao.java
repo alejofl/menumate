@@ -2,11 +2,11 @@ package ar.edu.itba.paw.persistance;
 
 public interface VerificationDao {
 
-    String generateVerificationToken(String email);
+    String generateVerificationToken(final String email);
 
-    boolean verifyAndDeleteToken(String email, String token);
+    boolean verifyAndDeleteToken(final String token);
 
     void deleteStaledVerificationTokens();
 
-    boolean hasActiveVerificationToken(String email);
+    boolean hasActiveVerificationToken(final String email);
 }

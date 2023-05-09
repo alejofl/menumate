@@ -2,9 +2,9 @@ package ar.edu.itba.paw.service;
 
 public interface VerificationService {
 
-    String generateVerificationToken(String email);
+    String generateVerificationToken(final String email);
 
-    boolean verifyAndDeleteToken(String email, String token);
+    boolean verifyAndDeleteToken(final String token);
 
-    boolean hasActiveVerificationToken(String email);
+    public boolean hasActiveVerificationToken(final String email);
 }
