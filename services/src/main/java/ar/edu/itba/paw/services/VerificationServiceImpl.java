@@ -14,8 +14,8 @@ public class VerificationServiceImpl implements VerificationService {
     private VerificationDao verificationDao;
 
     @Override
-    public String generateVerificationToken(final String email) {
-        return verificationDao.generateVerificationToken(email);
+    public String generateVerificationToken(final int userId) {
+        return verificationDao.generateVerificationToken(userId);
     }
 
     @Override
@@ -24,8 +24,8 @@ public class VerificationServiceImpl implements VerificationService {
     }
 
     @Override
-    public boolean hasActiveVerificationToken(final String email) {
-        return verificationDao.hasActiveVerificationToken(email);
+    public boolean hasActiveVerificationToken(final int userId) {
+        return verificationDao.hasActiveVerificationToken(userId);
     }
 
     @Scheduled(cron = "0 0 0 * * ?")

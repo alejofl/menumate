@@ -4,19 +4,19 @@ import org.springframework.security.authentication.DisabledException;
 
 public class UserNotVerifiedException extends DisabledException {
 
-    private final String email;
+    private final int userId;
 
-    public UserNotVerifiedException(String msg, String email) {
+    public UserNotVerifiedException(final String msg, final int userId) {
         super(msg);
-        this.email = email;
+        this.userId = userId;
     }
 
-    public UserNotVerifiedException(String msg, Throwable t, String email) {
+    public UserNotVerifiedException(final String msg, final Throwable t, final int userId) {
         super(msg, t);
-        this.email = email;
+        this.userId = userId;
     }
 
-    public String getEmail() {
-        return email;
+    public int getUserId() {
+        return userId;
     }
 }

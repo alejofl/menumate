@@ -48,8 +48,7 @@ public class AuthController {
         }
 
         final User user = userService.create(registerForm.getEmail(), registerForm.getPassword(), registerForm.getName());
-        // FIXME: use user_id
-        String token = verificationService.generateVerificationToken(user.getEmail());
+        String token = verificationService.generateVerificationToken(user.getUserId());
         String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
         emailService.sendUserVerificationEmail(baseUrl, user.getEmail(), token);
         return new ModelAndView("redirect:/auth/login?verify=emailed");

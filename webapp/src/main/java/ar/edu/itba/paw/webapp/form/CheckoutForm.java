@@ -20,7 +20,7 @@ public class CheckoutForm {
     @Email
     private String email;
 
-    @Min(0)
+    @Min(1)
     private Integer tableNumber;
 
     @Size(min = 3, max = 120)

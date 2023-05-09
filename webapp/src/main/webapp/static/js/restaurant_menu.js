@@ -41,6 +41,8 @@ function selectOrderTypeTab(tab) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+    let qr = document.querySelector("body").dataset.qr === "true";
+
     let cartModalHeader = document.querySelector("#add-item-to-cart-header");
     let cartModalTitle = document.querySelector("#add-item-to-cart-title");
     let cartModalDescription = document.querySelector("#add-item-to-cart-description");
@@ -48,6 +50,10 @@ document.addEventListener("DOMContentLoaded", () => {
     let cartModalButtonText = cartModalButton.innerHTML;
     let cartItemsContainer = document.querySelector("#checkout-cart-items");
     let orderType = document.querySelector("#checkout-order-type");
+
+    // Show Attention toast
+    const toast = bootstrap.Toast.getOrCreateInstance(document.querySelector(`#${qr ? "dine-in" : "delivery"}-toast`));
+    toast.show();
 
     // Open Checkout Modal if errors were found
     if (document.querySelector("body").dataset.formError === "true") {
@@ -67,13 +73,13 @@ document.addEventListener("DOMContentLoaded", () => {
     updatePlaceOrderButtonPrice();
 
     // Select Order Type tab automatically
-    if (orderType.value === "0" || orderType.value === "") {
-        selectOrderTypeTab("dinein");
-        orderType.value = "0"
-    } else if (orderType.value === "1") {
-        selectOrderTypeTab("takeaway");
-    } else {
-        selectOrderTypeTab("delivery");
+    if (!qr) {
+        if (orderType.value === "1" || orderType.value === "") {
+            selectOrderTypeTab("takeaway");
+            orderType.value = 1;
+        } else if (orderType.value === "2") {
+            selectOrderTypeTab("delivery");
+        }
     }
 
     // Fill modal for every menu item
@@ -135,10 +141,15 @@ document.addEventListener("DOMContentLoaded", () => {
         changeInputValue("add-item-to-cart-comments", "");
     });
     document.querySelector("#checkout").addEventListener("hidden.bs.modal", () => {
-        changeInputValue("checkout-name", "");
-        changeInputValue("checkout-email", "");
-        changeInputValue("checkout-table-number", "");
-        changeInputValue("checkout-address", "");
+        if (document.querySelector("#checkout-name").type !== "hidden") {
+            changeInputValue("checkout-name", "");
+            changeInputValue("checkout-email", "");
+        }
+        if (qr) {
+            changeInputValue("checkout-table-number", "");
+        } else {
+            changeInputValue("checkout-address", "");
+        }
     });
 
     // Add item to cart
@@ -162,16 +173,14 @@ document.addEventListener("DOMContentLoaded", () => {
         updatePlaceOrderButtonPrice();
     });
 
-    // Order Type Selector (FIXME this values are hardcoded)
-    document.querySelector("#checkout-dinein-tab").addEventListener("click", () => {
-        orderType.value = 0;
-    });
-    document.querySelector("#checkout-takeaway-tab").addEventListener("click", () => {
-        orderType.value = 1;
-    });
-    document.querySelector("#checkout-delivery-tab").addEventListener("click", () => {
-        orderType.value = 2;
-    });
+    if (!qr) {
+        document.querySelector("#checkout-takeaway-tab").addEventListener("click", () => {
+            orderType.value = 1;
+        });
+        document.querySelector("#checkout-delivery-tab").addEventListener("click", () => {
+            orderType.value = 2;
+        });
+    }
 
     // Auto-Scroll
     document.querySelectorAll(".category-item").forEach((value) => {

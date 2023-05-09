@@ -35,6 +35,9 @@
             <li class="nav-item">
                 <a class="nav-link ${status == "delivered" ? "active" : ""}" aria-current="page" href="<c:url value="/restaurants/${id}/orders/delivered"/>"><spring:message code="restaurantorders.delivered"/></a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link ${status == "cancelled" ? "active" : ""}" aria-current="page" href="<c:url value="/restaurants/${id}/orders/cancelled"/>"><spring:message code="restaurantorders.cancelled"/></a>
+            </li>
         </ul>
     </nav>
     <div class="table-responsive w-75">
@@ -180,7 +183,7 @@
                     </li>
                 </ul>
             </div>
-            <c:if test="${status != 'delivered'}">
+            <c:if test="${status != 'delivered' && status != 'cancelled'}">
                 <div class="modal-footer">
                     <form action="<c:url value="/orders/$1/cancel"/>" method="post" id="cancel-order-form">
                         <button type="submit" class="btn btn-danger"><spring:message code="restaurantorders.cancel"/></button>

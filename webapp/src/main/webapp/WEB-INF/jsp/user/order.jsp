@@ -27,6 +27,34 @@
                     <i class="bi bi-calendar-event"></i> <c:out value="${dateOrdered}"/>
                 </div>
             </div>
+            <div class="alert alert-${order.orderStatus == 'CANCELLED' ? "danger" : "light"} d-flex flex-column align-items-center" role="alert">
+                <div class="pb-2">
+                    <spring:message code="orderstatus.order"/> <spring:message code="orderstatus.singular.${order.orderStatus.messageCode}"/>
+                </div>
+
+                <c:set value="" var="statusWidth"/>
+                <c:choose>
+                    <c:when test="${order.orderStatus == 'PENDING'}">
+                        <c:set value="5" var="statusWidth"/>
+                    </c:when>
+                    <c:when test="${order.orderStatus == 'CONFIRMED'}">
+                        <c:set value="33" var="statusWidth"/>
+                    </c:when>
+                    <c:when test="${order.orderStatus == 'READY'}">
+                        <c:set value="66" var="statusWidth"/>
+                    </c:when>
+                    <c:when test="${order.orderStatus == 'DELIVERED'}">
+                        <c:set value="100" var="statusWidth"/>
+                    </c:when>
+                    <c:when test="${order.orderStatus == 'CANCELLED'}">
+                        <c:set value="100" var="statusWidth"/>
+                    </c:when>
+                </c:choose>
+
+                <div class="progress w-100" role="progressbar">
+                    <div class="progress-bar ${order.orderStatus == 'CANCELLED' ? "bg-danger" : ""}" style="width: ${statusWidth}%"></div>
+                </div>
+            </div>
             <div>
                 <h4><spring:message code="userorders.yourorder"/></h4>
                 <table class="table">
