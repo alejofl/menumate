@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.util.PaginatedResult;
 import ar.edu.itba.paw.model.util.Pair;
+import ar.edu.itba.paw.model.util.Triplet;
 import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.exception.RestaurantNotFoundException;
@@ -24,7 +25,7 @@ public class UserController {
     private OrderService orderService;
 
     @Autowired
-    private UserService userService;
+    private RolesService rolesService;
 
     @Autowired
     private RestaurantService restaurantService;
@@ -55,22 +56,10 @@ public class UserController {
     }
 
     @RequestMapping(value = "/user/restaurants", method = RequestMethod.GET)
-    public ModelAndView myRestaurants(
-            @Valid final PagingForm paging,
-            final BindingResult errors
-    ) {
+    public ModelAndView myRestaurants() {
         ModelAndView mav = new ModelAndView("user/myrestaurants");
-
-        if (errors.hasErrors()) {
-            mav.addObject("error", Boolean.TRUE);
-            paging.clear();
-        }
-
-        // FIXME Change to restaurants for user with role and pendingOrders
-        PaginatedResult<Restaurant> restaurants = restaurantService.getSearchResults("", paging.getPageOrDefault(), paging.getSizeOrDefault(ControllerUtils.DEFAULT_RESTAURANT_PAGE_SIZE));
-        mav.addObject("restaurants", restaurants.getResult());
-        mav.addObject("restaurantCount", restaurants.getTotalCount());
-        mav.addObject("pageCount", restaurants.getTotalPageCount());
+        List<Triplet<Restaurant, RestaurantRoleLevel, Integer>> restaurants = rolesService.getByUser(ControllerUtils.getCurrentUserIdOrThrow());
+        mav.addObject("restaurants", restaurants);
         return mav;
     }
 
