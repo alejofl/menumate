@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS user_verification_codes
     expires TIMESTAMP NOT NULL,
 
     UNIQUE (code, user_id)
-    );
+);
 
 CREATE TABLE IF NOT EXISTS restaurants
 (

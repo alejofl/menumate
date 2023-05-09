@@ -4,8 +4,9 @@ import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.service.EmailService;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.service.VerificationService;
+import ar.edu.itba.paw.webapp.exception.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.RegisterForm;
-import org.hibernate.validator.constraints.Email;
+import ar.edu.itba.paw.webapp.form.VerifyForm;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -56,17 +57,49 @@ public class AuthController {
 
     @RequestMapping(value = "/auth/login", method = RequestMethod.GET)
     public ModelAndView loginForm(@RequestParam(value = "verify", required = false) String verify) {
-        ModelAndView model = new ModelAndView("auth/login");
-        model.addObject("verify", verify);
-        return model;
+        return new ModelAndView("auth/login").addObject("verify", verify);
     }
 
     @RequestMapping(value = "/auth/verify", method = RequestMethod.GET)
-    public ModelAndView verifyUser(
-            @RequestParam(value = "token", required = true) @Length(min = 8, max = 8) final String token
+    public ModelAndView verifyForm(
+            @RequestParam(value = "token", required = false) @Length(min = 8, max = 8) final String token,
+            @ModelAttribute("verifyForm") final VerifyForm verifyForm
     ) {
-        if (verificationService.verifyAndDeleteToken(token))
-            return new ModelAndView("redirect:/auth/login?verify=verified");
-        return new ModelAndView("redirect:/auth/register?error=invalid_token_or_user");
+        if(token!=null){
+            if (verificationService.verifyAndDeleteToken(token))
+                return new ModelAndView("redirect:/auth/login?verify=verified");
+            return new ModelAndView("redirect:/auth/register?error=invalid_token_or_user");
+        } else {
+            return new ModelAndView("auth/verify");
+        }
+    }
+
+    @RequestMapping(value = "/auth/verify", method = RequestMethod.POST)
+    public ModelAndView sendCode(
+            @Valid @ModelAttribute("verifyForm") final VerifyForm verifyForm,
+            final BindingResult errors
+    ){
+        if (errors.hasErrors()) {
+            return verifyForm(null, verifyForm);
+        }
+        User user;
+        try{
+            user = userService.getByEmail(verifyForm.getEmail()).orElseThrow(UserNotFoundException::new);
+        } catch (UserNotFoundException e) {
+            return new ModelAndView("redirect:/auth/login?verify=emailed");
+        }
+
+        if(user.getIsActive()){
+            return new ModelAndView("redirect:/auth/login?verify=emailed");
+        }
+
+        String token = verificationService.generateVerificationToken(user.getUserId());
+        String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+        try {
+            emailService.sendUserVerificationEmail(baseUrl, user.getEmail(), token);
+        } catch (MessagingException e) {
+            return new ModelAndView("redirect:/auth/login?verify=error");
+        }
+        return new ModelAndView("redirect:/auth/login?verify=emailed");
     }
 }
