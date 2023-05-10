@@ -12,7 +12,7 @@
     </jsp:include></head>
     <script src="<c:url value="/static/js/edit_menu.js"/>"></script>
 </head>
-<body data-add-category-errors="${addCategoryErrors}" data-add-product-errors="${addProductErrors}" data-category-id="${addProductErrors ? addProductForm.categoryId : ""}">
+<body data-add-category-errors="${addCategoryErrors}" data-add-product-errors="${addProductErrors}" data-category-id="${addProductErrors ? addProductForm.categoryId : ""}" data-add-employee-errors="${addEmployeeErrors}">
 <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
 <div class="restaurant-header">
     <img src="<c:url value="/images/${restaurant.portraitId1}"/>" class="menu-item-card-img" alt="${restaurant.name}">
@@ -33,7 +33,7 @@
         </div>
         <div class="d-flex flex-column gap-2">
             <a class="btn btn-primary" href="<c:url value="/restaurants/${restaurant.restaurantId}"/>" role="button"><spring:message code="editmenu.done"/></a>
-            <a class="btn btn-secondary disabled" href="<c:url value="/restaurants/${restaurant.restaurantId}/orders"/>" role="button"><spring:message code="restaurant.menu.seeorders"/></a>
+            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#employees-modal" id="add-employees-button">Edit employees</button>
         </div>
     </div>
 </div>
@@ -192,6 +192,69 @@
                     <input type="hidden" name="productId" id="delete-product-form-product-id">
                     <input type="submit" class="btn btn-danger" value="<spring:message code="editmenu.form.yes"/>">
                 </form:form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="employees-modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5">Edit Employees</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <h4>Add Employee</h4>
+                    <c:url value="/restaurants/${restaurant.restaurantId}/employees/add" var="addEmployeeUrl"/>
+                    <form:form cssClass="m-0" modelAttribute="addEmployeeForm" action="${addEmployeeUrl}" method="post" id="delete-product-form">
+                        <div class="mb-3">
+                            <form:label path="email" cssClass="form-label">Employee Email</form:label>
+                            <form:input path="email" type="email" cssClass="form-control" id="add-employee-form-email"/>
+                            <form:errors path="email" element="div" cssClass="form-error"/>
+                            <form:errors element="div" cssClass="form-error"/>
+                        </div>
+                        <div class="mb-3">
+                            <form:label path="role" cssClass="form-label">Role</form:label>
+                            <form:select path="role" cssClass="form-select" multiple="false">
+                                <c:forEach var="role" items="${roles}">
+                                    <form:option value="${role.ordinal()}"><spring:message code="restaurantroles.${role.messageCode}"/></form:option>
+                                </c:forEach>
+                            </form:select>
+                            <form:errors path="role" element="div" cssClass="form-error"/>
+                        </div>
+                        <form:input path="restaurantId" type="hidden" value="${restaurant.restaurantId}"/>
+                        <input type="submit" class="btn btn-primary" value="Add Employee">
+                    </form:form>
+                </div>
+                <div class="mt-4">
+                    <h4>Restaurant Employees</h4>
+                    <ul class="list-group list-group-flush">
+                        <c:forEach var="employee" items="${employees}">
+                            <li class="list-group-item d-flex align-items-center">
+                                <i class="bi bi-person me-3"></i>
+                                <div class="d-flex justify-content-between align-items-center w-100">
+                                    <p class="mb-0">
+                                        <c:out value="${employee.key.name}"/> &lt;<a href="mailto:<c:out value="${employee.key.email}"/>"><c:out value="${employee.key.email}"/></a>&gt;
+                                    </p>
+                                    <div class="d-flex align-items-center">
+                                        <p class="mb-0">
+                                            <spring:message code="restaurantroles.${employee.value.messageCode}"/>
+                                        </p>
+                                        <c:if test="${employee.value.ordinal() != 0}">
+                                            <c:url value="/restaurants/${restaurant.restaurantId}/employees/delete" var="deleteEmployeeUrl"/>
+                                            <form:form cssClass="m-0" modelAttribute="deleteEmployeeForm" action="${deleteEmployeeUrl}" method="post" id="delete-employee-form">
+                                                <input type="hidden" name="userId" id="delete-employee-form-user-id" value="<c:out value="${employee.key.userId}"/>">
+                                                <input type="submit" class="btn btn-danger btn-sm ms-4" value="Delete Employee">
+                                            </form:form>
+                                        </c:if>
+                                    </div>
+                                </div>
+                            </li>
+                        </c:forEach>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
