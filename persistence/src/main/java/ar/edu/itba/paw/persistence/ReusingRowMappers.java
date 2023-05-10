@@ -96,6 +96,7 @@ class ReusingRowMappers {
                     pk,
                     rs.getString("restaurant_name"),
                     rs.getString("restaurant_email"),
+                    rs.getInt("restaurant_owner_user_id"),
                     rs.getInt("restaurant_logo_id"),
                     rs.getInt("restaurant_portrait_1_id"),
                     rs.getInt("restaurant_portrait_2_id"),

@@ -157,8 +157,7 @@ public class UserController {
         roles.remove(RestaurantRoleLevel.OWNER);
         mav.addObject("roles", roles);
 
-        final boolean is_owner = rolesService.doesUserHaveRole(ControllerUtils.getCurrentUserIdOrThrow(), id, RestaurantRoleLevel.OWNER);
-        mav.addObject("is_owner", is_owner);
+        mav.addObject("is_owner", restaurant.getOwnerUserId() == ControllerUtils.getCurrentUserIdOrThrow());
 
         mav.addObject("addProductErrors", addProductErrors);
         mav.addObject("addCategoryErrors", addCategoryErrors);

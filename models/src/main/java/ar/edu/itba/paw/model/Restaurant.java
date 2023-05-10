@@ -4,6 +4,7 @@ public class Restaurant {
     private final int restaurantId;
     private final String name;
     private final String email;
+    private final int ownerUserId;
     private final int logoId;
     private final int portraitId1;
     private final int portraitId2;
@@ -12,10 +13,11 @@ public class Restaurant {
     private final int maxTables;
     private final boolean isActive;
 
-    public Restaurant(int restaurantId, String name, String email, int logoId, int portrait1Id, int portrait2Id, String address, String description, int maxTables, boolean isActive) {
+    public Restaurant(int restaurantId, String name, String email, int ownerUserId, int logoId, int portrait1Id, int portrait2Id, String address, String description, int maxTables, boolean isActive) {
         this.restaurantId = restaurantId;
         this.name = name;
         this.email = email;
+        this.ownerUserId = ownerUserId;
         this.logoId = logoId;
         this.portraitId1 = portrait1Id;
         this.portraitId2 = portrait2Id;
@@ -35,6 +37,10 @@ public class Restaurant {
 
     public String getEmail() {
         return email;
+    }
+
+    public int getOwnerUserId() {
+        return ownerUserId;
     }
 
     public int getLogoId() {
