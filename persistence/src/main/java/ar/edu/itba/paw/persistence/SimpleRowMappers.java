@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.*;
+import ar.edu.itba.paw.model.util.AverageCountPair;
 import ar.edu.itba.paw.model.util.Pair;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -17,6 +18,11 @@ class SimpleRowMappers {
     static final RowMapper<Integer> COUNT_ROW_MAPPER = (rs, i) -> rs.getInt("c");
 
     static final RowMapper<Integer> MAX_ROW_MAPPER = (rs, i) -> rs.getInt("m");
+
+    static final RowMapper<AverageCountPair> AVERAGE_COUNT_ROW_MAPPER = (rs, i) -> new AverageCountPair(
+            rs.getFloat("a"),
+            rs.getInt("c")
+    );
 
     static final RowMapper<User> USER_ROW_MAPPER = (ResultSet rs, int rowNum) -> new User(
             rs.getInt("user_id"),
@@ -97,5 +103,12 @@ class SimpleRowMappers {
             rs.getInt("order_item_line_number"),
             rs.getInt("order_item_quantity"),
             rs.getString("order_item_comment")
+    );
+
+    static final RowMapper<Review> ORDER_REVIEW_ROW_MAPPER = (ResultSet rs, int rowNum) -> new Review(
+            ORDER_ITEMLESS_ROW_MAPPER.mapRow(rs, rowNum),
+            rs.getInt("order_review_rating"),
+            timestampToLocalDateTimeOrNull(rs.getTimestamp("order_review_date")),
+            rs.getString("order_review_comment")
     );
 }

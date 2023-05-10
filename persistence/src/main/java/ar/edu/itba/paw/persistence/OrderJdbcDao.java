@@ -14,11 +14,11 @@ import java.util.*;
 
 @Repository
 public class OrderJdbcDao implements OrderDao {
-    private static final String SELECT_FULL_BASE = "SELECT " + TableFields.ORDERS_FIELDS + ", " + TableFields.RESTAURANTS_FIELDS + ", " + TableFields.USERS_FIELDS + ", " + TableFields.ORDER_ITEMS_FIELDS + ", " + TableFields.PRODUCTS_FIELDS + ", " + TableFields.CATEGORIES_FIELDS + " FROM orders JOIN restaurants ON orders.restaurant_id = restaurants.restaurant_id JOIN users on orders.user_id = users.user_id LEFT OUTER JOIN order_items ON orders.order_id = order_items.order_id LEFT OUTER JOIN products ON order_items.product_id = products.product_id LEFT OUTER JOIN categories ON products.category_id = categories.category_id";
+    private static final String SELECT_FULL_BASE = "SELECT " + TableFields.ORDERS_FIELDS + ", " + TableFields.RESTAURANTS_FIELDS + ", " + TableFields.USERS_FIELDS + ", " + TableFields.ORDER_ITEMS_FIELDS + ", " + TableFields.PRODUCTS_FIELDS + ", " + TableFields.CATEGORIES_FIELDS + " FROM orders JOIN restaurants ON orders.restaurant_id = restaurants.restaurant_id JOIN users ON orders.user_id = users.user_id LEFT OUTER JOIN order_items ON orders.order_id = order_items.order_id LEFT OUTER JOIN products ON order_items.product_id = products.product_id LEFT OUTER JOIN categories ON products.category_id = categories.category_id";
     private static final String SELECT_FULL_END_ORDER_BY_ID = " ORDER BY orders.order_id, order_items.line_number";
     private static final String SELECT_FULL_END_ORDER_BY_DATE = " ORDER BY orders.date_ordered DESC, orders.order_id, order_items.line_number";
 
-    private static final String SELECT_ITEMLESS_BASE = "SELECT " + TableFields.ORDERS_FIELDS + ", " + TableFields.RESTAURANTS_FIELDS + ", " + TableFields.USERS_FIELDS + ", COUNT(*) AS order_item_count, SUM(order_items.quantity*products.price) as order_price FROM orders JOIN restaurants ON orders.restaurant_id = restaurants.restaurant_id JOIN users on orders.user_id = users.user_id LEFT OUTER JOIN order_items ON orders.order_id = order_items.order_id LEFT OUTER JOIN products ON order_items.product_id = products.product_id";
+    private static final String SELECT_ITEMLESS_BASE = "SELECT " + TableFields.ORDERS_FIELDS + ", " + TableFields.RESTAURANTS_FIELDS + ", " + TableFields.USERS_FIELDS + ", COUNT(*) AS order_item_count, SUM(order_items.quantity*products.price) AS order_price FROM orders JOIN restaurants ON orders.restaurant_id = restaurants.restaurant_id JOIN users ON orders.user_id = users.user_id LEFT OUTER JOIN order_items ON orders.order_id = order_items.order_id LEFT OUTER JOIN products ON order_items.product_id = products.product_id";
     private static final String SELECT_ITEMLESS_END = " GROUP BY orders.order_id, restaurants.restaurant_id, users.user_id";
 
     private static final String IS_PENDING_COND = "(date_confirmed IS NULL AND date_cancelled IS NULL)";
@@ -29,6 +29,15 @@ public class OrderJdbcDao implements OrderDao {
 
     static final String IS_IN_PROGRESS_COND = "(date_delivered IS NULL AND date_cancelled IS NULL)";
     static final String IS_CLOSED_COND = "(date_delivered IS NOT NULL OR date_cancelled IS NOT NULL)";
+
+    static final String SELECT_ITEMLESS_ORDERS = "SELECT " + TableFields.ORDERS_FIELDS + ", " + TableFields.RESTAURANTS_FIELDS + ", " + TableFields.USERS_FIELDS +
+            ", COUNT(*) AS order_item_count, SUM(order_items.quantity*products.price) AS order_price" +
+            " FROM orders JOIN restaurants ON orders.restaurant_id = restaurants.restaurant_id" +
+            " JOIN users on orders.user_id = users.user_id" +
+            " LEFT OUTER JOIN order_items ON orders.order_id = order_items.order_id" +
+            " LEFT OUTER JOIN products ON order_items.product_id = products.product_id" +
+            " GROUP BY orders.order_id, restaurants.restaurant_id, users.user_id";
+
 
     private static String getCondStringForOrderStatus(OrderStatus status) {
         switch (status) {
