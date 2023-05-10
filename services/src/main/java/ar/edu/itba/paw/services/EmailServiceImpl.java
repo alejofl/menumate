@@ -140,11 +140,23 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public void sendUserVerificationEmail(String baseUrl, String email, String token) throws MessagingException {
         final Map<String, Object> params = new HashMap<>();
-        params.put("link", baseUrl + "/auth/verify?token=" + token + "&email=" + email);
+        params.put("link", baseUrl + "/auth/verify?token=" + token);
         this.sendMessageUsingThymeleafTemplate(
                 "user_verification",
                 email,
                 "MenuMate - Verify your account",
+                params
+        );
+    }
+
+    @Override
+    public void sendResetPasswordEmail(String baseUrl, String email, String token) throws MessagingException {
+        final Map<String, Object> params = new HashMap<>();
+        params.put("link", baseUrl + "/auth/reset-password?token=" + token);
+        this.sendMessageUsingThymeleafTemplate(
+                "user_reset_password",
+                email,
+                "MenuMate - Reset your password",
                 params
         );
     }

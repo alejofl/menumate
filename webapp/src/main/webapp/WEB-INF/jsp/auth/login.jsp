@@ -17,14 +17,24 @@
             <h2 class="card-title mb-3">${login}</h2>
             <c:if test="${param.error != null}">
                 <c:choose>
-                    <c:when test="${param.error=='not_verified'}">
+                    <c:when test="${param.error=='not-verified'}">
                         <div class="alert alert-danger" role="alert">
                             <spring:message code="login.notVerified"/>
                         </div>
                     </c:when>
-                    <c:when test="${param.error=='mailer_error'}">
+                    <c:when test="${param.error=='password-reset-error'}">
+                        <div class="alert alert-danger" role="alert">
+                            <spring:message code="login.passwordResetError"/>
+                        </div>
+                    </c:when>
+                    <c:when test="${param.error=='mailer-error'}">
                         <div class="alert alert-danger" role="alert">
                             <spring:message code="login.mailerError"/>
+                        </div>
+                    </c:when>
+                    <c:when test="${param.error=='request-error'}">
+                        <div class="alert alert-danger" role="alert">
+                            <spring:message code="login.errorProcessingRequest"/>
                         </div>
                     </c:when>
                     <c:otherwise>
@@ -34,16 +44,26 @@
                     </c:otherwise>
                 </c:choose>
             </c:if>
-            <c:if test="${param.verify != null}">
+            <c:if test="${param.type != null}">
                 <c:choose>
-                    <c:when test="${param.verify=='verified'}">
+                    <c:when test="${param.type=='verified'}">
                         <div class="alert alert-success" role="alert">
                             <spring:message code="login.verify.verified"/>
                         </div>
                     </c:when>
-                    <c:otherwise>
+                    <c:when test="${param.type=='verify-emailed'}">
                         <div class="alert alert-success" role="alert">
                             <spring:message code="login.verify.emailed"/>
+                        </div>
+                    </c:when>
+                    <c:when test="${param.type=='reset-password-success'}">
+                        <div class="alert alert-success" role="alert">
+                            <spring:message code="login.succesfullyResetPassword"/>
+                        </div>
+                    </c:when>
+                    <c:otherwise>
+                        <div class="alert alert-success" role="alert">
+                            <spring:message code="login.resetPassword.emailed"/>
                         </div>
                     </c:otherwise>
                 </c:choose>
@@ -65,7 +85,7 @@
             </form>
             <p class="mt-3"><spring:message code="login.notregistered"/> <a href="<c:url value="/auth/register"/>"><spring:message code="login.signup"/></a></p>
             <p class="mt-3" style="text-align:center; font-size: 10px;">
-                <a href="<c:url value="/auth/forgot-password"/>"><spring:message code="login.forgotpassword"/></a> |
+                <a href="<c:url value="/auth/reset-password"/>"><spring:message code="login.forgotpassword"/></a> |
                 <a href="<c:url value="/auth/verify"/>"><spring:message code="login.sendverificationcode"/></a>
             </p>
         </div>
