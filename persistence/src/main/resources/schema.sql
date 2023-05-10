@@ -22,6 +22,13 @@ CREATE TABLE IF NOT EXISTS user_verification_codes
     expires TIMESTAMP NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS user_resetpassword_codes
+(
+    code    VARCHAR(32) PRIMARY KEY,
+    user_id INT UNIQUE REFERENCES users (user_id) ON DELETE CASCADE NOT NULL,
+    expires TIMESTAMP NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS restaurants
 (
     restaurant_id SERIAL PRIMARY KEY,

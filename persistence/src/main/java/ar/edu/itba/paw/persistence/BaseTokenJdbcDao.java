@@ -1,20 +1,18 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.persistance.VerificationDao;
-import org.springframework.beans.factory.annotation.Autowired;
+import ar.edu.itba.paw.persistance.BaseTokenDao;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
-@Repository
-public class VerificationJdbcDao implements VerificationDao {
+public class BaseTokenJdbcDao implements BaseTokenDao {
 
+    private final String tableName;
     private static final Integer TOKEN_DURATION_DAYS = 1;
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
@@ -25,12 +23,13 @@ public class VerificationJdbcDao implements VerificationDao {
     private static final RowMapper<LocalDateTime> TOKEN_EXPIRES_ROW_MAPPER =
             (rs, rowNum) -> rs.getTimestamp("expires").toLocalDateTime();
 
-    @Autowired
-    public VerificationJdbcDao(final DataSource ds) {
+
+    public BaseTokenJdbcDao(final String tableName, final DataSource ds) {
+        this.tableName = tableName;
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsert = new SimpleJdbcInsert(ds)
-                .withTableName("user_verification_codes")
-                .usingColumns("email", "code", "expires");
+                .withTableName(tableName)
+                .usingColumns("user_id", "code", "expires");
     }
 
     private static LocalDateTime generateTokenExpirationDate() {
@@ -38,10 +37,10 @@ public class VerificationJdbcDao implements VerificationDao {
     }
 
     @Override
-    public String generateVerificationToken(final int userId) {
+    public String generateToken(int userId) {
         String token = UUID.randomUUID().toString().substring(0, 32);
         jdbcTemplate.update(
-                "INSERT INTO user_verification_codes (code, user_id, expires) VALUES (?, ?, ?) ON CONFLICT (user_id) DO UPDATE SET code=excluded.code, expires = excluded.expires",
+                "INSERT INTO " + tableName +" (code, user_id, expires) VALUES (?, ?, ?) ON CONFLICT (user_id) DO UPDATE SET code=excluded.code, expires = excluded.expires",
                 token,
                 userId,
                 generateTokenExpirationDate()
@@ -50,10 +49,9 @@ public class VerificationJdbcDao implements VerificationDao {
     }
 
     @Override
-    public boolean verifyAndDeleteToken(final String token) {
-
+    public boolean verifyAndDeleteToken(String token) {
         Optional<Long> userId = jdbcTemplate.query(
-                "SELECT user_id FROM user_verification_codes WHERE code = ?",
+                "SELECT user_id FROM " + tableName + " WHERE code = ?",
                 TOKEN_USER_ID_ROW_MAPPER,
                 token
         ).stream().findFirst();
@@ -63,7 +61,7 @@ public class VerificationJdbcDao implements VerificationDao {
         }
 
         boolean success = jdbcTemplate.update(
-                "DELETE FROM user_verification_codes WHERE code = ? AND user_id = ? AND expires>now()",
+                "DELETE FROM " + tableName + " WHERE code = ? AND user_id = ? AND expires>now()",
                 token,
                 userId.get()
         ) > 0;
@@ -78,14 +76,14 @@ public class VerificationJdbcDao implements VerificationDao {
     }
 
     @Override
-    public void deleteStaledVerificationTokens() {
-        jdbcTemplate.update("DELETE FROM user_verification_codes WHERE expires <= now()");
+    public void deleteStaledTokens() {
+        jdbcTemplate.update("DELETE FROM " + tableName + " WHERE expires <= now()");
     }
 
     @Override
-    public boolean hasActiveVerificationToken(final int userId) {
+    public boolean hasActiveToken(int userId) {
         Optional<LocalDateTime> tokenInfo = jdbcTemplate.query(
-                "SELECT expires FROM user_verification_codes WHERE user_id = ?",
+                "SELECT expires FROM " + tableName + " WHERE user_id = ?",
                 TOKEN_EXPIRES_ROW_MAPPER,
                 userId
         ).stream().findFirst();

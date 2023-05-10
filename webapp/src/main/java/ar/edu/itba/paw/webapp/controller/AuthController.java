@@ -1,9 +1,9 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.User;
+import ar.edu.itba.paw.persistance.VerificationTokenDao;
 import ar.edu.itba.paw.service.EmailService;
 import ar.edu.itba.paw.service.UserService;
-import ar.edu.itba.paw.service.VerificationService;
 import ar.edu.itba.paw.webapp.exception.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.RegisterForm;
 import ar.edu.itba.paw.webapp.form.VerifyForm;
@@ -28,7 +28,7 @@ public class AuthController {
     private UserService userService;
 
     @Autowired
-    private VerificationService verificationService;
+    private VerificationTokenDao verificationService;
 
     @Autowired
     private EmailService emailService;
@@ -49,7 +49,7 @@ public class AuthController {
         }
 
         final User user = userService.create(registerForm.getEmail(), registerForm.getPassword(), registerForm.getName());
-        String token = verificationService.generateVerificationToken(user.getUserId());
+        String token = verificationService.generateToken(user.getUserId());
         String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
         emailService.sendUserVerificationEmail(baseUrl, user.getEmail(), token);
         return new ModelAndView("redirect:/auth/login?verify=emailed");
@@ -93,7 +93,7 @@ public class AuthController {
             return new ModelAndView("redirect:/auth/login?verify=emailed");
         }
 
-        String token = verificationService.generateVerificationToken(user.getUserId());
+        String token = verificationService.generateToken(user.getUserId());
         String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
         try {
             emailService.sendUserVerificationEmail(baseUrl, user.getEmail(), token);
