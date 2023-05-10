@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -55,12 +56,22 @@ public class ReviewJdbcDao implements ReviewDao {
 
     @Override
     public AverageCountPair getRestaurantAverage(int restaurantId) {
-        return null;
+        return jdbcTemplate.queryForObject(
+                "SELECT AVG(CAST(order_reviews.rating AS FLOAT)) AS a, COUNT(*) AS c FROM order_reviews JOIN orders ON order_reviews.order_id = orders.order_id WHERE orders.restaurant_id = ?",
+                SimpleRowMappers.AVERAGE_COUNT_ROW_MAPPER,
+                restaurantId
+        );
     }
 
     @Override
     public AverageCountPair getRestaurantAverageSince(int restaurantId, LocalDateTime datetime) {
-        return null;
+        return jdbcTemplate.queryForObject(
+                "SELECT AVG(CAST(order_reviews.rating AS FLOAT)) AS a, COUNT(*) AS c FROM order_reviews JOIN orders ON order_reviews.order_id = orders.order_id WHERE order_reviews.date >= ? AND orders.restaurant_id = ?",
+                SimpleRowMappers.AVERAGE_COUNT_ROW_MAPPER,
+                Timestamp.valueOf(datetime),
+                restaurantId
+        );
+
     }
 
     private static final String GET_BY_RESTAURANT_SQL = "WITH itemless_orders AS (" + OrderJdbcDao.SELECT_ITEMLESS_ORDERS + ")" +

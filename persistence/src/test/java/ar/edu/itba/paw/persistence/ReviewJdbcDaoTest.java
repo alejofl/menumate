@@ -2,6 +2,7 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.OrderType;
 import ar.edu.itba.paw.model.Review;
+import ar.edu.itba.paw.model.util.AverageCountPair;
 import ar.edu.itba.paw.model.util.PaginatedResult;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import org.junit.Assert;
@@ -15,6 +16,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
 
 import javax.sql.DataSource;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -42,6 +44,7 @@ public class ReviewJdbcDaoTest {
     private static final int RATING1 = 1;
     private static final int RATING2 = 4;
     private static final OrderType ORDER_TYPE = OrderType.TAKEAWAY;
+    private static final float FLOAT_DELTA = 0.001f;
 
     @Autowired
     private DataSource ds;
@@ -196,5 +199,51 @@ public class ReviewJdbcDaoTest {
         Assert.assertEquals(ORDER_ID1, review.getOrder().getOrderId());
         Assert.assertEquals(RATING1, review.getRating());
         Assert.assertNull(review.getComment());
+    }
+
+    @Test
+    public void testAverageZeroWhenEmpty() {
+        AverageCountPair ac = reviewDao.getRestaurantAverage(RESTAURANT_ID1);
+        Assert.assertEquals(0, ac.getCount());
+    }
+
+    @Test
+    public void testAverageWhenOne() {
+        jdbcTemplate.execute("INSERT INTO order_reviews (order_id, rating, comment) VALUES (" + ORDER_ID1 + ", " + RATING1 + ", null)");
+
+        AverageCountPair ac = reviewDao.getRestaurantAverage(RESTAURANT_ID1);
+        Assert.assertEquals(RATING1, ac.getAverage(), FLOAT_DELTA);
+        Assert.assertEquals(1, ac.getCount());
+    }
+
+    @Test
+    public void testAverageWhenTwo() {
+        jdbcTemplate.execute("INSERT INTO orders (order_id, order_type, restaurant_id, user_id, date_ordered, date_delivered, date_confirmed, date_ready) VALUES (" + 7381 + ", " + ORDER_TYPE.ordinal() + ", " + RESTAURANT_ID1 + ", " + USER_ID + ", now(), now(), now(), now())");
+        jdbcTemplate.execute("INSERT INTO order_reviews (order_id, rating, comment) VALUES (" + ORDER_ID1 + ", " + RATING1 + ", null)");
+        jdbcTemplate.execute("INSERT INTO order_reviews (order_id, rating, comment) VALUES (" + 7381 + ", " + RATING2 + ", null)");
+
+        AverageCountPair ac = reviewDao.getRestaurantAverage(RESTAURANT_ID1);
+        Assert.assertEquals((RATING1 + RATING2) / 2f, ac.getAverage(), FLOAT_DELTA);
+        Assert.assertEquals(2, ac.getCount());
+    }
+
+    @Test
+    public void testAverageSinceWhenOne() {
+        jdbcTemplate.execute("INSERT INTO order_reviews (order_id, rating, comment) VALUES (" + ORDER_ID1 + ", " + RATING1 + ", null)");
+
+        AverageCountPair ac = reviewDao.getRestaurantAverageSince(RESTAURANT_ID1, LocalDateTime.now().minusDays(1));
+        Assert.assertEquals(RATING1, ac.getAverage(), FLOAT_DELTA);
+        Assert.assertEquals(1, ac.getCount());
+    }
+
+    @Test
+    public void testAverageSinceWhenTwo() {
+        jdbcTemplate.execute("INSERT INTO orders (order_id, order_type, restaurant_id, user_id, date_ordered, date_delivered, date_confirmed, date_ready) VALUES (" + 7381 + ", " + ORDER_TYPE.ordinal() + ", " + RESTAURANT_ID1 + ", " + USER_ID + ", now(), now(), now(), now())");
+        jdbcTemplate.execute("INSERT INTO order_reviews (order_id, rating, comment) VALUES (" + ORDER_ID1 + ", " + RATING1 + ", null)");
+        jdbcTemplate.execute("INSERT INTO order_reviews (order_id, rating, comment) VALUES (" + 7381 + ", " + RATING2 + ", null)");
+
+        AverageCountPair ac = reviewDao.getRestaurantAverageSince(RESTAURANT_ID1, LocalDateTime.now().minusDays(1));
+        Assert.assertEquals((RATING1 + RATING2) / 2f, ac.getAverage(), FLOAT_DELTA);
+        Assert.assertEquals(2, ac.getCount());
     }
 }

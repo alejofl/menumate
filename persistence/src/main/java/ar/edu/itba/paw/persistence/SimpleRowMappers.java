@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.*;
+import ar.edu.itba.paw.model.util.AverageCountPair;
 import ar.edu.itba.paw.model.util.Pair;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -17,6 +18,11 @@ class SimpleRowMappers {
     static final RowMapper<Integer> COUNT_ROW_MAPPER = (rs, i) -> rs.getInt("c");
 
     static final RowMapper<Integer> MAX_ROW_MAPPER = (rs, i) -> rs.getInt("m");
+
+    static final RowMapper<AverageCountPair> AVERAGE_COUNT_ROW_MAPPER = (rs, i) -> new AverageCountPair(
+            rs.getFloat("a"),
+            rs.getInt("c")
+    );
 
     static final RowMapper<User> USER_ROW_MAPPER = (ResultSet rs, int rowNum) -> new User(
             rs.getInt("user_id"),
