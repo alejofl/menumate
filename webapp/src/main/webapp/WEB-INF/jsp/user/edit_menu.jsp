@@ -33,7 +33,7 @@
         </div>
         <div class="d-flex flex-column gap-2">
             <a class="btn btn-primary" href="<c:url value="/restaurants/${restaurant.restaurantId}"/>" role="button"><spring:message code="editmenu.done"/></a>
-            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#employees-modal" id="add-employees-button"><spring:message code="editmenu.editemployees"/></button>
+            <button type="button" class="btn btn-secondary ${is_owner ? "" : "disabled"}" data-bs-toggle="modal" data-bs-target="#employees-modal" id="add-employees-button"><spring:message code="editmenu.editemployees"/></button>
         </div>
     </div>
 </div>

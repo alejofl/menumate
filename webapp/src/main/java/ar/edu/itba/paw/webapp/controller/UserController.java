@@ -147,13 +147,19 @@ public class UserController {
 
         final Restaurant restaurant = restaurantService.getById(id).orElseThrow(RestaurantNotFoundException::new);
         mav.addObject("restaurant", restaurant);
+
         final List<Pair<Category, List<Product>>> menu = restaurantService.getMenu(id);
         mav.addObject("menu", menu);
+
         final List<Pair<User, RestaurantRoleLevel>> employees = rolesService.getByRestaurant(id);
         mav.addObject("employees", employees);
+
         final List<RestaurantRoleLevel> roles = new ArrayList<>(Arrays.asList(RestaurantRoleLevel.values()));
         roles.remove(RestaurantRoleLevel.OWNER);
         mav.addObject("roles", roles);
+
+        final boolean is_owner = rolesService.doesUserHaveRole(ControllerUtils.getCurrentUserIdOrThrow(), id, RestaurantRoleLevel.OWNER);
+        mav.addObject("is_owner", is_owner);
 
         mav.addObject("addProductErrors", addProductErrors);
         mav.addObject("addCategoryErrors", addCategoryErrors);
