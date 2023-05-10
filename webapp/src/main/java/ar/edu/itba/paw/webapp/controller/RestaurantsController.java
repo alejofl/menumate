@@ -114,11 +114,17 @@ public class RestaurantsController {
         } catch (MessagingException e) {
             e.printStackTrace();
         }
-        return new ModelAndView("redirect:/thankyou");
+        return thankYou(order.getOrderId(), order.getUser().getEmail());
     }
 
     @RequestMapping("/thankyou")
-    public ModelAndView thankYou() {
-        return new ModelAndView("menu/thankyou");
+    public ModelAndView thankYou(
+            final int orderId,
+            final String email
+    ) {
+        ModelAndView mav = new ModelAndView("menu/thankyou");
+        mav.addObject("orderId", orderId);
+        mav.addObject("userExists", userService.isUserEmailRegistered(email));
+        return mav;
     }
 }
