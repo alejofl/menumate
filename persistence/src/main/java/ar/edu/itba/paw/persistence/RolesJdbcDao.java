@@ -118,4 +118,9 @@ public class RolesJdbcDao implements RolesDao {
                 userId
         );
     }
+
+    @Override
+    public boolean deleteRole(int restaurantId, int userId) {
+        return jdbcTemplate.update("DELETE FROM restaurant_roles WHERE restaurant_id = ? AND user_id = ?", restaurantId, userId) > 0;
+    }
 }

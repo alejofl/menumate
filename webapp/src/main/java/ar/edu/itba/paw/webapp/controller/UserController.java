@@ -8,9 +8,11 @@ import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.exception.ResourceNotFoundException;
 import ar.edu.itba.paw.webapp.exception.RestaurantNotFoundException;
+import ar.edu.itba.paw.webapp.exception.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.*;
 import ar.edu.itba.paw.webapp.exception.OrderNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -36,6 +40,9 @@ public class UserController {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private UserService userService;
 
     @RequestMapping(value = "/user/restaurants", method = RequestMethod.GET)
     public ModelAndView myRestaurants() {
@@ -130,18 +137,33 @@ public class UserController {
             @ModelAttribute("addCategoryForm") final AddCategoryForm addCategoryForm,
             @ModelAttribute("deleteProductForm") final DeleteProductForm deleteProductForm,
             @ModelAttribute("deleteCategoryForm") final DeleteCategoryForm deleteCategoryForm,
+            @ModelAttribute("addEmployeeForm") final AddEmployeeForm addEmployeeForm,
+            @ModelAttribute("deleteEmployeeForm") final DeleteEmployeeForm deleteEmployeeForm,
             final Boolean addProductErrors,
-            final Boolean addCategoryErrors
+            final Boolean addCategoryErrors,
+            final Boolean addEmployeeErrors
     ) {
         ModelAndView mav = new ModelAndView("user/edit_menu");
 
         final Restaurant restaurant = restaurantService.getById(id).orElseThrow(RestaurantNotFoundException::new);
         mav.addObject("restaurant", restaurant);
+
         final List<Pair<Category, List<Product>>> menu = restaurantService.getMenu(id);
         mav.addObject("menu", menu);
 
+        final List<Pair<User, RestaurantRoleLevel>> employees = rolesService.getByRestaurant(id);
+        mav.addObject("employees", employees);
+
+        final List<RestaurantRoleLevel> roles = new ArrayList<>(Arrays.asList(RestaurantRoleLevel.values()));
+        roles.remove(RestaurantRoleLevel.OWNER);
+        mav.addObject("roles", roles);
+
+        final boolean is_owner = rolesService.doesUserHaveRole(ControllerUtils.getCurrentUserIdOrThrow(), id, RestaurantRoleLevel.OWNER);
+        mav.addObject("is_owner", is_owner);
+
         mav.addObject("addProductErrors", addProductErrors);
         mav.addObject("addCategoryErrors", addCategoryErrors);
+        mav.addObject("addEmployeeErrors", addEmployeeErrors);
 
         return mav;
     }
@@ -153,10 +175,23 @@ public class UserController {
             final BindingResult errors,
             @ModelAttribute("addCategoryForm") final AddCategoryForm addCategoryForm,
             @ModelAttribute("deleteProductForm") final DeleteProductForm deleteProductForm,
-            @ModelAttribute("deleteCategoryForm") final DeleteCategoryForm deleteCategoryForm
+            @ModelAttribute("deleteCategoryForm") final DeleteCategoryForm deleteCategoryForm,
+            @ModelAttribute("addEmployeeForm") final AddEmployeeForm addEmployeeForm,
+            @ModelAttribute("deleteEmployeeForm") final DeleteEmployeeForm deleteEmployeeForm
     ) throws IOException {
         if (errors.hasErrors()) {
-            return editRestaurant(id, addProductForm, addCategoryForm, deleteProductForm, deleteCategoryForm, true, false);
+            return editRestaurant(
+                    id,
+                    addProductForm,
+                    addCategoryForm,
+                    deleteProductForm,
+                    deleteCategoryForm,
+                    addEmployeeForm,
+                    deleteEmployeeForm,
+                    true,
+                    false,
+                    false
+            );
         }
 
         productService.create(
@@ -177,10 +212,23 @@ public class UserController {
             @Valid @ModelAttribute("addCategoryForm") final AddCategoryForm addCategoryForm,
             final BindingResult errors,
             @ModelAttribute("deleteProductForm") final DeleteProductForm deleteProductForm,
-            @ModelAttribute("deleteCategoryForm") final DeleteCategoryForm deleteCategoryForm
+            @ModelAttribute("deleteCategoryForm") final DeleteCategoryForm deleteCategoryForm,
+            @ModelAttribute("addEmployeeForm") final AddEmployeeForm addEmployeeForm,
+            @ModelAttribute("deleteEmployeeForm") final DeleteEmployeeForm deleteEmployeeForm
     ) {
         if (errors.hasErrors()) {
-            return editRestaurant(id, addProductForm, addCategoryForm, deleteProductForm, deleteCategoryForm, false, true);
+            return editRestaurant(
+                    id,
+                    addProductForm,
+                    addCategoryForm,
+                    deleteProductForm,
+                    deleteCategoryForm,
+                    addEmployeeForm,
+                    deleteEmployeeForm,
+                    false,
+                    true,
+                    false
+            );
         }
 
         categoryService.create(addCategoryForm.getRestaurantId(), addCategoryForm.getName());
@@ -195,7 +243,9 @@ public class UserController {
             @ModelAttribute("addCategoryForm") final AddCategoryForm addCategoryForm,
             @Valid @ModelAttribute("deleteProductForm") final DeleteProductForm deleteProductForm,
             final BindingResult errors,
-            @ModelAttribute("deleteCategoryForm") final DeleteCategoryForm deleteCategoryForm
+            @ModelAttribute("deleteCategoryForm") final DeleteCategoryForm deleteCategoryForm,
+            @ModelAttribute("addEmployeeForm") final AddEmployeeForm addEmployeeForm,
+            @ModelAttribute("deleteEmployeeForm") final DeleteEmployeeForm deleteEmployeeForm
     ) {
         if (errors.hasErrors()) {
             throw new IllegalStateException();
@@ -213,13 +263,67 @@ public class UserController {
             @ModelAttribute("addCategoryForm") final AddCategoryForm addCategoryForm,
             @ModelAttribute("deleteProductForm") final DeleteProductForm deleteProductForm,
             @Valid @ModelAttribute("deleteCategoryForm") final DeleteCategoryForm deleteCategoryForm,
-            final BindingResult errors
+            final BindingResult errors,
+            @ModelAttribute("addEmployeeForm") final AddEmployeeForm addEmployeeForm,
+            @ModelAttribute("deleteEmployeeForm") final DeleteEmployeeForm deleteEmployeeForm
     ) {
         if (errors.hasErrors()) {
             throw new IllegalStateException();
         }
 
         categoryService.delete(deleteCategoryForm.getCategoryId());
+
+        return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
+    }
+
+    @RequestMapping(value = "/restaurants/{id:\\d+}/employees/add", method = RequestMethod.POST)
+    public ModelAndView addEmployeeForRestaurant(
+            @PathVariable final int id,
+            @ModelAttribute("addProductForm") final AddProductForm addProductForm,
+            @ModelAttribute("addCategoryForm") final AddCategoryForm addCategoryForm,
+            @ModelAttribute("deleteProductForm") final DeleteProductForm deleteProductForm,
+            @ModelAttribute("deleteCategoryForm") final DeleteCategoryForm deleteCategoryForm,
+            @Valid @ModelAttribute("addEmployeeForm") final AddEmployeeForm addEmployeeForm,
+            final BindingResult errors,
+            @ModelAttribute("deleteEmployeeForm") final DeleteEmployeeForm deleteEmployeeForm
+    ) {
+        if (errors.hasErrors()) {
+            return editRestaurant(
+                    id,
+                    addProductForm,
+                    addCategoryForm,
+                    deleteProductForm,
+                    deleteCategoryForm,
+                    addEmployeeForm,
+                    deleteEmployeeForm,
+                    false,
+                    false,
+                    true
+            );
+        }
+
+        User user = userService.getByEmail(addEmployeeForm.getEmail()).orElseThrow(UserNotFoundException::new);
+        rolesService.setRole(user.getUserId(), id, RestaurantRoleLevel.values()[addEmployeeForm.getRole()]);
+
+        return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
+    }
+
+    @RequestMapping(value = "/restaurants/{id:\\d+}/employees/delete", method = RequestMethod.POST)
+    public ModelAndView deleteEmployeeForRestaurant(
+            @PathVariable final int id,
+            @ModelAttribute("addProductForm") final AddProductForm addProductForm,
+            @ModelAttribute("addCategoryForm") final AddCategoryForm addCategoryForm,
+            @ModelAttribute("deleteProductForm") final DeleteProductForm deleteProductForm,
+            @ModelAttribute("deleteCategoryForm") final DeleteCategoryForm deleteCategoryForm,
+            @ModelAttribute("addEmployeeForm") final AddEmployeeForm addEmployeeForm,
+            @Valid @ModelAttribute("deleteEmployeeForm") final DeleteEmployeeForm deleteEmployeeForm,
+            final BindingResult errors
+    ) {
+        if (errors.hasErrors()) {
+            throw new IllegalStateException();
+        }
+
+        rolesService.deleteRole(id, deleteEmployeeForm.getUserId());
 
         return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
     }

@@ -36,4 +36,6 @@ public interface RolesDao {
      * Gets the restaurants and roles for a given user, and the amount of non-finalized orders.
      */
     List<Triplet<Restaurant, RestaurantRoleLevel, Integer>> getByUser(int userId);
+
+    boolean deleteRole(int restaurantId, int userId);
 }

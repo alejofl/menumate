@@ -43,4 +43,9 @@ public class RolesServiceImpl implements RolesService {
     public List<Triplet<Restaurant, RestaurantRoleLevel, Integer>> getByUser(int userId) {
         return rolesDao.getByUser(userId);
     }
+
+    @Override
+    public boolean deleteRole(int restaurantId, int userId) {
+        return rolesDao.deleteRole(restaurantId, userId);
+    }
 }
