@@ -75,7 +75,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/restaurants/{restaurant_id:\\d+}/edit/**").access("@accessValidator.checkRestaurantAdmin(#restaurant_id)")
                 .antMatchers(HttpMethod.GET, "/restaurants/{restaurant_id:\\d+}/orders/**").access("@accessValidator.checkRestaurantOrderHandler(#restaurant_id)")
                 .antMatchers(HttpMethod.POST, "/restaurants/{restaurant_id:\\d+}/orders").permitAll()
-                .antMatchers(HttpMethod.GET, "/user/orders").authenticated()
+                .antMatchers(HttpMethod.GET, "/user/orders/**").authenticated()
                 .antMatchers(HttpMethod.GET, "/orders/{order_id:\\d+}/**").access("@accessValidator.checkOrderOwnerOrHandler(#order_id)")
                 .antMatchers(HttpMethod.POST, "/orders/{order_id:\\d+}/pending").access("@accessValidator.checkOrderHandler(#order_id)")
                 .antMatchers(HttpMethod.POST, "/orders/{order_id:\\d+}/confirmed").access("@accessValidator.checkOrderHandler(#order_id)")

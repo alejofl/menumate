@@ -6,6 +6,7 @@ import ar.edu.itba.paw.model.util.Pair;
 import ar.edu.itba.paw.model.util.Triplet;
 import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
+import ar.edu.itba.paw.webapp.exception.ResourceNotFoundException;
 import ar.edu.itba.paw.webapp.exception.RestaurantNotFoundException;
 import ar.edu.itba.paw.webapp.form.*;
 import ar.edu.itba.paw.webapp.exception.OrderNotFoundException;
@@ -36,33 +37,6 @@ public class UserController {
     @Autowired
     private ProductService productService;
 
-    private ModelAndView myOrders(
-            @Valid final PagingForm paging,
-            final BindingResult errors,
-            final String status
-    ) {
-        ModelAndView mav = new ModelAndView("user/myorders");
-
-        if (errors.hasErrors()) {
-            mav.addObject("error", Boolean.TRUE);
-            paging.clear();
-        }
-
-        PaginatedResult<OrderItemless> orders;
-        if (status.equals("inprogress")) {
-            orders = orderService.getInProgressByUserExcludeItems(ControllerUtils.getCurrentUserIdOrThrow(), paging.getPageOrDefault(), paging.getSizeOrDefault(ControllerUtils.DEFAULT_ORDERS_PAGE_SIZE));
-        } else {
-            orders = orderService.getByUserExcludeItems(ControllerUtils.getCurrentUserIdOrThrow(), paging.getPageOrDefault(), paging.getSizeOrDefault(ControllerUtils.DEFAULT_ORDERS_PAGE_SIZE));
-        }
-
-        mav.addObject("orders", orders.getResult());
-        mav.addObject("orderCount", orders.getTotalCount());
-        mav.addObject("pageCount", orders.getTotalPageCount());
-        mav.addObject("status", status);
-
-        return mav;
-    }
-
     @RequestMapping(value = "/user/restaurants", method = RequestMethod.GET)
     public ModelAndView myRestaurants() {
         ModelAndView mav = new ModelAndView("user/myrestaurants");
@@ -76,20 +50,37 @@ public class UserController {
         return new ModelAndView("redirect:/user/orders/inprogress");
     }
 
-    @RequestMapping(value = "/user/orders/inprogress", method = RequestMethod.GET)
-    public ModelAndView myOrdersPending(
+    @RequestMapping(value = "/user/orders/{status}", method = RequestMethod.GET)
+    public ModelAndView myOrdersByStatus(
             @Valid final PagingForm paging,
-            final BindingResult errors
+            final BindingResult errors,
+            @PathVariable final String status
     ) {
-        return myOrders(paging, errors, "inprogress");
-    }
+        ModelAndView mav = new ModelAndView("user/myorders");
 
-    @RequestMapping(value = "/user/orders/all", method = RequestMethod.GET)
-    public ModelAndView myOrdersAll(
-            @Valid final PagingForm paging,
-            final BindingResult errors
-    ) {
-        return myOrders(paging, errors, "all");
+        if (errors.hasErrors()) {
+            mav.addObject("error", Boolean.TRUE);
+            paging.clear();
+        }
+
+        PaginatedResult<OrderItemless> orders;
+        switch (status) {
+            case "inprogress":
+                orders = orderService.getInProgressByUserExcludeItems(ControllerUtils.getCurrentUserIdOrThrow(), paging.getPageOrDefault(), paging.getSizeOrDefault(ControllerUtils.DEFAULT_ORDERS_PAGE_SIZE));
+                break;
+            case "all":
+                orders = orderService.getByUserExcludeItems(ControllerUtils.getCurrentUserIdOrThrow(), paging.getPageOrDefault(), paging.getSizeOrDefault(ControllerUtils.DEFAULT_ORDERS_PAGE_SIZE));
+                break;
+            default:
+                throw new ResourceNotFoundException();
+        }
+
+        mav.addObject("orders", orders.getResult());
+        mav.addObject("orderCount", orders.getTotalCount());
+        mav.addObject("pageCount", orders.getTotalPageCount());
+        mav.addObject("status", status);
+
+        return mav;
     }
 
     @RequestMapping(value = "/orders/{id:\\d+}", method = RequestMethod.GET)
