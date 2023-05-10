@@ -27,13 +27,13 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public boolean verifyAndDeleteVerificationToken(final String token) {
-        return verificationTokenDao.verifyAndDeleteToken(token);
+    public boolean verifyUserAndDeleteVerificationToken(final String token) {
+        return verificationTokenDao.verifyUserAndDeleteToken(token);
     }
 
     @Override
-    public boolean verifyAndDeletePasswordResetToken(String token) {
-        return resetPasswordTokenDao.verifyAndDeleteToken(token);
+    public boolean updatePasswordAndDeleteResetPasswordToken(String token, String newPassword) {
+        return resetPasswordTokenDao.updatePasswordAndDeleteToken(token, newPassword);
     }
 
     @Override
@@ -44,6 +44,16 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public boolean hasActiveResetPasswordToken(final int userId) {
         return resetPasswordTokenDao.hasActiveToken(userId);
+    }
+
+    @Override
+    public boolean isValidVerificationToken(String token) {
+        return verificationTokenDao.isValidToken(token);
+    }
+
+    @Override
+    public boolean isValidResetPasswordToken(String token) {
+        return resetPasswordTokenDao.isValidToken(token);
     }
 
     @Scheduled(cron = "0 0 0 * * ?")

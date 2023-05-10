@@ -4,8 +4,11 @@
 
 <html>
 <head>
-  <c:if test="${type=='Verify'}">
-    <spring:message code="verify" var="viewTitle"/>
+  <c:if test="${actionType=='verify'}">
+    <spring:message code="email.form.verify" var="viewTitle"/>
+  </c:if>
+  <c:if test="${actionType=='reset-password'}">
+    <spring:message code="email.form.resetPassword" var="viewTitle"/>
   </c:if>
   <spring:message code="send" var="send"/>
   <jsp:include page="/WEB-INF/jsp/components/head.jsp">
@@ -27,8 +30,8 @@
         </div>
         <input type="submit" class="btn btn-primary" id="login-submit" value="${send}">
       </form:form>
-      <c:if test="${type=='Verify'}">
-        <p class="mt-3"><spring:message code="verify.alreadyverified"/> <a href="<c:url value="/auth/login"/>"><spring:message code="verify.login"/></a></p>
+      <c:if test="${actionType=='verify'}">
+        <p class="mt-3"><spring:message code="email.form.verify.alreadyverified"/> <a href="<c:url value="/auth/login"/>"><spring:message code="email.form.verify.login"/></a></p>
       </c:if>
     </div>
   </div>

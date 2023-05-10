@@ -29,10 +29,10 @@ public class CustomAuthenticationEntryPoint extends SimpleUrlAuthenticationFailu
     private UserService userService;
 
     private static final String LOGIN_URL = "/auth/login";
-    private static final String VERIFY_EMAIL_ERROR = "?verify=emailed";
-    private static final String NOT_VERIFIED_ERROR = "?error=not_verified";
+    private static final String VERIFY_EMAIL_ERROR = "?type=verify-emailed";
+    private static final String NOT_VERIFIED_ERROR = "?error=not-verified";
     private static final String INVALID_CREDENTIALS_ERROR = "?error=invalid_credentials";
-    private static final String MAILER_ERROR = "?error=mailer_error";
+    private static final String MAILER_ERROR = "?error=mailer-error";
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {

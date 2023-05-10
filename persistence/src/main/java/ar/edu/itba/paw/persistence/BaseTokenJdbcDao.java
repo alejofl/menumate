@@ -36,6 +36,26 @@ public class BaseTokenJdbcDao implements BaseTokenDao {
         return LocalDateTime.now().plusDays(TOKEN_DURATION_DAYS);
     }
 
+    private TokenResult deleteTokenAndRetrieveUserId(String token) {
+        Optional<Long> userId = jdbcTemplate.query(
+                "SELECT user_id FROM " + tableName + " WHERE code = ?",
+                TOKEN_USER_ID_ROW_MAPPER,
+                token
+        ).stream().findFirst();
+
+        if (!userId.isPresent()) {
+            return new TokenResult(false, null);
+        }
+
+        boolean success = jdbcTemplate.update(
+                "DELETE FROM " + tableName + " WHERE code = ? AND user_id = ? AND expires>now()",
+                token,
+                userId.get()
+        ) > 0;
+
+        return new TokenResult(success, userId.get());
+    }
+
     @Override
     public String generateToken(int userId) {
         String token = UUID.randomUUID().toString().substring(0, 32);
@@ -49,27 +69,13 @@ public class BaseTokenJdbcDao implements BaseTokenDao {
     }
 
     @Override
-    public boolean verifyAndDeleteToken(String token) {
-        Optional<Long> userId = jdbcTemplate.query(
-                "SELECT user_id FROM " + tableName + " WHERE code = ?",
-                TOKEN_USER_ID_ROW_MAPPER,
-                token
-        ).stream().findFirst();
+    public boolean verifyUserAndDeleteToken(String token) {
+        TokenResult result = deleteTokenAndRetrieveUserId(token);
 
-        if (!userId.isPresent()) {
-            return false;
-        }
-
-        boolean success = jdbcTemplate.update(
-                "DELETE FROM " + tableName + " WHERE code = ? AND user_id = ? AND expires>now()",
-                token,
-                userId.get()
-        ) > 0;
-
-        if (success) {
+        if (result.success && result.userId != null) {
             return jdbcTemplate.update(
                     "UPDATE users SET is_active = true WHERE user_id = ?",
-                    userId.get()
+                    result.userId
             ) > 0;
         }
         return false;
@@ -89,5 +95,46 @@ public class BaseTokenJdbcDao implements BaseTokenDao {
         ).stream().findFirst();
 
         return tokenInfo.isPresent() && tokenInfo.get().isAfter(LocalDateTime.now());
+    }
+
+    @Override
+    public boolean isValidToken(String token){
+        return jdbcTemplate.query(
+                "SELECT * FROM " + tableName + " WHERE code = ? AND expires>now()",
+                TOKEN_USER_ID_ROW_MAPPER,
+                token
+        ).stream().findFirst().isPresent();
+    }
+
+    @Override
+    public boolean updatePasswordAndDeleteToken(String token, String newPassword) {
+        TokenResult result = deleteTokenAndRetrieveUserId(token);
+
+        if (result.success && result.userId != null) {
+            return jdbcTemplate.update(
+                    "UPDATE users SET password = ? WHERE user_id = ?",
+                    newPassword,
+                    result.userId
+            ) > 0;
+        }
+        return false;
+    }
+
+    private static class TokenResult {
+        private final boolean success;
+        private final Long userId;
+
+        public TokenResult(boolean success, Long userId) {
+            this.success = success;
+            this.userId = userId;
+        }
+
+        public boolean isSuccess() {
+            return success;
+        }
+
+        public Long getUserId() {
+            return userId;
+        }
     }
 }

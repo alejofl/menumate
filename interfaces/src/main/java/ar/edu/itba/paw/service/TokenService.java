@@ -6,11 +6,15 @@ public interface TokenService {
 
     String generatePasswordResetToken(final int userId);
 
-    boolean verifyAndDeleteVerificationToken(final String token);
+    boolean verifyUserAndDeleteVerificationToken(final String token);
 
-    boolean verifyAndDeletePasswordResetToken(final String token);
+    boolean updatePasswordAndDeleteResetPasswordToken(final String token, final String newPassword);
 
     boolean hasActiveVerificationToken(final int userId);
 
     boolean hasActiveResetPasswordToken(final int userId);
+
+    boolean isValidVerificationToken(final String token);
+
+    boolean isValidResetPasswordToken(final String token);
 }

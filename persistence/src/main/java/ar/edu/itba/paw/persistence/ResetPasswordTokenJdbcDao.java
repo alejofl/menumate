@@ -9,7 +9,7 @@ import javax.sql.DataSource;
 @Repository
 public class ResetPasswordTokenJdbcDao extends BaseTokenJdbcDao implements ResetPasswordTokenDao {
 
-    private static final String TABLE_NAME = "user_reset_password_codes";
+    private static final String TABLE_NAME = "user_resetpassword_codes";
 
     @Autowired
     public ResetPasswordTokenJdbcDao(final DataSource ds) {

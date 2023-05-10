@@ -4,9 +4,13 @@ public interface BaseTokenDao {
 
     String generateToken(final int userId);
 
-    boolean verifyAndDeleteToken(final String token);
+    boolean verifyUserAndDeleteToken(final String token);
+
+    boolean updatePasswordAndDeleteToken(String token, String newPassword);
 
     void deleteStaledTokens();
 
     boolean hasActiveToken(final int userId);
+
+    boolean isValidToken(final String token);
 }
