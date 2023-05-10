@@ -76,7 +76,7 @@ public class RolesJdbcDao implements RolesDao {
 
     private static final RowMapper<Pair<User, RestaurantRoleLevel>> USER_ROLE_ROW_MAPPER = (ResultSet rs, int rowNum) -> new Pair<>(
             SimpleRowMappers.USER_ROW_MAPPER.mapRow(rs, rowNum),
-            RestaurantRoleLevel.values()[rs.getInt("role_level")]
+            RestaurantRoleLevel.fromOrdinal(rs.getInt("role_level"))
     );
 
     private static final String GET_BY_RESTAURANT_SQL =
@@ -98,7 +98,7 @@ public class RolesJdbcDao implements RolesDao {
 
     private static final RowMapper<Triplet<Restaurant, RestaurantRoleLevel, Integer>> RESTAURANT_ROLE_AMOUNT_ROW_MAPPER = (ResultSet rs, int rowNum) -> new Triplet<>(
             SimpleRowMappers.RESTAURANT_ROW_MAPPER.mapRow(rs, rowNum),
-            RestaurantRoleLevel.values()[rs.getInt("role_level")],
+            RestaurantRoleLevel.fromOrdinal(rs.getInt("role_level")),
             rs.getInt("order_count")
     );
 

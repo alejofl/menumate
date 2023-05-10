@@ -60,10 +60,7 @@ class SimpleRowMappers {
             return RestaurantRoleLevel.OWNER;
 
         int ordinal = rs.getInt("role_level");
-        RestaurantRoleLevel[] values = RestaurantRoleLevel.values();
-        if (rs.wasNull() || ordinal < 0 || ordinal >= values.length)
-            return null;
-        return values[ordinal];
+        return rs.wasNull() ? null : RestaurantRoleLevel.fromOrdinal(ordinal);
     };
 
     static final RowMapper<Category> CATEGORY_ROW_MAPPER = (ResultSet rs, int rowNum) -> new Category(
@@ -85,7 +82,7 @@ class SimpleRowMappers {
 
     static final RowMapper<OrderItemless> ORDER_ITEMLESS_ROW_MAPPER = (ResultSet rs, int rowNum) -> new OrderItemless(
             rs.getInt("order_id"),
-            OrderType.values()[rs.getInt("order_type")],
+            OrderType.fromOrdinal(rs.getInt("order_type")),
             RESTAURANT_ROW_MAPPER.mapRow(rs, rowNum),
             USER_ROW_MAPPER.mapRow(rs, rowNum),
             timestampToLocalDateTimeOrNull(rs.getTimestamp("order_date_ordered")),

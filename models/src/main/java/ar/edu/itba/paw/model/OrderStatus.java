@@ -29,4 +29,13 @@ public enum OrderStatus {
     public boolean isCancelledOrRejected() {
         return this == OrderStatus.CANCELLED || this == OrderStatus.REJECTED;
     }
+
+    private static final OrderStatus[] VALUES = OrderStatus.values();
+
+    /**
+     * Gets the OrderStatus value by ordinal if it exists, or null otherwise.
+     */
+    public static OrderStatus fromOrdinal(int ordinal) {
+        return ordinal >= 0 && ordinal < VALUES.length ? VALUES[ordinal] : null;
+    }
 }

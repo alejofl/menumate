@@ -153,12 +153,8 @@ public class UserController {
         final List<Pair<User, RestaurantRoleLevel>> employees = rolesService.getByRestaurant(id);
         mav.addObject("employees", employees);
 
-        final List<RestaurantRoleLevel> roles = new ArrayList<>(Arrays.asList(RestaurantRoleLevel.values()));
-        roles.remove(RestaurantRoleLevel.OWNER);
-        mav.addObject("roles", roles);
-
+        mav.addObject("roles", RestaurantRoleLevel.VALUES_EXCEPT_OWNER);
         mav.addObject("is_owner", restaurant.getOwnerUserId() == ControllerUtils.getCurrentUserIdOrThrow());
-
         mav.addObject("addProductErrors", addProductErrors);
         mav.addObject("addCategoryErrors", addCategoryErrors);
         mav.addObject("addEmployeeErrors", addEmployeeErrors);
@@ -301,7 +297,7 @@ public class UserController {
         }
 
         User user = userService.getByEmail(addEmployeeForm.getEmail()).orElseThrow(UserNotFoundException::new);
-        rolesService.setRole(user.getUserId(), id, RestaurantRoleLevel.values()[addEmployeeForm.getRole()]);
+        rolesService.setRole(user.getUserId(), id, RestaurantRoleLevel.fromOrdinal(addEmployeeForm.getRole()));
 
         return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
     }

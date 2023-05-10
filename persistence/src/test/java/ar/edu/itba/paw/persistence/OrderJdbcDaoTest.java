@@ -68,7 +68,7 @@ public class OrderJdbcDaoTest {
 
         Order order = mock(Order.class);
         when(order.getOrderId()).thenReturn(ORDER_ID);
-        when(order.getOrderType()).thenReturn(OrderType.values()[orderType]);
+        when(order.getOrderType()).thenReturn(OrderType.fromOrdinal(orderType));
         when(order.getRestaurant()).thenReturn(mock(Restaurant.class));
         when(order.getRestaurant().getRestaurantId()).thenReturn(RESTAURANT_ID);
         when(order.getUser()).thenReturn(mock(User.class));

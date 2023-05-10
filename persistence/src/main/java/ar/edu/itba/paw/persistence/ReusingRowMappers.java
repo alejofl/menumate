@@ -174,7 +174,7 @@ class ReusingRowMappers {
         public OrderItemless mapObject(Integer pk, ResultSet rs) throws SQLException {
             return new OrderItemless(
                     rs.getInt("order_id"),
-                    OrderType.values()[rs.getInt("order_type")],
+                    OrderType.fromOrdinal(rs.getInt("order_type")),
                     restaurantRowMapper.mapRow(rs, 1),
                     userRowMapper.mapRow(rs, 1),
                     SimpleRowMappers.timestampToLocalDateTimeOrNull(rs.getTimestamp("order_date_ordered")),
