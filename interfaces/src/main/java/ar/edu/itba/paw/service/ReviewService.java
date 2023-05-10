@@ -32,10 +32,10 @@ public interface ReviewService {
     /**
      * Gets a restaurant's reviews ordered by date descending.
      */
-    PaginatedResult<Review> getByRestaurant(int restaurantId);
+    PaginatedResult<Review> getByRestaurant(int restaurantId, int pageNumber, int pageSize);
 
     /**
      * Gets a user's reviews ordered by date descending.
      */
-    PaginatedResult<Review> getByUser(int userId);
+    PaginatedResult<Review> getByUser(int userId, int pageNumber, int pageSize);
 }

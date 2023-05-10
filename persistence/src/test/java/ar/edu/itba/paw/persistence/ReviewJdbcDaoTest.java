@@ -2,6 +2,7 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.OrderType;
 import ar.edu.itba.paw.model.Review;
+import ar.edu.itba.paw.model.util.PaginatedResult;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import org.junit.Assert;
 import org.junit.Before;
@@ -58,8 +59,8 @@ public class ReviewJdbcDaoTest {
         jdbcTemplate.execute("INSERT INTO users (user_id, email, password, name) VALUES (" + OWNER_ID + ", '" + OWNER_EMAIL + "', '" + OWNER_PASSWORD + "', '" + OWNER_NAME + "')");
         jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, owner_user_id, max_tables) VALUES (" + RESTAURANT_ID1 + ", '" + RESTAURANT_NAME1 + "', '" + RESTAURANT_EMAIL1 + "', " + OWNER_ID + ", " + MAX_TABLES + ")");
         jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, owner_user_id, max_tables) VALUES (" + RESTAURANT_ID2 + ", '" + RESTAURANT_NAME2 + "', '" + RESTAURANT_EMAIL2 + "', " + OWNER_ID + ", " + MAX_TABLES + ")");
-        jdbcTemplate.execute("INSERT INTO orders (order_id, order_type, restaurant_id, user_id, date_ordered, date_delivered, date_confirmed, date_ready) VALUES ("+ ORDER_ID1 +", "+ORDER_TYPE.ordinal()+", "+RESTAURANT_ID1+", "+USER_ID+", now(), now(), now(), now())");
-        jdbcTemplate.execute("INSERT INTO orders (order_id, order_type, restaurant_id, user_id, date_ordered, date_delivered, date_confirmed, date_ready) VALUES ("+ ORDER_ID2 +", "+ORDER_TYPE.ordinal()+", "+RESTAURANT_ID2+", "+USER_ID+", now(), now(), now(), now())");
+        jdbcTemplate.execute("INSERT INTO orders (order_id, order_type, restaurant_id, user_id, date_ordered, date_delivered, date_confirmed, date_ready) VALUES (" + ORDER_ID1 + ", " + ORDER_TYPE.ordinal() + ", " + RESTAURANT_ID1 + ", " + USER_ID + ", now(), now(), now(), now())");
+        jdbcTemplate.execute("INSERT INTO orders (order_id, order_type, restaurant_id, user_id, date_ordered, date_delivered, date_confirmed, date_ready) VALUES (" + ORDER_ID2 + ", " + ORDER_TYPE.ordinal() + ", " + RESTAURANT_ID2 + ", " + USER_ID + ", now(), now(), now(), now())");
     }
 
     @Test
@@ -118,5 +119,82 @@ public class ReviewJdbcDaoTest {
         Assert.assertEquals(ORDER_ID2, review2.get().getOrder().getOrderId());
         Assert.assertEquals(RATING2, review2.get().getRating());
         Assert.assertNull(review2.get().getComment());
+    }
+
+    @Test
+    public void testGetByRestaurantEmpty() {
+        PaginatedResult<Review> result = reviewDao.getByRestaurant(RESTAURANT_ID1, 1, 20);
+        Assert.assertEquals(0, result.getResult().size());
+        Assert.assertEquals(0, result.getTotalCount());
+    }
+
+    @Test
+    public void testGetByRestaurantNotEmpty() {
+        jdbcTemplate.execute("INSERT INTO order_reviews (order_id, rating, comment) VALUES (" + ORDER_ID1 + ", " + RATING1 + ", null)");
+
+        PaginatedResult<Review> result = reviewDao.getByRestaurant(RESTAURANT_ID1, 1, 20);
+        Assert.assertEquals(result.getResult().size(), 1);
+        Review review = result.getResult().get(0);
+        Assert.assertEquals(ORDER_ID1, review.getOrder().getOrderId());
+        Assert.assertEquals(RATING1, review.getRating());
+        Assert.assertNull(review.getComment());
+    }
+
+    @Test
+    public void testGetByRestaurantOneEmptyOneNot() {
+        jdbcTemplate.execute("INSERT INTO order_reviews (order_id, rating, comment) VALUES (" + ORDER_ID2 + ", " + RATING2 + ", null)");
+
+        PaginatedResult<Review> result2 = reviewDao.getByRestaurant(RESTAURANT_ID2, 1, 20);
+        Assert.assertEquals(1, result2.getResult().size());
+        Assert.assertEquals(1, result2.getTotalCount());
+        Review review = result2.getResult().get(0);
+        Assert.assertEquals(ORDER_ID2, review.getOrder().getOrderId());
+        Assert.assertEquals(RATING2, review.getRating());
+        Assert.assertNull(review.getComment());
+
+        PaginatedResult<Review> result1 = reviewDao.getByRestaurant(RESTAURANT_ID1, 1, 20);
+        Assert.assertEquals(0, result1.getResult().size());
+        Assert.assertEquals(0, result1.getTotalCount());
+    }
+
+    @Test
+    public void testGetByRestaurantBothNotEmpty() {
+        jdbcTemplate.execute("INSERT INTO order_reviews (order_id, rating, comment) VALUES (" + ORDER_ID1 + ", " + RATING1 + ", null)");
+        jdbcTemplate.execute("INSERT INTO order_reviews (order_id, rating, comment) VALUES (" + ORDER_ID2 + ", " + RATING2 + ", null)");
+
+        PaginatedResult<Review> result1 = reviewDao.getByRestaurant(RESTAURANT_ID1, 1, 20);
+        Assert.assertEquals(1, result1.getResult().size());
+        Assert.assertEquals(1, result1.getTotalCount());
+        Review review1 = result1.getResult().get(0);
+        Assert.assertEquals(ORDER_ID1, review1.getOrder().getOrderId());
+        Assert.assertEquals(RATING1, review1.getRating());
+        Assert.assertNull(review1.getComment());
+
+        PaginatedResult<Review> result2 = reviewDao.getByRestaurant(RESTAURANT_ID2, 1, 20);
+        Assert.assertEquals(1, result2.getResult().size());
+        Assert.assertEquals(1, result2.getTotalCount());
+        Review review2 = result2.getResult().get(0);
+        Assert.assertEquals(ORDER_ID2, review2.getOrder().getOrderId());
+        Assert.assertEquals(RATING2, review2.getRating());
+        Assert.assertNull(review2.getComment());
+    }
+
+    @Test
+    public void testGetByUserEmpty() {
+        PaginatedResult<Review> result = reviewDao.getByUser(USER_ID, 1, 20);
+        Assert.assertEquals(0, result.getResult().size());
+        Assert.assertEquals(0, result.getTotalCount());
+    }
+
+    @Test
+    public void testGetByUserNotEmpty() {
+        jdbcTemplate.execute("INSERT INTO order_reviews (order_id, rating, comment) VALUES (" + ORDER_ID1 + ", " + RATING1 + ", null)");
+
+        PaginatedResult<Review> result = reviewDao.getByUser(USER_ID, 1, 20);
+        Assert.assertEquals(result.getResult().size(), 1);
+        Review review = result.getResult().get(0);
+        Assert.assertEquals(ORDER_ID1, review.getOrder().getOrderId());
+        Assert.assertEquals(RATING1, review.getRating());
+        Assert.assertNull(review.getComment());
     }
 }

@@ -38,12 +38,12 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public PaginatedResult<Review> getByRestaurant(int restaurantId) {
-        return reviewDao.getByRestaurant(restaurantId);
+    public PaginatedResult<Review> getByRestaurant(int restaurantId, int pageNumber, int pageSize) {
+        return reviewDao.getByRestaurant(restaurantId, pageNumber, pageSize);
     }
 
     @Override
-    public PaginatedResult<Review> getByUser(int userId) {
-        return reviewDao.getByUser(userId);
+    public PaginatedResult<Review> getByUser(int userId, int pageNumber, int pageSize) {
+        return reviewDao.getByUser(userId, pageNumber, pageSize);
     }
 }
