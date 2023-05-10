@@ -23,7 +23,7 @@
     <nav>
         <ul class="nav nav-pills nav-fill mb-3">
             <li class="nav-item">
-                <a class="nav-link ${status == "in progress" ? "active" : ""}" aria-current="page" href="<c:url value="/user/orders/pending"/>"><spring:message code="userorders.inprogress"/></a>
+                <a class="nav-link ${status == "inprogress" ? "active" : ""}" aria-current="page" href="<c:url value="/user/orders/inprogress"/>"><spring:message code="userorders.inprogress"/></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link ${status == "all" ? "active" : ""}" aria-current="page" href="<c:url value="/user/orders/all"/>"><spring:message code="userorders.all"/></a>
@@ -79,7 +79,7 @@
 <nav class="d-flex justify-content-center">
     <ul class="pagination">
         <li class="page-item">
-            <c:url value="/user/orders" var="previousUrl">
+            <c:url value="/user/orders/${status}" var="previousUrl">
                 <c:param name="page" value="${currentPage - 1}"/>
                 <c:param name="size" value="${currentSize}"/>
             </c:url>
@@ -88,14 +88,14 @@
             </a>
         </li>
         <c:forEach begin="1" end="${pageCount}" var="pageNo">
-            <c:url value="/user/orders" var="pageUrl">
+            <c:url value="/user/orders/${status}" var="pageUrl">
                 <c:param name="page" value="${pageNo}"/>
                 <c:param name="size" value="${currentSize}"/>
             </c:url>
             <li class="page-item ${pageNo == currentPage ? "active" : ""}"><a class="page-link" href="${pageUrl}">${pageNo}</a></li>
         </c:forEach>
         <li class="page-item">
-            <c:url value="/user/orders" var="nextUrl">
+            <c:url value="/user/orders/${status}" var="nextUrl">
                 <c:param name="page" value="${currentPage + 1}"/>
                 <c:param name="size" value="${currentSize}"/>
             </c:url>
