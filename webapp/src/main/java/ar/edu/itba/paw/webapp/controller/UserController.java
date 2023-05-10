@@ -49,7 +49,7 @@ public class UserController {
         }
 
         PaginatedResult<OrderItemless> orders;
-        if (status.equals("in progress")) {
+        if (status.equals("inprogress")) {
             orders = orderService.getInProgressByUserExcludeItems(ControllerUtils.getCurrentUserIdOrThrow(), paging.getPageOrDefault(), paging.getSizeOrDefault(ControllerUtils.DEFAULT_ORDERS_PAGE_SIZE));
         } else {
             orders = orderService.getByUserExcludeItems(ControllerUtils.getCurrentUserIdOrThrow(), paging.getPageOrDefault(), paging.getSizeOrDefault(ControllerUtils.DEFAULT_ORDERS_PAGE_SIZE));
@@ -73,15 +73,15 @@ public class UserController {
 
     @RequestMapping(value = "/user/orders", method = RequestMethod.GET)
     public ModelAndView myOrders() {
-        return new ModelAndView("redirect:/user/orders/pending");
+        return new ModelAndView("redirect:/user/orders/inprogress");
     }
 
-    @RequestMapping(value = "/user/orders/pending", method = RequestMethod.GET)
+    @RequestMapping(value = "/user/orders/inprogress", method = RequestMethod.GET)
     public ModelAndView myOrdersPending(
             @Valid final PagingForm paging,
             final BindingResult errors
     ) {
-        return myOrders(paging, errors, "in progress");
+        return myOrders(paging, errors, "inprogress");
     }
 
     @RequestMapping(value = "/user/orders/all", method = RequestMethod.GET)
