@@ -98,4 +98,11 @@ class SimpleRowMappers {
             rs.getInt("order_item_quantity"),
             rs.getString("order_item_comment")
     );
+
+    static final RowMapper<Review> ORDER_REVIEW_ROW_MAPPER = (ResultSet rs, int rowNum) -> new Review(
+            ORDER_ITEMLESS_ROW_MAPPER.mapRow(rs, rowNum),
+            rs.getInt("order_review_rating"),
+            timestampToLocalDateTimeOrNull(rs.getTimestamp("order_review_date")),
+            rs.getString("order_review_comment")
+    );
 }

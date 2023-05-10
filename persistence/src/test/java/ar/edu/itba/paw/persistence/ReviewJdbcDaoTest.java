@@ -1,7 +1,9 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.OrderType;
+import ar.edu.itba.paw.model.Review;
 import ar.edu.itba.paw.persistence.config.TestConfig;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,6 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
 
 import javax.sql.DataSource;
+import java.util.Optional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
@@ -57,5 +60,63 @@ public class ReviewJdbcDaoTest {
         jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, owner_user_id, max_tables) VALUES (" + RESTAURANT_ID2 + ", '" + RESTAURANT_NAME2 + "', '" + RESTAURANT_EMAIL2 + "', " + OWNER_ID + ", " + MAX_TABLES + ")");
         jdbcTemplate.execute("INSERT INTO orders (order_id, order_type, restaurant_id, user_id, date_ordered, date_delivered, date_confirmed, date_ready) VALUES ("+ ORDER_ID1 +", "+ORDER_TYPE.ordinal()+", "+RESTAURANT_ID1+", "+USER_ID+", now(), now(), now(), now())");
         jdbcTemplate.execute("INSERT INTO orders (order_id, order_type, restaurant_id, user_id, date_ordered, date_delivered, date_confirmed, date_ready) VALUES ("+ ORDER_ID2 +", "+ORDER_TYPE.ordinal()+", "+RESTAURANT_ID2+", "+USER_ID+", now(), now(), now(), now())");
+    }
+
+    @Test
+    public void testGetByOrderEmpty() {
+        Optional<Review> review1 = reviewDao.getByOrder(ORDER_ID1);
+        Assert.assertFalse(review1.isPresent());
+    }
+
+    @Test
+    public void testGetByOrderBothEmpty() {
+        Optional<Review> review1 = reviewDao.getByOrder(ORDER_ID1);
+        Optional<Review> review2 = reviewDao.getByOrder(ORDER_ID2);
+        Assert.assertFalse(review1.isPresent());
+        Assert.assertFalse(review2.isPresent());
+    }
+
+    @Test
+    public void testGetByOrderExisting() {
+        jdbcTemplate.execute("INSERT INTO order_reviews (order_id, rating, comment) VALUES (" + ORDER_ID1 + ", " + RATING1 + ", null)");
+
+        Optional<Review> review1 = reviewDao.getByOrder(ORDER_ID1);
+
+        Assert.assertTrue(review1.isPresent());
+        Assert.assertEquals(ORDER_ID1, review1.get().getOrder().getOrderId());
+        Assert.assertEquals(RATING1, review1.get().getRating());
+        Assert.assertNull(review1.get().getComment());
+    }
+
+    @Test
+    public void testGetByOrderOneExistingOneNot() {
+        jdbcTemplate.execute("INSERT INTO order_reviews (order_id, rating, comment) VALUES (" + ORDER_ID1 + ", " + RATING1 + ", null)");
+
+        Optional<Review> review1 = reviewDao.getByOrder(ORDER_ID1);
+        Optional<Review> review2 = reviewDao.getByOrder(ORDER_ID2);
+
+        Assert.assertTrue(review1.isPresent());
+        Assert.assertEquals(ORDER_ID1, review1.get().getOrder().getOrderId());
+        Assert.assertEquals(RATING1, review1.get().getRating());
+        Assert.assertNull(review1.get().getComment());
+        Assert.assertFalse(review2.isPresent());
+    }
+
+    @Test
+    public void testGetByOrderBothExisting() {
+        jdbcTemplate.execute("INSERT INTO order_reviews (order_id, rating, comment) VALUES (" + ORDER_ID1 + ", " + RATING1 + ", null)");
+        jdbcTemplate.execute("INSERT INTO order_reviews (order_id, rating, comment) VALUES (" + ORDER_ID2 + ", " + RATING2 + ", null)");
+
+        Optional<Review> review1 = reviewDao.getByOrder(ORDER_ID1);
+        Optional<Review> review2 = reviewDao.getByOrder(ORDER_ID2);
+
+        Assert.assertTrue(review1.isPresent());
+        Assert.assertEquals(ORDER_ID1, review1.get().getOrder().getOrderId());
+        Assert.assertEquals(RATING1, review1.get().getRating());
+        Assert.assertNull(review1.get().getComment());
+        Assert.assertTrue(review2.isPresent());
+        Assert.assertEquals(ORDER_ID2, review2.get().getOrder().getOrderId());
+        Assert.assertEquals(RATING2, review2.get().getRating());
+        Assert.assertNull(review2.get().getComment());
     }
 }

@@ -4,13 +4,13 @@ import java.time.LocalDateTime;
 
 public class Review {
     private final OrderItemless order;
-    private final int score;
+    private final int rating;
     private final LocalDateTime date;
     private final String comment;
 
-    public Review(OrderItemless order, int score, LocalDateTime date, String comment) {
+    public Review(OrderItemless order, int rating, LocalDateTime date, String comment) {
         this.order = order;
-        this.score = score;
+        this.rating = rating;
         this.date = date;
         this.comment = comment;
     }
@@ -19,8 +19,8 @@ public class Review {
         return order;
     }
 
-    public int getScore() {
-        return score;
+    public int getRating() {
+        return rating;
     }
 
     public LocalDateTime getDate() {

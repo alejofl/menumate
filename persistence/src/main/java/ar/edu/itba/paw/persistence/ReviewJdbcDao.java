@@ -37,9 +37,19 @@ public class ReviewJdbcDao implements ReviewDao {
         ) > 0;
     }
 
+    private static final String GET_BY_ORDER_SQL = "WITH itemless_orders AS (" + OrderJdbcDao.SELECT_ITEMLESS_ORDERS + ")" +
+            " SELECT " + TableFields.ORDER_REVIEW_FIELDS + ", itemless_orders.*" +
+            " FROM order_reviews JOIN itemless_orders ON order_reviews.order_id = itemless_orders.order_id" +
+            " WHERE order_reviews.order_id = ?";
+
     @Override
     public Optional<Review> getByOrder(int orderId) {
-        return Optional.empty();
+        return jdbcTemplate.query(
+                GET_BY_ORDER_SQL,
+                SimpleRowMappers.ORDER_REVIEW_ROW_MAPPER,
+                orderId
+
+        ).stream().findFirst();
     }
 
     @Override
