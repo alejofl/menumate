@@ -117,8 +117,7 @@ public class RestaurantsController {
         return thankYou(order.getOrderId(), order.getUser().getEmail());
     }
 
-    @RequestMapping("/thankyou")
-    public ModelAndView thankYou(
+    private ModelAndView thankYou(
             final int orderId,
             final String email
     ) {
