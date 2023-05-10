@@ -6,7 +6,7 @@ import ar.edu.itba.paw.service.EmailService;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.exception.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.RegisterForm;
-import ar.edu.itba.paw.webapp.form.VerifyForm;
+import ar.edu.itba.paw.webapp.form.EmailForm;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -63,28 +63,30 @@ public class AuthController {
     @RequestMapping(value = "/auth/verify", method = RequestMethod.GET)
     public ModelAndView verifyForm(
             @RequestParam(value = "token", required = false) @Length(min = 8, max = 8) final String token,
-            @ModelAttribute("verifyForm") final VerifyForm verifyForm
+            @ModelAttribute("emailForm") final EmailForm emailForm
     ) {
         if(token!=null){
             if (verificationService.verifyAndDeleteToken(token))
                 return new ModelAndView("redirect:/auth/login?verify=verified");
-            return new ModelAndView("redirect:/auth/register?error=invalid_token_or_user");
+            return new ModelAndView("redirect:/auth/register?error=invalid_token_or_user"); // FIXME : invalid url
         } else {
-            return new ModelAndView("auth/verify");
+            return new ModelAndView("auth/email_form")
+                    .addObject("type", "Verify")
+                    .addObject("url", "/auth/verify");
         }
     }
 
     @RequestMapping(value = "/auth/verify", method = RequestMethod.POST)
     public ModelAndView sendCode(
-            @Valid @ModelAttribute("verifyForm") final VerifyForm verifyForm,
+            @Valid @ModelAttribute("emailForm") final EmailForm emailForm,
             final BindingResult errors
     ){
         if (errors.hasErrors()) {
-            return verifyForm(null, verifyForm);
+            return verifyForm(null, emailForm);
         }
         User user;
         try{
-            user = userService.getByEmail(verifyForm.getEmail()).orElseThrow(UserNotFoundException::new);
+            user = userService.getByEmail(emailForm.getEmail()).orElseThrow(UserNotFoundException::new);
         } catch (UserNotFoundException e) {
             return new ModelAndView("redirect:/auth/login?verify=emailed");
         }

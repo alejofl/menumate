@@ -4,28 +4,32 @@
 
 <html>
 <head>
-  <spring:message code="verify.send" var="send"/>
-  <spring:message code="verify" var="verify"/>
+  <c:if test="${type=='Verify'}">
+    <spring:message code="verify" var="viewTitle"/>
+  </c:if>
+  <spring:message code="send" var="send"/>
   <jsp:include page="/WEB-INF/jsp/components/head.jsp">
-    <jsp:param name="title" value="${verify}"/>
+    <jsp:param name="title" value="${viewTitle}"/>
   </jsp:include>
 </head>
 <body>
 <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
-<c:url var="verifyUrl" value="/auth/verify"/>
+<c:url var="url" value="${url}"/>
 <main class="login-register-main">
   <div class="card mb-3 login-register-card" style="width: 25rem;">
     <div class="card-body">
-      <h2 class="card-title mb-3">${verify}</h2>
-      <form:form modelAttribute="verifyForm" action="${verifyUrl}" method="post">
+      <h2 class="card-title mb-3">${viewTitle}</h2>
+      <form:form modelAttribute="emailForm" action="${url}" method="post">
         <div class="mb-3">
-          <form:label path="email" cssClass="form-label"><spring:message code="verify.email"/></form:label>
+          <form:label path="email" cssClass="form-label"><spring:message code="email"/></form:label>
           <form:input type="text" cssClass="form-control" path="email"/>
           <form:errors path="email" element="div" cssClass="form-error"/>
         </div>
         <input type="submit" class="btn btn-primary" id="login-submit" value="${send}">
       </form:form>
-      <p class="mt-3"><spring:message code="verify.alreadyverified"/> <a href="<c:url value="/auth/login"/>"><spring:message code="verify.login"/></a></p>
+      <c:if test="${type=='Verify'}">
+        <p class="mt-3"><spring:message code="verify.alreadyverified"/> <a href="<c:url value="/auth/login"/>"><spring:message code="verify.login"/></a></p>
+      </c:if>
     </div>
   </div>
 </main>
