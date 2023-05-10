@@ -22,6 +22,10 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewDao.createOrUpdate(orderId, rating, comment);
     }
 
+    public boolean delete(int orderId) {
+        return reviewDao.delete(orderId);
+    }
+
     @Override
     public Optional<Review> getByOrder(int orderId) {
         return reviewDao.getByOrder(orderId);

@@ -15,6 +15,12 @@ public interface ReviewService {
     boolean createOrUpdate(int orderId, int rating, String comment);
 
     /**
+     * Deletes the review attached to an order.
+     * @return True if the operation was successful.
+     */
+    boolean delete(int orderId);
+
+    /**
      * Gets an order's review, if it has one.
      */
     Optional<Review> getByOrder(int orderId);

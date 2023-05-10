@@ -39,6 +39,11 @@ public class ReviewJdbcDao implements ReviewDao {
         ) > 0;
     }
 
+    @Override
+    public boolean delete(int orderId) {
+        return jdbcTemplate.update("DELETE FROM order_reviews WHERE order_id = ?", orderId) > 0;
+    }
+
     private static final String GET_BY_ORDER_SQL = "WITH itemless_orders AS (" + OrderJdbcDao.SELECT_ITEMLESS_ORDERS + ")" +
             " SELECT " + TableFields.ORDER_REVIEW_FIELDS + ", itemless_orders.*" +
             " FROM order_reviews JOIN itemless_orders ON order_reviews.order_id = itemless_orders.order_id" +

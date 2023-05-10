@@ -246,4 +246,20 @@ public class ReviewJdbcDaoTest {
         Assert.assertEquals((RATING1 + RATING2) / 2f, ac.getAverage(), FLOAT_DELTA);
         Assert.assertEquals(2, ac.getCount());
     }
+
+    @Test
+    public void testDeleteWhenNone() {
+        boolean success = reviewDao.delete(ORDER_ID1);
+        Assert.assertFalse(success);
+    }
+
+    @Test
+    public void testDeleteWhenExists() {
+        jdbcTemplate.execute("INSERT INTO order_reviews (order_id, rating, comment) VALUES (" + ORDER_ID1 + ", " + RATING1 + ", null)");
+
+        boolean success = reviewDao.delete(ORDER_ID1);
+
+        Assert.assertTrue(success);
+        Assert.assertEquals(0, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "order_reviews", "order_id = " + ORDER_ID1));
+    }
 }
