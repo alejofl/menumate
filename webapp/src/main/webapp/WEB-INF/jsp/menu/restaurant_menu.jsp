@@ -56,12 +56,14 @@
         </div>
     </div>
 
-    <div class="items">
-        <div class="items-container">
-            <c:forEach items="${menu}" var="entry">
-                <div class="clearfix" id="category-${entry.key.categoryId}" style="text-align: center">
-                    <h3>${entry.key.name}</h3>
+    <div class="items d-flex flex-column px-4">
+        <c:forEach items="${menu}" var="entry">
+            <div class="card mb-4" id="category-${entry.key.categoryId}">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0">${entry.key.name}</h3>
                 </div>
+            </div>
+            <div class="items-container">
                 <c:forEach var="product" items="${entry.value}">
                     <jsp:include page="/WEB-INF/jsp/components/menu_item_card.jsp">
                         <jsp:param name="product_imageId" value="${product.imageId}"/>
@@ -71,8 +73,8 @@
                         <jsp:param name="product_price" value="${product.price}"/>
                     </jsp:include>
                 </c:forEach>
-            </c:forEach>
-        </div>
+            </div>
+        </c:forEach>
     </div>
     <div class="cart restaurant-menu-sticky-card">
         <div class="card">

@@ -40,13 +40,13 @@
 <main class="edit-menu flex-column px-4 pb-4">
     <div class="d-flex flex-column">
         <c:forEach items="${menu}" var="entry">
-            <div class="card my-4">
+            <div class="card mb-4">
                 <div class="card-body d-flex justify-content-between align-items-center">
                     <h3 class="mb-0">${entry.key.name}</h3>
                     <a class="delete-category-button" type="button" data-bs-toggle="modal" data-bs-target="#delete-category-modal" data-category-id="${entry.key.categoryId}"><i class="bi bi-trash-fill text-danger"></i></a>
                 </div>
             </div>
-            <div class="edit-menu-item-container mb-4">
+            <div class="items-container">
                 <c:forEach var="product" items="${entry.value}">
                     <div class="card menu-item-card">
                         <div class="menu-item-card-img-container">

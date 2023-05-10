@@ -235,10 +235,11 @@ main {
 
 .items-container {
     display: flex;
-    justify-content: center;
+    justify-content: start;
     flex-direction: row;
     gap: 20px;
     flex-wrap: wrap;
+    margin-bottom: 3rem;
 }
 
 .menu-item-card {
@@ -573,14 +574,6 @@ input:has(+ .form-error), textarea:has(+ .form-error) {
     display: flex;
     flex-direction: column;
     align-items: center;
-}
-
-.edit-menu-item-container {
-    display: flex;
-    justify-content: start;
-    flex-direction: row;
-    gap: 20px;
-    flex-wrap: wrap;
 }
 
 .edit-menu-add {
