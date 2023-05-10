@@ -36,6 +36,7 @@
                     <form:label path="repeatPassword" cssClass="form-label"><spring:message code="signup.confirmpassword"/></form:label>
                     <form:input type="password" cssClass="form-control" path="repeatPassword"/>
                     <form:errors path="repeatPassword" element="div" cssClass="form-error"/>
+                    <form:errors element="div" cssClass="form-error"/>
                 </div>
                 <input type="submit" class="btn btn-primary" id="login-submit" value="${register}">
             </form:form>

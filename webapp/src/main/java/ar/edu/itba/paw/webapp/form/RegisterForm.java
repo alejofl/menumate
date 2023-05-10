@@ -8,7 +8,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.Size;
 
-@RepeatPasswordsMatch
+@RepeatPasswordsMatch(passwordField = "password", repeatPasswordField = "repeatPassword")
 public class RegisterForm {
 
     @NotBlank
