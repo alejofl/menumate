@@ -4,6 +4,7 @@ public class Restaurant {
     private final long restaurantId;
     private final String name;
     private final String email;
+    private final RestaurantSpecialty specialty;
     private final long ownerUserId;
     private final Long logoId;
     private final Long portraitId1;
@@ -14,10 +15,11 @@ public class Restaurant {
     private final boolean isActive;
     private final boolean deleted;
 
-    public Restaurant(long restaurantId, String name, String email, long ownerUserId, Long logoId, Long portrait1Id, Long portrait2Id, String address, String description, int maxTables, boolean isActive, boolean deleted) {
+    public Restaurant(long restaurantId, String name, String email, RestaurantSpecialty specialty, long ownerUserId, Long logoId, Long portrait1Id, Long portrait2Id, String address, String description, int maxTables, boolean isActive, boolean deleted) {
         this.restaurantId = restaurantId;
         this.name = name;
         this.email = email;
+        this.specialty = specialty;
         this.ownerUserId = ownerUserId;
         this.logoId = logoId;
         this.portraitId1 = portrait1Id;
@@ -41,7 +43,11 @@ public class Restaurant {
         return email;
     }
 
-    public long getOwnerUserId() {
+    public RestaurantSpecialty getSpecialty() {
+        return specialty;
+    }
+
+    public Long getOwnerUserId() {
         return ownerUserId;
     }
 

@@ -50,6 +50,7 @@ class SimpleRowMappers {
             rs.getLong("restaurant_id"),
             rs.getString("restaurant_name"),
             rs.getString("restaurant_email"),
+            RestaurantSpecialty.fromOrdinal(rs.getInt("restaurant_specialty")),
             rs.getLong("restaurant_owner_user_id"),
             readLongOrNull(rs, "restaurant_logo_id"),
             readLongOrNull(rs, "restaurant_portrait_1_id"),

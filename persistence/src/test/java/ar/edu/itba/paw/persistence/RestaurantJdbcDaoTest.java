@@ -23,6 +23,7 @@ public class RestaurantJdbcDaoTest {
     private static final long ID = 5123;
     private static final int MAX_TABLES = 20;
     private static final String NAME = "pedros";
+    private static final int SPECIALTY = 2;
     private static final String EMAIL = "pedros@frompedros.com";
     private static final long USER_ID = 791;
     private static final String USER_EMAIL = "peter@peter.com";
@@ -46,7 +47,7 @@ public class RestaurantJdbcDaoTest {
 
     @Test
     public void testFindById() throws SQLException {
-        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, owner_user_id, max_tables) VALUES (" + ID + ", '" + NAME + "', '" + EMAIL + "', " + USER_ID + ", " + MAX_TABLES + ")");
+        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, specialty, owner_user_id, max_tables) VALUES (" + ID + ", '" + NAME + "', '" + EMAIL + "', " + SPECIALTY + ", " + USER_ID + ", " + MAX_TABLES + ")");
 
         Optional<Restaurant> maybeRestaurant = restaurantDao.getById(ID);
 
@@ -54,6 +55,7 @@ public class RestaurantJdbcDaoTest {
         Assert.assertEquals(ID, maybeRestaurant.get().getRestaurantId());
         Assert.assertEquals(NAME, maybeRestaurant.get().getName());
         Assert.assertEquals(EMAIL, maybeRestaurant.get().getEmail());
+        Assert.assertEquals(SPECIALTY, maybeRestaurant.get().getSpecialty().ordinal());
     }
 
     /* FIXME Update test
@@ -68,7 +70,7 @@ public class RestaurantJdbcDaoTest {
 
     @Test
     public void testDeletion() throws SQLException {
-        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, owner_user_id, max_tables) VALUES (" + ID + ", '" + NAME + "', '" + EMAIL + "', " + USER_ID + ", " + MAX_TABLES + ")");
+        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, specialty, owner_user_id, max_tables) VALUES (" + ID + ", '" + NAME + "', '" + EMAIL + "', " + SPECIALTY + ", " + USER_ID + ", " + MAX_TABLES + ")");
         Assert.assertTrue(restaurantDao.delete(ID));
     }
 }

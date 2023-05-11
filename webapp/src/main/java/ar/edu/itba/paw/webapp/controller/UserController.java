@@ -118,6 +118,7 @@ public class UserController {
                 form.getName(),
                 userDetails.getUsername(),
                 userDetails.getUserId(),
+                form.getSpecialty(),
                 form.getDescription(),
                 form.getAddress(),
                 form.getMaxTables(),

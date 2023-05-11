@@ -31,12 +31,12 @@ public class RestaurantServiceImpl implements RestaurantService {
     private CategoryService categoryService;
 
     @Override
-    public long create(String name, String email, long ownerUserId, String description, String address, int maxTables, byte[] logo, byte[] portrait1, byte[] portrait2) {
+    public long create(String name, String email, int specialty, long ownerUserId, String description, String address, int maxTables, byte[] logo, byte[] portrait1, byte[] portrait2) {
         long logoKey = imageService.create(logo);
         long portrait1Key = imageService.create(portrait1);
         long portrait2Key = imageService.create(portrait2);
 
-        return restaurantDao.create(name, email, ownerUserId, description, address, maxTables, logoKey, portrait1Key, portrait2Key);
+        return restaurantDao.create(name, email, specialty, ownerUserId, description, address, maxTables, logoKey, portrait1Key, portrait2Key);
     }
 
     @Override
