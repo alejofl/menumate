@@ -72,7 +72,7 @@ public class RestaurantsController {
 
         final AverageCountPair average = reviewService.getRestaurantAverage(id);
         mav.addObject("average", Math.round(average.getAverage()));
-        final List<Review> reviews = reviewService.getByRestaurant(id);
+        final List<Review> reviews = reviewService.getByRestaurant(id, 1, 30).getResult();
         mav.addObject("reviews", reviews);
 
         final List<Pair<Category, List<Product>>> menu = restaurantService.getMenu(id);

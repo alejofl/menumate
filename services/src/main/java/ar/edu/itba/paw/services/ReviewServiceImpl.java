@@ -2,6 +2,7 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.model.Review;
 import ar.edu.itba.paw.model.util.AverageCountPair;
+import ar.edu.itba.paw.model.util.PaginatedResult;
 import ar.edu.itba.paw.persistance.ReviewDao;
 import ar.edu.itba.paw.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
-import java.util.List;
 
 @Service
 public class ReviewServiceImpl implements ReviewService {
@@ -42,12 +42,12 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public List<Review> getByRestaurant(long restaurantId) {
-        return reviewDao.getByRestaurant(restaurantId);
+    public PaginatedResult<Review> getByRestaurant(long restaurantId, int pageNumber, int pageSize) {
+        return reviewDao.getByRestaurant(restaurantId, pageNumber, pageSize);
     }
 
     @Override
-    public List<Review> getByUser(long userId) {
-        return reviewDao.getByUser(userId);
+    public PaginatedResult<Review> getByUser(long userId, int pageNumber, int pageSize) {
+        return reviewDao.getByUser(userId, pageNumber, pageSize);
     }
 }

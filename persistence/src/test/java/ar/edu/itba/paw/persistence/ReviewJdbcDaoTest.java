@@ -31,6 +31,7 @@ public class ReviewJdbcDaoTest {
     private static final String OWNER_PASSWORD = "mega12secreto34";
     private static final String OWNER_NAME = "Pedro Parker";
     private static final long RESTAURANT_ID1 = 5123;
+    private static final long RESTAURANT_SPECIALITY = 0;
     private static final String RESTAURANT_NAME1 = "pedros";
     private static final String RESTAURANT_EMAIL1 = "pedros@frompedros.com";
     private static final long RESTAURANT_ID2 = 4242;
@@ -39,7 +40,6 @@ public class ReviewJdbcDaoTest {
     private static final int MAX_TABLES = 20;
     private static final long USER_ID_NONE = 1234;
     private static final long RESTAURANT_ID_NONE = 1234;
-    private static final int SPECIALTY = 1;
     private static final long ORDER_ID1 = 8844;
     private static final long ORDER_ID2 = 9090;
     private static final int RATING1 = 1;
@@ -61,8 +61,8 @@ public class ReviewJdbcDaoTest {
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "users", "restaurants", "restaurant_roles");
         jdbcTemplate.execute("INSERT INTO users (user_id, email, password, name) VALUES (" + USER_ID + ", '" + USER_EMAIL + "', '" + USER_PASSWORD + "', '" + USER_NAME + "')");
         jdbcTemplate.execute("INSERT INTO users (user_id, email, password, name) VALUES (" + OWNER_ID + ", '" + OWNER_EMAIL + "', '" + OWNER_PASSWORD + "', '" + OWNER_NAME + "')");
-        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, specialty, owner_user_id, max_tables) VALUES (" + RESTAURANT_ID1 + ", '" + RESTAURANT_NAME1 + "', '" + RESTAURANT_EMAIL1 + "', "+ SPECIALTY + ", " + OWNER_ID + ", " + MAX_TABLES + ")");
-        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, specialty, owner_user_id, max_tables) VALUES (" + RESTAURANT_ID2 + ", '" + RESTAURANT_NAME2 + "', '" + RESTAURANT_EMAIL2 + "', "+ SPECIALTY + ", " + OWNER_ID + ", " + MAX_TABLES + ")");
+        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, specialty, owner_user_id, max_tables) VALUES (" + RESTAURANT_ID1 + ", '" + RESTAURANT_NAME1 + "', '" + RESTAURANT_EMAIL1 + "', " + RESTAURANT_SPECIALITY + ", " + OWNER_ID + ", " + MAX_TABLES + ")");
+        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, specialty, owner_user_id, max_tables) VALUES (" + RESTAURANT_ID2 + ", '" + RESTAURANT_NAME2 + "', '" + RESTAURANT_EMAIL2 + "', " + RESTAURANT_SPECIALITY + ", " + OWNER_ID + ", " + MAX_TABLES + ")");
         jdbcTemplate.execute("INSERT INTO orders (order_id, order_type, restaurant_id, user_id, date_ordered, date_delivered, date_confirmed, date_ready) VALUES (" + ORDER_ID1 + ", " + ORDER_TYPE.ordinal() + ", " + RESTAURANT_ID1 + ", " + USER_ID + ", now(), now(), now(), now())");
         jdbcTemplate.execute("INSERT INTO orders (order_id, order_type, restaurant_id, user_id, date_ordered, date_delivered, date_confirmed, date_ready) VALUES (" + ORDER_ID2 + ", " + ORDER_TYPE.ordinal() + ", " + RESTAURANT_ID2 + ", " + USER_ID + ", now(), now(), now(), now())");
     }
@@ -125,7 +125,6 @@ public class ReviewJdbcDaoTest {
         Assert.assertNull(review2.get().getComment());
     }
 
-    /* FIXME Fix Tests (remove pagination)
     @Test
     public void testGetByRestaurantEmpty() {
         PaginatedResult<Review> result = reviewDao.getByRestaurant(RESTAURANT_ID1, 1, 20);
@@ -201,7 +200,7 @@ public class ReviewJdbcDaoTest {
         Assert.assertEquals(ORDER_ID1, review.getOrder().getOrderId());
         Assert.assertEquals(RATING1, review.getRating());
         Assert.assertNull(review.getComment());
-    }*/
+    }
 
     @Test
     public void testAverageZeroWhenEmpty() {
