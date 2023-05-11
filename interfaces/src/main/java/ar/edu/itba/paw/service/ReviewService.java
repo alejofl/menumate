@@ -2,10 +2,10 @@ package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.Review;
 import ar.edu.itba.paw.model.util.AverageCountPair;
-import ar.edu.itba.paw.model.util.PaginatedResult;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.List;
 
 public interface ReviewService {
     /**
@@ -38,10 +38,10 @@ public interface ReviewService {
     /**
      * Gets a restaurant's reviews ordered by date descending.
      */
-    PaginatedResult<Review> getByRestaurant(int restaurantId, int pageNumber, int pageSize);
+    List<Review> getByRestaurant(int restaurantId);
 
     /**
      * Gets a user's reviews ordered by date descending.
      */
-    PaginatedResult<Review> getByUser(int userId, int pageNumber, int pageSize);
+    List<Review> getByUser(int userId);
 }
