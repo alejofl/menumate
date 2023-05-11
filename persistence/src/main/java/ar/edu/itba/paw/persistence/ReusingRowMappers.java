@@ -151,7 +151,8 @@ class ReusingRowMappers {
                     rs.getBigDecimal("product_price"),
                     rs.getString("product_description"),
                     SimpleRowMappers.readLongOrNull(rs, "product_image_id"),
-                    rs.getBoolean("product_available")
+                    rs.getBoolean("product_available"),
+                    rs.getBoolean("product_deleted")
             );
         }
     }

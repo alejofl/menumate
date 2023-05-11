@@ -83,7 +83,8 @@ class SimpleRowMappers {
             rs.getBigDecimal("product_price"),
             rs.getString("product_description"),
             readLongOrNull(rs, "product_image_id"),
-            rs.getBoolean("product_available")
+            rs.getBoolean("product_available"),
+            rs.getBoolean("product_deleted")
     );
 
     static final RowMapper<OrderItemless> ORDER_ITEMLESS_ROW_MAPPER = (ResultSet rs, int rowNum) -> new OrderItemless(

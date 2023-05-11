@@ -10,7 +10,7 @@ class TableFields {
 
     static final String ORDERS_FIELDS = "orders.order_id order_id, orders.order_type order_type, orders.date_ordered order_date_ordered, orders.date_confirmed order_date_confirmed, orders.date_ready order_date_ready, orders.date_delivered order_date_delivered, orders.date_cancelled order_date_cancelled, orders.table_number order_table_number, orders.address order_address";
 
-    static final String PRODUCTS_FIELDS = "products.product_id product_id, products.name product_name, products.price product_price, products.description product_description, products.image_id product_image_id, products.available product_available";
+    static final String PRODUCTS_FIELDS = "products.product_id product_id, products.name product_name, products.price product_price, products.description product_description, products.image_id product_image_id, products.available product_available, products.deleted product_deleted";
 
     static final String ORDER_ITEMS_FIELDS = "order_items.line_number order_item_line_number, order_items.quantity order_item_quantity, order_items.comment order_item_comment";
 

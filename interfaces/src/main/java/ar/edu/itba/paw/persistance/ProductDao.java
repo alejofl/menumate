@@ -13,11 +13,7 @@ public interface ProductDao {
 
     List<Product> getByCategory(long categoryId);
 
-    List<Product> getByRestaurantOrderByCategoryOrder(long restaurantId);
-
-    boolean updatePrice(long productId, BigDecimal price);
-
-    boolean updateName(long productId, String name);
+    boolean update(long productId, String name, BigDecimal price, String description);
 
     boolean delete(long productId);
 

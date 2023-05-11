@@ -10,19 +10,17 @@ public class Product {
     private Long imageId;
     private final BigDecimal price;
     private boolean available;
+    private boolean deleted;
 
-    public Product(long productId, Category category, String name, BigDecimal price) {
+    public Product(long productId, Category category, String name, BigDecimal price, String description, Long imageId, boolean available, boolean deleted) {
         this.productId = productId;
         this.category = category;
         this.name = name;
         this.price = price;
-    }
-
-    public Product(long productId, Category category, String name, BigDecimal price, String description, Long imageId, boolean available) {
-        this(productId, category, name, price);
         this.description = description;
         this.imageId = imageId;
         this.available = available;
+        this.deleted = deleted;
     }
 
     public long getProductId() {
@@ -51,5 +49,9 @@ public class Product {
 
     public boolean getAvailable() {
         return available;
+    }
+
+    public boolean getDeleted() {
+        return deleted;
     }
 }

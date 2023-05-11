@@ -72,7 +72,8 @@ CREATE TABLE IF NOT EXISTS products
     price       DECIMAL(10, 2) NOT NULL CHECK (price > 0),
     description VARCHAR(300),
     image_id    INT REFERENCES images (image_id) ON DELETE SET NULL,
-    available   BOOLEAN NOT NULL DEFAULT TRUE
+    available   BOOLEAN NOT NULL DEFAULT TRUE,
+    deleted     BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS orders
