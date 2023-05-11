@@ -17,12 +17,12 @@ public class TokenServiceImpl implements TokenService {
     private ResetPasswordTokenDao resetPasswordTokenDao;
 
     @Override
-    public String generateVerificationToken(final int userId) {
+    public String generateVerificationToken(final long userId) {
         return verificationTokenDao.generateToken(userId);
     }
 
     @Override
-    public String generatePasswordResetToken(int userId) {
+    public String generatePasswordResetToken(long userId) {
         return resetPasswordTokenDao.generateToken(userId);
     }
 
@@ -37,12 +37,12 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public boolean hasActiveVerificationToken(final int userId) {
+    public boolean hasActiveVerificationToken(final long userId) {
         return verificationTokenDao.hasActiveToken(userId);
     }
 
     @Override
-    public boolean hasActiveResetPasswordToken(final int userId) {
+    public boolean hasActiveResetPasswordToken(final long userId) {
         return resetPasswordTokenDao.hasActiveToken(userId);
     }
 

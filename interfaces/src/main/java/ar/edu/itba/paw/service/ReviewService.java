@@ -12,36 +12,36 @@ public interface ReviewService {
      * Creates a review for a given orderId, or updates it if it already exists.
      * @return True if the operation was successful.
      */
-    boolean createOrUpdate(int orderId, int rating, String comment);
+    boolean createOrUpdate(long orderId, int rating, String comment);
 
     /**
      * Deletes the review attached to an order.
      * @return True if the operation was successful.
      */
-    boolean delete(int orderId);
+    boolean delete(long orderId);
 
     /**
      * Gets an order's review, if it has one.
      */
-    Optional<Review> getByOrder(int orderId);
+    Optional<Review> getByOrder(long orderId);
 
     /**
      * Gets a restaurant's average rating from reviews, alongside the amount of reviews.
      */
-    AverageCountPair getRestaurantAverage(int restaurantId);
+    AverageCountPair getRestaurantAverage(long restaurantId);
 
     /**
      * Gets a restaurant's average rating from reviews after a given datetime, alongside the amount of reviews.
      */
-    AverageCountPair getRestaurantAverageSince(int restaurantId, LocalDateTime datetime);
+    AverageCountPair getRestaurantAverageSince(long restaurantId, LocalDateTime datetime);
 
     /**
      * Gets a restaurant's reviews ordered by date descending.
      */
-    PaginatedResult<Review> getByRestaurant(int restaurantId, int pageNumber, int pageSize);
+    PaginatedResult<Review> getByRestaurant(long restaurantId, int pageNumber, int pageSize);
 
     /**
      * Gets a user's reviews ordered by date descending.
      */
-    PaginatedResult<Review> getByUser(int userId, int pageNumber, int pageSize);
+    PaginatedResult<Review> getByUser(long userId, int pageNumber, int pageSize);
 }

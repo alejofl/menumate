@@ -7,18 +7,18 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProductDao {
-    Product create(int categoryId, String name, String description, int imageId, BigDecimal price);
+    Product create(long categoryId, String name, String description, Long imageId, BigDecimal price);
 
-    Optional<Product> getById(int productId);
+    Optional<Product> getById(long productId);
 
-    List<Product> getByCategory(int categoryId);
+    List<Product> getByCategory(long categoryId);
 
-    List<Product> getByRestaurantOrderByCategoryOrder(int restaurantId);
+    List<Product> getByRestaurantOrderByCategoryOrder(long restaurantId);
 
-    boolean updatePrice(int productId, BigDecimal price);
+    boolean updatePrice(long productId, BigDecimal price);
 
-    boolean updateName(int productId, String name);
+    boolean updateName(long productId, String name);
 
-    boolean delete(int productId);
+    boolean delete(long productId);
 
 }

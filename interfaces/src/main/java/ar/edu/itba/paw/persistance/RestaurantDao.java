@@ -6,9 +6,9 @@ import ar.edu.itba.paw.model.util.PaginatedResult;
 import java.util.Optional;
 
 public interface RestaurantDao {
-    int create(String name, String email, int ownerUserId, String description, String address, int maxTables, int logoKey, int portrait1Kay, int portrait2Key);
+    long create(String name, String email, long ownerUserId, String description, String address, int maxTables, Long logoKey, Long portrait1Kay, Long portrait2Key);
 
-    Optional<Restaurant> getById(int restaurantId);
+    Optional<Restaurant> getById(long restaurantId);
 
     PaginatedResult<Restaurant> getActive(int pageNumber, int pageSize);
 
@@ -16,5 +16,5 @@ public interface RestaurantDao {
 
     PaginatedResult<Restaurant> getSearchResults(String[] tokens, int pageNumber, int pageSize);
 
-    boolean delete(int restaurantId);
+    boolean delete(long restaurantId);
 }

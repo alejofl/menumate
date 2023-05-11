@@ -55,7 +55,7 @@ public class RestaurantsController {
         final Restaurant restaurant = restaurantService.getById(id).orElseThrow(RestaurantNotFoundException::new);
         mav.addObject("restaurant", restaurant);
 
-        Integer currentUserId = ControllerUtils.getCurrentUserIdOrNull();
+        Long currentUserId = ControllerUtils.getCurrentUserIdOrNull();
         Optional<RestaurantRoleLevel> level;
         boolean admin = false;
         boolean order_viewer = false;
@@ -118,7 +118,7 @@ public class RestaurantsController {
     }
 
     private ModelAndView thankYou(
-            final int orderId,
+            final long orderId,
             final String email
     ) {
         ModelAndView mav = new ModelAndView("menu/thankyou");

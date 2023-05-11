@@ -3,30 +3,29 @@ package ar.edu.itba.paw.model;
 import java.math.BigDecimal;
 
 public class Product {
-
-    private final int productId;
+    private final long productId;
     private final Category category;
     private final String name;
     private String description;
-    private int imageId;
+    private Long imageId;
     private final BigDecimal price;
     private boolean available;
 
-    public Product(int productId, Category category, String name, BigDecimal price) {
+    public Product(long productId, Category category, String name, BigDecimal price) {
         this.productId = productId;
         this.category = category;
         this.name = name;
         this.price = price;
     }
 
-    public Product(int productId, Category category, String name, BigDecimal price, String description, int imageId, boolean available) {
+    public Product(long productId, Category category, String name, BigDecimal price, String description, Long imageId, boolean available) {
         this(productId, category, name, price);
         this.description = description;
         this.imageId = imageId;
         this.available = available;
     }
 
-    public int getProductId() {
+    public long getProductId() {
         return productId;
     }
 
@@ -42,7 +41,7 @@ public class Product {
         return description;
     }
 
-    public int getImageId() {
+    public Long getImageId() {
         return imageId;
     }
 

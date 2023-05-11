@@ -70,7 +70,7 @@ public class OrderJdbcDao implements OrderDao {
                 .usingColumns("order_id", "product_id", "line_number", "quantity", "comment");
     }
 
-    private Order create(OrderType orderType, int restaurantId, int userId, String address, Integer tableNumber, List<OrderItem> items) {
+    private Order create(OrderType orderType, long restaurantId, long userId, String address, Integer tableNumber, List<OrderItem> items) {
         final Map<String, Object> orderData = new HashMap<>();
         orderData.put("order_type", orderType.ordinal());
         orderData.put("restaurant_id", restaurantId);
@@ -91,7 +91,7 @@ public class OrderJdbcDao implements OrderDao {
         return getById(orderId).get();
     }
 
-    private void insertItems(List<OrderItem> items, int orderId) {
+    private void insertItems(List<OrderItem> items, long orderId) {
         final Map<String, Object>[] orderItemDatas = new Map[items.size()];
 
         for (int i = 0; i < items.size(); i++) {
@@ -109,7 +109,7 @@ public class OrderJdbcDao implements OrderDao {
     }
 
     @Override
-    public Optional<Order> getById(int orderId) {
+    public Optional<Order> getById(long orderId) {
         return jdbcTemplate.query(
                 SELECT_FULL_BASE + " WHERE orders.order_id = ?" + SELECT_FULL_END_ORDER_BY_ID,
                 Extractors.ORDER_EXTRACTOR,
@@ -118,7 +118,7 @@ public class OrderJdbcDao implements OrderDao {
     }
 
     @Override
-    public Optional<OrderItemless> getByIdExcludeItems(int orderId) {
+    public Optional<OrderItemless> getByIdExcludeItems(long orderId) {
         return jdbcTemplate.query(
                 SELECT_ITEMLESS_BASE + " WHERE orders.order_id = ?" + SELECT_ITEMLESS_END,
                 SimpleRowMappers.ORDER_ITEMLESS_ROW_MAPPER,
@@ -127,7 +127,7 @@ public class OrderJdbcDao implements OrderDao {
     }
 
     @Override
-    public PaginatedResult<Order> getByUser(int userId, int pageNumber, int pageSize) {
+    public PaginatedResult<Order> getByUser(long userId, int pageNumber, int pageSize) {
         int pageIdx = pageNumber - 1;
         List<Order> results = jdbcTemplate.query(
                 "WITH orders AS (SELECT * FROM orders WHERE user_id = ? ORDER BY date_ordered DESC LIMIT ? OFFSET ?) " + SELECT_FULL_BASE + SELECT_FULL_END_ORDER_BY_DATE,
@@ -147,7 +147,7 @@ public class OrderJdbcDao implements OrderDao {
     }
 
     @Override
-    public PaginatedResult<OrderItemless> getByUserExcludeItems(int userId, int pageNumber, int pageSize) {
+    public PaginatedResult<OrderItemless> getByUserExcludeItems(long userId, int pageNumber, int pageSize) {
         int pageIdx = pageNumber - 1;
         RowMapper<OrderItemless> rowMapper = ReusingRowMappers.getOrderItemlessReusingRowMapper();
 
@@ -169,7 +169,7 @@ public class OrderJdbcDao implements OrderDao {
     }
 
     @Override
-    public PaginatedResult<OrderItemless> getInProgressByUserExcludeItems(int userId, int pageNumber, int pageSize) {
+    public PaginatedResult<OrderItemless> getInProgressByUserExcludeItems(long userId, int pageNumber, int pageSize) {
         int pageIdx = pageNumber - 1;
         RowMapper<OrderItemless> rowMapper = ReusingRowMappers.getOrderItemlessReusingRowMapper();
 
@@ -191,7 +191,7 @@ public class OrderJdbcDao implements OrderDao {
     }
 
     @Override
-    public PaginatedResult<Order> getByRestaurant(int restaurantId, int pageNumber, int pageSize) {
+    public PaginatedResult<Order> getByRestaurant(long restaurantId, int pageNumber, int pageSize) {
         int pageIdx = pageNumber - 1;
         List<Order> results = jdbcTemplate.query(
                 "WITH orders AS (SELECT * FROM orders WHERE restaurant_id = ? ORDER BY date_ordered DESC LIMIT ? OFFSET ?) " + SELECT_FULL_BASE + SELECT_FULL_END_ORDER_BY_DATE,
@@ -211,7 +211,7 @@ public class OrderJdbcDao implements OrderDao {
     }
 
     @Override
-    public PaginatedResult<OrderItemless> getByRestaurantExcludeItems(int restaurantId, int pageNumber, int pageSize) {
+    public PaginatedResult<OrderItemless> getByRestaurantExcludeItems(long restaurantId, int pageNumber, int pageSize) {
         int pageIdx = pageNumber - 1;
         RowMapper<OrderItemless> rowMapper = ReusingRowMappers.getOrderItemlessReusingRowMapper();
 
@@ -233,7 +233,7 @@ public class OrderJdbcDao implements OrderDao {
     }
 
     @Override
-    public PaginatedResult<Order> getByRestaurant(int restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus) {
+    public PaginatedResult<Order> getByRestaurant(long restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus) {
         int pageIdx = pageNumber - 1;
         List<Order> results = jdbcTemplate.query(
                 "WITH orders AS (SELECT * FROM orders WHERE restaurant_id = ? AND " + getCondStringForOrderStatus(orderStatus) + " ORDER BY date_ordered DESC LIMIT ? OFFSET ?) " + SELECT_FULL_BASE + SELECT_FULL_END_ORDER_BY_DATE,
@@ -253,7 +253,7 @@ public class OrderJdbcDao implements OrderDao {
     }
 
     @Override
-    public PaginatedResult<OrderItemless> getByRestaurantExcludeItems(int restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus) {
+    public PaginatedResult<OrderItemless> getByRestaurantExcludeItems(long restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus) {
         int pageIdx = pageNumber - 1;
         RowMapper<OrderItemless> rowMapper = ReusingRowMappers.getOrderItemlessReusingRowMapper();
 
@@ -275,7 +275,7 @@ public class OrderJdbcDao implements OrderDao {
     }
 
     @Override
-    public boolean markAsConfirmed(int orderId) {
+    public boolean markAsConfirmed(long orderId) {
         return jdbcTemplate.update(
                 "UPDATE orders SET date_confirmed = now() WHERE order_id = ? AND " + IS_PENDING_COND,
                 orderId
@@ -283,7 +283,7 @@ public class OrderJdbcDao implements OrderDao {
     }
 
     @Override
-    public boolean markAsReady(int orderId) {
+    public boolean markAsReady(long orderId) {
         return jdbcTemplate.update(
                 "UPDATE orders SET date_ready = now() WHERE order_id = ? AND " + IS_CONFIRMED_COND,
                 orderId
@@ -291,7 +291,7 @@ public class OrderJdbcDao implements OrderDao {
     }
 
     @Override
-    public boolean markAsDelivered(int orderId) {
+    public boolean markAsDelivered(long orderId) {
         return jdbcTemplate.update(
                 "UPDATE orders SET date_delivered = now() WHERE order_id = ? AND " + IS_READY_COND,
                 orderId
@@ -299,7 +299,7 @@ public class OrderJdbcDao implements OrderDao {
     }
 
     @Override
-    public boolean markAsCancelled(int orderId) {
+    public boolean markAsCancelled(long orderId) {
         return jdbcTemplate.update(
                 "UPDATE orders SET date_cancelled = now() WHERE order_id = ? AND NOT(" + IS_CANCELLED_COND + ") AND NOT(" + IS_DELIVERED_COND + ")",
                 orderId
@@ -307,7 +307,7 @@ public class OrderJdbcDao implements OrderDao {
     }
 
     @Override
-    public boolean setOrderStatus(int orderId, OrderStatus orderStatus) {
+    public boolean setOrderStatus(long orderId, OrderStatus orderStatus) {
         String sql;
         switch (orderStatus) {
             case PENDING:
@@ -336,7 +336,7 @@ public class OrderJdbcDao implements OrderDao {
     }
 
     @Override
-    public boolean updateAddress(int orderId, String address) {
+    public boolean updateAddress(long orderId, String address) {
         return jdbcTemplate.update(
                 "UPDATE orders SET address = ? WHERE order_id = ? AND order_type = " + OrderType.DELIVERY.ordinal() + " AND NOT(" + IS_CLOSED_COND + ")",
                 address,
@@ -345,7 +345,7 @@ public class OrderJdbcDao implements OrderDao {
     }
 
     @Override
-    public boolean updateTableNumber(int orderId, int tableNumber) {
+    public boolean updateTableNumber(long orderId, int tableNumber) {
         return jdbcTemplate.update(
                 "UPDATE orders SET table_number = ? WHERE order_id = ? AND order_type = " + OrderType.DINE_IN.ordinal() + " AND NOT(" + IS_CLOSED_COND + ")",
                 tableNumber,
@@ -354,23 +354,23 @@ public class OrderJdbcDao implements OrderDao {
     }
 
     @Override
-    public boolean delete(int orderId) {
+    public boolean delete(long orderId) {
         return jdbcTemplate.update("DELETE FROM orders WHERE order_id = ?", orderId) > 0;
     }
 
     @Override
-    public Order createDineIn(int restaurantId, int userId, int tableNumber, List<OrderItem> items) {
+    public Order createDineIn(long restaurantId, long userId, int tableNumber, List<OrderItem> items) {
         return this.create(OrderType.DINE_IN, restaurantId, userId, null, tableNumber, items);
     }
 
     @Override
-    public Order createTakeaway(int restaurantId, int userId, List<OrderItem> items) {
+    public Order createTakeaway(long restaurantId, long userId, List<OrderItem> items) {
         return this.create(OrderType.TAKEAWAY, restaurantId, userId, null, null, items);
     }
 
 
     @Override
-    public Order createDelivery(int restaurantId, int userId, String address, List<OrderItem> items) {
+    public Order createDelivery(long restaurantId, long userId, String address, List<OrderItem> items) {
         return this.create(OrderType.DELIVERY, restaurantId, userId, address, null, items);
     }
 

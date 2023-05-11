@@ -28,94 +28,94 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private EmailService emailService;
 
-    private int getOrCreateUserId(String name, String email) {
+    private long getOrCreateUserId(String name, String email) {
         return userService.createIfNotExists(email, name).getUserId();
     }
 
     @Override
-    public Order createDelivery(int restaurantId, int userId, String address, List<OrderItem> items) {
+    public Order createDelivery(long restaurantId, long userId, String address, List<OrderItem> items) {
         return orderDao.createDelivery(restaurantId, userId, address, items);
     }
 
     @Override
-    public Order createDelivery(int restaurantId, String name, String email, String address, List<OrderItem> items) {
+    public Order createDelivery(long restaurantId, String name, String email, String address, List<OrderItem> items) {
         return orderDao.createDelivery(restaurantId, getOrCreateUserId(name, email), address, items);
     }
 
     @Override
-    public Order createDineIn(int restaurantId, int userId, int tableNumber, List<OrderItem> items) {
+    public Order createDineIn(long restaurantId, long userId, int tableNumber, List<OrderItem> items) {
         return orderDao.createDineIn(restaurantId, userId, tableNumber, items);
     }
 
     @Override
-    public Order createDineIn(int restaurantId, String name, String email, int tableNumber, List<OrderItem> items) {
+    public Order createDineIn(long restaurantId, String name, String email, int tableNumber, List<OrderItem> items) {
         return orderDao.createDineIn(restaurantId, getOrCreateUserId(name, email), tableNumber, items);
     }
 
     @Override
-    public Order createTakeAway(int restaurantId, int userId, List<OrderItem> items) {
+    public Order createTakeAway(long restaurantId, long userId, List<OrderItem> items) {
         return orderDao.createTakeaway(restaurantId, userId, items);
     }
 
     @Override
-    public Order createTakeAway(int restaurantId, String name, String email, List<OrderItem> items) {
+    public Order createTakeAway(long restaurantId, String name, String email, List<OrderItem> items) {
         return orderDao.createTakeaway(restaurantId, getOrCreateUserId(name, email), items);
     }
 
 
     @Override
-    public OrderItem createOrderItem(int productId, int lineNumber, int quantity, String comment) {
+    public OrderItem createOrderItem(long productId, int lineNumber, int quantity, String comment) {
         Product product = productService.getById(productId).orElseThrow(() -> new IllegalArgumentException("Invalid product id"));
         return orderDao.createOrderItem(product, lineNumber, quantity, comment);
     }
 
     @Override
-    public Optional<Order> getById(int orderId) {
+    public Optional<Order> getById(long orderId) {
         return orderDao.getById(orderId);
     }
 
     @Override
-    public Optional<OrderItemless> getByIdExcludeItems(int orderId) {
+    public Optional<OrderItemless> getByIdExcludeItems(long orderId) {
         return orderDao.getByIdExcludeItems(orderId);
     }
 
     @Override
-    public PaginatedResult<Order> getByUser(int userId, int pageNumber, int pageSize) {
+    public PaginatedResult<Order> getByUser(long userId, int pageNumber, int pageSize) {
         return orderDao.getByUser(userId, pageNumber, pageSize);
     }
 
     @Override
-    public PaginatedResult<OrderItemless> getByUserExcludeItems(int userId, int pageNumber, int pageSize) {
+    public PaginatedResult<OrderItemless> getByUserExcludeItems(long userId, int pageNumber, int pageSize) {
         return orderDao.getByUserExcludeItems(userId, pageNumber, pageSize);
     }
 
     @Override
-    public PaginatedResult<OrderItemless> getInProgressByUserExcludeItems(int userId, int pageNumber, int pageSize) {
+    public PaginatedResult<OrderItemless> getInProgressByUserExcludeItems(long userId, int pageNumber, int pageSize) {
         return orderDao.getInProgressByUserExcludeItems(userId, pageNumber, pageSize);
     }
 
     @Override
-    public PaginatedResult<Order> getByRestaurant(int restaurantId, int pageNumber, int pageSize) {
+    public PaginatedResult<Order> getByRestaurant(long restaurantId, int pageNumber, int pageSize) {
         return orderDao.getByRestaurant(restaurantId, pageNumber, pageSize);
     }
 
     @Override
-    public PaginatedResult<OrderItemless> getByRestaurantExcludeItems(int restaurantId, int pageNumber, int pageSize) {
+    public PaginatedResult<OrderItemless> getByRestaurantExcludeItems(long restaurantId, int pageNumber, int pageSize) {
         return orderDao.getByRestaurantExcludeItems(restaurantId, pageNumber, pageSize);
     }
 
     @Override
-    public PaginatedResult<Order> getByRestaurant(int restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus) {
+    public PaginatedResult<Order> getByRestaurant(long restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus) {
         return orderDao.getByRestaurant(restaurantId, pageNumber, pageSize, orderStatus);
     }
 
     @Override
-    public PaginatedResult<OrderItemless> getByRestaurantExcludeItems(int restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus) {
+    public PaginatedResult<OrderItemless> getByRestaurantExcludeItems(long restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus) {
         return orderDao.getByRestaurantExcludeItems(restaurantId, pageNumber, pageSize, orderStatus);
     }
 
     @Override
-    public boolean markAsConfirmed(int orderId) {
+    public boolean markAsConfirmed(long orderId) {
         boolean success = orderDao.markAsConfirmed(orderId);
         if (success) {
             try {
@@ -128,7 +128,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public boolean markAsReady(int orderId) {
+    public boolean markAsReady(long orderId) {
         boolean success = orderDao.markAsReady(orderId);
         if (success) {
             try {
@@ -141,7 +141,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public boolean markAsDelivered(int orderId) {
+    public boolean markAsDelivered(long orderId) {
         boolean success = orderDao.markAsDelivered(orderId);
         if (success) {
             try {
@@ -154,7 +154,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public boolean markAsCancelled(int orderId) {
+    public boolean markAsCancelled(long orderId) {
         boolean success = orderDao.markAsCancelled(orderId);
         if (success) {
             try {
@@ -167,22 +167,22 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public boolean setOrderStatus(int orderId, OrderStatus orderStatus) {
+    public boolean setOrderStatus(long orderId, OrderStatus orderStatus) {
         return orderDao.setOrderStatus(orderId, orderStatus);
     }
 
     @Override
-    public boolean updateAddress(int orderId, String address) {
+    public boolean updateAddress(long orderId, String address) {
         return orderDao.updateAddress(orderId, address);
     }
 
     @Override
-    public boolean updateTableNumber(int orderId, int tableNumber) {
+    public boolean updateTableNumber(long orderId, int tableNumber) {
         return orderDao.updateTableNumber(orderId, tableNumber);
     }
 
     @Override
-    public boolean delete(int orderId) {
+    public boolean delete(long orderId) {
         return orderDao.delete(orderId);
     }
 

@@ -28,7 +28,7 @@ public class RolesJdbcDao implements RolesDao {
     }
 
     @Override
-    public Optional<RestaurantRoleLevel> getRole(int userId, int restaurantId) {
+    public Optional<RestaurantRoleLevel> getRole(long userId, long restaurantId) {
         List<RestaurantRoleLevel> result = jdbcTemplate.query(
                 "SELECT (SELECT role_level FROM restaurant_roles WHERE restaurant_id = ? AND user_id = ?) AS role_level, EXISTS(SELECT * FROM restaurants WHERE restaurant_id = ? AND owner_user_id = ?) AS is_owner",
                 SimpleRowMappers.RESTAURANT_ROLE_LEVEL_ROW_MAPPER,
@@ -42,7 +42,7 @@ public class RolesJdbcDao implements RolesDao {
     }
 
     @Override
-    public boolean setRole(int userId, int restaurantId, RestaurantRoleLevel level) {
+    public boolean setRole(long userId, long restaurantId, RestaurantRoleLevel level) {
         if (level == RestaurantRoleLevel.OWNER)
             throw new RuntimeException("Cannot set owner role of a restaurant");
 
@@ -56,7 +56,7 @@ public class RolesJdbcDao implements RolesDao {
     }
 
     @Override
-    public boolean doesUserHaveRole(int userId, int restaurantId, RestaurantRoleLevel minimumRoleLevel) {
+    public boolean doesUserHaveRole(long userId, long restaurantId, RestaurantRoleLevel minimumRoleLevel) {
         if (minimumRoleLevel == RestaurantRoleLevel.OWNER) {
             SqlRowSet result = jdbcTemplate.queryForRowSet(
                     "SELECT EXISTS(SELECT * FROM restaurants WHERE restaurant_id = ? AND owner_user_id = ?) AS is_owner",
@@ -88,7 +88,7 @@ public class RolesJdbcDao implements RolesDao {
 
 
     @Override
-    public List<Pair<User, RestaurantRoleLevel>> getByRestaurant(int restaurantId) {
+    public List<Pair<User, RestaurantRoleLevel>> getByRestaurant(long restaurantId) {
         return jdbcTemplate.query(
                 GET_BY_RESTAURANT_SQL,
                 USER_ROLE_ROW_MAPPER,
@@ -111,7 +111,7 @@ public class RolesJdbcDao implements RolesDao {
                     " WHERE roles_grouped.user_id = ? ORDER BY order_count DESC";
 
     @Override
-    public List<Triplet<Restaurant, RestaurantRoleLevel, Integer>> getByUser(int userId) {
+    public List<Triplet<Restaurant, RestaurantRoleLevel, Integer>> getByUser(long userId) {
         return jdbcTemplate.query(
                 GET_BY_USER_SQL,
                 RESTAURANT_ROLE_AMOUNT_ROW_MAPPER,
@@ -120,7 +120,7 @@ public class RolesJdbcDao implements RolesDao {
     }
 
     @Override
-    public boolean deleteRole(int restaurantId, int userId) {
+    public boolean deleteRole(long restaurantId, long userId) {
         return jdbcTemplate.update("DELETE FROM restaurant_roles WHERE restaurant_id = ? AND user_id = ?", restaurantId, userId) > 0;
     }
 }

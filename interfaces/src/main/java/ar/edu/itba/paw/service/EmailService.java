@@ -7,7 +7,6 @@ import ar.edu.itba.paw.model.User;
 import javax.mail.MessagingException;
 
 public interface EmailService {
-
     void sendOrderReceivalForUser(Order order) throws MessagingException;
 
     void sendOrderReceivalForRestaurant(Restaurant restaurant, Order order) throws MessagingException;

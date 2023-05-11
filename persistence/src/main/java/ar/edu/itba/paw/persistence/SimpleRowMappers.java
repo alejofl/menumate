@@ -6,6 +6,7 @@ import ar.edu.itba.paw.model.util.Pair;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
@@ -13,6 +14,11 @@ class SimpleRowMappers {
 
     static LocalDateTime timestampToLocalDateTimeOrNull(Timestamp timestamp) {
         return timestamp == null ? null : timestamp.toLocalDateTime();
+    }
+
+    static Long readLongOrNull(ResultSet rs, String column) throws SQLException {
+        long value = rs.getLong(column);
+        return rs.wasNull() ? null : value;
     }
 
     static final RowMapper<Integer> COUNT_ROW_MAPPER = (rs, i) -> rs.getInt("c");
@@ -25,10 +31,10 @@ class SimpleRowMappers {
     );
 
     static final RowMapper<User> USER_ROW_MAPPER = (ResultSet rs, int rowNum) -> new User(
-            rs.getInt("user_id"),
+            rs.getLong("user_id"),
             rs.getString("user_email"),
             rs.getString("user_name"),
-            rs.getInt("user_image_id"),
+            readLongOrNull(rs, "user_image_id"),
             rs.getBoolean("user_is_active")
     );
 
@@ -41,13 +47,13 @@ class SimpleRowMappers {
 
 
     static final RowMapper<Restaurant> RESTAURANT_ROW_MAPPER = (ResultSet rs, int rowNum) -> new Restaurant(
-            rs.getInt("restaurant_id"),
+            rs.getLong("restaurant_id"),
             rs.getString("restaurant_name"),
             rs.getString("restaurant_email"),
-            rs.getInt("restaurant_owner_user_id"),
-            rs.getInt("restaurant_logo_id"),
-            rs.getInt("restaurant_portrait_1_id"),
-            rs.getInt("restaurant_portrait_2_id"),
+            rs.getLong("restaurant_owner_user_id"),
+            readLongOrNull(rs, "restaurant_logo_id"),
+            readLongOrNull(rs, "restaurant_portrait_1_id"),
+            readLongOrNull(rs, "restaurant_portrait_2_id"),
             rs.getString("restaurant_address"),
             rs.getString("restaurant_description"),
             rs.getInt("restaurant_max_tables"),
@@ -64,24 +70,24 @@ class SimpleRowMappers {
     };
 
     static final RowMapper<Category> CATEGORY_ROW_MAPPER = (ResultSet rs, int rowNum) -> new Category(
-            rs.getInt("category_id"),
+            rs.getLong("category_id"),
             RESTAURANT_ROW_MAPPER.mapRow(rs, rowNum),
             rs.getString("category_name"),
             rs.getInt("category_order")
     );
 
     static final RowMapper<Product> PRODUCT_ROW_MAPPER = (ResultSet rs, int rowNum) -> new Product(
-            rs.getInt("product_id"),
+            rs.getLong("product_id"),
             CATEGORY_ROW_MAPPER.mapRow(rs, rowNum),
             rs.getString("product_name"),
             rs.getBigDecimal("product_price"),
             rs.getString("product_description"),
-            rs.getInt("product_image_id"),
+            readLongOrNull(rs, "product_image_id"),
             rs.getBoolean("product_available")
     );
 
     static final RowMapper<OrderItemless> ORDER_ITEMLESS_ROW_MAPPER = (ResultSet rs, int rowNum) -> new OrderItemless(
-            rs.getInt("order_id"),
+            rs.getLong("order_id"),
             OrderType.fromOrdinal(rs.getInt("order_type")),
             RESTAURANT_ROW_MAPPER.mapRow(rs, rowNum),
             USER_ROW_MAPPER.mapRow(rs, rowNum),

@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class OrderItemless {
-    private final int orderId;
+    private final long orderId;
     private final OrderType orderType;
     private final Restaurant restaurant;
     private final User user;
@@ -18,7 +18,7 @@ public class OrderItemless {
     private final int itemCount;
     private final BigDecimal price;
 
-    public OrderItemless(int orderId, OrderType orderType, Restaurant restaurant, User user, LocalDateTime dateOrdered,LocalDateTime dateConfirmed, LocalDateTime dateReady, LocalDateTime dateDelivered, LocalDateTime dateCanceled, String address, int tableNumber, int itemCount, BigDecimal price) {
+    public OrderItemless(long orderId, OrderType orderType, Restaurant restaurant, User user, LocalDateTime dateOrdered,LocalDateTime dateConfirmed, LocalDateTime dateReady, LocalDateTime dateDelivered, LocalDateTime dateCanceled, String address, int tableNumber, int itemCount, BigDecimal price) {
         this.orderId = orderId;
         this.orderType = orderType;
         this.restaurant = restaurant;
@@ -34,7 +34,7 @@ public class OrderItemless {
         this.price = price;
     }
 
-    public int getOrderId() {
+    public long getOrderId() {
         return orderId;
     }
 

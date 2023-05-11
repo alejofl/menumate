@@ -31,7 +31,7 @@ public class CategoryJdbcDao implements CategoryDao {
     }
 
     @Override
-    public Category create(int restaurantId, String name) {
+    public Category create(long restaurantId, String name) {
         final Map<String, Object> categoryData = new HashMap<>();
         categoryData.put("restaurant_id", restaurantId);
         categoryData.put("name", name);
@@ -47,7 +47,7 @@ public class CategoryJdbcDao implements CategoryDao {
     }
 
     @Override
-    public Optional<Category> getById(int categoryId) {
+    public Optional<Category> getById(long categoryId) {
         return jdbcTemplate.query(
                 SELECT_BASE + " WHERE categories.category_id = ?",
                 SimpleRowMappers.CATEGORY_ROW_MAPPER,
@@ -56,7 +56,7 @@ public class CategoryJdbcDao implements CategoryDao {
     }
 
     @Override
-    public List<Category> getByRestaurantSortedByOrder(int restaurantId) {
+    public List<Category> getByRestaurantSortedByOrder(long restaurantId) {
         RowMapper<Category> rowMapper = ReusingRowMappers.getCategoryRowMapper();
         return jdbcTemplate.query(
                 SELECT_BASE + " WHERE categories.restaurant_id = ? ORDER BY categories.order_num",
@@ -66,17 +66,17 @@ public class CategoryJdbcDao implements CategoryDao {
     }
 
     @Override
-    public boolean updateName(int categoryId, String name) {
+    public boolean updateName(long categoryId, String name) {
         return jdbcTemplate.update("UPDATE categories SET name = ? WHERE category_id = ?", name, categoryId) > 0;
     }
 
     @Override
-    public boolean updateOrder(int categoryId, int order) {
+    public boolean updateOrder(long categoryId, int order) {
         return jdbcTemplate.update("UPDATE categories SET order_num = ? WHERE category_id = ?", order, categoryId) > 0;
     }
 
     @Override
-    public boolean delete(int categoryId) {
+    public boolean delete(long categoryId) {
         return jdbcTemplate.update("DELETE FROM categories WHERE category_id = ?", categoryId) > 0;
     }
 }

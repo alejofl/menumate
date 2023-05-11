@@ -30,7 +30,7 @@ public class ReviewJdbcDao implements ReviewDao {
     }
 
     @Override
-    public boolean createOrUpdate(int orderId, int rating, String comment) {
+    public boolean createOrUpdate(long orderId, int rating, String comment) {
         return jdbcTemplate.update(
                 "INSERT INTO order_reviews (order_id, rating, comment) VALUES (?, ?, ?) ON CONFLICT(order_id) DO UPDATE SET rating=excluded.rating, date=excluded.date, comment=excluded.comment",
                 orderId,
@@ -40,7 +40,7 @@ public class ReviewJdbcDao implements ReviewDao {
     }
 
     @Override
-    public boolean delete(int orderId) {
+    public boolean delete(long orderId) {
         return jdbcTemplate.update("DELETE FROM order_reviews WHERE order_id = ?", orderId) > 0;
     }
 
@@ -50,7 +50,7 @@ public class ReviewJdbcDao implements ReviewDao {
             " WHERE order_reviews.order_id = ?";
 
     @Override
-    public Optional<Review> getByOrder(int orderId) {
+    public Optional<Review> getByOrder(long orderId) {
         return jdbcTemplate.query(
                 GET_BY_ORDER_SQL,
                 SimpleRowMappers.ORDER_REVIEW_ROW_MAPPER,
@@ -60,7 +60,7 @@ public class ReviewJdbcDao implements ReviewDao {
     }
 
     @Override
-    public AverageCountPair getRestaurantAverage(int restaurantId) {
+    public AverageCountPair getRestaurantAverage(long restaurantId) {
         return jdbcTemplate.queryForObject(
                 "SELECT AVG(CAST(order_reviews.rating AS FLOAT)) AS a, COUNT(*) AS c FROM order_reviews JOIN orders ON order_reviews.order_id = orders.order_id WHERE orders.restaurant_id = ?",
                 SimpleRowMappers.AVERAGE_COUNT_ROW_MAPPER,
@@ -69,7 +69,7 @@ public class ReviewJdbcDao implements ReviewDao {
     }
 
     @Override
-    public AverageCountPair getRestaurantAverageSince(int restaurantId, LocalDateTime datetime) {
+    public AverageCountPair getRestaurantAverageSince(long restaurantId, LocalDateTime datetime) {
         return jdbcTemplate.queryForObject(
                 "SELECT AVG(CAST(order_reviews.rating AS FLOAT)) AS a, COUNT(*) AS c FROM order_reviews JOIN orders ON order_reviews.order_id = orders.order_id WHERE order_reviews.date >= ? AND orders.restaurant_id = ?",
                 SimpleRowMappers.AVERAGE_COUNT_ROW_MAPPER,
@@ -86,7 +86,7 @@ public class ReviewJdbcDao implements ReviewDao {
             " LIMIT ? OFFSET ?";
 
     @Override
-    public PaginatedResult<Review> getByRestaurant(int restaurantId, int pageNumber, int pageSize) {
+    public PaginatedResult<Review> getByRestaurant(long restaurantId, int pageNumber, int pageSize) {
         int pageIdx = pageNumber - 1;
         List<Review> results = jdbcTemplate.query(
                 GET_BY_RESTAURANT_SQL,
@@ -112,7 +112,7 @@ public class ReviewJdbcDao implements ReviewDao {
             " LIMIT ? OFFSET ?";
 
     @Override
-    public PaginatedResult<Review> getByUser(int userId, int pageNumber, int pageSize) {
+    public PaginatedResult<Review> getByUser(long userId, int pageNumber, int pageSize) {
         int pageIdx = pageNumber - 1;
         List<Review> results = jdbcTemplate.query(
                 GET_BY_USER_SQL,

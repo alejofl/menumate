@@ -57,7 +57,7 @@ public class BaseTokenJdbcDao implements BaseTokenDao {
     }
 
     @Override
-    public String generateToken(int userId) {
+    public String generateToken(long userId) {
         String token = UUID.randomUUID().toString().substring(0, 32);
         jdbcTemplate.update(
                 "INSERT INTO " + tableName +" (code, user_id, expires) VALUES (?, ?, ?) ON CONFLICT (user_id) DO UPDATE SET code=excluded.code, expires = excluded.expires",
@@ -74,7 +74,7 @@ public class BaseTokenJdbcDao implements BaseTokenDao {
     }
 
     @Override
-    public boolean hasActiveToken(int userId) {
+    public boolean hasActiveToken(long userId) {
         Optional<LocalDateTime> tokenInfo = jdbcTemplate.query(
                 "SELECT expires FROM " + tableName + " WHERE user_id = ?",
                 TOKEN_EXPIRES_ROW_MAPPER,

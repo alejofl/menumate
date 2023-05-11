@@ -33,7 +33,7 @@ public class RestaurantJdbcDao implements RestaurantDao {
     }
 
     @Override
-    public Optional<Restaurant> getById(int restaurantId) {
+    public Optional<Restaurant> getById(long restaurantId) {
         return jdbcTemplate.query(
                 SELECT_BASE + " WHERE restaurant_id = ?",
                 SimpleRowMappers.RESTAURANT_ROW_MAPPER,
@@ -92,7 +92,7 @@ public class RestaurantJdbcDao implements RestaurantDao {
     }
 
     @Override
-    public int create(String name, String email, int ownerUserId, String description, String address, int maxTables, int logoKey, int portrait1Kay, int portrait2Key) {
+    public long create(String name, String email, long ownerUserId, String description, String address, int maxTables, Long logoKey, Long portrait1Kay, Long portrait2Key) {
         final Map<String, Object> restaurantData = new HashMap<>();
         restaurantData.put("name", name);
         restaurantData.put("email", email);
@@ -107,7 +107,7 @@ public class RestaurantJdbcDao implements RestaurantDao {
     }
 
     @Override
-    public boolean delete(int restaurantId) {
+    public boolean delete(long restaurantId) {
         return jdbcTemplate.update("DELETE FROM restaurants WHERE restaurant_id = ?", restaurantId) > 0;
     }
 }

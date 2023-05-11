@@ -20,12 +20,12 @@ import java.util.Optional;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
 public class CategoryJdbcDaoTest {
-    private static final int CATEGORY_ID = 12421;
-    private static final int USER_ID = 791;
+    private static final long CATEGORY_ID = 12421;
+    private static final long USER_ID = 791;
     private static final String USER_EMAIL = "peter@peter.com";
     private static final String USER_PASSWORD = "super12secret34";
     private static final String USER_NAME = "Peter Parker";
-    private static final int RESTAURANT_ID = 79874;
+    private static final long RESTAURANT_ID = 79874;
     private static final String CATEGORY_NAME = "Postgres Dulces";
     private static final String RESTAURANT_NAME = "Cafe Mataderos";
     private static final String RESTAURANT_EMAIL = "pedro@frompedros.com";

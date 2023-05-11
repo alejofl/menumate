@@ -21,7 +21,7 @@ class Extractors {
 
         boolean isFirst = true;
 
-        int orderId = 0;
+        long orderId = 0;
         OrderType orderType = null;
         Restaurant restaurant = null;
         User user = null;
@@ -35,7 +35,7 @@ class Extractors {
         List<OrderItem> items = null;
 
         while (rs.next()) {
-            int currentOrderId = rs.getInt("order_id");
+            long currentOrderId = rs.getLong("order_id");
             if (isFirst || orderId != currentOrderId) {
                 if (!isFirst) {
                     orders.add(new Order(orderId, orderType, restaurant, user, dateOrdered, dateConfirmed, dateReady,
@@ -58,7 +58,7 @@ class Extractors {
                 isFirst = false;
             }
 
-            rs.getInt("product_id");
+            rs.getLong("product_id");
             if (!rs.wasNull())
                 items.add(orderItemRowMapper.mapRow(rs, 1));
         }

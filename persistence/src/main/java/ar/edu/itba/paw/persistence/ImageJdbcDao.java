@@ -26,24 +26,24 @@ public class ImageJdbcDao implements ImageDao {
     }
 
     @Override
-    public int create(byte[] bytes) {
+    public long create(byte[] bytes) {
         final Map<String, Object> imageData = new HashMap<>();
         imageData.put("bytes", bytes);
         return jdbcInsert.executeAndReturnKey(imageData).intValue();
     }
 
     @Override
-    public boolean update(int imageId, byte[] bytes) {
+    public boolean update(long imageId, byte[] bytes) {
         return jdbcTemplate.update("UPDATE images SET bytes = ? WHERE image_id = ?", bytes, imageId) > 0;
     }
 
     @Override
-    public boolean delete(int imageId) {
+    public boolean delete(long imageId) {
         return jdbcTemplate.update("DELETE FROM images WHERE image_id = ?", imageId) > 0;
     }
 
     @Override
-    public Optional<byte[]> getById(int imageId) {
+    public Optional<byte[]> getById(long imageId) {
         return jdbcTemplate.query(
                 "SELECT * FROM images WHERE image_id = ?",
                 SimpleRowMappers.IMAGE_ROW_MAPPER,

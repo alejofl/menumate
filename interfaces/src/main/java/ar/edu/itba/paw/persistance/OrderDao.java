@@ -7,47 +7,45 @@ import java.util.List;
 import java.util.Optional;
 
 public interface OrderDao {
+    Optional<Order> getById(long orderId);
 
+    Optional<OrderItemless> getByIdExcludeItems(long orderId);
 
-    Optional<Order> getById(int orderId);
+    PaginatedResult<Order> getByUser(long userId, int pageNumber, int pageSize);
 
-    Optional<OrderItemless> getByIdExcludeItems(int orderId);
+    PaginatedResult<OrderItemless> getByUserExcludeItems(long userId, int pageNumber, int pageSize);
 
-    PaginatedResult<Order> getByUser(int userId, int pageNumber, int pageSize);
+    PaginatedResult<OrderItemless> getInProgressByUserExcludeItems(long userId, int pageNumber, int pageSize);
 
-    PaginatedResult<OrderItemless> getByUserExcludeItems(int userId, int pageNumber, int pageSize);
+    PaginatedResult<Order> getByRestaurant(long restaurantId, int pageNumber, int pageSize);
 
-    PaginatedResult<OrderItemless> getInProgressByUserExcludeItems(int userId, int pageNumber, int pageSize);
+    PaginatedResult<OrderItemless> getByRestaurantExcludeItems(long restaurantId, int pageNumber, int pageSize);
 
-    PaginatedResult<Order> getByRestaurant(int restaurantId, int pageNumber, int pageSize);
+    PaginatedResult<Order> getByRestaurant(long restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus);
 
-    PaginatedResult<OrderItemless> getByRestaurantExcludeItems(int restaurantId, int pageNumber, int pageSize);
+    PaginatedResult<OrderItemless> getByRestaurantExcludeItems(long restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus);
 
-    PaginatedResult<Order> getByRestaurant(int restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus);
+    boolean markAsConfirmed(long orderId);
 
-    PaginatedResult<OrderItemless> getByRestaurantExcludeItems(int restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus);
+    boolean markAsReady(long orderId);
 
-    boolean markAsConfirmed(int orderId);
+    boolean markAsDelivered(long orderId);
 
-    boolean markAsReady(int orderId);
+    boolean markAsCancelled(long orderId);
 
-    boolean markAsDelivered(int orderId);
+    boolean setOrderStatus(long orderId, OrderStatus orderStatus);
 
-    boolean markAsCancelled(int orderId);
+    boolean updateAddress(long orderId, String address);
 
-    boolean setOrderStatus(int orderId, OrderStatus orderStatus);
+    boolean updateTableNumber(long orderId, int tableNumber);
 
-    boolean updateAddress(int orderId, String address);
+    boolean delete(long orderId);
 
-    boolean updateTableNumber(int orderId, int tableNumber);
+    Order createDelivery(long restaurantId, long userId, String address, List<OrderItem> items);
 
-    boolean delete(int orderId);
+    Order createTakeaway(long restaurantId, long userId, List<OrderItem> items);
 
-    Order createDelivery(int restaurantId, int userId, String address, List<OrderItem> items);
-
-    Order createTakeaway(int restaurantId, int userId, List<OrderItem> items);
-
-    Order createDineIn(int restaurantId, int userId, int tableNumber, List<OrderItem> items);
+    Order createDineIn(long restaurantId, long userId, int tableNumber, List<OrderItem> items);
 
     OrderItem createOrderItem(Product product, int lineNumber, int quantity, String comment);
 }

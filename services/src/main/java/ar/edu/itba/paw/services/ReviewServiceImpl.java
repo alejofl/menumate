@@ -18,36 +18,36 @@ public class ReviewServiceImpl implements ReviewService {
     private ReviewDao reviewDao;
 
     @Override
-    public boolean createOrUpdate(int orderId, int rating, String comment) {
+    public boolean createOrUpdate(long orderId, int rating, String comment) {
         return reviewDao.createOrUpdate(orderId, rating, comment);
     }
 
-    public boolean delete(int orderId) {
+    public boolean delete(long orderId) {
         return reviewDao.delete(orderId);
     }
 
     @Override
-    public Optional<Review> getByOrder(int orderId) {
+    public Optional<Review> getByOrder(long orderId) {
         return reviewDao.getByOrder(orderId);
     }
 
     @Override
-    public AverageCountPair getRestaurantAverage(int restaurantId) {
+    public AverageCountPair getRestaurantAverage(long restaurantId) {
         return reviewDao.getRestaurantAverage(restaurantId);
     }
 
     @Override
-    public AverageCountPair getRestaurantAverageSince(int restaurantId, LocalDateTime datetime) {
+    public AverageCountPair getRestaurantAverageSince(long restaurantId, LocalDateTime datetime) {
         return reviewDao.getRestaurantAverageSince(restaurantId, datetime);
     }
 
     @Override
-    public PaginatedResult<Review> getByRestaurant(int restaurantId, int pageNumber, int pageSize) {
+    public PaginatedResult<Review> getByRestaurant(long restaurantId, int pageNumber, int pageSize) {
         return reviewDao.getByRestaurant(restaurantId, pageNumber, pageSize);
     }
 
     @Override
-    public PaginatedResult<Review> getByUser(int userId, int pageNumber, int pageSize) {
+    public PaginatedResult<Review> getByUser(long userId, int pageNumber, int pageSize) {
         return reviewDao.getByUser(userId, pageNumber, pageSize);
     }
 }

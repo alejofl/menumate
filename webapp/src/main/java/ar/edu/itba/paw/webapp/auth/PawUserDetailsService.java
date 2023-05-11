@@ -24,7 +24,7 @@ public class PawUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("No user for email " + email));
 
 
-        int userId = userAndPassword.getKey().getUserId();
+        long userId = userAndPassword.getKey().getUserId();
         String userEmail = userAndPassword.getKey().getEmail();
         String userPassword = userAndPassword.getValue();
         boolean isActive = userAndPassword.getKey().getIsActive();

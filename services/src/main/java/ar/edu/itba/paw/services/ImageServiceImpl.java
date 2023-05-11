@@ -14,22 +14,22 @@ public class ImageServiceImpl implements ImageService {
     private ImageDao imageDao;
 
     @Override
-    public int create(byte[] bytes) {
+    public long create(byte[] bytes) {
         return imageDao.create(bytes);
     }
 
     @Override
-    public boolean update(int imageId, byte[] bytes) {
+    public boolean update(long imageId, byte[] bytes) {
         return imageDao.update(imageId, bytes);
     }
 
     @Override
-    public boolean delete(int imageId) {
+    public boolean delete(long imageId) {
         return imageDao.delete(imageId);
     }
 
     @Override
-    public Optional<byte[]> getById(int imageId) {
+    public Optional<byte[]> getById(long imageId) {
         return imageDao.getById(imageId);
     }
 }
