@@ -1,35 +1,38 @@
+
+
 document.addEventListener("DOMContentLoaded", () => {
     let ratingInput = document.querySelector("#review-form-rating");
 
     document.querySelectorAll(".small-ratings i").forEach(element => {
+
+        function addRating(end) {
+            for (let i = 1; i <= end; i++) {
+                document.querySelector(`.small-ratings i[data-number="${i}"]`).classList.add("rating-color");
+            }
+        }
+
+        function removeRating(start) {
+            for (let i = start; i <= 5; i++) {
+                document.querySelector(`.small-ratings i[data-number="${i}"]`).classList.remove("rating-color");
+            }
+        }
+
         let rating = parseInt(element.dataset.number);
 
         element.addEventListener("click", event => {
-            for (let i = 1; i <= rating; i++) {
-              document.querySelector(`.small-ratings i[data-number="${i}"]`).classList.add("rating-color");
-            }
-            for (let i = rating + 1; i <= 5; i++) {
-               document.querySelector(`.small-ratings i[data-number="${i}"]`).classList.remove("rating-color");
-            }
+            addRating(rating);
+            removeRating(rating + 1);
             ratingInput.value = rating;
         });
 
         element.addEventListener("mouseover", event => {
-            for (let i = 1; i <= rating; i++) {
-               document.querySelector(`.small-ratings i[data-number="${i}"]`).classList.add("rating-color");
-            }
-            for (let i = rating + 1; i <= 5; i++) {
-               document.querySelector(`.small-ratings i[data-number="${i}"]`).classList.remove("rating-color");
-            }
+            addRating(rating);
+            removeRating(rating + 1);
         });
 
         element.addEventListener("mouseout", event => {
-            for (let i = 1; i <= 5; i++) {
-                document.querySelector(`.small-ratings i[data-number="${i}"]`).classList.remove("rating-color");
-            }
-            for (let i = 1; i <= ratingInput.value; i++) {
-               document.querySelector(`.small-ratings i[data-number="${i}"]`).classList.add("rating-color");
-            }
+            removeRating(1);
+            addRating(ratingInput.value);
         });
     });
 
