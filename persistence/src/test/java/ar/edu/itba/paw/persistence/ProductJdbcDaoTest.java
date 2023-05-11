@@ -32,7 +32,8 @@ public class ProductJdbcDaoTest {
     private static final String RESTAURANT_NAME = "Kansas Grill & Bar";
     private static final String RESTAURANT_EMAIL = "kansas@lovelyrestaurant.com";
     private static final int MAX_TABLES = 20;
-    private static final long PRODUCT_ID = 912;
+    private static final int SPECIALTY = 1;
+    private static final int PRODUCT_ID = 912;
     private static final String PRODUCT_NAME = "Lomito";
     private static final BigDecimal PRODUCT_PRICE = new BigDecimal("533.55");
 
@@ -51,7 +52,7 @@ public class ProductJdbcDaoTest {
         jdbcTemplate = new JdbcTemplate(ds);
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "categories", "restaurants", "products", "users");
         jdbcTemplate.execute("INSERT INTO users (user_id, email, password, name) VALUES (" + USER_ID + ", '" + USER_EMAIL + "', '" + USER_PASSWORD + "', '" + USER_NAME + "')");
-        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, owner_user_id, max_tables) VALUES (" + RESTAURANT_ID + ", '" + RESTAURANT_NAME + "', '" + RESTAURANT_EMAIL + "', " + USER_ID + ", " + MAX_TABLES + ")");
+        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, specialty, max_tables, owner_user_id) VALUES (" + RESTAURANT_ID + ", '" + RESTAURANT_NAME + "', '" + RESTAURANT_EMAIL + "', " + SPECIALTY + ", " + MAX_TABLES + ", " + USER_ID + ")");
         jdbcTemplate.execute("INSERT INTO categories (category_id, name, restaurant_id, order_num) VALUES (" + CATEGORY_ID + ", '" + CATEGORY_NAME + "', " + RESTAURANT_ID + ", " + ORDER + ")");
     }
 
@@ -112,6 +113,24 @@ public class ProductJdbcDaoTest {
     public void testDeleteProduct() throws SQLException {
         jdbcTemplate.execute("INSERT INTO products (product_id, name, price, category_id) VALUES (" + PRODUCT_ID + ", '" + PRODUCT_NAME + "', " + PRODUCT_PRICE + ", " + CATEGORY_ID + ")");
         Assert.assertTrue(productDao.delete(PRODUCT_ID));
+    }
+
+    @Test
+    public void testAverageRestaurantPrice() throws SQLException {
+        double quantity = 0;
+        for (int i = 1; i <= PRODUCTS_NAMES.length; i++) {
+            jdbcTemplate.execute("INSERT INTO products (product_id, name, price, category_id) VALUES (" + i + ", '" + PRODUCTS_NAMES[i - 1] + "', " + PRODUCT_PRICE + ", " + CATEGORY_ID + ")");
+            quantity += PRODUCT_PRICE.doubleValue();
+        }
+
+        final double average = productDao.getRestaurantAveragePrice(RESTAURANT_ID);
+        Assert.assertEquals(quantity / PRODUCTS_NAMES.length, average, 0.000001);
+    }
+
+    @Test
+    public void testNoProductsAverageRestaurantPrice() throws SQLException {
+        final double average = productDao.getRestaurantAveragePrice(RESTAURANT_ID);
+        Assert.assertEquals(0, average, 0.000001);
     }
 
 }

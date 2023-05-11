@@ -139,6 +139,7 @@ public class UserController {
         long restaurantId = restaurantService.create(
                 form.getName(),
                 userDetails.getUsername(),
+                form.getSpecialty(),
                 userDetails.getUserId(),
                 form.getDescription(),
                 form.getAddress(),

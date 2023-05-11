@@ -18,6 +18,10 @@ public class CreateRestaurantForm {
     private String address;
 
     @NotBlank
+    @Min(0)
+    private Integer specialty;
+
+    @NotBlank
     @Size(max = 300)
     private String description;
 
@@ -40,6 +44,14 @@ public class CreateRestaurantForm {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Integer getSpecialty() {
+        return specialty;
+    }
+
+    public void setSpecialty(Integer specialty) {
+        this.specialty = specialty;
     }
 
     public String getAddress() {

@@ -1,7 +1,9 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.Restaurant;
+import ar.edu.itba.paw.model.RestaurantTags;
 import ar.edu.itba.paw.model.util.PaginatedResult;
+import ar.edu.itba.paw.model.util.Pair;
 import ar.edu.itba.paw.persistance.RestaurantDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -10,10 +12,8 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Function;
 
 @Repository
 public class RestaurantJdbcDao implements RestaurantDao {
@@ -22,14 +22,24 @@ public class RestaurantJdbcDao implements RestaurantDao {
 
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert restaurantJdbcInsert;
+    private final SimpleJdbcInsert restaurantTagsJdbcInsert;
+
+    @Autowired
+    private ReviewJdbcDao reviewJdbcDao;
+
+    @Autowired
+    private ProductJdbcDao productJdbcDao;
 
     @Autowired
     public RestaurantJdbcDao(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
         restaurantJdbcInsert = new SimpleJdbcInsert(ds)
                 .withTableName("restaurants")
-                .usingColumns("name", "email", "owner_user_id", "logo_id", "portrait_1_id", "portrait_2_id", "address", "description")
+                .usingColumns("name", "email", "owner_user_id", "specialty", "logo_id", "portrait_1_id", "portrait_2_id", "address", "description")
                 .usingGeneratedKeyColumns("restaurant_id");
+        restaurantTagsJdbcInsert = new SimpleJdbcInsert(ds)
+                .withTableName("restaurant_tags")
+                .usingColumns("restaurant_id", "tag_id");
     }
 
     private static final String GET_BY_ID_SQL = SELECT_BASE + " WHERE restaurant_id = ?";
@@ -101,11 +111,80 @@ public class RestaurantJdbcDao implements RestaurantDao {
         return new PaginatedResult<>(results, pageNumber, pageSize, count);
     }
 
+
+    private Pair<List<Restaurant>, Integer> getPreliminaryResults(int pageNumber, int pageSize, String orderByField, String sort) {
+        int pageIdx = pageNumber - 1;
+        List<Restaurant> results = jdbcTemplate.query(
+                SELECT_BASE + " WHERE is_active = true " + orderByField + " " + sort + " LIMIT ? OFFSET ?",
+                SimpleRowMappers.RESTAURANT_ROW_MAPPER,
+                pageSize,
+                pageIdx * pageSize
+        );
+
+        int count = jdbcTemplate.query(
+                "SELECT count(*) AS c FROM restaurants WHERE is_active = true",
+                SimpleRowMappers.COUNT_ROW_MAPPER
+        ).get(0);
+
+        return new Pair<>(results, count);
+    }
     @Override
-    public long create(String name, String email, long ownerUserId, String description, String address, int maxTables, Long logoKey, Long portrait1Kay, Long portrait2Key) {
+    public PaginatedResult<Restaurant> getSortedByName(int pageNumber, int pageSize, String sort) {
+        Pair<List<Restaurant>, Integer> preliminaryResults = getPreliminaryResults(pageNumber, pageSize, "ORDER BY restaurant_name", sort);
+        return new PaginatedResult<>(preliminaryResults.getKey(), pageNumber, pageSize, preliminaryResults.getValue());
+    }
+
+    @Override
+    public PaginatedResult<Restaurant> getSortedByPriceAverage(int pageNumber, int pageSize, String sort) {
+
+        Pair<List<Restaurant>, Integer> preliminaryResults = getPreliminaryResults(pageNumber, pageSize, "", "");
+        List<Restaurant> results = preliminaryResults.getKey();
+        int count = preliminaryResults.getValue();
+
+        results.sort(
+            Comparator.comparing
+            (
+                (Function<? super Restaurant, ? extends Float>) r -> reviewJdbcDao.getRestaurantAverage(r.getRestaurantId()).getAverage(),
+                sort.equalsIgnoreCase("ASC") ?
+                Comparator.naturalOrder() : Comparator.reverseOrder()
+            )
+        );
+
+        return new PaginatedResult<>(results, pageNumber, pageSize, count);
+    }
+
+    @Override
+    public PaginatedResult<Restaurant> getSortedByCreationDate(int pageNumber, int pageSize, String sort) {
+        Pair<List<Restaurant>, Integer> preliminaryResults = getPreliminaryResults(pageNumber, pageSize, "ORDER BY date_created", sort);
+        return new PaginatedResult<>(preliminaryResults.getKey(), pageNumber, pageSize, preliminaryResults.getValue());
+    }
+
+    @Override
+    public PaginatedResult<Restaurant> getSortedByAveragePrice(int pageNumber, int pageSize, String sort) {
+        Pair<List<Restaurant>, Integer> preliminaryResults = getPreliminaryResults(pageNumber, pageSize, "", "");
+        List<Restaurant> results = preliminaryResults.getKey();
+
+        int count = preliminaryResults.getValue();
+        results.sort(
+            Comparator.comparing
+            (
+                (Function<? super Restaurant, ? extends Double>) r ->  productJdbcDao.getRestaurantAveragePrice(r.getRestaurantId()),
+                sort.equalsIgnoreCase("ASC") ?
+                        Comparator.naturalOrder() : Comparator.reverseOrder()
+            )
+        );
+
+        return new PaginatedResult<>(results, pageNumber, pageSize, count);
+    }
+
+
+
+    @Override
+    public long create(String name, String email, int specialty , long ownerUserId, String description, String address, int maxTables, Long logoKey, Long portrait1Kay, Long portrait2Key) {
         final Map<String, Object> restaurantData = new HashMap<>();
         restaurantData.put("name", name);
         restaurantData.put("email", email);
+        restaurantData.put("specialty", specialty);
         restaurantData.put("owner_user_id", ownerUserId);
         restaurantData.put("description", description);
         restaurantData.put("address", address);
@@ -135,5 +214,31 @@ public class RestaurantJdbcDao implements RestaurantDao {
         }
 
         return success;
+    }
+
+    @Override
+    public List<RestaurantTags> getTags(long restaurantId) {
+        return jdbcTemplate.query(
+                "SELECT " + TableFields.RESTAURANT_TAGS_FIELDS + " FROM restaurant_tags WHERE restaurant_id = ?",
+                SimpleRowMappers.RESTAURANT_TAGS_ROW_MAPPER,
+                restaurantId
+        );
+    }
+
+    @Override
+    public boolean addTag(long restaurantId, long tagId) {
+        final Map<String, Object> tagData = new HashMap<>();
+        tagData.put("restaurant_id", restaurantId);
+        tagData.put("tag_id", tagId);
+        return restaurantTagsJdbcInsert.execute(tagData) > 0;
+    }
+
+    @Override
+    public boolean removeTag(long restaurantId, long tagId) {
+        return jdbcTemplate.update(
+                "DELETE FROM restaurant_tags WHERE restaurant_id = ? AND tag_id = ?",
+                restaurantId,
+                tagId
+        ) > 0;
     }
 }

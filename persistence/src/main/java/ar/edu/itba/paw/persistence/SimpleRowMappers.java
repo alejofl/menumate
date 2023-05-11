@@ -45,11 +45,11 @@ class SimpleRowMappers {
 
     static final RowMapper<byte[]> IMAGE_ROW_MAPPER = (ResultSet rs, int rowNum) -> rs.getBytes("bytes");
 
-
     static final RowMapper<Restaurant> RESTAURANT_ROW_MAPPER = (ResultSet rs, int rowNum) -> new Restaurant(
             rs.getLong("restaurant_id"),
             rs.getString("restaurant_name"),
             rs.getString("restaurant_email"),
+            RestaurantSpecialty.fromOrdinal(rs.getInt("restaurant_specialty")),
             rs.getLong("restaurant_owner_user_id"),
             readLongOrNull(rs, "restaurant_logo_id"),
             readLongOrNull(rs, "restaurant_portrait_1_id"),
@@ -68,6 +68,10 @@ class SimpleRowMappers {
 
         int ordinal = rs.getInt("role_level");
         return rs.wasNull() ? null : RestaurantRoleLevel.fromOrdinal(ordinal);
+    };
+    static final RowMapper<RestaurantTags> RESTAURANT_TAGS_ROW_MAPPER = (ResultSet rs, int rowNum) -> {
+        int ordinal = rs.getInt("tag_id");
+        return rs.wasNull() ? null : RestaurantTags.fromOrdinal(ordinal);
     };
 
     static final RowMapper<Category> CATEGORY_ROW_MAPPER = (ResultSet rs, int rowNum) -> new Category(
