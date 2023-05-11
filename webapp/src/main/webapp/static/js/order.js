@@ -1,22 +1,24 @@
+function addRating(end) {
+    for (let i = 1; i <= end; i++) {
+        document.querySelector(`.small-ratings i[data-number="${i}"]`).classList.add("rating-color");
+    }
+}
 
+function removeRating(start) {
+    for (let i = start; i <= 5; i++) {
+        document.querySelector(`.small-ratings i[data-number="${i}"]`).classList.remove("rating-color");
+    }
+}
 
 document.addEventListener("DOMContentLoaded", () => {
     let ratingInput = document.querySelector("#review-form-rating");
+    addRating(parseInt(ratingInput.value));
+
+    if (document.querySelector("body").dataset.error === "true") {
+        document.querySelector("#review-modal-button").dispatchEvent(new Event("click"));
+    }
 
     document.querySelectorAll(".small-ratings i").forEach(element => {
-
-        function addRating(end) {
-            for (let i = 1; i <= end; i++) {
-                document.querySelector(`.small-ratings i[data-number="${i}"]`).classList.add("rating-color");
-            }
-        }
-
-        function removeRating(start) {
-            for (let i = start; i <= 5; i++) {
-                document.querySelector(`.small-ratings i[data-number="${i}"]`).classList.remove("rating-color");
-            }
-        }
-
         let rating = parseInt(element.dataset.number);
 
         element.addEventListener("click", event => {
@@ -38,10 +40,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Modal dismissal
     document.querySelector("#review-modal").addEventListener("hidden.bs.modal", () => {
-        ratingInput.value = 0;
-        for (let i = 1; i <= 5; i++) {
-            document.querySelector(`.small-ratings i[data-number="${i}"]`).classList.remove("rating-color");
-        }
+        ratingInput.value = "";
+        removeRating(1);
         document.querySelector("#create-restaurant-description").value = "";
     });
 });

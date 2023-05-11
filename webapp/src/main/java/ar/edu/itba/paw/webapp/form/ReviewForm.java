@@ -9,9 +9,6 @@ import javax.validation.constraints.Size;
 
 public class ReviewForm {
     @NotNull
-    private Integer orderId;
-
-    @NotNull
     @Min(0)
     @Max(5)
     private Integer rating;
@@ -19,14 +16,6 @@ public class ReviewForm {
     @NotBlank
     @Size(max=500)
     private String comment;
-
-    public Integer getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(Integer orderId) {
-        this.orderId = orderId;
-    }
 
     public Integer getRating() {
         return rating;

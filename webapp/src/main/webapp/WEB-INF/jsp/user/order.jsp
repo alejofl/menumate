@@ -11,7 +11,7 @@
         <jsp:param name="title" value="${title}"/>
     </jsp:include></head>
     <script src="<c:url value="/static/js/order.js"/>"></script>
-<body>
+<body data-error="${error}">
 <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
 <main class="order-details">
     <div class="card order-details-card">
@@ -126,8 +126,10 @@
             </div>
         </div>
     </div>
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#review-modal">Make Review</button>
-    <a type="button" class="btn btn-primary" href="<c:url value="/restaurants/${order.restaurant.restaurantId}"/>"><spring:message code="userorders.neworder"/></a>
+    <div class="d-flex gap-3">
+        <button type="button" class="btn btn-primary ${has_review || order.orderStatus != "DELIVERED" ? "disabled" : ""}" data-bs-toggle="modal" data-bs-target="#review-modal" id="review-modal-button">Make Review</button>
+        <a type="button" class="btn btn-primary" href="<c:url value="/restaurants/${order.restaurant.restaurantId}"/>"><spring:message code="userorders.neworder"/></a>
+    </div>
 </main>
 
 <div class="modal fade" id="review-modal" tabindex="-1">
