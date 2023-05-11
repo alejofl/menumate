@@ -82,7 +82,7 @@ public class ReviewJdbcDao implements ReviewDao {
     private static final String GET_BY_RESTAURANT_SQL = "WITH itemless_orders AS (" + OrderJdbcDao.SELECT_ITEMLESS_ORDERS + ")" +
             " SELECT " + TableFields.ORDER_REVIEW_FIELDS + ", itemless_orders.*" +
             " FROM order_reviews JOIN itemless_orders ON order_reviews.order_id = itemless_orders.order_id" +
-            " WHERE itemless_orders.restaurant_id = ? ORDER BY itemless_orders.order_date_ordered, itemless_orders.order_id" +
+            " WHERE itemless_orders.restaurant_id = ? ORDER BY itemless_orders.order_date_ordered DESC, itemless_orders.order_id" +
             " LIMIT ? OFFSET ?";
 
     @Override
@@ -108,7 +108,7 @@ public class ReviewJdbcDao implements ReviewDao {
     private static final String GET_BY_USER_SQL = "WITH itemless_orders AS (" + OrderJdbcDao.SELECT_ITEMLESS_ORDERS + ")" +
             " SELECT " + TableFields.ORDER_REVIEW_FIELDS + ", itemless_orders.*" +
             " FROM order_reviews JOIN itemless_orders ON order_reviews.order_id = itemless_orders.order_id" +
-            " WHERE itemless_orders.user_id = ? ORDER BY itemless_orders.order_date_ordered, itemless_orders.order_id" +
+            " WHERE itemless_orders.user_id = ? ORDER BY itemless_orders.order_date_ordered DESC, itemless_orders.order_id" +
             " LIMIT ? OFFSET ?";
 
     @Override
