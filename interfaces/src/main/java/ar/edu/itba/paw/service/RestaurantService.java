@@ -21,4 +21,10 @@ public interface RestaurantService {
     List<Pair<Category, List<Product>>> getMenu(long restaurantId);
 
     boolean delete(long restaurantId);
+
+    List<RestaurantTags> getTags(int restaurantId);
+
+    boolean addTag(int restaurantId, int tagId);
+
+    boolean removeTag(int restaurantId, int tagId);
 }

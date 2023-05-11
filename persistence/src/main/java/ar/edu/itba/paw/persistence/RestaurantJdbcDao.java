@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.Restaurant;
+import ar.edu.itba.paw.model.RestaurantTags;
 import ar.edu.itba.paw.model.util.PaginatedResult;
 import ar.edu.itba.paw.persistance.RestaurantDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ public class RestaurantJdbcDao implements RestaurantDao {
 
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert restaurantJdbcInsert;
+    private final SimpleJdbcInsert restaurantTagsJdbcInsert;
 
     @Autowired
     public RestaurantJdbcDao(final DataSource ds) {
@@ -30,6 +32,9 @@ public class RestaurantJdbcDao implements RestaurantDao {
                 .withTableName("restaurants")
                 .usingColumns("name", "email", "owner_user_id", "specialty", "logo_id", "portrait_1_id", "portrait_2_id", "address", "description")
                 .usingGeneratedKeyColumns("restaurant_id");
+        restaurantTagsJdbcInsert = new SimpleJdbcInsert(ds)
+                .withTableName("restaurant_tags")
+                .usingColumns("restaurant_id", "tag_id");
     }
 
     private static final String GET_BY_ID_SQL = SELECT_BASE + " WHERE restaurant_id = ?";
@@ -136,5 +141,31 @@ public class RestaurantJdbcDao implements RestaurantDao {
         }
 
         return success;
+    }
+
+    @Override
+    public List<RestaurantTags> getTags(int restaurantId) {
+        return jdbcTemplate.query(
+                "SELECT " + TableFields.RESTAURANT_TAGS_FIELDS + " FROM restaurant_tags WHERE restaurant_id = ?",
+                SimpleRowMappers.RESTAURANT_TAGS_ROW_MAPPER,
+                restaurantId
+        );
+    }
+
+    @Override
+    public boolean addTag(int restaurantId, int tagId) {
+        final Map<String, Object> tagData = new HashMap<>();
+        tagData.put("restaurant_id", restaurantId);
+        tagData.put("tag_id", tagId);
+        return restaurantTagsJdbcInsert.execute(tagData) > 0;
+    }
+
+    @Override
+    public boolean removeTag(int restaurantId, int tagId) {
+        return jdbcTemplate.update(
+                "DELETE FROM restaurant_tags WHERE restaurant_id = ? AND tag_id = ?",
+                restaurantId,
+                tagId
+        ) > 0;
     }
 }

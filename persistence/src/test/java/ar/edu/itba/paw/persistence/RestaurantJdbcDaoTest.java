@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.Restaurant;
+import ar.edu.itba.paw.model.RestaurantTags;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import org.junit.Assert;
 import org.junit.Before;
@@ -14,6 +15,7 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -29,6 +31,7 @@ public class RestaurantJdbcDaoTest {
     private static final String USER_EMAIL = "peter@peter.com";
     private static final String USER_PASSWORD = "super12secret34";
     private static final String USER_NAME = "Peter Parker";
+    private static final RestaurantTags[] TAGS = RestaurantTags.values();
 
     @Autowired
     private DataSource ds;
@@ -72,5 +75,48 @@ public class RestaurantJdbcDaoTest {
     public void testDeletion() throws SQLException {
         jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, specialty, owner_user_id, max_tables) VALUES (" + ID + ", '" + NAME + "', '" + EMAIL + "', " + SPECIALTY + ", " + USER_ID + ", " + MAX_TABLES + ")");
         Assert.assertTrue(restaurantDao.delete(ID));
+    }
+
+    @Test
+    public void addTagsToRestaurant() throws SQLException {
+        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, specialty, owner_user_id, max_tables) VALUES (" + ID + ", '" + NAME + "', '" + EMAIL + "', " + SPECIALTY + ", " + USER_ID + ", " + MAX_TABLES + ")");
+        for (RestaurantTags tag : TAGS) {
+            Assert.assertTrue(restaurantDao.addTag(ID, tag.ordinal()));
+        }
+
+        int count = jdbcTemplate.query("SELECT COUNT(*) AS c FROM restaurant_tags WHERE restaurant_id = ?",
+                (rs, rowNum)-> rs.getInt("c"), ID).get(0);
+
+        Assert.assertEquals(TAGS.length, count);
+    }
+
+    @Test
+    public void getRestaurantTags() throws SQLException {
+        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, specialty, owner_user_id, max_tables) VALUES (" + ID + ", '" + NAME + "', '" + EMAIL + "', " + SPECIALTY + ", " + USER_ID + ", " + MAX_TABLES + ")");
+        List<RestaurantTags> restaurantTags = restaurantDao.getTags(ID);
+        Assert.assertTrue(restaurantTags.isEmpty());
+
+        for (RestaurantTags tag : TAGS) {
+            jdbcTemplate.execute("INSERT INTO restaurant_tags (restaurant_id, tag_id) VALUES (" + ID + ", " + tag.ordinal() + ")");
+        }
+
+        restaurantTags = restaurantDao.getTags(ID);
+        Assert.assertEquals(TAGS.length, restaurantTags.size());
+    }
+
+    @Test
+    public void removeRestaurantTags() throws SQLException {
+        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, specialty, owner_user_id, max_tables) VALUES (" + ID + ", '" + NAME + "', '" + EMAIL + "', " + SPECIALTY + ", " + USER_ID + ", " + MAX_TABLES + ")");
+        for (RestaurantTags tag : TAGS) {
+            jdbcTemplate.execute("INSERT INTO restaurant_tags (restaurant_id, tag_id) VALUES (" + ID + ", " + tag.ordinal() + ")");
+        }
+
+        int count;
+        for (int i = 1; i < TAGS.length + 1; i++) {
+            Assert.assertTrue(restaurantDao.removeTag(ID, TAGS[i-1].ordinal()));
+            count = jdbcTemplate.query("SELECT COUNT(*) AS c FROM restaurant_tags WHERE restaurant_id = ?",
+                    (rs, rowNum)-> rs.getInt("c"), ID).get(0);
+            Assert.assertEquals(count, TAGS.length - i);
+        }
     }
 }

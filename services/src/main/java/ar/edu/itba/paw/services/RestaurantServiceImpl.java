@@ -77,4 +77,19 @@ public class RestaurantServiceImpl implements RestaurantService {
     public boolean delete(long restaurantId) {
         return restaurantDao.delete(restaurantId);
     }
+
+    @Override
+    public List<RestaurantTags> getTags(int restaurantId) {
+        return restaurantDao.getTags(restaurantId);
+    }
+
+    @Override
+    public boolean addTag(int restaurantId, int tagId) {
+        return restaurantDao.addTag(restaurantId, tagId);
+    }
+
+    @Override
+    public boolean removeTag(int restaurantId, int tagId) {
+        return restaurantDao.removeTag(restaurantId, tagId);
+    }
 }
