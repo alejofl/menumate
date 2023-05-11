@@ -50,6 +50,16 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
+    public PaginatedResult<Restaurant> getSortedByNameAsc(int pageNumber, int pageSize) {
+        return restaurantDao.getSortedByName(pageNumber, pageSize, "ASC");
+    }
+
+    @Override
+    public PaginatedResult<Restaurant> getSortedByNameDesc(int pageNumber, int pageSize) {
+        return restaurantDao.getSortedByName(pageNumber, pageSize, "DESC");
+    }
+
+    @Override
     public int getActiveCount() {
         return restaurantDao.countActive();
     }

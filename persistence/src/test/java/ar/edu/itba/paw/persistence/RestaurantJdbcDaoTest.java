@@ -2,6 +2,7 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.model.RestaurantTags;
+import ar.edu.itba.paw.model.util.PaginatedResult;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import org.junit.Assert;
 import org.junit.Before;
@@ -15,6 +16,7 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,6 +34,8 @@ public class RestaurantJdbcDaoTest {
     private static final String USER_PASSWORD = "super12secret34";
     private static final String USER_NAME = "Peter Parker";
     private static final RestaurantTags[] TAGS = RestaurantTags.values();
+    private static final List<String> EXPECTED_NAMES = Arrays.asList("B", "D", "E", "A", "C", "F");
+    private static final int PAGE_SIZE = 2;
 
     @Autowired
     private DataSource ds;
@@ -117,6 +121,42 @@ public class RestaurantJdbcDaoTest {
             count = jdbcTemplate.query("SELECT COUNT(*) AS c FROM restaurant_tags WHERE restaurant_id = ?",
                     (rs, rowNum)-> rs.getInt("c"), ID).get(0);
             Assert.assertEquals(count, TAGS.length - i);
+        }
+    }
+
+    @Test
+    public void getSortedByNameAsc() throws SQLException {
+
+        for (int i=0 ; i<EXPECTED_NAMES.size() ; i++) {
+            jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, specialty, owner_user_id, max_tables) VALUES (" + (i+1) + ", '" + EXPECTED_NAMES.get(i) + "', '" + EMAIL + "', " + SPECIALTY + ", " + USER_ID + ", " + MAX_TABLES + ")");
+        }
+
+        int j=0;
+        for(int i=0 ; i<(EXPECTED_NAMES.size()/PAGE_SIZE) ; i++) {
+            PaginatedResult<Restaurant> restaurants = restaurantDao.getSortedByName(i+1, PAGE_SIZE, "ASC");
+            Assert.assertEquals(EXPECTED_NAMES.size(), restaurants.getTotalCount());
+            for (int k=0 ; k<restaurants.getResult().size() ; k++) {
+                Assert.assertEquals((char) ('A' + j), restaurants.getResult().get(k).getName().charAt(0));
+                j++;
+            }
+        }
+    }
+
+    @Test
+    public void getSortedByNameDesc() throws SQLException {
+
+        for (int i=0 ; i<EXPECTED_NAMES.size() ; i++) {
+            jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, specialty, owner_user_id, max_tables) VALUES (" + (i+1) + ", '" + EXPECTED_NAMES.get(i) + "', '" + EMAIL + "', " + SPECIALTY + ", " + USER_ID + ", " + MAX_TABLES + ")");
+        }
+
+        int j=EXPECTED_NAMES.size()-1;
+        for(int i=0 ; i<(EXPECTED_NAMES.size()/PAGE_SIZE) ; i++) {
+            PaginatedResult<Restaurant> restaurants = restaurantDao.getSortedByName(i+1, PAGE_SIZE, "DESC");
+            Assert.assertEquals(EXPECTED_NAMES.size(), restaurants.getTotalCount());
+            for (int k=0 ; k<restaurants.getResult().size() ; k++) {
+                Assert.assertEquals((char) ('A' + j), restaurants.getResult().get(k).getName().charAt(0));
+                j--;
+            }
         }
     }
 }

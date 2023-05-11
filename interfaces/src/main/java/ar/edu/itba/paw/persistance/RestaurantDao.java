@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistance;
 
+import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.model.RestaurantTags;
 import ar.edu.itba.paw.model.util.PaginatedResult;
@@ -17,6 +18,8 @@ public interface RestaurantDao {
     int countActive();
 
     PaginatedResult<Restaurant> getSearchResults(String[] tokens, int pageNumber, int pageSize);
+
+    PaginatedResult<Restaurant> getSortedByName(int pageNumber, int pageSize, String sort);
 
     boolean delete(long restaurantId);
 

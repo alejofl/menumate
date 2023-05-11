@@ -18,6 +18,10 @@ public interface RestaurantService {
 
     PaginatedResult<Restaurant> getSearchResults(String query, int pageNumber, int pageSize);
 
+    PaginatedResult<Restaurant> getSortedByNameAsc(int pageNumber, int pageSize);
+
+    PaginatedResult<Restaurant> getSortedByNameDesc(int pageNumber, int pageSize);
+
     List<Pair<Category, List<Product>>> getMenu(long restaurantId);
 
     boolean delete(long restaurantId);
