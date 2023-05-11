@@ -11,10 +11,8 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Function;
 
 @Repository
 public class RestaurantJdbcDao implements RestaurantDao {
@@ -24,6 +22,9 @@ public class RestaurantJdbcDao implements RestaurantDao {
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert restaurantJdbcInsert;
     private final SimpleJdbcInsert restaurantTagsJdbcInsert;
+
+    @Autowired
+    private ReviewJdbcDao reviewJdbcDao;
 
     @Autowired
     public RestaurantJdbcDao(final DataSource ds) {
@@ -121,6 +122,34 @@ public class RestaurantJdbcDao implements RestaurantDao {
                 "SELECT count(*) AS c FROM restaurants WHERE is_active = true",
                 SimpleRowMappers.COUNT_ROW_MAPPER
         ).get(0);
+
+        return new PaginatedResult<>(results, pageNumber, pageSize, count);
+    }
+
+    @Override
+    public PaginatedResult<Restaurant> getSortedByPriceAverage(int pageNumber, int pageSize, String sort) {
+        int pageIdx = pageNumber -1;
+
+        List<Restaurant> results = jdbcTemplate.query(
+                SELECT_BASE + " WHERE is_active = true LIMIT ? OFFSET ?",
+                SimpleRowMappers.RESTAURANT_ROW_MAPPER,
+                pageSize,
+                pageIdx * pageSize
+        );
+
+        int count = jdbcTemplate.query(
+                "SELECT count(*) AS c FROM restaurants WHERE is_active = true",
+                SimpleRowMappers.COUNT_ROW_MAPPER
+        ).get(0);
+
+        results.sort(
+            Comparator.comparing
+            (
+                (Function<? super Restaurant, ? extends Float>) r -> reviewJdbcDao.getRestaurantAverage(r.getRestaurantId()).getAverage(),
+                sort.equalsIgnoreCase("ASC") ?
+                Comparator.naturalOrder() : Comparator.reverseOrder()
+            )
+        );
 
         return new PaginatedResult<>(results, pageNumber, pageSize, count);
     }

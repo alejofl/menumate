@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.model.Restaurant;
-import ar.edu.itba.paw.model.RestaurantTags;
+import ar.edu.itba.paw.model.*;
+import ar.edu.itba.paw.model.util.AverageCountPair;
 import ar.edu.itba.paw.model.util.PaginatedResult;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import org.junit.Assert;
@@ -16,9 +16,11 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Stream;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
@@ -36,6 +38,9 @@ public class RestaurantJdbcDaoTest {
     private static final RestaurantTags[] TAGS = RestaurantTags.values();
     private static final List<String> EXPECTED_NAMES = Arrays.asList("B", "D", "E", "A", "C", "F");
     private static final int PAGE_SIZE = 2;
+    private static final int  MIN_REVIEW_SCORE = 1;
+    private static final int MAX_REVIEW_SCORE = 5;
+    private static final int RESTAURANTS_QTY = 3;
 
     @Autowired
     private DataSource ds;
@@ -158,5 +163,45 @@ public class RestaurantJdbcDaoTest {
                 j--;
             }
         }
+    }
+
+    @Test
+    public void getSortedByPriceAverageAsc() throws SQLException {
+
+        List<Float> mockedReviewAverages = new ArrayList<>();
+        Random random;
+        ReviewJdbcDao reviewJdbcDao = mock(ReviewJdbcDao.class);
+        AverageCountPair averageCountPair = mock(AverageCountPair.class);
+
+        // Create restaurant
+        for(int i=1; i<RESTAURANTS_QTY+1; i++){
+            jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, specialty, owner_user_id, max_tables) VALUES (" + i + ", '" + NAME + "', '" + EMAIL + "', " + SPECIALTY + ", " + USER_ID + ", " + MAX_TABLES + ")");
+        }
+
+        int sum = 0;
+        int randomScoreValue;
+        for(int i=0; i< RESTAURANTS_QTY*RESTAURANTS_QTY ; i++) {
+            random = new Random();
+            randomScoreValue = random.nextInt(MAX_REVIEW_SCORE - MIN_REVIEW_SCORE + 1) + MIN_REVIEW_SCORE;
+            sum+=randomScoreValue;
+            if(i % RESTAURANTS_QTY == 0){
+                mockedReviewAverages.add((float) (sum / RESTAURANTS_QTY));
+                sum = 0;
+            }
+        }
+
+        int maxIndex = Collections.max(mockedReviewAverages).intValue() - 1;
+        int aux = Collections.min(mockedReviewAverages).intValue();
+        int minIndex = aux == 0 ? 0 : aux - 1;
+
+        for(int i=1; i<RESTAURANTS_QTY+1; i++){
+            when(reviewJdbcDao.getRestaurantAverage(i)).thenReturn(averageCountPair);
+            when(reviewJdbcDao.getRestaurantAverage(i).getAverage()).thenReturn(mockedReviewAverages.get(i-1));
+        }
+
+        PaginatedResult<Restaurant> res = restaurantDao.getSortedByPriceAverage(1, RESTAURANTS_QTY, "ASC");
+        Assert.assertEquals(RESTAURANTS_QTY, res.getResult().size());
+        Assert.assertEquals(minIndex + 1, res.getResult().get(minIndex).getRestaurantId());
+        Assert.assertEquals(maxIndex + 1, res.getResult().get(maxIndex).getRestaurantId());
     }
 }
