@@ -233,4 +233,25 @@ public class RestaurantJdbcDaoTest {
         Assert.assertEquals(minIndex + 1, res.getResult().get(0).getRestaurantId());
         Assert.assertEquals(maxIndex + 1, res.getResult().get(RESTAURANTS_QTY-1).getRestaurantId());
     }
+
+    @Test
+    public void getSortedByAveragePrice() throws SQLException {
+        //productJdbcDao.getRestaurantAveragePrice(r.getRestaurantId())
+        ProductJdbcDao productJdbcDao = mock(ProductJdbcDao.class);
+
+        for(int i=1; i<RESTAURANTS_QTY+1; i++){
+            jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, specialty, owner_user_id, max_tables) VALUES (" + i + ", '" + NAME + "', '" + EMAIL + "', " + SPECIALTY + ", " + USER_ID + ", " + MAX_TABLES + ")");
+        }
+
+        List<Double> mockedPrices = new ArrayList<>(Collections.nCopies(RESTAURANTS_QTY, 10.0));
+        for(int i=1; i<RESTAURANTS_QTY+1; i++){
+            when(productJdbcDao.getRestaurantAveragePrice(i)).thenReturn(mockedPrices.get(i-1)*i);
+        }
+
+        PaginatedResult<Restaurant> res = restaurantDao.getSortedByAveragePrice(1, RESTAURANTS_QTY, "DESC");
+
+        Assert.assertEquals(RESTAURANTS_QTY, res.getResult().size());
+        Assert.assertEquals(RESTAURANTS_QTY-1, res.getResult().get(0).getRestaurantId());
+        Assert.assertEquals(1, res.getResult().get(RESTAURANTS_QTY-1).getRestaurantId());
+    }
 }

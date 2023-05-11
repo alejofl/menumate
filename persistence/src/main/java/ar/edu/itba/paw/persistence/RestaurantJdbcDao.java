@@ -27,6 +27,9 @@ public class RestaurantJdbcDao implements RestaurantDao {
     private ReviewJdbcDao reviewJdbcDao;
 
     @Autowired
+    private ProductJdbcDao productJdbcDao;
+
+    @Autowired
     public RestaurantJdbcDao(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
         restaurantJdbcInsert = new SimpleJdbcInsert(ds)
@@ -172,6 +175,36 @@ public class RestaurantJdbcDao implements RestaurantDao {
 
         return new PaginatedResult<>(results, pageNumber, pageSize, count);
     }
+
+    @Override
+    public PaginatedResult<Restaurant> getSortedByAveragePrice(int pageNumber, int pageSize, String sort) {
+        int pageIdx = pageNumber -1;
+
+        List<Restaurant> results = jdbcTemplate.query(
+                SELECT_BASE + " WHERE is_active = true ORDER BY date_created " + sort + " LIMIT ? OFFSET ?",
+                SimpleRowMappers.RESTAURANT_ROW_MAPPER,
+                pageSize,
+                pageIdx * pageSize
+        );
+
+        int count = jdbcTemplate.query(
+                "SELECT count(*) AS c FROM restaurants WHERE is_active = true",
+                SimpleRowMappers.COUNT_ROW_MAPPER
+        ).get(0);
+
+
+        results.sort(
+            Comparator.comparing
+            (
+                (Function<? super Restaurant, ? extends Double>) r ->  productJdbcDao.getRestaurantAveragePrice(r.getRestaurantId()),
+                sort.equalsIgnoreCase("ASC") ?
+                        Comparator.naturalOrder() : Comparator.reverseOrder()
+            )
+        );
+
+        return new PaginatedResult<>(results, pageNumber, pageSize, count);
+    }
+
 
     @Override
     public long create(String name, String email, int specialty , long ownerUserId, String description, String address, int maxTables, Long logoKey, Long portrait1Kay, Long portrait2Key) {

@@ -80,6 +80,16 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
+    public PaginatedResult<Restaurant> getSortedByAveragePriceAsc(int pageNumber, int pageSize) {
+        return restaurantDao.getSortedByAveragePrice(pageNumber, pageSize, "ASC");
+    }
+
+    @Override
+    public PaginatedResult<Restaurant> getSortedByAveragePriceDesc(int pageNumber, int pageSize) {
+        return restaurantDao.getSortedByAveragePrice(pageNumber, pageSize, "DESC");
+    }
+
+    @Override
     public int getActiveCount() {
         return restaurantDao.countActive();
     }
