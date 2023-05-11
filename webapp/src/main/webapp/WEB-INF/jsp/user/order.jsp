@@ -127,7 +127,7 @@
         </div>
     </div>
     <div class="d-flex gap-3">
-        <button type="button" class="btn btn-primary ${has_review || order.orderStatus != "DELIVERED" ? "disabled" : ""}" data-bs-toggle="modal" data-bs-target="#review-modal" id="review-modal-button">Make Review</button>
+        <button type="button" class="btn btn-primary ${has_review || order.orderStatus != "DELIVERED" ? "disabled" : ""}" data-bs-toggle="modal" data-bs-target="#review-modal" id="review-modal-button"><spring:message code="userorders.review.make"/></button>
         <a type="button" class="btn btn-primary" href="<c:url value="/restaurants/${order.restaurant.restaurantId}"/>"><spring:message code="userorders.neworder"/></a>
     </div>
 </main>
@@ -136,14 +136,14 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5">Make Review</h1>
+                <h1 class="modal-title fs-5"><spring:message code="userorders.review.make"/></h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <c:url value="/orders/${order.orderId}/review" var="reviewUrl"/>
             <form:form cssClass="mb-0" modelAttribute="reviewForm" action="${reviewUrl}" method="post" id="review-form">
                 <div class="modal-body">
                     <div class="mb-3">
-                        <form:label path="rating" cssClass="form-label">Rating</form:label>
+                        <form:label path="rating" cssClass="form-label"><spring:message code="userorders.review.rating"/></form:label>
                         <div class="small-ratings">
                             <i class="bi bi-star-fill" data-number="1"></i>
                             <i class="bi bi-star-fill" data-number="2"></i>
@@ -155,13 +155,13 @@
                         <form:errors path="rating" element="div" cssClass="form-error"/>
                     </div>
                     <div class="mb-3">
-                        <form:label path="comment" cssClass="form-label">Comment</form:label>
+                        <form:label path="comment" cssClass="form-label"><spring:message code="userorders.review.comment"/></form:label>
                         <form:textarea class="form-control" path="comment" id="create-restaurant-description" rows="3"/>
                         <form:errors path="comment" element="div" cssClass="form-error"/>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <input type="submit" class="btn btn-primary" value="Review">
+                    <input type="submit" class="btn btn-primary" value="<spring:message code="userorders.review"/>">
                 </div>
             </form:form>
         </div>
