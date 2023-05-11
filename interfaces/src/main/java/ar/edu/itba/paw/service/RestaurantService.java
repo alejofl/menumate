@@ -18,6 +18,8 @@ public interface RestaurantService {
 
     PaginatedResult<Restaurant> getSearchResults(String query, int pageNumber, int pageSize);
 
+    List<Pair<Restaurant, Integer>> getAverageRatingForRestaurants(List<Restaurant> restaurants);
+
     List<Pair<Category, List<Product>>> getMenu(int restaurantId);
 
     boolean delete(int restaurantId);
