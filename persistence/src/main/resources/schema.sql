@@ -42,7 +42,8 @@ CREATE TABLE IF NOT EXISTS restaurants
     logo_id       INT REFERENCES images (image_id) ON DELETE SET NULL,
     portrait_1_id INT REFERENCES images (image_id) ON DELETE SET NULL,
     portrait_2_id INT REFERENCES images (image_id) ON DELETE SET NULL,
-    is_active     BOOLEAN NOT NULL DEFAULT TRUE
+    is_active     BOOLEAN NOT NULL DEFAULT TRUE,
+    deleted       BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS restaurant_roles

@@ -32,21 +32,27 @@ public class RestaurantJdbcDao implements RestaurantDao {
                 .usingGeneratedKeyColumns("restaurant_id");
     }
 
+    private static final String GET_BY_ID_SQL = SELECT_BASE + " WHERE restaurant_id = ?";
+
     @Override
     public Optional<Restaurant> getById(long restaurantId) {
         return jdbcTemplate.query(
-                SELECT_BASE + " WHERE restaurant_id = ?",
+                GET_BY_ID_SQL,
                 SimpleRowMappers.RESTAURANT_ROW_MAPPER,
                 restaurantId
         ).stream().findFirst();
     }
+
+    private static final String GET_ACTIVE_SQL = SELECT_BASE
+            + " WHERE restaurants.deleted = false AND restaurants.is_active = true" +
+            " ORDER BY restaurants.date_created, restaurants.restaurant_id LIMIT ? OFFSET ?";
 
     @Override
     public PaginatedResult<Restaurant> getActive(int pageNumber, int pageSize) {
         int pageIdx = pageNumber - 1;
         RowMapper<Restaurant> rowMapper = SimpleRowMappers.RESTAURANT_ROW_MAPPER;
         List<Restaurant> results = jdbcTemplate.query(
-                SELECT_BASE + " WHERE is_active = true ORDER BY restaurant_id LIMIT ? OFFSET ?",
+                GET_ACTIVE_SQL,
                 rowMapper,
                 pageSize,
                 pageIdx * pageSize
@@ -60,10 +66,14 @@ public class RestaurantJdbcDao implements RestaurantDao {
     @Override
     public int countActive() {
         return jdbcTemplate.query(
-                "SELECT COUNT(*) AS c FROM restaurants WHERE is_active = true",
+                "SELECT COUNT(*) AS c FROM restaurants WHERE deleted = false AND is_active = true",
                 SimpleRowMappers.COUNT_ROW_MAPPER
         ).get(0);
     }
+
+    private static final String GET_SEARCH_RESULTS_SQL = SELECT_BASE +
+            " WHERE restaurants.deleted = false AND restaurants.is_active = true" +
+            " AND LOWER(restaurants.name) LIKE ? ORDER BY restaurants.restaurant_id LIMIT ? OFFSET ?";
 
     @Override
     public PaginatedResult<Restaurant> getSearchResults(String[] tokens, int pageNumber, int pageSize) {
@@ -75,7 +85,7 @@ public class RestaurantJdbcDao implements RestaurantDao {
         String search = searchParam.toString();
 
         List<Restaurant> results = jdbcTemplate.query(
-                SELECT_BASE + " WHERE is_active = true AND LOWER(name) LIKE ? ORDER BY restaurant_id LIMIT ? OFFSET ?",
+                GET_SEARCH_RESULTS_SQL,
                 SimpleRowMappers.RESTAURANT_ROW_MAPPER,
                 search,
                 pageSize,
@@ -83,7 +93,7 @@ public class RestaurantJdbcDao implements RestaurantDao {
         );
 
         int count = jdbcTemplate.query(
-                "SELECT count(*) AS c FROM restaurants WHERE is_active = true AND LOWER(name) LIKE ?",
+                "SELECT COUNT(*) AS c FROM restaurants WHERE deleted = false AND is_active = true AND LOWER(name) LIKE ?",
                 SimpleRowMappers.COUNT_ROW_MAPPER,
                 search
         ).get(0);
@@ -108,6 +118,22 @@ public class RestaurantJdbcDao implements RestaurantDao {
 
     @Override
     public boolean delete(long restaurantId) {
-        return jdbcTemplate.update("DELETE FROM restaurants WHERE restaurant_id = ?", restaurantId) > 0;
+        boolean success = jdbcTemplate.update(
+                "UPDATE restaurants SET deleted = true WHERE deleted = false AND restaurant_id = ?",
+                restaurantId
+        ) > 0;
+
+        if (success) {
+            jdbcTemplate.update(
+                    "UPDATE categories SET deleted = true WHERE categories.restaurant_id = ?",
+                    restaurantId
+            );
+            jdbcTemplate.update(
+                    "UPDATE products SET deleted = true WHERE products.category_id IN (SELECT category_id FROM categories WHERE restaurant_id = ?)",
+                    restaurantId
+            );
+        }
+
+        return success;
     }
 }

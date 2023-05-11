@@ -90,16 +90,18 @@ public class CategoryJdbcDao implements CategoryDao {
 
     @Override
     public boolean delete(long categoryId) {
-        int rows = jdbcTemplate.update(
+        boolean success = jdbcTemplate.update(
                 "UPDATE categories SET deleted = true WHERE deleted = false AND category_id = ?",
                 categoryId
-        );
+        ) > 0;
 
-        jdbcTemplate.update(
-                "UPDATE products SET deleted = true WHERE category_id = ?",
-                categoryId
-        );
+        if (success) {
+            jdbcTemplate.update(
+                    "UPDATE products SET deleted = true WHERE category_id = ?",
+                    categoryId
+            );
+        }
 
-        return rows > 0;
+        return success;
     }
 }

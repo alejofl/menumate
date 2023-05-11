@@ -57,7 +57,8 @@ class SimpleRowMappers {
             rs.getString("restaurant_address"),
             rs.getString("restaurant_description"),
             rs.getInt("restaurant_max_tables"),
-            rs.getBoolean("restaurant_is_active")
+            rs.getBoolean("restaurant_is_active"),
+            rs.getBoolean("restaurant_deleted")
     );
 
     static final RowMapper<RestaurantRoleLevel> RESTAURANT_ROLE_LEVEL_ROW_MAPPER = (ResultSet rs, int rowNum) -> {
