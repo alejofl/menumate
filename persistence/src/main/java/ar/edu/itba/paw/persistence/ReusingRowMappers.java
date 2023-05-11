@@ -126,7 +126,8 @@ class ReusingRowMappers {
                     pk,
                     restaurantRowMapper.mapRow(rs, 1),
                     rs.getString("category_name"),
-                    rs.getInt("category_order")
+                    rs.getInt("category_order"),
+                    rs.getBoolean("category_deleted")
             );
         }
     }

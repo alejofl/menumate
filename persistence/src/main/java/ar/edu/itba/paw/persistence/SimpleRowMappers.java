@@ -73,7 +73,8 @@ class SimpleRowMappers {
             rs.getLong("category_id"),
             RESTAURANT_ROW_MAPPER.mapRow(rs, rowNum),
             rs.getString("category_name"),
-            rs.getInt("category_order")
+            rs.getInt("category_order"),
+            rs.getBoolean("category_deleted")
     );
 
     static final RowMapper<Product> PRODUCT_ROW_MAPPER = (ResultSet rs, int rowNum) -> new Product(

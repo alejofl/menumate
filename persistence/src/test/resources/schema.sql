@@ -60,6 +60,7 @@ CREATE TABLE IF NOT EXISTS categories
     restaurant_id INT REFERENCES restaurants (restaurant_id) ON DELETE CASCADE NOT NULL,
     name          VARCHAR(50) NOT NULL,
     order_num     SMALLINT NOT NULL,
+    deleted       BOOLEAN NOT NULL DEFAULT FALSE,
 
     UNIQUE (restaurant_id, order_num)
 );
