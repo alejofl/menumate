@@ -31,16 +31,16 @@ public class RestaurantServiceImpl implements RestaurantService {
     private ReviewService reviewService;
 
     @Override
-    public int create(String name, String email, int ownerUserId, String description, String address, int maxTables, byte[] logo, byte[] portrait1, byte[] portrait2) {
-        int logoKey = imageService.create(logo);
-        int portrait1Key = imageService.create(portrait1);
-        int portrait2Key = imageService.create(portrait2);
+    public long create(String name, String email, long ownerUserId, String description, String address, int maxTables, byte[] logo, byte[] portrait1, byte[] portrait2) {
+        long logoKey = imageService.create(logo);
+        long portrait1Key = imageService.create(portrait1);
+        long portrait2Key = imageService.create(portrait2);
 
         return restaurantDao.create(name, email, ownerUserId, description, address, maxTables, logoKey, portrait1Key, portrait2Key);
     }
 
     @Override
-    public Optional<Restaurant> getById(int restaurantId) {
+    public Optional<Restaurant> getById(long restaurantId) {
         return restaurantDao.getById(restaurantId);
     }
 
@@ -64,25 +64,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public List<Pair<Category, List<Product>>> getMenu(int restaurantId) {
-//        List<Product> products = productDao.getByRestaurantOrderByCategoryOrder(restaurantId);
-//
-//        List<Pair<Category, List<Product>>> menu = new ArrayList<>();
-//        Category currentCategory = null;
-//        List<Product> currentList = null;
-//        for (Product product : products) {
-//            if (currentCategory == null || currentCategory.getCategoryId() != product.getCategory().getCategoryId()) {
-//                if (currentCategory != null)
-//                    menu.add(new Pair<>(currentCategory, currentList));
-//                currentCategory = product.getCategory();
-//                currentList = new ArrayList<>();
-//            }
-//            currentList.add(product);
-//        }
-//
-//        if (currentCategory != null)
-//            menu.add(new Pair<>(currentCategory, currentList));
-
+    public List<Pair<Category, List<Product>>> getMenu(long restaurantId) {
         List<Category> categories = categoryService.getByRestaurantSortedByOrder(restaurantId);
         List<Pair<Category, List<Product>>> menu = new ArrayList<>();
         for (Category category : categories) {
@@ -92,7 +74,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public boolean delete(int restaurantId) {
+    public boolean delete(long restaurantId) {
         return restaurantDao.delete(restaurantId);
     }
 

@@ -15,47 +15,44 @@ public class AccessValidator {
     private OrderService orderService;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private RolesService rolesService;
 
-    public boolean checkRestaurantRole(int restaurantId, RestaurantRoleLevel minimumRoleLevel) {
-        Integer currentUserId = ControllerUtils.getCurrentUserIdOrNull();
+    public boolean checkRestaurantRole(long restaurantId, RestaurantRoleLevel minimumRoleLevel) {
+        Long currentUserId = ControllerUtils.getCurrentUserIdOrNull();
         if (currentUserId == null)
             return false;
 
         return rolesService.doesUserHaveRole(currentUserId, restaurantId, minimumRoleLevel);
     }
 
-    public boolean checkRestaurantOwner(int restaurantId) {
+    public boolean checkRestaurantOwner(long restaurantId) {
         return checkRestaurantRole(restaurantId, RestaurantRoleLevel.OWNER);
     }
 
-    public boolean checkRestaurantAdmin(int restaurantId) {
+    public boolean checkRestaurantAdmin(long restaurantId) {
         return checkRestaurantRole(restaurantId, RestaurantRoleLevel.ADMIN);
     }
 
-    public boolean checkRestaurantManager(int restaurantId) {
+    public boolean checkRestaurantManager(long restaurantId) {
         return checkRestaurantRole(restaurantId, RestaurantRoleLevel.MANAGER);
     }
 
-    public boolean checkRestaurantOrderHandler(int restaurantId) {
+    public boolean checkRestaurantOrderHandler(long restaurantId) {
         return checkRestaurantRole(restaurantId, RestaurantRoleLevel.ORDER_HANDLER);
     }
 
-    public boolean checkOrderOwner(int orderId) {
+    public boolean checkOrderOwner(long orderId) {
         OrderItemless order = orderService.getByIdExcludeItems(orderId).orElse(null);
         PawAuthUserDetails currentUserDetails = ControllerUtils.getCurrentUserDetailsOrNull();
         return order != null && currentUserDetails != null && order.getUser().getUserId() == currentUserDetails.getUserId();
     }
 
-    public boolean checkOrderHandler(int orderId) {
+    public boolean checkOrderHandler(long orderId) {
         OrderItemless order = orderService.getByIdExcludeItems(orderId).orElse(null);
         return order != null && checkRestaurantOrderHandler(order.getRestaurant().getRestaurantId());
     }
 
-    public boolean checkOrderOwnerOrHandler(int orderId) {
+    public boolean checkOrderOwnerOrHandler(long orderId) {
         OrderItemless order = orderService.getByIdExcludeItems(orderId).orElse(null);
         PawAuthUserDetails currentUserDetails = ControllerUtils.getCurrentUserDetailsOrNull();
         return order != null && currentUserDetails != null && (order.getUser().getUserId() == currentUserDetails.getUserId() || checkRestaurantOrderHandler(order.getRestaurant().getRestaurantId()));

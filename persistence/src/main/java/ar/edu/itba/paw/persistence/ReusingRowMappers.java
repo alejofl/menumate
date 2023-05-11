@@ -30,52 +30,52 @@ class ReusingRowMappers {
         public abstract T mapObject(K pk, ResultSet rs) throws SQLException;
     }
 
-    private static abstract class IntKeyReusingRowMapper<T> extends ReusingRowMapper<Integer, T> {
+    private static abstract class LongKeyReusingRowMapper<T> extends ReusingRowMapper<Long, T> {
         private final String keyColumnName;
 
-        public IntKeyReusingRowMapper(String keyColumnName) {
+        public LongKeyReusingRowMapper(String keyColumnName) {
             this.keyColumnName = keyColumnName;
         }
 
         @Override
-        public Integer getKey(ResultSet resultSet, int i) throws SQLException {
-            return resultSet.getInt(keyColumnName);
+        public Long getKey(ResultSet resultSet, int i) throws SQLException {
+            return resultSet.getLong(keyColumnName);
         }
     }
 
-    private static abstract class TripleIntKeyReusingRowMapper<T> extends ReusingRowMapper<Triplet<Integer, Integer, Integer>, T> {
+    private static abstract class TripleLongKeyReusingRowMapper<T> extends ReusingRowMapper<Triplet<Long, Long, Long>, T> {
         private final String keyColumnName1;
         private final String keyColumnName2;
         private final String keyColumnName3;
 
-        public TripleIntKeyReusingRowMapper(String keyColumnName1, String keyColumnName2, String keyColumnName3) {
+        public TripleLongKeyReusingRowMapper(String keyColumnName1, String keyColumnName2, String keyColumnName3) {
             this.keyColumnName1 = keyColumnName1;
             this.keyColumnName2 = keyColumnName2;
             this.keyColumnName3 = keyColumnName3;
         }
 
         @Override
-        public Triplet<Integer, Integer, Integer> getKey(ResultSet resultSet, int i) throws SQLException {
+        public Triplet<Long, Long, Long> getKey(ResultSet resultSet, int i) throws SQLException {
             return new Triplet<>(
-                    resultSet.getInt(keyColumnName1),
-                    resultSet.getInt(keyColumnName2),
-                    resultSet.getInt(keyColumnName3)
+                    resultSet.getLong(keyColumnName1),
+                    resultSet.getLong(keyColumnName2),
+                    resultSet.getLong(keyColumnName3)
             );
         }
     }
 
-    private static class UserReusingRowMapper extends IntKeyReusingRowMapper<User> {
+    private static class UserReusingRowMapper extends LongKeyReusingRowMapper<User> {
         public UserReusingRowMapper() {
             super("user_id");
         }
 
         @Override
-        public User mapObject(Integer pk, ResultSet rs) throws SQLException {
+        public User mapObject(Long pk, ResultSet rs) throws SQLException {
             return new User(
                     pk,
                     rs.getString("user_email"),
                     rs.getString("user_name"),
-                    rs.getInt("user_image_id"),
+                    SimpleRowMappers.readLongOrNull(rs, "user_image_id"),
                     rs.getBoolean("user_is_active")
             );
         }
@@ -85,25 +85,26 @@ class ReusingRowMappers {
         return new UserReusingRowMapper();
     }
 
-    private static class RestaurantReusingRowMapper extends IntKeyReusingRowMapper<Restaurant> {
+    private static class RestaurantReusingRowMapper extends LongKeyReusingRowMapper<Restaurant> {
         public RestaurantReusingRowMapper() {
             super("restaurant_id");
         }
 
         @Override
-        public Restaurant mapObject(Integer pk, ResultSet rs) throws SQLException {
+        public Restaurant mapObject(Long pk, ResultSet rs) throws SQLException {
             return new Restaurant(
                     pk,
                     rs.getString("restaurant_name"),
                     rs.getString("restaurant_email"),
-                    rs.getInt("restaurant_owner_user_id"),
-                    rs.getInt("restaurant_logo_id"),
-                    rs.getInt("restaurant_portrait_1_id"),
-                    rs.getInt("restaurant_portrait_2_id"),
+                    rs.getLong("restaurant_owner_user_id"),
+                    SimpleRowMappers.readLongOrNull(rs, "restaurant_logo_id"),
+                    SimpleRowMappers.readLongOrNull(rs, "restaurant_portrait_1_id"),
+                    SimpleRowMappers.readLongOrNull(rs, "restaurant_portrait_2_id"),
                     rs.getString("restaurant_address"),
                     rs.getString("restaurant_description"),
                     rs.getInt("restaurant_max_tables"),
-                    rs.getBoolean("restaurant_is_active")
+                    rs.getBoolean("restaurant_is_active"),
+                    rs.getBoolean("restaurant_deleted")
             );
         }
     }
@@ -112,7 +113,7 @@ class ReusingRowMappers {
         return new RestaurantReusingRowMapper();
     }
 
-    private static class CategoryReusingRowMapper extends IntKeyReusingRowMapper<Category> {
+    private static class CategoryReusingRowMapper extends LongKeyReusingRowMapper<Category> {
         private final RowMapper<Restaurant> restaurantRowMapper;
 
         public CategoryReusingRowMapper() {
@@ -121,12 +122,13 @@ class ReusingRowMappers {
         }
 
         @Override
-        public Category mapObject(Integer pk, ResultSet rs) throws SQLException {
+        public Category mapObject(Long pk, ResultSet rs) throws SQLException {
             return new Category(
                     pk,
                     restaurantRowMapper.mapRow(rs, 1),
                     rs.getString("category_name"),
-                    rs.getInt("category_order")
+                    rs.getInt("category_order"),
+                    rs.getBoolean("category_deleted")
             );
         }
     }
@@ -135,7 +137,7 @@ class ReusingRowMappers {
         return new CategoryReusingRowMapper();
     }
 
-    private static class ProductReusingRowMapper extends IntKeyReusingRowMapper<Product> {
+    private static class ProductReusingRowMapper extends LongKeyReusingRowMapper<Product> {
         private final RowMapper<Category> categoryRowMapper;
 
         public ProductReusingRowMapper() {
@@ -144,14 +146,15 @@ class ReusingRowMappers {
         }
 
         @Override
-        public Product mapObject(Integer pk, ResultSet rs) throws SQLException {
+        public Product mapObject(Long pk, ResultSet rs) throws SQLException {
             return new Product(pk,
                     categoryRowMapper.mapRow(rs, 1),
                     rs.getString("product_name"),
                     rs.getBigDecimal("product_price"),
                     rs.getString("product_description"),
-                    rs.getInt("product_image_id"),
-                    rs.getBoolean("product_available")
+                    SimpleRowMappers.readLongOrNull(rs, "product_image_id"),
+                    rs.getBoolean("product_available"),
+                    rs.getBoolean("product_deleted")
             );
         }
     }
@@ -160,7 +163,7 @@ class ReusingRowMappers {
         return new ProductReusingRowMapper();
     }
 
-    private static class OrderItemlessReusingRowMapper extends IntKeyReusingRowMapper<OrderItemless> {
+    private static class OrderItemlessReusingRowMapper extends LongKeyReusingRowMapper<OrderItemless> {
         private final RowMapper<Restaurant> restaurantRowMapper;
         private final RowMapper<User> userRowMapper;
 
@@ -171,9 +174,9 @@ class ReusingRowMappers {
         }
 
         @Override
-        public OrderItemless mapObject(Integer pk, ResultSet rs) throws SQLException {
+        public OrderItemless mapObject(Long pk, ResultSet rs) throws SQLException {
             return new OrderItemless(
-                    rs.getInt("order_id"),
+                    rs.getLong("order_id"),
                     OrderType.fromOrdinal(rs.getInt("order_type")),
                     restaurantRowMapper.mapRow(rs, 1),
                     userRowMapper.mapRow(rs, 1),
@@ -194,7 +197,7 @@ class ReusingRowMappers {
         return new OrderItemlessReusingRowMapper();
     }
 
-    private static class OrderItemReusingRowMapper extends TripleIntKeyReusingRowMapper<OrderItem> {
+    private static class OrderItemReusingRowMapper extends TripleLongKeyReusingRowMapper<OrderItem> {
         private final RowMapper<Product> productRowMapper;
 
         public OrderItemReusingRowMapper() {
@@ -203,7 +206,7 @@ class ReusingRowMappers {
         }
 
         @Override
-        public OrderItem mapObject(Triplet<Integer, Integer, Integer> pk, ResultSet rs) throws SQLException {
+        public OrderItem mapObject(Triplet<Long, Long, Long> pk, ResultSet rs) throws SQLException {
             return new OrderItem(
                     productRowMapper.mapRow(rs, 1),
                     rs.getInt("order_item_line_number"),

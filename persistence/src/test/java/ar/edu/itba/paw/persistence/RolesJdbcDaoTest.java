@@ -24,24 +24,24 @@ import java.util.Optional;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
 public class RolesJdbcDaoTest {
-    private static final int USER_ID = 791;
+    private static final long USER_ID = 791;
     private static final String USER_EMAIL = "peter@peter.com";
     private static final String USER_PASSWORD = "super12secret34";
     private static final String USER_NAME = "Peter Parker";
-    private static final int OWNER_ID = 313;
+    private static final long OWNER_ID = 313;
     private static final String OWNER_EMAIL = "pedro@pedro.com";
     private static final String OWNER_PASSWORD = "mega12secreto34";
     private static final String OWNER_NAME = "Pedro Parker";
-    private static final int RESTAURANT_ID1 = 5123;
+    private static final long RESTAURANT_ID1 = 5123;
     private static final String RESTAURANT_NAME1 = "pedros";
     private static final String RESTAURANT_EMAIL1 = "pedros@frompedros.com";
-    private static final int RESTAURANT_ID2 = 4242;
+    private static final long RESTAURANT_ID2 = 4242;
     private static final String RESTAURANT_NAME2 = "La Mejor Pizza";
     private static final String RESTAURANT_EMAIL2 = "pizzeria@pizza.com";
     private static final int MAX_TABLES = 20;
     private static final RestaurantRoleLevel ROLE = RestaurantRoleLevel.MANAGER;
-    private static final int USER_ID_NONE = 1234;
-    private static final int RESTAURANT_ID_NONE = 1234;
+    private static final long USER_ID_NONE = 1234;
+    private static final long RESTAURANT_ID_NONE = 1234;
 
     @Autowired
     private DataSource ds;
@@ -157,8 +157,8 @@ public class RolesJdbcDaoTest {
 
         Assert.assertEquals(2, result.size());
 
-        int[] restaurantsExpected = new int[] {RESTAURANT_ID1, RESTAURANT_ID2};
-        int[] restaurantsGot = new int[] {result.get(0).getX().getRestaurantId(), result.get(1).getX().getRestaurantId()};
+        long[] restaurantsExpected = new long[] {RESTAURANT_ID1, RESTAURANT_ID2};
+        long[] restaurantsGot = new long[] {result.get(0).getX().getRestaurantId(), result.get(1).getX().getRestaurantId()};
         Arrays.sort(restaurantsGot);
         Arrays.sort(restaurantsExpected);
         Assert.assertArrayEquals(restaurantsExpected, restaurantsGot);

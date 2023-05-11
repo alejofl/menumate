@@ -136,7 +136,7 @@ public class UserController {
         }
 
         PawAuthUserDetails userDetails = ControllerUtils.getCurrentUserDetailsOrThrow();
-        int restaurantId = restaurantService.create(
+        long restaurantId = restaurantService.create(
                 form.getName(),
                 userDetails.getUsername(),
                 userDetails.getUserId(),

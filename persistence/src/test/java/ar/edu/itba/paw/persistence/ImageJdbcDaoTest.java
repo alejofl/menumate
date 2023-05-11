@@ -28,7 +28,7 @@ public class ImageJdbcDaoTest {
 
     private JdbcTemplate jdbcTemplate;
 
-    private static final int IMAGE_ID = 6363;
+    private static final long IMAGE_ID = 6363;
     private static final byte[] IMG_INFO_1 = new byte[50];
     private static final byte[] IMG_INFO_2 = new byte[100];
 
@@ -44,7 +44,7 @@ public class ImageJdbcDaoTest {
 
     @Test
     public void testCreateImg() throws SQLException {
-        final int image = imageJdbcDao.create(IMG_INFO_1);
+        final long image = imageJdbcDao.create(IMG_INFO_1);
         Assert.assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "images"));
     }
 

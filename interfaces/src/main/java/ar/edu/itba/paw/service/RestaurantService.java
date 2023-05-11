@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RestaurantService {
-    int create(String name, String email, int ownerUserId, String description, String address, int maxTables, byte[] logo, byte[] portrait1, byte[] portrait2);
+    long create(String name, String email, long ownerUserId, String description, String address, int maxTables, byte[] logo, byte[] portrait1, byte[] portrait2);
 
-    Optional<Restaurant> getById(int restaurantId);
+    Optional<Restaurant> getById(long restaurantId);
 
     PaginatedResult<Restaurant> getActive(int pageNumber, int pageSize);
 
@@ -20,7 +20,7 @@ public interface RestaurantService {
 
     List<Pair<Restaurant, Integer>> getAverageRatingForRestaurants(List<Restaurant> restaurants);
 
-    List<Pair<Category, List<Product>>> getMenu(int restaurantId);
+    List<Pair<Category, List<Product>>> getMenu(long restaurantId);
 
-    boolean delete(int restaurantId);
+    boolean delete(long restaurantId);
 }

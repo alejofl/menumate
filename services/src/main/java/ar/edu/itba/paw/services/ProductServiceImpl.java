@@ -21,33 +21,28 @@ public class ProductServiceImpl implements ProductService {
     private ImageService imageService;
 
     @Override
-    public Product create(int categoryId, String name, String description, byte[] image, BigDecimal price) {
-        int imageKey = imageService.create(image);
+    public Product create(long categoryId, String name, String description, byte[] image, BigDecimal price) {
+        long imageKey = imageService.create(image);
         return productDao.create(categoryId, name, description, imageKey, price);
     }
 
     @Override
-    public Optional<Product> getById(int productId) {
+    public Optional<Product> getById(long productId) {
         return productDao.getById(productId);
     }
 
     @Override
-    public List<Product> getByCategory(int categoryId) {
+    public List<Product> getByCategory(long categoryId) {
         return productDao.getByCategory(categoryId);
     }
 
     @Override
-    public boolean updatePrice(int productId, BigDecimal price) {
-        return productDao.updatePrice(productId, price);
+    public boolean update(long productId, String name, BigDecimal price, String description) {
+        return productDao.update(productId, name, price ,description);
     }
 
     @Override
-    public boolean updateName(int productId, String name) {
-        return productDao.updateName(productId, name);
-    }
-
-    @Override
-    public boolean delete(int productId) {
+    public boolean delete(long productId) {
         return productDao.delete(productId);
     }
 }

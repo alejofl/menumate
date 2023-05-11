@@ -36,19 +36,19 @@ public class UserJdbcDao implements UserDao {
         userData.put("password", password);
         userData.put("name", name);
 
-        final int userId = jdbcInsert.executeAndReturnKey(userData).intValue();
-        return new User(userId, email, name, 0, false);
+        final long userId = jdbcInsert.executeAndReturnKey(userData).longValue();
+        return new User(userId, email, name, null, false);
     }
 
     @Override
     public User update(String email, String password, String name) {
-        int userId = getByEmail(email).get().getUserId();
+        long userId = getByEmail(email).get().getUserId();
         jdbcTemplate.update("UPDATE users SET password = ?, name = ? WHERE user_id = ?", password, name, userId);
         return getByEmail(email).get();
     }
 
     @Override
-    public Optional<User> getById(int userId) {
+    public Optional<User> getById(long userId) {
         return jdbcTemplate.query(
                 "SELECT " + TableFields.USERS_FIELDS + " FROM users WHERE user_id = ?",
                 SimpleRowMappers.USER_ROW_MAPPER,

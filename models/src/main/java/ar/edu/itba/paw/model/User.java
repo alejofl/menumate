@@ -2,13 +2,13 @@ package ar.edu.itba.paw.model;
 
 public class User {
 
-    private final int userId;
+    private final long userId;
     private final String email;
     private final String name;
-    private final int imageId;
+    private final Long imageId;
     private final boolean isActive;
 
-    public User(int userId, String email, String name, int imageId, boolean isActive) {
+    public User(long userId, String email, String name, Long imageId, boolean isActive) {
         this.userId = userId;
         this.name = name;
         this.email = email;
@@ -24,11 +24,11 @@ public class User {
         return name;
     }
 
-    public int getUserId() {
+    public long getUserId() {
         return userId;
     }
 
-    public int getImageId() {
+    public Long getImageId() {
         return imageId;
     }
 

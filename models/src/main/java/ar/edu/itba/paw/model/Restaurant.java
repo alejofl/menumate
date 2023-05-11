@@ -1,19 +1,20 @@
 package ar.edu.itba.paw.model;
 
 public class Restaurant {
-    private final int restaurantId;
+    private final long restaurantId;
     private final String name;
     private final String email;
-    private final int ownerUserId;
-    private final int logoId;
-    private final int portraitId1;
-    private final int portraitId2;
+    private final long ownerUserId;
+    private final Long logoId;
+    private final Long portraitId1;
+    private final Long portraitId2;
     private final String address;
     private final String description;
     private final int maxTables;
     private final boolean isActive;
+    private final boolean deleted;
 
-    public Restaurant(int restaurantId, String name, String email, int ownerUserId, int logoId, int portrait1Id, int portrait2Id, String address, String description, int maxTables, boolean isActive) {
+    public Restaurant(long restaurantId, String name, String email, long ownerUserId, Long logoId, Long portrait1Id, Long portrait2Id, String address, String description, int maxTables, boolean isActive, boolean deleted) {
         this.restaurantId = restaurantId;
         this.name = name;
         this.email = email;
@@ -25,9 +26,10 @@ public class Restaurant {
         this.description = description;
         this.maxTables = maxTables;
         this.isActive = isActive;
+        this.deleted = deleted;
     }
 
-    public int getRestaurantId() {
+    public long getRestaurantId() {
         return restaurantId;
     }
 
@@ -39,19 +41,19 @@ public class Restaurant {
         return email;
     }
 
-    public int getOwnerUserId() {
+    public long getOwnerUserId() {
         return ownerUserId;
     }
 
-    public int getLogoId() {
+    public Long getLogoId() {
         return logoId;
     }
 
-    public int getPortraitId1() {
+    public Long getPortraitId1() {
         return portraitId1;
     }
 
-    public int getPortraitId2() {
+    public Long getPortraitId2() {
         return portraitId2;
     }
 
@@ -69,5 +71,9 @@ public class Restaurant {
 
     public boolean getIsActive() {
         return isActive;
+    }
+
+    public boolean getDeleted() {
+        return deleted;
     }
 }

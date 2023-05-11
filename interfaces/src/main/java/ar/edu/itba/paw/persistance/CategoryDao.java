@@ -6,15 +6,15 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CategoryDao {
-    Category create(int restaurantId, String name);
+    Category create(long restaurantId, String name);
 
-    Optional<Category> getById(int categoryId);
+    Optional<Category> getById(long categoryId);
 
-    List<Category> getByRestaurantSortedByOrder(int restaurantId);
+    List<Category> getByRestaurantSortedByOrder(long restaurantId);
 
-    boolean updateName(int categoryId, String name);
+    boolean updateName(long categoryId, String name);
 
-    boolean updateOrder(int categoryId, int order);
+    boolean updateOrder(long categoryId, int order);
 
-    boolean delete(int categoryId);
+    boolean delete(long categoryId);
 }

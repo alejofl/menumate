@@ -29,7 +29,7 @@ public class ReviewJdbcDao implements ReviewDao {
     }
 
     @Override
-    public boolean createOrUpdate(int orderId, int rating, String comment) {
+    public boolean createOrUpdate(long orderId, int rating, String comment) {
         return jdbcTemplate.update(
                 "INSERT INTO order_reviews (order_id, rating, comment) VALUES (?, ?, ?) ON CONFLICT(order_id) DO UPDATE SET rating=excluded.rating, date=excluded.date, comment=excluded.comment",
                 orderId,
@@ -39,7 +39,7 @@ public class ReviewJdbcDao implements ReviewDao {
     }
 
     @Override
-    public boolean delete(int orderId) {
+    public boolean delete(long orderId) {
         return jdbcTemplate.update("DELETE FROM order_reviews WHERE order_id = ?", orderId) > 0;
     }
 
@@ -49,7 +49,7 @@ public class ReviewJdbcDao implements ReviewDao {
             " WHERE order_reviews.order_id = ?";
 
     @Override
-    public Optional<Review> getByOrder(int orderId) {
+    public Optional<Review> getByOrder(long orderId) {
         return jdbcTemplate.query(
                 GET_BY_ORDER_SQL,
                 SimpleRowMappers.ORDER_REVIEW_ROW_MAPPER,
@@ -59,7 +59,7 @@ public class ReviewJdbcDao implements ReviewDao {
     }
 
     @Override
-    public AverageCountPair getRestaurantAverage(int restaurantId) {
+    public AverageCountPair getRestaurantAverage(long restaurantId) {
         return jdbcTemplate.queryForObject(
                 "SELECT AVG(CAST(order_reviews.rating AS FLOAT)) AS a, COUNT(*) AS c FROM order_reviews JOIN orders ON order_reviews.order_id = orders.order_id WHERE orders.restaurant_id = ?",
                 SimpleRowMappers.AVERAGE_COUNT_ROW_MAPPER,
@@ -68,7 +68,7 @@ public class ReviewJdbcDao implements ReviewDao {
     }
 
     @Override
-    public AverageCountPair getRestaurantAverageSince(int restaurantId, LocalDateTime datetime) {
+    public AverageCountPair getRestaurantAverageSince(long restaurantId, LocalDateTime datetime) {
         return jdbcTemplate.queryForObject(
                 "SELECT AVG(CAST(order_reviews.rating AS FLOAT)) AS a, COUNT(*) AS c FROM order_reviews JOIN orders ON order_reviews.order_id = orders.order_id WHERE order_reviews.date >= ? AND orders.restaurant_id = ?",
                 SimpleRowMappers.AVERAGE_COUNT_ROW_MAPPER,
@@ -81,10 +81,10 @@ public class ReviewJdbcDao implements ReviewDao {
     private static final String GET_BY_RESTAURANT_SQL = "WITH itemless_orders AS (" + OrderJdbcDao.SELECT_ITEMLESS_ORDERS + ")" +
             " SELECT " + TableFields.ORDER_REVIEW_FIELDS + ", itemless_orders.*" +
             " FROM order_reviews JOIN itemless_orders ON order_reviews.order_id = itemless_orders.order_id" +
-            " WHERE itemless_orders.restaurant_id = ? ORDER BY itemless_orders.order_date_ordered, itemless_orders.order_id";
+            " WHERE itemless_orders.restaurant_id = ? ORDER BY itemless_orders.order_date_ordered DESC, itemless_orders.order_id";
 
     @Override
-    public List<Review> getByRestaurant(int restaurantId) {
+    public List<Review> getByRestaurant(long restaurantId) {
         return jdbcTemplate.query(
                 GET_BY_RESTAURANT_SQL,
                 SimpleRowMappers.ORDER_REVIEW_ROW_MAPPER,
@@ -95,10 +95,10 @@ public class ReviewJdbcDao implements ReviewDao {
     private static final String GET_BY_USER_SQL = "WITH itemless_orders AS (" + OrderJdbcDao.SELECT_ITEMLESS_ORDERS + ")" +
             " SELECT " + TableFields.ORDER_REVIEW_FIELDS + ", itemless_orders.*" +
             " FROM order_reviews JOIN itemless_orders ON order_reviews.order_id = itemless_orders.order_id" +
-            " WHERE itemless_orders.user_id = ? ORDER BY itemless_orders.order_date_ordered, itemless_orders.order_id";
-
+            " WHERE itemless_orders.restaurant_deleted = false AND itemless_orders.user_id = ?" +
+            " ORDER BY itemless_orders.order_date_ordered DESC, itemless_orders.order_id";
     @Override
-    public List<Review> getByUser(int userId) {
+    public List<Review> getByUser(long userId) {
         return jdbcTemplate.query(
                 GET_BY_USER_SQL,
                 SimpleRowMappers.ORDER_REVIEW_ROW_MAPPER,

@@ -19,7 +19,7 @@ import java.util.Optional;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
 public class UserJdbcDaoTest {
-    private static final int ID = 791;
+    private static final long ID = 791;
     private static final String EMAIL = "peter@peter.com";
     private static final String PASSWORD = "super12secret34";
     private static final String NAME = "Peter Parker";

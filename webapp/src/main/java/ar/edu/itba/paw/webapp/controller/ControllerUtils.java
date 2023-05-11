@@ -46,7 +46,7 @@ public class ControllerUtils {
     /**
      * Returns the currently logged-in user's userId, or null of no user is logged in.
      */
-    public static Integer getCurrentUserIdOrNull() {
+    public static Long getCurrentUserIdOrNull() {
         PawAuthUserDetails details = getCurrentUserDetailsOrNull();
         return details == null ? null : details.getUserId();
     }
@@ -54,7 +54,7 @@ public class ControllerUtils {
     /**
      * Returns the currently logged-in user's userId, or throws an UserNotFoundException if there's no such user.
      */
-    public static int getCurrentUserIdOrThrow() {
+    public static long getCurrentUserIdOrThrow() {
         PawAuthUserDetails details = getCurrentUserDetailsOrNull();
         if (details == null)
             throw new UserNotFoundException();

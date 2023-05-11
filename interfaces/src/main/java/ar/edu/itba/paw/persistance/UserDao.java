@@ -10,7 +10,7 @@ public interface UserDao {
 
     User update(String email, String password, String name);
 
-    Optional<User> getById(int userId);
+    Optional<User> getById(long userId);
 
     Optional<User> getByEmail(String email);
 

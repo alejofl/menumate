@@ -20,32 +20,32 @@ public class RolesServiceImpl implements RolesService {
     private RolesDao rolesDao;
 
     @Override
-    public Optional<RestaurantRoleLevel> getRole(int userId, int restaurantId) {
+    public Optional<RestaurantRoleLevel> getRole(long userId, long restaurantId) {
         return rolesDao.getRole(userId, restaurantId);
     }
 
     @Override
-    public boolean setRole(int userId, int restaurantId, RestaurantRoleLevel level) {
+    public boolean setRole(long userId, long restaurantId, RestaurantRoleLevel level) {
         return rolesDao.setRole(userId, restaurantId, level);
     }
 
     @Override
-    public boolean doesUserHaveRole(int userId, int restaurantId, RestaurantRoleLevel minimumRoleLevel) {
+    public boolean doesUserHaveRole(long userId, long restaurantId, RestaurantRoleLevel minimumRoleLevel) {
         return rolesDao.doesUserHaveRole(userId, restaurantId, minimumRoleLevel);
     }
 
     @Override
-    public List<Pair<User, RestaurantRoleLevel>> getByRestaurant(int restaurantId) {
+    public List<Pair<User, RestaurantRoleLevel>> getByRestaurant(long restaurantId) {
         return rolesDao.getByRestaurant(restaurantId);
     }
 
     @Override
-    public List<Triplet<Restaurant, RestaurantRoleLevel, Integer>> getByUser(int userId) {
+    public List<Triplet<Restaurant, RestaurantRoleLevel, Integer>> getByUser(long userId) {
         return rolesDao.getByUser(userId);
     }
 
     @Override
-    public boolean deleteRole(int restaurantId, int userId) {
+    public boolean deleteRole(long restaurantId, long userId) {
         return rolesDao.deleteRole(restaurantId, userId);
     }
 }

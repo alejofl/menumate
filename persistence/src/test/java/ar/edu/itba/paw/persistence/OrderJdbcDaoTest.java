@@ -16,6 +16,8 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.mockito.Mockito.mock;
@@ -24,24 +26,24 @@ import static org.mockito.Mockito.when;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
 public class OrderJdbcDaoTest {
-    private static final int ORDER_ID = 8844;
+    private static final long ORDER_ID = 8844;
     private static final String ADDRESS = "Calle 123";
     private static final int TABLE_NUMBER = 11;
     private static final String[] ADDRESSES = {"Calle 123", "Calle 456", "Calle 789", "Calle 101112", "Calle 131415", "Calle 123"};
     private static final Integer[] TABLE_NUMBERS = {1, 2, 3, 4, 5, 6, 10, 10, 10, 11};
-    private static final int RESTAURANT_ID = 45123;
+    private static final long RESTAURANT_ID = 45123;
     private static final String RESTAURANT_NAME = "EmpanadasMorita";
     private static final String RESTAURANT_EMAIL = "ivawashere@email.com";
     private static final int MAX_TABLES = 20;
-    private static final int USER_ID = 791;
+    private static final long USER_ID = 791;
     private static final String EMAIL = "peter@peter.com";
     private static final String PASSWORD = "super12secret34";
     private static final String NAME = "Peter Parker";
     private static final OrderType ORDER_TYPE = OrderType.DINE_IN;
-    private static final int PRODUCT_ID = 212;
+    private static final long PRODUCT_ID = 212;
     private static final String PRODUCT_NAME = "Pepinito con sal";
     private static final BigDecimal PRODUCT_PRICE = new BigDecimal("533.55");
-    private static final int CATEGORY_ID = 12421;
+    private static final long CATEGORY_ID = 12421;
     private static final String CATEGORY_NAME = "Postgres Dulces";
     private static final int CATEGORY_ORDER = 10;
     private List<OrderItem> orderItemList;
@@ -80,13 +82,13 @@ public class OrderJdbcDaoTest {
         when(category.getRestaurant()).thenReturn(mock(Restaurant.class));
         when(category.getRestaurant().getRestaurantId()).thenReturn(RESTAURANT_ID);
         for (int i = 0; i < 10; i++) {
-            int product_id = PRODUCT_ID + i + 1;
-            int cateogry_id = CATEGORY_ID;
+            long product_id = PRODUCT_ID + i + 1;
+            long cateogry_id = CATEGORY_ID;
             String product_name = PRODUCT_NAME + i + 1;
             BigDecimal product_price = PRODUCT_PRICE.add(BigDecimal.valueOf(i + 1));
 
             jdbcTemplate.execute("INSERT INTO products(product_id, category_id, name, price) VALUES (" + product_id + ", " + cateogry_id + ", '" + product_name + "', " + product_price + ")");
-            Product product = new Product(product_id, category, product_name, product_price);
+            Product product = new Product(product_id, category, product_name, product_price, null, null, true, false);
 
             int line_number = i + 1;
             OrderItem orderItem = new OrderItem(product, line_number, 10, "comment");
@@ -190,7 +192,7 @@ public class OrderJdbcDaoTest {
     public void testFindOrdersByUserId() throws SQLException {
         int iters = 10;
         for (int i = 0; i < iters; i++) {
-            jdbcTemplate.execute("INSERT INTO orders (order_id, restaurant_id, user_id, order_type) VALUES (" + i + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + ORDER_TYPE.ordinal() + ")");
+            jdbcTemplate.update("INSERT INTO orders (order_id, restaurant_id, user_id, order_type, date_ordered) VALUES (" + i + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + ORDER_TYPE.ordinal() + ", ?)", Timestamp.valueOf(LocalDateTime.now().minusDays(i)));
             for (int j = 0; j < i; j++)
                 jdbcTemplate.execute("INSERT INTO order_items (order_id, product_id, line_number, quantity) VALUES (" + i + ", " + PRODUCT_ID + ", " + (j + 1) + ", " + (j + 2) + ")");
         }
@@ -222,7 +224,7 @@ public class OrderJdbcDaoTest {
     public void testFindOrdersByRestaurantId() throws SQLException {
         int iters = 10;
         for (int i = 1; i <= iters; i++) {
-            jdbcTemplate.execute("INSERT INTO orders (order_id, restaurant_id, user_id, order_type) VALUES (" + i + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + ORDER_TYPE.ordinal() + ")");
+            jdbcTemplate.update("INSERT INTO orders (order_id, restaurant_id, user_id, order_type, date_ordered) VALUES (" + i + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + ORDER_TYPE.ordinal() + ", ?)", Timestamp.valueOf(LocalDateTime.now().minusDays(i)));
         }
 
         List<Order> orders = orderJdbcDao.getByRestaurant(RESTAURANT_ID, 1, iters).getResult();
@@ -243,7 +245,7 @@ public class OrderJdbcDaoTest {
     public void testFindOrdersByRestaurantIdPaged() throws SQLException {
         int iters = 10;
         for (int i = 1; i <= iters; i++) {
-            jdbcTemplate.execute("INSERT INTO orders (order_id, restaurant_id, user_id, order_type) VALUES (" + i + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + ORDER_TYPE.ordinal() + ")");
+            jdbcTemplate.update("INSERT INTO orders (order_id, restaurant_id, user_id, order_type, date_ordered) VALUES (" + i + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + ORDER_TYPE.ordinal() + ", ?)", Timestamp.valueOf(LocalDateTime.now().minusDays(i)));
         }
 
         int pageSize = 4;
@@ -255,6 +257,7 @@ public class OrderJdbcDaoTest {
         }
 
         List<Order> allOrders = new ArrayList<>();
+
         for (int i = 0; i < pageCount; i++) {
             PaginatedResult<Order> page = pages.get(i);
             Assert.assertNotNull(page);

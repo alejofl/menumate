@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> getById(int userId) {
+    public Optional<User> getById(long userId) {
         return userDao.getById(userId);
     }
 

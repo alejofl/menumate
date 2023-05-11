@@ -20,11 +20,11 @@ import java.util.Optional;
 @ContextConfiguration(classes = TestConfig.class)
 public class RestaurantJdbcDaoTest {
 
-    private static final int ID = 5123;
+    private static final long ID = 5123;
     private static final int MAX_TABLES = 20;
     private static final String NAME = "pedros";
     private static final String EMAIL = "pedros@frompedros.com";
-    private static final int USER_ID = 791;
+    private static final long USER_ID = 791;
     private static final String USER_EMAIL = "peter@peter.com";
     private static final String USER_PASSWORD = "super12secret34";
     private static final String USER_NAME = "Peter Parker";

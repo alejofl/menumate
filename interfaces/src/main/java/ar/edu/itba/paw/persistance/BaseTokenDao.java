@@ -1,12 +1,11 @@
 package ar.edu.itba.paw.persistance;
 
 public interface BaseTokenDao {
-
-    String generateToken(final int userId);
+    String generateToken(final long userId);
 
     void deleteStaledTokens();
 
-    boolean hasActiveToken(final int userId);
+    boolean hasActiveToken(final long userId);
 
     boolean isValidToken(final String token);
 }

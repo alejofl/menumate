@@ -21,18 +21,18 @@ import java.util.Optional;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
 public class ProductJdbcDaoTest {
-    private static final int CATEGORY_ID = 581;
+    private static final long CATEGORY_ID = 581;
     private static final String CATEGORY_NAME = "Entradas";
-    private static final int USER_ID = 791;
+    private static final long USER_ID = 791;
     private static final String USER_EMAIL = "peter@peter.com";
     private static final String USER_PASSWORD = "super12secret34";
     private static final String USER_NAME = "Peter Parker";
     private static final int ORDER = 1;
-    private static final int RESTAURANT_ID = 5123;
+    private static final long RESTAURANT_ID = 5123;
     private static final String RESTAURANT_NAME = "Kansas Grill & Bar";
     private static final String RESTAURANT_EMAIL = "kansas@lovelyrestaurant.com";
     private static final int MAX_TABLES = 20;
-    private static final int PRODUCT_ID = 912;
+    private static final long PRODUCT_ID = 912;
     private static final String PRODUCT_NAME = "Lomito";
     private static final BigDecimal PRODUCT_PRICE = new BigDecimal("533.55");
 
@@ -99,13 +99,13 @@ public class ProductJdbcDaoTest {
     @Test
     public void testUpdateProductPrice() throws SQLException {
         jdbcTemplate.execute("INSERT INTO products (product_id, name, price, category_id) VALUES (" + PRODUCT_ID + ", '" + PRODUCT_NAME + "', " + PRODUCT_PRICE + ", " + CATEGORY_ID + ")");
-        Assert.assertTrue(productDao.updatePrice(PRODUCT_ID, PRODUCT_PRICE.add(BigDecimal.valueOf(2))));
+        Assert.assertTrue(productDao.update(PRODUCT_ID, PRODUCT_NAME, PRODUCT_PRICE.add(BigDecimal.valueOf(2)), null));
     }
 
     @Test
     public void testUpdateProductName() throws SQLException {
         jdbcTemplate.execute("INSERT INTO products (product_id, name, price, category_id) VALUES (" + PRODUCT_ID + ", '" + PRODUCT_NAME + "', " + PRODUCT_PRICE + ", " + CATEGORY_ID + ")");
-        Assert.assertTrue(productDao.updateName(PRODUCT_ID, PRODUCT_NAME + "- v2.0"));
+        Assert.assertTrue(productDao.update(PRODUCT_ID, PRODUCT_NAME + "- v2.0", PRODUCT_PRICE, null));
     }
 
     @Test

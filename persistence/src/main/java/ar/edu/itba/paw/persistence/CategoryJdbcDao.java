@@ -31,12 +31,12 @@ public class CategoryJdbcDao implements CategoryDao {
     }
 
     @Override
-    public Category create(int restaurantId, String name) {
+    public Category create(long restaurantId, String name) {
         final Map<String, Object> categoryData = new HashMap<>();
         categoryData.put("restaurant_id", restaurantId);
         categoryData.put("name", name);
         int order = jdbcTemplate.query(
-                "SELECT MAX(order_num) AS m FROM categories WHERE restaurant_id = ?",
+                "SELECT MAX(order_num) AS m FROM categories WHERE deleted = false AND restaurant_id = ?",
                 SimpleRowMappers.MAX_ROW_MAPPER,
                 restaurantId
         ).get(0);
@@ -46,37 +46,62 @@ public class CategoryJdbcDao implements CategoryDao {
         return getById(categoryId).get();
     }
 
+    private static final String GET_BY_ID_SQL = SELECT_BASE + " WHERE categories.category_id = ?";
+
     @Override
-    public Optional<Category> getById(int categoryId) {
+    public Optional<Category> getById(long categoryId) {
         return jdbcTemplate.query(
-                SELECT_BASE + " WHERE categories.category_id = ?",
+                GET_BY_ID_SQL,
                 SimpleRowMappers.CATEGORY_ROW_MAPPER,
                 categoryId
         ).stream().findFirst();
     }
 
+    private static final String GET_BY_RESTAURANT_SORTED_SQL = SELECT_BASE +
+            " WHERE categories.deleted = false AND categories.restaurant_id = ? ORDER BY categories.order_num";
+
     @Override
-    public List<Category> getByRestaurantSortedByOrder(int restaurantId) {
+    public List<Category> getByRestaurantSortedByOrder(long restaurantId) {
         RowMapper<Category> rowMapper = ReusingRowMappers.getCategoryRowMapper();
         return jdbcTemplate.query(
-                SELECT_BASE + " WHERE categories.restaurant_id = ? ORDER BY categories.order_num",
+                GET_BY_RESTAURANT_SORTED_SQL,
                 rowMapper,
                 restaurantId
         );
     }
 
     @Override
-    public boolean updateName(int categoryId, String name) {
-        return jdbcTemplate.update("UPDATE categories SET name = ? WHERE category_id = ?", name, categoryId) > 0;
+    public boolean updateName(long categoryId, String name) {
+        return jdbcTemplate.update(
+                "UPDATE categories SET name = ? WHERE deleted = false AND category_id = ?",
+                name,
+                categoryId
+        ) > 0;
     }
 
     @Override
-    public boolean updateOrder(int categoryId, int order) {
-        return jdbcTemplate.update("UPDATE categories SET order_num = ? WHERE category_id = ?", order, categoryId) > 0;
+    public boolean updateOrder(long categoryId, int order) {
+        return jdbcTemplate.update(
+                "UPDATE categories SET order_num = ? WHERE deleted = false AND category_id = ?",
+                order,
+                categoryId
+        ) > 0;
     }
 
     @Override
-    public boolean delete(int categoryId) {
-        return jdbcTemplate.update("DELETE FROM categories WHERE category_id = ?", categoryId) > 0;
+    public boolean delete(long categoryId) {
+        boolean success = jdbcTemplate.update(
+                "UPDATE categories SET deleted = true WHERE deleted = false AND category_id = ?",
+                categoryId
+        ) > 0;
+
+        if (success) {
+            jdbcTemplate.update(
+                    "UPDATE products SET deleted = true WHERE category_id = ?",
+                    categoryId
+            );
+        }
+
+        return success;
     }
 }
