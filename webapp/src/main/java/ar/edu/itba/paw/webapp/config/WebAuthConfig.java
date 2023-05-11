@@ -72,18 +72,40 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
                 // Request authorization
                 .and().authorizeRequests()
+
+                // Static content & images
+                .antMatchers("/static/**").permitAll()
+                .antMatchers("/images/{id:\\d+}").permitAll()
+
+                // General public pages
+                .antMatchers("/").permitAll()
+                .antMatchers("/403").permitAll()
+                .antMatchers(HttpMethod.GET, "/restaurants").permitAll()
+
+                // Authentication pages
+                .antMatchers("/auth/**").permitAll()
+
+                // User pages
+                .antMatchers(HttpMethod.GET, "/user/**").authenticated()
+
+                // Restaurant public pages
+                .antMatchers(HttpMethod.GET, "/restaurants/{restaurant_id:\\d+}").permitAll()
+                .antMatchers(HttpMethod.POST, "/restaurants/{restaurant_id:\\d+}/orders").permitAll()
+
+                // Restaurants edit pages
                 .antMatchers("/restaurants/{restaurant_id:\\d+}/edit/**").access("@accessValidator.checkRestaurantAdmin(#restaurant_id)")
+                .antMatchers(HttpMethod.POST, "/restaurants/{restaurant_id:\\d+}/employees/**").access("@accessValidator.checkRestaurantAdmin(#restaurant_id)")
+
+                // Restaurant orders pages
                 .antMatchers(HttpMethod.GET, "/restaurants/{restaurant_id:\\d+}/orders/**").access("@accessValidator.checkRestaurantOrderHandler(#restaurant_id)")
+
+                // Create restaurant pages
                 .antMatchers("/restaurants/create").authenticated()
-                .antMatchers(HttpMethod.POST, "/restaurants/{restaurant_id:\\d+}/employees/**").access("@accessValidator.checkRestaurantOwner(#restaurant_id)")
-                .antMatchers(HttpMethod.GET, "/user/orders/**").authenticated()
-                .antMatchers(HttpMethod.GET, "/user/restaurants").authenticated()
+
+                // Orders pages
                 .antMatchers(HttpMethod.GET, "/orders/{order_id:\\d+}").access("@accessValidator.checkOrderOwner(#order_id)")
-                .antMatchers(HttpMethod.POST, "/orders/{order_id:\\d+}/confirm").access("@accessValidator.checkOrderHandler(#order_id)")
-                .antMatchers(HttpMethod.POST, "/orders/{order_id:\\d+}/ready").access("@accessValidator.checkOrderHandler(#order_id)")
-                .antMatchers(HttpMethod.POST, "/orders/{order_id:\\d+}/deliver").access("@accessValidator.checkOrderHandler(#order_id)")
-                .antMatchers(HttpMethod.POST, "/orders/{order_id:\\d+}/cancel").access("@accessValidator.checkOrderHandler(#order_id)")
-                .antMatchers("/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/orders/{order_id:\\d+}/{status}").access("@accessValidator.checkOrderHandler(#order_id)")
+
                 .and().exceptionHandling()
                 .accessDeniedPage("/403")
 
