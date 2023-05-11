@@ -26,6 +26,10 @@ public interface RestaurantService {
 
     PaginatedResult<Restaurant> getSortedByPriceAverageDesc(int pageNumber, int pageSize);
 
+    PaginatedResult<Restaurant> getSortedByCreationDateAsc(int pageNumber, int pageSize);
+
+    PaginatedResult<Restaurant> getSortedByCreationDateDesc(int pageNumber, int pageSize);
+
     List<Pair<Category, List<Product>>> getMenu(long restaurantId);
 
     boolean delete(long restaurantId);

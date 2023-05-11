@@ -16,8 +16,10 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Stream;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -189,9 +191,9 @@ public class RestaurantJdbcDaoTest {
                 sum = 0;
             }
         }
-
-        int maxIndex = Collections.max(mockedReviewAverages).intValue() - 1;
-        int aux = Collections.min(mockedReviewAverages).intValue();
+        int aux = Collections.max(mockedReviewAverages).intValue();
+        int maxIndex = aux == 0 ? 0 : aux - 1;
+        aux = Collections.min(mockedReviewAverages).intValue();
         int minIndex = aux == 0 ? 0 : aux - 1;
 
         for(int i=1; i<RESTAURANTS_QTY+1; i++){
@@ -203,5 +205,32 @@ public class RestaurantJdbcDaoTest {
         Assert.assertEquals(RESTAURANTS_QTY, res.getResult().size());
         Assert.assertEquals(minIndex + 1, res.getResult().get(minIndex).getRestaurantId());
         Assert.assertEquals(maxIndex + 1, res.getResult().get(maxIndex).getRestaurantId());
+    }
+
+    @Test
+    public void getSortedByCreationDate() throws SQLException {
+
+        Random random = new Random();
+        List<LocalDateTime> mockedDates = new ArrayList<>();
+        LocalDateTime startDateTime = LocalDateTime.now().minusDays(1);
+        LocalDateTime endDateTime = LocalDateTime.now();
+
+        for(int i=1; i<RESTAURANTS_QTY+1; i++){
+            LocalDateTime randomDateTime = startDateTime.plusSeconds(random.nextInt((int) Duration.between(startDateTime, endDateTime).getSeconds() + 1));
+            mockedDates.add(randomDateTime);
+            Timestamp aux = Timestamp.valueOf(mockedDates.get(i-1));
+            jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, specialty, owner_user_id, max_tables, date_created) VALUES (" + i + ", '" + NAME + "', '" + EMAIL + "', " + SPECIALTY + ", " + USER_ID + ", " + MAX_TABLES + ", '" + aux + "')");
+        }
+
+        // Greatest
+        int maxIndex = mockedDates.indexOf(Collections.max(mockedDates));
+
+        // Oldest
+        int minIndex = mockedDates.indexOf(Collections.min(mockedDates));
+
+        PaginatedResult<Restaurant> res = restaurantDao.getSortedByCreationDate(1, RESTAURANTS_QTY, "ASC");
+        Assert.assertEquals(RESTAURANTS_QTY, res.getResult().size());
+        Assert.assertEquals(minIndex + 1, res.getResult().get(0).getRestaurantId());
+        Assert.assertEquals(maxIndex + 1, res.getResult().get(RESTAURANTS_QTY-1).getRestaurantId());
     }
 }

@@ -23,6 +23,8 @@ public interface RestaurantDao {
 
     PaginatedResult<Restaurant> getSortedByPriceAverage(int pageNumber, int pageSize, String sort);
 
+    PaginatedResult<Restaurant> getSortedByCreationDate(int pageNumber, int pageSize, String sort);
+
     boolean delete(long restaurantId);
 
     List<RestaurantTags> getTags(int restaurantId);
