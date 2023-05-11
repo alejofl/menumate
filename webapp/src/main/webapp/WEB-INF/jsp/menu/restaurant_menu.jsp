@@ -40,7 +40,7 @@
                         <i class="bi bi-star-fill"></i>
                     </c:forEach>
                 </div>
-                <a href="" class="ms-2" data-bs-toggle="modal" data-bs-target="#view-reviews-modal"><small>View Reviews</small></a>
+                <a href="" class="ms-2" data-bs-toggle="modal" data-bs-target="#view-reviews-modal"><small><spring:message code="restaurant.menu.viewreviews"/></small></a>
             </div>
         </div>
         <div class="d-flex flex-column gap-2">
@@ -258,7 +258,7 @@
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5">Reviews</h1>
+                <h1 class="modal-title fs-5"><spring:message code="restaurant.menu.reviews"/></h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
