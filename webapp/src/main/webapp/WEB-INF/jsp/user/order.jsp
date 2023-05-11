@@ -1,6 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <html>
@@ -9,7 +10,8 @@
     <jsp:include page="/WEB-INF/jsp/components/head.jsp">
         <jsp:param name="title" value="${title}"/>
     </jsp:include></head>
-<body>
+    <script src="<c:url value="/static/js/order.js"/>"></script>
+<body data-error="${error}">
 <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
 <main class="order-details">
     <div class="card order-details-card">
@@ -124,7 +126,47 @@
             </div>
         </div>
     </div>
-    <a type="button" class="btn btn-primary" href="<c:url value="/restaurants/${order.restaurant.restaurantId}"/>"><spring:message code="userorders.neworder"/></a>
+    <div class="d-flex gap-3">
+        <button type="button" class="btn btn-primary ${has_review || order.orderStatus != "DELIVERED" ? "disabled" : ""}" data-bs-toggle="modal" data-bs-target="#review-modal" id="review-modal-button"><spring:message code="userorders.review.make"/></button>
+        <a type="button" class="btn btn-primary" href="<c:url value="/restaurants/${order.restaurant.restaurantId}"/>"><spring:message code="userorders.neworder"/></a>
+    </div>
 </main>
+
+<div class="modal fade" id="review-modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5"><spring:message code="userorders.review.make"/></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <c:url value="/orders/${order.orderId}/review" var="reviewUrl"/>
+            <form:form cssClass="mb-0" modelAttribute="reviewForm" action="${reviewUrl}" method="post" id="review-form">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <form:label path="rating" cssClass="form-label"><spring:message code="userorders.review.rating"/></form:label>
+                        <div class="small-ratings">
+                            <i class="bi bi-star-fill" data-number="1"></i>
+                            <i class="bi bi-star-fill" data-number="2"></i>
+                            <i class="bi bi-star-fill" data-number="3"></i>
+                            <i class="bi bi-star-fill" data-number="4"></i>
+                            <i class="bi bi-star-fill" data-number="5"></i>
+                        </div>
+                        <form:input path="rating" type="hidden" cssClass="form-control" id="review-form-rating"/>
+                        <form:errors path="rating" element="div" cssClass="form-error"/>
+                    </div>
+                    <div class="mb-3">
+                        <form:label path="comment" cssClass="form-label"><spring:message code="userorders.review.comment"/></form:label>
+                        <form:textarea class="form-control" path="comment" id="create-restaurant-description" rows="3"/>
+                        <form:errors path="comment" element="div" cssClass="form-error"/>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" class="btn btn-primary" value="<spring:message code="userorders.review"/>">
+                </div>
+            </form:form>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>

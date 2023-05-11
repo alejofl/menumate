@@ -3,6 +3,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <html>
 <head>
@@ -30,6 +31,17 @@
                     <p><i> <spring:message code="restaurant.menu.nodescription"/></i></p>
                 </c:otherwise>
             </c:choose>
+            <div class="d-flex align-items-center">
+                <div class="small-ratings">
+                    <c:forEach begin="1" end="${average}">
+                        <i class="bi bi-star-fill rating-color"></i>
+                    </c:forEach>
+                    <c:forEach begin="1" end="${5 - average}">
+                        <i class="bi bi-star-fill"></i>
+                    </c:forEach>
+                </div>
+                <a href="" class="ms-2" data-bs-toggle="modal" data-bs-target="#view-reviews-modal"><small><spring:message code="restaurant.menu.viewreviews"/></small></a>
+            </div>
         </div>
         <div class="d-flex flex-column gap-2">
             <c:if test="${admin}">
@@ -240,7 +252,41 @@
             </div>
         </c:otherwise>
     </c:choose>
+</div>
 
+<div class="modal fade" id="view-reviews-modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5"><spring:message code="restaurant.menu.reviews"/></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="list-group list-group-flush">
+                    <c:forEach items="${reviews}" var="review">
+                        <div class="list-group-item mt-3">
+                            <b><c:out value="${review.order.user.name}"/></b>
+                            <div class="d-flex gap-2 align-items-baseline my-2">
+                                <div class="small-ratings">
+                                    <c:forEach begin="1" end="${review.rating}">
+                                        <i class="bi bi-star-fill rating-color"></i>
+                                    </c:forEach>
+                                    <c:forEach begin="1" end="${5 - review.rating}">
+                                        <i class="bi bi-star-fill"></i>
+                                    </c:forEach>
+                                </div>
+                                <%-- This os a workaround to make LocalDateTime formattable --%>
+                                <fmt:parseDate value="${review.date}" pattern="yyyy-MM-dd'T'HH:mm:ss" var="parsedDateOrdered" type="both"/>
+                                <fmt:formatDate pattern="dd MMMM yyyy - HH:mm" value="${parsedDateOrdered}" var="reviewDate"/>
+                                <small class="text-muted">${reviewDate}</small>
+                            </div>
+                            <p><c:out value="${review.comment}"/></p>
+                        </div>
+                    </c:forEach>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 </body>
 </html>

@@ -19,8 +19,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -42,6 +40,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ReviewService reviewService;
 
     @RequestMapping(value = "/user/restaurants", method = RequestMethod.GET)
     public ModelAndView myRestaurants() {
@@ -90,10 +91,31 @@ public class UserController {
     }
 
     @RequestMapping(value = "/orders/{id:\\d+}", method = RequestMethod.GET)
-    public ModelAndView order(@PathVariable int id) {
+    public ModelAndView order(
+            @PathVariable final int id,
+            @ModelAttribute("reviewForm") final ReviewForm reviewForm,
+            final Boolean error
+    ) {
         ModelAndView mav = new ModelAndView("user/order");
         mav.addObject("order", orderService.getById(id).orElseThrow(OrderNotFoundException::new));
+        mav.addObject("has_review", reviewService.getByOrder(id).isPresent());
+        mav.addObject("error", error);
         return mav;
+    }
+
+    @RequestMapping(value = "/orders/{id:\\d+}/review", method = RequestMethod.POST)
+    public ModelAndView review(
+            @PathVariable final int id,
+            @Valid @ModelAttribute("reviewForm") final ReviewForm reviewForm,
+            final BindingResult errors
+    ) {
+        if (errors.hasErrors()) {
+            return order(id, reviewForm, true);
+        }
+
+        reviewService.createOrUpdate(id, reviewForm.getRating(), reviewForm.getComment());
+
+        return new ModelAndView(String.format("redirect:/orders/%d", id));
     }
 
     @RequestMapping(value = "/restaurants/create", method = RequestMethod.GET)

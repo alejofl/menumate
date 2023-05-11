@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.*;
+import ar.edu.itba.paw.model.util.AverageCountPair;
 import ar.edu.itba.paw.model.util.Pair;
 import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.webapp.exception.InvalidOrderTypeException;
@@ -39,6 +40,9 @@ public class RestaurantsController {
     @Autowired
     private RolesService rolesService;
 
+    @Autowired
+    private ReviewService reviewService;
+
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         binder.setValidator(new PreProcessingCheckoutFormValidator(binder.getValidator()));
@@ -65,6 +69,11 @@ public class RestaurantsController {
         }
         mav.addObject("admin", admin);
         mav.addObject("order_viewer", order_viewer);
+
+        final AverageCountPair average = reviewService.getRestaurantAverage(id);
+        mav.addObject("average", Math.round(average.getAverage()));
+        final List<Review> reviews = reviewService.getByRestaurant(id);
+        mav.addObject("reviews", reviews);
 
         final List<Pair<Category, List<Product>>> menu = restaurantService.getMenu(id);
         mav.addObject("menu", menu);
