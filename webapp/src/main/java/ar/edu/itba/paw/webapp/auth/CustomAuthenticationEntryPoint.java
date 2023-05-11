@@ -1,8 +1,10 @@
 package ar.edu.itba.paw.webapp.auth;
 
+import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.persistance.VerificationTokenDao;
 import ar.edu.itba.paw.service.EmailService;
 import ar.edu.itba.paw.service.UserService;
+import ar.edu.itba.paw.webapp.exception.UserNotFoundException;
 import ar.edu.itba.paw.webapp.exception.UserNotVerifiedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.AuthenticationException;
@@ -42,8 +44,8 @@ public class CustomAuthenticationEntryPoint extends SimpleUrlAuthenticationFailu
                 String baseUrl = request.getRequestURL().toString().replace(request.getRequestURI(), request.getContextPath());
                 String token = verificationService.generateToken(e.getUserId());
                 try {
-                    String userEmail = userService.getById(e.getUserId()).get().getEmail();
-                    emailService.sendUserVerificationEmail(baseUrl, userEmail, token);
+                    User user = userService.getById(e.getUserId()).orElseThrow(UserNotFoundException::new);
+                    emailService.sendUserVerificationEmail(baseUrl, user.getEmail(), user.getName(), token);
                     setDefaultFailureUrl(LOGIN_URL + VERIFY_EMAIL_ERROR);
                 } catch (MessagingException ex) {
                     setDefaultFailureUrl(LOGIN_URL + MAILER_ERROR);

@@ -139,9 +139,10 @@ public class EmailServiceImpl implements EmailService {
 
     @Async
     @Override
-    public void sendUserVerificationEmail(String baseUrl, String email, String token) throws MessagingException {
+    public void sendUserVerificationEmail(String baseUrl, String email, String username, String token) throws MessagingException {
         final Map<String, Object> params = new HashMap<>();
         params.put("link", baseUrl + "/auth/verify?token=" + token);
+        params.put("username", username);
         this.sendMessageUsingThymeleafTemplate(
                 "user_verification",
                 email,
@@ -152,9 +153,10 @@ public class EmailServiceImpl implements EmailService {
 
     @Async
     @Override
-    public void sendResetPasswordEmail(String baseUrl, String email, String token) throws MessagingException {
+    public void sendResetPasswordEmail(String baseUrl, String email, String username, String token) throws MessagingException {
         final Map<String, Object> params = new HashMap<>();
         params.put("link", baseUrl + "/auth/reset-password?token=" + token);
+        params.put("username", username);
         this.sendMessageUsingThymeleafTemplate(
                 "user_reset_password",
                 email,

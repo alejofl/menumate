@@ -53,7 +53,7 @@ public class AuthController {
         final User user = userService.create(registerForm.getEmail(), registerForm.getPassword(), registerForm.getName());
         String token = verificationService.generateToken(user.getUserId());
         String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
-        emailService.sendUserVerificationEmail(baseUrl, user.getEmail(), token);
+        emailService.sendUserVerificationEmail(baseUrl, user.getEmail(), user.getName(), token);
         return new ModelAndView("redirect:/auth/login?type=verify-emailed");
     }
 
@@ -111,10 +111,10 @@ public class AuthController {
                     return new ModelAndView("redirect:/auth/login?type=verified");
                 }
                 token = verificationService.generateToken(user.getUserId());
-                emailService.sendUserVerificationEmail(baseUrl, user.getEmail(), token);
+                emailService.sendUserVerificationEmail(baseUrl, user.getEmail(), user.getName(), token);
             } else {
                 token = resetPasswordTokenDao.generateToken(user.getUserId());
-                emailService.sendResetPasswordEmail(baseUrl, user.getEmail(), token);
+                emailService.sendResetPasswordEmail(baseUrl, user.getEmail(), user.getName(), token);
             }
             return new ModelAndView("redirect:/auth/login?type=" + actionType + "-emailed");
         } catch (UserNotFoundException e) {
