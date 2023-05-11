@@ -178,6 +178,7 @@ public class RestaurantJdbcDao implements RestaurantDao {
     }
 
 
+
     @Override
     public long create(String name, String email, int specialty , long ownerUserId, String description, String address, int maxTables, Long logoKey, Long portrait1Kay, Long portrait2Key) {
         final Map<String, Object> restaurantData = new HashMap<>();
@@ -216,7 +217,7 @@ public class RestaurantJdbcDao implements RestaurantDao {
     }
 
     @Override
-    public List<RestaurantTags> getTags(int restaurantId) {
+    public List<RestaurantTags> getTags(long restaurantId) {
         return jdbcTemplate.query(
                 "SELECT " + TableFields.RESTAURANT_TAGS_FIELDS + " FROM restaurant_tags WHERE restaurant_id = ?",
                 SimpleRowMappers.RESTAURANT_TAGS_ROW_MAPPER,
@@ -225,7 +226,7 @@ public class RestaurantJdbcDao implements RestaurantDao {
     }
 
     @Override
-    public boolean addTag(int restaurantId, int tagId) {
+    public boolean addTag(long restaurantId, long tagId) {
         final Map<String, Object> tagData = new HashMap<>();
         tagData.put("restaurant_id", restaurantId);
         tagData.put("tag_id", tagId);
@@ -233,7 +234,7 @@ public class RestaurantJdbcDao implements RestaurantDao {
     }
 
     @Override
-    public boolean removeTag(int restaurantId, int tagId) {
+    public boolean removeTag(long restaurantId, long tagId) {
         return jdbcTemplate.update(
                 "DELETE FROM restaurant_tags WHERE restaurant_id = ? AND tag_id = ?",
                 restaurantId,

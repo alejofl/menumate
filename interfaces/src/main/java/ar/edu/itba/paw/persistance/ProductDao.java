@@ -17,6 +17,6 @@ public interface ProductDao {
 
     boolean delete(long productId);
 
-    double getRestaurantAveragePrice(int restaurantId);
+    double getRestaurantAveragePrice(long restaurantId);
 
 }

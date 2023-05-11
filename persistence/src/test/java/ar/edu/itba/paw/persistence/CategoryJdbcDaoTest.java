@@ -31,6 +31,7 @@ public class CategoryJdbcDaoTest {
     private static final String RESTAURANT_EMAIL = "pedro@frompedros.com";
     private static final int MAX_TABLES = 20;
     private static final int ORDER_NUM = 1293;
+    private static final int SPECIALTY = 1;
     private static final String[] categoryNames = {"Category 1", "Category 2", "Category 3", "Category 4"};
 
     @Autowired
@@ -46,7 +47,7 @@ public class CategoryJdbcDaoTest {
         jdbcTemplate = new JdbcTemplate(ds);
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "categories", "restaurants", "users");
         jdbcTemplate.execute("INSERT INTO users (user_id, email, password, name) VALUES (" + USER_ID + ", '" + USER_EMAIL + "', '" + USER_PASSWORD + "', '" + USER_NAME + "')");
-        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, owner_user_id, max_tables) VALUES (" + RESTAURANT_ID + ", '" + RESTAURANT_NAME + "', '" + RESTAURANT_EMAIL + "', " + USER_ID + ", " + MAX_TABLES + ")");
+        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, max_tables, specialty, owner_user_id) VALUES (" + RESTAURANT_ID + ", '" + RESTAURANT_NAME + "', '" + RESTAURANT_EMAIL + "', " + MAX_TABLES + ", " + SPECIALTY + ", " + USER_ID + ")");
     }
 
     /* FIXME update to match implementation

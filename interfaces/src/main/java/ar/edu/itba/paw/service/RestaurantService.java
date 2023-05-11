@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RestaurantService {
-    long create(String name, String email, long ownerUserId, String description, String address, int maxTables, byte[] logo, byte[] portrait1, byte[] portrait2);
+    long create(String name, String email, int specialty, long ownerUserId, String description, String address, int maxTables, byte[] logo, byte[] portrait1, byte[] portrait2);
 
     Optional<Restaurant> getById(long restaurantId);
 
@@ -38,9 +38,9 @@ public interface RestaurantService {
 
     boolean delete(long restaurantId);
 
-    List<RestaurantTags> getTags(int restaurantId);
+    List<RestaurantTags> getTags(long restaurantId);
 
-    boolean addTag(int restaurantId, int tagId);
+    boolean addTag(long restaurantId, long tagId);
 
-    boolean removeTag(int restaurantId, int tagId);
+    boolean removeTag(long restaurantId, long tagId);
 }

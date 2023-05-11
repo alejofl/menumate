@@ -119,17 +119,17 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public List<RestaurantTags> getTags(int restaurantId) {
+    public List<RestaurantTags> getTags(long restaurantId) {
         return restaurantDao.getTags(restaurantId);
     }
 
     @Override
-    public boolean addTag(int restaurantId, int tagId) {
+    public boolean addTag(long restaurantId, long tagId) {
         return restaurantDao.addTag(restaurantId, tagId);
     }
 
     @Override
-    public boolean removeTag(int restaurantId, int tagId) {
+    public boolean removeTag(long restaurantId, long tagId) {
         return restaurantDao.removeTag(restaurantId, tagId);
     }
 }

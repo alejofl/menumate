@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RestaurantDao {
-    long create(String name, String email, long ownerUserId, String description, String address, int maxTables, Long logoKey, Long portrait1Kay, Long portrait2Key);
+    long create(String name, String email, int specialty, long ownerUserId, String description, String address, int maxTables, Long logoKey, Long portrait1Kay, Long portrait2Key);
 
     Optional<Restaurant> getById(long restaurantId);
 
@@ -29,10 +29,10 @@ public interface RestaurantDao {
 
     boolean delete(long restaurantId);
 
-    List<RestaurantTags> getTags(int restaurantId);
+    List<RestaurantTags> getTags(long restaurantId);
 
-    boolean addTag(int restaurantId, int tagId);
+    boolean addTag(long restaurantId, long tagId);
 
-    boolean removeTag(int restaurantId, int tagId);
+    boolean removeTag(long restaurantId, long tagId);
 
 }
