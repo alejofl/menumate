@@ -14,13 +14,13 @@ public class BaseTokenJdbcDao implements BaseTokenDao {
 
     private final String tableName;
     private static final Integer TOKEN_DURATION_DAYS = 1;
-    private final JdbcTemplate jdbcTemplate;
-    private final SimpleJdbcInsert jdbcInsert;
+    final JdbcTemplate jdbcTemplate;
+    final SimpleJdbcInsert jdbcInsert;
 
-    private static final RowMapper<Long> TOKEN_USER_ID_ROW_MAPPER =
+    static final RowMapper<Long> TOKEN_USER_ID_ROW_MAPPER =
             (rs, rowNum) -> rs.getLong("user_id");
 
-    private static final RowMapper<LocalDateTime> TOKEN_EXPIRES_ROW_MAPPER =
+    static final RowMapper<LocalDateTime> TOKEN_EXPIRES_ROW_MAPPER =
             (rs, rowNum) -> rs.getTimestamp("expires").toLocalDateTime();
 
 
@@ -36,7 +36,7 @@ public class BaseTokenJdbcDao implements BaseTokenDao {
         return LocalDateTime.now().plusDays(TOKEN_DURATION_DAYS);
     }
 
-    private TokenResult deleteTokenAndRetrieveUserId(String token) {
+    TokenResult deleteTokenAndRetrieveUserId(String token) {
         Optional<Long> userId = jdbcTemplate.query(
                 "SELECT user_id FROM " + tableName + " WHERE code = ?",
                 TOKEN_USER_ID_ROW_MAPPER,
@@ -47,13 +47,13 @@ public class BaseTokenJdbcDao implements BaseTokenDao {
             return new TokenResult(false, null);
         }
 
-        boolean success = jdbcTemplate.update(
+        boolean successfullyDeleted = jdbcTemplate.update(
                 "DELETE FROM " + tableName + " WHERE code = ? AND user_id = ? AND expires>now()",
                 token,
                 userId.get()
         ) > 0;
 
-        return new TokenResult(success, userId.get());
+        return new TokenResult(successfullyDeleted, userId.get());
     }
 
     @Override
@@ -66,19 +66,6 @@ public class BaseTokenJdbcDao implements BaseTokenDao {
                 generateTokenExpirationDate()
         );
         return token;
-    }
-
-    @Override
-    public boolean verifyUserAndDeleteToken(String token) {
-        TokenResult result = deleteTokenAndRetrieveUserId(token);
-
-        if (result.success && result.userId != null) {
-            return jdbcTemplate.update(
-                    "UPDATE users SET is_active = true WHERE user_id = ?",
-                    result.userId
-            ) > 0;
-        }
-        return false;
     }
 
     @Override
@@ -106,31 +93,17 @@ public class BaseTokenJdbcDao implements BaseTokenDao {
         ).stream().findFirst().isPresent();
     }
 
-    @Override
-    public boolean updatePasswordAndDeleteToken(String token, String newPassword) {
-        TokenResult result = deleteTokenAndRetrieveUserId(token);
-
-        if (result.success && result.userId != null) {
-            return jdbcTemplate.update(
-                    "UPDATE users SET password = ? WHERE user_id = ?",
-                    newPassword,
-                    result.userId
-            ) > 0;
-        }
-        return false;
-    }
-
-    private static class TokenResult {
-        private final boolean success;
+    static class TokenResult {
+        private final boolean successfullyDeleted;
         private final Long userId;
 
-        public TokenResult(boolean success, Long userId) {
-            this.success = success;
+        TokenResult(boolean successfullyDeleted, Long userId) {
+            this.successfullyDeleted = successfullyDeleted;
             this.userId = userId;
         }
 
-        public boolean isSuccess() {
-            return success;
+        public boolean getSuccessfullyDeleted() {
+            return successfullyDeleted;
         }
 
         public Long getUserId() {

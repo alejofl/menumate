@@ -108,7 +108,7 @@ public class AuthController {
 
             if(actionType.equals("verify")){
                 if(user.getIsActive()){
-                    return new ModelAndView("redirect:/auth/login?type=verified");
+                    return new ModelAndView("redirect:/auth/login?type=" + actionType + "-emailed");
                 }
                 token = verificationService.generateToken(user.getUserId());
                 emailService.sendUserVerificationEmail(baseUrl, user.getEmail(), user.getName(), token);
