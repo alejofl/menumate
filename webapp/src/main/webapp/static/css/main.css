@@ -712,6 +712,9 @@ input:has(+ .form-error), textarea:has(+ .form-error) {
 
 .small-ratings i {
     color: #cecece;
+}
+
+#review-modal i {
     font-size: 1.5rem;
     cursor: pointer;
 }
