@@ -16,6 +16,8 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.mockito.Mockito.mock;
@@ -190,7 +192,7 @@ public class OrderJdbcDaoTest {
     public void testFindOrdersByUserId() throws SQLException {
         int iters = 10;
         for (int i = 0; i < iters; i++) {
-            jdbcTemplate.execute("INSERT INTO orders (order_id, restaurant_id, user_id, order_type) VALUES (" + i + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + ORDER_TYPE.ordinal() + ")");
+            jdbcTemplate.update("INSERT INTO orders (order_id, restaurant_id, user_id, order_type, date_ordered) VALUES (" + i + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + ORDER_TYPE.ordinal() + ", ?)", Timestamp.valueOf(LocalDateTime.now().minusDays(i)));
             for (int j = 0; j < i; j++)
                 jdbcTemplate.execute("INSERT INTO order_items (order_id, product_id, line_number, quantity) VALUES (" + i + ", " + PRODUCT_ID + ", " + (j + 1) + ", " + (j + 2) + ")");
         }
@@ -222,7 +224,7 @@ public class OrderJdbcDaoTest {
     public void testFindOrdersByRestaurantId() throws SQLException {
         int iters = 10;
         for (int i = 1; i <= iters; i++) {
-            jdbcTemplate.execute("INSERT INTO orders (order_id, restaurant_id, user_id, order_type) VALUES (" + i + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + ORDER_TYPE.ordinal() + ")");
+            jdbcTemplate.update("INSERT INTO orders (order_id, restaurant_id, user_id, order_type, date_ordered) VALUES (" + i + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + ORDER_TYPE.ordinal() + ", ?)", Timestamp.valueOf(LocalDateTime.now().minusDays(i)));
         }
 
         List<Order> orders = orderJdbcDao.getByRestaurant(RESTAURANT_ID, 1, iters).getResult();
@@ -243,7 +245,7 @@ public class OrderJdbcDaoTest {
     public void testFindOrdersByRestaurantIdPaged() throws SQLException {
         int iters = 10;
         for (int i = 1; i <= iters; i++) {
-            jdbcTemplate.execute("INSERT INTO orders (order_id, restaurant_id, user_id, order_type) VALUES (" + i + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + ORDER_TYPE.ordinal() + ")");
+            jdbcTemplate.update("INSERT INTO orders (order_id, restaurant_id, user_id, order_type, date_ordered) VALUES (" + i + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + ORDER_TYPE.ordinal() + ", ?)", Timestamp.valueOf(LocalDateTime.now().minusDays(i)));
         }
 
         int pageSize = 4;
@@ -255,6 +257,7 @@ public class OrderJdbcDaoTest {
         }
 
         List<Order> allOrders = new ArrayList<>();
+
         for (int i = 0; i < pageCount; i++) {
             PaginatedResult<Order> page = pages.get(i);
             Assert.assertNotNull(page);
