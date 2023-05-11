@@ -108,7 +108,8 @@ public class ReviewJdbcDao implements ReviewDao {
     private static final String GET_BY_USER_SQL = "WITH itemless_orders AS (" + OrderJdbcDao.SELECT_ITEMLESS_ORDERS + ")" +
             " SELECT " + TableFields.ORDER_REVIEW_FIELDS + ", itemless_orders.*" +
             " FROM order_reviews JOIN itemless_orders ON order_reviews.order_id = itemless_orders.order_id" +
-            " WHERE itemless_orders.user_id = ? ORDER BY itemless_orders.order_date_ordered DESC, itemless_orders.order_id" +
+            " WHERE itemless_orders.restaurant_deleted = false AND itemless_orders.user_id = ?" +
+            " ORDER BY itemless_orders.order_date_ordered DESC, itemless_orders.order_id" +
             " LIMIT ? OFFSET ?";
 
     @Override
@@ -123,7 +124,7 @@ public class ReviewJdbcDao implements ReviewDao {
         );
 
         int count = jdbcTemplate.query(
-                "SELECT COUNT(*) AS c FROM order_reviews JOIN orders ON orders.order_id = order_reviews.order_id WHERE orders.user_id  = ?",
+                "SELECT COUNT(*) AS c FROM order_reviews JOIN orders ON orders.order_id = order_reviews.order_id WHERE EXISTS(SELECT * FROM restaurants WHERE restaurants.restaurant_id = orders.restaurant_id AND restaurants.deleted = false) AND orders.user_id  = ?",
                 SimpleRowMappers.COUNT_ROW_MAPPER,
                 userId
         ).get(0);

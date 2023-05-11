@@ -108,7 +108,8 @@ public class RolesJdbcDao implements RolesDao {
                     " FROM restaurants) SELECT " + TableFields.RESTAURANTS_FIELDS + ", roles_grouped.role_level," +
                     " (SELECT COUNT(*) FROM orders WHERE orders.restaurant_id = restaurants.restaurant_id AND " + OrderJdbcDao.IS_IN_PROGRESS_COND + ") AS order_count" +
                     " FROM roles_grouped JOIN restaurants ON roles_grouped.restaurant_id = restaurants.restaurant_id" +
-                    " WHERE roles_grouped.user_id = ? ORDER BY order_count DESC";
+                    " WHERE roles_grouped.user_id = ? AND EXISTS(SELECT * FROM restaurants WHERE restaurants.restaurant_id = roles_grouped.restaurant_id AND restaurants.deleted = false)" +
+                    " ORDER BY order_count DESC";
 
     @Override
     public List<Triplet<Restaurant, RestaurantRoleLevel, Integer>> getByUser(long userId) {
@@ -121,6 +122,10 @@ public class RolesJdbcDao implements RolesDao {
 
     @Override
     public boolean deleteRole(long restaurantId, long userId) {
-        return jdbcTemplate.update("DELETE FROM restaurant_roles WHERE restaurant_id = ? AND user_id = ?", restaurantId, userId) > 0;
+        return jdbcTemplate.update(
+                "DELETE FROM restaurant_roles WHERE restaurant_id = ? AND user_id = ?",
+                restaurantId,
+                userId
+        ) > 0;
     }
 }
