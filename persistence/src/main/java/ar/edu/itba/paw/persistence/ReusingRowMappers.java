@@ -103,7 +103,8 @@ class ReusingRowMappers {
                     rs.getString("restaurant_address"),
                     rs.getString("restaurant_description"),
                     rs.getInt("restaurant_max_tables"),
-                    rs.getBoolean("restaurant_is_active")
+                    rs.getBoolean("restaurant_is_active"),
+                    rs.getBoolean("restaurant_deleted")
             );
         }
     }
@@ -126,7 +127,8 @@ class ReusingRowMappers {
                     pk,
                     restaurantRowMapper.mapRow(rs, 1),
                     rs.getString("category_name"),
-                    rs.getInt("category_order")
+                    rs.getInt("category_order"),
+                    rs.getBoolean("category_deleted")
             );
         }
     }
@@ -151,7 +153,8 @@ class ReusingRowMappers {
                     rs.getBigDecimal("product_price"),
                     rs.getString("product_description"),
                     SimpleRowMappers.readLongOrNull(rs, "product_image_id"),
-                    rs.getBoolean("product_available")
+                    rs.getBoolean("product_available"),
+                    rs.getBoolean("product_deleted")
             );
         }
     }

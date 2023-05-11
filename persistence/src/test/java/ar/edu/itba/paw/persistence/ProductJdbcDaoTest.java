@@ -99,13 +99,13 @@ public class ProductJdbcDaoTest {
     @Test
     public void testUpdateProductPrice() throws SQLException {
         jdbcTemplate.execute("INSERT INTO products (product_id, name, price, category_id) VALUES (" + PRODUCT_ID + ", '" + PRODUCT_NAME + "', " + PRODUCT_PRICE + ", " + CATEGORY_ID + ")");
-        Assert.assertTrue(productDao.updatePrice(PRODUCT_ID, PRODUCT_PRICE.add(BigDecimal.valueOf(2))));
+        Assert.assertTrue(productDao.update(PRODUCT_ID, PRODUCT_NAME, PRODUCT_PRICE.add(BigDecimal.valueOf(2)), null));
     }
 
     @Test
     public void testUpdateProductName() throws SQLException {
         jdbcTemplate.execute("INSERT INTO products (product_id, name, price, category_id) VALUES (" + PRODUCT_ID + ", '" + PRODUCT_NAME + "', " + PRODUCT_PRICE + ", " + CATEGORY_ID + ")");
-        Assert.assertTrue(productDao.updateName(PRODUCT_ID, PRODUCT_NAME + "- v2.0"));
+        Assert.assertTrue(productDao.update(PRODUCT_ID, PRODUCT_NAME + "- v2.0", PRODUCT_PRICE, null));
     }
 
     @Test

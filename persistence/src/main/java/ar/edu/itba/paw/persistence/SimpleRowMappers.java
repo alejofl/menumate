@@ -57,7 +57,8 @@ class SimpleRowMappers {
             rs.getString("restaurant_address"),
             rs.getString("restaurant_description"),
             rs.getInt("restaurant_max_tables"),
-            rs.getBoolean("restaurant_is_active")
+            rs.getBoolean("restaurant_is_active"),
+            rs.getBoolean("restaurant_deleted")
     );
 
     static final RowMapper<RestaurantRoleLevel> RESTAURANT_ROLE_LEVEL_ROW_MAPPER = (ResultSet rs, int rowNum) -> {
@@ -73,7 +74,8 @@ class SimpleRowMappers {
             rs.getLong("category_id"),
             RESTAURANT_ROW_MAPPER.mapRow(rs, rowNum),
             rs.getString("category_name"),
-            rs.getInt("category_order")
+            rs.getInt("category_order"),
+            rs.getBoolean("category_deleted")
     );
 
     static final RowMapper<Product> PRODUCT_ROW_MAPPER = (ResultSet rs, int rowNum) -> new Product(
@@ -83,7 +85,8 @@ class SimpleRowMappers {
             rs.getBigDecimal("product_price"),
             rs.getString("product_description"),
             readLongOrNull(rs, "product_image_id"),
-            rs.getBoolean("product_available")
+            rs.getBoolean("product_available"),
+            rs.getBoolean("product_deleted")
     );
 
     static final RowMapper<OrderItemless> ORDER_ITEMLESS_ROW_MAPPER = (ResultSet rs, int rowNum) -> new OrderItemless(

@@ -12,8 +12,9 @@ public class Restaurant {
     private final String description;
     private final int maxTables;
     private final boolean isActive;
+    private final boolean deleted;
 
-    public Restaurant(long restaurantId, String name, String email, long ownerUserId, Long logoId, Long portrait1Id, Long portrait2Id, String address, String description, int maxTables, boolean isActive) {
+    public Restaurant(long restaurantId, String name, String email, long ownerUserId, Long logoId, Long portrait1Id, Long portrait2Id, String address, String description, int maxTables, boolean isActive, boolean deleted) {
         this.restaurantId = restaurantId;
         this.name = name;
         this.email = email;
@@ -25,6 +26,7 @@ public class Restaurant {
         this.description = description;
         this.maxTables = maxTables;
         this.isActive = isActive;
+        this.deleted = deleted;
     }
 
     public long getRestaurantId() {
@@ -69,5 +71,9 @@ public class Restaurant {
 
     public boolean getIsActive() {
         return isActive;
+    }
+
+    public boolean getDeleted() {
+        return deleted;
     }
 }

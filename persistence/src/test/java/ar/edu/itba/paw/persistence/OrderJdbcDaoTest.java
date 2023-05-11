@@ -86,7 +86,7 @@ public class OrderJdbcDaoTest {
             BigDecimal product_price = PRODUCT_PRICE.add(BigDecimal.valueOf(i + 1));
 
             jdbcTemplate.execute("INSERT INTO products(product_id, category_id, name, price) VALUES (" + product_id + ", " + cateogry_id + ", '" + product_name + "', " + product_price + ")");
-            Product product = new Product(product_id, category, product_name, product_price);
+            Product product = new Product(product_id, category, product_name, product_price, null, null, true, false);
 
             int line_number = i + 1;
             OrderItem orderItem = new OrderItem(product, line_number, 10, "comment");

@@ -42,7 +42,8 @@ CREATE TABLE IF NOT EXISTS restaurants
     logo_id       INT REFERENCES images (image_id) ON DELETE SET NULL,
     portrait_1_id INT REFERENCES images (image_id) ON DELETE SET NULL,
     portrait_2_id INT REFERENCES images (image_id) ON DELETE SET NULL,
-    is_active     BOOLEAN NOT NULL DEFAULT TRUE
+    is_active     BOOLEAN NOT NULL DEFAULT TRUE,
+    deleted       BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS restaurant_roles
@@ -60,6 +61,7 @@ CREATE TABLE IF NOT EXISTS categories
     restaurant_id INT REFERENCES restaurants (restaurant_id) ON DELETE CASCADE NOT NULL,
     name          VARCHAR(50) NOT NULL,
     order_num     SMALLINT NOT NULL,
+    deleted       BOOLEAN NOT NULL DEFAULT FALSE,
 
     UNIQUE (restaurant_id, order_num)
 );
@@ -72,7 +74,8 @@ CREATE TABLE IF NOT EXISTS products
     price       DECIMAL(10, 2) NOT NULL CHECK (price > 0),
     description VARCHAR(300),
     image_id    INT REFERENCES images (image_id) ON DELETE SET NULL,
-    available   BOOLEAN NOT NULL DEFAULT TRUE
+    available   BOOLEAN NOT NULL DEFAULT TRUE,
+    deleted     BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS orders
