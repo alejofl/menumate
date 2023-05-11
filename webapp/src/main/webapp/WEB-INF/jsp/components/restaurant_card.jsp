@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <body>
@@ -8,8 +9,16 @@
                 style="--main_image: url(${param.main_image}); --hover_image: url(${param.hover_image})"
         >
         <div class="card-body">
-            <h5 class="card-title">${param.name}</h5>
-            <p class="card-text">${param.address}</p>
+            <h5 class="card-title"><c:out value="${param.name}"/></h5>
+            <p class="card-text"><c:out value="${param.address}"/></p>
+            <div class="small-ratings">
+                <c:forEach begin="1" end="${param.rating}">
+                    <i class="bi bi-star-fill rating-color"></i>
+                </c:forEach>
+                <c:forEach begin="1" end="${5 - param.rating}">
+                    <i class="bi bi-star-fill"></i>
+                </c:forEach>
+            </div>
         </div>
     </div>
 </a>

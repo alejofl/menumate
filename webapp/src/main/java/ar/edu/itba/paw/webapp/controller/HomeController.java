@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.model.util.PaginatedResult;
 import ar.edu.itba.paw.service.RestaurantService;
+import ar.edu.itba.paw.service.ReviewService;
 import ar.edu.itba.paw.webapp.form.SearchForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,6 +21,9 @@ public class HomeController {
     @Autowired
     private RestaurantService restaurantService;
 
+    @Autowired
+    private ReviewService reviewService;
+
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView index(
             @ModelAttribute("searchForm") final SearchForm form
@@ -28,7 +32,7 @@ public class HomeController {
 
         final int maxRestaurants = 4;
         final PaginatedResult<Restaurant> results = restaurantService.getActive(1, maxRestaurants);
-        mav.addObject("restaurants", results.getResult());
+        mav.addObject("restaurants", restaurantService.getAverageRatingForRestaurants(results.getResult()));
 
         return mav;
     }
@@ -46,7 +50,7 @@ public class HomeController {
         }
 
         final PaginatedResult<Restaurant> results = restaurantService.getSearchResults(form.getSearch(), form.getPageOrDefault(), form.getSizeOrDefault(ControllerUtils.DEFAULT_SEARCH_PAGE_SIZE));
-        mav.addObject("restaurants", results.getResult());
+        mav.addObject("restaurants", restaurantService.getAverageRatingForRestaurants(results.getResult()));
         mav.addObject("restaurantCount", results.getTotalCount());
         mav.addObject("pageCount", results.getTotalPageCount());
 

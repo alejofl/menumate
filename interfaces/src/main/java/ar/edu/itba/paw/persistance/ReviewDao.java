@@ -2,9 +2,9 @@ package ar.edu.itba.paw.persistance;
 
 import ar.edu.itba.paw.model.Review;
 import ar.edu.itba.paw.model.util.AverageCountPair;
-import ar.edu.itba.paw.model.util.PaginatedResult;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface ReviewDao {
@@ -38,10 +38,10 @@ public interface ReviewDao {
     /**
      * Gets a restaurant's reviews ordered by date descending.
      */
-    PaginatedResult<Review> getByRestaurant(long restaurantId, int pageNumber, int pageSize);
+    List<Review> getByRestaurant(long restaurantId);
 
     /**
      * Gets a user's reviews ordered by date descending.
      */
-    PaginatedResult<Review> getByUser(long userId, int pageNumber, int pageSize);
+    List<Review> getByUser(long userId);
 }

@@ -3,10 +3,7 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.util.PaginatedResult;
 import ar.edu.itba.paw.persistance.RestaurantDao;
-import ar.edu.itba.paw.service.CategoryService;
-import ar.edu.itba.paw.service.ImageService;
-import ar.edu.itba.paw.service.ProductService;
-import ar.edu.itba.paw.service.RestaurantService;
+import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.model.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +26,9 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Autowired
     private CategoryService categoryService;
+
+    @Autowired
+    private ReviewService reviewService;
 
     @Override
     public long create(String name, String email, long ownerUserId, String description, String address, int maxTables, byte[] logo, byte[] portrait1, byte[] portrait2) {
@@ -76,5 +76,15 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Override
     public boolean delete(long restaurantId) {
         return restaurantDao.delete(restaurantId);
+    }
+
+    @Override
+    public List<Pair<Restaurant, Integer>> getAverageRatingForRestaurants(List<Restaurant> restaurants) {
+        List<Pair<Restaurant, Integer>> results = new ArrayList<>();
+        for (Restaurant restaurant : restaurants) {
+            int average = Math.round(reviewService.getRestaurantAverage(restaurant.getRestaurantId()).getAverage());
+            results.add(new Pair<>(restaurant, average));
+        }
+        return results;
     }
 }
