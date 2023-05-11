@@ -137,6 +137,7 @@ public class EmailServiceImpl implements EmailService {
         );
     }
 
+    @Async
     @Override
     public void sendUserVerificationEmail(String baseUrl, String email, String token) throws MessagingException {
         final Map<String, Object> params = new HashMap<>();
@@ -149,6 +150,7 @@ public class EmailServiceImpl implements EmailService {
         );
     }
 
+    @Async
     @Override
     public void sendResetPasswordEmail(String baseUrl, String email, String token) throws MessagingException {
         final Map<String, Object> params = new HashMap<>();
