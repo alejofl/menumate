@@ -3,6 +3,7 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.model.RestaurantTags;
 import ar.edu.itba.paw.model.util.PaginatedResult;
+import ar.edu.itba.paw.model.util.Pair;
 import ar.edu.itba.paw.persistance.RestaurantDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -110,12 +111,11 @@ public class RestaurantJdbcDao implements RestaurantDao {
         return new PaginatedResult<>(results, pageNumber, pageSize, count);
     }
 
-    @Override
-    public PaginatedResult<Restaurant> getSortedByName(int pageNumber, int pageSize, String sort) {
-        int pageIdx = pageNumber - 1;
 
+    private Pair<List<Restaurant>, Integer> getPreliminaryResults(int pageNumber, int pageSize, String orderByField, String sort) {
+        int pageIdx = pageNumber - 1;
         List<Restaurant> results = jdbcTemplate.query(
-                SELECT_BASE + " WHERE is_active = true ORDER BY restaurant_name " + sort + " LIMIT ? OFFSET ?",
+                SELECT_BASE + " WHERE is_active = true " + orderByField + " " + sort + " LIMIT ? OFFSET ?",
                 SimpleRowMappers.RESTAURANT_ROW_MAPPER,
                 pageSize,
                 pageIdx * pageSize
@@ -126,24 +126,20 @@ public class RestaurantJdbcDao implements RestaurantDao {
                 SimpleRowMappers.COUNT_ROW_MAPPER
         ).get(0);
 
-        return new PaginatedResult<>(results, pageNumber, pageSize, count);
+        return new Pair<>(results, count);
+    }
+    @Override
+    public PaginatedResult<Restaurant> getSortedByName(int pageNumber, int pageSize, String sort) {
+        Pair<List<Restaurant>, Integer> preliminaryResults = getPreliminaryResults(pageNumber, pageSize, "ORDER BY restaurant_name", sort);
+        return new PaginatedResult<>(preliminaryResults.getKey(), pageNumber, pageSize, preliminaryResults.getValue());
     }
 
     @Override
     public PaginatedResult<Restaurant> getSortedByPriceAverage(int pageNumber, int pageSize, String sort) {
-        int pageIdx = pageNumber -1;
 
-        List<Restaurant> results = jdbcTemplate.query(
-                SELECT_BASE + " WHERE is_active = true LIMIT ? OFFSET ?",
-                SimpleRowMappers.RESTAURANT_ROW_MAPPER,
-                pageSize,
-                pageIdx * pageSize
-        );
-
-        int count = jdbcTemplate.query(
-                "SELECT count(*) AS c FROM restaurants WHERE is_active = true",
-                SimpleRowMappers.COUNT_ROW_MAPPER
-        ).get(0);
+        Pair<List<Restaurant>, Integer> preliminaryResults = getPreliminaryResults(pageNumber, pageSize, "", "");
+        List<Restaurant> results = preliminaryResults.getKey();
+        int count = preliminaryResults.getValue();
 
         results.sort(
             Comparator.comparing
@@ -159,40 +155,16 @@ public class RestaurantJdbcDao implements RestaurantDao {
 
     @Override
     public PaginatedResult<Restaurant> getSortedByCreationDate(int pageNumber, int pageSize, String sort) {
-        int pageIdx = pageNumber -1;
-
-        List<Restaurant> results = jdbcTemplate.query(
-                SELECT_BASE + " WHERE is_active = true ORDER BY date_created " + sort + " LIMIT ? OFFSET ?",
-                SimpleRowMappers.RESTAURANT_ROW_MAPPER,
-                pageSize,
-                pageIdx * pageSize
-        );
-
-        int count = jdbcTemplate.query(
-                "SELECT count(*) AS c FROM restaurants WHERE is_active = true",
-                SimpleRowMappers.COUNT_ROW_MAPPER
-        ).get(0);
-
-        return new PaginatedResult<>(results, pageNumber, pageSize, count);
+        Pair<List<Restaurant>, Integer> preliminaryResults = getPreliminaryResults(pageNumber, pageSize, "ORDER BY date_created", sort);
+        return new PaginatedResult<>(preliminaryResults.getKey(), pageNumber, pageSize, preliminaryResults.getValue());
     }
 
     @Override
     public PaginatedResult<Restaurant> getSortedByAveragePrice(int pageNumber, int pageSize, String sort) {
-        int pageIdx = pageNumber -1;
+        Pair<List<Restaurant>, Integer> preliminaryResults = getPreliminaryResults(pageNumber, pageSize, "", "");
+        List<Restaurant> results = preliminaryResults.getKey();
 
-        List<Restaurant> results = jdbcTemplate.query(
-                SELECT_BASE + " WHERE is_active = true ORDER BY date_created " + sort + " LIMIT ? OFFSET ?",
-                SimpleRowMappers.RESTAURANT_ROW_MAPPER,
-                pageSize,
-                pageIdx * pageSize
-        );
-
-        int count = jdbcTemplate.query(
-                "SELECT count(*) AS c FROM restaurants WHERE is_active = true",
-                SimpleRowMappers.COUNT_ROW_MAPPER
-        ).get(0);
-
-
+        int count = preliminaryResults.getValue();
         results.sort(
             Comparator.comparing
             (

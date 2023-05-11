@@ -191,10 +191,8 @@ public class RestaurantJdbcDaoTest {
                 sum = 0;
             }
         }
-        int aux = Collections.max(mockedReviewAverages).intValue();
-        int maxIndex = aux == 0 ? 0 : aux - 1;
-        aux = Collections.min(mockedReviewAverages).intValue();
-        int minIndex = aux == 0 ? 0 : aux - 1;
+        int maxIndex = mockedReviewAverages.indexOf(Collections.max(mockedReviewAverages));
+        int minIndex = mockedReviewAverages.indexOf(Collections.min(mockedReviewAverages));
 
         for(int i=1; i<RESTAURANTS_QTY+1; i++){
             when(reviewJdbcDao.getRestaurantAverage(i)).thenReturn(averageCountPair);
@@ -250,8 +248,11 @@ public class RestaurantJdbcDaoTest {
 
         PaginatedResult<Restaurant> res = restaurantDao.getSortedByAveragePrice(1, RESTAURANTS_QTY, "DESC");
 
+        int maxIndex = mockedPrices.indexOf(Collections.max(mockedPrices));
+        int minIndex = mockedPrices.indexOf(Collections.min(mockedPrices));
+
         Assert.assertEquals(RESTAURANTS_QTY, res.getResult().size());
-        Assert.assertEquals(RESTAURANTS_QTY-1, res.getResult().get(0).getRestaurantId());
-        Assert.assertEquals(1, res.getResult().get(RESTAURANTS_QTY-1).getRestaurantId());
+        Assert.assertEquals(res.getResult().get(0).getRestaurantId(), maxIndex + 1);
+        Assert.assertEquals(res.getResult().get(0).getRestaurantId(), minIndex + 1);
     }
 }
