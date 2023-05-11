@@ -11,6 +11,7 @@ import ar.edu.itba.paw.webapp.exception.RestaurantNotFoundException;
 import ar.edu.itba.paw.webapp.exception.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.*;
 import ar.edu.itba.paw.webapp.exception.OrderNotFoundException;
+import com.azul.tooling.in.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -90,7 +91,10 @@ public class UserController {
     }
 
     @RequestMapping(value = "/orders/{id:\\d+}", method = RequestMethod.GET)
-    public ModelAndView order(@PathVariable int id) {
+    public ModelAndView order(
+            @PathVariable final int id,
+            @ModelAttribute("reviewForm") final ReviewForm reviewForm
+    ) {
         ModelAndView mav = new ModelAndView("user/order");
         mav.addObject("order", orderService.getById(id).orElseThrow(OrderNotFoundException::new));
         return mav;

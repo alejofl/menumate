@@ -709,3 +709,13 @@ input:has(+ .form-error), textarea:has(+ .form-error) {
         transform: scale(100);
     }
 }
+
+.small-ratings i {
+    color: #cecece;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.rating-color {
+    color: #fbc634 !important;
+}
