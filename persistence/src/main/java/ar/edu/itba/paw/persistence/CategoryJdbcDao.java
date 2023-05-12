@@ -27,6 +27,7 @@ public class CategoryJdbcDao implements CategoryDao {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsert = new SimpleJdbcInsert(ds)
                 .withTableName("categories")
+                .usingColumns("restaurant_id", "name", "order_num")
                 .usingGeneratedKeyColumns("category_id");
     }
 
