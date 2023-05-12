@@ -111,7 +111,7 @@ public class RestaurantJdbcDao implements RestaurantDao {
     );
 
     @Override
-    public PaginatedResult<RestaurantDetails> search(String query, int pageNumber, int pageSize, RestaurantOrderBy orderBy, boolean descending, List<RestaurantTags> tags, List<RestaurantSpecialty> specialty) {
+    public PaginatedResult<RestaurantDetails> search(String query, int pageNumber, int pageSize, RestaurantOrderBy orderBy, boolean descending, List<RestaurantTags> tags, List<RestaurantSpecialty> specialties) {
         int pageIdx = pageNumber - 1;
 
         if (query == null)

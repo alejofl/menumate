@@ -24,10 +24,10 @@ public interface RestaurantService {
      * @param orderBy Specifies how the results should be ordered.
      * @param descending False to sort in ascending order, true to sort in descending order.
      * @param tags Filters out restaurants that don't have one of the tags on this list.
-     * @param specialty Filters out restaurants whose specialty isn't in this list.
+     * @param specialties Filters out restaurants whose specialties isn't in this list.
      * @return The paginated results.
      */
-    PaginatedResult<RestaurantDetails> search(String query, int pageNumber, int pageSize, RestaurantOrderBy orderBy, boolean descending, List<RestaurantTags> tags, List<RestaurantSpecialty> specialty);
+    PaginatedResult<RestaurantDetails> search(String query, int pageNumber, int pageSize, RestaurantOrderBy orderBy, boolean descending, List<RestaurantTags> tags, List<RestaurantSpecialty> specialties);
 
     List<Pair<Category, List<Product>>> getMenu(long restaurantId);
 

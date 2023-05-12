@@ -17,7 +17,7 @@ public interface RestaurantDao {
 
     PaginatedResult<Restaurant> getActive(int pageNumber, int pageSize);
 
-    PaginatedResult<RestaurantDetails> search(String query, int pageNumber, int pageSize, RestaurantOrderBy orderBy, boolean descending, List<RestaurantTags> tags, List<RestaurantSpecialty> specialty);
+    PaginatedResult<RestaurantDetails> search(String query, int pageNumber, int pageSize, RestaurantOrderBy orderBy, boolean descending, List<RestaurantTags> tags, List<RestaurantSpecialty> specialties);
 
     boolean delete(long restaurantId);
 

@@ -29,9 +29,6 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Autowired
     private CategoryService categoryService;
 
-    @Autowired
-    private ReviewService reviewService;
-
     @Override
     public long create(String name, String email, int specialty, long ownerUserId, String description, String address, int maxTables, byte[] logo, byte[] portrait1, byte[] portrait2) {
         long logoKey = imageService.create(logo);
@@ -52,10 +49,10 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public PaginatedResult<RestaurantDetails> search(String query, int pageNumber, int pageSize, RestaurantOrderBy orderBy, boolean descending, List<RestaurantTags> tags, List<RestaurantSpecialty> specialty) {
+    public PaginatedResult<RestaurantDetails> search(String query, int pageNumber, int pageSize, RestaurantOrderBy orderBy, boolean descending, List<RestaurantTags> tags, List<RestaurantSpecialty> specialties) {
         // NOTE: If we want for queries to "pizza" to include the tag for PIZZA, we can process the query and add the
         // tag in here.
-        return restaurantDao.search(query, pageNumber, pageSize, orderBy, descending, tags, specialty);
+        return restaurantDao.search(query, pageNumber, pageSize, orderBy, descending, tags, specialties);
     }
 
     @Override
