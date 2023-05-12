@@ -6,7 +6,6 @@ import ar.edu.itba.paw.model.util.PaginatedResult;
 import ar.edu.itba.paw.persistance.ReviewDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -19,14 +18,10 @@ import java.util.Optional;
 public class ReviewJdbcDao implements ReviewDao {
 
     private final JdbcTemplate jdbcTemplate;
-    private final SimpleJdbcInsert jdbcInsert;
 
     @Autowired
     public ReviewJdbcDao(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
-        jdbcInsert = new SimpleJdbcInsert(ds)
-                .withTableName("order_reviews")
-                .usingColumns("order_id", "rating", "comment");
     }
 
     @Override

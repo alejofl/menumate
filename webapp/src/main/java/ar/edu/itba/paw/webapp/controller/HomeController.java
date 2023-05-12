@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import ar.edu.itba.paw.RestaurantDetails;
+import ar.edu.itba.paw.RestaurantOrderBy;
 import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.model.util.PaginatedResult;
 import ar.edu.itba.paw.service.RestaurantService;
@@ -31,8 +33,8 @@ public class HomeController {
         ModelAndView mav = new ModelAndView("home/index");
 
         final int maxRestaurants = 4;
-        final PaginatedResult<Restaurant> results = restaurantService.getActive(1, maxRestaurants);
-        mav.addObject("restaurants", restaurantService.getAverageRatingForRestaurants(results.getResult()));
+        final PaginatedResult<RestaurantDetails> results = restaurantService.search(null, 1, maxRestaurants, RestaurantOrderBy.RATING, true, null, null);
+        mav.addObject("restaurants", results.getResult());
 
         return mav;
     }
@@ -48,9 +50,8 @@ public class HomeController {
             mav.addObject("error", Boolean.TRUE);
             form.clear();
         }
-
-        final PaginatedResult<Restaurant> results = restaurantService.getSearchResults(form.getSearch(), form.getPageOrDefault(), form.getSizeOrDefault(ControllerUtils.DEFAULT_SEARCH_PAGE_SIZE));
-        mav.addObject("restaurants", restaurantService.getAverageRatingForRestaurants(results.getResult()));
+        final PaginatedResult<RestaurantDetails> results = restaurantService.search(form.getSearch(), form.getPageOrDefault(), form.getSizeOrDefault(ControllerUtils.DEFAULT_SEARCH_PAGE_SIZE), null, false, null, null);
+        mav.addObject("restaurants", results.getResult());
         mav.addObject("restaurantCount", results.getTotalCount());
         mav.addObject("pageCount", results.getTotalPageCount());
 

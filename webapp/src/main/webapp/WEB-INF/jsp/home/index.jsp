@@ -18,14 +18,14 @@
     <div class="landing-restaurants">
         <p class="landing-restaurants-title"><spring:message code="index.restaurant.title"/></p>
         <main class="restaurant-feed">
-            <c:forEach items="${restaurants}" var="restaurant">
-                <c:url var="restaurantUrl" value="/restaurants/${restaurant.key.restaurantId}"/>
-                <c:url var="mainImage" value="/images/${restaurant.key.portraitId1}"/>
-                <c:url var="hoverImage" value="/images/${restaurant.key.portraitId2}"/>
+            <c:forEach items="${restaurants}" var="restaurantDetails">
+                <c:url var="restaurantUrl" value="/restaurants/${restaurantDetails.restaurant.restaurantId}"/>
+                <c:url var="mainImage" value="/images/${restaurantDetails.restaurant.portraitId1}"/>
+                <c:url var="hoverImage" value="/images/${restaurantDetails.restaurant.portraitId2}"/>
                 <jsp:include page="/WEB-INF/jsp/components/restaurant_card.jsp">
-                    <jsp:param name="name" value="${restaurant.key.name}"/>
-                    <jsp:param name="address" value="${restaurant.key.address}"/>
-                    <jsp:param name="rating" value="${restaurant.value}"/>
+                    <jsp:param name="name" value="${restaurantDetails.restaurant.name}"/>
+                    <jsp:param name="address" value="${restaurantDetails.restaurant.address}"/>
+                    <jsp:param name="rating" value="${restaurantDetails.averageRating}"/>
                     <jsp:param name="main_image" value="${mainImage}"/>
                     <jsp:param name="hover_image" value="${hoverImage}"/>
                     <jsp:param name="link" value="${restaurantUrl}"/>

@@ -1,7 +1,9 @@
 package ar.edu.itba.paw.persistance;
 
-import ar.edu.itba.paw.model.Order;
+import ar.edu.itba.paw.RestaurantDetails;
+import ar.edu.itba.paw.RestaurantOrderBy;
 import ar.edu.itba.paw.model.Restaurant;
+import ar.edu.itba.paw.model.RestaurantSpecialty;
 import ar.edu.itba.paw.model.RestaurantTags;
 import ar.edu.itba.paw.model.util.PaginatedResult;
 
@@ -15,17 +17,7 @@ public interface RestaurantDao {
 
     PaginatedResult<Restaurant> getActive(int pageNumber, int pageSize);
 
-    int countActive();
-
-    PaginatedResult<Restaurant> getSearchResults(String[] tokens, int pageNumber, int pageSize);
-
-    PaginatedResult<Restaurant> getSortedByName(int pageNumber, int pageSize, String sort);
-
-    PaginatedResult<Restaurant> getSortedByPriceAverage(int pageNumber, int pageSize, String sort);
-
-    PaginatedResult<Restaurant> getSortedByCreationDate(int pageNumber, int pageSize, String sort);
-
-    PaginatedResult<Restaurant> getSortedByAveragePrice(int pageNumber, int pageSize, String sort);
+    PaginatedResult<RestaurantDetails> search(String query, int pageNumber, int pageSize, RestaurantOrderBy orderBy, boolean descending, List<RestaurantTags> tags, List<RestaurantSpecialty> specialty);
 
     boolean delete(long restaurantId);
 

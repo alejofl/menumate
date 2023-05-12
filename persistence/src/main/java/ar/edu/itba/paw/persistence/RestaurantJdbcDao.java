@@ -1,19 +1,21 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.RestaurantDetails;
+import ar.edu.itba.paw.RestaurantOrderBy;
 import ar.edu.itba.paw.model.Restaurant;
+import ar.edu.itba.paw.model.RestaurantSpecialty;
 import ar.edu.itba.paw.model.RestaurantTags;
 import ar.edu.itba.paw.model.util.PaginatedResult;
-import ar.edu.itba.paw.model.util.Pair;
 import ar.edu.itba.paw.persistance.RestaurantDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.sql.DataSource;
 import java.util.*;
-import java.util.function.Function;
 
 @Repository
 public class RestaurantJdbcDao implements RestaurantDao {
@@ -23,12 +25,6 @@ public class RestaurantJdbcDao implements RestaurantDao {
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert restaurantJdbcInsert;
     private final SimpleJdbcInsert restaurantTagsJdbcInsert;
-
-    @Autowired
-    private ReviewJdbcDao reviewJdbcDao;
-
-    @Autowired
-    private ProductJdbcDao productJdbcDao;
 
     @Autowired
     public RestaurantJdbcDao(final DataSource ds) {
@@ -68,35 +64,84 @@ public class RestaurantJdbcDao implements RestaurantDao {
                 pageIdx * pageSize
         );
 
-        int count = countActive();
+        int count = jdbcTemplate.query(
+                "SELECT COUNT(*) AS c FROM restaurants WHERE deleted = false AND is_active = true",
+                SimpleRowMappers.COUNT_ROW_MAPPER
+        ).get(0);
 
         return new PaginatedResult<>(results, pageNumber, pageSize, count);
     }
 
-    @Override
-    public int countActive() {
-        return jdbcTemplate.query(
-                "SELECT COUNT(*) AS c FROM restaurants WHERE deleted = false AND is_active = true",
-                SimpleRowMappers.COUNT_ROW_MAPPER
-        ).get(0);
+    private static final String RESTAURANT_RATINGS_COUNTS_SQL = "SELECT" +
+            " restaurants.restaurant_id AS restaurant_id," +
+            " COALESCE(AVG(CAST(order_reviews.rating AS FLOAT)), 0) AS rating_average," +
+            " COUNT(order_reviews) AS rating_count" +
+            " FROM order_reviews JOIN orders ON order_reviews.order_id = orders.order_id" +
+            " RIGHT OUTER JOIN restaurants ON restaurants.restaurant_id = orders.restaurant_id" +
+            " GROUP BY restaurants.restaurant_id";
+
+    private static final String RESTAURANT_AVERAGE_PRICE_SQL = "SELECT COALESCE(AVG(products.price), 0)" +
+            " FROM products JOIN categories ON products.category_id = categories.category_id" +
+            " WHERE categories.restaurant_id = restaurants.restaurant_id" +
+            " AND products.deleted = false AND products.available = true";
+
+    private String getOrderByColumn(RestaurantOrderBy orderBy) {
+        if (orderBy == null)
+            return "restaurants.restaurant_id";
+
+        switch (orderBy) {
+            case DATE:
+                return "restaurants.date_created";
+            case ALPHABETIC:
+                return "restaurants.name";
+            case RATING:
+                return "restaurant_average_rating";
+            case PRICE:
+                return "restaurant_average_price";
+            default:
+                throw new NotImplementedException();
+        }
     }
 
-    private static final String GET_SEARCH_RESULTS_SQL = SELECT_BASE +
-            " WHERE restaurants.deleted = false AND restaurants.is_active = true" +
-            " AND LOWER(restaurants.name) LIKE ? ORDER BY restaurants.restaurant_id LIMIT ? OFFSET ?";
+    private static final RowMapper<RestaurantDetails> RESTAURANT_DETAILS_ROW_MAPPER = (rs, rowNum) -> new RestaurantDetails(
+            SimpleRowMappers.RESTAURANT_ROW_MAPPER.mapRow(rs, rowNum),
+            rs.getFloat("restaurant_average_rating"),
+            rs.getInt("restaurant_review_count"),
+            rs.getFloat("restaurant_average_price")
+    );
 
     @Override
-    public PaginatedResult<Restaurant> getSearchResults(String[] tokens, int pageNumber, int pageSize) {
+    public PaginatedResult<RestaurantDetails> search(String query, int pageNumber, int pageSize, RestaurantOrderBy orderBy, boolean descending, List<RestaurantTags> tags, List<RestaurantSpecialty> specialty) {
         int pageIdx = pageNumber - 1;
+
+        if (query == null)
+            query = "";
+
+        String orderByDirection = descending ? "DESC" : "ASC";
+        String orderByColumn = getOrderByColumn(orderBy);
+
+        // TODO: Optimize string construction to use StringBuilder
+        String sql = "WITH restaurant_ratings_counts AS" +
+                " (" + RESTAURANT_RATINGS_COUNTS_SQL + ")" +
+                " SELECT " + TableFields.RESTAURANTS_FIELDS + ", restaurant_ratings_counts.*," +
+                " restaurant_ratings_counts.rating_average AS restaurant_average_rating," +
+                " restaurant_ratings_counts.rating_count AS restaurant_review_count," +
+                " (" + RESTAURANT_AVERAGE_PRICE_SQL + ") AS restaurant_average_price" +
+                " FROM restaurants JOIN restaurant_ratings_counts ON restaurants.restaurant_id = restaurant_ratings_counts.restaurant_id" +
+                " WHERE restaurants.deleted = false AND restaurants.is_active = true AND LOWER(restaurants.name) LIKE ?" +
+                // " AND restaurants.specialty IN (1, 2, 3)" //TODO: Implement checks for tags and specialty (remember to update count select)
+                " ORDER BY " + orderByColumn + " " + orderByDirection + " LIMIT ? OFFSET ?";
+
+        String[] tokens = query.trim().toLowerCase().split(" +");
+
         StringBuilder searchParam = new StringBuilder("%");
-        for (String token : tokens) {
-            searchParam.append(token).append("%");
-        }
+        for (String token : tokens)
+            searchParam.append(token.trim()).append("%");
         String search = searchParam.toString();
 
-        List<Restaurant> results = jdbcTemplate.query(
-                GET_SEARCH_RESULTS_SQL,
-                SimpleRowMappers.RESTAURANT_ROW_MAPPER,
+        List<RestaurantDetails> results = jdbcTemplate.query(
+                sql,
+                RESTAURANT_DETAILS_ROW_MAPPER,
                 search,
                 pageSize,
                 pageIdx * pageSize
@@ -111,76 +156,8 @@ public class RestaurantJdbcDao implements RestaurantDao {
         return new PaginatedResult<>(results, pageNumber, pageSize, count);
     }
 
-
-    private Pair<List<Restaurant>, Integer> getPreliminaryResults(int pageNumber, int pageSize, String orderByField, String sort) {
-        int pageIdx = pageNumber - 1;
-        List<Restaurant> results = jdbcTemplate.query(
-                SELECT_BASE + " WHERE restaurants.deleted = false AND restaurants.is_active = true " + orderByField + " " + sort + " LIMIT ? OFFSET ?",
-                SimpleRowMappers.RESTAURANT_ROW_MAPPER,
-                pageSize,
-                pageIdx * pageSize
-        );
-
-        int count = jdbcTemplate.query(
-                "SELECT COUNT(*) AS c FROM restaurants WHERE deleted = false AND is_active = true",
-                SimpleRowMappers.COUNT_ROW_MAPPER
-        ).get(0);
-
-        return new Pair<>(results, count);
-    }
     @Override
-    public PaginatedResult<Restaurant> getSortedByName(int pageNumber, int pageSize, String sort) {
-        Pair<List<Restaurant>, Integer> preliminaryResults = getPreliminaryResults(pageNumber, pageSize, "ORDER BY restaurant_name", sort);
-        return new PaginatedResult<>(preliminaryResults.getKey(), pageNumber, pageSize, preliminaryResults.getValue());
-    }
-
-    @Override
-    public PaginatedResult<Restaurant> getSortedByPriceAverage(int pageNumber, int pageSize, String sort) {
-
-        Pair<List<Restaurant>, Integer> preliminaryResults = getPreliminaryResults(pageNumber, pageSize, "", "");
-        List<Restaurant> results = preliminaryResults.getKey();
-        int count = preliminaryResults.getValue();
-
-        results.sort(
-            Comparator.comparing
-            (
-                (Function<? super Restaurant, ? extends Float>) r -> reviewJdbcDao.getRestaurantAverage(r.getRestaurantId()).getAverage(),
-                sort.equalsIgnoreCase("ASC") ?
-                Comparator.naturalOrder() : Comparator.reverseOrder()
-            )
-        );
-
-        return new PaginatedResult<>(results, pageNumber, pageSize, count);
-    }
-
-    @Override
-    public PaginatedResult<Restaurant> getSortedByCreationDate(int pageNumber, int pageSize, String sort) {
-        Pair<List<Restaurant>, Integer> preliminaryResults = getPreliminaryResults(pageNumber, pageSize, "ORDER BY date_created", sort);
-        return new PaginatedResult<>(preliminaryResults.getKey(), pageNumber, pageSize, preliminaryResults.getValue());
-    }
-
-    @Override
-    public PaginatedResult<Restaurant> getSortedByAveragePrice(int pageNumber, int pageSize, String sort) {
-        Pair<List<Restaurant>, Integer> preliminaryResults = getPreliminaryResults(pageNumber, pageSize, "", "");
-        List<Restaurant> results = preliminaryResults.getKey();
-
-        int count = preliminaryResults.getValue();
-        results.sort(
-            Comparator.comparing
-            (
-                (Function<? super Restaurant, ? extends Double>) r ->  productJdbcDao.getRestaurantAveragePrice(r.getRestaurantId()),
-                sort.equalsIgnoreCase("ASC") ?
-                        Comparator.naturalOrder() : Comparator.reverseOrder()
-            )
-        );
-
-        return new PaginatedResult<>(results, pageNumber, pageSize, count);
-    }
-
-
-
-    @Override
-    public long create(String name, String email, int specialty , long ownerUserId, String description, String address, int maxTables, Long logoKey, Long portrait1Kay, Long portrait2Key) {
+    public long create(String name, String email, int specialty, long ownerUserId, String description, String address, int maxTables, Long logoKey, Long portrait1Kay, Long portrait2Key) {
         final Map<String, Object> restaurantData = new HashMap<>();
         restaurantData.put("name", name);
         restaurantData.put("email", email);

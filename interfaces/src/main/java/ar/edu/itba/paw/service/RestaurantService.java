@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.service;
 
+import ar.edu.itba.paw.RestaurantDetails;
+import ar.edu.itba.paw.RestaurantOrderBy;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.util.PaginatedResult;
 import ar.edu.itba.paw.model.util.Pair;
@@ -14,27 +16,18 @@ public interface RestaurantService {
 
     PaginatedResult<Restaurant> getActive(int pageNumber, int pageSize);
 
-    int getActiveCount();
-
-    PaginatedResult<Restaurant> getSearchResults(String query, int pageNumber, int pageSize);
-
-    PaginatedResult<Restaurant> getSortedByNameAsc(int pageNumber, int pageSize);
-
-    PaginatedResult<Restaurant> getSortedByNameDesc(int pageNumber, int pageSize);
-
-    PaginatedResult<Restaurant> getSortedByPriceAverageAsc(int pageNumber, int pageSize);
-
-    PaginatedResult<Restaurant> getSortedByPriceAverageDesc(int pageNumber, int pageSize);
-
-    PaginatedResult<Restaurant> getSortedByCreationDateAsc(int pageNumber, int pageSize);
-
-    PaginatedResult<Restaurant> getSortedByCreationDateDesc(int pageNumber, int pageSize);
-
-    PaginatedResult<Restaurant> getSortedByAveragePriceAsc(int pageNumber, int pageSize);
-
-    PaginatedResult<Restaurant> getSortedByAveragePriceDesc(int pageNumber, int pageSize);
-
-    List<Pair<Restaurant, Integer>> getAverageRatingForRestaurants(List<Restaurant> restaurants);
+    /**
+     * Searches for restaurants. Any of the nullable parameters in this function can be null to disable said filter.
+     * @param query A string to search restaurants by name.
+     * @param pageNumber Specifies the maximun.
+     * @param pageSize The amount of restaurants in a page.
+     * @param orderBy Specifies how the results should be ordered.
+     * @param descending False to sort in ascending order, true to sort in descending order.
+     * @param tags Filters out restaurants that don't have one of the tags on this list.
+     * @param specialty Filters out restaurants whose specialty isn't in this list.
+     * @return The paginated results.
+     */
+    PaginatedResult<RestaurantDetails> search(String query, int pageNumber, int pageSize, RestaurantOrderBy orderBy, boolean descending, List<RestaurantTags> tags, List<RestaurantSpecialty> specialty);
 
     List<Pair<Category, List<Product>>> getMenu(long restaurantId);
 
