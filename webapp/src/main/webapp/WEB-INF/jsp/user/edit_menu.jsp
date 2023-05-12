@@ -97,7 +97,7 @@
                 <h1 class="modal-title fs-5"><spring:message code="editmenu.addproduct.modal.title"/></h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <c:url value="/restaurants/${restaurant.restaurantId}/edit/add_product" var="addProductFormUrl"/>
+            <c:url value="/restaurants/${restaurant.restaurantId}/products/add" var="addProductFormUrl"/>
             <form:form cssClass="mb-0" modelAttribute="addProductForm" action="${addProductFormUrl}" method="post" id="add-product-form" enctype="multipart/form-data">
                 <div class="modal-body">
                     <div class="mb-3">
@@ -137,7 +137,7 @@
                 <h1 class="modal-title fs-5"><spring:message code="editmenu.addcategory.modal.title"/></h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <c:url value="/restaurants/${restaurant.restaurantId}/edit/add_category" var="addCategoryFormUrl"/>
+            <c:url value="/restaurants/${restaurant.restaurantId}/categories/add" var="addCategoryFormUrl"/>
             <form:form cssClass="mb-0" modelAttribute="addCategoryForm" action="${addCategoryFormUrl}" method="post" id="add-category-form">
                 <div class="modal-body">
                     <div class="mb-3">
@@ -166,7 +166,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><spring:message code="editmenu.form.no"/></button>
-                <c:url value="/restaurants/${restaurant.restaurantId}/edit/delete_category" var="deleteCategoryFormUrl"/>
+                <c:url value="/restaurants/${restaurant.restaurantId}/categories/delete" var="deleteCategoryFormUrl"/>
                 <form:form cssClass="m-0" modelAttribute="deleteCategoryForm" action="${deleteCategoryFormUrl}" method="post" id="delete-category-form">
                     <input type="hidden" name="categoryId" id="delete-category-form-category-id">
                     <input type="submit" class="btn btn-danger" value="<spring:message code="editmenu.form.yes"/>">
@@ -187,7 +187,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><spring:message code="editmenu.form.no"/></button>
-                <c:url value="/restaurants/${restaurant.restaurantId}/edit/delete_product" var="deleteProductFormUrl"/>
+                <c:url value="/restaurants/${restaurant.restaurantId}/products/delete" var="deleteProductFormUrl"/>
                 <form:form cssClass="m-0" modelAttribute="deleteProductForm" action="${deleteProductFormUrl}" method="post" id="delete-product-form">
                     <input type="hidden" name="productId" id="delete-product-form-product-id">
                     <input type="submit" class="btn btn-danger" value="<spring:message code="editmenu.form.yes"/>">

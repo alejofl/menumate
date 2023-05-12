@@ -185,7 +185,7 @@ public class UserController {
         return mav;
     }
 
-    @RequestMapping(value = "/restaurants/{id:\\d+}/edit/add_product", method = RequestMethod.POST)
+    @RequestMapping(value = "/restaurants/{id:\\d+}/products/add", method = RequestMethod.POST)
     public ModelAndView addProductToRestaurant(
             @PathVariable final int id,
             @Valid @ModelAttribute("addProductForm") final AddProductForm addProductForm,
@@ -222,7 +222,7 @@ public class UserController {
         return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
     }
 
-    @RequestMapping(value = "/restaurants/{id:\\d+}/edit/add_category", method = RequestMethod.POST)
+    @RequestMapping(value = "/restaurants/{id:\\d+}/categories/add", method = RequestMethod.POST)
     public ModelAndView addCategoryToRestaurant(
             @PathVariable final int id,
             @ModelAttribute("addProductForm") final AddProductForm addProductForm,
@@ -253,7 +253,7 @@ public class UserController {
         return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
     }
 
-    @RequestMapping(value = "/restaurants/{id:\\d+}/edit/delete_product", method = RequestMethod.POST)
+    @RequestMapping(value = "/restaurants/{id:\\d+}/products/delete", method = RequestMethod.POST)
     public ModelAndView deleteProductForRestaurant(
             @PathVariable final int id,
             @ModelAttribute("addProductForm") final AddProductForm addProductForm,
@@ -273,7 +273,7 @@ public class UserController {
         return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
     }
 
-    @RequestMapping(value = "/restaurants/{id:\\d+}/edit/delete_category", method = RequestMethod.POST)
+    @RequestMapping(value = "/restaurants/{id:\\d+}/categories/delete", method = RequestMethod.POST)
     public ModelAndView deleteCategoryForRestaurant(
             @PathVariable final int id,
             @ModelAttribute("addProductForm") final AddProductForm addProductForm,
