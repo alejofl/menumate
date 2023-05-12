@@ -12,7 +12,7 @@
     </jsp:include></head>
     <script src="<c:url value="/static/js/edit_menu.js"/>"></script>
 </head>
-<body data-add-category-errors="${addCategoryErrors}" data-add-product-errors="${addProductErrors}" data-category-id="${addProductErrors ? addProductForm.categoryId : ""}" data-add-employee-errors="${addEmployeeErrors}">
+<body data-add-category-errors="${addCategoryErrors}" data-add-product-errors="${addProductErrors}" data-category-id="${addProductErrors ? addProductForm.categoryId : ""}" data-add-employee-errors="${addEmployeeErrors}" data-edit-product-errors="${editProductErrors}" data-product-id="${editProductErrors ? editProductPriceForm.productId : ""}">
 <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
 <div class="restaurant-header">
     <img src="<c:url value="/images/${restaurant.portraitId1}"/>" class="menu-item-card-img" alt="${restaurant.name}">
@@ -67,7 +67,10 @@
                                     </c:otherwise>
                                 </c:choose>
                             </div>
-                            <h5 class="card-title">$${product.price}</h5>
+                            <div class="d-flex align-items-center gap-2">
+                                <h5 class="card-title">$${product.price}</h5>
+                                <a class="edit-product-price-button" type="button" data-bs-toggle="modal" data-bs-target="#edit-item-price-modal" data-product-id="${product.productId}"><i class="bi bi-pencil-fill"></i></a>
+                            </div>
                         </div>
                     </div>
                 </c:forEach>
@@ -193,6 +196,31 @@
                     <input type="submit" class="btn btn-danger" value="<spring:message code="editmenu.form.yes"/>">
                 </form:form>
             </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="edit-item-price-modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5"><spring:message code="editmenu.editprice.modal.title"/></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <c:url value="/restaurants/${restaurant.restaurantId}/products/edit" var="editProductPriceFormUrl"/>
+            <form:form cssClass="mb-0" modelAttribute="editProductPriceForm" action="${editProductPriceFormUrl}" method="post" id="edit-product-price-form">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <form:label path="price" cssClass="form-label"><spring:message code="editmenu.editprice.form.newprice"/></form:label>
+                        <form:input path="price" step="0.01" min="0" type="number" cssClass="form-control" id="edit-product-price-form-price"/>
+                        <form:errors path="price" element="div" cssClass="form-error"/>
+                    </div>
+                </div>
+                <input type="hidden" name="productId" id="edit-product-price-form-product-id">
+                <div class="modal-footer">
+                    <input type="submit" class="btn btn-primary" value="<spring:message code="editmenu.form.update"/>">
+                </div>
+            </form:form>
         </div>
     </div>
 </div>

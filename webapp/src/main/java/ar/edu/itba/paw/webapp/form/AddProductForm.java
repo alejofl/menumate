@@ -22,7 +22,7 @@ public class AddProductForm {
     private MultipartFile image;
 
     @NotNull
-    @DecimalMin(value = "0", inclusive = true)
+    @DecimalMin(value = "0", inclusive = false)
     @Digits(integer = 8, fraction = 2)
     private BigDecimal price;
 

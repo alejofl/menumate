@@ -6,15 +6,19 @@ document.addEventListener("DOMContentLoaded", () => {
     let addProductFormCategoryId = document.querySelector("#add-product-form-category-id");
     let deleteProductFormProductId = document.querySelector("#delete-product-form-product-id");
     let deleteCategoryFormCategoryId = document.querySelector("#delete-category-form-category-id");
+    let editProductPriceFormProductId = document.querySelector("#edit-product-price-form-product-id");
 
     // Open Checkout Modal if errors were found
     if (document.querySelector("body").dataset.addProductErrors === "true") {
-        addProductFormCategoryId.value = document.querySelector("body").dataset.categoryId;
         document.querySelector(`.add-product-button`).dispatchEvent(new Event("click"));
+        addProductFormCategoryId.value = document.querySelector("body").dataset.categoryId;
     } else if (document.querySelector("body").dataset.addCategoryErrors === "true") {
         document.querySelector("#add-category-button").dispatchEvent(new Event("click"));
     } else if (document.querySelector("body").dataset.addEmployeeErrors === "true") {
         document.querySelector("#add-employees-button").dispatchEvent(new Event("click"));
+    } else if (document.querySelector("body").dataset.editProductErrors === "true") {
+        document.querySelector(`.edit-product-price-button`).dispatchEvent(new Event("click"));
+        editProductPriceFormProductId.value = document.querySelector("body").dataset.productId;
     }
 
     // Modal dismissal
@@ -30,10 +34,19 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelector("#employees-modal").addEventListener("hidden.bs.modal", () => {
         changeInputValue("add-employee-form-email", "");
     });
+    document.querySelector("#edit-item-price-modal").addEventListener("hidden.bs.modal", () => {
+        changeInputValue("edit-product-price-form-price", "");
+    });
 
     document.querySelectorAll(".add-product-button").forEach(element => {
         element.addEventListener("click", (event) => {
             addProductFormCategoryId.value = element.dataset.categoryId;
+        });
+    });
+
+    document.querySelectorAll(".edit-product-price-button").forEach(element => {
+        element.addEventListener("click", (event) => {
+            editProductPriceFormProductId.value = element.dataset.productId;
         });
     });
 
