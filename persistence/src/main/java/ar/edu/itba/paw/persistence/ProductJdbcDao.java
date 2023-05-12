@@ -92,7 +92,7 @@ public class ProductJdbcDao implements ProductDao {
     @Override
     public double getRestaurantAveragePrice(long restaurantId) {
         return jdbcTemplate.queryForObject(
-                "SELECT COALESCE(AVG(price), 0) FROM products JOIN categories ON products.category_id = categories.category_id WHERE categories.restaurant_id = ? AND products.available = true",
+                "SELECT COALESCE(AVG(products.price), 0) FROM products JOIN categories ON products.category_id = categories.category_id WHERE categories.restaurant_id = ? AND products.deleted = false AND products.available = true",
                 Double.class,
                 restaurantId
         );

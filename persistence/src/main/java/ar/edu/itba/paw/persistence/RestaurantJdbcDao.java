@@ -115,14 +115,14 @@ public class RestaurantJdbcDao implements RestaurantDao {
     private Pair<List<Restaurant>, Integer> getPreliminaryResults(int pageNumber, int pageSize, String orderByField, String sort) {
         int pageIdx = pageNumber - 1;
         List<Restaurant> results = jdbcTemplate.query(
-                SELECT_BASE + " WHERE is_active = true " + orderByField + " " + sort + " LIMIT ? OFFSET ?",
+                SELECT_BASE + " WHERE restaurants.deleted = false AND restaurants.is_active = true " + orderByField + " " + sort + " LIMIT ? OFFSET ?",
                 SimpleRowMappers.RESTAURANT_ROW_MAPPER,
                 pageSize,
                 pageIdx * pageSize
         );
 
         int count = jdbcTemplate.query(
-                "SELECT count(*) AS c FROM restaurants WHERE is_active = true",
+                "SELECT COUNT(*) AS c FROM restaurants WHERE deleted = false AND is_active = true",
                 SimpleRowMappers.COUNT_ROW_MAPPER
         ).get(0);
 
