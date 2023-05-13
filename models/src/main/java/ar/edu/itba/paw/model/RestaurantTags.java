@@ -1,14 +1,28 @@
 package ar.edu.itba.paw.model;
 
 public enum RestaurantTags {
-    ELEGANT("Elegant"),
-    CASUAL("Casual"),
-    CHEAP("Cheap"),
-    COSY("Cosy"),
-    FAMILYFRIENDLY("Family Friendly"),
-    KIDFRIENDLY("Kid Friendly"),
-    LGBTFRIENDLY("LGBT Friendly"),
-    PETFRIENDLY("Pet Friendly");
+    ELEGANT("elegant"),
+    CASUAL("casual"),
+    CHEAP("cheap"),
+    COSY("cosy"),
+    FAMILY_FRIENDLY("family_friendly"),
+    KID_FRIENDLY("kid_friendly"),
+    LGBT_FRIENDLY("lgbt_friendly"),
+    PET_FRIENDLY("pet_friendly"),
+    HEALTHY("healthy"),
+    SUSTAINABLE("sustainable"),
+    LOCALLY_SOURCED("locally_sourced"),
+    HISTORIC("historic"),
+    TRENDY("trendy"),
+    ROMANTIC("romantic"),
+    OUTDOOR_DINING("outdoor_dining"),
+    FINE_DINING("fine_dining"),
+    INTERNATIONAL("international"),
+    WHEELCHAIR_ACCESSIBLE("wheelchair_accessible"),
+    LIVE_MUSIC("live_music"),
+    KARAOKE("karaoke"),
+    HAPPY_HOUR("happy_hour"),
+    OLD_FASHIONED("old_fashioned");
 
     private final String messageCode;
 

@@ -39,6 +39,15 @@
                 <form:errors path="specialty" element="div" cssClass="form-error"/>
             </div>
             <div class="mb-3">
+                <form:label path="tags" cssClass="form-label"><spring:message code="createrestaurant.form.tags"/></form:label>
+                <form:select path="tags" cssClass="form-select" multiple="true">
+                    <c:forEach var="tag" items="${tags}">
+                        <form:option value="${tag.ordinal()}"><spring:message code="restauranttags.${tag.messageCode}"/></form:option>
+                    </c:forEach>
+                </form:select>
+                <form:errors path="tags" element="div" cssClass="form-error"/>
+            </div>
+            <div class="mb-3">
                 <form:label path="description" cssClass="form-label"><spring:message code="createrestaurant.form.description"/></form:label>
                 <form:textarea class="form-control" path="description" id="create-restaurant-description" rows="3"/>
                 <form:errors path="description" element="div" cssClass="form-error"/>
