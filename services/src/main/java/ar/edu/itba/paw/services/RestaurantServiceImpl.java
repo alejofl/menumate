@@ -31,12 +31,12 @@ public class RestaurantServiceImpl implements RestaurantService {
     private ReviewService reviewService;
 
     @Override
-    public long create(String name, String email, long ownerUserId, String description, String address, int maxTables, byte[] logo, byte[] portrait1, byte[] portrait2) {
+    public long create(String name, String email, int specialty, long ownerUserId, String description, String address, int maxTables, byte[] logo, byte[] portrait1, byte[] portrait2) {
         long logoKey = imageService.create(logo);
         long portrait1Key = imageService.create(portrait1);
         long portrait2Key = imageService.create(portrait2);
 
-        return restaurantDao.create(name, email, ownerUserId, description, address, maxTables, logoKey, portrait1Key, portrait2Key);
+        return restaurantDao.create(name, email, specialty, ownerUserId, description, address, maxTables, logoKey, portrait1Key, portrait2Key);
     }
 
     @Override
@@ -47,6 +47,46 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Override
     public PaginatedResult<Restaurant> getActive(int pageNumber, int pageSize) {
         return restaurantDao.getActive(pageNumber, pageSize);
+    }
+
+    @Override
+    public PaginatedResult<Restaurant> getSortedByNameAsc(int pageNumber, int pageSize) {
+        return restaurantDao.getSortedByName(pageNumber, pageSize, "ASC");
+    }
+
+    @Override
+    public PaginatedResult<Restaurant> getSortedByNameDesc(int pageNumber, int pageSize) {
+        return restaurantDao.getSortedByName(pageNumber, pageSize, "DESC");
+    }
+
+    @Override
+    public PaginatedResult<Restaurant> getSortedByPriceAverageAsc(int pageNumber, int pageSize) {
+        return restaurantDao.getSortedByPriceAverage(pageNumber, pageSize, "ASC");
+    }
+
+    @Override
+    public PaginatedResult<Restaurant> getSortedByPriceAverageDesc(int pageNumber, int pageSize) {
+        return restaurantDao.getSortedByPriceAverage(pageNumber, pageSize, "DESC");
+    }
+
+    @Override
+    public PaginatedResult<Restaurant> getSortedByCreationDateAsc(int pageNumber, int pageSize) {
+        return restaurantDao.getSortedByCreationDate(pageNumber, pageSize, "ASC");
+    }
+
+    @Override
+    public PaginatedResult<Restaurant> getSortedByCreationDateDesc(int pageNumber, int pageSize) {
+        return restaurantDao.getSortedByCreationDate(pageNumber, pageSize, "DESC");
+    }
+
+    @Override
+    public PaginatedResult<Restaurant> getSortedByAveragePriceAsc(int pageNumber, int pageSize) {
+        return restaurantDao.getSortedByAveragePrice(pageNumber, pageSize, "ASC");
+    }
+
+    @Override
+    public PaginatedResult<Restaurant> getSortedByAveragePriceDesc(int pageNumber, int pageSize) {
+        return restaurantDao.getSortedByAveragePrice(pageNumber, pageSize, "DESC");
     }
 
     @Override
@@ -79,6 +119,20 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
+    public List<RestaurantTags> getTags(long restaurantId) {
+        return restaurantDao.getTags(restaurantId);
+    }
+
+    @Override
+    public boolean addTag(long restaurantId, long tagId) {
+        return restaurantDao.addTag(restaurantId, tagId);
+    }
+
+    @Override
+    public boolean removeTag(long restaurantId, long tagId) {
+        return restaurantDao.removeTag(restaurantId, tagId);
+    }
+
     public List<Pair<Restaurant, Integer>> getAverageRatingForRestaurants(List<Restaurant> restaurants) {
         List<Pair<Restaurant, Integer>> results = new ArrayList<>();
         for (Restaurant restaurant : restaurants) {

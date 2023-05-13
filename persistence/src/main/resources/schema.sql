@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS restaurants
     restaurant_id SERIAL PRIMARY KEY,
     name          VARCHAR(50) NOT NULL,
     email         VARCHAR(320) NOT NULL,
+    specialty     SMALLINT NOT NULL,
     owner_user_id INT REFERENCES users (user_id) ON DELETE CASCADE NOT NULL,
     date_created  TIMESTAMP NOT NULL DEFAULT now(),
     address       VARCHAR(200),
@@ -53,6 +54,13 @@ CREATE TABLE IF NOT EXISTS restaurant_roles
     role_level    SMALLINT NOT NULL CHECK (role_level > 0),
 
     PRIMARY KEY (user_id, restaurant_id)
+);
+
+CREATE TABLE IF NOT EXISTS restaurant_tags
+(
+    restaurant_id INT REFERENCES restaurants (restaurant_id) ON DELETE CASCADE NOT NULL,
+    tag_id        SMALLINT NOT NULL,
+    PRIMARY KEY (restaurant_id, tag_id)
 );
 
 CREATE TABLE IF NOT EXISTS categories

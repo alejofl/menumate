@@ -37,6 +37,7 @@ public class RolesJdbcDaoTest {
     private static final String RESTAURANT_EMAIL1 = "pedros@frompedros.com";
     private static final long RESTAURANT_ID2 = 4242;
     private static final String RESTAURANT_NAME2 = "La Mejor Pizza";
+    private static final int SPECIALTY = 1;
     private static final String RESTAURANT_EMAIL2 = "pizzeria@pizza.com";
     private static final int MAX_TABLES = 20;
     private static final RestaurantRoleLevel ROLE = RestaurantRoleLevel.MANAGER;
@@ -57,8 +58,8 @@ public class RolesJdbcDaoTest {
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "users", "restaurants", "restaurant_roles");
         jdbcTemplate.execute("INSERT INTO users (user_id, email, password, name) VALUES (" + USER_ID + ", '" + USER_EMAIL + "', '" + USER_PASSWORD + "', '" + USER_NAME + "')");
         jdbcTemplate.execute("INSERT INTO users (user_id, email, password, name) VALUES (" + OWNER_ID + ", '" + OWNER_EMAIL + "', '" + OWNER_PASSWORD + "', '" + OWNER_NAME + "')");
-        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, owner_user_id, max_tables) VALUES (" + RESTAURANT_ID1 + ", '" + RESTAURANT_NAME1 + "', '" + RESTAURANT_EMAIL1 + "', " + OWNER_ID + ", " + MAX_TABLES + ")");
-        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, owner_user_id, max_tables) VALUES (" + RESTAURANT_ID2 + ", '" + RESTAURANT_NAME2 + "', '" + RESTAURANT_EMAIL2 + "', " + OWNER_ID + ", " + MAX_TABLES + ")");
+        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, specialty, owner_user_id, max_tables) VALUES (" + RESTAURANT_ID1 + ", '" + RESTAURANT_NAME1 + "', '" + RESTAURANT_EMAIL1 + "', " + SPECIALTY + ", " + OWNER_ID + ", " + MAX_TABLES + ")");
+        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, specialty, owner_user_id, max_tables) VALUES (" + RESTAURANT_ID2 + ", '" + RESTAURANT_NAME2 + "', '" + RESTAURANT_EMAIL2 + "', " + SPECIALTY + ", " + OWNER_ID + ", " + MAX_TABLES + ")");
     }
 
     @Test

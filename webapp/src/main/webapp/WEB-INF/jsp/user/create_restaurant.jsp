@@ -55,6 +55,7 @@
                 <form:errors path="portrait2" element="div" cssClass="form-error"/>
             </div>
             <div class="mt-4">
+                <form:errors element="div" cssClass="form-error"/>
                 <input type="submit" class="btn btn-primary" value="<spring:message code="navbar.createrestaurant"/>">
             </div>
         </form:form>

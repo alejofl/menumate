@@ -1,12 +1,15 @@
 package ar.edu.itba.paw.persistance;
 
+import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.model.Restaurant;
+import ar.edu.itba.paw.model.RestaurantTags;
 import ar.edu.itba.paw.model.util.PaginatedResult;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface RestaurantDao {
-    long create(String name, String email, long ownerUserId, String description, String address, int maxTables, Long logoKey, Long portrait1Kay, Long portrait2Key);
+    long create(String name, String email, int specialty, long ownerUserId, String description, String address, int maxTables, Long logoKey, Long portrait1Kay, Long portrait2Key);
 
     Optional<Restaurant> getById(long restaurantId);
 
@@ -16,5 +19,20 @@ public interface RestaurantDao {
 
     PaginatedResult<Restaurant> getSearchResults(String[] tokens, int pageNumber, int pageSize);
 
+    PaginatedResult<Restaurant> getSortedByName(int pageNumber, int pageSize, String sort);
+
+    PaginatedResult<Restaurant> getSortedByPriceAverage(int pageNumber, int pageSize, String sort);
+
+    PaginatedResult<Restaurant> getSortedByCreationDate(int pageNumber, int pageSize, String sort);
+
+    PaginatedResult<Restaurant> getSortedByAveragePrice(int pageNumber, int pageSize, String sort);
+
     boolean delete(long restaurantId);
+
+    List<RestaurantTags> getTags(long restaurantId);
+
+    boolean addTag(long restaurantId, long tagId);
+
+    boolean removeTag(long restaurantId, long tagId);
+
 }

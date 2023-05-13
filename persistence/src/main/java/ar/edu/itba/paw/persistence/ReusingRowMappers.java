@@ -96,6 +96,7 @@ class ReusingRowMappers {
                     pk,
                     rs.getString("restaurant_name"),
                     rs.getString("restaurant_email"),
+                    RestaurantSpecialty.fromOrdinal(rs.getInt("restaurant_specialty")),
                     rs.getLong("restaurant_owner_user_id"),
                     SimpleRowMappers.readLongOrNull(rs, "restaurant_logo_id"),
                     SimpleRowMappers.readLongOrNull(rs, "restaurant_portrait_1_id"),
