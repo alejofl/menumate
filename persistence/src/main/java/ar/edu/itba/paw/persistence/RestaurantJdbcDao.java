@@ -103,11 +103,12 @@ public class RestaurantJdbcDao implements RestaurantDao {
         }
     }
 
-    private static final RowMapper<RestaurantDetails> RESTAURANT_DETAILS_ROW_MAPPER = (rs, rowNum) -> new RestaurantDetails(
+    private final RowMapper<RestaurantDetails> RESTAURANT_DETAILS_ROW_MAPPER = (rs, rowNum) -> new RestaurantDetails(
             SimpleRowMappers.RESTAURANT_ROW_MAPPER.mapRow(rs, rowNum),
             rs.getFloat("restaurant_average_rating"),
             rs.getInt("restaurant_review_count"),
-            rs.getFloat("restaurant_average_price")
+            rs.getFloat("restaurant_average_price"),
+            getTags(rs.getLong("restaurant_id"))
     );
 
     @Override
