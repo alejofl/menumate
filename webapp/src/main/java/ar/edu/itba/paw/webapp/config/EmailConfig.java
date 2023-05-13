@@ -1,7 +1,9 @@
 package ar.edu.itba.paw.webapp.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -25,6 +27,9 @@ import java.util.Properties;
 public class EmailConfig {
     @Autowired
     private Environment environment;
+
+    @Autowired
+    private MessageSource messageSource;
 
     // Retrieved from: https://howtodoinjava.com/spring-core/send-email-with-spring-javamailsenderimpl-example/
     @Bean
@@ -69,7 +74,8 @@ public class EmailConfig {
     public TemplateEngine thymeleafTemplateEngine(ITemplateResolver templateResolver, ResourceBundleMessageSource emailMessageSource) {
         SpringTemplateEngine templateEngine = new SpringTemplateEngine();
         templateEngine.setTemplateResolver(templateResolver);
-        templateEngine.setTemplateEngineMessageSource(emailMessageSource);
+
+        templateEngine.setTemplateEngineMessageSource(messageSource);
         return templateEngine;
     }
 }

@@ -4,6 +4,7 @@ import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -38,8 +39,9 @@ public class EmailServiceImpl implements EmailService {
         emailSender.send(message);
     }
 
+
     private void sendMessageUsingThymeleafTemplate(String template, String to, String subject, Map<String, Object> params) throws MessagingException {
-        Context thymeleafContext = new Context();
+        Context thymeleafContext = new Context(LocaleContextHolder.getLocale());
         thymeleafContext.setVariables(params);
         String htmlBody = thymeleafTemplateEngine.process(template, thymeleafContext);
         sendHtmlMessage(to, subject, htmlBody);
