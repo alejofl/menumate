@@ -119,7 +119,9 @@ public class UserController {
     public ModelAndView createRestaurant(
             @ModelAttribute("createRestaurantForm") final CreateRestaurantForm form
     ) {
-        return new ModelAndView("user/create_restaurant");
+        final ModelAndView mav = new ModelAndView("user/create_restaurant");
+        mav.addObject("specialties", RestaurantSpecialty.values());
+        return mav;
     }
 
     @RequestMapping(value = "/restaurants/create", method = RequestMethod.POST)

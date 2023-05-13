@@ -17,7 +17,7 @@ public class CreateRestaurantForm {
     @Size(max = 200)
     private String address;
 
-    @NotBlank
+    @NotNull
     @Min(0)
     private Integer specialty;
 

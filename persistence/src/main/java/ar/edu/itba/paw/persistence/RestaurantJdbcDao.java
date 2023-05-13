@@ -31,7 +31,7 @@ public class RestaurantJdbcDao implements RestaurantDao {
         jdbcTemplate = new JdbcTemplate(ds);
         restaurantJdbcInsert = new SimpleJdbcInsert(ds)
                 .withTableName("restaurants")
-                .usingColumns("name", "email", "owner_user_id", "specialty", "logo_id", "portrait_1_id", "portrait_2_id", "address", "description")
+                .usingColumns("name", "email", "owner_user_id", "specialty", "logo_id", "portrait_1_id", "portrait_2_id", "address", "description", "max_tables")
                 .usingGeneratedKeyColumns("restaurant_id");
         restaurantTagsJdbcInsert = new SimpleJdbcInsert(ds)
                 .withTableName("restaurant_tags")
