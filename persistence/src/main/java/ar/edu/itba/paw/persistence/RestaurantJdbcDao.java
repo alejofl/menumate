@@ -131,7 +131,7 @@ public class RestaurantJdbcDao implements RestaurantDao {
                 " FROM restaurants JOIN restaurant_ratings_counts ON restaurants.restaurant_id = restaurant_ratings_counts.restaurant_id" +
                 " WHERE restaurants.deleted = false AND restaurants.is_active = true AND LOWER(restaurants.name) LIKE ?" +
                 // " AND restaurants.specialty IN (1, 2, 3)" //TODO: Implement checks for tags and specialty (remember to update count select)
-                " ORDER BY " + orderByColumn + " " + orderByDirection + " LIMIT ? OFFSET ?";
+                " ORDER BY " + orderByColumn + " " + orderByDirection + (orderBy == null ? "" : ", restaurants.restaurant_id") + " LIMIT ? OFFSET ?";
 
         String[] tokens = query.trim().toLowerCase().split(" +");
 
