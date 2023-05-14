@@ -4,6 +4,7 @@ import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.env.Environment;
@@ -17,12 +18,16 @@ import org.thymeleaf.context.Context;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 
 @Service
 @PropertySource("classpath:email.properties")
 public class EmailServiceImpl implements EmailService {
+
+    private final Locale locale = LocaleContextHolder.getLocale();
+
     @Autowired
     private JavaMailSender emailSender;
 
@@ -31,6 +36,9 @@ public class EmailServiceImpl implements EmailService {
 
     @Autowired
     private Environment environment;
+
+    @Autowired
+    private MessageSource messageSource;
 
     private void sendHtmlMessage(String to, String subject, String htmlBody) throws MessagingException {
         MimeMessage message = emailSender.createMimeMessage();
@@ -46,7 +54,7 @@ public class EmailServiceImpl implements EmailService {
     // This method will concatenate the baseUrl.
     // Only one link should be served for each email.
     private void sendMessageUsingThymeleafTemplate(String template, String to, String subject, Map<String, Object> params) throws MessagingException {
-        Context thymeleafContext = new Context(LocaleContextHolder.getLocale());
+        Context thymeleafContext = new Context(locale);
         final String baseUrl = environment.getProperty("email.base_url");
         if (params.containsKey("link")) {
             params.put("link", baseUrl + params.get("link"));
@@ -68,7 +76,7 @@ public class EmailServiceImpl implements EmailService {
         this.sendMessageUsingThymeleafTemplate(
                 "user_order_received",
                 order.getUser().getEmail(),
-                String.format("MenuMate - %s received your order!", order.getRestaurant().getName()),
+                messageSource.getMessage("email.userorderreceived.subject", new Object[]{order.getRestaurant().getName()}, locale),
                 params
         );
     }
@@ -85,7 +93,7 @@ public class EmailServiceImpl implements EmailService {
         this.sendMessageUsingThymeleafTemplate(
                 "restaurant_order_received",
                 restaurant.getEmail(),
-                "MenuMate - New order received.",
+                messageSource.getMessage("email.resturantorderreceived.subject", null, locale),
                 params
         );
     }
@@ -101,7 +109,7 @@ public class EmailServiceImpl implements EmailService {
         this.sendMessageUsingThymeleafTemplate(
                 "user_order_confirmed",
                 order.getUser().getEmail(),
-                String.format("MenuMate - %s confirmed your order!", order.getRestaurant().getName()),
+                messageSource.getMessage("email.userorderconfirmed.subject", new Object[]{order.getRestaurant().getName()}, locale),
                 params
         );
     }
@@ -117,7 +125,7 @@ public class EmailServiceImpl implements EmailService {
         this.sendMessageUsingThymeleafTemplate(
                 "user_order_ready",
                 order.getUser().getEmail(),
-                String.format("MenuMate - %s has your order ready!", order.getRestaurant().getName()),
+                messageSource.getMessage("email.userorderready.subject", new Object[]{order.getRestaurant().getName()}, locale),
                 params
         );
     }
@@ -133,7 +141,7 @@ public class EmailServiceImpl implements EmailService {
         this.sendMessageUsingThymeleafTemplate(
                 "user_order_delivered",
                 order.getUser().getEmail(),
-                String.format("MenuMate - Your order from %s has been delivered.", order.getRestaurant().getName()),
+                messageSource.getMessage("email.userorderdelivered.subject", new Object[]{order.getRestaurant().getName()}, locale),
                 params
         );
     }
@@ -149,7 +157,7 @@ public class EmailServiceImpl implements EmailService {
         this.sendMessageUsingThymeleafTemplate(
                 "user_order_cancelled",
                 order.getUser().getEmail(),
-                String.format("MenuMate - Your order from %s has been cancelled.", order.getRestaurant().getName()),
+                messageSource.getMessage("email.userordercancelled.subject", new Object[]{order.getRestaurant().getName()}, locale),
                 params
         );
     }
@@ -163,7 +171,7 @@ public class EmailServiceImpl implements EmailService {
         this.sendMessageUsingThymeleafTemplate(
                 "user_verification",
                 email,
-                "MenuMate - Verify your account",
+                messageSource.getMessage("email.userorderverification.subject", null, locale),
                 params
         );
     }
@@ -177,7 +185,7 @@ public class EmailServiceImpl implements EmailService {
         this.sendMessageUsingThymeleafTemplate(
                 "user_reset_password",
                 email,
-                "MenuMate - Reset your password",
+                messageSource.getMessage("email.userresetpassword.subject", null, locale),
                 params
         );
     }
