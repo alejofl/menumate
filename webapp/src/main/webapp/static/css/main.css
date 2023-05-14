@@ -722,3 +722,10 @@ input:has(+ .form-error), textarea:has(+ .form-error) {
 .rating-color {
     color: #fbc634 !important;
 }
+
+.tags-container {
+    padding-top: 6px;
+    display: flex;
+    gap: 6px;
+    overflow-x: scroll;
+}
