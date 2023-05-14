@@ -2,16 +2,14 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.RestaurantDetails;
 import ar.edu.itba.paw.RestaurantOrderBy;
-import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.model.RestaurantSpecialty;
 import ar.edu.itba.paw.model.RestaurantTags;
-import ar.edu.itba.paw.model.util.PaginatedResult;
+import ar.edu.itba.paw.util.PaginatedResult;
 import ar.edu.itba.paw.service.RestaurantService;
 import ar.edu.itba.paw.service.ReviewService;
 import ar.edu.itba.paw.webapp.form.FilterForm;
 import ar.edu.itba.paw.webapp.form.SearchForm;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -20,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

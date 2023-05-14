@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.webapp.exception;
+package ar.edu.itba.paw.exception;
 
 /**
  * A base class for all resource-not-found type exceptions. The idea of this base class is being able to identify

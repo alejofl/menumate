@@ -1,8 +1,8 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.*;
-import ar.edu.itba.paw.model.util.AverageCountPair;
-import ar.edu.itba.paw.model.util.Pair;
+import ar.edu.itba.paw.util.AverageCountPair;
+import ar.edu.itba.paw.util.Pair;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;

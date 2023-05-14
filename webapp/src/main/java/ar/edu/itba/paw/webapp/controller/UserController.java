@@ -1,12 +1,12 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import ar.edu.itba.paw.exception.*;
 import ar.edu.itba.paw.model.*;
-import ar.edu.itba.paw.model.util.PaginatedResult;
-import ar.edu.itba.paw.model.util.Pair;
-import ar.edu.itba.paw.model.util.Triplet;
+import ar.edu.itba.paw.util.PaginatedResult;
+import ar.edu.itba.paw.util.Pair;
+import ar.edu.itba.paw.util.Triplet;
 import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
-import ar.edu.itba.paw.webapp.exception.*;
 import ar.edu.itba.paw.webapp.form.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -130,7 +130,6 @@ public class UserController {
             @Valid @ModelAttribute("createRestaurantForm") final CreateRestaurantForm form,
             final BindingResult errors
     ) throws IOException {
-        // TODO recover images when errors occur on other field
         if (errors.hasErrors()) {
             return createRestaurant(form);
         }

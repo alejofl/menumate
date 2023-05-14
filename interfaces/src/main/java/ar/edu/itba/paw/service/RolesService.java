@@ -3,8 +3,8 @@ package ar.edu.itba.paw.service;
 import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.model.RestaurantRoleLevel;
 import ar.edu.itba.paw.model.User;
-import ar.edu.itba.paw.model.util.Pair;
-import ar.edu.itba.paw.model.util.Triplet;
+import ar.edu.itba.paw.util.Pair;
+import ar.edu.itba.paw.util.Triplet;
 
 import java.util.List;
 import java.util.Optional;

@@ -19,7 +19,7 @@ public interface EmailService {
 
     void sendOrderCancelled(Order order) throws MessagingException;
 
-    void sendUserVerificationEmail(String baseUrl, String email, String username, String token) throws MessagingException;
+    void sendUserVerificationEmail(String email, String username, String token) throws MessagingException;
 
-    void sendResetPasswordEmail(String baseUrl, String email, String username, String token) throws MessagingException;
+    void sendResetPasswordEmail(String email, String username, String token) throws MessagingException;
 }

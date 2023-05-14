@@ -1,11 +1,11 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.*;
-import ar.edu.itba.paw.model.util.AverageCountPair;
-import ar.edu.itba.paw.model.util.Pair;
+import ar.edu.itba.paw.util.AverageCountPair;
+import ar.edu.itba.paw.util.Pair;
 import ar.edu.itba.paw.service.*;
-import ar.edu.itba.paw.webapp.exception.InvalidOrderTypeException;
-import ar.edu.itba.paw.webapp.exception.RestaurantNotFoundException;
+import ar.edu.itba.paw.exception.InvalidOrderTypeException;
+import ar.edu.itba.paw.exception.RestaurantNotFoundException;
 import ar.edu.itba.paw.webapp.form.CartItem;
 import ar.edu.itba.paw.webapp.form.CheckoutForm;
 import ar.edu.itba.paw.webapp.form.validation.PreProcessingCheckoutFormValidator;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,9 +29,6 @@ public class RestaurantsController {
 
     @Autowired
     private OrderService orderService;
-
-    @Autowired
-    private EmailService emailService;
 
     @Autowired
     private UserService userService;
@@ -114,17 +110,6 @@ public class RestaurantsController {
             throw new InvalidOrderTypeException("Order type not supported");
         }
 
-        // FIXME: how do we handle this?
-        // FIXME: we should move this to the orderService
-        try {
-            emailService.sendOrderReceivalForUser(order);
-            emailService.sendOrderReceivalForRestaurant(
-                    restaurantService.getById(form.getRestaurantId()).orElseThrow(RestaurantNotFoundException::new),
-                    order
-            );
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        }
         return thankYou(order.getOrderId(), order.getUser().getEmail());
     }
 

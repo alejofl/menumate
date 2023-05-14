@@ -6,7 +6,8 @@
   <artifactId>paw-2023a-01</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>Menumate</name>
+  <name>MenuMate</name>
+  <url>http://pawserver.it.itba.edu.ar/paw-2023a-01</url>
 
   <properties>
     <!-- Spring dependencies -->

@@ -1,11 +1,17 @@
 package ar.edu.itba.paw.services;
 
+import ar.edu.itba.paw.exception.UserNotFoundException;
+import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.persistance.ResetPasswordTokenDao;
 import ar.edu.itba.paw.persistance.VerificationTokenDao;
+import ar.edu.itba.paw.service.EmailService;
 import ar.edu.itba.paw.service.TokenService;
+import ar.edu.itba.paw.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+
+import javax.mail.MessagingException;
 
 @Service
 public class TokenServiceImpl implements TokenService {
@@ -16,14 +22,26 @@ public class TokenServiceImpl implements TokenService {
     @Autowired
     private ResetPasswordTokenDao resetPasswordTokenDao;
 
+    @Autowired
+    private EmailService emailService;
+
+    @Autowired
+    private UserService userService;
+
     @Override
-    public String generateVerificationToken(final long userId) {
-        return verificationTokenDao.generateToken(userId);
+    public String generateVerificationToken(final long userId) throws MessagingException {
+        User user = userService.getById(userId).orElseThrow(UserNotFoundException::new);
+        String token = verificationTokenDao.generateToken(userId);
+        emailService.sendUserVerificationEmail(user.getEmail(), user.getName(), token);
+        return token;
     }
 
     @Override
-    public String generatePasswordResetToken(long userId) {
-        return resetPasswordTokenDao.generateToken(userId);
+    public String generatePasswordResetToken(long userId) throws MessagingException {
+        User user = userService.getById(userId).orElseThrow(UserNotFoundException::new);
+        String token = resetPasswordTokenDao.generateToken(userId);
+        emailService.sendResetPasswordEmail(user.getEmail(), user.getName(), token);
+        return token;
     }
 
     @Override

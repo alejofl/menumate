@@ -1,9 +1,11 @@
 package ar.edu.itba.paw.service;
 
-public interface TokenService {
-    String generateVerificationToken(final long userId);
+import javax.mail.MessagingException;
 
-    String generatePasswordResetToken(final long userId);
+public interface TokenService {
+    String generateVerificationToken(final long userId) throws MessagingException;
+
+    String generatePasswordResetToken(final long userId) throws MessagingException;
 
     boolean verifyUserAndDeleteVerificationToken(final String token);
 

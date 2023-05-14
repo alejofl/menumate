@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.model.util;
+package ar.edu.itba.paw.util;
 
 import java.io.Serializable;
 

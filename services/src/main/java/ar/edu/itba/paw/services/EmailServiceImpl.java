@@ -4,6 +4,9 @@ import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.core.env.Environment;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -18,6 +21,7 @@ import java.util.Map;
 
 
 @Service
+@PropertySource("classpath:email.properties")
 public class EmailServiceImpl implements EmailService {
     @Autowired
     private JavaMailSender emailSender;
@@ -25,21 +29,28 @@ public class EmailServiceImpl implements EmailService {
     @Autowired
     private TemplateEngine thymeleafTemplateEngine;
 
-    private static final String MENUMATE_EMAIL = "menumate@gmail.com";
-
+    @Autowired
+    private Environment environment;
 
     private void sendHtmlMessage(String to, String subject, String htmlBody) throws MessagingException {
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, "UTF-8");
         helper.setTo(to);
-        helper.setFrom(MENUMATE_EMAIL);
+        helper.setFrom(environment.getProperty("email.address"));
         helper.setSubject(subject);
         helper.setText(htmlBody, true);
         emailSender.send(message);
     }
 
+    // If a link wants to be passed, set the **path** in params with key "link".
+    // This method will concatenate the baseUrl.
+    // Only one link should be served for each email.
     private void sendMessageUsingThymeleafTemplate(String template, String to, String subject, Map<String, Object> params) throws MessagingException {
-        Context thymeleafContext = new Context();
+        Context thymeleafContext = new Context(LocaleContextHolder.getLocale());
+        final String baseUrl = environment.getProperty("email.base_url");
+        if (params.containsKey("link")) {
+            params.put("link", baseUrl + params.get("link"));
+        }
         thymeleafContext.setVariables(params);
         String htmlBody = thymeleafTemplateEngine.process(template, thymeleafContext);
         sendHtmlMessage(to, subject, htmlBody);
@@ -52,6 +63,7 @@ public class EmailServiceImpl implements EmailService {
         params.put("recipientName", order.getUser().getName());
         params.put("orderId", order.getOrderId());
         params.put("restaurantName", order.getRestaurant().getName());
+        params.put("link", "/orders/" + order.getOrderId());
         params.put("price", order.getPrice());
         this.sendMessageUsingThymeleafTemplate(
                 "user_order_received",
@@ -68,6 +80,7 @@ public class EmailServiceImpl implements EmailService {
         params.put("userName", order.getUser().getName());
         params.put("orderId", order.getOrderId());
         params.put("items", order.getItems());
+        params.put("link", String.format("/restaurants/%d/orders", restaurant.getRestaurantId()));
         params.put("price", order.getPrice());
         this.sendMessageUsingThymeleafTemplate(
                 "restaurant_order_received",
@@ -83,6 +96,7 @@ public class EmailServiceImpl implements EmailService {
         final Map<String, Object> params = new HashMap<>();
         params.put("recipientName", order.getUser().getName());
         params.put("orderId", order.getOrderId());
+        params.put("link", "/orders/" + order.getOrderId());
         params.put("restaurantName", order.getRestaurant().getName());
         this.sendMessageUsingThymeleafTemplate(
                 "user_order_confirmed",
@@ -98,6 +112,7 @@ public class EmailServiceImpl implements EmailService {
         final Map<String, Object> params = new HashMap<>();
         params.put("recipientName", order.getUser().getName());
         params.put("orderId", order.getOrderId());
+        params.put("link", "/orders/" + order.getOrderId());
         params.put("restaurantName", order.getRestaurant().getName());
         this.sendMessageUsingThymeleafTemplate(
                 "user_order_ready",
@@ -113,6 +128,7 @@ public class EmailServiceImpl implements EmailService {
         final Map<String, Object> params = new HashMap<>();
         params.put("recipientName", order.getUser().getName());
         params.put("orderId", order.getOrderId());
+        params.put("link", "/orders/" + order.getOrderId());
         params.put("restaurantName", order.getRestaurant().getName());
         this.sendMessageUsingThymeleafTemplate(
                 "user_order_delivered",
@@ -128,6 +144,7 @@ public class EmailServiceImpl implements EmailService {
         final Map<String, Object> params = new HashMap<>();
         params.put("recipientName", order.getUser().getName());
         params.put("orderId", order.getOrderId());
+        params.put("link", "/restaurants");
         params.put("restaurantName", order.getRestaurant().getName());
         this.sendMessageUsingThymeleafTemplate(
                 "user_order_cancelled",
@@ -139,9 +156,9 @@ public class EmailServiceImpl implements EmailService {
 
     @Async
     @Override
-    public void sendUserVerificationEmail(String baseUrl, String email, String username, String token) throws MessagingException {
+    public void sendUserVerificationEmail(String email, String username, String token) throws MessagingException {
         final Map<String, Object> params = new HashMap<>();
-        params.put("link", baseUrl + "/auth/verify?token=" + token);
+        params.put("link", "/auth/verify?token=" + token);
         params.put("username", username);
         this.sendMessageUsingThymeleafTemplate(
                 "user_verification",
@@ -153,9 +170,9 @@ public class EmailServiceImpl implements EmailService {
 
     @Async
     @Override
-    public void sendResetPasswordEmail(String baseUrl, String email, String username, String token) throws MessagingException {
+    public void sendResetPasswordEmail(String email, String username, String token) throws MessagingException {
         final Map<String, Object> params = new HashMap<>();
-        params.put("link", baseUrl + "/auth/reset-password?token=" + token);
+        params.put("link", "/auth/reset-password?token=" + token);
         params.put("username", username);
         this.sendMessageUsingThymeleafTemplate(
                 "user_reset_password",

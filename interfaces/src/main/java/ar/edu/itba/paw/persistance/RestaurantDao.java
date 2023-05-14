@@ -5,7 +5,7 @@ import ar.edu.itba.paw.RestaurantOrderBy;
 import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.model.RestaurantSpecialty;
 import ar.edu.itba.paw.model.RestaurantTags;
-import ar.edu.itba.paw.model.util.PaginatedResult;
+import ar.edu.itba.paw.util.PaginatedResult;
 
 import java.util.List;
 import java.util.Optional;

@@ -4,10 +4,8 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Simple Transactional Email</title>
 </head>
 <body style="background-color: #f4f4f4; font-family: sans-serif; -webkit-font-smoothing: antialiased; font-size: 14px; line-height: 1.4; margin: 0; padding: 0; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
-<span class="preheader" style="color: transparent; display: none; height: 0; max-height: 0; max-width: 0; opacity: 0; overflow: hidden; mso-hide: all; visibility: hidden; width: 0;">You have received an order.</span>
 <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="body" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f4f4f4; width: 100%;" width="100%" bgcolor="#f4f4f4">
     <tr>
         <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">&nbsp;</td>
@@ -26,16 +24,15 @@
                                             <img src="https://i.ibb.co/6gX0R50/logo.png" width="200" alt="MenuMate" style="text-align: center; margin: auto; padding-bottom: px;">
                                         </a>
                                         <hr style="margin-bottom: 18px;">
-                                        <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">You have received an order from <span th:text="${userName}"></span>! Congratulations!</p>
-                                        <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">The order contains the following items:</p>
-                                        <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">
+                                        <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;" th:text="#{email.resturantorderreceived.youreceivedandorderfrom} + ' ' + ${userName} + '!' + ' ' + #{email.resturantorderreceived.congratulations}"></p>
+                                        <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;" th:text="#{email.resturantorderreceived.ordercontains}">
                                             <ul>
                                                 <th:block th:each="item : ${items}">
-                                                    <li><span th:text="${item.product.name}"></span> - Quantity: <span th:text="${item.quantity}"></span> - Comment: <span th:text="${item.comment}"></span></li>
+                                                    <li th:text="${item.product.name} + ' ' + #{email.resturantorderreceived.quantity} + ' ' + ${item.quantity} + ' ' + #{email.resturantorderreceived.comment} + ' ' + ${item.comment}"></li>
                                                 </th:block>
                                             </ul>
                                         </p>
-                                        <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">The order total is $<span th:text="${price}"></span></p>
+                                        <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;" th:text="#{email.resturantorderreceived.ordertotal} + ${price} + '.'"></p>
 
                                         <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; box-sizing: border-box; width: 100%;" width="100%">
                                             <tbody>
@@ -44,7 +41,7 @@
                                                     <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: auto;">
                                                         <tbody>
                                                         <tr>
-                                                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top; border-radius: 5px; text-align: center; background-color: #ed7a57;" valign="top" align="center" bgcolor="#ed7a57"> <a href="http://pawserver.it.itba.edu.ar/paw-2023a-01/" target="_blank" style="border: solid 1px #ed7a57; border-radius: 5px; box-sizing: border-box; cursor: pointer; display: inline-block; font-size: 14px; font-weight: bold; margin: 0; padding: 12px 25px; text-decoration: none; text-transform: capitalize; background-color: #ed7a57; border-color: #ed7a57; color: #ffffff;">Visit MenuMate</a></td>
+                                                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top; border-radius: 5px; text-align: center; background-color: #ed7a57;" valign="top" align="center" bgcolor="#ed7a57"> <a th:href="${link}" target="_blank" style="border: solid 1px #ed7a57; border-radius: 5px; box-sizing: border-box; cursor: pointer; display: inline-block; font-size: 14px; font-weight: bold; margin: 0; padding: 12px 25px; text-decoration: none; text-transform: capitalize; background-color: #ed7a57; border-color: #ed7a57; color: #ffffff;" th:text="#{email.resturantorderreceived.viewyourorders}"></a></td>
                                                         </tr>
                                                         </tbody>
                                                     </table>

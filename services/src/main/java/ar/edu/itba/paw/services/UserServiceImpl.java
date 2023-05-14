@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.model.User;
-import ar.edu.itba.paw.model.util.Pair;
+import ar.edu.itba.paw.util.Pair;
 import ar.edu.itba.paw.persistance.UserDao;
 import ar.edu.itba.paw.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

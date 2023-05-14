@@ -2,9 +2,9 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.model.OrderStatus;
-import ar.edu.itba.paw.model.util.PaginatedResult;
+import ar.edu.itba.paw.util.PaginatedResult;
 import ar.edu.itba.paw.service.OrderService;
-import ar.edu.itba.paw.webapp.exception.OrderNotFoundException;
+import ar.edu.itba.paw.exception.OrderNotFoundException;
 import ar.edu.itba.paw.webapp.form.PagingForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
