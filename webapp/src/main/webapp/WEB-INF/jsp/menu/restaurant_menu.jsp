@@ -42,6 +42,11 @@
                 </div>
                 <a href="" class="ms-2" data-bs-toggle="modal" data-bs-target="#view-reviews-modal"><small><spring:message code="restaurant.menu.viewreviews"/></small></a>
             </div>
+            <div class="tags-container">
+                <c:forEach var="tag" items="${tags}">
+                    <span class="badge rounded-pill text-bg-secondary"><spring:message code="restauranttags.${tag.messageCode}"/></span>
+                </c:forEach>
+            </div>
         </div>
         <div class="d-flex flex-column gap-2">
             <c:if test="${admin}">
