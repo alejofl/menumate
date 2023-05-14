@@ -2,8 +2,8 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.OrderType;
 import ar.edu.itba.paw.model.Review;
-import ar.edu.itba.paw.model.util.AverageCountPair;
-import ar.edu.itba.paw.model.util.PaginatedResult;
+import ar.edu.itba.paw.util.AverageCountPair;
+import ar.edu.itba.paw.util.PaginatedResult;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import org.junit.Assert;
 import org.junit.Before;

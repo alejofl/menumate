@@ -4,7 +4,7 @@ import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.model.OrderItem;
 import ar.edu.itba.paw.model.OrderItemless;
 import ar.edu.itba.paw.model.OrderStatus;
-import ar.edu.itba.paw.model.util.PaginatedResult;
+import ar.edu.itba.paw.util.PaginatedResult;
 
 import java.util.List;
 import java.util.Optional;

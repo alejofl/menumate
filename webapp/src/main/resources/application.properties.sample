@@ -6,3 +6,5 @@ database.password=
 # Mailing
 mailer.email=
 mailer.password=
+mailer.host=
+mailer.port=

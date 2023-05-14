@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.webapp.exception;
+package ar.edu.itba.paw.exception;
 
 public class InvalidOrderTypeException extends RuntimeException {
     public InvalidOrderTypeException() {

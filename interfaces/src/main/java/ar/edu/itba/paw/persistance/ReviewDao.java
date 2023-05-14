@@ -1,8 +1,8 @@
 package ar.edu.itba.paw.persistance;
 
 import ar.edu.itba.paw.model.Review;
-import ar.edu.itba.paw.model.util.AverageCountPair;
-import ar.edu.itba.paw.model.util.PaginatedResult;
+import ar.edu.itba.paw.util.AverageCountPair;
+import ar.edu.itba.paw.util.PaginatedResult;
 
 import java.time.LocalDateTime;
 import java.util.Optional;

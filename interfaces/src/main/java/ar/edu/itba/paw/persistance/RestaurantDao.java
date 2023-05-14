@@ -1,9 +1,8 @@
 package ar.edu.itba.paw.persistance;
 
-import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.model.RestaurantTags;
-import ar.edu.itba.paw.model.util.PaginatedResult;
+import ar.edu.itba.paw.util.PaginatedResult;
 
 import java.util.List;
 import java.util.Optional;

@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.Restaurant;
-import ar.edu.itba.paw.model.util.PaginatedResult;
+import ar.edu.itba.paw.util.PaginatedResult;
 import ar.edu.itba.paw.service.RestaurantService;
 import ar.edu.itba.paw.service.ReviewService;
 import ar.edu.itba.paw.webapp.form.SearchForm;

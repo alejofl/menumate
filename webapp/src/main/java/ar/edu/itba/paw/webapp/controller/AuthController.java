@@ -1,11 +1,9 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.User;
-import ar.edu.itba.paw.persistance.ResetPasswordTokenDao;
-import ar.edu.itba.paw.persistance.VerificationTokenDao;
-import ar.edu.itba.paw.service.EmailService;
+import ar.edu.itba.paw.service.TokenService;
 import ar.edu.itba.paw.service.UserService;
-import ar.edu.itba.paw.webapp.exception.UserNotFoundException;
+import ar.edu.itba.paw.exception.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.RegisterForm;
 import ar.edu.itba.paw.webapp.form.EmailForm;
 import ar.edu.itba.paw.webapp.form.ResetPasswordForm;
@@ -27,14 +25,7 @@ public class AuthController {
     private UserService userService;
 
     @Autowired
-    private VerificationTokenDao verificationService;
-
-    @Autowired
-    private ResetPasswordTokenDao resetPasswordTokenDao;
-
-    @Autowired
-    private EmailService emailService;
-
+    private TokenService tokenService;
 
     @RequestMapping(value = "/auth/register", method = RequestMethod.GET)
     public ModelAndView registerForm(@ModelAttribute("registerForm") final RegisterForm registerForm) {
@@ -45,15 +36,17 @@ public class AuthController {
     public ModelAndView register(
             @Valid @ModelAttribute("registerForm") final RegisterForm registerForm,
             final BindingResult errors
-    ) throws MessagingException {
+    ) {
         if (errors.hasErrors()) {
             return registerForm(registerForm);
         }
 
         final User user = userService.create(registerForm.getEmail(), registerForm.getPassword(), registerForm.getName());
-        String token = verificationService.generateToken(user.getUserId());
-        String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
-        emailService.sendUserVerificationEmail(baseUrl, user.getEmail(), user.getName(), token);
+        try {
+            tokenService.generateVerificationToken(user.getUserId());
+        } catch (MessagingException e) {
+            return new ModelAndView("redirect:/auth/login?error=mailer_error");
+        }
         return new ModelAndView("redirect:/auth/login?type=verify-emailed");
     }
 
@@ -73,9 +66,9 @@ public class AuthController {
             return new ModelAndView("redirect:/errors/404");
 
         if(token!=null){
-            if(actionType.equals("verify") && verificationService.verifyUserAndDeleteToken(token))
+            if(actionType.equals("verify") && tokenService.verifyUserAndDeleteVerificationToken(token))
                 return new ModelAndView("redirect:/auth/login?type=verified");
-            else if (actionType.equals("reset-password") && resetPasswordTokenDao.isValidToken(token))
+            else if (actionType.equals("reset-password") && tokenService.isValidResetPasswordToken(token))
                 return new ModelAndView("redirect:/auth/reset-password-form?token=" + token);
             else
                 return new ModelAndView("redirect:/auth/login?error=request-error");
@@ -92,7 +85,7 @@ public class AuthController {
             final String actionType,
             @Valid @ModelAttribute("emailForm") final EmailForm emailForm,
             final BindingResult errors
-    ){
+    ) {
         if(!actionType.matches("verify|reset-password"))
             return new ModelAndView("redirect:/errors/404");
 
@@ -103,18 +96,13 @@ public class AuthController {
         try {
             User user = userService.getByEmail(emailForm.getEmail()).orElseThrow(UserNotFoundException::new);
 
-            String token;
-            String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
-
             if(actionType.equals("verify")){
                 if(user.getIsActive()){
                     return new ModelAndView("redirect:/auth/login?type=" + actionType + "-emailed");
                 }
-                token = verificationService.generateToken(user.getUserId());
-                emailService.sendUserVerificationEmail(baseUrl, user.getEmail(), user.getName(), token);
+                tokenService.generateVerificationToken(user.getUserId());
             } else {
-                token = resetPasswordTokenDao.generateToken(user.getUserId());
-                emailService.sendResetPasswordEmail(baseUrl, user.getEmail(), user.getName(), token);
+                tokenService.generatePasswordResetToken(user.getUserId());
             }
             return new ModelAndView("redirect:/auth/login?type=" + actionType + "-emailed");
         } catch (UserNotFoundException e) {
@@ -129,7 +117,7 @@ public class AuthController {
             @RequestParam(value = "token", required = false) @Length(min = 32, max = 32) final String token,
             @ModelAttribute("resetPasswordForm") final ResetPasswordForm resetPasswordForm
     ) {
-        if(token!=null && resetPasswordTokenDao.isValidToken(token))
+        if(token!=null && tokenService.isValidResetPasswordToken(token))
             return new ModelAndView("auth/reset_password").addObject("token", token);
         else
             return new ModelAndView("redirect:/auth/login?error=mailer_error");
@@ -147,7 +135,7 @@ public class AuthController {
 
         String newPassword = userService.encodePassword(resetPasswordForm.getPassword());
 
-        if(resetPasswordTokenDao.updatePasswordAndDeleteToken(token, newPassword)) {
+        if(tokenService.updatePasswordAndDeleteResetPasswordToken(token, newPassword)) {
             return new ModelAndView("redirect:/auth/login?type=reset-password-success");
         } else {
             return new ModelAndView("redirect:/auth/login?error=password-reset-error");
