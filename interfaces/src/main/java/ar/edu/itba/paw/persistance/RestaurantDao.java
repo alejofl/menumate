@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.persistance;
 
-import ar.edu.itba.paw.RestaurantDetails;
-import ar.edu.itba.paw.RestaurantOrderBy;
+import ar.edu.itba.paw.model.RestaurantDetails;
+import ar.edu.itba.paw.model.RestaurantOrderBy;
 import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.model.RestaurantSpecialty;
 import ar.edu.itba.paw.model.RestaurantTags;
