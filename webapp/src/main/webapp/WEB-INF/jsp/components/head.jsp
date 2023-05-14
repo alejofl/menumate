@@ -16,3 +16,5 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.4/font/bootstrap-icons.css">
 <c:url var="mainJSUrl" value="/static/js/main.js"/>
 <script src="${mainJSUrl}"></script>
+<c:url var="multiselectDropdownJS" value="/static/js/multiselect-dropdown.js"/>
+<script src="${multiselectDropdownJS}"></script>
