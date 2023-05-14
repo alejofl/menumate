@@ -3,10 +3,8 @@ package ar.edu.itba.paw.webapp.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.env.Environment;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -63,15 +61,7 @@ public class EmailConfig {
 
     // Retrieved from: https://www.baeldung.com/spring-email-templates
     @Bean
-    public ResourceBundleMessageSource emailMessageSource() {
-        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-        messageSource.setBasename("/mail/messages");
-        return messageSource;
-    }
-
-    // Retrieved from: https://www.baeldung.com/spring-email-templates
-    @Bean
-    public TemplateEngine thymeleafTemplateEngine(ITemplateResolver templateResolver, ResourceBundleMessageSource emailMessageSource) {
+    public TemplateEngine thymeleafTemplateEngine(ITemplateResolver templateResolver) {
         SpringTemplateEngine templateEngine = new SpringTemplateEngine();
         templateEngine.setTemplateResolver(templateResolver);
 
