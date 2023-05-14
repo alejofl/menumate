@@ -45,7 +45,7 @@ public class CustomAuthenticationEntryPoint extends SimpleUrlAuthenticationFailu
                 String token = verificationService.generateToken(e.getUserId());
                 try {
                     User user = userService.getById(e.getUserId()).orElseThrow(UserNotFoundException::new);
-                    emailService.sendUserVerificationEmail(baseUrl, user.getEmail(), user.getName(), token);
+                    emailService.sendUserVerificationEmail(user.getEmail(), user.getName(), token);
                     setDefaultFailureUrl(LOGIN_URL + VERIFY_EMAIL_ERROR);
                 } catch (MessagingException ex) {
                     setDefaultFailureUrl(LOGIN_URL + MAILER_ERROR);
