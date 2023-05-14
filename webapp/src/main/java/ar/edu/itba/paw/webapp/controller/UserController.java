@@ -127,7 +127,6 @@ public class UserController {
             @Valid @ModelAttribute("createRestaurantForm") final CreateRestaurantForm form,
             final BindingResult errors
     ) throws IOException {
-        // TODO recover images when errors occur on other field
         if (errors.hasErrors()) {
             return createRestaurant(form);
         }

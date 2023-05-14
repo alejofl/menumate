@@ -20,7 +20,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User create(String email, String password, String name) {
-        // TODO: send email validation mail
         if (isUserEmailRegistered(email)) {
             throw new IllegalStateException();
         }

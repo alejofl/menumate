@@ -60,7 +60,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         final SimpleDriverDataSource ds = new SimpleDriverDataSource();
         ds.setDriverClass(org.postgresql.Driver.class);
 
-        // TODO: Check that this configuration does not affect the deployment. In case it does, ask how to mitigate it.
         ds.setUrl(environment.getProperty("database.url"));
         ds.setUsername(environment.getProperty("database.username"));
         ds.setPassword(environment.getProperty("database.password"));

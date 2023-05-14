@@ -33,7 +33,6 @@
                     </div>
                 </div>
                 <h4>
-                    <%-- FIXME change pendingOrders after updating queryset --%>
                     <span class="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-${triplet.z == 0 ? "success" : "danger"}">
                         <spring:message code="restaurantorders.pending" var="pending"/>
                         ${triplet.z} ${fn:toLowerCase(pending)}

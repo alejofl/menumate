@@ -30,10 +30,7 @@ public class RestaurantsController {
 
     @Autowired
     private OrderService orderService;
-
-    @Autowired
-    private EmailService emailService;
-
+    
     @Autowired
     private UserService userService;
 
@@ -112,17 +109,6 @@ public class RestaurantsController {
             throw new InvalidOrderTypeException("Order type not supported");
         }
 
-        // FIXME: how do we handle this?
-        // FIXME: we should move this to the orderService
-        try {
-            emailService.sendOrderReceivalForUser(order);
-            emailService.sendOrderReceivalForRestaurant(
-                    restaurantService.getById(form.getRestaurantId()).orElseThrow(RestaurantNotFoundException::new),
-                    order
-            );
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        }
         return thankYou(order.getOrderId(), order.getUser().getEmail());
     }
 
