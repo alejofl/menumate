@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <html>
 <head>
@@ -13,7 +14,21 @@
     <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
     <div class="landing-container">
         <p class="landing-text"><spring:message code="index.landingtext"/></p>
-        <jsp:include page="/WEB-INF/jsp/components/search.jsp"/>
+        <spring:message code="restaurants.search.placeholder" var="searchPlaceholder"/>
+        <c:url var="search" value="/restaurants"/>
+        <form:form modelAttribute="searchForm" action="${search}" method="get">
+            <div class="search-form-container">
+                <div>
+                    <div class="input-group flex-nowrap">
+                        <span class="input-group-text search-input"><i class="bi bi-search"></i></span>
+                        <form:input type="text" path="search" cssClass="form-control search-input" placeholder="${searchPlaceholder}"/>
+                        <form:errors path="search" element="div" cssClass="form-error invalid-tooltip"/>
+                    </div>
+                    <form:input type="hidden" path="page" value="1"/>
+                </div>
+            </div>
+            <input type="submit" class="btn btn-primary" value='<spring:message code="restaurants.search"/>'>
+        </form:form>
     </div>
     <div class="landing-restaurants">
         <p class="landing-restaurants-title"><spring:message code="index.restaurant.title"/></p>

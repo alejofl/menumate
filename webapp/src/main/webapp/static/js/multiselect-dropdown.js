@@ -8,7 +8,8 @@ var style = document.createElement('style');
 style.setAttribute("id","multiselect_dropdown_styles");
 style.innerHTML = `
 .multiselect-dropdown{
-  display: inline-block;
+  display: flex;
+  align-items: center;
   border-radius: 4px;
   border: solid 1px #dee2e6;
   background-color: white;
@@ -40,7 +41,9 @@ style.innerHTML = `
 }
 .multiselect-dropdown span.optext .optdel:hover { color: #c66;}
 .multiselect-dropdown span.placeholder{
-  visibility: hidden;
+  background-color: transparent;
+  color: var(--bs-gray);
+  opacity: 1;
 }
 .multiselect-dropdown-list-wrapper{
   box-shadow: gray 0 3px 8px;
