@@ -29,5 +29,4 @@ public class ResetPasswordTokenJdbcDao extends BaseTokenJdbcDao implements Reset
         }
         return false;
     }
-
 }

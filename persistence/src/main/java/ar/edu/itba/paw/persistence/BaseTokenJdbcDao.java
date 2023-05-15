@@ -4,13 +4,14 @@ import ar.edu.itba.paw.persistance.BaseTokenDao;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 
 import javax.sql.DataSource;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
-public class BaseTokenJdbcDao implements BaseTokenDao {
+class BaseTokenJdbcDao implements BaseTokenDao {
 
     private final String tableName;
     private static final Integer TOKEN_DURATION_DAYS = 1;
@@ -23,6 +24,11 @@ public class BaseTokenJdbcDao implements BaseTokenDao {
     static final RowMapper<LocalDateTime> TOKEN_EXPIRES_ROW_MAPPER =
             (rs, rowNum) -> rs.getTimestamp("expires").toLocalDateTime();
 
+    private final String SELECT_USER_ID_SQL;
+    private final String DELETE_TOKEN_SQL;
+    private final String GENERATE_TOKEN_SQL;
+    private final String DELETE_STALED_SQL;
+    private final String IS_VALID_TOKEN_SQL;
 
     public BaseTokenJdbcDao(final String tableName, final DataSource ds) {
         this.tableName = tableName;
@@ -30,25 +36,30 @@ public class BaseTokenJdbcDao implements BaseTokenDao {
         jdbcInsert = new SimpleJdbcInsert(ds)
                 .withTableName(tableName)
                 .usingColumns("user_id", "code", "expires");
+
+        SELECT_USER_ID_SQL = "SELECT user_id FROM " + tableName + " WHERE code = ?";
+        DELETE_TOKEN_SQL = "DELETE FROM " + tableName + " WHERE code = ? AND user_id = ? AND expires > now()";
+        GENERATE_TOKEN_SQL = "INSERT INTO " + tableName + " (code, user_id, expires) VALUES (?, ?, ?) ON CONFLICT (user_id) DO UPDATE SET code = excluded.code, expires = excluded.expires";
+        DELETE_STALED_SQL = "DELETE FROM " + tableName + " WHERE expires <= now()";
+        IS_VALID_TOKEN_SQL = "SELECT EXISTS(SELECT * FROM " + tableName + " WHERE code = ? AND expires > now()) AS ht";
     }
 
     private static LocalDateTime generateTokenExpirationDate() {
         return LocalDateTime.now().plusDays(TOKEN_DURATION_DAYS);
     }
 
-    TokenResult deleteTokenAndRetrieveUserId(String token) {
+    protected TokenResult deleteTokenAndRetrieveUserId(String token) {
         Optional<Long> userId = jdbcTemplate.query(
-                "SELECT user_id FROM " + tableName + " WHERE code = ?",
+                SELECT_USER_ID_SQL,
                 TOKEN_USER_ID_ROW_MAPPER,
                 token
         ).stream().findFirst();
 
-        if (!userId.isPresent()) {
+        if (!userId.isPresent())
             return new TokenResult(false, null);
-        }
 
         boolean successfullyDeleted = jdbcTemplate.update(
-                "DELETE FROM " + tableName + " WHERE code = ? AND user_id = ? AND expires>now()",
+                DELETE_TOKEN_SQL,
                 token,
                 userId.get()
         ) > 0;
@@ -60,7 +71,7 @@ public class BaseTokenJdbcDao implements BaseTokenDao {
     public String generateToken(long userId) {
         String token = UUID.randomUUID().toString().substring(0, 32);
         jdbcTemplate.update(
-                "INSERT INTO " + tableName + " (code, user_id, expires) VALUES (?, ?, ?) ON CONFLICT (user_id) DO UPDATE SET code=excluded.code, expires = excluded.expires",
+                GENERATE_TOKEN_SQL,
                 token,
                 userId,
                 generateTokenExpirationDate()
@@ -70,27 +81,28 @@ public class BaseTokenJdbcDao implements BaseTokenDao {
 
     @Override
     public void deleteStaledTokens() {
-        jdbcTemplate.update("DELETE FROM " + tableName + " WHERE expires <= now()");
+        jdbcTemplate.update(DELETE_STALED_SQL);
     }
 
     @Override
     public boolean hasActiveToken(long userId) {
-        Optional<LocalDateTime> tokenInfo = jdbcTemplate.query(
-                "SELECT expires FROM " + tableName + " WHERE user_id = ?",
+        SqlRowSet result = jdbcTemplate.queryForRowSet(
+                "SELECT EXISTS(SELECT * FROM " + tableName + " WHERE user_id = ? AND expires < now()) AS ht",
                 TOKEN_EXPIRES_ROW_MAPPER,
                 userId
-        ).stream().findFirst();
+        );
 
-        return tokenInfo.isPresent() && tokenInfo.get().isAfter(LocalDateTime.now());
+        return result.next() && result.getBoolean("ht");
     }
 
     @Override
     public boolean isValidToken(String token) {
-        return jdbcTemplate.query(
-                "SELECT * FROM " + tableName + " WHERE code = ? AND expires>now()",
-                TOKEN_USER_ID_ROW_MAPPER,
+        SqlRowSet result = jdbcTemplate.queryForRowSet(
+                IS_VALID_TOKEN_SQL,
                 token
-        ).stream().findFirst().isPresent();
+        );
+
+        return result.next() && result.getBoolean("ht");
     }
 
     static class TokenResult {

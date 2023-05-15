@@ -1,9 +1,7 @@
 package ar.edu.itba.paw.webapp.auth;
 
-import ar.edu.itba.paw.exception.UserNotFoundException;
-import ar.edu.itba.paw.model.User;
-import ar.edu.itba.paw.persistance.VerificationTokenDao;
 import ar.edu.itba.paw.service.EmailService;
+import ar.edu.itba.paw.service.TokenService;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.exception.UserNotVerifiedException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +20,7 @@ import java.io.IOException;
 public class CustomAuthenticationEntryPoint extends SimpleUrlAuthenticationFailureHandler {
 
     @Autowired
-    private VerificationTokenDao verificationService;
+    private TokenService verificationService;
 
     @Autowired
     private EmailService emailService;
@@ -40,12 +38,9 @@ public class CustomAuthenticationEntryPoint extends SimpleUrlAuthenticationFailu
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         if (exception.getCause() instanceof UserNotVerifiedException) {
             UserNotVerifiedException e = (UserNotVerifiedException) exception.getCause();
-            if (!verificationService.hasActiveToken(e.getUserId())) {
-                String baseUrl = request.getRequestURL().toString().replace(request.getRequestURI(), request.getContextPath());
-                String token = verificationService.generateToken(e.getUserId());
+            if (!verificationService.hasActiveVerificationToken(e.getUserId())) {
                 try {
-                    User user = userService.getById(e.getUserId()).orElseThrow(UserNotFoundException::new);
-                    emailService.sendUserVerificationEmail(user.getEmail(), user.getName(), token);
+                    verificationService.generateVerificationToken(e.getUserId());
                     setDefaultFailureUrl(LOGIN_URL + VERIFY_EMAIL_ERROR);
                 } catch (MessagingException ex) {
                     setDefaultFailureUrl(LOGIN_URL + MAILER_ERROR);
