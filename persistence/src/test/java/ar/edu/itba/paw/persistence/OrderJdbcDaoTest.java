@@ -281,12 +281,12 @@ public class OrderJdbcDaoTest {
     @Test
     public void testUpdateAddress() throws SQLException {
         jdbcTemplate.execute("INSERT INTO orders (order_id, restaurant_id, user_id, order_type, address) VALUES (" + ORDER_ID + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + OrderType.DELIVERY.ordinal() + ", '" + ADDRESS + "')");
-        Assert.assertTrue(orderJdbcDao.updateAddress(ORDER_ID, "newAddress"));
+        orderJdbcDao.updateAddress(ORDER_ID, "newAddress");
     }
 
     @Test
     public void testUpdateTableNumber() throws SQLException {
         jdbcTemplate.execute("INSERT INTO orders (order_id, restaurant_id, user_id, order_type, table_number) VALUES (" + ORDER_ID + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + ORDER_TYPE.ordinal() + ", '" + TABLE_NUMBER + "')");
-        Assert.assertTrue(orderJdbcDao.updateTableNumber(ORDER_ID, TABLE_NUMBER + 10));
+        orderJdbcDao.updateTableNumber(ORDER_ID, TABLE_NUMBER + 10);
     }
 }

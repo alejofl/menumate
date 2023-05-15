@@ -7,6 +7,14 @@ import java.util.List;
 import java.util.Optional;
 
 public interface OrderDao {
+    Order createDelivery(long restaurantId, long userId, String address, List<OrderItem> items);
+
+    Order createTakeaway(long restaurantId, long userId, List<OrderItem> items);
+
+    Order createDineIn(long restaurantId, long userId, int tableNumber, List<OrderItem> items);
+
+    OrderItem createOrderItem(Product product, int lineNumber, int quantity, String comment);
+
     Optional<Order> getById(long orderId);
 
     Optional<OrderItemless> getByIdExcludeItems(long orderId);
@@ -25,27 +33,19 @@ public interface OrderDao {
 
     PaginatedResult<OrderItemless> getByRestaurantExcludeItems(long restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus);
 
-    boolean markAsConfirmed(long orderId);
+    void markAsConfirmed(long orderId);
 
-    boolean markAsReady(long orderId);
+    void markAsReady(long orderId);
 
-    boolean markAsDelivered(long orderId);
+    void markAsDelivered(long orderId);
 
-    boolean markAsCancelled(long orderId);
+    void markAsCancelled(long orderId);
 
-    boolean setOrderStatus(long orderId, OrderStatus orderStatus);
+    void setOrderStatus(long orderId, OrderStatus orderStatus);
 
-    boolean updateAddress(long orderId, String address);
+    void updateAddress(long orderId, String address);
 
-    boolean updateTableNumber(long orderId, int tableNumber);
+    void updateTableNumber(long orderId, int tableNumber);
 
-    boolean delete(long orderId);
-
-    Order createDelivery(long restaurantId, long userId, String address, List<OrderItem> items);
-
-    Order createTakeaway(long restaurantId, long userId, List<OrderItem> items);
-
-    Order createDineIn(long restaurantId, long userId, int tableNumber, List<OrderItem> items);
-
-    OrderItem createOrderItem(Product product, int lineNumber, int quantity, String comment);
+    void delete(long orderId);
 }

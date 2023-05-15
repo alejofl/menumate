@@ -136,75 +136,70 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public boolean markAsConfirmed(long orderId) {
-        boolean success = orderDao.markAsConfirmed(orderId);
-        if (success) {
-            try {
-                emailService.sendOrderConfirmation(this.getById(orderId).get());
-            } catch (MessagingException e) {
-                e.printStackTrace();
-            }
+    public Optional<Order> markAsConfirmed(long orderId) {
+        try {
+            orderDao.markAsConfirmed(orderId);
+            emailService.sendOrderConfirmation(this.getById(orderId).get());
+            return orderDao.getById(orderId);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            return Optional.empty();
         }
-        return success;
     }
 
     @Override
-    public boolean markAsReady(long orderId) {
-        boolean success = orderDao.markAsReady(orderId);
-        if (success) {
-            try {
-                emailService.sendOrderReady(this.getById(orderId).get());
-            } catch (MessagingException e) {
-                e.printStackTrace();
-            }
+    public Optional<Order> markAsReady(long orderId) {
+        try {
+            orderDao.markAsReady(orderId);
+            emailService.sendOrderReady(this.getById(orderId).get());
+            return orderDao.getById(orderId);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            return Optional.empty();
         }
-        return success;
     }
 
     @Override
-    public boolean markAsDelivered(long orderId) {
-        boolean success = orderDao.markAsDelivered(orderId);
-        if (success) {
-            try {
-                emailService.sendOrderDelivered(this.getById(orderId).get());
-            } catch (MessagingException e) {
-                e.printStackTrace();
-            }
+    public Optional<Order> markAsDelivered(long orderId) {
+        try {
+            orderDao.markAsDelivered(orderId);
+            emailService.sendOrderDelivered(this.getById(orderId).get());
+            return orderDao.getById(orderId);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            return Optional.empty();
         }
-        return success;
     }
 
     @Override
-    public boolean markAsCancelled(long orderId) {
-        boolean success = orderDao.markAsCancelled(orderId);
-        if (success) {
-            try {
-                emailService.sendOrderCancelled(this.getById(orderId).get());
-            } catch (MessagingException e) {
-                e.printStackTrace();
-            }
+    public Optional<Order> markAsCancelled(long orderId) {
+        try {
+            orderDao.markAsCancelled(orderId);
+            emailService.sendOrderCancelled(this.getById(orderId).get());
+            return orderDao.getById(orderId);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            return Optional.empty();
         }
-        return success;
     }
 
     @Override
-    public boolean setOrderStatus(long orderId, OrderStatus orderStatus) {
-        return orderDao.setOrderStatus(orderId, orderStatus);
+    public void setOrderStatus(long orderId, OrderStatus orderStatus) {
+        orderDao.setOrderStatus(orderId, orderStatus);
     }
 
     @Override
-    public boolean updateAddress(long orderId, String address) {
-        return orderDao.updateAddress(orderId, address);
+    public void updateAddress(long orderId, String address) {
+        orderDao.updateAddress(orderId, address);
     }
 
     @Override
-    public boolean updateTableNumber(long orderId, int tableNumber) {
-        return orderDao.updateTableNumber(orderId, tableNumber);
+    public void updateTableNumber(long orderId, int tableNumber) {
+        orderDao.updateTableNumber(orderId, tableNumber);
     }
 
     @Override
-    public boolean delete(long orderId) {
-        return orderDao.delete(orderId);
+    public void delete(long orderId) {
+        orderDao.delete(orderId);
     }
-
 }

@@ -93,7 +93,7 @@ public class CategoryJdbcDaoTest {
     @Test
     public void testUpdateCategoryName() throws SQLException {
         jdbcTemplate.execute("INSERT INTO categories (category_id ,restaurant_id, name, order_num) VALUES (" + CATEGORY_ID + ", " + RESTAURANT_ID + ", '" + CATEGORY_NAME + "'," + ORDER_NUM + ")");
-        Assert.assertTrue(categoryDao.updateName(CATEGORY_ID, CATEGORY_NAME + "blabla"));
+        categoryDao.updateName(CATEGORY_ID, CATEGORY_NAME + "blabla");
     }
 
     @Test
@@ -101,7 +101,7 @@ public class CategoryJdbcDaoTest {
         jdbcTemplate.execute("INSERT INTO categories (category_id ,restaurant_id, name, order_num) VALUES (" + CATEGORY_ID + ", " + RESTAURANT_ID + ", '" + CATEGORY_NAME + "'," + ORDER_NUM + ")");
 
         final int newOrder = ORDER_NUM + 1;
-        Assert.assertTrue(categoryDao.updateOrder(CATEGORY_ID, newOrder));
+        categoryDao.updateOrder(CATEGORY_ID, newOrder);
     }
 
     @Test
@@ -110,6 +110,6 @@ public class CategoryJdbcDaoTest {
 
         Optional<Category> category1 = categoryDao.getById(CATEGORY_ID);
         Assert.assertTrue(category1.isPresent());
-        Assert.assertTrue(categoryDao.delete(CATEGORY_ID));
+        categoryDao.delete(CATEGORY_ID);
     }
 }

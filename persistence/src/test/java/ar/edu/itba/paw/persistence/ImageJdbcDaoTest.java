@@ -52,7 +52,7 @@ public class ImageJdbcDaoTest {
     public void testUpdateImg() throws SQLException {
         jdbcTemplate.update("INSERT INTO images (image_id, bytes) VALUES (?, ?)", IMAGE_ID, IMG_INFO_1);
 
-        Assert.assertTrue(imageJdbcDao.update(IMAGE_ID, IMG_INFO_2));
+        imageJdbcDao.update(IMAGE_ID, IMG_INFO_2);
 
         Optional<byte[]> maybeImage = imageJdbcDao.getById(IMAGE_ID);
         Assert.assertTrue(maybeImage.isPresent());
@@ -63,7 +63,7 @@ public class ImageJdbcDaoTest {
     public void testDeleteImg() throws SQLException {
         jdbcTemplate.update("INSERT INTO images (image_id, bytes) VALUES (?, ?)", IMAGE_ID, IMG_INFO_1);
 
-        Assert.assertTrue(imageJdbcDao.delete(IMAGE_ID));
+        imageJdbcDao.delete(IMAGE_ID);
         Assert.assertFalse(imageJdbcDao.getById(IMAGE_ID).isPresent());
     }
 

@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.exception.OrderNotFoundException;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.persistance.OrderDao;
 import ar.edu.itba.paw.util.PaginatedResult;
@@ -92,6 +93,27 @@ public class OrderJdbcDao implements OrderDao {
         insertItems(items, orderId);
 
         return getById(orderId).get();
+    }
+
+    @Override
+    public Order createDineIn(long restaurantId, long userId, int tableNumber, List<OrderItem> items) {
+        return this.create(OrderType.DINE_IN, restaurantId, userId, null, tableNumber, items);
+    }
+
+    @Override
+    public Order createTakeaway(long restaurantId, long userId, List<OrderItem> items) {
+        return this.create(OrderType.TAKEAWAY, restaurantId, userId, null, null, items);
+    }
+
+
+    @Override
+    public Order createDelivery(long restaurantId, long userId, String address, List<OrderItem> items) {
+        return this.create(OrderType.DELIVERY, restaurantId, userId, address, null, items);
+    }
+
+    @Override
+    public OrderItem createOrderItem(Product product, int lineNumber, int quantity, String comment) {
+        return new OrderItem(product, lineNumber, quantity, comment);
     }
 
     private void insertItems(List<OrderItem> items, long orderId) {
@@ -278,39 +300,51 @@ public class OrderJdbcDao implements OrderDao {
     }
 
     @Override
-    public boolean markAsConfirmed(long orderId) {
-        return jdbcTemplate.update(
+    public void markAsConfirmed(long orderId) {
+        int rows = jdbcTemplate.update(
                 "UPDATE orders SET date_confirmed = now() WHERE order_id = ? AND " + IS_PENDING_COND,
                 orderId
-        ) > 0;
+        );
+
+        if (rows == 0)
+            throw new OrderNotFoundException();
     }
 
     @Override
-    public boolean markAsReady(long orderId) {
-        return jdbcTemplate.update(
+    public void markAsReady(long orderId) {
+        int rows = jdbcTemplate.update(
                 "UPDATE orders SET date_ready = now() WHERE order_id = ? AND " + IS_CONFIRMED_COND,
                 orderId
-        ) > 0;
+        );
+
+        if (rows == 0)
+            throw new OrderNotFoundException();
     }
 
     @Override
-    public boolean markAsDelivered(long orderId) {
-        return jdbcTemplate.update(
+    public void markAsDelivered(long orderId) {
+        int rows = jdbcTemplate.update(
                 "UPDATE orders SET date_delivered = now() WHERE order_id = ? AND " + IS_READY_COND,
                 orderId
-        ) > 0;
+        );
+
+        if (rows == 0)
+            throw new OrderNotFoundException();
     }
 
     @Override
-    public boolean markAsCancelled(long orderId) {
-        return jdbcTemplate.update(
+    public void markAsCancelled(long orderId) {
+        int rows = jdbcTemplate.update(
                 "UPDATE orders SET date_cancelled = now() WHERE order_id = ? AND NOT(" + IS_CANCELLED_COND + ") AND NOT(" + IS_DELIVERED_COND + ")",
                 orderId
-        ) > 0;
+        );
+
+        if (rows == 0)
+            throw new OrderNotFoundException();
     }
 
     @Override
-    public boolean setOrderStatus(long orderId, OrderStatus orderStatus) {
+    public void setOrderStatus(long orderId, OrderStatus orderStatus) {
         String sql;
         switch (orderStatus) {
             case PENDING:
@@ -335,50 +369,41 @@ public class OrderJdbcDao implements OrderDao {
                 throw new IllegalArgumentException("No such OrderType enum constant");
         }
 
-        return jdbcTemplate.update(sql, orderId) > 0;
+        int rows = jdbcTemplate.update(sql, orderId);
+
+        if (rows == 0)
+            throw new OrderNotFoundException();
     }
 
     @Override
-    public boolean updateAddress(long orderId, String address) {
-        return jdbcTemplate.update(
+    public void updateAddress(long orderId, String address) {
+        int rows = jdbcTemplate.update(
                 "UPDATE orders SET address = ? WHERE order_id = ? AND order_type = " + OrderType.DELIVERY.ordinal() + " AND NOT(" + IS_CLOSED_COND + ")",
                 address,
                 orderId
-        ) > 0;
+        );
+
+        if (rows == 0)
+            throw new OrderNotFoundException();
     }
 
     @Override
-    public boolean updateTableNumber(long orderId, int tableNumber) {
-        return jdbcTemplate.update(
+    public void updateTableNumber(long orderId, int tableNumber) {
+        int rows = jdbcTemplate.update(
                 "UPDATE orders SET table_number = ? WHERE order_id = ? AND order_type = " + OrderType.DINE_IN.ordinal() + " AND NOT(" + IS_CLOSED_COND + ")",
                 tableNumber,
                 orderId
-        ) > 0;
+        );
+
+        if (rows == 0)
+            throw new OrderNotFoundException();
     }
 
     @Override
-    public boolean delete(long orderId) {
-        return jdbcTemplate.update("DELETE FROM orders WHERE order_id = ?", orderId) > 0;
-    }
+    public void delete(long orderId) {
+        int rows = jdbcTemplate.update("DELETE FROM orders WHERE order_id = ?", orderId);
 
-    @Override
-    public Order createDineIn(long restaurantId, long userId, int tableNumber, List<OrderItem> items) {
-        return this.create(OrderType.DINE_IN, restaurantId, userId, null, tableNumber, items);
-    }
-
-    @Override
-    public Order createTakeaway(long restaurantId, long userId, List<OrderItem> items) {
-        return this.create(OrderType.TAKEAWAY, restaurantId, userId, null, null, items);
-    }
-
-
-    @Override
-    public Order createDelivery(long restaurantId, long userId, String address, List<OrderItem> items) {
-        return this.create(OrderType.DELIVERY, restaurantId, userId, address, null, items);
-    }
-
-    @Override
-    public OrderItem createOrderItem(Product product, int lineNumber, int quantity, String comment) {
-        return new OrderItem(product, lineNumber, quantity, comment);
+        if (rows == 0)
+            throw new OrderNotFoundException();
     }
 }

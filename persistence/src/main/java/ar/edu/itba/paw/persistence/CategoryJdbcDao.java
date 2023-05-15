@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.exception.CategoryNotFoundException;
 import ar.edu.itba.paw.model.Category;
 import ar.edu.itba.paw.persistance.CategoryDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,7 @@ public class CategoryJdbcDao implements CategoryDao {
     }
 
     @Override
-    public Category create(long restaurantId, String name) {
+    public long create(long restaurantId, String name) {
         final Map<String, Object> categoryData = new HashMap<>();
         categoryData.put("restaurant_id", restaurantId);
         categoryData.put("name", name);
@@ -44,7 +45,7 @@ public class CategoryJdbcDao implements CategoryDao {
         categoryData.put("order_num", order + 1);
 
         final int categoryId = jdbcInsert.executeAndReturnKey(categoryData).intValue();
-        return getById(categoryId).get();
+        return categoryId;
     }
 
     private static final String GET_BY_ID_SQL = SELECT_BASE + " WHERE categories.category_id = ?";
@@ -72,37 +73,42 @@ public class CategoryJdbcDao implements CategoryDao {
     }
 
     @Override
-    public boolean updateName(long categoryId, String name) {
-        return jdbcTemplate.update(
+    public void updateName(long categoryId, String name) {
+        int rows = jdbcTemplate.update(
                 "UPDATE categories SET name = ? WHERE deleted = false AND category_id = ?",
                 name,
                 categoryId
-        ) > 0;
+        );
+
+        if (rows == 0)
+            throw new CategoryNotFoundException();
     }
 
     @Override
-    public boolean updateOrder(long categoryId, int order) {
-        return jdbcTemplate.update(
+    public void updateOrder(long categoryId, int order) {
+        int rows = jdbcTemplate.update(
                 "UPDATE categories SET order_num = ? WHERE deleted = false AND category_id = ?",
                 order,
                 categoryId
-        ) > 0;
+        );
+
+        if (rows == 0)
+            throw new CategoryNotFoundException();
     }
 
     @Override
-    public boolean delete(long categoryId) {
-        boolean success = jdbcTemplate.update(
+    public void delete(long categoryId) {
+        int rows = jdbcTemplate.update(
                 "UPDATE categories SET deleted = true WHERE deleted = false AND category_id = ?",
                 categoryId
-        ) > 0;
+        );
 
-        if (success) {
-            jdbcTemplate.update(
-                    "UPDATE products SET deleted = true WHERE category_id = ?",
-                    categoryId
-            );
-        }
+        if (rows == 0)
+            throw new CategoryNotFoundException();
 
-        return success;
+        jdbcTemplate.update(
+                "UPDATE products SET deleted = true WHERE category_id = ?",
+                categoryId
+        );
     }
 }

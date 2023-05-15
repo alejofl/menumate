@@ -19,17 +19,17 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public boolean update(long imageId, byte[] bytes) {
-        return imageDao.update(imageId, bytes);
-    }
-
-    @Override
-    public boolean delete(long imageId) {
-        return imageDao.delete(imageId);
-    }
-
-    @Override
     public Optional<byte[]> getById(long imageId) {
         return imageDao.getById(imageId);
+    }
+
+    @Override
+    public void update(long imageId, byte[] bytes) {
+        imageDao.update(imageId, bytes);
+    }
+
+    @Override
+    public void delete(long imageId) {
+        imageDao.delete(imageId);
     }
 }

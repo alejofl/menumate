@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 @Controller
 public class RestaurantOrdersController {
@@ -99,29 +100,25 @@ public class RestaurantOrdersController {
 
     @RequestMapping(value = "/orders/{orderId:\\d+}/confirm", method = RequestMethod.POST)
     public ModelAndView confirmOrder(@PathVariable final int orderId) {
-        Order order = orderService.getById(orderId).orElseThrow(OrderNotFoundException::new);
-        boolean success = orderService.markAsConfirmed(orderId);
-        return new ModelAndView(String.format("redirect:/restaurants/%d/orders/pending%s", order.getRestaurant().getRestaurantId(), success ? "" : "?error=1"));
+        Order order = orderService.markAsConfirmed(orderId).orElseThrow(OrderNotFoundException::new);
+        return new ModelAndView(String.format("redirect:/restaurants/%d/orders/pending", order.getRestaurant().getRestaurantId()));
     }
 
     @RequestMapping(value = "/orders/{orderId:\\d+}/ready", method = RequestMethod.POST)
     public ModelAndView readyOrder(@PathVariable final int orderId) {
-        Order order = orderService.getById(orderId).orElseThrow(OrderNotFoundException::new);
-        boolean success = orderService.markAsReady(orderId);
-        return new ModelAndView(String.format("redirect:/restaurants/%d/orders/confirmed%s", order.getRestaurant().getRestaurantId(), success ? "" : "?error=1"));
+        Order order = orderService.markAsReady(orderId).orElseThrow(OrderNotFoundException::new);
+        return new ModelAndView(String.format("redirect:/restaurants/%d/orders/confirmed", order.getRestaurant().getRestaurantId()));
     }
 
     @RequestMapping(value = "/orders/{orderId:\\d+}/deliver", method = RequestMethod.POST)
     public ModelAndView deliverOrder(@PathVariable final int orderId) {
-        Order order = orderService.getById(orderId).orElseThrow(OrderNotFoundException::new);
-        boolean success = orderService.markAsDelivered(orderId);
-        return new ModelAndView(String.format("redirect:/restaurants/%d/orders/ready%s", order.getRestaurant().getRestaurantId(), success ? "" : "?error=1"));
+        Order order = orderService.markAsDelivered(orderId).orElseThrow(OrderNotFoundException::new);
+        return new ModelAndView(String.format("redirect:/restaurants/%d/orders/ready", order.getRestaurant().getRestaurantId()));
     }
 
     @RequestMapping(value = "/orders/{orderId:\\d+}/cancel", method = RequestMethod.POST)
     public ModelAndView cancelOrder(@PathVariable final int orderId) {
-        Order order = orderService.getById(orderId).orElseThrow(OrderNotFoundException::new);
-        boolean success = orderService.markAsCancelled(orderId);
-        return new ModelAndView(String.format("redirect:/restaurants/%d/orders/pending%s", order.getRestaurant().getRestaurantId(), success ? "" : "?error=1"));
+        Order order = orderService.markAsCancelled(orderId).orElseThrow(OrderNotFoundException::new);
+        return new ModelAndView(String.format("redirect:/restaurants/%d/orders/pending", order.getRestaurant().getRestaurantId()));
     }
 }

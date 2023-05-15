@@ -7,7 +7,7 @@ public interface ImageService {
 
     Optional<byte[]> getById(long imageId);
 
-    boolean update(long imageId, byte[] bytes);
+    void update(long imageId, byte[] bytes);
 
-    boolean delete(long imageId);
+    void delete(long imageId);
 }

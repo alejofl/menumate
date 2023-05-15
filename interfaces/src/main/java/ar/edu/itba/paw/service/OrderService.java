@@ -6,6 +6,7 @@ import ar.edu.itba.paw.model.OrderItemless;
 import ar.edu.itba.paw.model.OrderStatus;
 import ar.edu.itba.paw.util.PaginatedResult;
 
+import javax.mail.MessagingException;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,19 +43,23 @@ public interface OrderService {
 
     PaginatedResult<OrderItemless> getByRestaurantExcludeItems(long restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus);
 
-    boolean markAsConfirmed(long orderId);
+    Optional<Order> markAsConfirmed(long orderId);
 
-    boolean markAsReady(long orderId);
+    Optional<Order> markAsReady(long orderId);
 
-    boolean markAsDelivered(long orderId);
+    Optional<Order> markAsDelivered(long orderId);
 
-    boolean markAsCancelled(long orderId);
+    Optional<Order> markAsCancelled(long orderId);
 
-    boolean setOrderStatus(long orderId, OrderStatus orderStatus);
+    /**
+     * Warning: this method forcedly modifies an order's status. No checks are performed and no
+     * notifications are sent, so this method should only be used on extreme circumstances.
+     */
+    void setOrderStatus(long orderId, OrderStatus orderStatus);
 
-    boolean updateAddress(long orderId, String address);
+    void updateAddress(long orderId, String address);
 
-    boolean updateTableNumber(long orderId, int tableNumber);
+    void updateTableNumber(long orderId, int tableNumber);
 
-    boolean delete(long orderId);
+    void delete(long orderId);
 }
