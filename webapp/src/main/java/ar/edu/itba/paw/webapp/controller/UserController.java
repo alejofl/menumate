@@ -119,7 +119,10 @@ public class UserController {
     public ModelAndView createRestaurant(
             @ModelAttribute("createRestaurantForm") final CreateRestaurantForm form
     ) {
-        return new ModelAndView("user/create_restaurant");
+        final ModelAndView mav = new ModelAndView("user/create_restaurant");
+        mav.addObject("specialties", RestaurantSpecialty.values());
+        mav.addObject("tags", RestaurantTags.values());
+        return mav;
     }
 
     @RequestMapping(value = "/restaurants/create", method = RequestMethod.POST)
@@ -144,6 +147,10 @@ public class UserController {
                 form.getPortrait1().getBytes(),
                 form.getPortrait2().getBytes()
         );
+
+        for (Integer tag : form.getTags()) {
+            restaurantService.addTag(restaurantId, tag);
+        }
 
         return new ModelAndView(String.format("redirect:/restaurants/%d", restaurantId));
     }

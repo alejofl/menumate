@@ -1,4 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <body>
@@ -17,6 +18,11 @@
                 </c:forEach>
                 <c:forEach begin="1" end="${5 - param.rating}">
                     <i class="bi bi-star-fill"></i>
+                </c:forEach>
+            </div>
+            <div class="tags-container">
+                <c:forEach var="tag" items="${requestScope.tags}">
+                    <span class="badge rounded-pill text-bg-secondary"><spring:message code="restauranttags.${tag.messageCode}"/></span>
                 </c:forEach>
             </div>
         </div>

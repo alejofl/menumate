@@ -70,6 +70,8 @@ public class RestaurantsController {
         mav.addObject("average", Math.round(average.getAverage()));
         final List<Review> reviews = reviewService.getByRestaurant(id, 1, 30).getResult();
         mav.addObject("reviews", reviews);
+        final List<RestaurantTags> tags = restaurantService.getTags(id);
+        mav.addObject("tags", tags);
 
         final List<Pair<Category, List<Product>>> menu = restaurantService.getMenu(id);
         mav.addObject("menu", menu);
