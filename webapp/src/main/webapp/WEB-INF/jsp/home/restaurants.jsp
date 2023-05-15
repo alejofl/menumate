@@ -111,9 +111,14 @@
         <ul class="pagination">
             <li class="page-item">
                 <c:url value="/restaurants" var="previousUrl">
-                    <c:param name="search" value="${searchForm.search}"/>
+                    <c:forEach var="par" items="${paramValues}">
+                        <c:if test="${par.key != 'page'}">
+                            <c:forEach var="parValue" items="${par.value}">
+                                <c:param name="${par.key}" value="${parValue}"/>
+                            </c:forEach>
+                        </c:if>
+                    </c:forEach>
                     <c:param name="page" value="${currentPage - 1}"/>
-                    <c:param name="size" value="${currentSize}"/>
                 </c:url>
                 <a class="page-link ${currentPage == 1 ? "disabled" : ""}" href="${previousUrl}" aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>
@@ -121,17 +126,27 @@
             </li>
             <c:forEach begin="1" end="${pageCount}" var="pageNo">
                 <c:url value="/restaurants" var="pageUrl">
-                    <c:param name="search" value="${searchForm.search}"/>
+                    <c:forEach var="par" items="${paramValues}">
+                        <c:if test="${par.key != 'page'}">
+                            <c:forEach var="parValue" items="${par.value}">
+                                <c:param name="${par.key}" value="${parValue}"/>
+                            </c:forEach>
+                        </c:if>
+                    </c:forEach>
                     <c:param name="page" value="${pageNo}"/>
-                    <c:param name="size" value="${currentSize}"/>
                 </c:url>
                 <li class="page-item ${pageNo == currentPage ? "active" : ""}"><a class="page-link" href="${pageUrl}">${pageNo}</a></li>
             </c:forEach>
             <li class="page-item">
                 <c:url value="/restaurants" var="nextUrl">
-                    <c:param name="search" value="${searchForm.search}"/>
+                    <c:forEach var="par" items="${paramValues}">
+                        <c:if test="${par.key != 'page'}">
+                            <c:forEach var="parValue" items="${par.value}">
+                                <c:param name="${par.key}" value="${parValue}"/>
+                            </c:forEach>
+                        </c:if>
+                    </c:forEach>
                     <c:param name="page" value="${currentPage + 1}"/>
-                    <c:param name="size" value="${currentSize}"/>
                 </c:url>
                 <a class="page-link ${(currentPage == pageCount || pageCount == 0) ? "disabled" : ""}" href="${nextUrl}" aria-label="Next">
                     <span aria-hidden="true">&raquo;</span>
