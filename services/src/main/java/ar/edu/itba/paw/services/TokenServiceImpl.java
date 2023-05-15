@@ -60,16 +60,6 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public boolean hasActiveResetPasswordToken(final long userId) {
-        return resetPasswordTokenDao.hasActiveToken(userId);
-    }
-
-    @Override
-    public boolean isValidVerificationToken(String token) {
-        return verificationTokenDao.isValidToken(token);
-    }
-
-    @Override
     public boolean isValidResetPasswordToken(String token) {
         return resetPasswordTokenDao.isValidToken(token);
     }

@@ -13,9 +13,5 @@ public interface TokenService {
 
     boolean hasActiveVerificationToken(final long userId);
 
-    boolean hasActiveResetPasswordToken(final long userId);
-
-    boolean isValidVerificationToken(final String token);
-
     boolean isValidResetPasswordToken(final String token);
 }
