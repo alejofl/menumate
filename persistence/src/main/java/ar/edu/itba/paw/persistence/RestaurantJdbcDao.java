@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class RestaurantJdbcDao implements RestaurantDao {
@@ -120,6 +121,24 @@ public class RestaurantJdbcDao implements RestaurantDao {
 
         String orderByDirection = descending ? "DESC" : "ASC";
         String orderByColumn = getOrderByColumn(orderBy);
+        String specialtiesDirective = "";
+        String tagsDirective = "";
+
+
+        if(specialties != null && !specialties.isEmpty())
+            if(specialties.size()==1){
+                specialtiesDirective = "AND restaurants.specialty = " + specialties.get(0).ordinal() + " ";
+            } else {
+                specialtiesDirective = "AND restaurants.specialty IN (" + specialties.stream().map(specialty -> String.valueOf(specialty.ordinal())).collect(Collectors.joining(", ")) + ") ";
+            }
+
+        if(tags != null && !tags.isEmpty()){
+            if(tags.size()==1){
+                tagsDirective = "AND restaurants.restaurant_id IN (SELECT restaurant_id FROM restaurant_tags WHERE restaurant_tags.tag_id = " + tags.get(0).ordinal() + ") ";
+            } else {
+                tagsDirective = "AND restaurants.restaurant_id IN (SELECT restaurant_id IN FROM restaurant_tags WHERE restaurant_tags.tag_id IN (" + tags.stream().map(tag -> String.valueOf(tag.ordinal())).collect(Collectors.joining(", ")) + ")) ";
+            }
+        }
 
         // TODO: Optimize string construction to use StringBuilder
         String sql = "WITH restaurant_ratings_counts AS" +
@@ -129,8 +148,8 @@ public class RestaurantJdbcDao implements RestaurantDao {
                 " restaurant_ratings_counts.rating_count AS restaurant_review_count," +
                 " (" + RESTAURANT_AVERAGE_PRICE_SQL + ") AS restaurant_average_price" +
                 " FROM restaurants JOIN restaurant_ratings_counts ON restaurants.restaurant_id = restaurant_ratings_counts.restaurant_id" +
-                " WHERE restaurants.deleted = false AND restaurants.is_active = true AND LOWER(restaurants.name) LIKE ?" +
-                // " AND restaurants.specialty IN (1, 2, 3)" //TODO: Implement checks for tags and specialty (remember to update count select)
+                " WHERE restaurants.deleted = false AND restaurants.is_active = true AND LOWER(restaurants.name) LIKE ? " +
+                specialtiesDirective + tagsDirective +
                 " ORDER BY " + orderByColumn + " " + orderByDirection + (orderBy == null ? "" : ", restaurants.restaurant_id") + " LIMIT ? OFFSET ?";
 
         String[] tokens = query.trim().toLowerCase().split(" +");
