@@ -1,7 +1,5 @@
 package ar.edu.itba.paw.service;
 
-import ar.edu.itba.paw.model.RestaurantDetails;
-import ar.edu.itba.paw.model.RestaurantOrderBy;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.util.PaginatedResult;
 import ar.edu.itba.paw.util.Pair;
@@ -18,12 +16,13 @@ public interface RestaurantService {
 
     /**
      * Searches for restaurants. Any of the nullable parameters in this function can be null to disable said filter.
-     * @param query A string to search restaurants by name.
-     * @param pageNumber Specifies the maximun.
-     * @param pageSize The amount of restaurants in a page.
-     * @param orderBy Specifies how the results should be ordered.
-     * @param descending False to sort in ascending order, true to sort in descending order.
-     * @param tags Filters out restaurants that don't have one of the tags on this list.
+     *
+     * @param query       A string to search restaurants by name.
+     * @param pageNumber  Specifies the maximun.
+     * @param pageSize    The amount of restaurants in a page.
+     * @param orderBy     Specifies how the results should be ordered.
+     * @param descending  False to sort in ascending order, true to sort in descending order.
+     * @param tags        Filters out restaurants that don't have one of the tags on this list.
      * @param specialties Filters out restaurants whose specialties isn't in this list.
      * @return The paginated results.
      */

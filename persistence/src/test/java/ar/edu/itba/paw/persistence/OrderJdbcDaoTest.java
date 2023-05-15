@@ -1,8 +1,8 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.*;
-import ar.edu.itba.paw.util.PaginatedResult;
 import ar.edu.itba.paw.persistence.config.TestConfig;
+import ar.edu.itba.paw.util.PaginatedResult;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,7 +18,9 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -46,7 +48,7 @@ public class OrderJdbcDaoTest {
     private static final long CATEGORY_ID = 12421;
     private static final String CATEGORY_NAME = "Postgres Dulces";
     private static final int CATEGORY_ORDER = 10;
-    private static final int SPECIALTY=2;
+    private static final int SPECIALTY = 2;
     private List<OrderItem> orderItemList;
 
     @Autowired
@@ -110,11 +112,11 @@ public class OrderJdbcDaoTest {
         List<OrderItem> dataToTest = order.getItems();
         Assert.assertEquals(orderItemList.size(), dataToTest.size());
         boolean present = true;
-        for(OrderItem orderItem : orderItemList){
+        for (OrderItem orderItem : orderItemList) {
             Assert.assertTrue(present);
             present = false;
-            for(OrderItem data : dataToTest){
-                if(orderItem.getProduct().getProductId() == data.getProduct().getProductId()){
+            for (OrderItem data : dataToTest) {
+                if (orderItem.getProduct().getProductId() == data.getProduct().getProductId()) {
                     Assert.assertEquals(orderItem.getComment(), data.getComment());
                     Assert.assertEquals(orderItem.getQuantity(), data.getQuantity());
                     Assert.assertEquals(orderItem.getLineNumber(), data.getLineNumber());
@@ -136,11 +138,11 @@ public class OrderJdbcDaoTest {
         List<OrderItem> dataToTest = order.getItems();
         Assert.assertEquals(orderItemList.size(), dataToTest.size());
         boolean present = true;
-        for(OrderItem orderItem : orderItemList){
+        for (OrderItem orderItem : orderItemList) {
             Assert.assertTrue(present);
             present = false;
-            for(OrderItem data : dataToTest){
-                if(orderItem.getProduct().getProductId() == data.getProduct().getProductId()){
+            for (OrderItem data : dataToTest) {
+                if (orderItem.getProduct().getProductId() == data.getProduct().getProductId()) {
                     Assert.assertEquals(orderItem.getComment(), data.getComment());
                     Assert.assertEquals(orderItem.getQuantity(), data.getQuantity());
                     Assert.assertEquals(orderItem.getLineNumber(), data.getLineNumber());
@@ -163,11 +165,11 @@ public class OrderJdbcDaoTest {
         List<OrderItem> dataToTest = order.getItems();
         Assert.assertEquals(orderItemList.size(), dataToTest.size());
         boolean present = true;
-        for(OrderItem orderItem : orderItemList){
+        for (OrderItem orderItem : orderItemList) {
             Assert.assertTrue(present);
             present = false;
-            for(OrderItem data : dataToTest){
-                if(orderItem.getProduct().getProductId() == data.getProduct().getProductId()){
+            for (OrderItem data : dataToTest) {
+                if (orderItem.getProduct().getProductId() == data.getProduct().getProductId()) {
                     Assert.assertEquals(orderItem.getComment(), data.getComment());
                     Assert.assertEquals(orderItem.getQuantity(), data.getQuantity());
                     Assert.assertEquals(orderItem.getLineNumber(), data.getLineNumber());

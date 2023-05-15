@@ -18,7 +18,7 @@ public class OrderItemless {
     private final int itemCount;
     private final BigDecimal price;
 
-    public OrderItemless(long orderId, OrderType orderType, Restaurant restaurant, User user, LocalDateTime dateOrdered,LocalDateTime dateConfirmed, LocalDateTime dateReady, LocalDateTime dateDelivered, LocalDateTime dateCanceled, String address, int tableNumber, int itemCount, BigDecimal price) {
+    public OrderItemless(long orderId, OrderType orderType, Restaurant restaurant, User user, LocalDateTime dateOrdered, LocalDateTime dateConfirmed, LocalDateTime dateReady, LocalDateTime dateDelivered, LocalDateTime dateCanceled, String address, int tableNumber, int itemCount, BigDecimal price) {
         this.orderId = orderId;
         this.orderType = orderType;
         this.restaurant = restaurant;

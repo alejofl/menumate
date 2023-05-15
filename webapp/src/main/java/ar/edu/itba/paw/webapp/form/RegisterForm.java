@@ -25,7 +25,7 @@ public class RegisterForm {
     private String repeatPassword;
 
     @NotBlank
-    @Size(min = 2, max=48)
+    @Size(min = 2, max = 48)
     private String name;
 
     public String getEmail() {

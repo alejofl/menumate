@@ -10,7 +10,7 @@ public class AddCategoryForm {
     private Integer restaurantId;
 
     @NotBlank
-    @Size(max=50)
+    @Size(max = 50)
     private String name;
 
     public Integer getRestaurantId() {

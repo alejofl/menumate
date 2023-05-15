@@ -80,7 +80,7 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Scheduled(cron = "0 0 0 * * ?")
-    public void deletedStaledResetPasswordTokens(){
+    public void deletedStaledResetPasswordTokens() {
         resetPasswordTokenDao.deleteStaledTokens();
     }
 }

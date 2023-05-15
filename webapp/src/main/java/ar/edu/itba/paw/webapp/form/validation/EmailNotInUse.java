@@ -17,6 +17,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface EmailNotInUse {
     String message() default "Email already in use!";
+
     Class<?>[] groups() default {};
+
     Class<? extends Payload>[] payload() default {};
 }

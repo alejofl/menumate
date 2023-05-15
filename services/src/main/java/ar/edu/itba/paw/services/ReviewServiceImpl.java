@@ -1,10 +1,10 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.model.Review;
-import ar.edu.itba.paw.util.AverageCountPair;
-import ar.edu.itba.paw.util.PaginatedResult;
 import ar.edu.itba.paw.persistance.ReviewDao;
 import ar.edu.itba.paw.service.ReviewService;
+import ar.edu.itba.paw.util.AverageCountPair;
+import ar.edu.itba.paw.util.PaginatedResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

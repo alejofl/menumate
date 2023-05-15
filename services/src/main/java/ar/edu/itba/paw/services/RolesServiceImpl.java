@@ -3,10 +3,10 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.model.RestaurantRoleLevel;
 import ar.edu.itba.paw.model.User;
-import ar.edu.itba.paw.util.Pair;
-import ar.edu.itba.paw.util.Triplet;
 import ar.edu.itba.paw.persistance.RolesDao;
 import ar.edu.itba.paw.service.RolesService;
+import ar.edu.itba.paw.util.Pair;
+import ar.edu.itba.paw.util.Triplet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

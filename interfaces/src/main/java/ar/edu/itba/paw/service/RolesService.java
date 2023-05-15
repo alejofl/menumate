@@ -18,6 +18,7 @@ public interface RolesService {
 
     /**
      * Sets a user's role at a restaurant. Specify roleLevel as null to remove a user's role at a restaurant.
+     *
      * @return True if the operation was successful
      */
     boolean setRole(long userId, long restaurantId, RestaurantRoleLevel roleLevel);

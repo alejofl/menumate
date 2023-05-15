@@ -1,9 +1,9 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import ar.edu.itba.paw.exception.UserNotFoundException;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
-import ar.edu.itba.paw.exception.UserNotFoundException;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 public class ControllerUtils {
@@ -12,7 +12,7 @@ public class ControllerUtils {
     static final int DEFAULT_RESTAURANT_PAGE_SIZE = 12;
 
     private ControllerUtils() {
-        
+
     }
 
     /**

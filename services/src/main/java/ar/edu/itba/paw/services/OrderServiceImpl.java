@@ -1,12 +1,12 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.model.*;
-import ar.edu.itba.paw.util.PaginatedResult;
 import ar.edu.itba.paw.persistance.OrderDao;
 import ar.edu.itba.paw.service.EmailService;
 import ar.edu.itba.paw.service.OrderService;
 import ar.edu.itba.paw.service.ProductService;
 import ar.edu.itba.paw.service.UserService;
+import ar.edu.itba.paw.util.PaginatedResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

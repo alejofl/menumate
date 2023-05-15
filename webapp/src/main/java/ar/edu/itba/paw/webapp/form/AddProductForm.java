@@ -4,7 +4,10 @@ import ar.edu.itba.paw.webapp.form.validation.Image;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 
 public class AddProductForm {
@@ -12,10 +15,10 @@ public class AddProductForm {
     private Integer categoryId;
 
     @NotBlank
-    @Size(max=150)
+    @Size(max = 150)
     private String productName;
 
-    @Size(max=300)
+    @Size(max = 300)
     private String description;
 
     @Image

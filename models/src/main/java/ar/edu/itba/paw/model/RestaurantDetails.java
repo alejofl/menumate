@@ -1,8 +1,5 @@
 package ar.edu.itba.paw.model;
 
-import ar.edu.itba.paw.model.Restaurant;
-import ar.edu.itba.paw.model.RestaurantTags;
-
 import java.util.List;
 
 public class RestaurantDetails {

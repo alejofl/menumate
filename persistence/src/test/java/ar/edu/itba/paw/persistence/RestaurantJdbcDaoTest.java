@@ -1,8 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.model.*;
-import ar.edu.itba.paw.util.AverageCountPair;
-import ar.edu.itba.paw.util.PaginatedResult;
+import ar.edu.itba.paw.model.Restaurant;
+import ar.edu.itba.paw.model.RestaurantTags;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import org.junit.Assert;
 import org.junit.Before;
@@ -16,13 +15,9 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.*;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
@@ -40,7 +35,7 @@ public class RestaurantJdbcDaoTest {
     private static final RestaurantTags[] TAGS = RestaurantTags.values();
     private static final List<String> EXPECTED_NAMES = Arrays.asList("B", "D", "E", "A", "C", "F");
     private static final int PAGE_SIZE = 2;
-    private static final int  MIN_REVIEW_SCORE = 1;
+    private static final int MIN_REVIEW_SCORE = 1;
     private static final int MAX_REVIEW_SCORE = 5;
     private static final int RESTAURANTS_QTY = 3;
 
@@ -96,7 +91,7 @@ public class RestaurantJdbcDaoTest {
         }
 
         int count = jdbcTemplate.query("SELECT COUNT(*) AS c FROM restaurant_tags WHERE restaurant_id = ?",
-                (rs, rowNum)-> rs.getInt("c"), ID).get(0);
+                (rs, rowNum) -> rs.getInt("c"), ID).get(0);
 
         Assert.assertEquals(TAGS.length, count);
     }
@@ -124,9 +119,9 @@ public class RestaurantJdbcDaoTest {
 
         int count;
         for (int i = 1; i < TAGS.length + 1; i++) {
-            Assert.assertTrue(restaurantDao.removeTag(ID, TAGS[i-1].ordinal()));
+            Assert.assertTrue(restaurantDao.removeTag(ID, TAGS[i - 1].ordinal()));
             count = jdbcTemplate.query("SELECT COUNT(*) AS c FROM restaurant_tags WHERE restaurant_id = ?",
-                    (rs, rowNum)-> rs.getInt("c"), ID).get(0);
+                    (rs, rowNum) -> rs.getInt("c"), ID).get(0);
             Assert.assertEquals(count, TAGS.length - i);
         }
     }

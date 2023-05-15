@@ -14,7 +14,7 @@ public class ReviewForm {
     private Integer rating;
 
     @NotBlank
-    @Size(max=500)
+    @Size(max = 500)
     private String comment;
 
     public Integer getRating() {

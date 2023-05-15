@@ -1,11 +1,11 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import ar.edu.itba.paw.exception.UserNotFoundException;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.service.TokenService;
 import ar.edu.itba.paw.service.UserService;
-import ar.edu.itba.paw.exception.UserNotFoundException;
-import ar.edu.itba.paw.webapp.form.RegisterForm;
 import ar.edu.itba.paw.webapp.form.EmailForm;
+import ar.edu.itba.paw.webapp.form.RegisterForm;
 import ar.edu.itba.paw.webapp.form.ResetPasswordForm;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.mail.MessagingException;
 import javax.validation.Valid;
@@ -57,16 +56,15 @@ public class AuthController {
 
     @RequestMapping(value = {"/auth/{actionType}"}, method = RequestMethod.GET)
     public ModelAndView getEmailForm(
-            @PathVariable("actionType")
-            final String actionType,
+            @PathVariable("actionType") final String actionType,
             @RequestParam(value = "token", required = false) @Length(min = 32, max = 32) final String token,
             @ModelAttribute("emailForm") final EmailForm emailForm
     ) {
-        if(!actionType.matches("verify|reset-password"))
+        if (!actionType.matches("verify|reset-password"))
             return new ModelAndView("redirect:/errors/404");
 
-        if(token!=null){
-            if(actionType.equals("verify") && tokenService.verifyUserAndDeleteVerificationToken(token))
+        if (token != null) {
+            if (actionType.equals("verify") && tokenService.verifyUserAndDeleteVerificationToken(token))
                 return new ModelAndView("redirect:/auth/login?type=verified");
             else if (actionType.equals("reset-password") && tokenService.isValidResetPasswordToken(token))
                 return new ModelAndView("redirect:/auth/reset-password-form?token=" + token);
@@ -81,23 +79,22 @@ public class AuthController {
 
     @RequestMapping(value = "/auth/{actionType}", method = RequestMethod.POST)
     public ModelAndView sendToken(
-            @PathVariable("actionType")
-            final String actionType,
+            @PathVariable("actionType") final String actionType,
             @Valid @ModelAttribute("emailForm") final EmailForm emailForm,
             final BindingResult errors
     ) {
-        if(!actionType.matches("verify|reset-password"))
+        if (!actionType.matches("verify|reset-password"))
             return new ModelAndView("redirect:/errors/404");
 
         if (errors.hasErrors()) {
-            return getEmailForm(actionType,null, emailForm);
+            return getEmailForm(actionType, null, emailForm);
         }
 
         try {
             User user = userService.getByEmail(emailForm.getEmail()).orElseThrow(UserNotFoundException::new);
 
-            if(actionType.equals("verify")){
-                if(user.getIsActive()){
+            if (actionType.equals("verify")) {
+                if (user.getIsActive()) {
                     return new ModelAndView("redirect:/auth/login?type=" + actionType + "-emailed");
                 }
                 tokenService.generateVerificationToken(user.getUserId());
@@ -117,7 +114,7 @@ public class AuthController {
             @RequestParam(value = "token", required = false) @Length(min = 32, max = 32) final String token,
             @ModelAttribute("resetPasswordForm") final ResetPasswordForm resetPasswordForm
     ) {
-        if(token!=null && tokenService.isValidResetPasswordToken(token))
+        if (token != null && tokenService.isValidResetPasswordToken(token))
             return new ModelAndView("auth/reset_password").addObject("token", token);
         else
             return new ModelAndView("redirect:/auth/login?error=mailer_error");
@@ -135,7 +132,7 @@ public class AuthController {
 
         String newPassword = userService.encodePassword(resetPasswordForm.getPassword());
 
-        if(tokenService.updatePasswordAndDeleteResetPasswordToken(token, newPassword)) {
+        if (tokenService.updatePasswordAndDeleteResetPasswordToken(token, newPassword)) {
             return new ModelAndView("redirect:/auth/login?type=reset-password-success");
         } else {
             return new ModelAndView("redirect:/auth/login?error=password-reset-error");

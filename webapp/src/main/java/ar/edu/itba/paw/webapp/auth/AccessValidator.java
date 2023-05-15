@@ -1,9 +1,9 @@
 package ar.edu.itba.paw.webapp.auth;
 
-import ar.edu.itba.paw.model.*;
+import ar.edu.itba.paw.model.OrderItemless;
+import ar.edu.itba.paw.model.RestaurantRoleLevel;
 import ar.edu.itba.paw.service.OrderService;
 import ar.edu.itba.paw.service.RolesService;
-import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.controller.ControllerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

@@ -81,7 +81,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public MessageSource messageSource(){
+    public MessageSource messageSource() {
         final ReloadableResourceBundleMessageSource ms = new ReloadableResourceBundleMessageSource();
         ms.setCacheSeconds((int) TimeUnit.SECONDS.toSeconds(5));
         ms.setBasename("classpath:i18n/messages");

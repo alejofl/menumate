@@ -3,9 +3,9 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.model.RestaurantRoleLevel;
 import ar.edu.itba.paw.model.User;
+import ar.edu.itba.paw.persistence.config.TestConfig;
 import ar.edu.itba.paw.util.Pair;
 import ar.edu.itba.paw.util.Triplet;
-import ar.edu.itba.paw.persistence.config.TestConfig;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -158,8 +158,8 @@ public class RolesJdbcDaoTest {
 
         Assert.assertEquals(2, result.size());
 
-        long[] restaurantsExpected = new long[] {RESTAURANT_ID1, RESTAURANT_ID2};
-        long[] restaurantsGot = new long[] {result.get(0).getX().getRestaurantId(), result.get(1).getX().getRestaurantId()};
+        long[] restaurantsExpected = new long[]{RESTAURANT_ID1, RESTAURANT_ID2};
+        long[] restaurantsGot = new long[]{result.get(0).getX().getRestaurantId(), result.get(1).getX().getRestaurantId()};
         Arrays.sort(restaurantsGot);
         Arrays.sort(restaurantsExpected);
         Assert.assertArrayEquals(restaurantsExpected, restaurantsGot);

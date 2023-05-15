@@ -75,7 +75,7 @@ public class CategoryJdbcDaoTest {
 
     @Test
     public void testFindByRestaurantId() throws SQLException {
-        for (int i = categoryNames.length; i > 0 ; i--)
+        for (int i = categoryNames.length; i > 0; i--)
             jdbcTemplate.execute("INSERT INTO categories (category_id, name, restaurant_id, order_num) VALUES (" + i + ", '" + categoryNames[i - 1] + "', " + RESTAURANT_ID + ", " + i + ")");
 
         final List<Category> category = categoryDao.getByRestaurantSortedByOrder(RESTAURANT_ID);

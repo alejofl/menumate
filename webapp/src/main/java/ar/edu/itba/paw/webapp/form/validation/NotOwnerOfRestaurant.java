@@ -12,8 +12,12 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface NotOwnerOfRestaurant {
     String message() default "Cannot add roles to owner of restaurant";
-    Class<?>[] groups() default { };
-    Class<? extends Payload>[] payload() default { };
+
+    Class<?>[] groups() default {};
+
+    Class<? extends Payload>[] payload() default {};
+
     String emailField();
+
     String restaurantIdField();
 }

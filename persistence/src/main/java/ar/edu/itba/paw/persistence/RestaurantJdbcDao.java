@@ -1,12 +1,8 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.model.RestaurantDetails;
-import ar.edu.itba.paw.model.RestaurantOrderBy;
-import ar.edu.itba.paw.model.Restaurant;
-import ar.edu.itba.paw.model.RestaurantSpecialty;
-import ar.edu.itba.paw.model.RestaurantTags;
-import ar.edu.itba.paw.util.PaginatedResult;
+import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.persistance.RestaurantDao;
+import ar.edu.itba.paw.util.PaginatedResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -15,7 +11,10 @@ import org.springframework.stereotype.Repository;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.sql.DataSource;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Repository
 public class RestaurantJdbcDao implements RestaurantDao {
