@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.exception.UserNotFoundException;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.persistance.UserDao;
 import ar.edu.itba.paw.util.Pair;
@@ -41,10 +42,18 @@ public class UserJdbcDao implements UserDao {
     }
 
     @Override
-    public User update(String email, String password, String name) {
-        long userId = getByEmail(email).get().getUserId();
-        jdbcTemplate.update("UPDATE users SET password = ?, name = ? WHERE user_id = ?", password, name, userId);
-        return getByEmail(email).get();
+    public User update(long userId, String password, String name) {
+        int rows = jdbcTemplate.update(
+                "UPDATE users SET password = ?, name = ? WHERE user_id = ?",
+                password,
+                name,
+                userId
+        );
+
+        if (rows == 0)
+            throw new UserNotFoundException();
+
+        return getById(userId).orElseThrow(UserNotFoundException::new);
     }
 
     @Override
@@ -66,12 +75,12 @@ public class UserJdbcDao implements UserDao {
     }
 
     @Override
-    public boolean isUserEmailRegistered(String email) {
+    public boolean isUserEmailRegisteredAndConsolidated(String email) {
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(
-                "SELECT EXISTS(SELECT 1 FROM users WHERE email = ? AND PASSWORD IS NOT NULL) AS exists",
+                "SELECT EXISTS(SELECT 1 FROM users WHERE email = ? AND PASSWORD IS NOT NULL) AS ext",
                 email
         );
-        return rowSet.next() && rowSet.getBoolean("exists");
+        return rowSet.next() && rowSet.getBoolean("ext");
     }
 
     public Optional<Pair<User, String>> getByEmailWithPassword(String email) {

@@ -8,13 +8,13 @@ import java.util.Optional;
 public interface UserDao {
     User create(String email, String password, String name);
 
-    User update(String email, String password, String name);
+    User update(long userId, String password, String name);
 
     Optional<User> getById(long userId);
 
     Optional<User> getByEmail(String email);
 
-    boolean isUserEmailRegistered(String email);
+    boolean isUserEmailRegisteredAndConsolidated(String email);
 
     Optional<Pair<User, String>> getByEmailWithPassword(String email);
 }

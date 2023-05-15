@@ -12,7 +12,7 @@ public interface UserService {
 
     Optional<User> getByEmail(String email);
 
-    boolean isUserEmailRegistered(String email);
+    boolean isUserEmailRegisteredAndConsolidated(String email);
 
     Optional<Pair<User, String>> getByEmailWithPassword(String email);
 

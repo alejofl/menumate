@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.exception.RestaurantNotFoundException;
+import ar.edu.itba.paw.exception.RoleNotFoundException;
 import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.model.RestaurantRoleLevel;
 import ar.edu.itba.paw.model.User;
@@ -42,17 +44,31 @@ public class RolesJdbcDao implements RolesDao {
     }
 
     @Override
-    public boolean setRole(long userId, long restaurantId, RestaurantRoleLevel level) {
+    public void setRole(long userId, long restaurantId, RestaurantRoleLevel level) {
         if (level == RestaurantRoleLevel.OWNER)
-            throw new RuntimeException("Cannot set owner role of a restaurant");
+            throw new IllegalArgumentException("Cannot set owner role of a restaurant");
 
-        int rowsAffected = jdbcTemplate.update(
+        int rows = jdbcTemplate.update(
                 "INSERT INTO restaurant_roles (user_id, restaurant_id, role_level) VALUES (?, ?, ?) ON CONFLICT (user_id, restaurant_id) DO UPDATE SET role_level=excluded.role_level",
                 userId,
                 restaurantId,
                 level.ordinal()
         );
-        return rowsAffected != 0;
+
+        if (rows == 0)
+            throw new RestaurantNotFoundException();
+    }
+
+    @Override
+    public void deleteRole(long restaurantId, long userId) {
+        int rows = jdbcTemplate.update(
+                "DELETE FROM restaurant_roles WHERE restaurant_id = ? AND user_id = ?",
+                restaurantId,
+                userId
+        );
+
+        if (rows == 0)
+            throw new RoleNotFoundException();
     }
 
     @Override
@@ -118,14 +134,5 @@ public class RolesJdbcDao implements RolesDao {
                 RESTAURANT_ROLE_AMOUNT_ROW_MAPPER,
                 userId
         );
-    }
-
-    @Override
-    public boolean deleteRole(long restaurantId, long userId) {
-        return jdbcTemplate.update(
-                "DELETE FROM restaurant_roles WHERE restaurant_id = ? AND user_id = ?",
-                restaurantId,
-                userId
-        ) > 0;
     }
 }

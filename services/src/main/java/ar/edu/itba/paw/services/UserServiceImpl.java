@@ -20,15 +20,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User create(String email, String password, String name) {
-        if (isUserEmailRegistered(email)) {
-            throw new IllegalStateException();
-        }
         if (password == null) {
             return userDao.create(email, null, name);
         } else {
-            if (getByEmail(email).isPresent()) {
-                return userDao.update(email, passwordEncoder.encode(password), name);
-            }
+            Optional<User> maybeUser = userDao.getByEmail(email);
+            if (maybeUser.isPresent())
+                return userDao.update(maybeUser.get().getUserId(), passwordEncoder.encode(password), name);
             return userDao.create(email, passwordEncoder.encode(password), name);
         }
     }
@@ -44,8 +41,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean isUserEmailRegistered(String email) {
-        return userDao.isUserEmailRegistered(email);
+    public boolean isUserEmailRegisteredAndConsolidated(String email) {
+        return userDao.isUserEmailRegisteredAndConsolidated(email);
     }
 
     @Override

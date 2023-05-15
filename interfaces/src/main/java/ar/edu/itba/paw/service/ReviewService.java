@@ -17,10 +17,8 @@ public interface ReviewService {
 
     /**
      * Deletes the review attached to an order.
-     *
-     * @return True if the operation was successful.
      */
-    boolean delete(long orderId);
+    void delete(long orderId);
 
     /**
      * Gets an order's review, if it has one.

@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.exception.ReviewNotFoundException;
 import ar.edu.itba.paw.model.Review;
 import ar.edu.itba.paw.persistance.ReviewDao;
 import ar.edu.itba.paw.util.AverageCountPair;
@@ -35,8 +36,14 @@ public class ReviewJdbcDao implements ReviewDao {
     }
 
     @Override
-    public boolean delete(long orderId) {
-        return jdbcTemplate.update("DELETE FROM order_reviews WHERE order_id = ?", orderId) > 0;
+    public void delete(long orderId) {
+        int rows = jdbcTemplate.update(
+                "DELETE FROM order_reviews WHERE order_id = ?",
+                orderId
+        );
+
+        if (rows == 0)
+            throw new ReviewNotFoundException();
     }
 
     private static final String GET_BY_ORDER_SQL = "WITH itemless_orders AS (" + OrderJdbcDao.SELECT_ITEMLESS_ORDERS + ")" +

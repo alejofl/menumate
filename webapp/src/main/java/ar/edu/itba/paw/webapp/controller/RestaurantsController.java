@@ -119,7 +119,7 @@ public class RestaurantsController {
     ) {
         ModelAndView mav = new ModelAndView("menu/thankyou");
         mav.addObject("orderId", orderId);
-        mav.addObject("userExists", userService.isUserEmailRegistered(email));
+        mav.addObject("userExists", userService.isUserEmailRegisteredAndConsolidated(email));
         return mav;
     }
 }

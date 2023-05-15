@@ -20,6 +20,6 @@ public class EmailNotInUseValidator implements ConstraintValidator<EmailNotInUse
         if (s == null || s.length() < 3)
             return true;
 
-        return !userService.isUserEmailRegistered(s);
+        return !userService.isUserEmailRegisteredAndConsolidated(s);
     }
 }

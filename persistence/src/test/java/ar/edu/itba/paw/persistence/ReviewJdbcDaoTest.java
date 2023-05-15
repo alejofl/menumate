@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.exception.ReviewNotFoundException;
 import ar.edu.itba.paw.model.OrderType;
 import ar.edu.itba.paw.model.Review;
 import ar.edu.itba.paw.persistence.config.TestConfig;
@@ -250,17 +251,15 @@ public class ReviewJdbcDaoTest {
 
     @Test
     public void testDeleteWhenNone() {
-        boolean success = reviewDao.delete(ORDER_ID1);
-        Assert.assertFalse(success);
+        Assert.assertThrows(ReviewNotFoundException.class, () -> reviewDao.delete(ORDER_ID1));
     }
 
     @Test
     public void testDeleteWhenExists() {
         jdbcTemplate.execute("INSERT INTO order_reviews (order_id, rating, comment) VALUES (" + ORDER_ID1 + ", " + RATING1 + ", null)");
 
-        boolean success = reviewDao.delete(ORDER_ID1);
+        reviewDao.delete(ORDER_ID1);
 
-        Assert.assertTrue(success);
         Assert.assertEquals(0, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "order_reviews", "order_id = " + ORDER_ID1));
     }
 }

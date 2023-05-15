@@ -25,8 +25,16 @@ public class RolesServiceImpl implements RolesService {
     }
 
     @Override
-    public boolean setRole(long userId, long restaurantId, RestaurantRoleLevel level) {
-        return rolesDao.setRole(userId, restaurantId, level);
+    public void setRole(long userId, long restaurantId, RestaurantRoleLevel level) {
+        if (level == null)
+            rolesDao.deleteRole(userId, restaurantId);
+        else
+            rolesDao.setRole(userId, restaurantId, level);
+    }
+
+    @Override
+    public void deleteRole(long restaurantId, long userId) {
+        rolesDao.deleteRole(restaurantId, userId);
     }
 
     @Override
@@ -42,10 +50,5 @@ public class RolesServiceImpl implements RolesService {
     @Override
     public List<Triplet<Restaurant, RestaurantRoleLevel, Integer>> getByUser(long userId) {
         return rolesDao.getByUser(userId);
-    }
-
-    @Override
-    public boolean deleteRole(long restaurantId, long userId) {
-        return rolesDao.deleteRole(restaurantId, userId);
     }
 }

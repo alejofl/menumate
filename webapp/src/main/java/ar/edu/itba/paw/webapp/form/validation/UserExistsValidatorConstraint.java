@@ -20,6 +20,6 @@ public class UserExistsValidatorConstraint implements ConstraintValidator<UserEx
 
     @Override
     public boolean isValid(String email, ConstraintValidatorContext constraintValidatorContext) {
-        return userService.isUserEmailRegistered(email);
+        return userService.isUserEmailRegisteredAndConsolidated(email);
     }
 }
