@@ -94,7 +94,7 @@ public class RestaurantJdbcDao implements RestaurantDao {
             case DATE:
                 return "restaurants.date_created";
             case ALPHABETIC:
-                return "restaurants.name";
+                return "LOWER(restaurants.name)";
             case RATING:
                 return "restaurant_average_rating";
             case PRICE:
@@ -125,18 +125,18 @@ public class RestaurantJdbcDao implements RestaurantDao {
         String tagsDirective = "";
 
 
-        if(specialties != null && !specialties.isEmpty())
-            if(specialties.size()==1){
-                specialtiesDirective = "AND restaurants.specialty = " + specialties.get(0).ordinal() + " ";
+        if (specialties != null && !specialties.isEmpty())
+            if (specialties.size() == 1) {
+                specialtiesDirective = " AND restaurants.specialty = " + specialties.get(0).ordinal();
             } else {
-                specialtiesDirective = "AND restaurants.specialty IN (" + specialties.stream().map(specialty -> String.valueOf(specialty.ordinal())).collect(Collectors.joining(", ")) + ") ";
+                specialtiesDirective = " AND restaurants.specialty IN (" + specialties.stream().map(specialty -> String.valueOf(specialty.ordinal())).collect(Collectors.joining(", ")) + ")";
             }
 
-        if(tags != null && !tags.isEmpty()){
-            if(tags.size()==1){
-                tagsDirective = "AND restaurants.restaurant_id IN (SELECT restaurant_id FROM restaurant_tags WHERE restaurant_tags.tag_id = " + tags.get(0).ordinal() + ") ";
+        if (tags != null && !tags.isEmpty()) {
+            if (tags.size() == 1) {
+                tagsDirective = " AND restaurants.restaurant_id IN (SELECT restaurant_id FROM restaurant_tags WHERE restaurant_tags.tag_id = " + tags.get(0).ordinal() + ") ";
             } else {
-                tagsDirective = "AND restaurants.restaurant_id IN (SELECT restaurant_id IN FROM restaurant_tags WHERE restaurant_tags.tag_id IN (" + tags.stream().map(tag -> String.valueOf(tag.ordinal())).collect(Collectors.joining(", ")) + ")) ";
+                tagsDirective = " AND restaurants.restaurant_id IN (SELECT restaurant_id FROM restaurant_tags WHERE restaurant_tags.tag_id IN (" + tags.stream().map(tag -> String.valueOf(tag.ordinal())).collect(Collectors.joining(", ")) + ")) ";
             }
         }
 
@@ -148,7 +148,7 @@ public class RestaurantJdbcDao implements RestaurantDao {
                 " restaurant_ratings_counts.rating_count AS restaurant_review_count," +
                 " (" + RESTAURANT_AVERAGE_PRICE_SQL + ") AS restaurant_average_price" +
                 " FROM restaurants JOIN restaurant_ratings_counts ON restaurants.restaurant_id = restaurant_ratings_counts.restaurant_id" +
-                " WHERE restaurants.deleted = false AND restaurants.is_active = true AND LOWER(restaurants.name) LIKE ? " +
+                " WHERE restaurants.deleted = false AND restaurants.is_active = true AND LOWER(restaurants.name) LIKE ?" +
                 specialtiesDirective + tagsDirective +
                 " ORDER BY " + orderByColumn + " " + orderByDirection + (orderBy == null ? "" : ", restaurants.restaurant_id") + " LIMIT ? OFFSET ?";
 
@@ -168,7 +168,7 @@ public class RestaurantJdbcDao implements RestaurantDao {
         );
 
         int count = jdbcTemplate.query(
-                "SELECT COUNT(*) AS c FROM restaurants WHERE deleted = false AND is_active = true AND LOWER(name) LIKE ?",
+                "SELECT COUNT(*) AS c FROM restaurants WHERE deleted = false AND is_active = true AND LOWER(name) LIKE ?" + specialtiesDirective + tagsDirective,
                 SimpleRowMappers.COUNT_ROW_MAPPER,
                 search
         ).get(0);
