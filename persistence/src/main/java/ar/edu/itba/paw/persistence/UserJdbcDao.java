@@ -56,19 +56,23 @@ public class UserJdbcDao implements UserDao {
         return getById(userId).orElseThrow(UserNotFoundException::new);
     }
 
+    private static final String GET_BY_ID_SQL = "SELECT " + TableFields.USERS_FIELDS + " FROM users WHERE user_id = ?";
+
     @Override
     public Optional<User> getById(long userId) {
         return jdbcTemplate.query(
-                "SELECT " + TableFields.USERS_FIELDS + " FROM users WHERE user_id = ?",
+                GET_BY_ID_SQL,
                 SimpleRowMappers.USER_ROW_MAPPER,
                 userId
         ).stream().findFirst();
     }
 
+    private static final String GET_BY_EMAIL_SQL = "SELECT " + TableFields.USERS_FIELDS + " FROM users WHERE email = ?";
+
     @Override
     public Optional<User> getByEmail(String email) {
         return jdbcTemplate.query(
-                "SELECT " + TableFields.USERS_FIELDS + " FROM users WHERE email = ?",
+                GET_BY_EMAIL_SQL,
                 SimpleRowMappers.USER_ROW_MAPPER,
                 email
         ).stream().findFirst();
@@ -83,9 +87,11 @@ public class UserJdbcDao implements UserDao {
         return rowSet.next() && rowSet.getBoolean("ext");
     }
 
+    private static final String GET_BY_EMAIL_WITH_PASSWORD_SQL = "SELECT " + TableFields.USERS_FIELDS + ", password FROM users WHERE email = ?";
+
     public Optional<Pair<User, String>> getByEmailWithPassword(String email) {
         return jdbcTemplate.query(
-                "SELECT " + TableFields.USERS_FIELDS + ", password FROM users WHERE email = ?",
+                GET_BY_EMAIL_WITH_PASSWORD_SQL,
                 SimpleRowMappers.USER_WITH_PASSWORD_ROW_MAPPER,
                 email
         ).stream().findFirst();

@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
@@ -32,6 +33,7 @@ public class CategoryJdbcDao implements CategoryDao {
                 .usingGeneratedKeyColumns("category_id");
     }
 
+    @Transactional
     @Override
     public long create(long restaurantId, String name) {
         final Map<String, Object> categoryData = new HashMap<>();
@@ -96,6 +98,7 @@ public class CategoryJdbcDao implements CategoryDao {
             throw new CategoryNotFoundException();
     }
 
+    @Transactional
     @Override
     public void delete(long categoryId) {
         int rows = jdbcTemplate.update(

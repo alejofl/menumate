@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.exception.TokenGenerationException;
 import ar.edu.itba.paw.persistance.BaseTokenDao;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -29,6 +30,7 @@ class BaseTokenJdbcDao implements BaseTokenDao {
     private final String GENERATE_TOKEN_SQL;
     private final String DELETE_STALED_SQL;
     private final String IS_VALID_TOKEN_SQL;
+    private final String HAS_ACTIVE_TOKEN_SQL;
 
     public BaseTokenJdbcDao(final String tableName, final DataSource ds) {
         this.tableName = tableName;
@@ -42,6 +44,7 @@ class BaseTokenJdbcDao implements BaseTokenDao {
         GENERATE_TOKEN_SQL = "INSERT INTO " + tableName + " (code, user_id, expires) VALUES (?, ?, ?) ON CONFLICT (user_id) DO UPDATE SET code = excluded.code, expires = excluded.expires";
         DELETE_STALED_SQL = "DELETE FROM " + tableName + " WHERE expires <= now()";
         IS_VALID_TOKEN_SQL = "SELECT EXISTS(SELECT * FROM " + tableName + " WHERE code = ? AND expires > now()) AS ht";
+        HAS_ACTIVE_TOKEN_SQL = "SELECT EXISTS(SELECT * FROM " + tableName + " WHERE user_id = ? AND expires < now()) AS ht";
     }
 
     private static LocalDateTime generateTokenExpirationDate() {
@@ -70,12 +73,16 @@ class BaseTokenJdbcDao implements BaseTokenDao {
     @Override
     public String generateToken(long userId) {
         String token = UUID.randomUUID().toString().substring(0, 32);
-        jdbcTemplate.update(
+        int rows = jdbcTemplate.update(
                 GENERATE_TOKEN_SQL,
                 token,
                 userId,
                 generateTokenExpirationDate()
         );
+
+        if (rows == 0)
+            throw new TokenGenerationException();
+
         return token;
     }
 
@@ -87,7 +94,7 @@ class BaseTokenJdbcDao implements BaseTokenDao {
     @Override
     public boolean hasActiveToken(long userId) {
         SqlRowSet result = jdbcTemplate.queryForRowSet(
-                "SELECT EXISTS(SELECT * FROM " + tableName + " WHERE user_id = ? AND expires < now()) AS ht",
+                HAS_ACTIVE_TOKEN_SQL,
                 TOKEN_EXPIRES_ROW_MAPPER,
                 userId
         );

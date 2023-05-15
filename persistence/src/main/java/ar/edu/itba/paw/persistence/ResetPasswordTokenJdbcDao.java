@@ -3,6 +3,7 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.persistance.ResetPasswordTokenDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 
@@ -16,6 +17,7 @@ public class ResetPasswordTokenJdbcDao extends BaseTokenJdbcDao implements Reset
         super(TABLE_NAME, ds);
     }
 
+    @Transactional
     @Override
     public boolean updatePasswordAndDeleteToken(String token, String newPassword) {
         TokenResult result = deleteTokenAndRetrieveUserId(token);

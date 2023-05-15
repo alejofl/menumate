@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
@@ -68,6 +69,7 @@ public class ProductJdbcDao implements ProductDao {
         );
     }
 
+    @Transactional
     @Override
     public void update(long productId, String name, BigDecimal price, String description) {
         int rows = jdbcTemplate.update(
@@ -90,8 +92,8 @@ public class ProductJdbcDao implements ProductDao {
     @Override
     public void delete(long productId) {
         int rows = jdbcTemplate.update(
-                "UPDATE products SET deleted = true WHERE product_id = ? AND deleted = false"
-                , productId
+                "UPDATE products SET deleted = true WHERE product_id = ? AND deleted = false",
+                productId
         );
 
         if (rows == 0)

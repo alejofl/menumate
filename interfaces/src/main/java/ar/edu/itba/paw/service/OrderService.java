@@ -59,6 +59,4 @@ public interface OrderService {
     void updateAddress(long orderId, String address);
 
     void updateTableNumber(long orderId, int tableNumber);
-
-    void delete(long orderId);
 }
