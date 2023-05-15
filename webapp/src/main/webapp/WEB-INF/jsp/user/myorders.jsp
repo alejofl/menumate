@@ -12,98 +12,101 @@
     </jsp:include>
 </head>
 <body>
-<jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
-<c:if test="${error}">
-    <jsp:include page="/WEB-INF/jsp/components/param_error.jsp"/>
-</c:if>
-<div class="page-title">
-    <h1><spring:message code="userorders.title"/></h1>
-</div>
-<div class="my-orders-nav d-flex pt-2 justify-content-center">
-    <nav>
-        <ul class="nav nav-pills nav-fill mb-3">
-            <li class="nav-item">
-                <a class="nav-link ${status == "inprogress" ? "active" : ""}" aria-current="page" href="<c:url value="/user/orders/inprogress"/>"><spring:message code="userorders.inprogress"/></a>
+<div class="content">
+    <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
+    <c:if test="${error}">
+        <jsp:include page="/WEB-INF/jsp/components/param_error.jsp"/>
+    </c:if>
+    <div class="page-title">
+        <h1><spring:message code="userorders.title"/></h1>
+    </div>
+    <div class="my-orders-nav d-flex pt-2 justify-content-center">
+        <nav>
+            <ul class="nav nav-pills nav-fill mb-3">
+                <li class="nav-item">
+                    <a class="nav-link ${status == "inprogress" ? "active" : ""}" aria-current="page" href="<c:url value="/user/orders/inprogress"/>"><spring:message code="userorders.inprogress"/></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link ${status == "all" ? "active" : ""}" aria-current="page" href="<c:url value="/user/orders/all"/>"><spring:message code="userorders.all"/></a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <main class="restaurant-feed">
+        <c:forEach var="order" items="${orders}">
+            <%-- This os a workaround to make LocalDateTime formattable --%>
+            <fmt:parseDate value="${order.dateOrdered}" pattern="yyyy-MM-dd'T'HH:mm:ss" var="parsedDateOrdered" type="both"/>
+            <fmt:formatDate pattern="yyyy-MM-dd HH:mm" value="${parsedDateOrdered}" var="dateOrdered"/>
+
+            <spring:message var="orderType" code="restaurant.menu.form.${order.orderType.messageCode}"/>
+
+            <jsp:include page="/WEB-INF/jsp/components/order_card.jsp">
+                <jsp:param name="id" value="${order.orderId}"/>
+                <jsp:param name="restaurantLogoId" value="${order.restaurant.logoId}"/>
+                <jsp:param name="restaurantName" value="${order.restaurant.name}"/>
+                <jsp:param name="dateOrdered" value="${dateOrdered}"/>
+                <jsp:param name="productQuantity" value="${order.itemCount}"/>
+                <jsp:param name="price" value="${order.price}"/>
+                <jsp:param name="orderType" value="${orderType}"/>
+                <jsp:param name="orderStatus" value="${order.orderStatus.messageCode}"/>
+            </jsp:include>
+        </c:forEach>
+
+        <c:if test="${fn:length(orders) == 0}">
+            <div class="empty-results">
+                <h1><i class="bi bi-slash-circle"></i></h1>
+                <p><spring:message code="userorders.noorders"/></p>
+            </div>
+        </c:if>
+    </main>
+
+    <c:choose>
+        <c:when test="${empty param.page}">
+            <c:set var="currentPage" value="1"/>
+        </c:when>
+        <c:otherwise>
+            <c:set var="currentPage" value="${param.page}"/>
+        </c:otherwise>
+    </c:choose>
+    <c:choose>
+        <c:when test="${empty param.size}">
+            <c:set var="currentSize" value="20"/>
+        </c:when>
+        <c:otherwise>
+            <c:set var="currentSize" value="${param.size}"/>
+        </c:otherwise>
+    </c:choose>
+
+    <nav class="d-flex justify-content-center">
+        <ul class="pagination">
+            <li class="page-item">
+                <c:url value="/user/orders/${status}" var="previousUrl">
+                    <c:param name="page" value="${currentPage - 1}"/>
+                    <c:param name="size" value="${currentSize}"/>
+                </c:url>
+                <a class="page-link ${currentPage == 1 ? "disabled" : ""}" href="${previousUrl}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link ${status == "all" ? "active" : ""}" aria-current="page" href="<c:url value="/user/orders/all"/>"><spring:message code="userorders.all"/></a>
+            <c:forEach begin="1" end="${pageCount}" var="pageNo">
+                <c:url value="/user/orders/${status}" var="pageUrl">
+                    <c:param name="page" value="${pageNo}"/>
+                    <c:param name="size" value="${currentSize}"/>
+                </c:url>
+                <li class="page-item ${pageNo == currentPage ? "active" : ""}"><a class="page-link" href="${pageUrl}">${pageNo}</a></li>
+            </c:forEach>
+            <li class="page-item">
+                <c:url value="/user/orders/${status}" var="nextUrl">
+                    <c:param name="page" value="${currentPage + 1}"/>
+                    <c:param name="size" value="${currentSize}"/>
+                </c:url>
+                <a class="page-link ${(currentPage == pageCount || pageCount == 0) ? "disabled" : ""}" href="${nextUrl}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
             </li>
         </ul>
     </nav>
 </div>
-<main class="restaurant-feed">
-    <c:forEach var="order" items="${orders}">
-        <%-- This os a workaround to make LocalDateTime formattable --%>
-        <fmt:parseDate value="${order.dateOrdered}" pattern="yyyy-MM-dd'T'HH:mm:ss" var="parsedDateOrdered" type="both"/>
-        <fmt:formatDate pattern="yyyy-MM-dd HH:mm" value="${parsedDateOrdered}" var="dateOrdered"/>
-
-        <spring:message var="orderType" code="restaurant.menu.form.${order.orderType.messageCode}"/>
-
-        <jsp:include page="/WEB-INF/jsp/components/order_card.jsp">
-            <jsp:param name="id" value="${order.orderId}"/>
-            <jsp:param name="restaurantLogoId" value="${order.restaurant.logoId}"/>
-            <jsp:param name="restaurantName" value="${order.restaurant.name}"/>
-            <jsp:param name="dateOrdered" value="${dateOrdered}"/>
-            <jsp:param name="productQuantity" value="${order.itemCount}"/>
-            <jsp:param name="price" value="${order.price}"/>
-            <jsp:param name="orderType" value="${orderType}"/>
-            <jsp:param name="orderStatus" value="${order.orderStatus.messageCode}"/>
-        </jsp:include>
-    </c:forEach>
-
-    <c:if test="${fn:length(orders) == 0}">
-        <div class="empty-results">
-            <h1><i class="bi bi-slash-circle"></i></h1>
-            <p><spring:message code="userorders.noorders"/></p>
-        </div>
-    </c:if>
-</main>
-
-<c:choose>
-    <c:when test="${empty param.page}">
-        <c:set var="currentPage" value="1"/>
-    </c:when>
-    <c:otherwise>
-        <c:set var="currentPage" value="${param.page}"/>
-    </c:otherwise>
-</c:choose>
-<c:choose>
-    <c:when test="${empty param.size}">
-        <c:set var="currentSize" value="20"/>
-    </c:when>
-    <c:otherwise>
-        <c:set var="currentSize" value="${param.size}"/>
-    </c:otherwise>
-</c:choose>
-
-<nav class="d-flex justify-content-center">
-    <ul class="pagination">
-        <li class="page-item">
-            <c:url value="/user/orders/${status}" var="previousUrl">
-                <c:param name="page" value="${currentPage - 1}"/>
-                <c:param name="size" value="${currentSize}"/>
-            </c:url>
-            <a class="page-link ${currentPage == 1 ? "disabled" : ""}" href="${previousUrl}" aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
-            </a>
-        </li>
-        <c:forEach begin="1" end="${pageCount}" var="pageNo">
-            <c:url value="/user/orders/${status}" var="pageUrl">
-                <c:param name="page" value="${pageNo}"/>
-                <c:param name="size" value="${currentSize}"/>
-            </c:url>
-            <li class="page-item ${pageNo == currentPage ? "active" : ""}"><a class="page-link" href="${pageUrl}">${pageNo}</a></li>
-        </c:forEach>
-        <li class="page-item">
-            <c:url value="/user/orders/${status}" var="nextUrl">
-                <c:param name="page" value="${currentPage + 1}"/>
-                <c:param name="size" value="${currentSize}"/>
-            </c:url>
-            <a class="page-link ${(currentPage == pageCount || pageCount == 0) ? "disabled" : ""}" href="${nextUrl}" aria-label="Next">
-                <span aria-hidden="true">&raquo;</span>
-            </a>
-        </li>
-    </ul>
-</nav>
+<jsp:include page="/WEB-INF/jsp/components/footer.jsp"/>
 </body>
 </html>
