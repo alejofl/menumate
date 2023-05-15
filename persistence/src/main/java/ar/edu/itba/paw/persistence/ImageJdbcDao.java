@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.exception.CategoryNotFoundException;
 import ar.edu.itba.paw.exception.ImageNotFoundException;
 import ar.edu.itba.paw.persistance.ImageDao;
 import org.springframework.beans.factory.annotation.Autowired;

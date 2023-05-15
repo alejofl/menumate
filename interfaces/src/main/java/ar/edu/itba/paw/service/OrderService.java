@@ -6,7 +6,6 @@ import ar.edu.itba.paw.model.OrderItemless;
 import ar.edu.itba.paw.model.OrderStatus;
 import ar.edu.itba.paw.util.PaginatedResult;
 
-import javax.mail.MessagingException;
 import java.util.List;
 import java.util.Optional;
 

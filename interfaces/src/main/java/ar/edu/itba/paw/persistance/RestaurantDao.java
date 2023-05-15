@@ -15,12 +15,12 @@ public interface RestaurantDao {
 
     PaginatedResult<RestaurantDetails> search(String query, int pageNumber, int pageSize, RestaurantOrderBy orderBy, boolean descending, List<RestaurantTags> tags, List<RestaurantSpecialty> specialties);
 
-    boolean delete(long restaurantId);
+    void delete(long restaurantId);
 
     List<RestaurantTags> getTags(long restaurantId);
 
-    boolean addTag(long restaurantId, long tagId);
+    void addTag(long restaurantId, long tagId);
 
-    boolean removeTag(long restaurantId, long tagId);
+    void removeTag(long restaurantId, long tagId);
 
 }

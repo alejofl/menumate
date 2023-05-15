@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.exception.RestaurantNotFoundException;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.persistance.RestaurantDao;
 import ar.edu.itba.paw.util.PaginatedResult;
@@ -173,24 +174,24 @@ public class RestaurantJdbcDao implements RestaurantDao {
     }
 
     @Override
-    public boolean delete(long restaurantId) {
-        boolean success = jdbcTemplate.update(
+    public void delete(long restaurantId) {
+        int rows = jdbcTemplate.update(
                 "UPDATE restaurants SET deleted = true WHERE deleted = false AND restaurant_id = ?",
                 restaurantId
-        ) > 0;
+        );
 
-        if (success) {
-            jdbcTemplate.update(
-                    "UPDATE categories SET deleted = true WHERE categories.restaurant_id = ?",
-                    restaurantId
-            );
-            jdbcTemplate.update(
-                    "UPDATE products SET deleted = true WHERE products.category_id IN (SELECT category_id FROM categories WHERE restaurant_id = ?)",
-                    restaurantId
-            );
-        }
+        if (rows == 0)
+            throw new RestaurantNotFoundException();
 
-        return success;
+        jdbcTemplate.update(
+                "UPDATE categories SET deleted = true WHERE categories.restaurant_id = ?",
+                restaurantId
+        );
+
+        jdbcTemplate.update(
+                "UPDATE products SET deleted = true WHERE products.category_id IN (SELECT category_id FROM categories WHERE restaurant_id = ?)",
+                restaurantId
+        );
     }
 
     @Override
@@ -203,19 +204,25 @@ public class RestaurantJdbcDao implements RestaurantDao {
     }
 
     @Override
-    public boolean addTag(long restaurantId, long tagId) {
+    public void addTag(long restaurantId, long tagId) {
         final Map<String, Object> tagData = new HashMap<>();
         tagData.put("restaurant_id", restaurantId);
         tagData.put("tag_id", tagId);
-        return restaurantTagsJdbcInsert.execute(tagData) > 0;
+
+        int rows = restaurantTagsJdbcInsert.execute(tagData);
+        if (rows == 0)
+            throw new RestaurantNotFoundException();
     }
 
     @Override
-    public boolean removeTag(long restaurantId, long tagId) {
-        return jdbcTemplate.update(
+    public void removeTag(long restaurantId, long tagId) {
+        int rows = jdbcTemplate.update(
                 "DELETE FROM restaurant_tags WHERE restaurant_id = ? AND tag_id = ?",
                 restaurantId,
                 tagId
-        ) > 0;
+        );
+
+        if (rows == 0)
+            throw new RestaurantNotFoundException();
     }
 }

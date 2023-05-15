@@ -37,12 +37,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public boolean update(long productId, String name, BigDecimal price, String description) {
-        return productDao.update(productId, name, price, description);
+    public void update(long productId, String name, BigDecimal price, String description) {
+        productDao.update(productId, name, price, description);
     }
 
     @Override
-    public boolean delete(long productId) {
-        return productDao.delete(productId);
+    public void delete(long productId) {
+        productDao.delete(productId);
     }
 }

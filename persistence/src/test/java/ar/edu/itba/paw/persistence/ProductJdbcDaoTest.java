@@ -100,37 +100,18 @@ public class ProductJdbcDaoTest {
     @Test
     public void testUpdateProductPrice() throws SQLException {
         jdbcTemplate.execute("INSERT INTO products (product_id, name, price, category_id) VALUES (" + PRODUCT_ID + ", '" + PRODUCT_NAME + "', " + PRODUCT_PRICE + ", " + CATEGORY_ID + ")");
-        Assert.assertTrue(productDao.update(PRODUCT_ID, PRODUCT_NAME, PRODUCT_PRICE.add(BigDecimal.valueOf(2)), null));
+        productDao.update(PRODUCT_ID, PRODUCT_NAME, PRODUCT_PRICE.add(BigDecimal.valueOf(2)), null);
     }
 
     @Test
     public void testUpdateProductName() throws SQLException {
         jdbcTemplate.execute("INSERT INTO products (product_id, name, price, category_id) VALUES (" + PRODUCT_ID + ", '" + PRODUCT_NAME + "', " + PRODUCT_PRICE + ", " + CATEGORY_ID + ")");
-        Assert.assertTrue(productDao.update(PRODUCT_ID, PRODUCT_NAME + "- v2.0", PRODUCT_PRICE, null));
+        productDao.update(PRODUCT_ID, PRODUCT_NAME + "- v2.0", PRODUCT_PRICE, null);
     }
 
     @Test
     public void testDeleteProduct() throws SQLException {
         jdbcTemplate.execute("INSERT INTO products (product_id, name, price, category_id) VALUES (" + PRODUCT_ID + ", '" + PRODUCT_NAME + "', " + PRODUCT_PRICE + ", " + CATEGORY_ID + ")");
-        Assert.assertTrue(productDao.delete(PRODUCT_ID));
+        productDao.delete(PRODUCT_ID);
     }
-
-    @Test
-    public void testAverageRestaurantPrice() throws SQLException {
-        double quantity = 0;
-        for (int i = 1; i <= PRODUCTS_NAMES.length; i++) {
-            jdbcTemplate.execute("INSERT INTO products (product_id, name, price, category_id) VALUES (" + i + ", '" + PRODUCTS_NAMES[i - 1] + "', " + PRODUCT_PRICE + ", " + CATEGORY_ID + ")");
-            quantity += PRODUCT_PRICE.doubleValue();
-        }
-
-        final double average = productDao.getRestaurantAveragePrice(RESTAURANT_ID);
-        Assert.assertEquals(quantity / PRODUCTS_NAMES.length, average, 0.000001);
-    }
-
-    @Test
-    public void testNoProductsAverageRestaurantPrice() throws SQLException {
-        final double average = productDao.getRestaurantAveragePrice(RESTAURANT_ID);
-        Assert.assertEquals(0, average, 0.000001);
-    }
-
 }

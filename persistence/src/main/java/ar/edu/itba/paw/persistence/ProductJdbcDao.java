@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.exception.ProductNotFoundException;
 import ar.edu.itba.paw.model.Product;
 import ar.edu.itba.paw.persistance.ProductDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,33 +69,32 @@ public class ProductJdbcDao implements ProductDao {
     }
 
     @Override
-    public boolean update(long productId, String name, BigDecimal price, String description) {
-        return (jdbcTemplate.update(
+    public void update(long productId, String name, BigDecimal price, String description) {
+        int rows = jdbcTemplate.update(
                 "UPDATE products SET deleted = true WHERE product_id = ? AND deleted = false",
                 productId
-        ) > 0) && (jdbcTemplate.update(
+        );
+
+        if (rows == 0)
+            throw new ProductNotFoundException();
+
+        jdbcTemplate.update(
                 "INSERT INTO products (category_id, name, price, description, image_id, available) SELECT category_id, ?, ?, ?, image_id, available FROM products WHERE product_id = ?",
                 name,
                 price,
                 description,
                 productId
-        ) > 0);
+        );
     }
 
     @Override
-    public boolean delete(long productId) {
-        return jdbcTemplate.update(
+    public void delete(long productId) {
+        int rows = jdbcTemplate.update(
                 "UPDATE products SET deleted = true WHERE product_id = ? AND deleted = false"
                 , productId
-        ) > 0;
-    }
-
-    @Override
-    public double getRestaurantAveragePrice(long restaurantId) {
-        return jdbcTemplate.queryForObject(
-                "SELECT COALESCE(AVG(products.price), 0) FROM products JOIN categories ON products.category_id = categories.category_id WHERE categories.restaurant_id = ? AND products.deleted = false AND products.available = true",
-                Double.class,
-                restaurantId
         );
+
+        if (rows == 0)
+            throw new ProductNotFoundException();
     }
 }

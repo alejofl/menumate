@@ -67,8 +67,8 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public boolean delete(long restaurantId) {
-        return restaurantDao.delete(restaurantId);
+    public void delete(long restaurantId) {
+        restaurantDao.delete(restaurantId);
     }
 
     @Override
@@ -77,13 +77,13 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public boolean addTag(long restaurantId, long tagId) {
-        return restaurantDao.addTag(restaurantId, tagId);
+    public void addTag(long restaurantId, long tagId) {
+        restaurantDao.addTag(restaurantId, tagId);
     }
 
     @Override
-    public boolean removeTag(long restaurantId, long tagId) {
-        return restaurantDao.removeTag(restaurantId, tagId);
+    public void removeTag(long restaurantId, long tagId) {
+        restaurantDao.removeTag(restaurantId, tagId);
     }
 
 }

@@ -13,7 +13,7 @@ public interface ProductService {
 
     List<Product> getByCategory(long categoryId);
 
-    boolean update(long productId, String name, BigDecimal price, String description);
+    void update(long productId, String name, BigDecimal price, String description);
 
-    boolean delete(long productId);
+    void delete(long productId);
 }

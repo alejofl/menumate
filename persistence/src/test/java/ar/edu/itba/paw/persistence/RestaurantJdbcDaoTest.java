@@ -80,14 +80,14 @@ public class RestaurantJdbcDaoTest {
     @Test
     public void testDeletion() throws SQLException {
         jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, specialty, owner_user_id, max_tables) VALUES (" + ID + ", '" + NAME + "', '" + EMAIL + "', " + SPECIALTY + ", " + USER_ID + ", " + MAX_TABLES + ")");
-        Assert.assertTrue(restaurantDao.delete(ID));
+        restaurantDao.delete(ID);
     }
 
     @Test
     public void addTagsToRestaurant() throws SQLException {
         jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, specialty, owner_user_id, max_tables) VALUES (" + ID + ", '" + NAME + "', '" + EMAIL + "', " + SPECIALTY + ", " + USER_ID + ", " + MAX_TABLES + ")");
         for (RestaurantTags tag : TAGS) {
-            Assert.assertTrue(restaurantDao.addTag(ID, tag.ordinal()));
+            restaurantDao.addTag(ID, tag.ordinal());
         }
 
         int count = jdbcTemplate.query("SELECT COUNT(*) AS c FROM restaurant_tags WHERE restaurant_id = ?",
@@ -119,7 +119,7 @@ public class RestaurantJdbcDaoTest {
 
         int count;
         for (int i = 1; i < TAGS.length + 1; i++) {
-            Assert.assertTrue(restaurantDao.removeTag(ID, TAGS[i - 1].ordinal()));
+            restaurantDao.removeTag(ID, TAGS[i - 1].ordinal());
             count = jdbcTemplate.query("SELECT COUNT(*) AS c FROM restaurant_tags WHERE restaurant_id = ?",
                     (rs, rowNum) -> rs.getInt("c"), ID).get(0);
             Assert.assertEquals(count, TAGS.length - i);
