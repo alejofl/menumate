@@ -1,15 +1,15 @@
 package ar.edu.itba.paw.services;
 
-import ar.edu.itba.paw.exception.UserNotFoundException;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.persistance.ResetPasswordTokenDao;
 import ar.edu.itba.paw.persistance.VerificationTokenDao;
 import ar.edu.itba.paw.service.EmailService;
 import ar.edu.itba.paw.service.TokenService;
-import ar.edu.itba.paw.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.mail.MessagingException;
 
@@ -26,22 +26,24 @@ public class TokenServiceImpl implements TokenService {
     private EmailService emailService;
 
     @Autowired
-    private UserService userService;
+    private PasswordEncoder passwordEncoder;
 
+    @Transactional
     @Override
-    public String generateVerificationToken(final long userId) throws MessagingException {
-        User user = userService.getById(userId).orElseThrow(UserNotFoundException::new);
-        String token = verificationTokenDao.generateToken(userId);
-        emailService.sendUserVerificationEmail(user.getEmail(), user.getName(), token);
-        return token;
+    public void sendUserVerificationToken(final User user) throws MessagingException {
+        if (!user.getIsActive()) {
+            String token = verificationTokenDao.generateToken(user.getUserId());
+            emailService.sendUserVerificationEmail(user.getEmail(), user.getName(), token);
+        }
     }
 
+    @Transactional
     @Override
-    public String generatePasswordResetToken(long userId) throws MessagingException {
-        User user = userService.getById(userId).orElseThrow(UserNotFoundException::new);
-        String token = resetPasswordTokenDao.generateToken(userId);
-        emailService.sendResetPasswordEmail(user.getEmail(), user.getName(), token);
-        return token;
+    public void sendPasswordResetToken(User user) throws MessagingException {
+        if (user.getIsActive()) {
+            String token = resetPasswordTokenDao.generateToken(user.getUserId());
+            emailService.sendResetPasswordEmail(user.getEmail(), user.getName(), token);
+        }
     }
 
     @Override
@@ -51,6 +53,7 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public boolean updatePasswordAndDeleteResetPasswordToken(String token, String newPassword) {
+        newPassword = passwordEncoder.encode(newPassword);
         return resetPasswordTokenDao.updatePasswordAndDeleteToken(token, newPassword);
     }
 

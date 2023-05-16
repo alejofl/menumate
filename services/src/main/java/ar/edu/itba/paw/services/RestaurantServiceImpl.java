@@ -10,6 +10,7 @@ import ar.edu.itba.paw.util.PaginatedResult;
 import ar.edu.itba.paw.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Autowired
     private CategoryService categoryService;
 
+    @Transactional
     @Override
     public long create(String name, String email, int specialty, long ownerUserId, String description, String address, int maxTables, byte[] logo, byte[] portrait1, byte[] portrait2) {
         long logoKey = imageService.create(logo);

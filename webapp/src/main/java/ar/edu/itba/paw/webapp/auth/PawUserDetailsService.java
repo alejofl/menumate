@@ -23,18 +23,16 @@ public class PawUserDetailsService implements UserDetailsService {
         final Pair<User, String> userAndPassword = us.getByEmailWithPassword(email)
                 .orElseThrow(() -> new UsernameNotFoundException("No user for email " + email));
 
-
-        long userId = userAndPassword.getKey().getUserId();
-        String userEmail = userAndPassword.getKey().getEmail();
+        User user = userAndPassword.getKey();
         String userPassword = userAndPassword.getValue();
         boolean isActive = userAndPassword.getKey().getIsActive();
 
         if (!isActive)
-            throw new UserNotVerifiedException("User exists but is not verified", userId);
+            throw new UserNotVerifiedException("User exists but is not verified", user);
 
         if (userPassword == null)
             throw new UsernameNotFoundException("User exists but is not consolidated");
 
-        return new PawAuthUserDetails(userId, userEmail, userPassword, new ArrayList<>());
+        return new PawAuthUserDetails(user.getUserId(), user.getEmail(), userPassword, new ArrayList<>());
     }
 }

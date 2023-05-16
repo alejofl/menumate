@@ -40,9 +40,8 @@ public class AuthController {
             return registerForm(registerForm);
         }
 
-        final User user = userService.create(registerForm.getEmail(), registerForm.getPassword(), registerForm.getName());
         try {
-            tokenService.generateVerificationToken(user.getUserId());
+            userService.createOrConsolidate(registerForm.getEmail(), registerForm.getPassword(), registerForm.getName());
         } catch (MessagingException e) {
             return new ModelAndView("redirect:/auth/login?error=mailer_error");
         }
@@ -54,56 +53,73 @@ public class AuthController {
         return new ModelAndView("auth/login").addObject("type", type);
     }
 
-    @RequestMapping(value = {"/auth/{actionType}"}, method = RequestMethod.GET)
-    public ModelAndView getEmailForm(
-            @PathVariable("actionType") final String actionType,
+    @RequestMapping(value = {"/auth/verify"}, method = RequestMethod.GET)
+    public ModelAndView getVerifyEmailForm(
             @RequestParam(value = "token", required = false) @Length(min = 32, max = 32) final String token,
             @ModelAttribute("emailForm") final EmailForm emailForm
     ) {
-        if (!actionType.matches("verify|reset-password"))
-            return new ModelAndView("redirect:/errors/404");
-
-        if (token != null) {
-            if (actionType.equals("verify") && tokenService.verifyUserAndDeleteVerificationToken(token))
-                return new ModelAndView("redirect:/auth/login?type=verified");
-            else if (actionType.equals("reset-password") && tokenService.isValidResetPasswordToken(token))
-                return new ModelAndView("redirect:/auth/reset-password-form?token=" + token);
-            else
-                return new ModelAndView("redirect:/auth/login?error=request-error");
-        } else {
+        if (token == null) {
             return new ModelAndView("auth/email_form")
-                    .addObject("actionType", actionType)
-                    .addObject("url", "/auth/" + actionType);
+                    .addObject("actionType", "verify")
+                    .addObject("url", "/auth/verify");
         }
+
+        if (tokenService.verifyUserAndDeleteVerificationToken(token))
+            return new ModelAndView("redirect:/auth/login?type=verified");
+        else
+            return new ModelAndView("redirect:/auth/login?error=request-error");
     }
 
-    @RequestMapping(value = "/auth/{actionType}", method = RequestMethod.POST)
-    public ModelAndView sendToken(
-            @PathVariable("actionType") final String actionType,
+    @RequestMapping(value = "/auth/verify", method = RequestMethod.POST)
+    public ModelAndView sendVerifyToken(
             @Valid @ModelAttribute("emailForm") final EmailForm emailForm,
             final BindingResult errors
     ) {
-        if (!actionType.matches("verify|reset-password"))
-            return new ModelAndView("redirect:/errors/404");
-
-        if (errors.hasErrors()) {
-            return getEmailForm(actionType, null, emailForm);
-        }
+        if (errors.hasErrors())
+            return getVerifyEmailForm(null, emailForm);
 
         try {
             User user = userService.getByEmail(emailForm.getEmail()).orElseThrow(UserNotFoundException::new);
-
-            if (actionType.equals("verify")) {
-                if (user.getIsActive()) {
-                    return new ModelAndView("redirect:/auth/login?type=" + actionType + "-emailed");
-                }
-                tokenService.generateVerificationToken(user.getUserId());
-            } else {
-                tokenService.generatePasswordResetToken(user.getUserId());
-            }
-            return new ModelAndView("redirect:/auth/login?type=" + actionType + "-emailed");
+            tokenService.sendUserVerificationToken(user);
+            return new ModelAndView("redirect:/auth/login?type=verify-emailed");
         } catch (UserNotFoundException e) {
-            return new ModelAndView("redirect:/auth/login?type=" + actionType + "-emailed");
+            return new ModelAndView("redirect:/auth/login?type=verify-emailed");
+        } catch (MessagingException e) {
+            return new ModelAndView("redirect:/auth/login?error=mailer_error");
+        }
+    }
+
+    @RequestMapping(value = {"/auth/reset-password"}, method = RequestMethod.GET)
+    public ModelAndView getResetPasswordEmailForm(
+            @RequestParam(value = "token", required = false) @Length(min = 32, max = 32) final String token,
+            @ModelAttribute("emailForm") final EmailForm emailForm
+    ) {
+        if (token == null) {
+            return new ModelAndView("auth/email_form")
+                    .addObject("actionType", "reset-password")
+                    .addObject("url", "/auth/reset-password");
+        }
+
+        if (tokenService.isValidResetPasswordToken(token))
+            return new ModelAndView("redirect:/auth/reset-password-form?token=" + token);
+        else
+            return new ModelAndView("redirect:/auth/login?error=request-error");
+    }
+
+    @RequestMapping(value = "/auth/reset-password", method = RequestMethod.POST)
+    public ModelAndView sendResetPasswordToken(
+            @Valid @ModelAttribute("emailForm") final EmailForm emailForm,
+            final BindingResult errors
+    ) {
+        if (errors.hasErrors())
+            return getResetPasswordEmailForm(null, emailForm);
+
+        try {
+            User user = userService.getByEmail(emailForm.getEmail()).orElseThrow(UserNotFoundException::new);
+            tokenService.sendPasswordResetToken(user);
+            return new ModelAndView("redirect:/auth/login?type=reset-password-emailed");
+        } catch (UserNotFoundException e) {
+            return new ModelAndView("redirect:/auth/login?type=reset-password-emailed");
         } catch (MessagingException e) {
             return new ModelAndView("redirect:/auth/login?error=mailer_error");
         }
@@ -126,13 +142,10 @@ public class AuthController {
             @Valid @ModelAttribute("resetPasswordForm") final ResetPasswordForm resetPasswordForm,
             final BindingResult errors
     ) {
-        if (errors.hasErrors()) {
+        if (errors.hasErrors())
             return resetPasswordForm(token, resetPasswordForm);
-        }
 
-        String newPassword = userService.encodePassword(resetPasswordForm.getPassword());
-
-        if (tokenService.updatePasswordAndDeleteResetPasswordToken(token, newPassword)) {
+        if (tokenService.updatePasswordAndDeleteResetPasswordToken(token, resetPasswordForm.getPassword())) {
             return new ModelAndView("redirect:/auth/login?type=reset-password-success");
         } else {
             return new ModelAndView("redirect:/auth/login?error=password-reset-error");

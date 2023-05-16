@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
@@ -30,8 +31,19 @@ public class UserJdbcDao implements UserDao {
                 .usingGeneratedKeyColumns("user_id");
     }
 
+    @Transactional
     @Override
-    public User create(String email, String password, String name) {
+    public User createOrConsolidate(String email, String password, String name) {
+        int rowsUpdated = jdbcTemplate.update(
+                "UPDATE users SET password = ?, name = ? WHERE email = ? AND password IS NULL",
+                password,
+                name,
+                email
+        );
+
+        if (rowsUpdated != 0)
+            return getByEmail(email).orElseThrow(UserNotFoundException::new);
+
         final Map<String, Object> userData = new HashMap<>();
         userData.put("email", email);
         userData.put("password", password);
@@ -41,19 +53,32 @@ public class UserJdbcDao implements UserDao {
         return new User(userId, email, name, null, false);
     }
 
+    @Transactional
     @Override
-    public User update(long userId, String password, String name) {
+    public User createIfNotExists(String email, String name) {
+        Optional<User> maybeUser = getByEmail(email);
+        if (maybeUser.isPresent())
+            return maybeUser.get();
+
+        final Map<String, Object> userData = new HashMap<>();
+        userData.put("email", email);
+        userData.put("password", null);
+        userData.put("name", name);
+
+        final long userId = jdbcInsert.executeAndReturnKey(userData).longValue();
+        return new User(userId, email, name, null, false);
+    }
+
+    @Override
+    public void updatePassword(long userId, String password) {
         int rows = jdbcTemplate.update(
-                "UPDATE users SET password = ?, name = ? WHERE user_id = ?",
+                "UPDATE users SET password = ? WHERE user_id = ?",
                 password,
-                name,
                 userId
         );
 
         if (rows == 0)
             throw new UserNotFoundException();
-
-        return getById(userId).orElseThrow(UserNotFoundException::new);
     }
 
     private static final String GET_BY_ID_SQL = "SELECT " + TableFields.USERS_FIELDS + " FROM users WHERE user_id = ?";

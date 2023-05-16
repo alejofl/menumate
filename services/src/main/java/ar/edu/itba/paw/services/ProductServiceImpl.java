@@ -6,6 +6,7 @@ import ar.edu.itba.paw.service.ImageService;
 import ar.edu.itba.paw.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -20,6 +21,7 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ImageService imageService;
 
+    @Transactional
     @Override
     public Product create(long categoryId, String name, String description, byte[] image, BigDecimal price) {
         long imageKey = imageService.create(image);
