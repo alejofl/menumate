@@ -87,6 +87,11 @@ public class RestaurantJdbcDao implements RestaurantDao {
             " WHERE categories.restaurant_id = restaurants.restaurant_id" +
             " AND products.deleted = false AND products.available = true";
 
+    private static final String SINGLE_SPECIALTY_DIRECTIVE = " AND restaurants.specialty = ";
+    private static final String MULTIPLE_SPECIALTY_DIRECTIVE = " AND restaurants.specialty IN (";
+    private static final String SINGLE_TAG_DIRECTIVE = " AND restaurants.restaurant_id IN (SELECT restaurant_id FROM restaurant_tags WHERE restaurant_tags.tag_id = ";
+    private static final String MULTIPLE_TAG_DIRECTIVE = " AND restaurants.restaurant_id IN (SELECT restaurant_id FROM restaurant_tags WHERE restaurant_tags.tag_id IN (";
+
     private String getOrderByColumn(RestaurantOrderBy orderBy) {
         if (orderBy == null)
             return "restaurants.restaurant_id";
@@ -104,7 +109,6 @@ public class RestaurantJdbcDao implements RestaurantDao {
                 throw new NotImplementedException();
         }
     }
-
     private final RowMapper<RestaurantDetails> RESTAURANT_DETAILS_ROW_MAPPER = (rs, rowNum) -> new RestaurantDetails(
             SimpleRowMappers.RESTAURANT_ROW_MAPPER.mapRow(rs, rowNum),
             rs.getFloat("restaurant_average_rating"),
@@ -127,31 +131,36 @@ public class RestaurantJdbcDao implements RestaurantDao {
 
         if (specialties != null && !specialties.isEmpty())
             if (specialties.size() == 1) {
-                specialtiesDirective = " AND restaurants.specialty = " + specialties.get(0).ordinal();
+                specialtiesDirective = SINGLE_SPECIALTY_DIRECTIVE + specialties.get(0).ordinal();
             } else {
-                specialtiesDirective = " AND restaurants.specialty IN (" + specialties.stream().map(specialty -> String.valueOf(specialty.ordinal())).collect(Collectors.joining(", ")) + ")";
+                specialtiesDirective = MULTIPLE_SPECIALTY_DIRECTIVE + specialties.stream().map(specialty -> String.valueOf(specialty.ordinal())).collect(Collectors.joining(", ")) + ")";
             }
 
         if (tags != null && !tags.isEmpty()) {
             if (tags.size() == 1) {
-                tagsDirective = " AND restaurants.restaurant_id IN (SELECT restaurant_id FROM restaurant_tags WHERE restaurant_tags.tag_id = " + tags.get(0).ordinal() + ") ";
+                tagsDirective = SINGLE_TAG_DIRECTIVE + tags.get(0).ordinal() + ") ";
             } else {
-                tagsDirective = " AND restaurants.restaurant_id IN (SELECT restaurant_id FROM restaurant_tags WHERE restaurant_tags.tag_id IN (" + tags.stream().map(tag -> String.valueOf(tag.ordinal())).collect(Collectors.joining(", ")) + ")) ";
+                tagsDirective = MULTIPLE_TAG_DIRECTIVE + tags.stream().map(tag -> String.valueOf(tag.ordinal())).collect(Collectors.joining(", ")) + ")) ";
             }
         }
 
-        // TODO: Optimize string construction to use StringBuilder
-        String sql = "WITH restaurant_ratings_counts AS" +
-                " (" + RESTAURANT_RATINGS_COUNTS_SQL + ")" +
-                " SELECT " + TableFields.RESTAURANTS_FIELDS + ", restaurant_ratings_counts.*," +
-                " restaurant_ratings_counts.rating_average AS restaurant_average_rating," +
-                " restaurant_ratings_counts.rating_count AS restaurant_review_count," +
-                " (" + RESTAURANT_AVERAGE_PRICE_SQL + ") AS restaurant_average_price" +
-                " FROM restaurants JOIN restaurant_ratings_counts ON restaurants.restaurant_id = restaurant_ratings_counts.restaurant_id" +
-                " WHERE restaurants.deleted = false AND restaurants.is_active = true AND LOWER(restaurants.name) LIKE ?" +
-                specialtiesDirective + tagsDirective +
-                " ORDER BY " + orderByColumn + " " + orderByDirection + (orderBy == null ? "" : ", restaurants.restaurant_id") + " LIMIT ? OFFSET ?";
+        StringBuilder sqlBuilder = new StringBuilder();
+        sqlBuilder.append("WITH restaurant_ratings_counts AS (")
+                .append(RESTAURANT_RATINGS_COUNTS_SQL)
+                .append(") SELECT ")
+                .append(TableFields.RESTAURANTS_FIELDS)
+                .append(", restaurant_ratings_counts.*, ")
+                .append("restaurant_ratings_counts.rating_average AS restaurant_average_rating, ")
+                .append("restaurant_ratings_counts.rating_count AS restaurant_review_count, ")
+                .append("(").append(RESTAURANT_AVERAGE_PRICE_SQL).append(") AS restaurant_average_price")
+                .append(" FROM restaurants JOIN restaurant_ratings_counts ON restaurants.restaurant_id = restaurant_ratings_counts.restaurant_id")
+                .append(" WHERE restaurants.deleted = false AND restaurants.is_active = true AND LOWER(restaurants.name) LIKE ?")
+                .append(specialtiesDirective)
+                .append(tagsDirective)
+                .append(" ORDER BY ").append(orderByColumn).append(" ").append(orderByDirection).append(orderBy == null ? "" : ", restaurants.restaurant_id")
+                .append(" LIMIT ? OFFSET ?");
 
+        String sql = sqlBuilder.toString();
         String[] tokens = query.trim().toLowerCase().split(" +");
 
         StringBuilder searchParam = new StringBuilder("%");
