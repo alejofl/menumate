@@ -39,8 +39,8 @@ class BaseTokenJdbcDao implements BaseTokenDao {
                 .withTableName(tableName)
                 .usingColumns("user_id", "code", "expires");
 
-        SELECT_USER_ID_SQL = "SELECT user_id FROM " + tableName + " WHERE code = ?";
-        DELETE_TOKEN_SQL = "DELETE FROM " + tableName + " WHERE code = ? AND user_id = ? AND expires > now()";
+        SELECT_USER_ID_SQL = "SELECT user_id FROM " + tableName + " WHERE code = ? AND expires > now()";
+        DELETE_TOKEN_SQL = "DELETE FROM " + tableName + " WHERE code = ? AND user_id = ?";
         INSERT_TOKEN_SQL = "INSERT INTO " + tableName + " (code, user_id, expires) VALUES (?, ?, ?)";
         UPDATE_TOKEN_SQL = "UPDATE " + tableName + " SET code = ?, expires = ? WHERE user_id = ?";
         DELETE_STALED_SQL = "DELETE FROM " + tableName + " WHERE expires <= now()";
