@@ -77,7 +77,7 @@ public class RestaurantJdbcDao implements RestaurantDao {
     private static final String RESTAURANT_RATINGS_COUNTS_SQL = "SELECT" +
             " restaurants.restaurant_id AS restaurant_id," +
             " COALESCE(AVG(CAST(order_reviews.rating AS FLOAT)), 0) AS rating_average," +
-            " COUNT(order_reviews) AS rating_count" +
+            " COUNT(order_reviews.order_id) AS rating_count" +
             " FROM order_reviews JOIN orders ON order_reviews.order_id = orders.order_id" +
             " RIGHT OUTER JOIN restaurants ON restaurants.restaurant_id = orders.restaurant_id" +
             " GROUP BY restaurants.restaurant_id";
