@@ -747,7 +747,10 @@ input:has(+ .form-error), textarea:has(+ .form-error) {
 }
 
 .tags-container::-webkit-scrollbar {
-    width: 0px;
+    width: 0;
+    height: 0;
+    padding: 0;
+    margin: 0;
     background: transparent; /* make scrollbar transparent */
 }
 .tags-container {
