@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.exception.RestaurantNotFoundException;
 import ar.edu.itba.paw.exception.RoleNotFoundException;
 import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.model.RestaurantRoleLevel;
@@ -11,22 +10,30 @@ import ar.edu.itba.paw.util.Triplet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 import java.sql.ResultSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
 public class RolesJdbcDao implements RolesDao {
 
     private final JdbcTemplate jdbcTemplate;
+    private final SimpleJdbcInsert jdbcInsert;
 
     @Autowired
     public RolesJdbcDao(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
+        jdbcInsert = new SimpleJdbcInsert(ds)
+                .withTableName("restaurant_roles")
+                .usingColumns("user_id", "restaurant_id", "role_level");
     }
 
     @Override
@@ -43,20 +50,26 @@ public class RolesJdbcDao implements RolesDao {
         return result.isEmpty() || result.get(0) == null ? Optional.empty() : Optional.of(result.get(0));
     }
 
+    @Transactional
     @Override
     public void setRole(long userId, long restaurantId, RestaurantRoleLevel level) {
         if (level == RestaurantRoleLevel.OWNER)
             throw new IllegalArgumentException("Cannot set owner role of a restaurant");
 
         int rows = jdbcTemplate.update(
-                "INSERT INTO restaurant_roles (user_id, restaurant_id, role_level) VALUES (?, ?, ?) ON CONFLICT (user_id, restaurant_id) DO UPDATE SET role_level=excluded.role_level",
+                "UPDATE restaurant_roles SET role_level = ? WHERE user_id = ? AND restaurant_id = ?",
+                level.ordinal(),
                 userId,
-                restaurantId,
-                level.ordinal()
+                restaurantId
         );
 
-        if (rows == 0)
-            throw new RestaurantNotFoundException();
+        if (rows == 0) {
+            final Map<String, Object> data = new HashMap<>();
+            data.put("user_id", userId);
+            data.put("restaurant_id", restaurantId);
+            data.put("role_level", level.ordinal());
+            jdbcInsert.execute(data);
+        }
     }
 
     @Override

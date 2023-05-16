@@ -106,7 +106,8 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
                 // Orders pages
                 .antMatchers(HttpMethod.GET, "/orders/{order_id:\\d+}").access("@accessValidator.checkOrderOwner(#order_id)")
-                .antMatchers(HttpMethod.POST, "/orders/{order_id:\\d+}/{status}").access("@accessValidator.checkOrderHandler(#order_id)")
+                .antMatchers(HttpMethod.POST, "/orders/{order_id:\\d+}/{status:(confirm|ready|deliver|cancel)}").access("@accessValidator.checkOrderHandler(#order_id)")
+                .antMatchers(HttpMethod.POST, "/orders/{order_id:\\d+}/review").access("@accessValidator.checkOrderOwner(#order_id)")
 
                 .and().exceptionHandling()
                 .accessDeniedPage("/403")

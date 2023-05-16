@@ -7,33 +7,52 @@ import ar.edu.itba.paw.util.AverageCountPair;
 import ar.edu.itba.paw.util.PaginatedResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
 public class ReviewJdbcDao implements ReviewDao {
 
     private final JdbcTemplate jdbcTemplate;
+    private final SimpleJdbcInsert jdbcInsert;
 
     @Autowired
     public ReviewJdbcDao(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
+        jdbcInsert = new SimpleJdbcInsert(ds)
+                .withTableName("order_reviews")
+                .usingColumns("order_id", "rating", "comment");
     }
 
     @Override
-    public boolean createOrUpdate(long orderId, int rating, String comment) {
-        return jdbcTemplate.update(
-                "INSERT INTO order_reviews (order_id, rating, comment) VALUES (?, ?, ?) ON CONFLICT(order_id) DO UPDATE SET rating=excluded.rating, date=excluded.date, comment=excluded.comment",
-                orderId,
-                rating,
-                comment
-        ) > 0;
+    public void create(long orderId, int rating, String comment) {
+        final Map<String, Object> data = new HashMap<>();
+        data.put("order_id", orderId);
+        data.put("rating", rating);
+        data.put("comment", comment);
+        jdbcInsert.execute(data);
     }
+
+    /*@Override
+    public void update(long orderId, int rating, String comment) {
+        int rows = jdbcTemplate.update(
+                "UPDATE order_reviews SET rating = ?, comment = ? WHERE order_id = ?",
+                rating,
+                comment,
+                orderId
+        );
+
+        if (rows == 0)
+            throw new ReviewNotFoundException();
+    }*/
 
     @Override
     public void delete(long orderId) {

@@ -18,8 +18,8 @@ public class ReviewServiceImpl implements ReviewService {
     private ReviewDao reviewDao;
 
     @Override
-    public boolean createOrUpdate(long orderId, int rating, String comment) {
-        return reviewDao.createOrUpdate(orderId, rating, comment);
+    public void create(long orderId, int rating, String comment) {
+        reviewDao.create(orderId, rating, comment);
     }
 
     public void delete(long orderId) {

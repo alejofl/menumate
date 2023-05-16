@@ -10,10 +10,8 @@ import java.util.Optional;
 public interface ReviewDao {
     /**
      * Creates a review for a given orderId, or updates it if it already exists.
-     *
-     * @return True if the operation was successful.
      */
-    boolean createOrUpdate(long orderId, int rating, String comment);
+    void create(long orderId, int rating, String comment);
 
     /**
      * Deletes the review attached to an order.

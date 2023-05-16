@@ -113,7 +113,7 @@ public class UserController {
             return order(id, reviewForm, true);
         }
 
-        reviewService.createOrUpdate(id, reviewForm.getRating(), reviewForm.getComment());
+        reviewService.create(id, reviewForm.getRating(), reviewForm.getComment());
 
         return new ModelAndView(String.format("redirect:/orders/%d", id));
     }

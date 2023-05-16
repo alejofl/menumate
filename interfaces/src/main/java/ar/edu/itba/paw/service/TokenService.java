@@ -7,13 +7,13 @@ import javax.mail.MessagingException;
 public interface TokenService {
     /**
      * Sends a verification token by email to the given user, if it isn't active.
-     * @throws MessagingException
+     * @throws MessagingException When sending the email fails.
      */
     void sendUserVerificationToken(final User user) throws MessagingException;
 
     /**
      * Sends a password reset token by email to the given user, if it is active.
-     * @throws MessagingException
+     * @throws MessagingException When sending the email fails.
      */
     void sendPasswordResetToken(final User user) throws MessagingException;
 

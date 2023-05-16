@@ -76,6 +76,9 @@ public class OrderJdbcDao implements OrderDao {
     }
 
     private Order create(OrderType orderType, long restaurantId, long userId, String address, Integer tableNumber, List<OrderItem> items) {
+        if (items.isEmpty())
+            throw new IllegalArgumentException("An order must have at least one item");
+
         final Map<String, Object> orderData = new HashMap<>();
         orderData.put("order_type", orderType.ordinal());
         orderData.put("restaurant_id", restaurantId);
