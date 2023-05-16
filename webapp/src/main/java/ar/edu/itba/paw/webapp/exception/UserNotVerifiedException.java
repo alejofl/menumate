@@ -1,21 +1,22 @@
 package ar.edu.itba.paw.webapp.exception;
 
+import ar.edu.itba.paw.model.User;
 import org.springframework.security.authentication.DisabledException;
 
 public class UserNotVerifiedException extends DisabledException {
-    private final long userId;
+    private final User user;
 
-    public UserNotVerifiedException(final String msg, final long userId) {
+    public UserNotVerifiedException(final String msg, final User user) {
         super(msg);
-        this.userId = userId;
+        this.user = user;
     }
 
-    public UserNotVerifiedException(final String msg, final Throwable t, final long userId) {
+    public UserNotVerifiedException(final String msg, final Throwable t, final User user) {
         super(msg, t);
-        this.userId = userId;
+        this.user = user;
     }
 
-    public long getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 }

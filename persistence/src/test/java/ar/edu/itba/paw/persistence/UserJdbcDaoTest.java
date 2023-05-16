@@ -73,7 +73,7 @@ public class UserJdbcDaoTest {
 
     @Test
     public void testCreate() {
-        User user = userDao.create(EMAIL, PASSWORD, NAME);
+        User user = userDao.createOrConsolidate(EMAIL, PASSWORD, NAME);
 
         Assert.assertNotNull(user);
         Assert.assertEquals(EMAIL, user.getEmail());
