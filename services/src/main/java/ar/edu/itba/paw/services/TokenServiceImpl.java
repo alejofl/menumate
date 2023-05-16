@@ -1,13 +1,10 @@
 package ar.edu.itba.paw.services;
 
-import ar.edu.itba.paw.exception.UserNotFoundException;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.persistance.ResetPasswordTokenDao;
-import ar.edu.itba.paw.persistance.UserDao;
 import ar.edu.itba.paw.persistance.VerificationTokenDao;
 import ar.edu.itba.paw.service.EmailService;
 import ar.edu.itba.paw.service.TokenService;
-import ar.edu.itba.paw.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;

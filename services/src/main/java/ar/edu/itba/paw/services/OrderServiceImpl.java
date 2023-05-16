@@ -33,7 +33,7 @@ public class OrderServiceImpl implements OrderService {
             emailService.sendOrderReceivalForUser(order);
             emailService.sendOrderReceivalForRestaurant(order.getRestaurant(), order);
         } catch (MessagingException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // TODO: Logging
         }
     }
 
@@ -41,6 +41,8 @@ public class OrderServiceImpl implements OrderService {
         return userService.createIfNotExists(email, name).getUserId();
     }
 
+    // NOTE: create methods that send emails are not transactional, we want the order to remain placed even if the
+    // notification email fails.
     @Override
     public Order createDelivery(long restaurantId, long userId, String address, List<OrderItem> items) {
         Order order = orderDao.createDelivery(restaurantId, userId, address, items);
@@ -142,7 +144,7 @@ public class OrderServiceImpl implements OrderService {
             emailService.sendOrderConfirmation(this.getById(orderId).get());
             return orderDao.getById(orderId);
         } catch (MessagingException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // TODO: Logging
             return Optional.empty();
         }
     }
@@ -154,7 +156,7 @@ public class OrderServiceImpl implements OrderService {
             emailService.sendOrderReady(this.getById(orderId).get());
             return orderDao.getById(orderId);
         } catch (MessagingException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // TODO: Logging
             return Optional.empty();
         }
     }
@@ -166,7 +168,7 @@ public class OrderServiceImpl implements OrderService {
             emailService.sendOrderDelivered(this.getById(orderId).get());
             return orderDao.getById(orderId);
         } catch (MessagingException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // TODO: Logging
             return Optional.empty();
         }
     }
@@ -178,7 +180,7 @@ public class OrderServiceImpl implements OrderService {
             emailService.sendOrderCancelled(this.getById(orderId).get());
             return orderDao.getById(orderId);
         } catch (MessagingException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // TODO: Logging
             return Optional.empty();
         }
     }
