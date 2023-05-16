@@ -87,11 +87,6 @@ public class RestaurantJdbcDao implements RestaurantDao {
             " WHERE categories.restaurant_id = restaurants.restaurant_id" +
             " AND products.deleted = false AND products.available = true";
 
-    private static final String SINGLE_SPECIALTY_DIRECTIVE = " AND restaurants.specialty = ";
-    private static final String MULTIPLE_SPECIALTY_DIRECTIVE = " AND restaurants.specialty IN (";
-    private static final String SINGLE_TAG_DIRECTIVE = " AND restaurants.restaurant_id IN (SELECT restaurant_id FROM restaurant_tags WHERE restaurant_tags.tag_id = ";
-    private static final String MULTIPLE_TAG_DIRECTIVE = " AND restaurants.restaurant_id IN (SELECT restaurant_id FROM restaurant_tags WHERE restaurant_tags.tag_id IN (";
-
     private String getOrderByColumn(RestaurantOrderBy orderBy) {
         if (orderBy == null)
             return "restaurants.restaurant_id";
@@ -109,6 +104,7 @@ public class RestaurantJdbcDao implements RestaurantDao {
                 throw new NotImplementedException();
         }
     }
+
     private final RowMapper<RestaurantDetails> RESTAURANT_DETAILS_ROW_MAPPER = (rs, rowNum) -> new RestaurantDetails(
             SimpleRowMappers.RESTAURANT_ROW_MAPPER.mapRow(rs, rowNum),
             rs.getFloat("restaurant_average_rating"),
@@ -116,6 +112,10 @@ public class RestaurantJdbcDao implements RestaurantDao {
             rs.getFloat("restaurant_average_price"),
             getTags(rs.getLong("restaurant_id"))
     );
+
+    private static final String SPECIALTY_DIRECTIVE = " AND restaurants.specialty";
+    private static final String TAG_DIRECTIVE = " AND restaurants.restaurant_id IN (SELECT restaurant_id FROM restaurant_tags WHERE restaurant_tags.tag_id";
+
 
     @Override
     public PaginatedResult<RestaurantDetails> search(String query, int pageNumber, int pageSize, RestaurantOrderBy orderBy, boolean descending, List<RestaurantTags> tags, List<RestaurantSpecialty> specialties) {
@@ -126,22 +126,40 @@ public class RestaurantJdbcDao implements RestaurantDao {
 
         String orderByDirection = descending ? "DESC" : "ASC";
         String orderByColumn = getOrderByColumn(orderBy);
+
+        StringBuilder specialtiesDirectiveBuilder;
         String specialtiesDirective = "";
+
+        StringBuilder tagsDirectiveBuilder;
         String tagsDirective = "";
 
-        if (specialties != null && !specialties.isEmpty())
+        if (specialties != null && !specialties.isEmpty()) {
+            specialtiesDirectiveBuilder = new StringBuilder(SPECIALTY_DIRECTIVE);
             if (specialties.size() == 1) {
-                specialtiesDirective = SINGLE_SPECIALTY_DIRECTIVE + specialties.get(0).ordinal();
+                specialtiesDirectiveBuilder
+                        .append(" = ")
+                        .append(specialties.get(0).ordinal());
             } else {
-                specialtiesDirective = MULTIPLE_SPECIALTY_DIRECTIVE + specialties.stream().map(specialty -> String.valueOf(specialty.ordinal())).collect(Collectors.joining(", ")) + ")";
+                specialtiesDirectiveBuilder
+                        .append(" IN (")
+                        .append(specialties.stream().map(specialty -> String.valueOf(specialty.ordinal())).collect(Collectors.joining(", ")))
+                        .append(")");
             }
+            specialtiesDirective = specialtiesDirectiveBuilder.toString();
+        }
 
         if (tags != null && !tags.isEmpty()) {
+            tagsDirectiveBuilder = new StringBuilder(TAG_DIRECTIVE);
             if (tags.size() == 1) {
-                tagsDirective = SINGLE_TAG_DIRECTIVE + tags.get(0).ordinal() + ") ";
+                tagsDirectiveBuilder.append(" = ")
+                        .append(tags.get(0).ordinal())
+                        .append(") ");
             } else {
-                tagsDirective = MULTIPLE_TAG_DIRECTIVE + tags.stream().map(tag -> String.valueOf(tag.ordinal())).collect(Collectors.joining(", ")) + ")) ";
+                tagsDirectiveBuilder.append(" IN (")
+                        .append(tags.stream().map(tag -> String.valueOf(tag.ordinal())).collect(Collectors.joining(", ")))
+                        .append(")) ");
             }
+            tagsDirective = tagsDirectiveBuilder.toString();
         }
 
         StringBuilder sqlBuilder = new StringBuilder();
