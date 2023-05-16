@@ -22,7 +22,7 @@ public class ResetPasswordTokenJdbcDao extends BaseTokenJdbcDao implements Reset
     public boolean updatePasswordAndDeleteToken(String token, String newPassword) {
         TokenResult result = deleteTokenAndRetrieveUserId(token);
 
-        if (result.getSuccessfullyDeleted() && result.getUserId() != null) {
+        if (result.getSuccessfullyDeleted() && result.getUserId() != null && newPassword != null) {
             return jdbcTemplate.update(
                     "UPDATE users SET password = ? WHERE user_id = ?",
                     newPassword,
