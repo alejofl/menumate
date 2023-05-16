@@ -52,23 +52,24 @@ class BaseTokenJdbcDao implements BaseTokenDao {
         return LocalDateTime.now().plusDays(TOKEN_DURATION_DAYS);
     }
 
-    protected TokenResult deleteTokenAndRetrieveUserId(String token) {
+    @Transactional
+    @Override
+    public Optional<Long> deleteTokenAndRetrieveUserId(String token) {
         Optional<Long> userId = jdbcTemplate.query(
                 SELECT_USER_ID_SQL,
                 TOKEN_USER_ID_ROW_MAPPER,
                 token
         ).stream().findFirst();
 
-        if (!userId.isPresent())
-            return new TokenResult(false, null);
+        if (userId.isPresent()) {
+            jdbcTemplate.update(
+                    DELETE_TOKEN_SQL,
+                    token,
+                    userId.get()
+            );
+        }
 
-        boolean successfullyDeleted = jdbcTemplate.update(
-                DELETE_TOKEN_SQL,
-                token,
-                userId.get()
-        ) > 0;
-
-        return new TokenResult(successfullyDeleted, userId.get());
+        return userId;
     }
 
     @Transactional
