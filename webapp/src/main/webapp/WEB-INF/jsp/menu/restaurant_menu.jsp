@@ -289,6 +289,13 @@
                                 <p><c:out value="${review.comment}"/></p>
                             </div>
                         </c:forEach>
+
+                        <c:if test="${fn:length(reviews) == 0}">
+                            <div class="empty-results">
+                                <h1><i class="bi bi-slash-circle"></i></h1>
+                                <p>  <spring:message code="userorders.noorders"/></p>
+                            </div>
+                        </c:if>
                     </div>
                 </div>
             </div>
