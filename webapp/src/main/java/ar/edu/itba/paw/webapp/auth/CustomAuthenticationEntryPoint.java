@@ -22,12 +22,6 @@ public class CustomAuthenticationEntryPoint extends SimpleUrlAuthenticationFailu
     @Autowired
     private TokenService verificationService;
 
-    @Autowired
-    private EmailService emailService;
-
-    @Autowired
-    private UserService userService;
-
     private static final String LOGIN_URL = "/auth/login";
     private static final String VERIFY_EMAIL_ERROR = "?type=verify-emailed";
     private static final String NOT_VERIFIED_ERROR = "?error=not-verified";

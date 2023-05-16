@@ -22,9 +22,6 @@ class BaseTokenJdbcDao implements BaseTokenDao {
     static final RowMapper<Long> TOKEN_USER_ID_ROW_MAPPER =
             (rs, rowNum) -> rs.getLong("user_id");
 
-    static final RowMapper<LocalDateTime> TOKEN_EXPIRES_ROW_MAPPER =
-            (rs, rowNum) -> rs.getTimestamp("expires").toLocalDateTime();
-
     private final String SELECT_USER_ID_SQL;
     private final String DELETE_TOKEN_SQL;
     private final String GENERATE_TOKEN_SQL;
@@ -95,7 +92,6 @@ class BaseTokenJdbcDao implements BaseTokenDao {
     public boolean hasActiveToken(long userId) {
         SqlRowSet result = jdbcTemplate.queryForRowSet(
                 HAS_ACTIVE_TOKEN_SQL,
-                TOKEN_EXPIRES_ROW_MAPPER,
                 userId
         );
 
