@@ -13,7 +13,7 @@
 <body>
     <div class="content">
         <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
-        <div class="landing-container">
+        <div class="landing-container" style="--bck-image: url(<c:url value="/static/pictures/food.jpg"/>);">
             <p class="landing-text"><spring:message code="index.landingtext"/></p>
             <spring:message code="restaurants.search.placeholder" var="searchPlaceholder"/>
             <c:url var="search" value="/restaurants"/>
