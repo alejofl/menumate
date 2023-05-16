@@ -33,10 +33,6 @@ public class AccessValidator {
         return checkRestaurantRole(restaurantId, RestaurantRoleLevel.ADMIN);
     }
 
-    public boolean checkRestaurantManager(long restaurantId) {
-        return checkRestaurantRole(restaurantId, RestaurantRoleLevel.MANAGER);
-    }
-
     public boolean checkRestaurantOrderHandler(long restaurantId) {
         return checkRestaurantRole(restaurantId, RestaurantRoleLevel.ORDER_HANDLER);
     }

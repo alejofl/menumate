@@ -20,11 +20,6 @@ public enum RestaurantRoleLevel {
     ADMIN("admin"),
 
     /**
-     * Cannot edit the restaurant, but can assign handler roles.
-     */
-    MANAGER("manager"),
-
-    /**
      * Can view and handle orders (e.g. mark as delivered).
      */
     ORDER_HANDLER("orderhandler");
