@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.sql.DataSource;
@@ -50,8 +51,8 @@ public class RestaurantJdbcDao implements RestaurantDao {
         ).stream().findFirst();
     }
 
-    private static final String GET_ACTIVE_SQL = SELECT_BASE
-            + " WHERE restaurants.deleted = false AND restaurants.is_active = true" +
+    private static final String GET_ACTIVE_SQL = SELECT_BASE  +
+            " WHERE restaurants.deleted = false AND restaurants.is_active = true" +
             " ORDER BY restaurants.date_created, restaurants.restaurant_id LIMIT ? OFFSET ?";
 
     @Override
@@ -124,7 +125,6 @@ public class RestaurantJdbcDao implements RestaurantDao {
         String specialtiesDirective = "";
         String tagsDirective = "";
 
-
         if (specialties != null && !specialties.isEmpty())
             if (specialties.size() == 1) {
                 specialtiesDirective = " AND restaurants.specialty = " + specialties.get(0).ordinal();
@@ -192,6 +192,7 @@ public class RestaurantJdbcDao implements RestaurantDao {
         return restaurantJdbcInsert.executeAndReturnKey(restaurantData).intValue();
     }
 
+    @Transactional
     @Override
     public void delete(long restaurantId) {
         int rows = jdbcTemplate.update(

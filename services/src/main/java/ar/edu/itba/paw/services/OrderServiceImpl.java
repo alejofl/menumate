@@ -197,9 +197,4 @@ public class OrderServiceImpl implements OrderService {
     public void updateTableNumber(long orderId, int tableNumber) {
         orderDao.updateTableNumber(orderId, tableNumber);
     }
-
-    @Override
-    public void delete(long orderId) {
-        orderDao.delete(orderId);
-    }
 }

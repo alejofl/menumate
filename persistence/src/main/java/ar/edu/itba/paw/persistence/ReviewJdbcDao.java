@@ -78,7 +78,25 @@ public class ReviewJdbcDao implements ReviewDao {
                 Timestamp.valueOf(datetime),
                 restaurantId
         );
+    }
 
+    private PaginatedResult<Review> getReviewPaginatedResult(long queryTableId, int pageNumber, int pageSize, String getSql, String getCountSql) {
+        int pageIdx = pageNumber - 1;
+        List<Review> results = jdbcTemplate.query(
+                getSql,
+                SimpleRowMappers.ORDER_REVIEW_ROW_MAPPER,
+                queryTableId,
+                pageSize,
+                pageIdx * pageSize
+        );
+
+        int count = jdbcTemplate.query(
+                getCountSql,
+                SimpleRowMappers.COUNT_ROW_MAPPER,
+                queryTableId
+        ).get(0);
+
+        return new PaginatedResult<>(results, pageNumber, pageSize, count);
     }
 
     private static final String GET_BY_RESTAURANT_SQL = "WITH itemless_orders AS (" + OrderJdbcDao.SELECT_ITEMLESS_ORDERS + ")" +
@@ -87,24 +105,11 @@ public class ReviewJdbcDao implements ReviewDao {
             " WHERE itemless_orders.restaurant_id = ? ORDER BY itemless_orders.order_date_ordered DESC, itemless_orders.order_id" +
             " LIMIT ? OFFSET ?";
 
+    private static final String GET_BY_RESTAURANT_COUNT_SQL = "SELECT COUNT(*) AS c FROM order_reviews JOIN orders ON orders.order_id = order_reviews.order_id WHERE orders.restaurant_id = ?";
+
     @Override
     public PaginatedResult<Review> getByRestaurant(long restaurantId, int pageNumber, int pageSize) {
-        int pageIdx = pageNumber - 1;
-        List<Review> results = jdbcTemplate.query(
-                GET_BY_RESTAURANT_SQL,
-                SimpleRowMappers.ORDER_REVIEW_ROW_MAPPER,
-                restaurantId,
-                pageSize,
-                pageIdx * pageSize
-        );
-
-        int count = jdbcTemplate.query(
-                "SELECT COUNT(*) AS c FROM order_reviews JOIN orders ON orders.order_id = order_reviews.order_id WHERE orders.restaurant_id = ?",
-                SimpleRowMappers.COUNT_ROW_MAPPER,
-                restaurantId
-        ).get(0);
-
-        return new PaginatedResult<>(results, pageNumber, pageSize, count);
+        return getReviewPaginatedResult(restaurantId, pageNumber, pageSize, GET_BY_RESTAURANT_SQL, GET_BY_RESTAURANT_COUNT_SQL);
     }
 
     private static final String GET_BY_USER_SQL = "WITH itemless_orders AS (" + OrderJdbcDao.SELECT_ITEMLESS_ORDERS + ")" +
@@ -114,23 +119,10 @@ public class ReviewJdbcDao implements ReviewDao {
             " ORDER BY itemless_orders.order_date_ordered DESC, itemless_orders.order_id" +
             " LIMIT ? OFFSET ?";
 
+    private static final String GET_BY_USER_COUNT_SQL = "SELECT COUNT(*) AS c FROM order_reviews JOIN orders ON orders.order_id = order_reviews.order_id WHERE EXISTS(SELECT * FROM restaurants WHERE restaurants.restaurant_id = orders.restaurant_id AND restaurants.deleted = false) AND orders.user_id  = ?";
+
     @Override
     public PaginatedResult<Review> getByUser(long userId, int pageNumber, int pageSize) {
-        int pageIdx = pageNumber - 1;
-        List<Review> results = jdbcTemplate.query(
-                GET_BY_USER_SQL,
-                SimpleRowMappers.ORDER_REVIEW_ROW_MAPPER,
-                userId,
-                pageSize,
-                pageIdx * pageSize
-        );
-
-        int count = jdbcTemplate.query(
-                "SELECT COUNT(*) AS c FROM order_reviews JOIN orders ON orders.order_id = order_reviews.order_id WHERE EXISTS(SELECT * FROM restaurants WHERE restaurants.restaurant_id = orders.restaurant_id AND restaurants.deleted = false) AND orders.user_id  = ?",
-                SimpleRowMappers.COUNT_ROW_MAPPER,
-                userId
-        ).get(0);
-
-        return new PaginatedResult<>(results, pageNumber, pageSize, count);
+        return getReviewPaginatedResult(userId, pageNumber, pageSize, GET_BY_USER_SQL, GET_BY_USER_COUNT_SQL);
     }
 }
