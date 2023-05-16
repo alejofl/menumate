@@ -16,16 +16,16 @@
 <div class="content">
     <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
     <div class="restaurant-header">
-        <img src="<c:url value="/images/${restaurant.portraitId1}"/>" class="menu-item-card-img" alt="${restaurant.name}">
+        <img src="<c:url value="/images/${restaurant.portraitId1}"/>" class="menu-item-card-img" alt="<c:out value="${restaurant.name}"/>">
     </div>
     <div class="restaurant-information-container">
         <div class="restaurant-information">
-            <img src="<c:url value="/images/${restaurant.logoId}"/>" alt="${restaurant.name}" class="restaurant-logo">
+            <img src="<c:url value="/images/${restaurant.logoId}"/>" alt="<c:out value="${restaurant.name}"/>" class="restaurant-logo">
             <div style="flex-grow: 1;">
-                <h1>${restaurant.name}</h1>
+                <h1><c:out value="${restaurant.name}"/></h1>
                 <c:choose>
                     <c:when test="${not empty restaurant.description}">
-                        <p>${restaurant.description}</p>
+                        <p><c:out value="${restaurant.description}"/></p>
                     </c:when>
                     <c:otherwise>
                         <p><i> <spring:message code="restaurant.menu.nodescription"/></i></p>
@@ -43,7 +43,7 @@
             <c:forEach items="${menu}" var="entry">
                 <div class="card mb-4">
                     <div class="card-body d-flex justify-content-between align-items-center">
-                        <h3 class="mb-0">${entry.key.name}</h3>
+                        <h3 class="mb-0"><c:out value="${entry.key.name}"/></h3>
                         <a class="delete-category-button" type="button" data-bs-toggle="modal" data-bs-target="#delete-category-modal" data-category-id="${entry.key.categoryId}"><i class="bi bi-trash-fill text-danger"></i></a>
                     </div>
                 </div>
@@ -51,17 +51,17 @@
                     <c:forEach var="product" items="${entry.value}">
                         <div class="card menu-item-card">
                             <div class="menu-item-card-img-container">
-                                <img src="<c:url value="/images/${product.imageId}"/>" class="img-fluid rounded-start menu-item-card-img" alt="${product.name}">
+                                <img src="<c:url value="/images/${product.imageId}"/>" class="img-fluid rounded-start menu-item-card-img" alt="<c:out value="${product.name}"/>">
                             </div>
                             <div class="card-body menu-item-card-body">
                                 <div>
                                     <div class="d-flex justify-content-between">
-                                        <p class="card-text">${product.name}</p>
+                                        <p class="card-text"><c:out value="${product.name}"/></p>
                                         <a class="delete-product-button" type="button" data-bs-toggle="modal" data-bs-target="#delete-item-modal" data-product-id="${product.productId}"><i class="bi bi-trash-fill text-danger"></i></a>
                                     </div>
                                     <c:choose>
                                         <c:when test="${not empty product.description}">
-                                            <p class="card-text"><small class="text-body-secondary">${product.description}</small></p>
+                                            <p class="card-text"><small class="text-body-secondary"><c:out value="${product.description}"/></small></p>
                                         </c:when>
                                         <c:otherwise>
                                             <p><i><spring:message code="menuitem.product.nodescription"/></i></p>

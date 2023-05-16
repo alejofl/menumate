@@ -20,18 +20,18 @@ document.addEventListener("DOMContentLoaded", () => {
               document.querySelector("#order-items").innerHTML += `
                 <tr>
                     <td class="text-start">${items[i].lineNumber}</td>
-                    <td class="text-center">${items[i].productName}</td>
-                    <td class="text-center">${items[i].comment}</td>
+                    <td class="text-center">${escapeHtml(items[i].productName)}</td>
+                    <td class="text-center">${escapeHtml(items[i].comment)}</td>
                     <td class="text-center">${items[i].quantity}</td>
                     <td class="text-end">$${items[i].productPrice}</td>
                 </tr>
               `;
           }
 
-          document.querySelector("#order-details-customer").innerHTML = `${element.dataset.orderCustomerName} &lt;<a href="mailto:${element.dataset.orderCustomerEmail}">${element.dataset.orderCustomerEmail}</a>&gt;`
+          document.querySelector("#order-details-customer").innerHTML = `${escapeHtml(element.dataset.orderCustomerName)} &lt;<a href="mailto:${escapeHtml(element.dataset.orderCustomerEmail)}">${escapeHtml(element.dataset.orderCustomerEmail)}</a>&gt;`
           document.querySelector("#order-total-price").innerHTML = `$${element.dataset.orderTotalPrice}`;
           document.querySelector("#order-details-table-number").innerHTML = `${element.dataset.orderTableNumber}`;
-          document.querySelector("#order-details-address").innerHTML = `${element.dataset.orderAddress}`;
+          document.querySelector("#order-details-address").innerHTML = `${escapeHtml(element.dataset.orderAddress)}`;
 
           let orderType = parseInt(element.dataset.orderType);
           for (let i = 0; i < 3; i++) {

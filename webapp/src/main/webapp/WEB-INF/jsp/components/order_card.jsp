@@ -10,7 +10,7 @@
         <div class="card order-card">
             <div class="card-body">
                 <div class="order-card-restaurant">
-                    <img src="<c:url value="/images/${param.restaurantLogoId}"/>" alt="${param.restaurantName}">
+                    <img src="<c:url value="/images/${param.restaurantLogoId}"/>" alt="<c:out value="${param.restaurantName}"/>">
                     <div>
                         <small class="text-muted"><spring:message code="userorders.ordernumber" arguments="${param.id}"/></small>
                         <h5 class="card-title mb-0"><c:out value="${param.restaurantName}"/></h5>

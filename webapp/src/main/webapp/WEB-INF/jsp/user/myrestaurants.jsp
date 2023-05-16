@@ -22,15 +22,15 @@
         </div>
         <main class="restaurant-feed">
             <c:forEach var="triplet" items="${restaurants}">
-                <a class="clickable-object position-relative" href="<c:out value="/restaurants/${triplet.x.restaurantId}"/>">
+                <a class="clickable-object position-relative" href="<c:url value="/restaurants/${triplet.x.restaurantId}"/>">
                     <div class="card restaurant-card">
                         <img
                                 class="card-img restaurant-card-img"
-                                style="--main_image: url(<c:out value="/images/${triplet.x.portraitId1}"/>); --hover_image: url(<c:out value="/images/${triplet.x.portraitId2}"/>)"
+                                style="--main_image: url(<c:url value="/images/${triplet.x.portraitId1}"/>); --hover_image: url(<c:url value="/images/${triplet.x.portraitId2}"/>)"
                         >
                         <div class="card-body">
-                            <h5 class="card-title">${triplet.x.name}</h5>
-                            <p class="card-text">${triplet.x.address}</p>
+                            <h5 class="card-title"><c:out value="${triplet.x.name}"/></h5>
+                            <p class="card-text"><c:out value="${triplet.x.address}"/></p>
                         </div>
                     </div>
                     <h4>

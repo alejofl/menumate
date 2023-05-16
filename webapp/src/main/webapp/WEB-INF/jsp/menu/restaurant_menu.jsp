@@ -21,12 +21,12 @@
     </div>
     <div class="restaurant-information-container">
         <div class="restaurant-information">
-            <img src="<c:url value="/images/${restaurant.logoId}"/>" alt="${restaurant.name}" class="restaurant-logo">
+            <img src="<c:url value="/images/${restaurant.logoId}"/>" alt="<c:out value="${restaurant.name}"/>" class="restaurant-logo">
             <div style="flex-grow: 1;">
-                <h1>${restaurant.name}</h1>
+                <h1><c:out value="${restaurant.name}"/></h1>
                 <c:choose>
                     <c:when test="${not empty restaurant.description}">
-                        <p>${restaurant.description}</p>
+                        <p><c:out value="${restaurant.description}"/></p>
                     </c:when>
                     <c:otherwise>
                         <p><i> <spring:message code="restaurant.menu.nodescription"/></i></p>
@@ -67,7 +67,7 @@
                 <div class="card-body">
                     <div class="nav nav-pills small">
                         <c:forEach items="${menu}" var="entry">
-                            <button class="category-item nav-link" data-category="${entry.key.categoryId}">${entry.key.name}</button>
+                            <button class="category-item nav-link" data-category="${entry.key.categoryId}"><c:out value="${entry.key.name}"/></button>
                         </c:forEach>
                     </div>
                 </div>
@@ -78,7 +78,7 @@
             <c:forEach items="${menu}" var="entry">
                 <div class="card mb-4" id="category-${entry.key.categoryId}">
                     <div class="card-body d-flex justify-content-between align-items-center">
-                        <h3 class="mb-0">${entry.key.name}</h3>
+                        <h3 class="mb-0"><c:out value="${entry.key.name}"/></h3>
                     </div>
                 </div>
                 <div class="items-container">

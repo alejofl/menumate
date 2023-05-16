@@ -16,10 +16,10 @@
     <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
     <main class="order-details">
         <div class="card order-details-card">
-            <img src="<c:url value="/images/${order.restaurant.portraitId1}"/>" class="card-img-top" alt="${order.restaurant.name}">
+            <img src="<c:url value="/images/${order.restaurant.portraitId1}"/>" class="card-img-top" alt="<c:out value="${order.restaurant.name}"/>">
             <div class="card-body">
                 <div class="order-details-card-restaurant">
-                    <img src="<c:url value="/images/${order.restaurant.logoId}"/>" alt="${order.restaurant.name}">
+                    <img src="<c:url value="/images/${order.restaurant.logoId}"/>" alt="<c:out value="${order.restaurant.name}"/>">
                     <div>
                         <small class="text-muted"><spring:message code="userorders.ordernumber" arguments="${order.orderId}"/></small>
                         <h3 class="card-title mb-0"><c:out value="${order.restaurant.name}"/></h3>
@@ -72,9 +72,9 @@
                         <tbody>
                         <c:forEach var="item" items="${order.items}">
                             <tr>
-                                <th scope="row">${item.lineNumber}</th>
-                                <td>${item.product.name}</td>
-                                <td>${item.quantity}</td>
+                                <th scope="row"><c:out value="${item.lineNumber}"/></th>
+                                <td><c:out value="${item.product.name}"/></td>
+                                <td><c:out value="${item.quantity}"/></td>
                                 <td>$${item.product.price * item.quantity}</td>
                             </tr>
                         </c:forEach>

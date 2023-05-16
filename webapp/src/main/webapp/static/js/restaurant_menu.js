@@ -15,10 +15,10 @@ function updatePlaceOrderButtonPrice() {
 
 function addItemToFrontCart(title, unitPrice, quantity, comments) {
     let item = {
-        "title": title,
+        "title": escapeHtml(title),
         "quantity": quantity,
         "price": quantity * parseFloat(unitPrice),
-        "comments": comments
+        "comments": escapeHtml(comments)
     };
     cart.push(item);
     document.querySelector("#cart-container").innerHTML += `
@@ -26,7 +26,7 @@ function addItemToFrontCart(title, unitPrice, quantity, comments) {
             <div class="cart-item">
                 <div class="cart-item-body">
                     <span class="badge text-bg-secondary">x${item.quantity}</span>
-                    <span>${item.title}</span>
+                    <span>${escapeHtml(item.title)}</span>
                 </div>
                 <span><strong>$${item.price}</strong></span>
             </div>
@@ -86,10 +86,10 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".menu-item-card-button").forEach((value) => {
         value.addEventListener("click", () => {
             cartModalHeader.style.setProperty("--image", `url(${value.dataset.infoImage})`);
-            cartModalTitle.innerHTML = value.dataset.infoTitle;
-            cartModalDescription.innerHTML = value.dataset.infoDescription;
+            cartModalTitle.innerHTML = escapeHtml(value.dataset.infoTitle);
+            cartModalDescription.innerHTML = escapeHtml(value.dataset.infoDescription);
             cartModalButton.setAttribute("data-info-unit-price", value.dataset.infoPrice);
-            cartModalButton.setAttribute("data-info-title", value.dataset.infoTitle);
+            cartModalButton.setAttribute("data-info-title", escapeHtml(value.dataset.infoTitle));
             cartModalButton.setAttribute("data-info-id", value.dataset.infoId);
             cartModalButton.innerHTML = `${cartModalButtonText} ($${value.dataset.infoPrice})`;
         });
@@ -157,14 +157,14 @@ document.addEventListener("DOMContentLoaded", () => {
         cartItemsContainer.innerHTML += `
             <input type="hidden" name="cart[${cartIndex}].productId" value="${event.target.dataset.infoId}"/>
             <input type="hidden" name="cart[${cartIndex}].quantity" value="${parseInt(cartModalQuantity.value)}"/>
-            <input type="hidden" name="cart[${cartIndex}].comment" value="${cartModalComments.value}"/>
+            <input type="hidden" name="cart[${cartIndex}].comment" value="${escapeHtml(cartModalComments.value)}"/>
         `;
         cartIndex++;
         addItemToFrontCart(
-            event.target.dataset.infoTitle,
+            escapeHtml(event.target.dataset.infoTitle),
             event.target.dataset.infoUnitPrice,
             cartModalQuantity.value,
-            cartModalComments.value
+            escapeHtml(cartModalComments.value)
         );
     });
 
