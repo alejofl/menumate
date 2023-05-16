@@ -83,7 +83,7 @@ class BaseTokenJdbcDao implements BaseTokenDao {
                 userId
         );
 
-        if (rowsUpdated == 0){
+        if (rowsUpdated == 0) {
             int rowsInserted = jdbcTemplate.update(
                     INSERT_TOKEN_SQL,
                     token,
@@ -97,13 +97,11 @@ class BaseTokenJdbcDao implements BaseTokenDao {
         return token;
     }
 
-    @Transactional
     @Override
     public void deleteStaledTokens() {
         jdbcTemplate.update(DELETE_STALED_SQL);
     }
 
-    @Transactional
     @Override
     public boolean hasActiveToken(long userId) {
         SqlRowSet result = jdbcTemplate.queryForRowSet(
@@ -114,7 +112,6 @@ class BaseTokenJdbcDao implements BaseTokenDao {
         return result.next() && result.getBoolean("ht");
     }
 
-    @Transactional
     @Override
     public boolean isValidToken(String token) {
         SqlRowSet result = jdbcTemplate.queryForRowSet(
