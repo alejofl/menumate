@@ -66,7 +66,7 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public boolean updatePasswordAndDeleteResetPasswordToken(String token, String newPassword) {
         Optional<Long> userId = resetPasswordTokenDao.deleteTokenAndRetrieveUserId(token);
-        if (!userId.isPresent())
+        if (!userId.isPresent() || newPassword == null)
             return false;
 
         newPassword = passwordEncoder.encode(newPassword);
