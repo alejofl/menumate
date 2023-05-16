@@ -3,7 +3,6 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.persistance.VerificationTokenDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 
@@ -16,19 +15,5 @@ public class VerificationTokenJdbcDao extends BaseTokenJdbcDao implements Verifi
     @Autowired
     public VerificationTokenJdbcDao(final DataSource ds) {
         super(TABLE_NAME, ds);
-    }
-
-    @Transactional
-    @Override
-    public boolean verifyUserAndDeleteToken(String token) {
-        TokenResult result = deleteTokenAndRetrieveUserId(token);
-
-        if (result.getSuccessfullyDeleted() && result.getUserId() != null) {
-            return jdbcTemplate.update(
-                    "UPDATE users SET is_active = true WHERE user_id = ?",
-                    result.getUserId()
-            ) > 0;
-        }
-        return false;
     }
 }

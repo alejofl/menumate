@@ -81,6 +81,18 @@ public class UserJdbcDao implements UserDao {
             throw new UserNotFoundException();
     }
 
+    @Override
+    public void updateUserActive(long userId, boolean isActive) {
+        int rows = jdbcTemplate.update(
+                "UPDATE users SET is_active = ? WHERE user_id = ?",
+                isActive,
+                userId
+        );
+
+        if (rows == 0)
+            throw new UserNotFoundException();
+    }
+
     private static final String GET_BY_ID_SQL = "SELECT " + TableFields.USERS_FIELDS + " FROM users WHERE user_id = ?";
 
     @Override

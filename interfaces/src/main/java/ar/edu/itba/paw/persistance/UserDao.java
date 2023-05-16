@@ -10,7 +10,9 @@ public interface UserDao {
 
     User createIfNotExists(String email, String name);
 
-    void updatePassword(long userId, String name);
+    void updatePassword(long userId, String password);
+
+    void updateUserActive(long userId, boolean isActive);
 
     Optional<User> getById(long userId);
 
