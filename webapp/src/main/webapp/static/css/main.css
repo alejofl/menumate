@@ -745,3 +745,12 @@ input:has(+ .form-error), textarea:has(+ .form-error) {
     gap: 6px;
     overflow-x: scroll;
 }
+
+.tags-container::-webkit-scrollbar {
+    width: 0px;
+    background: transparent; /* make scrollbar transparent */
+}
+.tags-container {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
