@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -66,6 +67,18 @@ public class ReviewJdbcDaoTest {
         jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, specialty, owner_user_id, max_tables) VALUES (" + RESTAURANT_ID2 + ", '" + RESTAURANT_NAME2 + "', '" + RESTAURANT_EMAIL2 + "', " + RESTAURANT_SPECIALITY + ", " + OWNER_ID + ", " + MAX_TABLES + ")");
         jdbcTemplate.execute("INSERT INTO orders (order_id, order_type, restaurant_id, user_id, date_ordered, date_delivered, date_confirmed, date_ready) VALUES (" + ORDER_ID1 + ", " + ORDER_TYPE.ordinal() + ", " + RESTAURANT_ID1 + ", " + USER_ID + ", now(), now(), now(), now())");
         jdbcTemplate.execute("INSERT INTO orders (order_id, order_type, restaurant_id, user_id, date_ordered, date_delivered, date_confirmed, date_ready) VALUES (" + ORDER_ID2 + ", " + ORDER_TYPE.ordinal() + ", " + RESTAURANT_ID2 + ", " + USER_ID + ", now(), now(), now(), now())");
+    }
+
+    @Test
+    public void testCreateWhenNonexisting() {
+        reviewDao.create(ORDER_ID1, RATING1, null);
+        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "order_reviews", "order_id=" + ORDER_ID1 + " AND rating=" + RATING1 + " AND comment IS NULL"));
+    }
+
+    @Test
+    public void testCreateWhenExisting() {
+        jdbcTemplate.execute("INSERT INTO order_reviews (order_id, rating, comment) VALUES (" + ORDER_ID1 + ", " + RATING1 + ", null)");
+        Assert.assertThrows(DuplicateKeyException.class, () -> reviewDao.create(ORDER_ID1, RATING1, null));
     }
 
     @Test

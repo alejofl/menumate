@@ -59,6 +59,9 @@ class BaseTokenJdbcDao implements BaseTokenDao {
     @Transactional
     @Override
     public Optional<Long> deleteTokenAndRetrieveUserId(String token) {
+        if (token == null || token.isEmpty())
+            return Optional.empty();
+
         Optional<Long> userId = jdbcTemplate.query(
                 SELECT_USER_ID_SQL,
                 TOKEN_USER_ID_ROW_MAPPER,

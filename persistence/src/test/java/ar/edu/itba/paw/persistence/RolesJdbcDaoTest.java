@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.exception.RoleNotFoundException;
 import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.model.RestaurantRoleLevel;
 import ar.edu.itba.paw.model.User;
@@ -40,7 +41,8 @@ public class RolesJdbcDaoTest {
     private static final int SPECIALTY = 1;
     private static final String RESTAURANT_EMAIL2 = "pizzeria@pizza.com";
     private static final int MAX_TABLES = 20;
-    private static final RestaurantRoleLevel ROLE = RestaurantRoleLevel.ADMIN;
+    private static final RestaurantRoleLevel ROLE1 = RestaurantRoleLevel.ADMIN;
+    private static final RestaurantRoleLevel ROLE2 = RestaurantRoleLevel.ORDER_HANDLER;
     private static final long USER_ID_NONE = 1234;
     private static final long RESTAURANT_ID_NONE = 1234;
 
@@ -60,6 +62,89 @@ public class RolesJdbcDaoTest {
         jdbcTemplate.execute("INSERT INTO users (user_id, email, password, name) VALUES (" + OWNER_ID + ", '" + OWNER_EMAIL + "', '" + OWNER_PASSWORD + "', '" + OWNER_NAME + "')");
         jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, specialty, owner_user_id, max_tables) VALUES (" + RESTAURANT_ID1 + ", '" + RESTAURANT_NAME1 + "', '" + RESTAURANT_EMAIL1 + "', " + SPECIALTY + ", " + OWNER_ID + ", " + MAX_TABLES + ")");
         jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, specialty, owner_user_id, max_tables) VALUES (" + RESTAURANT_ID2 + ", '" + RESTAURANT_NAME2 + "', '" + RESTAURANT_EMAIL2 + "', " + SPECIALTY + ", " + OWNER_ID + ", " + MAX_TABLES + ")");
+    }
+
+    @Test
+    public void testSetWhenNonexisting() {
+        rolesDao.setRole(USER_ID, RESTAURANT_ID1, ROLE1);
+        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "restaurant_roles", "user_id=" + USER_ID + " AND restaurant_id=" + RESTAURANT_ID1 + " AND role_level=" + ROLE1.ordinal()));
+    }
+
+    @Test
+    public void testSetWhenExisting() {
+        jdbcTemplate.execute("INSERT INTO restaurant_roles (user_id, restaurant_id, role_level) VALUES (" + USER_ID + ", " + RESTAURANT_ID1 + ", " + ROLE1.ordinal() + ")");
+
+        rolesDao.setRole(USER_ID, RESTAURANT_ID1, ROLE2);
+        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "restaurant_roles", "user_id=" + USER_ID + " AND restaurant_id=" + RESTAURANT_ID1 + " AND role_level=" + ROLE2.ordinal()));
+    }
+
+    @Test
+    public void testSetWhenNonexistingWithOtherRolePresent() {
+        jdbcTemplate.execute("INSERT INTO restaurant_roles (user_id, restaurant_id, role_level) VALUES (" + USER_ID + ", " + RESTAURANT_ID2 + ", " + ROLE1.ordinal() + ")");
+
+        rolesDao.setRole(USER_ID, RESTAURANT_ID1, ROLE1);
+        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "restaurant_roles", "user_id=" + USER_ID + " AND restaurant_id=" + RESTAURANT_ID1 + " AND role_level=" + ROLE1.ordinal()));
+        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "restaurant_roles", "user_id=" + USER_ID + " AND restaurant_id=" + RESTAURANT_ID2 + " AND role_level=" + ROLE1.ordinal()));
+    }
+
+    @Test
+    public void testSetWhenExistingWithOtherRolePresent() {
+        jdbcTemplate.execute("INSERT INTO restaurant_roles (user_id, restaurant_id, role_level) VALUES (" + USER_ID + ", " + RESTAURANT_ID1 + ", " + ROLE1.ordinal() + ")");
+        jdbcTemplate.execute("INSERT INTO restaurant_roles (user_id, restaurant_id, role_level) VALUES (" + USER_ID + ", " + RESTAURANT_ID2 + ", " + ROLE1.ordinal() + ")");
+
+        rolesDao.setRole(USER_ID, RESTAURANT_ID1, ROLE2);
+        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "restaurant_roles", "user_id=" + USER_ID + " AND restaurant_id=" + RESTAURANT_ID1 + " AND role_level=" + ROLE2.ordinal()));
+        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "restaurant_roles", "user_id=" + USER_ID + " AND restaurant_id=" + RESTAURANT_ID2 + " AND role_level=" + ROLE1.ordinal()));
+    }
+
+    @Test
+    public void testSetOwnerThrowsOnUser() {
+        Assert.assertThrows(IllegalArgumentException.class, () -> rolesDao.setRole(USER_ID, RESTAURANT_ID1, RestaurantRoleLevel.OWNER));
+        Assert.assertThrows(IllegalArgumentException.class, () -> rolesDao.setRole(USER_ID, RESTAURANT_ID2, RestaurantRoleLevel.OWNER));
+    }
+
+    @Test
+    public void testSetOwnerThrowsOnOwner() {
+        Assert.assertThrows(IllegalArgumentException.class, () -> rolesDao.setRole(OWNER_ID, RESTAURANT_ID1, RestaurantRoleLevel.OWNER));
+        Assert.assertThrows(IllegalArgumentException.class, () -> rolesDao.setRole(OWNER_ID, RESTAURANT_ID2, RestaurantRoleLevel.OWNER));
+    }
+
+    @Test
+    public void testDeleteThrowsWhenNonexistingRole() {
+        Assert.assertThrows(RoleNotFoundException.class, () -> rolesDao.deleteRole(USER_ID, RESTAURANT_ID1));
+        Assert.assertThrows(RoleNotFoundException.class, () -> rolesDao.deleteRole(USER_ID, RESTAURANT_ID2));
+    }
+
+    @Test
+    public void testDeleteThrowsWhenNonexistingUser() {
+        Assert.assertThrows(RoleNotFoundException.class, () -> rolesDao.deleteRole(USER_ID_NONE, RESTAURANT_ID1));
+        Assert.assertThrows(RoleNotFoundException.class, () -> rolesDao.deleteRole(USER_ID_NONE, RESTAURANT_ID2));
+    }
+
+    @Test
+    public void testDeleteWhenExisting() {
+        jdbcTemplate.execute("INSERT INTO restaurant_roles (user_id, restaurant_id, role_level) VALUES (" + USER_ID + ", " + RESTAURANT_ID1 + ", " + ROLE1.ordinal() + ")");
+
+        rolesDao.deleteRole(USER_ID, RESTAURANT_ID1);
+        Assert.assertEquals(0, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "restaurant_roles", "user_id=" + USER_ID + " AND restaurant_id=" + RESTAURANT_ID1 + " AND role_level=" + ROLE2.ordinal()));
+    }
+
+    @Test
+    public void testDeleteWhenNonexistingWithOtherRolePresent() {
+        jdbcTemplate.execute("INSERT INTO restaurant_roles (user_id, restaurant_id, role_level) VALUES (" + USER_ID + ", " + RESTAURANT_ID2 + ", " + ROLE1.ordinal() + ")");
+
+        Assert.assertThrows(RoleNotFoundException.class, () -> rolesDao.deleteRole(USER_ID, RESTAURANT_ID1));
+        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "restaurant_roles", "user_id=" + USER_ID + " AND restaurant_id=" + RESTAURANT_ID2));
+    }
+
+    @Test
+    public void testDeleteWhenExistingWithOtherRolePresent() {
+        jdbcTemplate.execute("INSERT INTO restaurant_roles (user_id, restaurant_id, role_level) VALUES (" + USER_ID + ", " + RESTAURANT_ID1 + ", " + ROLE1.ordinal() + ")");
+        jdbcTemplate.execute("INSERT INTO restaurant_roles (user_id, restaurant_id, role_level) VALUES (" + USER_ID + ", " + RESTAURANT_ID2 + ", " + ROLE1.ordinal() + ")");
+
+        rolesDao.deleteRole(USER_ID, RESTAURANT_ID1);
+        Assert.assertEquals(0, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "restaurant_roles", "user_id=" + USER_ID + " AND restaurant_id=" + RESTAURANT_ID1 + " AND role_level=" + ROLE2.ordinal()));
+        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "restaurant_roles", "user_id=" + USER_ID + " AND restaurant_id=" + RESTAURANT_ID2 + " AND role_level=" + ROLE1.ordinal()));
     }
 
     @Test
@@ -95,12 +180,12 @@ public class RolesJdbcDaoTest {
 
     @Test
     public void testGetRoleWhenNotOwner() {
-        jdbcTemplate.execute("INSERT INTO restaurant_roles (user_id, restaurant_id, role_level) VALUES (" + USER_ID + ", " + RESTAURANT_ID1 + ", " + ROLE.ordinal() + ")");
+        jdbcTemplate.execute("INSERT INTO restaurant_roles (user_id, restaurant_id, role_level) VALUES (" + USER_ID + ", " + RESTAURANT_ID1 + ", " + ROLE1.ordinal() + ")");
 
         Optional<RestaurantRoleLevel> role = rolesDao.getRole(USER_ID, RESTAURANT_ID1);
 
         Assert.assertTrue(role.isPresent());
-        Assert.assertEquals(ROLE, role.get());
+        Assert.assertEquals(ROLE1, role.get());
     }
 
     @Test

@@ -33,8 +33,8 @@ public class RolesServiceImpl implements RolesService {
     }
 
     @Override
-    public void deleteRole(long restaurantId, long userId) {
-        rolesDao.deleteRole(restaurantId, userId);
+    public void deleteRole(long userId, long restaurantId) {
+        rolesDao.deleteRole(userId, restaurantId);
     }
 
     @Override
