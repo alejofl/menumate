@@ -113,9 +113,42 @@ public class RestaurantJdbcDao implements RestaurantDao {
             getTags(rs.getLong("restaurant_id"))
     );
 
-    private static final String SPECIALTY_DIRECTIVE = " AND restaurants.specialty";
-    private static final String TAG_DIRECTIVE = " AND restaurants.restaurant_id IN (SELECT restaurant_id FROM restaurant_tags WHERE restaurant_tags.tag_id";
+    private void appendSpecialtiesCondition(StringBuilder sqlBuilder, List<RestaurantSpecialty> specialties) {
+        if (specialties == null || specialties.isEmpty())
+            return;
 
+        if (specialties.size() == 1) {
+            sqlBuilder.append(" AND restaurants.specialty = ");
+            sqlBuilder.append(specialties.get(0).ordinal());
+        } else {
+            sqlBuilder.append(" AND restaurants.specialty IN (");
+            sqlBuilder.append(specialties.get(0).ordinal());
+            for (int i = 1; i < specialties.size(); i++) {
+                sqlBuilder.append(", ");
+                sqlBuilder.append(specialties.get(i).ordinal());
+            }
+            sqlBuilder.append(")");
+        }
+    }
+
+    private void appendTagsCondition(StringBuilder sqlBuilder, List<RestaurantTags> tags) {
+        if (tags == null || tags.isEmpty())
+            return;
+
+        if (tags.size() == 1) {
+            sqlBuilder.append(" AND restaurants.restaurant_id IN (SELECT restaurant_id FROM restaurant_tags WHERE restaurant_tags.tag_id = ");
+            sqlBuilder.append(tags.get(0).ordinal());
+            sqlBuilder.append(")");
+        } else {
+            sqlBuilder.append(" AND restaurants.restaurant_id IN (SELECT restaurant_id FROM restaurant_tags WHERE restaurant_tags.tag_id IN (");
+            sqlBuilder.append(tags.get(0).ordinal());
+            for (int i = 1; i < tags.size(); i++) {
+                sqlBuilder.append(", ");
+                sqlBuilder.append(tags.get(i).ordinal());
+            }
+            sqlBuilder.append("))");
+        }
+    }
 
     @Override
     public PaginatedResult<RestaurantDetails> search(String query, int pageNumber, int pageSize, RestaurantOrderBy orderBy, boolean descending, List<RestaurantTags> tags, List<RestaurantSpecialty> specialties) {
@@ -124,43 +157,8 @@ public class RestaurantJdbcDao implements RestaurantDao {
         if (query == null)
             query = "";
 
-        String orderByDirection = descending ? "DESC" : "ASC";
         String orderByColumn = getOrderByColumn(orderBy);
-
-        StringBuilder specialtiesDirectiveBuilder;
-        String specialtiesDirective = "";
-
-        StringBuilder tagsDirectiveBuilder;
-        String tagsDirective = "";
-
-        if (specialties != null && !specialties.isEmpty()) {
-            specialtiesDirectiveBuilder = new StringBuilder(SPECIALTY_DIRECTIVE);
-            if (specialties.size() == 1) {
-                specialtiesDirectiveBuilder
-                        .append(" = ")
-                        .append(specialties.get(0).ordinal());
-            } else {
-                specialtiesDirectiveBuilder
-                        .append(" IN (")
-                        .append(specialties.stream().map(specialty -> String.valueOf(specialty.ordinal())).collect(Collectors.joining(", ")))
-                        .append(")");
-            }
-            specialtiesDirective = specialtiesDirectiveBuilder.toString();
-        }
-
-        if (tags != null && !tags.isEmpty()) {
-            tagsDirectiveBuilder = new StringBuilder(TAG_DIRECTIVE);
-            if (tags.size() == 1) {
-                tagsDirectiveBuilder.append(" = ")
-                        .append(tags.get(0).ordinal())
-                        .append(") ");
-            } else {
-                tagsDirectiveBuilder.append(" IN (")
-                        .append(tags.stream().map(tag -> String.valueOf(tag.ordinal())).collect(Collectors.joining(", ")))
-                        .append(")) ");
-            }
-            tagsDirective = tagsDirectiveBuilder.toString();
-        }
+        String orderByDirection = descending ? "DESC" : "ASC";
 
         StringBuilder sqlBuilder = new StringBuilder();
         sqlBuilder.append("WITH restaurant_ratings_counts AS (")
@@ -172,13 +170,14 @@ public class RestaurantJdbcDao implements RestaurantDao {
                 .append("restaurant_ratings_counts.rating_count AS restaurant_review_count, ")
                 .append("(").append(RESTAURANT_AVERAGE_PRICE_SQL).append(") AS restaurant_average_price")
                 .append(" FROM restaurants JOIN restaurant_ratings_counts ON restaurants.restaurant_id = restaurant_ratings_counts.restaurant_id")
-                .append(" WHERE restaurants.deleted = false AND restaurants.is_active = true AND LOWER(restaurants.name) LIKE ?")
-                .append(specialtiesDirective)
-                .append(tagsDirective)
-                .append(" ORDER BY ").append(orderByColumn).append(" ").append(orderByDirection).append(orderBy == null ? "" : ", restaurants.restaurant_id")
-                .append(" LIMIT ? OFFSET ?");
+                .append(" WHERE restaurants.deleted = false AND restaurants.is_active = true AND LOWER(restaurants.name) LIKE ?");
+        appendSpecialtiesCondition(sqlBuilder, specialties);
+        appendTagsCondition(sqlBuilder, tags);
+        sqlBuilder.append(" ORDER BY ").append(orderByColumn).append(' ').append(orderByDirection);
+        if (orderBy != null)
+            sqlBuilder.append(", restaurants.restaurant_id");
+        sqlBuilder.append(" LIMIT ? OFFSET ?");
 
-        String sql = sqlBuilder.toString();
         String[] tokens = query.trim().toLowerCase().split(" +");
 
         StringBuilder searchParam = new StringBuilder("%");
@@ -187,15 +186,20 @@ public class RestaurantJdbcDao implements RestaurantDao {
         String search = searchParam.toString();
 
         List<RestaurantDetails> results = jdbcTemplate.query(
-                sql,
+                sqlBuilder.toString(),
                 RESTAURANT_DETAILS_ROW_MAPPER,
                 search,
                 pageSize,
                 pageIdx * pageSize
         );
 
+        sqlBuilder.setLength(0);
+        sqlBuilder.append("SELECT COUNT(*) AS c FROM restaurants WHERE deleted = false AND is_active = true AND LOWER(name) LIKE ?");
+        appendSpecialtiesCondition(sqlBuilder, specialties);
+        appendTagsCondition(sqlBuilder, tags);
+
         int count = jdbcTemplate.query(
-                "SELECT COUNT(*) AS c FROM restaurants WHERE deleted = false AND is_active = true AND LOWER(name) LIKE ?" + specialtiesDirective + tagsDirective,
+                sqlBuilder.toString(),
                 SimpleRowMappers.COUNT_ROW_MAPPER,
                 search
         ).get(0);
