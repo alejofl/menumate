@@ -35,7 +35,6 @@ public class TokenServiceTest {
     @InjectMocks
     private final TokenServiceImpl tokenService = new TokenServiceImpl();
 
-    private User user;
     private static final long USER_ID = 1L;
     private static final String NAME = "menumate";
     private static final String EMAIL = "menumate@menumate.com";
@@ -45,11 +44,6 @@ public class TokenServiceTest {
 
     @Before
     public void setup() {
-        user = mock(User.class);
-        when(user.getUserId()).thenReturn(USER_ID);
-        when(user.getEmail()).thenReturn(EMAIL);
-        when(user.getName()).thenReturn(NAME);
-        when(user.getIsActive()).thenReturn(false);
     }
 
     @Test
@@ -75,7 +69,7 @@ public class TokenServiceTest {
 
     @Test
     public void nullableVerificationToken() {
-        when(verificationTokenDao.deleteTokenAndRetrieveUserId(TOKEN)).thenReturn(Optional.empty());
+        when(verificationTokenDao.deleteTokenAndRetrieveUserId(null)).thenReturn(Optional.empty());
         Assert.assertFalse(tokenService.verifyUserAndDeleteVerificationToken(null));
     }
 
@@ -87,7 +81,7 @@ public class TokenServiceTest {
 
     @Test
     public void nullablePasswordToken() {
-        when(resetPasswordTokenDao.deleteTokenAndRetrieveUserId(TOKEN)).thenReturn(Optional.empty());
+        when(resetPasswordTokenDao.deleteTokenAndRetrieveUserId(null)).thenReturn(Optional.empty());
         Assert.assertFalse(tokenService.updatePasswordAndDeleteResetPasswordToken(null, NEW_PASSWORD));
     }
 }

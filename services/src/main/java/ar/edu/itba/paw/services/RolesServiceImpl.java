@@ -27,14 +27,14 @@ public class RolesServiceImpl implements RolesService {
     @Override
     public void setRole(long userId, long restaurantId, RestaurantRoleLevel level) {
         if (level == null)
-            rolesDao.deleteRole(restaurantId, userId);
+            rolesDao.deleteRole(userId, restaurantId);
         else
             rolesDao.setRole(userId, restaurantId, level);
     }
 
     @Override
-    public void deleteRole(long restaurantId, long userId) {
-        rolesDao.deleteRole(restaurantId, userId);
+    public void deleteRole(long userId, long restaurantId) {
+        rolesDao.deleteRole(userId, restaurantId);
     }
 
     @Override

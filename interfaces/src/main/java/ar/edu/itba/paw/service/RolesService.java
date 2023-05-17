@@ -21,7 +21,7 @@ public interface RolesService {
      */
     void setRole(long userId, long restaurantId, RestaurantRoleLevel roleLevel);
 
-    void deleteRole(long restaurantId, long userId);
+    void deleteRole(long userId, long restaurantId);
 
     /**
      * Returns whether a given user has a given role level or higher at a given restaurant.

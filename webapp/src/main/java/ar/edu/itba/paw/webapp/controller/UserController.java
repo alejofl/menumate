@@ -362,7 +362,7 @@ public class UserController {
             throw new IllegalStateException();
         }
 
-        rolesService.deleteRole(id, deleteEmployeeForm.getUserId());
+        rolesService.deleteRole(deleteEmployeeForm.getUserId(), id);
 
         return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
     }
