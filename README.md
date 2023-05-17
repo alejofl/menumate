@@ -3,10 +3,17 @@
 
 
 ## Users in prod
-- ```Email```: menumateapp.user@gmail.com
-- ```Password```: ***REMOVED*** 
+We have six users set up in our production databases, using the following emails:
+- menumateapp.user+draco@gmail.com
+- menumateapp.user+hagrid@gmail.com
+- menumateapp.user+harry@gmail.com
+- menumateapp.user+hermione@gmail.com
+- menumateapp.user+ron@gmail.com
+- menumateapp.user+snape@gmail.com
 
-In that Gmail account, we have set up filters to work as multiple inboxes. Within our web app, the following six different users addresses are available with the same password as the gmail account:
+The password for all these users is the same: ***REMOVED***
+
+Since all of these go to the same Gmail account, we have set up filters to work as multiple inboxes. Within our app, these users have the following permissions:
 
 | User                                | Restaurant Role                            |
 |-------------------------------------|--------------------------------------------|
