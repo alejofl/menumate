@@ -74,8 +74,10 @@ class BaseTokenJdbcDao implements BaseTokenDao {
                     token,
                     userId.get()
             );
+            LOGGER.info("Deleted token for user {}", userId.get());
+        } else {
+            LOGGER.info("Token not found");
         }
-        LOGGER.info("Deleted token for user {}", userId);
         return userId;
     }
 
@@ -101,8 +103,11 @@ class BaseTokenJdbcDao implements BaseTokenDao {
 
             if (rowsInserted == 0)
                 throw new TokenGenerationException();
+            LOGGER.info("Created token for user {}", userId);
+        } else {
+            LOGGER.info("Updated token for user {}", userId);
         }
-        LOGGER.info("Created token for user {}", userId);
+
         return token;
     }
 
