@@ -2,6 +2,8 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.exception.TokenGenerationException;
 import ar.edu.itba.paw.persistance.BaseTokenDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -15,6 +17,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 class BaseTokenJdbcDao implements BaseTokenDao {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(BaseTokenJdbcDao.class);
 
     private final String tableName;
     private static final Integer TOKEN_DURATION_DAYS = 1;
@@ -71,7 +75,7 @@ class BaseTokenJdbcDao implements BaseTokenDao {
                     userId.get()
             );
         }
-
+        LOGGER.info("Deleted token for user {}", userId);
         return userId;
     }
 
@@ -98,6 +102,7 @@ class BaseTokenJdbcDao implements BaseTokenDao {
             if (rowsInserted == 0)
                 throw new TokenGenerationException();
         }
+        LOGGER.info("Created token for user {}", userId);
         return token;
     }
 

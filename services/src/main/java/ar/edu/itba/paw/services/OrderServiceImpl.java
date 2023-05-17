@@ -7,6 +7,8 @@ import ar.edu.itba.paw.service.OrderService;
 import ar.edu.itba.paw.service.ProductService;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.util.PaginatedResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +18,9 @@ import java.util.Optional;
 
 @Service
 public class OrderServiceImpl implements OrderService {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(OrderServiceImpl.class);
+
     @Autowired
     private OrderDao orderDao;
 
@@ -33,7 +38,7 @@ public class OrderServiceImpl implements OrderService {
             emailService.sendOrderReceivalForUser(order);
             emailService.sendOrderReceivalForRestaurant(order.getRestaurant(), order);
         } catch (MessagingException e) {
-            e.printStackTrace(); // TODO: Logging
+            LOGGER.error("Order Receival Email Sending Failed");
         }
     }
 
@@ -144,7 +149,7 @@ public class OrderServiceImpl implements OrderService {
             emailService.sendOrderConfirmation(this.getById(orderId).get());
             return orderDao.getById(orderId);
         } catch (MessagingException e) {
-            e.printStackTrace(); // TODO: Logging
+            LOGGER.error("Order Confirmation Email Sending Failed");
             return Optional.empty();
         }
     }
@@ -156,7 +161,7 @@ public class OrderServiceImpl implements OrderService {
             emailService.sendOrderReady(this.getById(orderId).get());
             return orderDao.getById(orderId);
         } catch (MessagingException e) {
-            e.printStackTrace(); // TODO: Logging
+            LOGGER.error("Order Ready Email Sending Failed");
             return Optional.empty();
         }
     }
@@ -168,7 +173,7 @@ public class OrderServiceImpl implements OrderService {
             emailService.sendOrderDelivered(this.getById(orderId).get());
             return orderDao.getById(orderId);
         } catch (MessagingException e) {
-            e.printStackTrace(); // TODO: Logging
+            LOGGER.error("Order Delivered Email Sending Failed");
             return Optional.empty();
         }
     }
@@ -180,7 +185,7 @@ public class OrderServiceImpl implements OrderService {
             emailService.sendOrderCancelled(this.getById(orderId).get());
             return orderDao.getById(orderId);
         } catch (MessagingException e) {
-            e.printStackTrace(); // TODO: Logging
+            LOGGER.error("Order Cancelled Email Sending Failed");
             return Optional.empty();
         }
     }

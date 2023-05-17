@@ -8,6 +8,8 @@ import ar.edu.itba.paw.webapp.form.EmailForm;
 import ar.edu.itba.paw.webapp.form.RegisterForm;
 import ar.edu.itba.paw.webapp.form.ResetPasswordForm;
 import org.hibernate.validator.constraints.Length;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -19,6 +21,8 @@ import javax.validation.Valid;
 
 @Controller
 public class AuthController {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(AuthController.class);
 
     @Autowired
     private UserService userService;
@@ -43,6 +47,7 @@ public class AuthController {
         try {
             userService.createOrConsolidate(registerForm.getEmail(), registerForm.getPassword(), registerForm.getName());
         } catch (MessagingException e) {
+            LOGGER.error("User Registered Email Sending Failed");
             return new ModelAndView("redirect:/auth/login?error=mailer_error");
         }
         return new ModelAndView("redirect:/auth/login?type=verify-emailed");
@@ -83,8 +88,10 @@ public class AuthController {
             tokenService.sendUserVerificationToken(user);
             return new ModelAndView("redirect:/auth/login?type=verify-emailed");
         } catch (UserNotFoundException e) {
+            LOGGER.error("User not found when verifying account");
             return new ModelAndView("redirect:/auth/login?type=verify-emailed");
         } catch (MessagingException e) {
+            LOGGER.error("Verify Token Email Sending Failed");
             return new ModelAndView("redirect:/auth/login?error=mailer_error");
         }
     }
@@ -119,8 +126,10 @@ public class AuthController {
             tokenService.sendPasswordResetToken(user);
             return new ModelAndView("redirect:/auth/login?type=reset-password-emailed");
         } catch (UserNotFoundException e) {
+            LOGGER.error("User not found when resetting password");
             return new ModelAndView("redirect:/auth/login?type=reset-password-emailed");
         } catch (MessagingException e) {
+            LOGGER.error("Reset Password Email Sending Failed");
             return new ModelAndView("redirect:/auth/login?error=mailer_error");
         }
     }

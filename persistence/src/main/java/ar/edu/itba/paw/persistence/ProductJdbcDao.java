@@ -3,6 +3,8 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.exception.ProductNotFoundException;
 import ar.edu.itba.paw.model.Product;
 import ar.edu.itba.paw.persistance.ProductDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -19,6 +21,9 @@ import java.util.Optional;
 
 @Repository
 public class ProductJdbcDao implements ProductDao {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(ProductJdbcDao.class);
+
     private static final String SELECT_BASE = "SELECT " + TableFields.PRODUCTS_FIELDS + ", " + TableFields.CATEGORIES_FIELDS + ", " + TableFields.RESTAURANTS_FIELDS + " FROM products JOIN categories ON products.category_id = categories.category_id JOIN restaurants ON categories.restaurant_id = restaurants.restaurant_id";
 
     private final JdbcTemplate jdbcTemplate;
@@ -43,6 +48,7 @@ public class ProductJdbcDao implements ProductDao {
         productData.put("price", price);
 
         final int productId = jdbcInsert.executeAndReturnKey(productData).intValue();
+        LOGGER.info("Created product with ID {}", productId);
         return getById(productId).get();
     }
 
@@ -98,5 +104,7 @@ public class ProductJdbcDao implements ProductDao {
 
         if (rows == 0)
             throw new ProductNotFoundException();
+
+        LOGGER.info("Deleted product with ID {}", productId);
     }
 }

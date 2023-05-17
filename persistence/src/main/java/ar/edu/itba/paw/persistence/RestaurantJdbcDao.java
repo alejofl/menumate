@@ -4,6 +4,8 @@ import ar.edu.itba.paw.exception.RestaurantNotFoundException;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.persistance.RestaurantDao;
 import ar.edu.itba.paw.util.PaginatedResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -21,6 +23,8 @@ import java.util.stream.Collectors;
 
 @Repository
 public class RestaurantJdbcDao implements RestaurantDao {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(RestaurantJdbcDao.class);
 
     private static final String SELECT_BASE = "SELECT " + TableFields.RESTAURANTS_FIELDS + " FROM restaurants";
 
@@ -220,7 +224,10 @@ public class RestaurantJdbcDao implements RestaurantDao {
         restaurantData.put("logo_id", logoKey);
         restaurantData.put("portrait_1_id", portrait1Kay);
         restaurantData.put("portrait_2_id", portrait2Key);
-        return restaurantJdbcInsert.executeAndReturnKey(restaurantData).intValue();
+
+        long key = restaurantJdbcInsert.executeAndReturnKey(restaurantData).intValue();
+        LOGGER.info("Created restaurant with ID {}", key);
+        return key;
     }
 
     @Transactional
@@ -243,6 +250,8 @@ public class RestaurantJdbcDao implements RestaurantDao {
                 "UPDATE products SET deleted = true WHERE products.category_id IN (SELECT category_id FROM categories WHERE restaurant_id = ?)",
                 restaurantId
         );
+
+        LOGGER.info("Deleted restaurant with ID {}", restaurantId);
     }
 
     @Override

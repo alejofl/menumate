@@ -3,6 +3,8 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.exception.CategoryNotFoundException;
 import ar.edu.itba.paw.model.Category;
 import ar.edu.itba.paw.persistance.CategoryDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -18,6 +20,8 @@ import java.util.Optional;
 
 @Repository
 public class CategoryJdbcDao implements CategoryDao {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(CategoryJdbcDao.class);
 
     private static final String SELECT_BASE = "SELECT " + TableFields.CATEGORIES_FIELDS + ", " + TableFields.RESTAURANTS_FIELDS + " FROM categories JOIN restaurants ON categories.restaurant_id = restaurants.restaurant_id";
 
@@ -47,6 +51,7 @@ public class CategoryJdbcDao implements CategoryDao {
         categoryData.put("order_num", order + 1);
 
         final int categoryId = jdbcInsert.executeAndReturnKey(categoryData).intValue();
+        LOGGER.info("Created category with ID {}", categoryId);
         return categoryId;
     }
 
@@ -84,6 +89,7 @@ public class CategoryJdbcDao implements CategoryDao {
 
         if (rows == 0)
             throw new CategoryNotFoundException();
+        LOGGER.info("Category {} name updated to {}", categoryId, name);
     }
 
     @Override
@@ -96,6 +102,7 @@ public class CategoryJdbcDao implements CategoryDao {
 
         if (rows == 0)
             throw new CategoryNotFoundException();
+        LOGGER.info("Category {} order updated to {}", categoryId, order);
     }
 
     @Transactional
@@ -113,5 +120,7 @@ public class CategoryJdbcDao implements CategoryDao {
                 "UPDATE products SET deleted = true WHERE category_id = ?",
                 categoryId
         );
+
+        LOGGER.info("Deleted category with ID {}", categoryId);
     }
 }

@@ -5,6 +5,8 @@ import ar.edu.itba.paw.model.Review;
 import ar.edu.itba.paw.persistance.ReviewDao;
 import ar.edu.itba.paw.util.AverageCountPair;
 import ar.edu.itba.paw.util.PaginatedResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -20,6 +22,8 @@ import java.util.Optional;
 
 @Repository
 public class ReviewJdbcDao implements ReviewDao {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(ReviewJdbcDao.class);
 
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
@@ -39,6 +43,7 @@ public class ReviewJdbcDao implements ReviewDao {
         data.put("rating", rating);
         data.put("comment", comment);
         jdbcInsert.execute(data);
+        LOGGER.info("Created review for order with ID {}", orderId);
     }
 
     /*@Override
@@ -63,6 +68,8 @@ public class ReviewJdbcDao implements ReviewDao {
 
         if (rows == 0)
             throw new ReviewNotFoundException();
+
+        LOGGER.info("Deleted review for order with ID {}", orderId);
     }
 
     private static final String GET_BY_ORDER_SQL = "WITH itemless_orders AS (" + OrderJdbcDao.SELECT_ITEMLESS_ORDERS + ")" +

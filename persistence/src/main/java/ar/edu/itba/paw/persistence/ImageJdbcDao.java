@@ -2,6 +2,8 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.exception.ImageNotFoundException;
 import ar.edu.itba.paw.persistance.ImageDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -15,6 +17,7 @@ import java.util.Optional;
 @Repository
 public class ImageJdbcDao implements ImageDao {
 
+    private final static Logger LOGGER = LoggerFactory.getLogger(ImageJdbcDao.class);
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
@@ -30,7 +33,9 @@ public class ImageJdbcDao implements ImageDao {
     public long create(byte[] bytes) {
         final Map<String, Object> imageData = new HashMap<>();
         imageData.put("bytes", bytes);
-        return jdbcInsert.executeAndReturnKey(imageData).intValue();
+        int imageId = jdbcInsert.executeAndReturnKey(imageData).intValue();
+        LOGGER.info("Created image with ID {}", imageId);
+        return imageId;
     }
 
     @Override
@@ -52,6 +57,8 @@ public class ImageJdbcDao implements ImageDao {
 
         if (rows == 0)
             throw new ImageNotFoundException();
+
+        LOGGER.info("Updated image with ID {}", imageId);
     }
 
     @Override
@@ -63,5 +70,7 @@ public class ImageJdbcDao implements ImageDao {
 
         if (rows == 0)
             throw new ImageNotFoundException();
+
+        LOGGER.info("Deleted image with ID {}", imageId);
     }
 }

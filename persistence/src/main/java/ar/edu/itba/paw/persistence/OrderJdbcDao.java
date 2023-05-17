@@ -4,6 +4,8 @@ import ar.edu.itba.paw.exception.OrderNotFoundException;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.persistance.OrderDao;
 import ar.edu.itba.paw.util.PaginatedResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -19,6 +21,7 @@ import java.util.Optional;
 
 @Repository
 public class OrderJdbcDao implements OrderDao {
+    private final static Logger LOGGER = LoggerFactory.getLogger(OrderJdbcDao.class);
     private static final String SELECT_FULL_BASE = "SELECT " + TableFields.ORDERS_FIELDS + ", " + TableFields.RESTAURANTS_FIELDS + ", " + TableFields.USERS_FIELDS + ", " + TableFields.ORDER_ITEMS_FIELDS + ", " + TableFields.PRODUCTS_FIELDS + ", " + TableFields.CATEGORIES_FIELDS + " FROM orders JOIN restaurants ON orders.restaurant_id = restaurants.restaurant_id JOIN users ON orders.user_id = users.user_id LEFT OUTER JOIN order_items ON orders.order_id = order_items.order_id LEFT OUTER JOIN products ON order_items.product_id = products.product_id LEFT OUTER JOIN categories ON products.category_id = categories.category_id";
     private static final String SELECT_FULL_END_ORDER_BY_ID = " ORDER BY orders.order_id, order_items.line_number";
     private static final String SELECT_FULL_END_ORDER_BY_DATE = " ORDER BY orders.date_ordered DESC, orders.order_id, order_items.line_number";
@@ -95,7 +98,7 @@ public class OrderJdbcDao implements OrderDao {
         final int orderId = jdbcInsertOrder.executeAndReturnKey(orderData).intValue();
 
         insertItems(items, orderId);
-
+        LOGGER.info("Created order with ID {}", orderId);
         return getById(orderId).get();
     }
 
@@ -110,7 +113,6 @@ public class OrderJdbcDao implements OrderDao {
     public Order createTakeaway(long restaurantId, long userId, List<OrderItem> items) {
         return this.create(OrderType.TAKEAWAY, restaurantId, userId, null, null, items);
     }
-
 
     @Transactional
     @Override
@@ -136,7 +138,6 @@ public class OrderJdbcDao implements OrderDao {
             map.put("comment", item.getComment());
             orderItemDatas[i] = map;
         }
-
         jdbcInsertOrderItem.executeBatch(orderItemDatas);
     }
 
@@ -278,9 +279,10 @@ public class OrderJdbcDao implements OrderDao {
     @Override
     public void markAsConfirmed(long orderId) {
         int rows = jdbcTemplate.update(MARK_AS_CONFIRMED_SQL, orderId);
-
-        if (rows == 0)
+        if (rows == 0) {
             throw new OrderNotFoundException();
+        }
+        LOGGER.info("Order {} marked as confirmed", orderId);
     }
 
     private static final String MARK_AS_READY_SQL = "UPDATE orders SET date_ready = now() WHERE order_id = ? AND " + IS_CONFIRMED_COND;
@@ -291,6 +293,7 @@ public class OrderJdbcDao implements OrderDao {
 
         if (rows == 0)
             throw new OrderNotFoundException();
+        LOGGER.info("Order {} marked as ready", orderId);
     }
 
     private static final String MARK_AS_DELIVERED_SQL = "UPDATE orders SET date_delivered = now() WHERE order_id = ? AND " + IS_READY_COND;
@@ -301,6 +304,7 @@ public class OrderJdbcDao implements OrderDao {
 
         if (rows == 0)
             throw new OrderNotFoundException();
+        LOGGER.info("Order {} marked as delivered", orderId);
     }
 
     private static final String MARK_AS_CANCELLED_SQL = "UPDATE orders SET date_cancelled = now() WHERE order_id = ? AND NOT(" + IS_CANCELLED_COND + ") AND NOT(" + IS_DELIVERED_COND + ")";
@@ -319,21 +323,27 @@ public class OrderJdbcDao implements OrderDao {
         switch (orderStatus) {
             case PENDING:
                 sql = "UPDATE orders SET date_confirmed=NULL, date_ready=NULL, date_delivered=NULL, date_cancelled=NULL WHERE order_id=?";
+                LOGGER.info("Order {} set to pending status", orderId);
                 break;
             case REJECTED:
                 sql = "UPDATE orders SET date_confirmed=NULL, date_ready=NULL, date_delivered=NULL, date_cancelled=COALESCE(date_cancelled, now()) WHERE order_id=?";
+                LOGGER.info("Order {} set to rejected status", orderId);
                 break;
             case CANCELLED:
                 sql = "UPDATE orders SET date_delivered=NULL, date_cancelled=COALESCE(date_cancelled, now()) WHERE order_id=?";
+                LOGGER.info("Order {} set to cancelled status", orderId);
                 break;
             case CONFIRMED:
                 sql = "UPDATE orders SET date_confirmed=COALESCE(date_confirmed, now()), date_ready=NULL, date_delivered=NULL, date_cancelled=NULL WHERE order_id=?";
+                LOGGER.info("Order {} set to confirmed status", orderId);
                 break;
             case READY:
                 sql = "UPDATE orders SET date_confirmed=COALESCE(date_confirmed, now()), date_ready=COALESCE(date_ready, now()), date_delivered=NULL, date_cancelled=NULL WHERE order_id=?";
+                LOGGER.info("Order {} set to ready status", orderId);
                 break;
             case DELIVERED:
                 sql = "UPDATE orders SET date_confirmed=COALESCE(date_confirmed, now()), date_ready=COALESCE(date_ready, now()), date_delivered=COALESCE(date_delivered, now()), date_cancelled=NULL WHERE order_id=?";
+                LOGGER.info("Order {} set to delivered status", orderId);
                 break;
             default:
                 throw new IllegalArgumentException("No such OrderType enum constant");
@@ -353,6 +363,7 @@ public class OrderJdbcDao implements OrderDao {
 
         if (rows == 0)
             throw new OrderNotFoundException();
+        LOGGER.info("Order {} address updated to {}", orderId, address);
     }
 
     private static final String UPDATE_TABLENUMBER_SQL = "UPDATE orders SET table_number = ? WHERE order_id = ? AND order_type = " + OrderType.DINE_IN.ordinal() + " AND " + IS_IN_PROGRESS_COND;
@@ -363,5 +374,6 @@ public class OrderJdbcDao implements OrderDao {
 
         if (rows == 0)
             throw new OrderNotFoundException();
+        LOGGER.info("Order {} table number updated to {}", orderId, tableNumber);
     }
 }
