@@ -4,12 +4,19 @@
 
 ## Users in prod
 We have six users set up in our production databases, using the following emails:
-- menumateapp.user+draco@gmail.com
-- menumateapp.user+hagrid@gmail.com
-- menumateapp.user+harry@gmail.com
-- menumateapp.user+hermione@gmail.com
-- menumateapp.user+ron@gmail.com
-- menumateapp.user+snape@gmail.com
+
+* menumateapp.user+draco@gmail.com
+
+* menumateapp.user+hagrid@gmail.com
+
+* menumateapp.user+harry@gmail.com
+
+* menumateapp.user+hermione@gmail.com
+
+* menumateapp.user+ron@gmail.com
+
+* menumateapp.user+snape@gmail.com
+
 
 The password for all these users is the same: ***REMOVED***
 
