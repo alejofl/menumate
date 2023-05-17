@@ -1,26 +1,30 @@
-# MenuMate
 
-## Requirements
-- [Docker](https://www.docker.com/) or [postgresql](https://www.postgresql.org/) 
-- [Maven](https://maven.apache.org/)
-- SDK Corretto-1.8
-- Tomcat 8.5
+![MENUMATE](webapp/src/main/webapp/static/pictures/logo.png)
 
 
-## Installation
-If you dont have postgresql on your machine, just run the Docker container:
-```sh
-docker-compose up
-```
-It should download, set-up and run the environment. This will take some time. The container will run on port 5432 of the host and exposes the service on port 5432, which is the default port used by PostgreSQL. Port 5432 is the access point from the host to establish a connection with the PostgreSQL container.
+## Users in prod
+- ```Email```: menumateapp.user@gmail.com
+- ```Password```: ***REMOVED*** 
 
-Then, compile the Maven project to download the dependencies:
-```sh
-mvn compile
-```
+In that Gmail account, we have set up filters to work as multiple inboxes. Within our web app, the following six different users addresses are available with the same password as the gmail account:
 
-The `application.properties` file is crucial to add some basic properties, check that it is in the repo.
+| User                                | Restaurant Role                            |
+|-------------------------------------|--------------------------------------------|
+| menumateapp.user+draco@gmail.com    | Order Handler in La Paloma and Honest Food |
+| menumateapp.user+hagrid@gmail.com   | Order Handler in Honest Food               |
+| menumateapp.user+harry@gmail.com    | -                                          |
+| menumateapp.user+hermione@gmail.com | Admin in Solomia Parrilla                  |
+| menumateapp.user+ron@gmail.com      | Admin in Solomia Parrilla                  |
+| menumateapp.user+snape@gmail.com    | -                                          |
 
-Finally, run the application with Tomcat
+| User                                | Owns Restaurant   |
+|-------------------------------------|-------------------|
+| menumateapp.user+draco@gmail.com    | Empanadas Delicia |
+| menumateapp.user+hagrid@gmail.com   | -                 |
+| menumateapp.user+harry@gmail.com    | Solomia Parrilla  |
+| menumateapp.user+hermione@gmail.com | -                 |
+| menumateapp.user+ron@gmail.com      | Honest Food       |
+| menumateapp.user+snape@gmail.com    | -                 |
 
-To shut down docker, just send a sigterm (Ctrl+C) or use `docker-compose down`. If you want to delete the database volume, run `docker-compose down -v`
+Emails sent to these addresses will automatically be directed to the respective labels within the Gmail account.
+
