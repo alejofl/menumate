@@ -1,5 +1,4 @@
 import ar.edu.itba.paw.model.RestaurantRoleLevel;
-import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.persistance.ResetPasswordTokenDao;
 import ar.edu.itba.paw.persistance.UserDao;
 import ar.edu.itba.paw.persistance.VerificationTokenDao;
