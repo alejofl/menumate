@@ -44,7 +44,7 @@ public class CategoryJdbcDao implements CategoryDao {
         categoryData.put("restaurant_id", restaurantId);
         categoryData.put("name", name);
         int order = jdbcTemplate.query(
-                "SELECT MAX(order_num) AS m FROM categories WHERE deleted = false AND restaurant_id = ?",
+                "SELECT MAX(order_num) AS m FROM categories WHERE restaurant_id = ?",
                 SimpleRowMappers.MAX_ROW_MAPPER,
                 restaurantId
         ).get(0);
