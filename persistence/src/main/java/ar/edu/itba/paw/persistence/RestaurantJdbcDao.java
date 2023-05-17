@@ -105,7 +105,7 @@ public class RestaurantJdbcDao implements RestaurantDao {
             case PRICE:
                 return "restaurant_average_price";
             default:
-                throw new NotImplementedException();
+                throw new IllegalArgumentException("Invalid or not implemented RestaurantOrderBy: " + orderBy);
         }
     }
 
