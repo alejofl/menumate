@@ -4,6 +4,8 @@ import ar.edu.itba.paw.exception.UserNotFoundException;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.persistance.UserDao;
 import ar.edu.itba.paw.util.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -18,6 +20,8 @@ import java.util.Optional;
 
 @Repository
 public class UserJdbcDao implements UserDao {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(UserJdbcDao.class);
 
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
@@ -41,8 +45,12 @@ public class UserJdbcDao implements UserDao {
                 email
         );
 
-        if (rowsUpdated != 0)
-            return getByEmail(email).orElseThrow(UserNotFoundException::new);
+        if (rowsUpdated != 0) {
+            User u = getByEmail(email).orElseThrow(UserNotFoundException::new);
+            LOGGER.info("Consolidated user with ID {}", u.getUserId());
+            return u;
+        }
+
 
         final Map<String, Object> userData = new HashMap<>();
         userData.put("email", email);
@@ -50,6 +58,7 @@ public class UserJdbcDao implements UserDao {
         userData.put("name", name);
 
         final long userId = jdbcInsert.executeAndReturnKey(userData).longValue();
+        LOGGER.info("Created user with ID {}", userId);
         return new User(userId, email, name, null, false);
     }
 
@@ -66,6 +75,7 @@ public class UserJdbcDao implements UserDao {
         userData.put("name", name);
 
         final long userId = jdbcInsert.executeAndReturnKey(userData).longValue();
+        LOGGER.info("Created user with ID {}", userId);
         return new User(userId, email, name, null, false);
     }
 

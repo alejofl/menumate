@@ -3,6 +3,8 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.service.EmailService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.PropertySource;
@@ -26,6 +28,8 @@ import java.util.Map;
 @PropertySource("classpath:email.properties")
 public class EmailServiceImpl implements EmailService {
 
+    private final static Logger LOGGER = LoggerFactory.getLogger(EmailServiceImpl.class);
+
     private final Locale locale = LocaleContextHolder.getLocale();
 
     @Autowired
@@ -41,6 +45,7 @@ public class EmailServiceImpl implements EmailService {
     private MessageSource messageSource;
 
     private void sendHtmlMessage(String to, String subject, String htmlBody) throws MessagingException {
+        LOGGER.info("Sent email to {} with subject {}", to, subject);
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, "UTF-8");
         helper.setTo(to);

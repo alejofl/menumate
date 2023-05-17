@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
         final User user = userDao.createOrConsolidate(email, password, name);
         String token = verificationTokenDao.generateToken(user.getUserId());
         emailService.sendUserVerificationEmail(user.getEmail(), user.getName(), token);
-        return  user;
+        return user;
     }
 
     @Override

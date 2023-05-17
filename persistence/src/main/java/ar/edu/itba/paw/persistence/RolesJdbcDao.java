@@ -7,6 +7,8 @@ import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.persistance.RolesDao;
 import ar.edu.itba.paw.util.Pair;
 import ar.edu.itba.paw.util.Triplet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -24,6 +26,8 @@ import java.util.Optional;
 
 @Repository
 public class RolesJdbcDao implements RolesDao {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(RolesJdbcDao.class);
 
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
@@ -70,6 +74,8 @@ public class RolesJdbcDao implements RolesDao {
             data.put("role_level", level.ordinal());
             jdbcInsert.execute(data);
         }
+
+        LOGGER.info("Set role {} for user with ID {} on restaurant with ID {}", level, userId, restaurantId);
     }
 
     @Override
@@ -82,6 +88,8 @@ public class RolesJdbcDao implements RolesDao {
 
         if (rows == 0)
             throw new RoleNotFoundException();
+
+        LOGGER.info("Delete role for user with ID {} on restaurant with ID {}", userId, restaurantId);
     }
 
     @Override
