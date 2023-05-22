@@ -28,6 +28,10 @@ body {
     min-height: 100vh;
 }
 
+p {
+    overflow-wrap: anywhere;
+}
+
 .content {
     flex-grow: 1;
 }
@@ -250,7 +254,7 @@ main {
 
 .menu-item-card {
     width: 400px;
-    height: 200px;
+    min-height: 200px;
     display: flex;
     flex-direction: row;
 }
