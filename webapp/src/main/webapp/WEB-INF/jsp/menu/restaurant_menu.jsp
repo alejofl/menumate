@@ -32,7 +32,7 @@
                         <p><i> <spring:message code="restaurant.menu.nodescription"/></i></p>
                     </c:otherwise>
                 </c:choose>
-                <div class="d-flex align-items-center">
+                <div class="d-flex align-items-baseline">
                     <div class="small-ratings">
                         <c:forEach begin="1" end="${average}">
                             <i class="bi bi-star-fill rating-color"></i>
@@ -41,8 +41,11 @@
                             <i class="bi bi-star-fill"></i>
                         </c:forEach>
                     </div>
-                    <a href="" class="ms-2" data-bs-toggle="modal" data-bs-target="#view-reviews-modal"><small><spring:message code="restaurant.menu.viewreviews"/></small></a>
+                    <small class="text-muted ms-2"">
+                        <spring:message code="restaurants.ratingcount" arguments="${ratingCount}"/>
+                    </small>
                 </div>
+                <a href="" data-bs-toggle="modal" data-bs-target="#view-reviews-modal"><small><spring:message code="restaurant.menu.viewreviews"/></small></a>
                 <div class="tags-container">
                     <c:forEach var="tag" items="${tags}">
                         <c:url value="/restaurants" var="tagUrl">

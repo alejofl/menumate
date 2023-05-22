@@ -78,6 +78,7 @@
                     <jsp:param name="name" value="${restaurantDetails.restaurant.name}"/>
                     <jsp:param name="address" value="${restaurantDetails.restaurant.address}"/>
                     <jsp:param name="rating" value="${restaurantDetails.averageRating}"/>
+                    <jsp:param name="rating_count" value="${restaurantDetails.reviewCount}"/>
                     <jsp:param name="main_image" value="${mainImage}"/>
                     <jsp:param name="hover_image" value="${hoverImage}"/>
                     <jsp:param name="link" value="${restaurantUrl}"/>

@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <body>
@@ -19,6 +20,10 @@
                 <c:forEach begin="1" end="${5 - param.rating}">
                     <i class="bi bi-star-fill"></i>
                 </c:forEach>
+                <small class="text-muted ps-1">
+                    <fmt:parseNumber var="ratingCount" type="number" value="${param.rating_count}"/>
+                    <spring:message code="restaurants.ratingcount" arguments="${ratingCount}"/>
+                </small>
             </div>
             <div class="tags-container">
                 <c:forEach var="tag" items="${requestScope.tags}">

@@ -68,6 +68,7 @@ public class RestaurantsController {
 
         final AverageCountPair average = reviewService.getRestaurantAverage(id);
         mav.addObject("average", Math.round(average.getAverage()));
+        mav.addObject("ratingCount", average.getCount());
         final List<Review> reviews = reviewService.getByRestaurant(id, 1, 30).getResult();
         mav.addObject("reviews", reviews);
         final List<RestaurantTags> tags = restaurantService.getTags(id);
