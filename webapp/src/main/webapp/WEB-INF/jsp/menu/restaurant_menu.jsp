@@ -45,7 +45,12 @@
                 </div>
                 <div class="tags-container">
                     <c:forEach var="tag" items="${tags}">
-                        <span class="badge rounded-pill text-bg-secondary"><spring:message code="restauranttags.${tag.messageCode}"/></span>
+                        <c:url value="/restaurants" var="tagUrl">
+                            <c:param name="tags" value="${tag.ordinal()}"/>
+                        </c:url>
+                        <a href="${tagUrl}" class="clickable-object">
+                            <span class="badge rounded-pill text-bg-secondary"><spring:message code="restauranttags.${tag.messageCode}"/></span>
+                        </a>
                     </c:forEach>
                 </div>
             </div>
