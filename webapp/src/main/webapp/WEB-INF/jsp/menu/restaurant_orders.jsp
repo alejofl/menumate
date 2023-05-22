@@ -6,7 +6,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <html>
 <head>
-    <spring:message code="restaurantorders.title" var="title"/>
+    <spring:message code="restaurantorders.head" var="title" arguments="${restaurant.name}"/>
     <jsp:include page="/WEB-INF/jsp/components/head.jsp">
         <jsp:param name="title" value="${title}"/>
     </jsp:include>
@@ -19,7 +19,7 @@
         <jsp:include page="/WEB-INF/jsp/components/param_error.jsp"/>
     </c:if>
     <div class="page-title">
-        <h1><spring:message code="restaurantorders.orders"/></h1>
+        <h1><spring:message code="restaurantorders.orders" arguments="${restaurant.name}"/></h1>
     </div>
     <main class="restaurant-orders-view">
         <nav>
