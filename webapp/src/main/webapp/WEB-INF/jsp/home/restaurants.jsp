@@ -87,6 +87,7 @@
                 <div class="empty-results">
                     <h1><i class="bi bi-slash-circle"></i></h1>
                     <p>  <spring:message code="restaurants.search.noresult"/></p>
+                    <a class="btn btn-primary btn-sm" href="<c:url value="/restaurants"/>"><spring:message code="restaurants.search.clearfilters"/></a>
                 </div>
             </c:if>
         </main>
