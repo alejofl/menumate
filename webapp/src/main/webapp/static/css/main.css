@@ -189,12 +189,11 @@ main {
     display: flex;
     gap: 20px;
     align-items: center;
-    height: 15rem;
 }
 
 .restaurant-logo {
     border-radius: 50%;
-    height: 100%;
+    max-width: 10rem;
     aspect-ratio: 1/1;
     object-fit: cover;
 }
@@ -744,6 +743,8 @@ input:has(+ .form-error), textarea:has(+ .form-error) {
     display: flex;
     gap: 6px;
     overflow-x: scroll;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
 }
 
 .tags-container::-webkit-scrollbar {
@@ -753,7 +754,8 @@ input:has(+ .form-error), textarea:has(+ .form-error) {
     margin: 0;
     background: transparent; /* make scrollbar transparent */
 }
-.tags-container {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+
+.restaurant-information .tags-container {
+    padding-top: 12px;
+    flex-wrap: wrap;
 }
