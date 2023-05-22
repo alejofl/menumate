@@ -1,9 +1,12 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.exception.OrderNotFoundException;
+import ar.edu.itba.paw.exception.RestaurantNotFoundException;
 import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.model.OrderStatus;
+import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.service.OrderService;
+import ar.edu.itba.paw.service.RestaurantService;
 import ar.edu.itba.paw.util.PaginatedResult;
 import ar.edu.itba.paw.webapp.form.PagingForm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,9 @@ import javax.validation.Valid;
 public class RestaurantOrdersController {
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private RestaurantService restaurantService;
 
     private ModelAndView restaurantOrders(
             final PagingForm paging,
@@ -38,6 +44,7 @@ public class RestaurantOrdersController {
 
         ModelAndView mav = new ModelAndView("menu/restaurant_orders");
 
+        mav.addObject("restaurant", restaurantService.getById(id).orElseThrow(RestaurantNotFoundException::new));
         mav.addObject("orders", orders.getResult());
         mav.addObject("status", orderStatus.getMessageCode());
         mav.addObject("orderCount", orders.getTotalCount());
