@@ -6,9 +6,9 @@ import ar.edu.itba.paw.util.Pair;
 import java.util.Optional;
 
 public interface UserDao {
-    User createOrConsolidate(String email, String password, String name);
+    User createOrConsolidate(String email, String password, String name, String language);
 
-    User createIfNotExists(String email, String name);
+    User createIfNotExists(String email, String name, String language);
 
     void updatePassword(long userId, String password);
 

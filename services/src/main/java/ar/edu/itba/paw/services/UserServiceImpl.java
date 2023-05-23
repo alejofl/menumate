@@ -7,6 +7,7 @@ import ar.edu.itba.paw.service.EmailService;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,15 +33,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public User createOrConsolidate(String email, String password, String name) throws MessagingException {
         password = password == null ? null : passwordEncoder.encode(password);
-        final User user = userDao.createOrConsolidate(email, password, name);
+        final User user = userDao.createOrConsolidate(email, password, name, LocaleContextHolder.getLocale().getLanguage());
         String token = verificationTokenDao.generateToken(user.getUserId());
-        emailService.sendUserVerificationEmail(user.getEmail(), user.getName(), token);
+        emailService.sendUserVerificationEmail(user, token);
         return user;
     }
 
     @Override
     public User createIfNotExists(String email, String name) {
-        return userDao.createIfNotExists(email, name);
+        return userDao.createIfNotExists(email, name, LocaleContextHolder.getLocale().getLanguage());
     }
 
     @Override

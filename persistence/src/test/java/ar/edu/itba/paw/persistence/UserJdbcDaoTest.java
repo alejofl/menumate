@@ -23,6 +23,7 @@ public class UserJdbcDaoTest {
     private static final String EMAIL = "peter@peter.com";
     private static final String PASSWORD = "super12secret34";
     private static final String NAME = "Peter Parker";
+    private static final String PREFERRED_LANGUAGE = "en";
     private static final boolean IS_ACTIVE = true;
 
     @Autowired
@@ -41,7 +42,7 @@ public class UserJdbcDaoTest {
 
     @Test
     public void testFindById() throws SQLException {
-        jdbcTemplate.execute("INSERT INTO users (user_id, email, password, name, is_active) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + NAME + "', " + IS_ACTIVE + ")");
+        jdbcTemplate.execute("INSERT INTO users (user_id, email, password, name, is_active, preferred_language) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + NAME + "', " + IS_ACTIVE + ", '" + PREFERRED_LANGUAGE + "')");
 
         Optional<User> maybeUser = userDao.getById(ID);
 
@@ -50,11 +51,12 @@ public class UserJdbcDaoTest {
         Assert.assertEquals(EMAIL, maybeUser.get().getEmail());
         Assert.assertEquals(NAME, maybeUser.get().getName());
         Assert.assertEquals(IS_ACTIVE, maybeUser.get().getIsActive());
+        Assert.assertEquals(PREFERRED_LANGUAGE, maybeUser.get().getPreferredLanguage());
     }
 
     @Test
     public void testFindByEmail() throws SQLException {
-        jdbcTemplate.execute("INSERT INTO users (user_id, email, password, name, is_active) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + NAME + "', " + IS_ACTIVE + ")");
+        jdbcTemplate.execute("INSERT INTO users (user_id, email, password, name, is_active, preferred_language) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "', '" + NAME + "', " + IS_ACTIVE + ", '" + PREFERRED_LANGUAGE + "')");
 
         Optional<User> maybeUser = userDao.getByEmail(EMAIL);
 
@@ -63,6 +65,7 @@ public class UserJdbcDaoTest {
         Assert.assertEquals(EMAIL, maybeUser.get().getEmail());
         Assert.assertEquals(NAME, maybeUser.get().getName());
         Assert.assertEquals(IS_ACTIVE, maybeUser.get().getIsActive());
+        Assert.assertEquals(PREFERRED_LANGUAGE, maybeUser.get().getPreferredLanguage());
     }
 
     @Test
@@ -73,11 +76,12 @@ public class UserJdbcDaoTest {
 
     @Test
     public void testCreate() {
-        User user = userDao.createOrConsolidate(EMAIL, PASSWORD, NAME);
+        User user = userDao.createOrConsolidate(EMAIL, PASSWORD, NAME, PREFERRED_LANGUAGE);
 
         Assert.assertNotNull(user);
         Assert.assertEquals(EMAIL, user.getEmail());
         Assert.assertEquals(NAME, user.getName());
+        Assert.assertEquals(PREFERRED_LANGUAGE, user.getPreferredLanguage());
         Assert.assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "users"));
     }
 }

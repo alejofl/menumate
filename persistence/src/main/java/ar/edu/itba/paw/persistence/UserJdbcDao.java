@@ -31,17 +31,18 @@ public class UserJdbcDao implements UserDao {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsert = new SimpleJdbcInsert(ds)
                 .withTableName("users")
-                .usingColumns("email", "password", "name", "image_id")
+                .usingColumns("email", "password", "name", "image_id", "preferred_language")
                 .usingGeneratedKeyColumns("user_id");
     }
 
     @Transactional
     @Override
-    public User createOrConsolidate(String email, String password, String name) {
+    public User createOrConsolidate(String email, String password, String name, String language) {
         int rowsUpdated = jdbcTemplate.update(
-                "UPDATE users SET password = ?, name = ? WHERE email = ? AND password IS NULL",
+                "UPDATE users SET password = ?, name = ?, preferred_language = ? WHERE email = ? AND password IS NULL",
                 password,
                 name,
+                language,
                 email
         );
 
@@ -56,15 +57,16 @@ public class UserJdbcDao implements UserDao {
         userData.put("email", email);
         userData.put("password", password);
         userData.put("name", name);
+        userData.put("preferred_language", language);
 
         final long userId = jdbcInsert.executeAndReturnKey(userData).longValue();
         LOGGER.info("Created user with ID {}", userId);
-        return new User(userId, email, name, null, false);
+        return new User(userId, email, name, null, false, language);
     }
 
     @Transactional
     @Override
-    public User createIfNotExists(String email, String name) {
+    public User createIfNotExists(String email, String name, String language) {
         Optional<User> maybeUser = getByEmail(email);
         if (maybeUser.isPresent())
             return maybeUser.get();
@@ -73,10 +75,11 @@ public class UserJdbcDao implements UserDao {
         userData.put("email", email);
         userData.put("password", null);
         userData.put("name", name);
+        userData.put("preferred_language", language);
 
         final long userId = jdbcInsert.executeAndReturnKey(userData).longValue();
         LOGGER.info("Created user with ID {}", userId);
-        return new User(userId, email, name, null, false);
+        return new User(userId, email, name, null, false, language);
     }
 
     @Override

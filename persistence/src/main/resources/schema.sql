@@ -6,13 +6,14 @@ CREATE TABLE IF NOT EXISTS images
 
 CREATE TABLE IF NOT EXISTS users
 (
-    user_id     SERIAL PRIMARY KEY,
-    email       VARCHAR(320) UNIQUE NOT NULL,
-    password    VARCHAR(60),
-    name        VARCHAR(50) NOT NULL,
-    date_joined TIMESTAMP NOT NULL DEFAULT now(),
-    image_id    INT REFERENCES images (image_id) ON DELETE SET NULL,
-    is_active   BOOLEAN NOT NULL DEFAULT FALSE
+    user_id            SERIAL PRIMARY KEY,
+    email              VARCHAR(320) UNIQUE NOT NULL,
+    password           VARCHAR(60),
+    name               VARCHAR(50) NOT NULL,
+    date_joined        TIMESTAMP NOT NULL DEFAULT now(),
+    image_id           INT REFERENCES images (image_id) ON DELETE SET NULL,
+    is_active          BOOLEAN NOT NULL DEFAULT FALSE,
+    preferred_language VARCHAR(3) NOT NULL DEFAULT 'en'
 );
 
 CREATE TABLE IF NOT EXISTS user_verification_codes

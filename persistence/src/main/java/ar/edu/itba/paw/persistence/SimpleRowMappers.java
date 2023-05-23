@@ -35,7 +35,8 @@ class SimpleRowMappers {
             rs.getString("user_email"),
             rs.getString("user_name"),
             readLongOrNull(rs, "user_image_id"),
-            rs.getBoolean("user_is_active")
+            rs.getBoolean("user_is_active"),
+            rs.getString("user_preferred_language")
     );
 
     static final RowMapper<Pair<User, String>> USER_WITH_PASSWORD_ROW_MAPPER = (ResultSet rs, int rowNum) -> new Pair<>(

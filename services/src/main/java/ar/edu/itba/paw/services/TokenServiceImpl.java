@@ -47,7 +47,7 @@ public class TokenServiceImpl implements TokenService {
     public void sendUserVerificationToken(final User user) throws MessagingException {
         if (!user.getIsActive()) {
             String token = verificationTokenDao.generateToken(user.getUserId());
-            emailService.sendUserVerificationEmail(user.getEmail(), user.getName(), token);
+            emailService.sendUserVerificationEmail(user, token);
         }
     }
 
@@ -56,7 +56,7 @@ public class TokenServiceImpl implements TokenService {
     public void sendPasswordResetToken(User user) throws MessagingException {
         if (user.getIsActive()) {
             String token = resetPasswordTokenDao.generateToken(user.getUserId());
-            emailService.sendResetPasswordEmail(user.getEmail(), user.getName(), token);
+            emailService.sendResetPasswordEmail(user, token);
         }
     }
 

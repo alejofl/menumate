@@ -76,7 +76,8 @@ class ReusingRowMappers {
                     rs.getString("user_email"),
                     rs.getString("user_name"),
                     SimpleRowMappers.readLongOrNull(rs, "user_image_id"),
-                    rs.getBoolean("user_is_active")
+                    rs.getBoolean("user_is_active"),
+                    rs.getString("user_preferred_language")
             );
         }
     }

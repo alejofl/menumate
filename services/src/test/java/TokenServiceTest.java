@@ -1,4 +1,5 @@
 import ar.edu.itba.paw.model.RestaurantRoleLevel;
+import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.persistance.ResetPasswordTokenDao;
 import ar.edu.itba.paw.persistance.UserDao;
 import ar.edu.itba.paw.persistance.VerificationTokenDao;
@@ -49,6 +50,7 @@ public class TokenServiceTest {
     public void verifyUser() {
         when(verificationTokenDao.deleteTokenAndRetrieveUserId(TOKEN)).thenReturn(Optional.of(USER_ID));
         doNothing().when(userDao).updateUserActive(anyLong(), anyBoolean());
+        when(userDao.getById(USER_ID)).thenReturn(Optional.of(new User(USER_ID, EMAIL, NAME, null, true, null)));
         Assert.assertTrue(tokenService.verifyUserAndDeleteVerificationToken(TOKEN));
     }
 

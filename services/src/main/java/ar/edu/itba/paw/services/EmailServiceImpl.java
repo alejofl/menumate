@@ -1,14 +1,16 @@
 package ar.edu.itba.paw.services;
 
+import ar.edu.itba.paw.exception.UserNotFoundException;
 import ar.edu.itba.paw.model.Order;
+import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.service.EmailService;
+import ar.edu.itba.paw.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.env.Environment;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -30,7 +32,8 @@ public class EmailServiceImpl implements EmailService {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(EmailServiceImpl.class);
 
-    private final Locale locale = LocaleContextHolder.getLocale();
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private JavaMailSender emailSender;
@@ -58,7 +61,7 @@ public class EmailServiceImpl implements EmailService {
     // If a link wants to be passed, set the **path** in params with key "link".
     // This method will concatenate the baseUrl.
     // Only one link should be served for each email.
-    private void sendMessageUsingThymeleafTemplate(String template, String to, String subject, Map<String, Object> params) throws MessagingException {
+    private void sendMessageUsingThymeleafTemplate(String template, String to, String subject, Locale locale, Map<String, Object> params) throws MessagingException {
         Context thymeleafContext = new Context(locale);
         final String baseUrl = environment.getProperty("email.base_url");
         if (params.containsKey("link")) {
@@ -72,6 +75,7 @@ public class EmailServiceImpl implements EmailService {
     @Async
     @Override
     public void sendOrderReceivalForUser(Order order) throws MessagingException {
+        Locale locale = new Locale(order.getUser().getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
         params.put("recipientName", order.getUser().getName());
         params.put("orderId", order.getOrderId());
@@ -82,6 +86,7 @@ public class EmailServiceImpl implements EmailService {
                 "user_order_received",
                 order.getUser().getEmail(),
                 messageSource.getMessage("email.userorderreceived.subject", new Object[]{order.getRestaurant().getName()}, locale),
+                locale,
                 params
         );
     }
@@ -89,6 +94,7 @@ public class EmailServiceImpl implements EmailService {
     @Async
     @Override
     public void sendOrderReceivalForRestaurant(Restaurant restaurant, Order order) throws MessagingException {
+        Locale locale = new Locale(userService.getById(restaurant.getOwnerUserId()).orElseThrow(UserNotFoundException::new).getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
         params.put("userName", order.getUser().getName());
         params.put("orderId", order.getOrderId());
@@ -99,6 +105,7 @@ public class EmailServiceImpl implements EmailService {
                 "restaurant_order_received",
                 restaurant.getEmail(),
                 messageSource.getMessage("email.resturantorderreceived.subject", null, locale),
+                locale,
                 params
         );
     }
@@ -106,6 +113,7 @@ public class EmailServiceImpl implements EmailService {
     @Async
     @Override
     public void sendOrderConfirmation(Order order) throws MessagingException {
+        Locale locale = new Locale(order.getUser().getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
         params.put("recipientName", order.getUser().getName());
         params.put("orderId", order.getOrderId());
@@ -115,6 +123,7 @@ public class EmailServiceImpl implements EmailService {
                 "user_order_confirmed",
                 order.getUser().getEmail(),
                 messageSource.getMessage("email.userorderconfirmed.subject", new Object[]{order.getRestaurant().getName()}, locale),
+                locale,
                 params
         );
     }
@@ -122,6 +131,7 @@ public class EmailServiceImpl implements EmailService {
     @Async
     @Override
     public void sendOrderReady(Order order) throws MessagingException {
+        Locale locale = new Locale(order.getUser().getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
         params.put("recipientName", order.getUser().getName());
         params.put("orderId", order.getOrderId());
@@ -131,6 +141,7 @@ public class EmailServiceImpl implements EmailService {
                 "user_order_ready",
                 order.getUser().getEmail(),
                 messageSource.getMessage("email.userorderready.subject", new Object[]{order.getRestaurant().getName()}, locale),
+                locale,
                 params
         );
     }
@@ -138,6 +149,7 @@ public class EmailServiceImpl implements EmailService {
     @Async
     @Override
     public void sendOrderDelivered(Order order) throws MessagingException {
+        Locale locale = new Locale(order.getUser().getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
         params.put("recipientName", order.getUser().getName());
         params.put("orderId", order.getOrderId());
@@ -147,6 +159,7 @@ public class EmailServiceImpl implements EmailService {
                 "user_order_delivered",
                 order.getUser().getEmail(),
                 messageSource.getMessage("email.userorderdelivered.subject", new Object[]{order.getRestaurant().getName()}, locale),
+                locale,
                 params
         );
     }
@@ -154,6 +167,7 @@ public class EmailServiceImpl implements EmailService {
     @Async
     @Override
     public void sendOrderCancelled(Order order) throws MessagingException {
+        Locale locale = new Locale(order.getUser().getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
         params.put("recipientName", order.getUser().getName());
         params.put("orderId", order.getOrderId());
@@ -163,34 +177,39 @@ public class EmailServiceImpl implements EmailService {
                 "user_order_cancelled",
                 order.getUser().getEmail(),
                 messageSource.getMessage("email.userordercancelled.subject", new Object[]{order.getRestaurant().getName()}, locale),
+                locale,
                 params
         );
     }
 
     @Async
     @Override
-    public void sendUserVerificationEmail(String email, String username, String token) throws MessagingException {
+    public void sendUserVerificationEmail(User user, String token) throws MessagingException {
+        Locale locale = new Locale(user.getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
         params.put("link", "/auth/verify?token=" + token);
-        params.put("username", username);
+        params.put("username", user.getName());
         this.sendMessageUsingThymeleafTemplate(
                 "user_verification",
-                email,
+                user.getEmail(),
                 messageSource.getMessage("email.userorderverification.subject", null, locale),
+                locale,
                 params
         );
     }
 
     @Async
     @Override
-    public void sendResetPasswordEmail(String email, String username, String token) throws MessagingException {
+    public void sendResetPasswordEmail(User user, String token) throws MessagingException {
+        Locale locale = new Locale(user.getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
         params.put("link", "/auth/reset-password?token=" + token);
-        params.put("username", username);
+        params.put("username", user.getName());
         this.sendMessageUsingThymeleafTemplate(
                 "user_reset_password",
-                email,
+                user.getEmail(),
                 messageSource.getMessage("email.userresetpassword.subject", null, locale),
+                locale,
                 params
         );
     }

@@ -2,7 +2,7 @@ package ar.edu.itba.paw.persistence;
 
 class TableFields {
 
-    static final String USERS_FIELDS = "users.user_id user_id, users.email user_email, users.name user_name, users.image_id user_image_id, users.is_active user_is_active";
+    static final String USERS_FIELDS = "users.user_id user_id, users.email user_email, users.name user_name, users.image_id user_image_id, users.is_active user_is_active, users.preferred_language user_preferred_language";
 
     static final String RESTAURANTS_FIELDS = "restaurants.restaurant_id restaurant_id, restaurants.name restaurant_name, restaurants.email restaurant_email, restaurants.specialty restaurant_specialty, restaurants.owner_user_id restaurant_owner_user_id, restaurants.logo_id restaurant_logo_id, restaurants.portrait_1_id restaurant_portrait_1_id, restaurants.portrait_2_id restaurant_portrait_2_id, restaurants.address restaurant_address, restaurants.description restaurant_description, restaurants.max_tables restaurant_max_tables, restaurants.is_active restaurant_is_active, restaurants.deleted restaurant_deleted";
 

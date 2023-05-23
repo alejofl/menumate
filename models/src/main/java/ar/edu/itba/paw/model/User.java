@@ -7,13 +7,15 @@ public class User {
     private final String name;
     private final Long imageId;
     private final boolean isActive;
+    private final String preferredLanguage;
 
-    public User(long userId, String email, String name, Long imageId, boolean isActive) {
+    public User(long userId, String email, String name, Long imageId, boolean isActive, String preferredLanguage) {
         this.userId = userId;
         this.name = name;
         this.email = email;
         this.imageId = imageId;
         this.isActive = isActive;
+        this.preferredLanguage = preferredLanguage;
     }
 
     public String getEmail() {
@@ -34,5 +36,9 @@ public class User {
 
     public boolean getIsActive() {
         return isActive;
+    }
+
+    public String getPreferredLanguage() {
+        return preferredLanguage;
     }
 }
