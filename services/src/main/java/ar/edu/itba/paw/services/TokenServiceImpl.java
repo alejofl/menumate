@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.services;
 
+import ar.edu.itba.paw.exception.UserNotFoundException;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.persistance.ResetPasswordTokenDao;
 import ar.edu.itba.paw.persistance.UserDao;
@@ -8,6 +9,11 @@ import ar.edu.itba.paw.service.EmailService;
 import ar.edu.itba.paw.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +38,9 @@ public class TokenServiceImpl implements TokenService {
 
     @Autowired
     private UserDao userDao;
+
+    @Autowired
+    private UserDetailsService userDetailsService;
 
     @Transactional
     @Override
@@ -59,6 +68,11 @@ public class TokenServiceImpl implements TokenService {
             return false;
 
         userDao.updateUserActive(userId.get(), true);
+
+        String email = userDao.getById(userId.get()).orElseThrow(UserNotFoundException::new).getEmail();
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetailsService.loadUserByUsername(email), null, AuthorityUtils.NO_AUTHORITIES);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
         return true;
     }
 
