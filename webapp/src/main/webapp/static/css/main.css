@@ -614,7 +614,6 @@ input:has(+ .form-error), textarea:has(+ .form-error) {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 100%;
 }
 
 .restaurant-orders-table tr {
