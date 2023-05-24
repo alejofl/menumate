@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
@@ -28,6 +29,9 @@ public class TokenServiceTest {
 
     @Mock
     private UserDao userDao;
+
+    @Mock
+    private UserDetailsService userDetailsService;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -51,6 +55,7 @@ public class TokenServiceTest {
         when(verificationTokenDao.deleteTokenAndRetrieveUserId(TOKEN)).thenReturn(Optional.of(USER_ID));
         doNothing().when(userDao).updateUserActive(anyLong(), anyBoolean());
         when(userDao.getById(USER_ID)).thenReturn(Optional.of(new User(USER_ID, EMAIL, NAME, null, true, null)));
+        when(userDetailsService.loadUserByUsername(EMAIL)).thenReturn(null);
         Assert.assertTrue(tokenService.verifyUserAndDeleteVerificationToken(TOKEN));
     }
 
