@@ -18,13 +18,13 @@ import java.util.Random;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
-public class ImageJdbcDaoTest {
+public class ImageJpaDaoTest {
 
     @Autowired
     private DataSource ds;
 
     @Autowired
-    private ImageJdbcDao imageJdbcDao;
+    private ImageJpaDao imageJdbcDao;
 
     private JdbcTemplate jdbcTemplate;
 

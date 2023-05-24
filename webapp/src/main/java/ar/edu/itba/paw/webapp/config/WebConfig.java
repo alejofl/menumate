@@ -16,10 +16,12 @@ import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.DatabasePopulator;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -36,6 +38,7 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 @EnableWebMvc
+// @EnableTransactionManagement // TODO: Fix transactions
 @ComponentScan({"ar.edu.itba.paw.webapp.controller", "ar.edu.itba.paw.services", "ar.edu.itba.paw.persistence"})
 @PropertySource("classpath:application.properties")
 @Configuration
@@ -82,19 +85,15 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
-        factoryBean.setPackagesToScan("ar.edu.itba.paw.models");
+        factoryBean.setPackagesToScan("ar.edu.itba.paw.model");
         factoryBean.setDataSource(dataSource());
 
-        final HibernateJpaVendorAdapter jpaAdapter = new HibernateJpaVendorAdapter();
+        final JpaVendorAdapter jpaAdapter = new HibernateJpaVendorAdapter();
         factoryBean.setJpaVendorAdapter(jpaAdapter);
 
         final Properties properties = new Properties();
         properties.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQL92Dialect");
         properties.setProperty("hibernate.hbm2ddl.auto", "none");
-
-        // Print SQL queries to stdout (KEEP DISABLED, ONLY USE FOR TESTING):
-        // properties.setProperty("hibernate.show_sql", "true");
-        // properties.setProperty("format_sql", "true");
 
         factoryBean.setJpaProperties(properties);
 
