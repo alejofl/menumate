@@ -248,11 +248,14 @@
                             </div>
                             <div class="mb-3">
                                 <form:label path="role" cssClass="form-label"><spring:message code="editmenu.empoyees.modal.role"/></form:label>
-                                <form:select path="role" cssClass="form-select" multiple="false">
+                                <form:select path="role" cssClass="form-select" multiple="false" aria-labelledby="role-help-text">
                                     <c:forEach var="role" items="${roles}">
                                         <form:option value="${role.ordinal()}"><spring:message code="restaurantroles.${role.messageCode}"/></form:option>
                                     </c:forEach>
                                 </form:select>
+                                <div id="role-help-text" class="form-text">
+                                    <spring:message code="editmenu.employees.modal.role.helptext"/>
+                                </div>
                                 <form:errors path="role" element="div" cssClass="form-error"/>
                             </div>
                             <form:input path="restaurantId" type="hidden" value="${restaurant.restaurantId}"/>
