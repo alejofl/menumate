@@ -1,9 +1,9 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.model.*;
+import ar.edu.itba.paw.persistance.ImageDao;
 import ar.edu.itba.paw.persistance.RestaurantDao;
 import ar.edu.itba.paw.service.CategoryService;
-import ar.edu.itba.paw.service.ImageService;
 import ar.edu.itba.paw.service.ProductService;
 import ar.edu.itba.paw.service.RestaurantService;
 import ar.edu.itba.paw.util.PaginatedResult;
@@ -26,7 +26,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     private ProductService productService;
 
     @Autowired
-    private ImageService imageService;
+    private ImageDao imageDao;
 
     @Autowired
     private CategoryService categoryService;
@@ -34,9 +34,9 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Transactional
     @Override
     public long create(String name, String email, int specialty, long ownerUserId, String description, String address, int maxTables, byte[] logo, byte[] portrait1, byte[] portrait2) {
-        long logoKey = imageService.create(logo);
-        long portrait1Key = imageService.create(portrait1);
-        long portrait2Key = imageService.create(portrait2);
+        long logoKey = imageDao.create(logo);
+        long portrait1Key = imageDao.create(portrait1);
+        long portrait2Key = imageDao.create(portrait2);
 
         return restaurantDao.create(name, email, specialty, ownerUserId, description, address, maxTables, logoKey, portrait1Key, portrait2Key);
     }

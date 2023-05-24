@@ -19,6 +19,7 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -37,12 +38,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+@EnableScheduling
+@EnableAsync(proxyTargetClass = true)
+@EnableTransactionManagement
 @EnableWebMvc
-// @EnableTransactionManagement // TODO: Fix transactions
 @ComponentScan({"ar.edu.itba.paw.webapp.controller", "ar.edu.itba.paw.services", "ar.edu.itba.paw.persistence"})
 @PropertySource("classpath:application.properties")
 @Configuration
-@EnableScheduling
 public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Autowired

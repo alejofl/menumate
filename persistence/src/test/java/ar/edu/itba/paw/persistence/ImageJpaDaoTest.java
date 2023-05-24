@@ -24,7 +24,7 @@ public class ImageJpaDaoTest {
     private DataSource ds;
 
     @Autowired
-    private ImageJpaDao imageJdbcDao;
+    private ImageJpaDao imageDao;
 
     private JdbcTemplate jdbcTemplate;
 
@@ -44,7 +44,7 @@ public class ImageJpaDaoTest {
 
     @Test
     public void testCreateImg() throws SQLException {
-        final long image = imageJdbcDao.create(IMG_INFO_1);
+        final long image = imageDao.create(IMG_INFO_1);
         Assert.assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "images"));
     }
 
@@ -52,9 +52,9 @@ public class ImageJpaDaoTest {
     public void testUpdateImg() throws SQLException {
         jdbcTemplate.update("INSERT INTO images (image_id, bytes) VALUES (?, ?)", IMAGE_ID, IMG_INFO_1);
 
-        imageJdbcDao.update(IMAGE_ID, IMG_INFO_2);
+        imageDao.update(IMAGE_ID, IMG_INFO_2);
 
-        Optional<byte[]> maybeImage = imageJdbcDao.getById(IMAGE_ID);
+        Optional<byte[]> maybeImage = imageDao.getById(IMAGE_ID);
         Assert.assertTrue(maybeImage.isPresent());
         Assert.assertArrayEquals(IMG_INFO_2, maybeImage.get());
     }
@@ -63,15 +63,15 @@ public class ImageJpaDaoTest {
     public void testDeleteImg() throws SQLException {
         jdbcTemplate.update("INSERT INTO images (image_id, bytes) VALUES (?, ?)", IMAGE_ID, IMG_INFO_1);
 
-        imageJdbcDao.delete(IMAGE_ID);
-        Assert.assertFalse(imageJdbcDao.getById(IMAGE_ID).isPresent());
+        imageDao.delete(IMAGE_ID);
+        Assert.assertFalse(imageDao.getById(IMAGE_ID).isPresent());
     }
 
     @Test
     public void testGetImageById() throws SQLException {
         jdbcTemplate.update("INSERT INTO images (image_id, bytes) VALUES (?, ?)", IMAGE_ID, IMG_INFO_1);
 
-        Optional<byte[]> image = imageJdbcDao.getById(IMAGE_ID);
+        Optional<byte[]> image = imageDao.getById(IMAGE_ID);
         Assert.assertTrue(image.isPresent());
         Assert.assertArrayEquals(IMG_INFO_1, image.get());
     }

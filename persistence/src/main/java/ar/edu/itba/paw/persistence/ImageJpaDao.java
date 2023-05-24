@@ -5,7 +5,6 @@ import ar.edu.itba.paw.persistance.ImageDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -19,7 +18,6 @@ public class ImageJpaDao implements ImageDao {
     @PersistenceContext
     private EntityManager em;
 
-    @Transactional
     @Override
     public long create(byte[] bytes) {
         final Image image = new Image(null, bytes);
@@ -34,7 +32,6 @@ public class ImageJpaDao implements ImageDao {
         return image == null ? Optional.empty() : Optional.of(image.getBytes());
     }
 
-    @Transactional
     @Override
     public void update(long imageId, byte[] bytes) {
         final Image image = new Image(imageId, bytes);
@@ -42,7 +39,6 @@ public class ImageJpaDao implements ImageDao {
         LOGGER.info("Updated image with ID {}, length is now {}", image.getImageId(), image.getBytes().length);
     }
 
-    @Transactional
     @Override
     public void delete(long imageId) {
         em.remove(new Image(imageId, null));
