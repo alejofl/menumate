@@ -28,8 +28,12 @@ body {
     min-height: 100vh;
 }
 
-p {
+p, span, h1, h2, h3, h4, h5, h6 {
     overflow-wrap: anywhere;
+}
+
+.no-wrap {
+    overflow-wrap: normal;
 }
 
 .content {
