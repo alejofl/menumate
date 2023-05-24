@@ -155,7 +155,7 @@ public class UserController {
             restaurantService.addTag(restaurantId, tag);
         }
 
-        return new ModelAndView(String.format("redirect:/restaurants/%d", restaurantId));
+        return new ModelAndView(String.format("redirect:/restaurants/%d/edit", restaurantId));
     }
 
     @RequestMapping(value = "/restaurants/{id:\\d+}/edit", method = RequestMethod.GET)
