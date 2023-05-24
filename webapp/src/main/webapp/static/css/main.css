@@ -605,6 +605,13 @@ input:has(+ .form-error), textarea:has(+ .form-error) {
     color: var(--gray);
 }
 
+.edit-menu-add span {
+    font-weight: 900;
+    text-transform: uppercase;
+    color: var(--gray);
+    text-align: center;
+}
+
 .add-item-card {
     width: 200px;
     height: 200px;

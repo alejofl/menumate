@@ -77,8 +77,9 @@
                     </c:forEach>
                     <a class="add-product-button clickable-object" type="button" data-bs-toggle="modal" data-bs-target="#add-item-modal" data-category-id="${entry.key.categoryId}">
                         <div class="card add-item-card edit-menu-add">
-                            <div class="card-body d-flex justify-content-center align-items-center">
+                            <div class="card-body d-flex justify-content-center flex-column align-items-center gap-2">
                                 <i class="bi bi-plus-circle-fill"></i>
+                                <span><spring:message code="editmenu.addproduct.modal.title"/></span>
                             </div>
                         </div>
                     </a>
@@ -86,8 +87,9 @@
             </c:forEach>
             <a type="button" class="clickable-object" id="add-category-button" data-bs-toggle="modal" data-bs-target="#add-category-modal">
                 <div class="card my-4 edit-menu-add">
-                    <div class="card-body d-flex justify-content-center align-items-center">
+                    <div class="card-body d-flex justify-content-center align-items-center gap-2">
                         <i class="bi bi-plus-circle-fill"></i>
+                        <span><spring:message code="editmenu.addcategory.modal.title"/></span>
                     </div>
                 </div>
             </a>
