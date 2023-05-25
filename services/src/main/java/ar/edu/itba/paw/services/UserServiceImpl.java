@@ -6,6 +6,8 @@ import ar.edu.itba.paw.persistance.VerificationTokenDao;
 import ar.edu.itba.paw.service.EmailService;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.util.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,6 +19,9 @@ import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
+
     @Autowired
     private UserDao userDao;
 
@@ -29,21 +34,6 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private EmailService emailService;
 
-    @Transactional
-    @Override
-    public User createOrConsolidate(String email, String password, String name) throws MessagingException {
-        password = password == null ? null : passwordEncoder.encode(password);
-        final User user = userDao.createOrConsolidate(email, password, name, LocaleContextHolder.getLocale().getLanguage());
-        String token = verificationTokenDao.generateToken(user.getUserId());
-        emailService.sendUserVerificationEmail(user, token);
-        return user;
-    }
-
-    @Override
-    public User createIfNotExists(String email, String name) {
-        return userDao.createIfNotExists(email, name, LocaleContextHolder.getLocale().getLanguage());
-    }
-
     @Override
     public Optional<User> getById(long userId) {
         return userDao.getById(userId);
@@ -54,13 +44,42 @@ public class UserServiceImpl implements UserService {
         return userDao.getByEmail(email);
     }
 
+    @Transactional
     @Override
-    public boolean isUserEmailRegisteredAndConsolidated(String email) {
-        return userDao.isUserEmailRegisteredAndConsolidated(email);
+    public User createOrConsolidate(String email, String password, String name) throws MessagingException {
+        password = password == null ? null : passwordEncoder.encode(password);
+
+        final Optional<User> maybeUser = userDao.getByEmail(email);
+        if (!maybeUser.isPresent())
+            return userDao.create(email, password, name, LocaleContextHolder.getLocale().getLanguage());
+
+        final User user = maybeUser.get();
+        if (password == null)
+            throw new IllegalArgumentException("Cannot createOrConsolidate an existing user with a null password");
+        if (user.getPassword() != null)
+            throw new IllegalStateException("Cannot createOrConsolidate an already consolidated user");
+
+        userDao.updatePassword(user, password);
+        LOGGER.info("Consolidated user with ID {}", user.getUserId());
+
+        String token = verificationTokenDao.generateToken(user.getUserId());
+        emailService.sendUserVerificationEmail(user, token);
+        return user;
+    }
+
+    @Transactional
+    @Override
+    public User createIfNotExists(String email, String name) {
+        Optional<User> maybeUser = userDao.getByEmail(email);
+        if (maybeUser.isPresent())
+            return maybeUser.get();
+
+        return userDao.create(email, null, name, LocaleContextHolder.getLocale().getLanguage());
     }
 
     @Override
-    public Optional<Pair<User, String>> getByEmailWithPassword(String email) {
-        return userDao.getByEmailWithPassword(email);
+    public boolean isUserEmailRegisteredAndConsolidated(String email) {
+        Optional<User> maybeUser = userDao.getByEmail(email);
+        return maybeUser.isPresent() && maybeUser.get().getPassword() != null;
     }
 }

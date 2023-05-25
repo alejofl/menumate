@@ -6,19 +6,14 @@ import ar.edu.itba.paw.util.Pair;
 import java.util.Optional;
 
 public interface UserDao {
-    User createOrConsolidate(String email, String password, String name, String language);
-
-    User createIfNotExists(String email, String name, String language);
-
-    void updatePassword(long userId, String password);
-
-    void updateUserActive(long userId, boolean isActive);
 
     Optional<User> getById(long userId);
 
     Optional<User> getByEmail(String email);
 
-    boolean isUserEmailRegisteredAndConsolidated(String email);
+    User create(String email, String password, String name, String language);
 
-    Optional<Pair<User, String>> getByEmailWithPassword(String email);
+    void updatePassword(User user, String password);
+
+    void updateIsActive(User user, boolean isActive);
 }

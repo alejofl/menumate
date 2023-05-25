@@ -18,19 +18,19 @@ import java.util.Optional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
-public class UserJdbcDaoTest {
+public class UserJpaDaoTest {
     private static final long ID = 791;
     private static final String EMAIL = "peter@peter.com";
     private static final String PASSWORD = "super12secret34";
     private static final String NAME = "Peter Parker";
-    private static final String PREFERRED_LANGUAGE = "en";
+    private static final String PREFERRED_LANGUAGE = "qx";
     private static final boolean IS_ACTIVE = true;
 
     @Autowired
     private DataSource ds;
 
     @Autowired
-    private UserJdbcDao userDao;
+    private UserJpaDao userDao;
 
     private JdbcTemplate jdbcTemplate;
 
@@ -47,7 +47,7 @@ public class UserJdbcDaoTest {
         Optional<User> maybeUser = userDao.getById(ID);
 
         Assert.assertTrue(maybeUser.isPresent());
-        Assert.assertEquals(ID, maybeUser.get().getUserId());
+        Assert.assertEquals(ID, maybeUser.get().getUserId().longValue());
         Assert.assertEquals(EMAIL, maybeUser.get().getEmail());
         Assert.assertEquals(NAME, maybeUser.get().getName());
         Assert.assertEquals(IS_ACTIVE, maybeUser.get().getIsActive());
@@ -61,7 +61,7 @@ public class UserJdbcDaoTest {
         Optional<User> maybeUser = userDao.getByEmail(EMAIL);
 
         Assert.assertTrue(maybeUser.isPresent());
-        Assert.assertEquals(ID, maybeUser.get().getUserId());
+        Assert.assertEquals(ID, maybeUser.get().getUserId().longValue());
         Assert.assertEquals(EMAIL, maybeUser.get().getEmail());
         Assert.assertEquals(NAME, maybeUser.get().getName());
         Assert.assertEquals(IS_ACTIVE, maybeUser.get().getIsActive());
@@ -76,12 +76,14 @@ public class UserJdbcDaoTest {
 
     @Test
     public void testCreate() {
-        User user = userDao.createOrConsolidate(EMAIL, PASSWORD, NAME, PREFERRED_LANGUAGE);
+        User user = userDao.create(EMAIL, PASSWORD, NAME, PREFERRED_LANGUAGE);
 
         Assert.assertNotNull(user);
         Assert.assertEquals(EMAIL, user.getEmail());
         Assert.assertEquals(NAME, user.getName());
         Assert.assertEquals(PREFERRED_LANGUAGE, user.getPreferredLanguage());
         Assert.assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "users"));
+
+        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "users", "user_id=" + user.getUserId() + " AND email='" + EMAIL + "' AND password='" + PASSWORD + "' AND name='" + NAME + "' AND preferred_language='" + PREFERRED_LANGUAGE + "'"));
     }
 }

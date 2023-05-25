@@ -67,10 +67,10 @@ public class TokenServiceImpl implements TokenService {
         if (!userId.isPresent())
             return false;
 
-        userDao.updateUserActive(userId.get(), true);
+        User user = userDao.getById(userId.get()).orElseThrow(UserNotFoundException::new);
+        userDao.updateIsActive(user, true);
 
-        String email = userDao.getById(userId.get()).orElseThrow(UserNotFoundException::new).getEmail();
-        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetailsService.loadUserByUsername(email), null, AuthorityUtils.NO_AUTHORITIES);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetailsService.loadUserByUsername(user.getEmail()), null, AuthorityUtils.NO_AUTHORITIES);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         return true;
@@ -84,7 +84,8 @@ public class TokenServiceImpl implements TokenService {
             return false;
 
         newPassword = passwordEncoder.encode(newPassword);
-        userDao.updatePassword(userId.get(), newPassword);
+        User user = userDao.getById(userId.get()).orElseThrow(UserNotFoundException::new);
+        userDao.updatePassword(user, newPassword);
         return true;
     }
 

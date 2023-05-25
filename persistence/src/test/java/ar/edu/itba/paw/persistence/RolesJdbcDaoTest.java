@@ -215,7 +215,7 @@ public class RolesJdbcDaoTest {
 
         Assert.assertEquals(1, result.size());
         Assert.assertEquals(RestaurantRoleLevel.OWNER, result.get(0).getValue());
-        Assert.assertEquals(OWNER_ID, result.get(0).getKey().getUserId());
+        Assert.assertEquals(OWNER_ID, result.get(0).getKey().getUserId().longValue());
     }
 
     @Test

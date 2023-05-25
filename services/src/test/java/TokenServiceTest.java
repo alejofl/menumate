@@ -53,7 +53,7 @@ public class TokenServiceTest {
     @Test
     public void verifyUser() {
         when(verificationTokenDao.deleteTokenAndRetrieveUserId(TOKEN)).thenReturn(Optional.of(USER_ID));
-        doNothing().when(userDao).updateUserActive(anyLong(), anyBoolean());
+        doNothing().when(userDao).updateIsActive(any(User.class), anyBoolean());
         when(userDao.getById(USER_ID)).thenReturn(Optional.of(new User(USER_ID, EMAIL, NAME, null, true, null)));
         when(userDetailsService.loadUserByUsername(EMAIL)).thenReturn(null);
         Assert.assertTrue(tokenService.verifyUserAndDeleteVerificationToken(TOKEN));
@@ -69,7 +69,7 @@ public class TokenServiceTest {
     public void updatePassword() {
         when(resetPasswordTokenDao.deleteTokenAndRetrieveUserId(TOKEN)).thenReturn(Optional.of(USER_ID));
         when(passwordEncoder.encode(anyString())).thenReturn(NEW_PASSWORD);
-        doNothing().when(userDao).updatePassword(anyLong(), anyString());
+        doNothing().when(userDao).updatePassword(any(User.class), anyString());
         Assert.assertTrue(tokenService.updatePasswordAndDeleteResetPasswordToken(TOKEN, NEW_PASSWORD));
     }
 
