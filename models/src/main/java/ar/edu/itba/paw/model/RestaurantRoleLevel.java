@@ -15,7 +15,7 @@ public enum RestaurantRoleLevel {
     OWNER("owner"),
 
     /**
-     * Can edit the restaurant and assign roles.
+     * Can edit the restaurant and handle orders.
      */
     ADMIN("admin"),
 
