@@ -38,16 +38,4 @@ public class UserJpaDao implements UserDao {
         LOGGER.info("Created {}consolidated user with ID {}", password == null ? "un" : "", user.getUserId());
         return user;
     }
-
-    @Override
-    public void updatePassword(User user, String password) {
-        user.setPassword(password);
-        em.persist(user);
-    }
-
-    @Override
-    public void updateIsActive(User user, boolean isActive) {
-        user.setIsActive(isActive);
-        em.persist(user);
-    }
 }

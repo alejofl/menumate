@@ -2,7 +2,6 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.exception.UserNotFoundException;
 import ar.edu.itba.paw.model.User;
-import ar.edu.itba.paw.service.TokenService;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.form.EmailForm;
 import ar.edu.itba.paw.webapp.form.RegisterForm;
@@ -11,15 +10,12 @@ import org.hibernate.validator.constraints.Length;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.mail.MessagingException;
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @Controller
@@ -29,9 +25,6 @@ public class AuthController {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private TokenService tokenService;
 
     @RequestMapping(value = "/auth/register", method = RequestMethod.GET)
     public ModelAndView registerForm(@ModelAttribute("registerForm") final RegisterForm registerForm) {
@@ -72,7 +65,7 @@ public class AuthController {
                     .addObject("url", "/auth/verify");
         }
 
-        if (tokenService.verifyUserAndDeleteVerificationToken(token))
+        if (userService.verifyUserAndDeleteVerificationToken(token))
             return new ModelAndView("redirect:/");
         else
             return new ModelAndView("redirect:/auth/login?error=request-error");
@@ -88,7 +81,7 @@ public class AuthController {
 
         try {
             User user = userService.getByEmail(emailForm.getEmail()).orElseThrow(UserNotFoundException::new);
-            tokenService.sendUserVerificationToken(user);
+            userService.sendUserVerificationToken(user);
             return new ModelAndView("redirect:/auth/login?type=verify-emailed");
         } catch (UserNotFoundException e) {
             LOGGER.error("User not found when verifying account");
@@ -110,7 +103,7 @@ public class AuthController {
                     .addObject("url", "/auth/reset-password");
         }
 
-        if (tokenService.isValidResetPasswordToken(token))
+        if (userService.isValidResetPasswordToken(token))
             return new ModelAndView("redirect:/auth/reset-password-form?token=" + token);
         else
             return new ModelAndView("redirect:/auth/login?error=request-error");
@@ -126,7 +119,7 @@ public class AuthController {
 
         try {
             User user = userService.getByEmail(emailForm.getEmail()).orElseThrow(UserNotFoundException::new);
-            tokenService.sendPasswordResetToken(user);
+            userService.sendPasswordResetToken(user);
             return new ModelAndView("redirect:/auth/login?type=reset-password-emailed");
         } catch (UserNotFoundException e) {
             LOGGER.error("User not found when resetting password");
@@ -142,7 +135,7 @@ public class AuthController {
             @RequestParam(value = "token", required = false) @Length(min = 32, max = 32) final String token,
             @ModelAttribute("resetPasswordForm") final ResetPasswordForm resetPasswordForm
     ) {
-        if (token != null && tokenService.isValidResetPasswordToken(token))
+        if (token != null && userService.isValidResetPasswordToken(token))
             return new ModelAndView("auth/reset_password").addObject("token", token);
         else
             return new ModelAndView("redirect:/auth/login?error=mailer_error");
@@ -157,7 +150,7 @@ public class AuthController {
         if (errors.hasErrors())
             return resetPasswordForm(token, resetPasswordForm);
 
-        if (tokenService.updatePasswordAndDeleteResetPasswordToken(token, resetPasswordForm.getPassword())) {
+        if (userService.updatePasswordAndDeleteResetPasswordToken(token, resetPasswordForm.getPassword())) {
             return new ModelAndView("redirect:/auth/login?type=reset-password-success");
         } else {
             return new ModelAndView("redirect:/auth/login?error=password-reset-error");

@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.webapp.auth;
 
-import ar.edu.itba.paw.service.TokenService;
+import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.exception.UserNotVerifiedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.AuthenticationException;
@@ -18,7 +18,7 @@ import java.io.IOException;
 public class CustomAuthenticationEntryPoint extends SimpleUrlAuthenticationFailureHandler {
 
     @Autowired
-    private TokenService verificationService;
+    private UserService userService;
 
     private static final String LOGIN_URL = "/auth/login";
     private static final String VERIFY_EMAIL_ERROR = "?type=verify-emailed";
@@ -30,9 +30,9 @@ public class CustomAuthenticationEntryPoint extends SimpleUrlAuthenticationFailu
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         if (exception.getCause() instanceof UserNotVerifiedException) {
             UserNotVerifiedException e = (UserNotVerifiedException) exception.getCause();
-            if (!verificationService.hasActiveVerificationToken(e.getUser().getUserId())) {
+            if (!userService.hasActiveVerificationToken(e.getUser().getUserId())) {
                 try {
-                    verificationService.sendUserVerificationToken(e.getUser());
+                    userService.sendUserVerificationToken(e.getUser());
                     setDefaultFailureUrl(LOGIN_URL + VERIFY_EMAIL_ERROR);
                 } catch (MessagingException ex) {
                     setDefaultFailureUrl(LOGIN_URL + MAILER_ERROR);

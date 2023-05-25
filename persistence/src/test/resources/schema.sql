@@ -16,17 +16,17 @@ CREATE TABLE IF NOT EXISTS users
     preferred_language VARCHAR(3) NOT NULL DEFAULT 'en'
 );
 
-CREATE TABLE IF NOT EXISTS user_verification_codes
+CREATE TABLE IF NOT EXISTS user_verification_tokens
 (
-    code    VARCHAR(32) PRIMARY KEY,
-    user_id INT UNIQUE REFERENCES users (user_id) ON DELETE CASCADE NOT NULL,
+    user_id INT PRIMARY KEY REFERENCES users (user_id) ON DELETE CASCADE,
+    token   VARCHAR(32) UNIQUE NOT NULL,
     expires TIMESTAMP NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS user_resetpassword_codes
+CREATE TABLE IF NOT EXISTS user_resetpassword_tokens
 (
-    code    VARCHAR(32) PRIMARY KEY,
-    user_id INT UNIQUE REFERENCES users (user_id) ON DELETE CASCADE NOT NULL,
+    user_id INT PRIMARY KEY REFERENCES users (user_id) ON DELETE CASCADE,
+    token   VARCHAR(32) UNIQUE NOT NULL,
     expires TIMESTAMP NOT NULL
 );
 

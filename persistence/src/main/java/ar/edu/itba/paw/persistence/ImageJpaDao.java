@@ -19,17 +19,17 @@ public class ImageJpaDao implements ImageDao {
     private EntityManager em;
 
     @Override
+    public Optional<byte[]> getById(long imageId) {
+        final Image image = em.find(Image.class, imageId);
+        return image == null ? Optional.empty() : Optional.of(image.getBytes());
+    }
+
+    @Override
     public long create(byte[] bytes) {
         final Image image = new Image(null, bytes);
         em.persist(image);
         LOGGER.info("Created image with ID {}, length {}", image.getImageId(), image.getBytes().length);
         return image.getImageId();
-    }
-
-    @Override
-    public Optional<byte[]> getById(long imageId) {
-        final Image image = em.find(Image.class, imageId);
-        return image == null ? Optional.empty() : Optional.of(image.getBytes());
     }
 
     @Override
