@@ -41,7 +41,7 @@ public class ImageJpaDao implements ImageDao {
 
     @Override
     public void delete(long imageId) {
-        em.remove(new Image(imageId, null));
+        em.remove(em.getReference(Image.class, imageId));
         LOGGER.info("Deleted image with ID {}", imageId);
     }
 }
