@@ -49,7 +49,7 @@ public class RestaurantJpaDao implements RestaurantDao {
             case ALPHABETIC:
                 return "LOWER(r.name)";
             case RATING:
-                return "r.rating_average";
+                return "r.average_rating";
             case PRICE:
                 return "r.average_price";
             default:

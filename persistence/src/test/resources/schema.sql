@@ -126,7 +126,7 @@ DROP VIEW IF EXISTS restaurant_details;
 CREATE VIEW restaurant_details AS
 (
     SELECT restaurants.*,
-    COALESCE(AVG(CAST(order_reviews.rating AS FLOAT)), 0) AS rating_average,
+    COALESCE(AVG(CAST(order_reviews.rating AS FLOAT)), 0) AS average_rating,
     COUNT(order_reviews.order_id) AS review_count,
     (
         SELECT COALESCE(AVG(products.price), 0) FROM products

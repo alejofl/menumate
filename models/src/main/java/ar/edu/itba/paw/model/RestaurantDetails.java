@@ -14,7 +14,7 @@ public class RestaurantDetails {
     @PrimaryKeyJoinColumn(name = "restaurant_id", referencedColumnName = "restaurant_id")
     private Restaurant restaurant;
 
-    @Column(name = "rating_average")
+    @Column(name = "average_rating")
     private int averageRating;
 
     @Column(name = "review_count")
@@ -25,13 +25,6 @@ public class RestaurantDetails {
 
     RestaurantDetails() {
 
-    }
-
-    public RestaurantDetails(final Restaurant restaurant, final float averageRating, final int reviewCount, final float averageProductPrice) {
-        this.restaurant = restaurant;
-        this.averageRating = Math.round(averageRating);
-        this.reviewCount = reviewCount;
-        this.averageProductPrice = averageProductPrice;
     }
 
     public Restaurant getRestaurant() {
