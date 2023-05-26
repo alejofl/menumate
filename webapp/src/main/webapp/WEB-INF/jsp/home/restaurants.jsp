@@ -73,7 +73,7 @@
                 <c:url var="restaurantUrl" value="/restaurants/${restaurantDetails.restaurant.restaurantId}"/>
                 <c:url var="mainImage" value="/images/${restaurantDetails.restaurant.portrait1Id}"/>
                 <c:url var="hoverImage" value="/images/${restaurantDetails.restaurant.portrait2Id}"/>
-                <c:set var="tags" value="${restaurantDetails.tags}" scope="request"/>
+                <c:set var="tags" value="${restaurantDetails.restaurant.tags}" scope="request"/>
                 <jsp:include page="/WEB-INF/jsp/components/restaurant_card.jsp">
                     <jsp:param name="name" value="${restaurantDetails.restaurant.name}"/>
                     <jsp:param name="address" value="${restaurantDetails.restaurant.address}"/>

@@ -42,7 +42,7 @@ public class RestaurantJpaDao implements RestaurantDao {
         List<Restaurant> restaurants = new ArrayList<>();
         for (int i = 0; i < pageSize; i++)
             getById(i).ifPresent(r -> restaurants.add(r));
-        List<RestaurantDetails> pedro = restaurants.stream().map(restaurant -> new RestaurantDetails(restaurant, 1, 1, 1, restaurant.getTags())).collect(Collectors.toList());
+        List<RestaurantDetails> pedro = restaurants.stream().map(restaurant -> new RestaurantDetails(restaurant, 1, 1, 1)).collect(Collectors.toList());
         return new PaginatedResult<>(pedro, pageNumber, pageSize, restaurants.size());
     }
 
