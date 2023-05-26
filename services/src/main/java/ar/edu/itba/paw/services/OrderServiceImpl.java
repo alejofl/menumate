@@ -53,42 +53,54 @@ public class OrderServiceImpl implements OrderService {
     // notification email fails.
     @Override
     public Order createDelivery(long restaurantId, long userId, String address, List<OrderItem> items) {
-        Order order = orderDao.createDelivery(restaurantId, userId, address, items);
+        Order order = orderDao.createDelivery(restaurantId, userId, address);
+        List<OrderItem> orderList = order.getItems();
+        orderList.addAll(items);
         sendOrderReceivedEmails(order);
         return order;
     }
 
     @Override
     public Order createDelivery(long restaurantId, String name, String email, String address, List<OrderItem> items) {
-        Order order = orderDao.createDelivery(restaurantId, getOrCreateUserId(name, email), address, items);
+        Order order = orderDao.createDelivery(restaurantId, getOrCreateUserId(name, email), address);
+        List<OrderItem> orderList = order.getItems();
+        orderList.addAll(items);
         sendOrderReceivedEmails(order);
         return order;
     }
 
     @Override
     public Order createDineIn(long restaurantId, long userId, int tableNumber, List<OrderItem> items) {
-        Order order = orderDao.createDineIn(restaurantId, userId, tableNumber, items);
+        Order order = orderDao.createDineIn(restaurantId, userId, tableNumber);
+        List<OrderItem> orderList = order.getItems();
+        orderList.addAll(items);
         sendOrderReceivedEmails(order);
         return order;
     }
 
     @Override
     public Order createDineIn(long restaurantId, String name, String email, int tableNumber, List<OrderItem> items) {
-        Order order = orderDao.createDineIn(restaurantId, getOrCreateUserId(name, email), tableNumber, items);
+        Order order = orderDao.createDineIn(restaurantId, getOrCreateUserId(name, email), tableNumber);
+        List<OrderItem> orderList = order.getItems();
+        orderList.addAll(items);
         sendOrderReceivedEmails(order);
         return order;
     }
 
     @Override
     public Order createTakeAway(long restaurantId, long userId, List<OrderItem> items) {
-        Order order = orderDao.createTakeaway(restaurantId, userId, items);
+        Order order = orderDao.createTakeaway(restaurantId, userId);
+        List<OrderItem> orderList = order.getItems();
+        orderList.addAll(items);
         sendOrderReceivedEmails(order);
         return order;
     }
 
     @Override
     public Order createTakeAway(long restaurantId, String name, String email, List<OrderItem> items) {
-        Order order = orderDao.createTakeaway(restaurantId, getOrCreateUserId(name, email), items);
+        Order order = orderDao.createTakeaway(restaurantId, getOrCreateUserId(name, email));
+        List<OrderItem> orderList = order.getItems();
+        orderList.addAll(items);
         sendOrderReceivedEmails(order);
         return order;
     }

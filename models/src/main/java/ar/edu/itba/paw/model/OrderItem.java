@@ -8,10 +8,10 @@ import javax.persistence.*;
 @Table(name = "order_items")
 public class OrderItem {
 
-//    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    //    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     //    @PrimaryKeyJoinColumn(name = "product_id", referencedColumnName = "product_id")
     //    private final Product product;
-
+    @Id
     @Column(name = "product_id")
     private long productId;
 

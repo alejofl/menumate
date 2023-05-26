@@ -3,6 +3,7 @@ package ar.edu.itba.paw.model;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -55,7 +56,7 @@ public class Order {
     Order() {
     }
 
-    public Order(OrderType orderType, Restaurant restaurant, User user, String address, Integer tableNumber, List<OrderItem> items) {
+    public Order(OrderType orderType, Restaurant restaurant, User user, String address, Integer tableNumber) {
         this.orderType = orderType;
         this.restaurant = restaurant;
         this.user = user;
@@ -66,7 +67,7 @@ public class Order {
         this.dateCancelled = null;
         this.address = address;
         this.tableNumber = tableNumber;
-        this.items = items;
+        this.items = new ArrayList<>();
     }
 
     // TODO: REMOVE THIS CONSTRUCTOR, It's only here for backwards compatibility until ORM migration is finished.
