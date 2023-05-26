@@ -44,7 +44,7 @@ public class UserVerificationTokenJpaDao implements UserVerificationTokenDao {
     @Override
     public void delete(UserVerificationToken userVerificationToken) {
         em.remove(userVerificationToken);
-        LOGGER.info("Deleted user verification token for user id {}", userVerificationToken.getUser().getUserId());
+        LOGGER.info("Deleted user verification token for user id {}", userVerificationToken.getUserId());
     }
 
     @Override

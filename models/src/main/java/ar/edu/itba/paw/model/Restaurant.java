@@ -15,17 +15,21 @@ public class Restaurant {
     @Column(name = "restaurant_id")
     private Long restaurantId;
 
-    @Column
+    @Column(nullable = false)
     private String name;
 
-    @Column
+    @Column(nullable = false)
     private String email;
 
     @Enumerated(EnumType.ORDINAL)
+    @Column(nullable = false)
     private RestaurantSpecialty specialty;
 
+    @Column(name = "owner_user_id", nullable = false)
+    private long ownerUserId;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
-    @JoinColumn(name = "owner_user_id", referencedColumnName = "user_id")
+    @JoinColumn(name = "owner_user_id", referencedColumnName = "user_id", nullable = false)
     private User owner;
     
     @Column(name = "date_created", nullable = false, insertable = false, updatable = false)
@@ -130,12 +134,17 @@ public class Restaurant {
         this.specialty = specialty;
     }
 
+    public long getOwnerUserId() {
+        return ownerUserId;
+    }
+
     public User getOwner() {
         return owner;
     }
 
     public void setOwner(User owner) {
         this.owner = owner;
+        this.ownerUserId = owner.getUserId();
     }
 
     public LocalDateTime getDateCreated() {

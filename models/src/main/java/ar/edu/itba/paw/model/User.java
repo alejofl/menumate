@@ -10,28 +10,28 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_user_id_seq")
     @SequenceGenerator(sequenceName = "users_user_id_seq", name = "users_user_id_seq", allocationSize = 1)
-    @Column(name = "user_id")
+    @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @Column
+    @Column(nullable = false)
     private String email;
 
     @Column
     private String password;
 
-    @Column
+    @Column(nullable = false)
     private String name;
 
-    @Column(name = "date_joined", insertable = false)
+    @Column(name = "date_joined", nullable = false, insertable = false, updatable = false)
     private LocalDateTime dateJoined;
 
     @Column(name = "image_id")
     private Long imageId;
 
-    @Column(name = "is_active")
+    @Column(name = "is_active", nullable = false)
     private boolean isActive;
 
-    @Column(name = "preferred_language")
+    @Column(name = "preferred_language", nullable = false)
     private String preferredLanguage;
 
     User() {
@@ -64,6 +64,10 @@ public class User {
 
     public String getEmail() {
         return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPassword() {

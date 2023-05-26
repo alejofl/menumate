@@ -44,7 +44,7 @@ public class UserResetpasswordTokenJpaDao implements UserResetpasswordTokenDao {
     @Override
     public void delete(UserResetpasswordToken userResetpasswordToken) {
         em.remove(userResetpasswordToken);
-        LOGGER.info("Deleted user resetpassword token for user id {}", userResetpasswordToken.getUser().getUserId());
+        LOGGER.info("Deleted user resetpassword token for user id {}", userResetpasswordToken.getUserId());
     }
 
     @Override

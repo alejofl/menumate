@@ -32,6 +32,10 @@ public class UserResetpasswordToken {
         this.expires = expires;
     }
 
+    public long getUserId() {
+        return userId;
+    }
+
     public User getUser() {
         return user;
     }
