@@ -17,7 +17,7 @@
 <div class="content">
     <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
     <div class="restaurant-header">
-        <img src="<c:url value="/images/${restaurant.portraitId1}"/>" class="menu-item-card-img" alt="${restaurant.name}">
+        <img src="<c:url value="/images/${restaurant.portrait1Id}"/>" class="menu-item-card-img" alt="${restaurant.name}">
     </div>
     <div class="restaurant-information-container">
         <div class="restaurant-information">

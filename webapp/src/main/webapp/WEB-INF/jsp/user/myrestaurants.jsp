@@ -26,7 +26,7 @@
                     <div class="card restaurant-card">
                         <img
                                 class="card-img restaurant-card-img"
-                                style="--main_image: url(<c:url value="/images/${triplet.x.portraitId1}"/>); --hover_image: url(<c:url value="/images/${triplet.x.portraitId2}"/>)"
+                                style="--main_image: url(<c:url value="/images/${triplet.x.portrait1Id}"/>); --hover_image: url(<c:url value="/images/${triplet.x.portrait2Id}"/>)"
                         >
                         <div class="card-body">
                             <h5 class="card-title"><c:out value="${triplet.x.name}"/></h5>

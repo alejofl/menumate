@@ -94,7 +94,7 @@ public class EmailServiceImpl implements EmailService {
     @Async
     @Override
     public void sendOrderReceivalForRestaurant(Restaurant restaurant, Order order) throws MessagingException {
-        Locale locale = new Locale(userService.getById(restaurant.getOwnerUserId()).orElseThrow(UserNotFoundException::new).getPreferredLanguage());
+        Locale locale = new Locale(restaurant.getOwner().getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
         params.put("userName", order.getUser().getName());
         params.put("orderId", order.getOrderId());

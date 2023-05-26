@@ -19,7 +19,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class UserController {
@@ -137,25 +139,25 @@ public class UserController {
             return createRestaurant(form);
         }
 
+        List<RestaurantTags> tags = form.getTags().stream().map(RestaurantTags::fromOrdinal).collect(Collectors.toList());
+
         PawAuthUserDetails userDetails = ControllerUtils.getCurrentUserDetailsOrThrow();
-        long restaurantId = restaurantService.create(
+        Restaurant restaurant = restaurantService.create(
                 form.getName(),
                 userDetails.getUsername(),
-                form.getSpecialty(),
+                RestaurantSpecialty.fromOrdinal(form.getSpecialty()),
                 userDetails.getUserId(),
-                form.getDescription(),
                 form.getAddress(),
+                form.getDescription(),
                 form.getMaxTables(),
                 form.getLogo().getBytes(),
                 form.getPortrait1().getBytes(),
-                form.getPortrait2().getBytes()
+                form.getPortrait2().getBytes(),
+                false,
+                tags
         );
 
-        for (Integer tag : form.getTags()) {
-            restaurantService.addTag(restaurantId, tag);
-        }
-
-        return new ModelAndView(String.format("redirect:/restaurants/%d", restaurantId));
+        return new ModelAndView(String.format("redirect:/restaurants/%d", restaurant.getRestaurantId()));
     }
 
     @RequestMapping(value = "/restaurants/{id:\\d+}/edit", method = RequestMethod.GET)
@@ -185,7 +187,7 @@ public class UserController {
         mav.addObject("employees", employees);
 
         mav.addObject("roles", RestaurantRoleLevel.VALUES_EXCEPT_OWNER);
-        mav.addObject("is_owner", restaurant.getOwnerUserId() == ControllerUtils.getCurrentUserIdOrThrow());
+        mav.addObject("is_owner", restaurant.getOwner().getUserId() == ControllerUtils.getCurrentUserIdOrThrow());
 
         mav.addObject("addProductErrors", addProductErrors);
         mav.addObject("addCategoryErrors", addCategoryErrors);

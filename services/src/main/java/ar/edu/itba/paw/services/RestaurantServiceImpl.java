@@ -33,22 +33,17 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Transactional
     @Override
-    public long create(String name, String email, int specialty, long ownerUserId, String description, String address, int maxTables, byte[] logo, byte[] portrait1, byte[] portrait2) {
-        long logoKey = imageDao.create(logo);
-        long portrait1Key = imageDao.create(portrait1);
-        long portrait2Key = imageDao.create(portrait2);
+    public Restaurant create(String name, String email, RestaurantSpecialty specialty, long ownerUserId, String address, String description, int maxTables, byte[] logo, byte[] portrait1, byte[] portrait2, boolean isActive, List<RestaurantTags> tags) {
+        long logoId = imageDao.create(logo);
+        long portrait1Id = imageDao.create(portrait1);
+        long portrait2Id = imageDao.create(portrait2);
 
-        return restaurantDao.create(name, email, specialty, ownerUserId, description, address, maxTables, logoKey, portrait1Key, portrait2Key);
+        return restaurantDao.create(name, email, specialty, ownerUserId, address, description, maxTables, logoId, portrait1Id, portrait2Id, isActive, tags);
     }
 
     @Override
     public Optional<Restaurant> getById(long restaurantId) {
         return restaurantDao.getById(restaurantId);
-    }
-
-    @Override
-    public PaginatedResult<Restaurant> getActive(int pageNumber, int pageSize) {
-        return restaurantDao.getActive(pageNumber, pageSize);
     }
 
     @Override
@@ -74,18 +69,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public List<RestaurantTags> getTags(long restaurantId) {
-        return restaurantDao.getTags(restaurantId);
+    public void delete(Restaurant restaurant) {
+        restaurantDao.delete(restaurant);
     }
-
-    @Override
-    public void addTag(long restaurantId, long tagId) {
-        restaurantDao.addTag(restaurantId, tagId);
-    }
-
-    @Override
-    public void removeTag(long restaurantId, long tagId) {
-        restaurantDao.removeTag(restaurantId, tagId);
-    }
-
 }

@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RestaurantService {
-    long create(String name, String email, int specialty, long ownerUserId, String description, String address, int maxTables, byte[] logo, byte[] portrait1, byte[] portrait2);
 
     Optional<Restaurant> getById(long restaurantId);
 
-    PaginatedResult<Restaurant> getActive(int pageNumber, int pageSize);
+    Restaurant create(String name, String email, RestaurantSpecialty specialty, long ownerUserId, String address, String description, int maxTables, byte[] logo, byte[] portrait1, byte[] portrait2, boolean isActive, List<RestaurantTags> tags);
+
 
     /**
      * Searches for restaurants. Any of the nullable parameters in this function can be null to disable said filter.
@@ -30,11 +30,7 @@ public interface RestaurantService {
 
     List<Pair<Category, List<Product>>> getMenu(long restaurantId);
 
+    void delete(Restaurant restaurant);
+
     void delete(long restaurantId);
-
-    List<RestaurantTags> getTags(long restaurantId);
-
-    void addTag(long restaurantId, long tagId);
-
-    void removeTag(long restaurantId, long tagId);
 }
