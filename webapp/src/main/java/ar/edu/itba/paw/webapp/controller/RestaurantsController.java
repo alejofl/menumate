@@ -95,7 +95,7 @@ public class RestaurantsController {
             // NOTE: The order item ID doesn't matter here; the orderService.createXxx functions will put their own
             // line number values on the items on insertion.
             CartItem cartItem = form.getCart().get(i);
-            items.add(orderService.createOrderItem(cartItem.getProductId(), i, cartItem.getQuantity(), cartItem.getComment()));
+            items.add(orderService.createOrderItem(cartItem.getProductId(), i + 1, cartItem.getQuantity(), cartItem.getComment()));
         }
 
         Order order;

@@ -72,13 +72,14 @@ public class UserController {
             paging.clear();
         }
 
-        PaginatedResult<OrderItemless> orders;
+        PaginatedResult<Order> orders;
+        // FIXME
         switch (status) {
             case "inprogress":
-                orders = orderService.getInProgressByUserExcludeItems(ControllerUtils.getCurrentUserIdOrThrow(), paging.getPageOrDefault(), paging.getSizeOrDefault(ControllerUtils.DEFAULT_ORDERS_PAGE_SIZE));
+                orders = orderService.getByUser(ControllerUtils.getCurrentUserIdOrThrow(), paging.getPageOrDefault(), paging.getSizeOrDefault(ControllerUtils.DEFAULT_ORDERS_PAGE_SIZE));
                 break;
             case "all":
-                orders = orderService.getByUserExcludeItems(ControllerUtils.getCurrentUserIdOrThrow(), paging.getPageOrDefault(), paging.getSizeOrDefault(ControllerUtils.DEFAULT_ORDERS_PAGE_SIZE));
+                orders = orderService.getByUser(ControllerUtils.getCurrentUserIdOrThrow(), paging.getPageOrDefault(), paging.getSizeOrDefault(ControllerUtils.DEFAULT_ORDERS_PAGE_SIZE));
                 break;
             default:
                 throw new ResourceNotFoundException();

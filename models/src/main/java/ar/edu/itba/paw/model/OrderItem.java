@@ -1,10 +1,41 @@
 package ar.edu.itba.paw.model;
 
+import jdk.nashorn.internal.ir.annotations.Ignore;
+
+import javax.persistence.*;
+
+@Entity
+@Table(name = "order_items")
 public class OrderItem {
-    private final Product product;
-    private final int lineNumber;
-    private final int quantity;
-    private final String comment;
+
+//    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    //    @PrimaryKeyJoinColumn(name = "product_id", referencedColumnName = "product_id")
+    //    private final Product product;
+
+    @Column(name = "product_id")
+    private long productId;
+
+    @Column(name = "line_number", nullable = false)
+    private int lineNumber;
+
+    @Column(nullable = false)
+    private int quantity;
+
+    @Column
+    private String comment;
+
+    @Transient
+    private Product product;
+
+    OrderItem() {
+    }
+
+    public OrderItem(long productId, int lineNumber, int quantity, String comment) {
+        this.productId = productId;
+        this.lineNumber = lineNumber;
+        this.quantity = quantity;
+        this.comment = comment;
+    }
 
     public OrderItem(Product product, int lineNumber, int quantity, String comment) {
         this.product = product;
@@ -15,6 +46,10 @@ public class OrderItem {
 
     public Product getProduct() {
         return product;
+    }
+
+    public long getProductId() {
+        return productId;
     }
 
     public int getLineNumber() {

@@ -25,7 +25,7 @@ public class Restaurant {
     private RestaurantSpecialty specialty;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
-    @PrimaryKeyJoinColumn(name = "owner_user_id", referencedColumnName = "user_id")
+    @JoinColumn(name = "owner_user_id", referencedColumnName = "user_id")
     private User owner;
     
     @Column(name = "date_created", nullable = false, insertable = false, updatable = false)

@@ -17,33 +17,9 @@ public interface OrderDao {
 
     Optional<Order> getById(long orderId);
 
-    Optional<OrderItemless> getByIdExcludeItems(long orderId);
-
     PaginatedResult<Order> getByUser(long userId, int pageNumber, int pageSize);
-
-    PaginatedResult<OrderItemless> getByUserExcludeItems(long userId, int pageNumber, int pageSize);
-
-    PaginatedResult<OrderItemless> getInProgressByUserExcludeItems(long userId, int pageNumber, int pageSize);
 
     PaginatedResult<Order> getByRestaurant(long restaurantId, int pageNumber, int pageSize);
 
-    PaginatedResult<OrderItemless> getByRestaurantExcludeItems(long restaurantId, int pageNumber, int pageSize);
-
     PaginatedResult<Order> getByRestaurant(long restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus);
-
-    PaginatedResult<OrderItemless> getByRestaurantExcludeItems(long restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus);
-
-    void markAsConfirmed(long orderId);
-
-    void markAsReady(long orderId);
-
-    void markAsDelivered(long orderId);
-
-    void markAsCancelled(long orderId);
-
-    void setOrderStatus(long orderId, OrderStatus orderStatus);
-
-    void updateAddress(long orderId, String address);
-
-    void updateTableNumber(long orderId, int tableNumber);
 }

@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.services;
 
+import ar.edu.itba.paw.exception.OrderNotFoundException;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.persistance.OrderDao;
 import ar.edu.itba.paw.service.EmailService;
@@ -11,8 +12,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.mail.MessagingException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -90,7 +93,6 @@ public class OrderServiceImpl implements OrderService {
         return order;
     }
 
-
     @Override
     public OrderItem createOrderItem(long productId, int lineNumber, int quantity, String comment) {
         Product product = productService.getById(productId).orElseThrow(() -> new IllegalArgumentException("Invalid product id"));
@@ -103,23 +105,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Optional<OrderItemless> getByIdExcludeItems(long orderId) {
-        return orderDao.getByIdExcludeItems(orderId);
-    }
-
-    @Override
     public PaginatedResult<Order> getByUser(long userId, int pageNumber, int pageSize) {
         return orderDao.getByUser(userId, pageNumber, pageSize);
-    }
-
-    @Override
-    public PaginatedResult<OrderItemless> getByUserExcludeItems(long userId, int pageNumber, int pageSize) {
-        return orderDao.getByUserExcludeItems(userId, pageNumber, pageSize);
-    }
-
-    @Override
-    public PaginatedResult<OrderItemless> getInProgressByUserExcludeItems(long userId, int pageNumber, int pageSize) {
-        return orderDao.getInProgressByUserExcludeItems(userId, pageNumber, pageSize);
     }
 
     @Override
@@ -128,24 +115,19 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public PaginatedResult<OrderItemless> getByRestaurantExcludeItems(long restaurantId, int pageNumber, int pageSize) {
-        return orderDao.getByRestaurantExcludeItems(restaurantId, pageNumber, pageSize);
-    }
-
-    @Override
     public PaginatedResult<Order> getByRestaurant(long restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus) {
         return orderDao.getByRestaurant(restaurantId, pageNumber, pageSize, orderStatus);
     }
 
     @Override
-    public PaginatedResult<OrderItemless> getByRestaurantExcludeItems(long restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus) {
-        return orderDao.getByRestaurantExcludeItems(restaurantId, pageNumber, pageSize, orderStatus);
-    }
-
-    @Override
     public Optional<Order> markAsConfirmed(long orderId) {
+        Order order = orderDao.getById(orderId).orElseThrow(OrderNotFoundException::new);
+        if (order.getDateConfirmed() != null || order.getDateCancelled() != null) {
+            LOGGER.error("Order {} is already confirmed or cancelled", orderId);
+            throw new IllegalStateException("Invalid order status");
+        }
+        order.setDateConfirmed(LocalDateTime.now());
         try {
-            orderDao.markAsConfirmed(orderId);
             emailService.sendOrderConfirmation(this.getById(orderId).get());
             return orderDao.getById(orderId);
         } catch (MessagingException e) {
@@ -156,8 +138,13 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Optional<Order> markAsReady(long orderId) {
+        Order order = orderDao.getById(orderId).orElseThrow(OrderNotFoundException::new);
+        if (order.getDateConfirmed() == null || order.getDateReady() != null || order.getDateCancelled() != null) {
+            LOGGER.error("Order {} is not confirmed or is already ready or cancelled", orderId);
+            throw new IllegalStateException("Invalid order status");
+        }
+        order.setDateReady(LocalDateTime.now());
         try {
-            orderDao.markAsReady(orderId);
             emailService.sendOrderReady(this.getById(orderId).get());
             return orderDao.getById(orderId);
         } catch (MessagingException e) {
@@ -168,8 +155,13 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Optional<Order> markAsDelivered(long orderId) {
+        Order order = orderDao.getById(orderId).orElseThrow(OrderNotFoundException::new);
+        if (order.getDateReady() == null || order.getDateDelivered() != null || order.getDateCancelled() != null) {
+            LOGGER.error("Order {} is not ready or is already delivered or cancelled", orderId);
+            throw new IllegalStateException("Invalid order status");
+        }
+        order.setDateDelivered(LocalDateTime.now());
         try {
-            orderDao.markAsDelivered(orderId);
             emailService.sendOrderDelivered(this.getById(orderId).get());
             return orderDao.getById(orderId);
         } catch (MessagingException e) {
@@ -180,8 +172,13 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Optional<Order> markAsCancelled(long orderId) {
+        Order order = orderDao.getById(orderId).orElseThrow(OrderNotFoundException::new);
+        if (order.getDateCancelled() != null || order.getDateDelivered() != null) {
+            LOGGER.error("Order {} is already cancelled or delivered", orderId);
+            throw new IllegalStateException("Invalid order status");
+        }
+        order.setDateCancelled(LocalDateTime.now());
         try {
-            orderDao.markAsCancelled(orderId);
             emailService.sendOrderCancelled(this.getById(orderId).get());
             return orderDao.getById(orderId);
         } catch (MessagingException e) {
@@ -192,16 +189,64 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void setOrderStatus(long orderId, OrderStatus orderStatus) {
-        orderDao.setOrderStatus(orderId, orderStatus);
+        Order order = orderDao.getById(orderId).orElseThrow(OrderNotFoundException::new);
+        switch (orderStatus) {
+            case PENDING:
+                order.setOrderDates(null, null, null, null);
+                LOGGER.info("Order {} set to pending status", orderId);
+                break;
+            case REJECTED:
+                order.setOrderDates(null, null, null, LocalDateTime.now());
+                LOGGER.info("Order {} set to rejected status", orderId);
+                break;
+            case CANCELLED:
+                order.setDateDelivered(null);
+                order.setDateCancelled(LocalDateTime.now());
+                LOGGER.info("Order {} set to cancelled status", orderId);
+                break;
+            case CONFIRMED:
+                order.setOrderDates(LocalDateTime.now(), null, null, null);
+                LOGGER.info("Order {} set to confirmed status", orderId);
+                break;
+            case READY:
+                order.setOrderDates(LocalDateTime.now(), LocalDateTime.now(), null, null);
+                LOGGER.info("Order {} set to ready status", orderId);
+                break;
+            case DELIVERED:
+                order.setOrderDates(LocalDateTime.now(), LocalDateTime.now(), LocalDateTime.now(), null);
+                LOGGER.info("Order {} set to delivered status", orderId);
+                break;
+            default:
+                LOGGER.error("Invalid order status");
+                throw new IllegalArgumentException("No such OrderType enum constant");
+        }
     }
 
     @Override
     public void updateAddress(long orderId, String address) {
-        orderDao.updateAddress(orderId, address);
+        Order order = orderDao.getById(orderId).orElseThrow(OrderNotFoundException::new);
+        if (order.getOrderType() != OrderType.DELIVERY) {
+            LOGGER.error("Order {} is not a delivery order", orderId);
+            throw new IllegalStateException("Invalid order type");
+        } else if(order.getDateDelivered() != null || order.getDateCancelled() != null) {
+            LOGGER.error("Order {} is already delivered or cancelled", orderId);
+            throw new IllegalStateException("Invalid order status");
+        }
+        order.setAddress(address);
+        LOGGER.info("Order {} address updated to {}", orderId, address);
     }
 
     @Override
     public void updateTableNumber(long orderId, int tableNumber) {
-        orderDao.updateTableNumber(orderId, tableNumber);
+        Order order = orderDao.getById(orderId).orElseThrow(OrderNotFoundException::new);
+        if (order.getOrderType() != OrderType.DINE_IN) {
+            LOGGER.error("Order {} is not a dine-in order", orderId);
+            throw new IllegalStateException("Invalid order type");
+        } else if(order.getDateDelivered() != null || order.getDateCancelled() != null) {
+            LOGGER.error("Order {} is already delivered or cancelled", orderId);
+            throw new IllegalStateException("Invalid order status");
+        }
+        order.setTableNumber(tableNumber);
+        LOGGER.info("Order {} table number updated to {}", orderId, tableNumber);
     }
 }

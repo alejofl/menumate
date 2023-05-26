@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.webapp.auth;
 
-import ar.edu.itba.paw.model.OrderItemless;
+import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.model.RestaurantRoleLevel;
 import ar.edu.itba.paw.service.OrderService;
 import ar.edu.itba.paw.service.RolesService;
@@ -38,18 +38,18 @@ public class AccessValidator {
     }
 
     public boolean checkOrderOwner(long orderId) {
-        OrderItemless order = orderService.getByIdExcludeItems(orderId).orElse(null);
+        Order order = orderService.getById(orderId).orElse(null);
         PawAuthUserDetails currentUserDetails = ControllerUtils.getCurrentUserDetailsOrNull();
         return order != null && currentUserDetails != null && order.getUser().getUserId() == currentUserDetails.getUserId();
     }
 
     public boolean checkOrderHandler(long orderId) {
-        OrderItemless order = orderService.getByIdExcludeItems(orderId).orElse(null);
+        Order order = orderService.getById(orderId).orElse(null);
         return order != null && checkRestaurantOrderHandler(order.getRestaurant().getRestaurantId());
     }
 
     public boolean checkOrderOwnerOrHandler(long orderId) {
-        OrderItemless order = orderService.getByIdExcludeItems(orderId).orElse(null);
+        Order order = orderService.getById(orderId).orElse(null);
         PawAuthUserDetails currentUserDetails = ControllerUtils.getCurrentUserDetailsOrNull();
         return order != null && currentUserDetails != null && (order.getUser().getUserId() == currentUserDetails.getUserId() || checkRestaurantOrderHandler(order.getRestaurant().getRestaurantId()));
     }
