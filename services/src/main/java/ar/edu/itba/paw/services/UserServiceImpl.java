@@ -155,7 +155,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean verifyUserAndDeleteVerificationToken(final String token) {
         Optional<UserVerificationToken> maybeToken = verificationTokenDao.getByToken(token);
-        if (!maybeToken.isPresent())
+        if (!maybeToken.isPresent() || !maybeToken.get().getExpires().isAfter(LocalDateTime.now()))
             return false;
 
         UserVerificationToken uvt = maybeToken.get();
@@ -176,7 +176,7 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("Attempted to updatePasswordAndDeleteResetPasswordToken with null newPassword");
 
         Optional<UserResetpasswordToken> maybeToken = resetpasswordTokenDao.getByToken(token);
-        if (!maybeToken.isPresent())
+        if (!maybeToken.isPresent() || !maybeToken.get().getExpires().isAfter(LocalDateTime.now()))
             return false;
 
         UserResetpasswordToken urt = maybeToken.get();
