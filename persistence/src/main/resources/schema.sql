@@ -115,8 +115,27 @@ CREATE TABLE IF NOT EXISTS order_items
 
 CREATE TABLE IF NOT EXISTS order_reviews
 (
-    order_id    INT REFERENCES orders (order_id) ON DELETE CASCADE PRIMARY KEY,
-    rating      SMALLINT NOT NULL CHECK (rating >= 0 AND rating <= 5),
-    date        TIMESTAMP NOT NULL DEFAULT now(),
-    comment     VARCHAR(500)
+    order_id INT REFERENCES orders (order_id) ON DELETE CASCADE PRIMARY KEY,
+    rating   SMALLINT NOT NULL CHECK (rating >= 0 AND rating <= 5),
+    date     TIMESTAMP NOT NULL DEFAULT now(),
+    comment  VARCHAR(500)
+);
+
+
+DROP VIEW IF EXISTS restaurant_details;
+CREATE VIEW restaurant_details AS
+(
+    SELECT restaurants.*,
+    COALESCE(AVG(CAST(order_reviews.rating AS FLOAT)), 0) AS rating_average,
+    COUNT(order_reviews.order_id) AS review_count,
+    (
+        SELECT COALESCE(AVG(products.price), 0) FROM products
+            JOIN categories ON categories.category_id = products.category_id
+            WHERE categories.restaurant_id = restaurants.restaurant_id
+                AND products.deleted = false AND products.available = true
+    ) AS average_price
+    FROM restaurants LEFT OUTER JOIN (orders JOIN order_reviews ON orders.order_id = order_reviews.order_id)
+        ON restaurants.restaurant_id = orders.restaurant_id
+    WHERE restaurants.deleted = false AND restaurants.is_active = true
+    GROUP BY restaurants.restaurant_id
 );

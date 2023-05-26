@@ -38,8 +38,7 @@ public class User {
 
     }
 
-    public User(Long userId, String email, String password, String name, LocalDateTime dateJoined, Long imageId, boolean isActive, String preferredLanguage) {
-        this.userId = userId;
+    public User(String email, String password, String name, LocalDateTime dateJoined, Long imageId, boolean isActive, String preferredLanguage) {
         this.email = email;
         this.password = password;
         this.name = name;
@@ -49,6 +48,7 @@ public class User {
         this.preferredLanguage = preferredLanguage;
     }
 
+    // TODO: Remove, old constructor remains for backwards compatibility until ORM migration is finished
     public User(long userId, String email, String name, Long imageId, boolean isActive, String preferredLanguage) {
         this.userId = userId;
         this.name = name;

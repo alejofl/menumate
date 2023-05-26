@@ -33,7 +33,7 @@ public class UserJpaDao implements UserDao {
 
     @Override
     public User create(String email, String password, String name, String language) {
-        final User user = new User(null, email, password, name, null, null, false, language);
+        final User user = new User(email, password, name, null, null, false, language);
         em.persist(user);
         LOGGER.info("Created {}consolidated user with ID {}", password == null ? "un" : "", user.getUserId());
         return user;
