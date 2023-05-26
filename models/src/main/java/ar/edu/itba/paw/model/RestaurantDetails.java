@@ -7,24 +7,28 @@ import javax.persistence.*;
 public class RestaurantDetails {
 
     @Id
-    @Column(name = "restaurant_id")
+    @Column(name = "restaurant_id", nullable = false)
     private long restaurantId;
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(fetch = FetchType.EAGER, optional = false)
     @PrimaryKeyJoinColumn(name = "restaurant_id", referencedColumnName = "restaurant_id")
     private Restaurant restaurant;
 
-    @Column(name = "average_rating")
+    @Column(name = "average_rating", nullable = false)
     private int averageRating;
 
-    @Column(name = "review_count")
+    @Column(name = "review_count", nullable = false)
     private int reviewCount;
 
-    @Column(name = "average_price")
+    @Column(name = "average_price", nullable = false)
     private float averageProductPrice;
 
     RestaurantDetails() {
 
+    }
+
+    public long getRestaurantId() {
+        return restaurantId;
     }
 
     public Restaurant getRestaurant() {

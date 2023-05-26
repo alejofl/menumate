@@ -12,7 +12,7 @@ public class Restaurant {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "restaurants_restaurant_id_seq")
     @SequenceGenerator(sequenceName = "restaurants_restaurant_id_seq", name = "restaurants_restaurant_id_seq", allocationSize = 1)
-    @Column(name = "restaurant_id")
+    @Column(name = "restaurant_id", nullable = false)
     private Long restaurantId;
 
     @Column(nullable = false)
@@ -25,7 +25,7 @@ public class Restaurant {
     @Column(nullable = false)
     private RestaurantSpecialty specialty;
 
-    @Column(name = "owner_user_id", nullable = false)
+    @Column(name = "owner_user_id", nullable = false, insertable = false, updatable = false)
     private long ownerUserId;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
@@ -56,7 +56,7 @@ public class Restaurant {
     @Column(name = "is_active", nullable = false)
     private boolean isActive;
 
-    @Column(nullable = false)
+    @Column(nullable = false, insertable = false)
     private boolean deleted;
 
     @ElementCollection(targetClass = RestaurantTags.class)
@@ -73,6 +73,7 @@ public class Restaurant {
         this.name = name;
         this.email = email;
         this.specialty = specialty;
+        this.ownerUserId = owner.getUserId();
         this.owner = owner;
         this.address = address;
         this.description = description;
@@ -91,6 +92,7 @@ public class Restaurant {
         this.name = name;
         this.email = email;
         this.specialty = specialty;
+        this.ownerUserId = ownerUserId;
         this.owner = new User(ownerUserId, "EMAIL", "PASSWORD", null, true, "en");
         this.address = address;
         this.description = description;
@@ -143,8 +145,8 @@ public class Restaurant {
     }
 
     public void setOwner(User owner) {
-        this.owner = owner;
         this.ownerUserId = owner.getUserId();
+        this.owner = owner;
     }
 
     public LocalDateTime getDateCreated() {

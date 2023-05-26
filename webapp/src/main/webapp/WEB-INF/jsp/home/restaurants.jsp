@@ -70,7 +70,7 @@
         </form:form>
         <main class="restaurant-feed">
             <c:forEach items="${restaurants}" var="restaurantDetails">
-                <c:url var="restaurantUrl" value="/restaurants/${restaurantDetails.restaurant.restaurantId}"/>
+                <c:url var="restaurantUrl" value="/restaurants/${restaurantDetails.restaurantId}"/>
                 <c:url var="mainImage" value="/images/${restaurantDetails.restaurant.portrait1Id}"/>
                 <c:url var="hoverImage" value="/images/${restaurantDetails.restaurant.portrait2Id}"/>
                 <c:set var="tags" value="${restaurantDetails.restaurant.tags}" scope="request"/>

@@ -188,7 +188,7 @@ public class UserController {
         mav.addObject("employees", employees);
 
         mav.addObject("roles", RestaurantRoleLevel.VALUES_EXCEPT_OWNER);
-        mav.addObject("is_owner", restaurant.getOwner().getUserId() == ControllerUtils.getCurrentUserIdOrThrow());
+        mav.addObject("is_owner", restaurant.getOwnerUserId() == ControllerUtils.getCurrentUserIdOrThrow());
 
         mav.addObject("addProductErrors", addProductErrors);
         mav.addObject("addCategoryErrors", addCategoryErrors);

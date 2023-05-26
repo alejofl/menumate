@@ -150,7 +150,7 @@ public class RestaurantJpaDao implements RestaurantDao {
         // Restaurant, and the idList is already sorted as desired, we'll just sort them here.
         // This isn't an issue because the native query is sorted, it's just that getting the page with HQL does not
         // preserve that order.
-        results.sort(Comparator.comparing(r -> idList.indexOf(r.getRestaurant().getRestaurantId())));
+        results.sort(Comparator.comparing(r -> idList.indexOf(r.getRestaurantId())));
 
         return new PaginatedResult<>(results, pageNumber, pageSize, count);
     }

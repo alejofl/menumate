@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 public class UserResetpasswordToken {
 
     @Id
-    @Column(name = "user_id")
+    @Column(name = "user_id", nullable = false, updatable = false)
     private long userId;
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)
