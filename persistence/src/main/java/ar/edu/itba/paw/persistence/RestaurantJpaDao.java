@@ -157,11 +157,12 @@ public class RestaurantJpaDao implements RestaurantDao {
 
     @Override
     public void delete(Restaurant restaurant) {
-        em.remove(restaurant);
+        em.remove(restaurant); // TODO: Logical deletion
     }
 
     @Override
     public void delete(long restaurantId) {
         em.remove(em.getReference(Restaurant.class, restaurantId));
+        // TODO: Logical deletion, consider leaving just one of the delete() methods and which
     }
 }
