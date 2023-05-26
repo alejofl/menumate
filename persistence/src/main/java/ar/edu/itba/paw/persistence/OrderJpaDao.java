@@ -31,25 +31,23 @@ public class OrderJpaDao implements OrderDao {
     }
 
     @Override
-    @Transactional
     public Order createDelivery(long restaurantId, long userId, String address) {
         return this.create(OrderType.DELIVERY, restaurantId, userId, address, null);
     }
 
     @Override
-    @Transactional
     public Order createTakeaway(long restaurantId, long userId) {
         return this.create(OrderType.TAKEAWAY, restaurantId, userId, null, null);
     }
 
     @Override
-    @Transactional
     public Order createDineIn(long restaurantId, long userId, int tableNumber) {
         return this.create(OrderType.DINE_IN, restaurantId, userId, null, tableNumber);
     }
 
     @Override
-    public OrderItem createOrderItem(Product product, int lineNumber, int quantity, String comment) {
+    public OrderItem createOrderItem(long productId, int lineNumber, int quantity, String comment) {
+        final Product product = em.getReference(Product.class, productId);
         return new OrderItem(product, lineNumber, quantity, comment);
     }
 

@@ -13,7 +13,7 @@ public interface OrderDao {
 
     Order createDineIn(long restaurantId, long userId, int tableNumber);
 
-    OrderItem createOrderItem(Product product, int lineNumber, int quantity, String comment);
+    OrderItem createOrderItem(long productId, int lineNumber, int quantity, String comment);
 
     Optional<Order> getById(long orderId);
 

@@ -51,6 +51,7 @@ public class OrderServiceImpl implements OrderService {
 
     // NOTE: create methods that send emails are not transactional, we want the order to remain placed even if the
     // notification email fails.
+    @Transactional
     @Override
     public Order createDelivery(long restaurantId, long userId, String address, List<OrderItem> items) {
         Order order = orderDao.createDelivery(restaurantId, userId, address);
@@ -60,6 +61,7 @@ public class OrderServiceImpl implements OrderService {
         return order;
     }
 
+    @Transactional
     @Override
     public Order createDelivery(long restaurantId, String name, String email, String address, List<OrderItem> items) {
         Order order = orderDao.createDelivery(restaurantId, getOrCreateUserId(name, email), address);
@@ -69,6 +71,7 @@ public class OrderServiceImpl implements OrderService {
         return order;
     }
 
+    @Transactional
     @Override
     public Order createDineIn(long restaurantId, long userId, int tableNumber, List<OrderItem> items) {
         Order order = orderDao.createDineIn(restaurantId, userId, tableNumber);
@@ -78,6 +81,7 @@ public class OrderServiceImpl implements OrderService {
         return order;
     }
 
+    @Transactional
     @Override
     public Order createDineIn(long restaurantId, String name, String email, int tableNumber, List<OrderItem> items) {
         Order order = orderDao.createDineIn(restaurantId, getOrCreateUserId(name, email), tableNumber);
@@ -87,6 +91,7 @@ public class OrderServiceImpl implements OrderService {
         return order;
     }
 
+    @Transactional
     @Override
     public Order createTakeAway(long restaurantId, long userId, List<OrderItem> items) {
         Order order = orderDao.createTakeaway(restaurantId, userId);
@@ -96,6 +101,7 @@ public class OrderServiceImpl implements OrderService {
         return order;
     }
 
+    @Transactional
     @Override
     public Order createTakeAway(long restaurantId, String name, String email, List<OrderItem> items) {
         Order order = orderDao.createTakeaway(restaurantId, getOrCreateUserId(name, email));
@@ -107,8 +113,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderItem createOrderItem(long productId, int lineNumber, int quantity, String comment) {
-        Product product = productService.getById(productId).orElseThrow(() -> new IllegalArgumentException("Invalid product id"));
-        return orderDao.createOrderItem(product, lineNumber, quantity, comment);
+        return orderDao.createOrderItem(productId, lineNumber, quantity, comment);
     }
 
     @Override
@@ -131,133 +136,168 @@ public class OrderServiceImpl implements OrderService {
         return orderDao.getByRestaurant(restaurantId, pageNumber, pageSize, orderStatus);
     }
 
+    @Transactional
     @Override
     public Optional<Order> markAsConfirmed(long orderId) {
         Order order = orderDao.getById(orderId).orElseThrow(OrderNotFoundException::new);
-        if (order.getDateConfirmed() != null || order.getDateCancelled() != null) {
-            LOGGER.error("Order {} is already confirmed or cancelled", orderId);
+        OrderStatus orderStatus = order.getOrderStatus();
+        if (orderStatus != OrderStatus.PENDING) {
+            LOGGER.error("Attempted to mark order with id {} as confirmed when the order is {}", orderId, orderStatus);
             throw new IllegalStateException("Invalid order status");
         }
         order.setDateConfirmed(LocalDateTime.now());
         try {
-            emailService.sendOrderConfirmation(this.getById(orderId).get());
-            return orderDao.getById(orderId);
+            emailService.sendOrderConfirmation(order);
+            return Optional.of(order);
         } catch (MessagingException e) {
             LOGGER.error("Order Confirmation Email Sending Failed");
             return Optional.empty();
         }
     }
 
+    @Transactional
     @Override
     public Optional<Order> markAsReady(long orderId) {
         Order order = orderDao.getById(orderId).orElseThrow(OrderNotFoundException::new);
-        if (order.getDateConfirmed() == null || order.getDateReady() != null || order.getDateCancelled() != null) {
-            LOGGER.error("Order {} is not confirmed or is already ready or cancelled", orderId);
+        OrderStatus orderStatus = order.getOrderStatus();
+        if (orderStatus != OrderStatus.CONFIRMED) {
+            LOGGER.error("Attempted to mark order with id {} as ready when the order is {}", orderId, orderStatus);
             throw new IllegalStateException("Invalid order status");
         }
         order.setDateReady(LocalDateTime.now());
         try {
-            emailService.sendOrderReady(this.getById(orderId).get());
-            return orderDao.getById(orderId);
+            emailService.sendOrderReady(order);
+            return Optional.of(order);
         } catch (MessagingException e) {
             LOGGER.error("Order Ready Email Sending Failed");
             return Optional.empty();
         }
     }
 
+    @Transactional
     @Override
     public Optional<Order> markAsDelivered(long orderId) {
         Order order = orderDao.getById(orderId).orElseThrow(OrderNotFoundException::new);
-        if (order.getDateReady() == null || order.getDateDelivered() != null || order.getDateCancelled() != null) {
-            LOGGER.error("Order {} is not ready or is already delivered or cancelled", orderId);
+        OrderStatus orderStatus = order.getOrderStatus();
+        if (orderStatus != OrderStatus.READY) {
+            LOGGER.error("Attempted to mark order with id {} as delivered when the order is {}", orderId, orderStatus);
             throw new IllegalStateException("Invalid order status");
         }
         order.setDateDelivered(LocalDateTime.now());
         try {
-            emailService.sendOrderDelivered(this.getById(orderId).get());
-            return orderDao.getById(orderId);
+            emailService.sendOrderDelivered(order);
+            return Optional.of(order);
         } catch (MessagingException e) {
             LOGGER.error("Order Delivered Email Sending Failed");
             return Optional.empty();
         }
     }
 
+    @Transactional
     @Override
     public Optional<Order> markAsCancelled(long orderId) {
         Order order = orderDao.getById(orderId).orElseThrow(OrderNotFoundException::new);
-        if (order.getDateCancelled() != null || order.getDateDelivered() != null) {
-            LOGGER.error("Order {} is already cancelled or delivered", orderId);
+        OrderStatus orderStatus = order.getOrderStatus();
+        if (!orderStatus.isInProgress()) {
+            LOGGER.error("Attempted to cancel order with id {} when the order is already {}", orderId, orderStatus);
             throw new IllegalStateException("Invalid order status");
         }
         order.setDateCancelled(LocalDateTime.now());
         try {
-            emailService.sendOrderCancelled(this.getById(orderId).get());
-            return orderDao.getById(orderId);
+            emailService.sendOrderCancelled(order);
+            return Optional.of(order);
         } catch (MessagingException e) {
             LOGGER.error("Order Cancelled Email Sending Failed");
             return Optional.empty();
         }
     }
 
+    private static <T> T coalesce(T a, T b) {
+        return a != null ? a : b;
+    }
+
+    @Transactional
     @Override
     public void setOrderStatus(long orderId, OrderStatus orderStatus) {
         Order order = orderDao.getById(orderId).orElseThrow(OrderNotFoundException::new);
+        LocalDateTime now = LocalDateTime.now();
         switch (orderStatus) {
             case PENDING:
-                order.setOrderDates(null, null, null, null);
-                LOGGER.info("Order {} set to pending status", orderId);
+                order.setDateConfirmed(null);
+                order.setDateReady(null);
+                order.setDateDelivered(null);
+                order.setDateCancelled(null);
                 break;
             case REJECTED:
-                order.setOrderDates(null, null, null, LocalDateTime.now());
-                LOGGER.info("Order {} set to rejected status", orderId);
+                order.setDateConfirmed(null);
+                order.setDateReady(null);
+                order.setDateDelivered(null);
+                order.setDateCancelled(coalesce(order.getDateCancelled(), now));
                 break;
             case CANCELLED:
                 order.setDateDelivered(null);
-                order.setDateCancelled(LocalDateTime.now());
-                LOGGER.info("Order {} set to cancelled status", orderId);
+                order.setDateCancelled(coalesce(order.getDateCancelled(), now));
                 break;
             case CONFIRMED:
-                order.setOrderDates(LocalDateTime.now(), null, null, null);
-                LOGGER.info("Order {} set to confirmed status", orderId);
+                order.setDateConfirmed(coalesce(order.getDateConfirmed(), now));
+                order.setDateReady(null);
+                order.setDateDelivered(null);
+                order.setDateCancelled(null);
                 break;
             case READY:
-                order.setOrderDates(LocalDateTime.now(), LocalDateTime.now(), null, null);
-                LOGGER.info("Order {} set to ready status", orderId);
+                order.setDateConfirmed(coalesce(order.getDateConfirmed(), now));
+                order.setDateReady(coalesce(order.getDateReady(), now));
+                order.setDateDelivered(null);
+                order.setDateCancelled(null);
                 break;
             case DELIVERED:
-                order.setOrderDates(LocalDateTime.now(), LocalDateTime.now(), LocalDateTime.now(), null);
-                LOGGER.info("Order {} set to delivered status", orderId);
+                order.setDateConfirmed(coalesce(order.getDateConfirmed(), now));
+                order.setDateReady(coalesce(order.getDateReady(), now));
+                order.setDateDelivered(coalesce(order.getDateDelivered(), now));
+                order.setDateCancelled(null);
                 break;
             default:
-                LOGGER.error("Invalid order status");
+                LOGGER.error("Attempted to force set order status to unknown OrderStatus value: {}", orderStatus);
                 throw new IllegalArgumentException("No such OrderType enum constant");
         }
+
+        LOGGER.info("Forced set order {} set to status {}", orderId, orderStatus);
     }
 
+    @Transactional
     @Override
     public void updateAddress(long orderId, String address) {
         Order order = orderDao.getById(orderId).orElseThrow(OrderNotFoundException::new);
         if (order.getOrderType() != OrderType.DELIVERY) {
-            LOGGER.error("Order {} is not a delivery order", orderId);
+            LOGGER.error("Attempted to update address of non-delivery order {}", orderId);
             throw new IllegalStateException("Invalid order type");
-        } else if(order.getDateDelivered() != null || order.getDateCancelled() != null) {
-            LOGGER.error("Order {} is already delivered or cancelled", orderId);
+        } else if (!order.getOrderStatus().isInProgress()) {
+            LOGGER.error("Attempted to update address of closed order {}", orderId);
             throw new IllegalStateException("Invalid order status");
         }
-        order.setAddress(address);
+
+        address = address == null ? null : address.trim();
+        if (address == null || address.isEmpty()) {
+            LOGGER.error("Attempted to update address of order {} to null-or-blank value", orderId);
+            throw new IllegalArgumentException("Cannot set order address to null");
+        }
+
+        order.setAddress(address.trim());
         LOGGER.info("Order {} address updated to {}", orderId, address);
     }
 
+    @Transactional
     @Override
     public void updateTableNumber(long orderId, int tableNumber) {
         Order order = orderDao.getById(orderId).orElseThrow(OrderNotFoundException::new);
         if (order.getOrderType() != OrderType.DINE_IN) {
-            LOGGER.error("Order {} is not a dine-in order", orderId);
+            LOGGER.error("Attempted to update tablenum of non-dinein order {}", orderId);
             throw new IllegalStateException("Invalid order type");
-        } else if(order.getDateDelivered() != null || order.getDateCancelled() != null) {
-            LOGGER.error("Order {} is already delivered or cancelled", orderId);
+        } else if (!order.getOrderStatus().isInProgress()) {
+            LOGGER.error("Attempted to update tablenum of closed order {}", orderId);
             throw new IllegalStateException("Invalid order status");
         }
+
         order.setTableNumber(tableNumber);
         LOGGER.info("Order {} table number updated to {}", orderId, tableNumber);
     }

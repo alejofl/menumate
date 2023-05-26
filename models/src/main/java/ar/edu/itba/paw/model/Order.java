@@ -186,11 +186,4 @@ public class Order {
             return OrderStatus.CONFIRMED;
         return OrderStatus.PENDING;
     }
-
-    public void setOrderDates(LocalDateTime dateConfirmed, LocalDateTime dateReady, LocalDateTime dateDelivered, LocalDateTime dateCancelled) {
-        this.dateConfirmed = dateConfirmed;
-        this.dateReady = dateReady;
-        this.dateDelivered = dateDelivered;
-        this.dateCancelled = dateCancelled;
-    }
 }

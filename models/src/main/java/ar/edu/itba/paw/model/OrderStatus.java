@@ -30,6 +30,10 @@ public enum OrderStatus {
         return this == OrderStatus.CANCELLED || this == OrderStatus.REJECTED;
     }
 
+    public boolean isInProgress() {
+        return !this.isCancelledOrRejected() && this != OrderStatus.DELIVERED;
+    }
+
     private static final OrderStatus[] VALUES = OrderStatus.values();
 
     /**
