@@ -139,3 +139,18 @@ CREATE VIEW restaurant_details AS
     WHERE restaurants.deleted = false AND restaurants.is_active = true
     GROUP BY restaurants.restaurant_id
 );
+
+DROP VIEW IF EXISTS restaurant_role_details;
+CREATE VIEW restaurant_role_details AS
+(
+    SELECT roles_grouped.*,
+    (
+        SELECT COUNT(*) FROM orders WHERE orders.restaurant_id = roles_grouped.restaurant_id
+            AND date_delivered IS NULL AND date_cancelled IS NULL
+    ) AS inprogress_order_count
+    FROM (
+        (SELECT user_id, restaurant_id, role_level FROM restaurant_roles)
+        UNION
+        (SELECT owner_user_id AS user_id, restaurant_id, 0 AS role_level FROM restaurants)
+    ) AS roles_grouped
+);

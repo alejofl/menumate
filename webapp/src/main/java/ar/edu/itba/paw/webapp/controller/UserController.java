@@ -28,7 +28,7 @@ public class UserController {
     private OrderService orderService;
 
     @Autowired
-    private RolesService rolesService;
+    private RestaurantRoleService restaurantRoleService;
 
     @Autowired
     private RestaurantService restaurantService;
@@ -48,7 +48,7 @@ public class UserController {
     @RequestMapping(value = "/user/restaurants", method = RequestMethod.GET)
     public ModelAndView myRestaurants() {
         ModelAndView mav = new ModelAndView("user/myrestaurants");
-        List<Triplet<Restaurant, RestaurantRoleLevel, Integer>> restaurants = rolesService.getByUser(ControllerUtils.getCurrentUserIdOrThrow());
+        List<RestaurantRoleDetails> restaurants = restaurantRoleService.getByUser(ControllerUtils.getCurrentUserIdOrThrow());
         mav.addObject("restaurants", restaurants);
         return mav;
     }
@@ -183,7 +183,7 @@ public class UserController {
         final List<Category> menu = categoryService.getByRestaurantSortedByOrder(id);
         mav.addObject("menu", menu);
 
-        final List<Pair<User, RestaurantRoleLevel>> employees = rolesService.getByRestaurant(id);
+        final List<Pair<User, RestaurantRoleLevel>> employees = restaurantRoleService.getByRestaurant(id);
         mav.addObject("employees", employees);
 
         mav.addObject("roles", RestaurantRoleLevel.VALUES_EXCEPT_OWNER);
@@ -343,7 +343,7 @@ public class UserController {
         }
 
         User user = userService.getByEmail(addEmployeeForm.getEmail()).orElseThrow(UserNotFoundException::new);
-        rolesService.setRole(user.getUserId(), id, RestaurantRoleLevel.fromOrdinal(addEmployeeForm.getRole()));
+        restaurantRoleService.setRole(user.getUserId(), id, RestaurantRoleLevel.fromOrdinal(addEmployeeForm.getRole()));
 
         return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
     }
@@ -364,7 +364,7 @@ public class UserController {
             throw new IllegalStateException();
         }
 
-        rolesService.deleteRole(deleteEmployeeForm.getUserId(), id);
+        restaurantRoleService.deleteRole(deleteEmployeeForm.getUserId(), id);
 
         return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
     }

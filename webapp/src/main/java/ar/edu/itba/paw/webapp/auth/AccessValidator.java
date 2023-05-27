@@ -3,7 +3,7 @@ package ar.edu.itba.paw.webapp.auth;
 import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.model.RestaurantRoleLevel;
 import ar.edu.itba.paw.service.OrderService;
-import ar.edu.itba.paw.service.RolesService;
+import ar.edu.itba.paw.service.RestaurantRoleService;
 import ar.edu.itba.paw.webapp.controller.ControllerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,14 +15,14 @@ public class AccessValidator {
     private OrderService orderService;
 
     @Autowired
-    private RolesService rolesService;
+    private RestaurantRoleService restaurantRoleService;
 
     public boolean checkRestaurantRole(long restaurantId, RestaurantRoleLevel minimumRoleLevel) {
         Long currentUserId = ControllerUtils.getCurrentUserIdOrNull();
         if (currentUserId == null)
             return false;
 
-        return rolesService.doesUserHaveRole(currentUserId, restaurantId, minimumRoleLevel);
+        return restaurantRoleService.doesUserHaveRole(currentUserId, restaurantId, minimumRoleLevel);
     }
 
     public boolean checkRestaurantOwner(long restaurantId) {

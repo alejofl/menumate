@@ -36,7 +36,7 @@ public class RestaurantsController {
     private UserService userService;
 
     @Autowired
-    private RolesService rolesService;
+    private RestaurantRoleService restaurantRoleService;
 
     @Autowired
     private ReviewService reviewService;
@@ -61,7 +61,7 @@ public class RestaurantsController {
         Optional<RestaurantRoleLevel> level;
         boolean admin = false;
         boolean order_viewer = false;
-        if (currentUserId != null && (level = rolesService.getRole(currentUserId, id)).isPresent()) {
+        if (currentUserId != null && (level = restaurantRoleService.getRole(currentUserId, id)).isPresent()) {
             admin = level.get().hasPermissionOf(RestaurantRoleLevel.ADMIN);
             order_viewer = level.get().hasPermissionOf(RestaurantRoleLevel.ORDER_HANDLER);
         }

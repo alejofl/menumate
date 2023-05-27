@@ -1,15 +1,14 @@
 package ar.edu.itba.paw.service;
 
-import ar.edu.itba.paw.model.Restaurant;
+import ar.edu.itba.paw.model.RestaurantRoleDetails;
 import ar.edu.itba.paw.model.RestaurantRoleLevel;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.util.Pair;
-import ar.edu.itba.paw.util.Triplet;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface RolesService {
+public interface RestaurantRoleService {
 
     /**
      * Gets a user's role at a restaurant, or empty if said user has no roles at said restaurant.
@@ -36,5 +35,5 @@ public interface RolesService {
     /**
      * Gets the restaurants and roles for a given user, and the amount of non-finalized orders.
      */
-    List<Triplet<Restaurant, RestaurantRoleLevel, Integer>> getByUser(long userId);
+    List<RestaurantRoleDetails> getByUser(long userId);
 }

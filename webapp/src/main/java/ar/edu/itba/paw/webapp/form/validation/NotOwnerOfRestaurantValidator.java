@@ -2,7 +2,7 @@ package ar.edu.itba.paw.webapp.form.validation;
 
 import ar.edu.itba.paw.model.RestaurantRoleLevel;
 import ar.edu.itba.paw.model.User;
-import ar.edu.itba.paw.service.RolesService;
+import ar.edu.itba.paw.service.RestaurantRoleService;
 import ar.edu.itba.paw.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,7 +15,7 @@ import java.util.Optional;
 @Component
 public class NotOwnerOfRestaurantValidator implements ConstraintValidator<NotOwnerOfRestaurant, Object> {
     @Autowired
-    private RolesService rolesService;
+    private RestaurantRoleService restaurantRoleService;
 
     @Autowired
     private UserService userService;
@@ -40,7 +40,7 @@ public class NotOwnerOfRestaurantValidator implements ConstraintValidator<NotOwn
             Optional<User> user = userService.getByEmail((String) emailField.get(o));
             if (!user.isPresent())
                 return true;
-            return !rolesService.doesUserHaveRole(user.get().getUserId(), (Integer) restaurantIdField.get(o), RestaurantRoleLevel.OWNER);
+            return !restaurantRoleService.doesUserHaveRole(user.get().getUserId(), (Integer) restaurantIdField.get(o), RestaurantRoleLevel.OWNER);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             return true;
         }
