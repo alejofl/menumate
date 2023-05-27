@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.exception.CategoryNotFoundException;
 import ar.edu.itba.paw.model.Category;
 import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.persistance.CategoryDao;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Optional;
@@ -46,7 +48,7 @@ public class CategoryJpaDao implements CategoryDao {
     @Override
     public List<Category> getByRestaurantSortedByOrder(long restaurantId) {
         TypedQuery<Category> query = em.createQuery(
-                "FROM Category WHERE restaurantId = :restaurantId ORDER BY orderNum",
+                "FROM Category WHERE restaurantId = :restaurantId AND deleted = false ORDER BY orderNum",
                 Category.class
         );
         query.setParameter("restaurantId", restaurantId);
@@ -55,8 +57,24 @@ public class CategoryJpaDao implements CategoryDao {
 
     @Override
     public void delete(long categoryId) {
-        final Category category = em.getReference(Category.class, categoryId);
-        em.remove(category); // TODO: Logical deletion
-        LOGGER.info("Deleted category id {}", category.getCategoryId());
+        final Category category = em.find(Category.class, categoryId);
+        if (category == null) {
+            LOGGER.error("Attempted to delete non-existing category id {}", categoryId);
+            throw new CategoryNotFoundException();
+        }
+
+        if (category.getDeleted()) {
+            LOGGER.error("Attempted to delete already-deleted category id {}", category.getCategoryId());
+            throw new IllegalStateException("Category is already deleted");
+        }
+
+        category.setDeleted(true);
+        em.persist(category);
+
+        Query productQuery = em.createQuery("UPDATE Product SET deleted = true WHERE deleted = false AND categoryId = :categoryId");
+        productQuery.setParameter("categoryId", categoryId);
+        int productCount = productQuery.executeUpdate();
+
+        LOGGER.info("Logical-deleted category id {} with {} products", category.getCategoryId(), productCount);
     }
 }

@@ -10,10 +10,10 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "products_product_id_seq")
     @SequenceGenerator(sequenceName = "products_product_id_seq", name = "products_product_id_seq", allocationSize = 1)
-    @Column(name = "product_id", nullable = false)
+    @Column(name = "product_id", nullable = false, updatable = false)
     private Long productId;
 
-    @Column(name = "category_id", nullable = false)
+    @Column(name = "category_id", nullable = false, updatable = false)
     private long categoryId;
 
     @Column(nullable = false)
@@ -65,10 +65,6 @@ public class Product {
 
     public long getCategoryId() {
         return categoryId;
-    }
-
-    public void setCategoryId(long categoryId) {
-        this.categoryId = categoryId;
     }
 
     public String getName() {

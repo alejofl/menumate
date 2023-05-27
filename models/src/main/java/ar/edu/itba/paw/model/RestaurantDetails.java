@@ -1,9 +1,12 @@
 package ar.edu.itba.paw.model;
 
+import org.hibernate.annotations.Immutable;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "restaurant_details")
+@Immutable
 public class RestaurantDetails {
 
     @Id

@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.exception.RestaurantNotFoundException;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.persistance.RestaurantDao;
 import ar.edu.itba.paw.util.PaginatedResult;
@@ -156,8 +157,28 @@ public class RestaurantJpaDao implements RestaurantDao {
 
     @Override
     public void delete(long restaurantId) {
-        final Restaurant restaurant = em.getReference(Restaurant.class, restaurantId);
-        em.remove(restaurant); // TODO: Logical deletion
-        LOGGER.info("Deleted restaurant id {}", restaurant.getRestaurantId());
+        final Restaurant restaurant = em.find(Restaurant.class, restaurantId);
+        if (restaurant == null) {
+            LOGGER.error("Attempted to delete non-existing restaurant id {}", restaurantId);
+            throw new RestaurantNotFoundException();
+        }
+
+        if (restaurant.getDeleted()) {
+            LOGGER.error("Attempted to delete already-deleted restaurant id {}", restaurant.getRestaurantId());
+            throw new IllegalStateException("Restaurant is already deleted");
+        }
+
+        restaurant.setDeleted(true);
+        em.persist(restaurant);
+
+        Query categoryQuery = em.createQuery("UPDATE Category SET deleted = true WHERE deleted = false AND restaurantId = :restaurantId");
+        categoryQuery.setParameter("restaurantId", restaurantId);
+        int categoryCount = categoryQuery.executeUpdate();
+
+        Query productQuery = em.createQuery("UPDATE Product SET deleted = true WHERE deleted = false AND EXISTS(FROM Category WHERE Product.categoryId = Category.categoryId AND restaurantId = :restaurantId)");
+        productQuery.setParameter("restaurantId", restaurantId);
+        int productCount = productQuery.executeUpdate();
+
+        LOGGER.info("Logical-deleted restaurant id {} with {} categories and {} products", restaurant.getRestaurantId(), categoryCount, productCount);
     }
 }

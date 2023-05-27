@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.model;
 
+import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -10,14 +12,14 @@ public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "categories_category_id_seq")
     @SequenceGenerator(sequenceName = "categories_category_id_seq", name = "categories_category_id_seq", allocationSize = 1)
-    @Column(name = "category_id", nullable = false)
+    @Column(name = "category_id", nullable = false, updatable = false)
     private Long categoryId;
 
     @Column(name = "restaurant_id", nullable = false, insertable = false, updatable = false)
     private long restaurantId;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
-    @JoinColumn(name = "restaurant_id", referencedColumnName = "restaurant_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "restaurant_id", referencedColumnName = "restaurant_id", nullable = false, updatable = false)
     private Restaurant restaurant;
 
     @Column(nullable = false)
@@ -31,6 +33,7 @@ public class Category {
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "category_id", referencedColumnName = "category_id")
+    @Where(clause = "deleted = false AND available = true")
     private List<Product> products;
 
     Category() {
@@ -63,11 +66,6 @@ public class Category {
 
     public Restaurant getRestaurant() {
         return restaurant;
-    }
-
-    public void setRestaurant(Restaurant restaurant) {
-        this.restaurantId = restaurant.getRestaurantId();
-        this.restaurant = restaurant;
     }
 
     public String getName() {
