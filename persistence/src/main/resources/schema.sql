@@ -105,12 +105,12 @@ CREATE TABLE IF NOT EXISTS orders
 CREATE TABLE IF NOT EXISTS order_items
 (
     order_id    INT REFERENCES orders (order_id) ON DELETE CASCADE NOT NULL,
-    product_id  INT REFERENCES products (product_id) ON DELETE CASCADE NOT NULL,
     line_number SMALLINT NOT NULL CHECK (line_number > 0),
+    product_id  INT REFERENCES products (product_id) ON DELETE CASCADE NOT NULL,
     quantity    SMALLINT NOT NULL CHECK (quantity > 0),
     comment     VARCHAR(120),
 
-    PRIMARY KEY (order_id, product_id, line_number)
+    PRIMARY KEY (order_id, line_number)
 );
 
 CREATE TABLE IF NOT EXISTS order_reviews
