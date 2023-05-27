@@ -30,7 +30,7 @@ public class OrderJpaDao implements OrderDao {
         final User user = em.getReference(User.class, userId);
         final Order order = new Order(orderType, restaurant, user, address, tableNumber);
         em.persist(order);
-        LOGGER.info("Created order with ID {}", order.getOrderId());
+        LOGGER.info("Created order id {} type {} for restaurant {} by user {}", order.getOrderId(), orderType, restaurantId, userId);
         return order;
     }
 

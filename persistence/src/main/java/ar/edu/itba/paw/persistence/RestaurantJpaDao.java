@@ -33,7 +33,7 @@ public class RestaurantJpaDao implements RestaurantDao {
         final User owner = em.getReference(User.class, ownerUserId);
         final Restaurant restaurant = new Restaurant(name, email, specialty, owner, address, description, maxTables, logoId, portrait1Id, portrait2Id, isActive, tags);
         em.persist(restaurant);
-        LOGGER.info("Created restaurant with ID {}", restaurant.getRestaurantId());
+        LOGGER.info("Created restaurant id {} with owner id {}", restaurant.getRestaurantId(), ownerUserId);
         return restaurant;
     }
 
