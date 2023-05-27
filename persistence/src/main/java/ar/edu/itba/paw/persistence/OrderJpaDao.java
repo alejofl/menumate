@@ -112,37 +112,53 @@ public class OrderJpaDao implements OrderDao {
         return new PaginatedResult<>(orders, pageNumber, pageSize, count);
     }
 
+
+    private static final String IS_PENDING_COND = "(date_confirmed IS NULL AND date_cancelled IS NULL)";
+    private static final String IS_CONFIRMED_COND = "(date_confirmed IS NOT NULL AND date_ready IS NULL AND date_cancelled IS NULL)";
+    private static final String IS_READY_COND = "(date_ready IS NOT NULL AND date_delivered IS NULL AND date_cancelled IS NULL)";
+    private static final String IS_DELIVERED_COND = "date_delivered IS NOT NULL";
+    private static final String IS_CANCELLED_COND = "date_cancelled IS NOT NULL";
+
+    private String getCoditionString(OrderStatus orderStatus) {
+        switch (orderStatus) {
+            case PENDING:
+                return IS_PENDING_COND;
+            case CONFIRMED:
+                return IS_CONFIRMED_COND;
+            case READY:
+                return IS_READY_COND;
+            case DELIVERED:
+                return IS_DELIVERED_COND;
+            default:
+                return IS_CANCELLED_COND;
+        }
+    }
+
     @Override
     public PaginatedResult<Order> getByRestaurant(long restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus) {
         Utils.validatePaginationParams(pageNumber, pageSize);
 
-        // TODO: Implement. This is just a placeholder.
-        final String IS_PENDING_COND = "(date_confirmed IS NULL AND date_cancelled IS NULL)";
-        final String IS_CONFIRMED_COND = "(date_confirmed IS NOT NULL AND date_ready IS NULL AND date_cancelled IS NULL)";
-        final String IS_READY_COND = "(date_ready IS NOT NULL AND date_delivered IS NULL AND date_cancelled IS NULL)";
-        final String IS_DELIVERED_COND = "date_delivered IS NOT NULL";
-        final String IS_CANCELLED_COND = "date_cancelled IS NOT NULL";
+        String condString = getCoditionString(orderStatus);
 
-        String condString = null;
-        switch (orderStatus) {
-            case PENDING:
-                condString = IS_PENDING_COND;
-            case CONFIRMED:
-                condString = IS_CONFIRMED_COND;
-            case READY:
-                condString = IS_READY_COND;
-            case DELIVERED:
-                condString = IS_DELIVERED_COND;
-            default:
-                condString = IS_CANCELLED_COND;
-        }
+        Query nativeQuery = em.createNativeQuery("SELECT order_id FROM orders WHERE restaurant_id = ? AND " + condString + " ORDER BY date_ordered DESC");
+        nativeQuery.setParameter(1, restaurantId);
+        nativeQuery.setMaxResults(pageSize);
+        nativeQuery.setFirstResult((pageNumber - 1) * pageSize);
 
-        List<Order> orders = em.createQuery("FROM Order WHERE restaurant.restaurantId = :restaurantId AND " + condString, Order.class)
-                .setParameter("restaurantId", restaurantId)
-                .setParameter("orderStatus", orderStatus)
-                .setFirstResult((pageNumber - 1) * pageSize)
-                .setMaxResults(pageSize)
-                .getResultList();
-        return new PaginatedResult<>(orders, pageNumber, pageSize, orders.size());
+        final List<Long> idList = nativeQuery.getResultList().stream().mapToLong(n -> ((Number)n).longValue()).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
+
+        if (idList.isEmpty())
+            return new PaginatedResult<>(Collections.emptyList(), pageNumber, pageSize, 0);
+
+        Query countQuery = em.createNativeQuery("SELECT COUNT(*) FROM orders WHERE restaurant_id = ? AND " + condString);
+        countQuery.setParameter(1, restaurantId);
+        int count = ((Number) countQuery.getSingleResult()).intValue();
+
+        final TypedQuery<Order> query = em.createQuery("FROM Order WHERE orderId IN :idList ORDER BY dateOrdered DESC", Order.class);
+        query.setParameter("idList", idList);
+
+        List<Order> orders = query.getResultList();
+
+        return new PaginatedResult<>(orders, pageNumber, pageSize, count);
     }
 }

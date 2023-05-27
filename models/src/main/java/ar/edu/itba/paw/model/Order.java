@@ -20,7 +20,7 @@ public class Order {
     @Column(name = "order_type")
     private OrderType orderType;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
 
@@ -151,7 +151,7 @@ public class Order {
     }
 
     public int getTableNumber() {
-        return tableNumber;
+        return (tableNumber == null) ? 0 : tableNumber;
     }
 
     public BigDecimal getPrice() {
