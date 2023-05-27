@@ -27,7 +27,7 @@ function addItemToFrontCart(title, unitPrice, quantity, comments) {
                 <div class="cart-item-body">
                     <span class="badge text-bg-secondary">x${item.quantity}</span>
                     <span>${escapeHtml(item.title)}</span>
-                    <span class="no-wrap"><strong>$${item.price}</strong></span>
+                    <span class="no-wrap"><strong>$${item.price.toFixed(2)}</strong></span>
                 </div>
             </div>
         </li>
