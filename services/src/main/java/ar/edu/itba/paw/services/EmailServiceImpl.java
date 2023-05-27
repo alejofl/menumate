@@ -4,7 +4,6 @@ import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.service.EmailService;
-import ar.edu.itba.paw.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

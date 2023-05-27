@@ -165,40 +165,6 @@ class ReusingRowMappers {
         return new ProductReusingRowMapper();
     }
 
-    private static class OrderItemlessReusingRowMapper extends LongKeyReusingRowMapper<OrderItemless> {
-        private final RowMapper<Restaurant> restaurantRowMapper;
-        private final RowMapper<User> userRowMapper;
-
-        public OrderItemlessReusingRowMapper() {
-            super("order_id");
-            restaurantRowMapper = ReusingRowMappers.getRestaurantRowMapper();
-            userRowMapper = ReusingRowMappers.getUserRowMapper();
-        }
-
-        @Override
-        public OrderItemless mapObject(Long pk, ResultSet rs) throws SQLException {
-            return new OrderItemless(
-                    rs.getLong("order_id"),
-                    OrderType.fromOrdinal(rs.getInt("order_type")),
-                    restaurantRowMapper.mapRow(rs, 1),
-                    userRowMapper.mapRow(rs, 1),
-                    SimpleRowMappers.timestampToLocalDateTimeOrNull(rs.getTimestamp("order_date_ordered")),
-                    SimpleRowMappers.timestampToLocalDateTimeOrNull(rs.getTimestamp("order_date_confirmed")),
-                    SimpleRowMappers.timestampToLocalDateTimeOrNull(rs.getTimestamp("order_date_ready")),
-                    SimpleRowMappers.timestampToLocalDateTimeOrNull(rs.getTimestamp("order_date_delivered")),
-                    SimpleRowMappers.timestampToLocalDateTimeOrNull(rs.getTimestamp("order_date_cancelled")),
-                    rs.getString("order_address"),
-                    rs.getInt("order_table_number"),
-                    rs.getInt("order_item_count"),
-                    rs.getBigDecimal("order_price")
-            );
-        }
-    }
-
-    static RowMapper<OrderItemless> getOrderItemlessReusingRowMapper() {
-        return new OrderItemlessReusingRowMapper();
-    }
-
     private static class OrderItemReusingRowMapper extends TripleLongKeyReusingRowMapper<OrderItem> {
         private final RowMapper<Product> productRowMapper;
 

@@ -2,7 +2,6 @@ package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.util.PaginatedResult;
-import ar.edu.itba.paw.util.Pair;
 
 import java.util.List;
 import java.util.Optional;

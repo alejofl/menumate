@@ -24,7 +24,7 @@ import java.util.Optional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
-public class RolesJdbcDaoTest {
+public class RestaurantRoleJdbcDaoTest {
     private static final long USER_ID = 791;
     private static final String USER_EMAIL = "peter@peter.com";
     private static final String USER_PASSWORD = "super12secret34";
@@ -50,7 +50,7 @@ public class RolesJdbcDaoTest {
     private DataSource ds;
 
     @Autowired
-    private RolesJdbcDao rolesDao;
+    private RestaurantRoleJdbcDao rolesDao;
 
     private JdbcTemplate jdbcTemplate;
 

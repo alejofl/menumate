@@ -9,7 +9,7 @@ import ar.edu.itba.paw.util.Triplet;
 import java.util.List;
 import java.util.Optional;
 
-public interface RolesDao {
+public interface RestaurantRoleDao {
 
     /**
      * Gets a user's role at a restaurant, or empty if said user has no roles at said restaurant.

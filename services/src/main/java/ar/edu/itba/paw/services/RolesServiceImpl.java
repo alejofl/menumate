@@ -3,7 +3,7 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.model.RestaurantRoleLevel;
 import ar.edu.itba.paw.model.User;
-import ar.edu.itba.paw.persistance.RolesDao;
+import ar.edu.itba.paw.persistance.RestaurantRoleDao;
 import ar.edu.itba.paw.service.RolesService;
 import ar.edu.itba.paw.util.Pair;
 import ar.edu.itba.paw.util.Triplet;
@@ -17,38 +17,38 @@ import java.util.Optional;
 public class RolesServiceImpl implements RolesService {
 
     @Autowired
-    private RolesDao rolesDao;
+    private RestaurantRoleDao restaurantRoleDao;
 
     @Override
     public Optional<RestaurantRoleLevel> getRole(long userId, long restaurantId) {
-        return rolesDao.getRole(userId, restaurantId);
+        return restaurantRoleDao.getRole(userId, restaurantId);
     }
 
     @Override
     public void setRole(long userId, long restaurantId, RestaurantRoleLevel level) {
         if (level == null)
-            rolesDao.deleteRole(userId, restaurantId);
+            restaurantRoleDao.deleteRole(userId, restaurantId);
         else
-            rolesDao.setRole(userId, restaurantId, level);
+            restaurantRoleDao.setRole(userId, restaurantId, level);
     }
 
     @Override
     public void deleteRole(long userId, long restaurantId) {
-        rolesDao.deleteRole(userId, restaurantId);
+        restaurantRoleDao.deleteRole(userId, restaurantId);
     }
 
     @Override
     public boolean doesUserHaveRole(long userId, long restaurantId, RestaurantRoleLevel minimumRoleLevel) {
-        return rolesDao.doesUserHaveRole(userId, restaurantId, minimumRoleLevel);
+        return restaurantRoleDao.doesUserHaveRole(userId, restaurantId, minimumRoleLevel);
     }
 
     @Override
     public List<Pair<User, RestaurantRoleLevel>> getByRestaurant(long restaurantId) {
-        return rolesDao.getByRestaurant(restaurantId);
+        return restaurantRoleDao.getByRestaurant(restaurantId);
     }
 
     @Override
     public List<Triplet<Restaurant, RestaurantRoleLevel, Integer>> getByUser(long userId) {
-        return rolesDao.getByUser(userId);
+        return restaurantRoleDao.getByUser(userId);
     }
 }

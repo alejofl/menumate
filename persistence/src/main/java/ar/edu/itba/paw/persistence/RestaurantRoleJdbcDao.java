@@ -4,7 +4,7 @@ import ar.edu.itba.paw.exception.RoleNotFoundException;
 import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.model.RestaurantRoleLevel;
 import ar.edu.itba.paw.model.User;
-import ar.edu.itba.paw.persistance.RolesDao;
+import ar.edu.itba.paw.persistance.RestaurantRoleDao;
 import ar.edu.itba.paw.util.Pair;
 import ar.edu.itba.paw.util.Triplet;
 import org.slf4j.Logger;
@@ -25,15 +25,15 @@ import java.util.Map;
 import java.util.Optional;
 
 @Repository
-public class RolesJdbcDao implements RolesDao {
+public class RestaurantRoleJdbcDao implements RestaurantRoleDao {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(RolesJdbcDao.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(RestaurantRoleJdbcDao.class);
 
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
     @Autowired
-    public RolesJdbcDao(final DataSource ds) {
+    public RestaurantRoleJdbcDao(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsert = new SimpleJdbcInsert(ds)
                 .withTableName("restaurant_roles")

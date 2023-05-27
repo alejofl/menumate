@@ -2,7 +2,6 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.util.AverageCountPair;
-import ar.edu.itba.paw.util.Pair;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
@@ -23,8 +22,6 @@ class SimpleRowMappers {
 
     static final RowMapper<Integer> COUNT_ROW_MAPPER = (rs, i) -> rs.getInt("c");
 
-    static final RowMapper<Integer> MAX_ROW_MAPPER = (rs, i) -> rs.getInt("m");
-
     static final RowMapper<AverageCountPair> AVERAGE_COUNT_ROW_MAPPER = (rs, i) -> new AverageCountPair(
             rs.getFloat("a"),
             rs.getInt("c")
@@ -38,13 +35,6 @@ class SimpleRowMappers {
             rs.getBoolean("user_is_active"),
             rs.getString("user_preferred_language")
     );
-
-    static final RowMapper<Pair<User, String>> USER_WITH_PASSWORD_ROW_MAPPER = (ResultSet rs, int rowNum) -> new Pair<>(
-            USER_ROW_MAPPER.mapRow(rs, rowNum),
-            rs.getString("password")
-    );
-
-    static final RowMapper<byte[]> IMAGE_ROW_MAPPER = (ResultSet rs, int rowNum) -> rs.getBytes("bytes");
 
     static final RowMapper<Restaurant> RESTAURANT_ROW_MAPPER = (ResultSet rs, int rowNum) -> new Restaurant(
             rs.getLong("restaurant_id"),
@@ -70,29 +60,6 @@ class SimpleRowMappers {
         int ordinal = rs.getInt("role_level");
         return rs.wasNull() ? null : RestaurantRoleLevel.fromOrdinal(ordinal);
     };
-    static final RowMapper<RestaurantTags> RESTAURANT_TAGS_ROW_MAPPER = (ResultSet rs, int rowNum) -> {
-        int ordinal = rs.getInt("tag_id");
-        return rs.wasNull() ? null : RestaurantTags.fromOrdinal(ordinal);
-    };
-
-    static final RowMapper<Category> CATEGORY_ROW_MAPPER = (ResultSet rs, int rowNum) -> new Category(
-            rs.getLong("category_id"),
-            RESTAURANT_ROW_MAPPER.mapRow(rs, rowNum),
-            rs.getString("category_name"),
-            rs.getInt("category_order"),
-            rs.getBoolean("category_deleted")
-    );
-
-    static final RowMapper<Product> PRODUCT_ROW_MAPPER = (ResultSet rs, int rowNum) -> new Product(
-            rs.getLong("product_id"),
-            CATEGORY_ROW_MAPPER.mapRow(rs, rowNum),
-            rs.getString("product_name"),
-            rs.getBigDecimal("product_price"),
-            rs.getString("product_description"),
-            readLongOrNull(rs, "product_image_id"),
-            rs.getBoolean("product_available"),
-            rs.getBoolean("product_deleted")
-    );
 
     static final RowMapper<OrderItemless> ORDER_ITEMLESS_ROW_MAPPER = (ResultSet rs, int rowNum) -> new OrderItemless(
             rs.getLong("order_id"),
@@ -108,13 +75,6 @@ class SimpleRowMappers {
             rs.getInt("order_table_number"),
             rs.getInt("order_item_count"),
             rs.getBigDecimal("order_price")
-    );
-
-    static final RowMapper<OrderItem> ORDER_ITEM_ROW_MAPPER = (ResultSet rs, int rowNum) -> new OrderItem(
-            PRODUCT_ROW_MAPPER.mapRow(rs, rowNum),
-            rs.getInt("order_item_line_number"),
-            rs.getInt("order_item_quantity"),
-            rs.getString("order_item_comment")
     );
 
     static final RowMapper<Review> ORDER_REVIEW_ROW_MAPPER = (ResultSet rs, int rowNum) -> new Review(
