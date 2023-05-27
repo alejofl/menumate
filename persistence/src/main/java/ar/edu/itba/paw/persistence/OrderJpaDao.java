@@ -90,13 +90,26 @@ public class OrderJpaDao implements OrderDao {
     public PaginatedResult<Order> getByRestaurant(long restaurantId, int pageNumber, int pageSize) {
         Utils.validatePaginationParams(pageNumber, pageSize);
 
-        // TODO: Implement. This is just a placeholder.
-        List<Order> orders = em.createQuery("FROM Order WHERE restaurant.restaurantId = :restaurantId", Order.class)
-                .setParameter("restaurantId", restaurantId)
-                .setFirstResult((pageNumber - 1) * pageSize)
-                .setMaxResults(pageSize)
-                .getResultList();
-        return new PaginatedResult<>(orders, pageNumber, pageSize, orders.size());
+        Query nativeQuery = em.createNativeQuery("SELECT order_id FROM orders WHERE restaurant_id = ? ORDER BY date_ordered DESC");
+        nativeQuery.setParameter(1, restaurantId);
+        nativeQuery.setMaxResults(pageSize);
+        nativeQuery.setFirstResult((pageNumber - 1) * pageSize);
+
+        final List<Long> idList = nativeQuery.getResultList().stream().mapToLong(n -> ((Number)n).longValue()).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
+
+        if (idList.isEmpty())
+            return new PaginatedResult<>(Collections.emptyList(), pageNumber, pageSize, 0);
+
+        Query countQuery = em.createNativeQuery("SELECT COUNT(*) FROM orders WHERE restaurant_id = ?");
+        countQuery.setParameter(1, restaurantId);
+        int count = ((Number) countQuery.getSingleResult()).intValue();
+
+        final TypedQuery<Order> query = em.createQuery("FROM Order WHERE orderId IN :idList ORDER BY dateOrdered DESC", Order.class);
+        query.setParameter("idList", idList);
+
+        List<Order> orders = query.getResultList();
+
+        return new PaginatedResult<>(orders, pageNumber, pageSize, count);
     }
 
     @Override
