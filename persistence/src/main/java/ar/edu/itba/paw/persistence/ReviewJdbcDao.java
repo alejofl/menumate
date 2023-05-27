@@ -5,6 +5,7 @@ import ar.edu.itba.paw.model.Review;
 import ar.edu.itba.paw.persistance.ReviewDao;
 import ar.edu.itba.paw.util.AverageCountPair;
 import ar.edu.itba.paw.util.PaginatedResult;
+import ar.edu.itba.paw.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,6 +108,8 @@ public class ReviewJdbcDao implements ReviewDao {
     }
 
     private PaginatedResult<Review> getReviewPaginatedResult(long queryTableId, int pageNumber, int pageSize, String getSql, String getCountSql) {
+        Utils.validatePaginationParams(pageNumber, pageSize);
+
         int pageIdx = pageNumber - 1;
         List<Review> results = jdbcTemplate.query(
                 getSql,
@@ -135,6 +138,7 @@ public class ReviewJdbcDao implements ReviewDao {
 
     @Override
     public PaginatedResult<Review> getByRestaurant(long restaurantId, int pageNumber, int pageSize) {
+        Utils.validatePaginationParams(pageNumber, pageSize);
         return getReviewPaginatedResult(restaurantId, pageNumber, pageSize, GET_BY_RESTAURANT_SQL, GET_BY_RESTAURANT_COUNT_SQL);
     }
 
@@ -149,6 +153,7 @@ public class ReviewJdbcDao implements ReviewDao {
 
     @Override
     public PaginatedResult<Review> getByUser(long userId, int pageNumber, int pageSize) {
+        Utils.validatePaginationParams(pageNumber, pageSize);
         return getReviewPaginatedResult(userId, pageNumber, pageSize, GET_BY_USER_SQL, GET_BY_USER_COUNT_SQL);
     }
 }

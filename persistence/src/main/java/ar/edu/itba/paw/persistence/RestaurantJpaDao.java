@@ -4,6 +4,7 @@ import ar.edu.itba.paw.exception.RestaurantNotFoundException;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.persistance.RestaurantDao;
 import ar.edu.itba.paw.util.PaginatedResult;
+import ar.edu.itba.paw.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -12,10 +13,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Repository
 public class RestaurantJpaDao implements RestaurantDao {
@@ -107,6 +105,7 @@ public class RestaurantJpaDao implements RestaurantDao {
 
     @Override
     public PaginatedResult<RestaurantDetails> search(String query, int pageNumber, int pageSize, RestaurantOrderBy orderBy, boolean descending, List<RestaurantTags> tags, List<RestaurantSpecialty> specialties) {
+        Utils.validatePaginationParams(pageNumber, pageSize);
         int pageIdx = pageNumber - 1;
 
         String orderByColumn = getOrderByColumn(orderBy);
@@ -128,6 +127,9 @@ public class RestaurantJpaDao implements RestaurantDao {
         nativeQuery.setParameter(3, pageIdx * pageSize);
 
         final List<Long> idList = nativeQuery.getResultList().stream().mapToLong(n -> ((Number)n).longValue()).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
+
+        if (idList.isEmpty())
+            return new PaginatedResult<>(Collections.emptyList(), pageNumber, pageSize, 0);
 
         sqlBuilder.setLength(0);
         sqlBuilder.append("SELECT COUNT(*) AS c FROM restaurants AS r WHERE deleted = false AND is_active = true AND name ILIKE ?");

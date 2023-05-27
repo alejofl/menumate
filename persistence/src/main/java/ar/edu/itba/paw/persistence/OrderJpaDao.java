@@ -3,6 +3,7 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.persistance.OrderDao;
 import ar.edu.itba.paw.util.PaginatedResult;
+import ar.edu.itba.paw.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -57,6 +58,8 @@ public class OrderJpaDao implements OrderDao {
 
     @Override
     public PaginatedResult<Order> getByUser(long userId, int pageNumber, int pageSize) {
+        Utils.validatePaginationParams(pageNumber, pageSize);
+
         // TODO: Implement. This is just a placeholder.
         List<Order> orders = em.createQuery("FROM Order WHERE user.userId = :userId", Order.class)
                 .setParameter("userId", userId)
@@ -68,6 +71,8 @@ public class OrderJpaDao implements OrderDao {
 
     @Override
     public PaginatedResult<Order> getByRestaurant(long restaurantId, int pageNumber, int pageSize) {
+        Utils.validatePaginationParams(pageNumber, pageSize);
+
         // TODO: Implement. This is just a placeholder.
         List<Order> orders = em.createQuery("FROM Order WHERE restaurant.restaurantId = :restaurantId", Order.class)
                 .setParameter("restaurantId", restaurantId)
@@ -79,6 +84,8 @@ public class OrderJpaDao implements OrderDao {
 
     @Override
     public PaginatedResult<Order> getByRestaurant(long restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus) {
+        Utils.validatePaginationParams(pageNumber, pageSize);
+
         // TODO: Implement. This is just a placeholder.
         final String IS_PENDING_COND = "(date_confirmed IS NULL AND date_cancelled IS NULL)";
         final String IS_CONFIRMED_COND = "(date_confirmed IS NOT NULL AND date_ready IS NULL AND date_cancelled IS NULL)";
