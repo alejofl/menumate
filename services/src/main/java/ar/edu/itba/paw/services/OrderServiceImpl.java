@@ -7,6 +7,7 @@ import ar.edu.itba.paw.service.EmailService;
 import ar.edu.itba.paw.service.OrderService;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.util.PaginatedResult;
+import ar.edu.itba.paw.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -208,10 +209,6 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    private static <T> T coalesce(T a, T b) {
-        return a != null ? a : b;
-    }
-
     @Transactional
     @Override
     public void setOrderStatus(long orderId, OrderStatus orderStatus) {
@@ -228,28 +225,28 @@ public class OrderServiceImpl implements OrderService {
                 order.setDateConfirmed(null);
                 order.setDateReady(null);
                 order.setDateDelivered(null);
-                order.setDateCancelled(coalesce(order.getDateCancelled(), now));
+                order.setDateCancelled(Utils.coalesce(order.getDateCancelled(), now));
                 break;
             case CANCELLED:
                 order.setDateDelivered(null);
-                order.setDateCancelled(coalesce(order.getDateCancelled(), now));
+                order.setDateCancelled(Utils.coalesce(order.getDateCancelled(), now));
                 break;
             case CONFIRMED:
-                order.setDateConfirmed(coalesce(order.getDateConfirmed(), now));
+                order.setDateConfirmed(Utils.coalesce(order.getDateConfirmed(), now));
                 order.setDateReady(null);
                 order.setDateDelivered(null);
                 order.setDateCancelled(null);
                 break;
             case READY:
-                order.setDateConfirmed(coalesce(order.getDateConfirmed(), now));
-                order.setDateReady(coalesce(order.getDateReady(), now));
+                order.setDateConfirmed(Utils.coalesce(order.getDateConfirmed(), now));
+                order.setDateReady(Utils.coalesce(order.getDateReady(), now));
                 order.setDateDelivered(null);
                 order.setDateCancelled(null);
                 break;
             case DELIVERED:
-                order.setDateConfirmed(coalesce(order.getDateConfirmed(), now));
-                order.setDateReady(coalesce(order.getDateReady(), now));
-                order.setDateDelivered(coalesce(order.getDateDelivered(), now));
+                order.setDateConfirmed(Utils.coalesce(order.getDateConfirmed(), now));
+                order.setDateReady(Utils.coalesce(order.getDateReady(), now));
+                order.setDateDelivered(Utils.coalesce(order.getDateDelivered(), now));
                 order.setDateCancelled(null);
                 break;
             default:
