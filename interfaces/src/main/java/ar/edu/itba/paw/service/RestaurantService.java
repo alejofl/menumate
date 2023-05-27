@@ -28,9 +28,5 @@ public interface RestaurantService {
      */
     PaginatedResult<RestaurantDetails> search(String query, int pageNumber, int pageSize, RestaurantOrderBy orderBy, boolean descending, List<RestaurantTags> tags, List<RestaurantSpecialty> specialties);
 
-    List<Pair<Category, List<Product>>> getMenu(long restaurantId);
-
-    void delete(Restaurant restaurant);
-
     void delete(long restaurantId);
 }

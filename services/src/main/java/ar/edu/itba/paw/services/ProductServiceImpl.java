@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.services;
 
+import ar.edu.itba.paw.exception.ProductNotFoundException;
 import ar.edu.itba.paw.model.Product;
 import ar.edu.itba.paw.persistance.ImageDao;
 import ar.edu.itba.paw.persistance.ProductDao;
@@ -21,6 +22,11 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ImageDao imageDao;
 
+    @Override
+    public Optional<Product> getById(long productId) {
+        return productDao.getById(productId);
+    }
+
     @Transactional
     @Override
     public Product create(long categoryId, String name, String description, byte[] image, BigDecimal price) {
@@ -28,21 +34,21 @@ public class ProductServiceImpl implements ProductService {
         return productDao.create(categoryId, name, description, imageKey, price);
     }
 
+    @Transactional
     @Override
-    public Optional<Product> getById(long productId) {
-        return productDao.getById(productId);
+    public Product update(long productId, String name, BigDecimal price, String description) {
+        final Optional<Product> maybeProduct = productDao.getById(productId);
+        if (!maybeProduct.isPresent())
+            throw new ProductNotFoundException();
+
+        final Product product = maybeProduct.get();
+        product.setName(name);
+        product.setDescription(description);
+        // TODO: Implement update price
+        return product;
     }
 
-    @Override
-    public List<Product> getByCategory(long categoryId) {
-        return productDao.getByCategory(categoryId);
-    }
-
-    @Override
-    public void update(long productId, String name, BigDecimal price, String description) {
-        productDao.update(productId, name, price, description);
-    }
-
+    @Transactional
     @Override
     public void delete(long productId) {
         productDao.delete(productId);

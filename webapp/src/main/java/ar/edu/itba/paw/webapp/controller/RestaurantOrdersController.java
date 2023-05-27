@@ -4,7 +4,6 @@ import ar.edu.itba.paw.exception.OrderNotFoundException;
 import ar.edu.itba.paw.exception.RestaurantNotFoundException;
 import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.model.OrderStatus;
-import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.service.OrderService;
 import ar.edu.itba.paw.service.RestaurantService;
 import ar.edu.itba.paw.util.PaginatedResult;

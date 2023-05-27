@@ -28,6 +28,9 @@ public class RestaurantsController {
     private RestaurantService restaurantService;
 
     @Autowired
+    private CategoryService categoryService;
+
+    @Autowired
     private OrderService orderService;
 
     @Autowired
@@ -73,7 +76,7 @@ public class RestaurantsController {
         mav.addObject("reviews", reviews);
         mav.addObject("tags", restaurant.getTags());
 
-        final List<Pair<Category, List<Product>>> menu = restaurantService.getMenu(id);
+        final List<Category> menu = categoryService.getByRestaurantSortedByOrder(id);
         mav.addObject("menu", menu);
 
         mav.addObject("formError", formError);

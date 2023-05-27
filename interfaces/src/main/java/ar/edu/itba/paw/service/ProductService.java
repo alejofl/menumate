@@ -7,13 +7,12 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProductService {
-    Product create(long categoryId, String name, String description, byte[] image, BigDecimal price);
 
     Optional<Product> getById(long productId);
 
-    List<Product> getByCategory(long categoryId);
+    Product create(long categoryId, String name, String description, byte[] image, BigDecimal price);
 
-    void update(long productId, String name, BigDecimal price, String description);
+    Product update(long productId, String name, BigDecimal price, String description);
 
     void delete(long productId);
 }

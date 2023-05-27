@@ -23,32 +23,33 @@ public class Category {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
-    private int order;
+    @Column(name = "order_num", nullable = false)
+    private int orderNum;
 
     @Column(nullable = false, insertable = false)
     private boolean deleted;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "category_id", referencedColumnName = "category_id")
     private List<Product> products;
 
     Category() {
 
     }
 
-    public Category(Restaurant restaurant, String name, int order) {
+    public Category(Restaurant restaurant, String name, int orderNum) {
         this.restaurantId = restaurant.getRestaurantId();
         this.restaurant = restaurant;
         this.name = name;
-        this.order = order;
+        this.orderNum = orderNum;
     }
 
     // TODO: Remove this constructor, it remains for backwards compatibility until ORM migration is finished
-    public Category(long categoryId, Restaurant restaurant, String name, int order, boolean deleted) {
+    public Category(long categoryId, Restaurant restaurant, String name, int orderNum, boolean deleted) {
         this.categoryId = categoryId;
         this.restaurant = restaurant;
         this.name = name;
-        this.order = order;
+        this.orderNum = orderNum;
         this.deleted = deleted;
     }
 
@@ -77,12 +78,12 @@ public class Category {
         this.name = name;
     }
 
-    public int getOrder() {
-        return order;
+    public int getOrderNum() {
+        return orderNum;
     }
 
-    public void setOrder(int order) {
-        this.order = order;
+    public void setOrderNum(int orderNum) {
+        this.orderNum = orderNum;
     }
 
     public boolean getDeleted() {

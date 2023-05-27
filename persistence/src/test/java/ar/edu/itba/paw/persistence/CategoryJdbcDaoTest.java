@@ -41,7 +41,7 @@ public class CategoryJdbcDaoTest {
     private DataSource ds;
 
     @Autowired
-    private CategoryJdbcDao categoryDao;
+    private CategoryJpaDao categoryDao;
 
     private JdbcTemplate jdbcTemplate;
 

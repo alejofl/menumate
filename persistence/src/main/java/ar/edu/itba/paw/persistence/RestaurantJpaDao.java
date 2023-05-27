@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Repository
 public class RestaurantJpaDao implements RestaurantDao {
@@ -156,13 +155,9 @@ public class RestaurantJpaDao implements RestaurantDao {
     }
 
     @Override
-    public void delete(Restaurant restaurant) {
-        em.remove(restaurant); // TODO: Logical deletion
-    }
-
-    @Override
     public void delete(long restaurantId) {
-        em.remove(em.getReference(Restaurant.class, restaurantId));
-        // TODO: Logical deletion, consider leaving just one of the delete() methods and which
+        final Restaurant restaurant = em.getReference(Restaurant.class, restaurantId);
+        em.remove(restaurant); // TODO: Logical deletion
+        LOGGER.info("Deleted restaurant id {}", restaurant.getRestaurantId());
     }
 }

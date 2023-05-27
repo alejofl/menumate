@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.services;
 
-import ar.edu.itba.paw.exception.UserNotFoundException;
 import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.model.Restaurant;
@@ -31,9 +30,6 @@ import java.util.Map;
 public class EmailServiceImpl implements EmailService {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(EmailServiceImpl.class);
-
-    @Autowired
-    private UserService userService;
 
     @Autowired
     private JavaMailSender emailSender;

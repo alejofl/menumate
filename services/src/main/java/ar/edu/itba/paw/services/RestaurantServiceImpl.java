@@ -23,13 +23,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     private RestaurantDao restaurantDao;
 
     @Autowired
-    private ProductService productService;
-
-    @Autowired
     private ImageDao imageDao;
-
-    @Autowired
-    private CategoryService categoryService;
 
     @Transactional
     @Override
@@ -54,22 +48,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public List<Pair<Category, List<Product>>> getMenu(long restaurantId) {
-        List<Category> categories = categoryService.getByRestaurantSortedByOrder(restaurantId);
-        List<Pair<Category, List<Product>>> menu = new ArrayList<>();
-        for (Category category : categories) {
-            menu.add(new Pair<>(category, productService.getByCategory(category.getCategoryId())));
-        }
-        return menu;
-    }
-
-    @Override
     public void delete(long restaurantId) {
         restaurantDao.delete(restaurantId);
-    }
-
-    @Override
-    public void delete(Restaurant restaurant) {
-        restaurantDao.delete(restaurant);
     }
 }

@@ -1,7 +1,5 @@
 package ar.edu.itba.paw.model;
 
-import jdk.nashorn.internal.ir.annotations.Ignore;
-
 import javax.persistence.*;
 
 @Entity

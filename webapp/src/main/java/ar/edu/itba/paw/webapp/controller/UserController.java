@@ -19,7 +19,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -181,7 +180,7 @@ public class UserController {
         final Restaurant restaurant = restaurantService.getById(id).orElseThrow(RestaurantNotFoundException::new);
         mav.addObject("restaurant", restaurant);
 
-        final List<Pair<Category, List<Product>>> menu = restaurantService.getMenu(id);
+        final List<Category> menu = categoryService.getByRestaurantSortedByOrder(id);
         mav.addObject("menu", menu);
 
         final List<Pair<User, RestaurantRoleLevel>> employees = rolesService.getByRestaurant(id);

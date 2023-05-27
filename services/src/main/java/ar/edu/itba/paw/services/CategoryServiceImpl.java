@@ -1,10 +1,12 @@
 package ar.edu.itba.paw.services;
 
+import ar.edu.itba.paw.exception.CategoryNotFoundException;
 import ar.edu.itba.paw.model.Category;
 import ar.edu.itba.paw.persistance.CategoryDao;
 import ar.edu.itba.paw.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,13 +18,14 @@ public class CategoryServiceImpl implements CategoryService {
     private CategoryDao categoryDao;
 
     @Override
-    public long create(long restaurantId, String name) {
-        return categoryDao.create(restaurantId, name);
-    }
-
-    @Override
     public Optional<Category> getById(long categoryId) {
         return categoryDao.getById(categoryId);
+    }
+
+    @Transactional
+    @Override
+    public Category create(long restaurantId, String name) {
+        return categoryDao.create(restaurantId, name);
     }
 
     @Override
@@ -30,16 +33,31 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryDao.getByRestaurantSortedByOrder(restaurantId);
     }
 
+    @Transactional
     @Override
-    public void updateName(long categoryId, String name) {
-        categoryDao.updateName(categoryId, name);
+    public Category updateName(long categoryId, String name) {
+        final Optional<Category> maybeCategory = categoryDao.getById(categoryId);
+        if (!maybeCategory.isPresent())
+            throw new CategoryNotFoundException();
+
+        final Category category = maybeCategory.get();
+        category.setName(name);
+        return category;
     }
 
+    @Transactional
     @Override
-    public void updateOrder(long categoryId, int order) {
-        categoryDao.updateOrder(categoryId, order);
+    public Category updateOrder(long categoryId, int orderNum) {
+        final Optional<Category> maybeCategory = categoryDao.getById(categoryId);
+        if (!maybeCategory.isPresent())
+            throw new CategoryNotFoundException();
+
+        final Category category = maybeCategory.get();
+        category.setOrderNum(orderNum);
+        return category;
     }
 
+    @Transactional
     @Override
     public void delete(long categoryId) {
         categoryDao.delete(categoryId);

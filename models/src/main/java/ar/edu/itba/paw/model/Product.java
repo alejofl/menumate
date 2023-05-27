@@ -13,6 +13,9 @@ public class Product {
     @Column(name = "product_id", nullable = false)
     private Long productId;
 
+    @Column(name = "category_id", nullable = false)
+    private long categoryId;
+
     @Column(nullable = false)
     private String name;
 
@@ -35,7 +38,8 @@ public class Product {
 
     }
 
-    public Product(String name, String description, Long imageId, BigDecimal price, boolean available) {
+    public Product(long categoryId, String name, String description, Long imageId, BigDecimal price, boolean available) {
+        this.categoryId = categoryId;
         this.name = name;
         this.description = description;
         this.imageId = imageId;
@@ -57,6 +61,14 @@ public class Product {
 
     public Long getProductId() {
         return productId;
+    }
+
+    public long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(long categoryId) {
+        this.categoryId = categoryId;
     }
 
     public String getName() {

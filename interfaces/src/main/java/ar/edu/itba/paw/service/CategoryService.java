@@ -6,15 +6,16 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CategoryService {
-    long create(long restaurantId, String name);
 
     Optional<Category> getById(long categoryId);
 
+    Category create(long restaurantId, String name);
+
     List<Category> getByRestaurantSortedByOrder(long restaurantId);
 
-    void updateName(long categoryId, String name);
+    Category updateName(long categoryId, String name);
 
-    void updateOrder(long categoryId, int order);
+    Category updateOrder(long categoryId, int orderNum);
 
     void delete(long categoryId);
 }

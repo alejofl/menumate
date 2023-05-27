@@ -31,9 +31,6 @@ public class OrderServiceImpl implements OrderService {
     private UserService userService;
 
     @Autowired
-    private ProductService productService;
-
-    @Autowired
     private EmailService emailService;
 
     private void sendOrderReceivedEmails(Order order) {
