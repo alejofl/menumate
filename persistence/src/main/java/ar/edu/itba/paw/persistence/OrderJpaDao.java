@@ -10,6 +10,10 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,13 +64,26 @@ public class OrderJpaDao implements OrderDao {
     public PaginatedResult<Order> getByUser(long userId, int pageNumber, int pageSize) {
         Utils.validatePaginationParams(pageNumber, pageSize);
 
-        // TODO: Implement. This is just a placeholder.
-        List<Order> orders = em.createQuery("FROM Order WHERE user.userId = :userId", Order.class)
-                .setParameter("userId", userId)
-                .setFirstResult((pageNumber - 1) * pageSize)
-                .setMaxResults(pageSize)
-                .getResultList();
-        return new PaginatedResult<>(orders, pageNumber, pageSize, orders.size());
+        Query nativeQuery = em.createNativeQuery("SELECT order_id FROM orders WHERE user_id = ? ORDER BY date_ordered DESC");
+        nativeQuery.setParameter(1, userId);
+        nativeQuery.setMaxResults(pageSize);
+        nativeQuery.setFirstResult((pageNumber - 1) * pageSize);
+
+        final List<Long> idList = nativeQuery.getResultList().stream().mapToLong(n -> ((Number)n).longValue()).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
+
+        if (idList.isEmpty())
+            return new PaginatedResult<>(Collections.emptyList(), pageNumber, pageSize, 0);
+
+        Query countQuery = em.createNativeQuery("SELECT COUNT(*) FROM orders WHERE user_id = ?");
+        countQuery.setParameter(1, userId);
+        int count = ((Number) countQuery.getSingleResult()).intValue();
+
+        final TypedQuery<Order> query = em.createQuery("FROM Order WHERE orderId IN :idList ORDER BY dateOrdered DESC", Order.class);
+        query.setParameter("idList", idList);
+
+        List<Order> orders = query.getResultList();
+
+        return new PaginatedResult<>(orders, pageNumber, pageSize, count);
     }
 
     @Override

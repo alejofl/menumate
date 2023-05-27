@@ -1,20 +1,25 @@
 package ar.edu.itba.paw.model;
 
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Objects;
 
 @Entity
 @Table(name = "order_items")
+@IdClass(OrderItem.OrderItemId.class)
 public class OrderItem {
 
-    //    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    //    @PrimaryKeyJoinColumn(name = "product_id", referencedColumnName = "product_id")
-    //    private final Product product;
     @Id
-    @Column(name = "product_id")
-    private long productId;
+    @Column(name = "order_id", nullable = false)
+    private long orderId;
 
+    @Id
     @Column(name = "line_number", nullable = false)
     private int lineNumber;
+
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "product_id", referencedColumnName = "product_id")
+    private Product product;
 
     @Column(nullable = false)
     private int quantity;
@@ -22,17 +27,7 @@ public class OrderItem {
     @Column
     private String comment;
 
-    @Transient
-    private Product product;
-
     OrderItem() {
-    }
-
-    public OrderItem(long productId, int lineNumber, int quantity, String comment) {
-        this.productId = productId;
-        this.lineNumber = lineNumber;
-        this.quantity = quantity;
-        this.comment = comment;
     }
 
     public OrderItem(Product product, int lineNumber, int quantity, String comment) {
@@ -42,12 +37,12 @@ public class OrderItem {
         this.comment = comment;
     }
 
-    public Product getProduct() {
-        return product;
+    public void setOrderId(long orderId) {
+        this.orderId = orderId;
     }
 
-    public long getProductId() {
-        return productId;
+    public Product getProduct() {
+        return product;
     }
 
     public int getLineNumber() {
@@ -60,5 +55,32 @@ public class OrderItem {
 
     public String getComment() {
         return comment;
+    }
+
+    static class OrderItemId implements Serializable {
+
+        private long orderId;
+        private int lineNumber;
+
+        OrderItemId() {
+        }
+
+        public OrderItemId(long orderId, int lineNumber) {
+            this.orderId = orderId;
+            this.lineNumber = lineNumber;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof OrderItemId)) return false;
+            OrderItemId oi = (OrderItemId) o;
+            return orderId == oi.orderId && lineNumber == oi.lineNumber;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(orderId, lineNumber);
+        }
     }
 }

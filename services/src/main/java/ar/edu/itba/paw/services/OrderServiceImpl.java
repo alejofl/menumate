@@ -46,14 +46,21 @@ public class OrderServiceImpl implements OrderService {
         return userService.createIfNotExists(email, name).getUserId();
     }
 
+    private void assingOrderItemsToOrder(Order order, List<OrderItem> items) {
+        List<OrderItem> orderList = order.getItems();
+        orderList.addAll(items);
+        for (OrderItem item : items) {
+            item.setOrderId(order.getOrderId());
+        }
+    }
+
     // NOTE: create methods that send emails are not transactional, we want the order to remain placed even if the
     // notification email fails.
     @Transactional
     @Override
     public Order createDelivery(long restaurantId, long userId, String address, List<OrderItem> items) {
         Order order = orderDao.createDelivery(restaurantId, userId, address);
-        List<OrderItem> orderList = order.getItems();
-        orderList.addAll(items);
+        assingOrderItemsToOrder(order, items);
         sendOrderReceivedEmails(order);
         return order;
     }
@@ -62,8 +69,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order createDelivery(long restaurantId, String name, String email, String address, List<OrderItem> items) {
         Order order = orderDao.createDelivery(restaurantId, getOrCreateUserId(name, email), address);
-        List<OrderItem> orderList = order.getItems();
-        orderList.addAll(items);
+        assingOrderItemsToOrder(order, items);
         sendOrderReceivedEmails(order);
         return order;
     }
@@ -72,8 +78,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order createDineIn(long restaurantId, long userId, int tableNumber, List<OrderItem> items) {
         Order order = orderDao.createDineIn(restaurantId, userId, tableNumber);
-        List<OrderItem> orderList = order.getItems();
-        orderList.addAll(items);
+        assingOrderItemsToOrder(order, items);
         sendOrderReceivedEmails(order);
         return order;
     }
@@ -82,8 +87,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order createDineIn(long restaurantId, String name, String email, int tableNumber, List<OrderItem> items) {
         Order order = orderDao.createDineIn(restaurantId, getOrCreateUserId(name, email), tableNumber);
-        List<OrderItem> orderList = order.getItems();
-        orderList.addAll(items);
+        assingOrderItemsToOrder(order, items);
         sendOrderReceivedEmails(order);
         return order;
     }
@@ -92,8 +96,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order createTakeAway(long restaurantId, long userId, List<OrderItem> items) {
         Order order = orderDao.createTakeaway(restaurantId, userId);
-        List<OrderItem> orderList = order.getItems();
-        orderList.addAll(items);
+        assingOrderItemsToOrder(order, items);
         sendOrderReceivedEmails(order);
         return order;
     }
@@ -102,8 +105,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order createTakeAway(long restaurantId, String name, String email, List<OrderItem> items) {
         Order order = orderDao.createTakeaway(restaurantId, getOrCreateUserId(name, email));
-        List<OrderItem> orderList = order.getItems();
-        orderList.addAll(items);
+        assingOrderItemsToOrder(order, items);
         sendOrderReceivedEmails(order);
         return order;
     }

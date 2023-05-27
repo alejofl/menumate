@@ -162,6 +162,10 @@ public class Order {
         return items;
     }
 
+    public int getItemCount() {
+        return items.size();
+    }
+
     private static BigDecimal calculatePrice(Iterable<OrderItem> items) {
         BigDecimal orderPrice = BigDecimal.ZERO;
         for (OrderItem item : items) {
