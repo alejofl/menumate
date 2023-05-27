@@ -18,7 +18,7 @@ public class RestaurantDetails {
     private Restaurant restaurant;
 
     @Column(name = "average_rating", nullable = false)
-    private int averageRating;
+    private float averageRating;
 
     @Column(name = "review_count", nullable = false)
     private int reviewCount;
@@ -39,7 +39,7 @@ public class RestaurantDetails {
     }
 
     public int getAverageRating() {
-        return averageRating;
+        return Math.round(averageRating);
     }
 
     public int getReviewCount() {
