@@ -126,11 +126,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public PaginatedResult<Order> getByRestaurant(long restaurantId, int pageNumber, int pageSize) {
-        return orderDao.getByRestaurant(restaurantId, pageNumber, pageSize);
-    }
-
-    @Override
     public PaginatedResult<Order> getByRestaurant(long restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus) {
         return orderDao.getByRestaurant(restaurantId, pageNumber, pageSize, orderStatus);
     }

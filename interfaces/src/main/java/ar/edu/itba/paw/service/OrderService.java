@@ -27,8 +27,6 @@ public interface OrderService {
 
     PaginatedResult<Order> getByUser(long userId, int pageNumber, int pageSize);
 
-    PaginatedResult<Order> getByRestaurant(long restaurantId, int pageNumber, int pageSize);
-
     PaginatedResult<Order> getByRestaurant(long restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus);
 
     Optional<Order> markAsConfirmed(long orderId);

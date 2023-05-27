@@ -86,51 +86,21 @@ public class OrderJpaDao implements OrderDao {
         return new PaginatedResult<>(orders, pageNumber, pageSize, count);
     }
 
-    @Override
-    public PaginatedResult<Order> getByRestaurant(long restaurantId, int pageNumber, int pageSize) {
-        Utils.validatePaginationParams(pageNumber, pageSize);
+    private static String getCoditionString(OrderStatus orderStatus) {
+        if (orderStatus == null)
+            return "";
 
-        Query nativeQuery = em.createNativeQuery("SELECT order_id FROM orders WHERE restaurant_id = ? ORDER BY date_ordered DESC");
-        nativeQuery.setParameter(1, restaurantId);
-        nativeQuery.setMaxResults(pageSize);
-        nativeQuery.setFirstResult((pageNumber - 1) * pageSize);
-
-        final List<Long> idList = nativeQuery.getResultList().stream().mapToLong(n -> ((Number)n).longValue()).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
-
-        if (idList.isEmpty())
-            return new PaginatedResult<>(Collections.emptyList(), pageNumber, pageSize, 0);
-
-        Query countQuery = em.createNativeQuery("SELECT COUNT(*) FROM orders WHERE restaurant_id = ?");
-        countQuery.setParameter(1, restaurantId);
-        int count = ((Number) countQuery.getSingleResult()).intValue();
-
-        final TypedQuery<Order> query = em.createQuery("FROM Order WHERE orderId IN :idList ORDER BY dateOrdered DESC", Order.class);
-        query.setParameter("idList", idList);
-
-        List<Order> orders = query.getResultList();
-
-        return new PaginatedResult<>(orders, pageNumber, pageSize, count);
-    }
-
-
-    private static final String IS_PENDING_COND = "(date_confirmed IS NULL AND date_cancelled IS NULL)";
-    private static final String IS_CONFIRMED_COND = "(date_confirmed IS NOT NULL AND date_ready IS NULL AND date_cancelled IS NULL)";
-    private static final String IS_READY_COND = "(date_ready IS NOT NULL AND date_delivered IS NULL AND date_cancelled IS NULL)";
-    private static final String IS_DELIVERED_COND = "date_delivered IS NOT NULL";
-    private static final String IS_CANCELLED_COND = "date_cancelled IS NOT NULL";
-
-    private String getCoditionString(OrderStatus orderStatus) {
         switch (orderStatus) {
             case PENDING:
-                return IS_PENDING_COND;
+                return " AND (date_confirmed IS NULL AND date_cancelled IS NULL)";
             case CONFIRMED:
-                return IS_CONFIRMED_COND;
+                return " AND (date_confirmed IS NOT NULL AND date_ready IS NULL AND date_cancelled IS NULL)";
             case READY:
-                return IS_READY_COND;
+                return " AND (date_ready IS NOT NULL AND date_delivered IS NULL AND date_cancelled IS NULL)";
             case DELIVERED:
-                return IS_DELIVERED_COND;
+                return " AND date_delivered IS NOT NULL";
             default:
-                return IS_CANCELLED_COND;
+                return " AND date_cancelled IS NOT NULL";
         }
     }
 
@@ -140,7 +110,7 @@ public class OrderJpaDao implements OrderDao {
 
         String condString = getCoditionString(orderStatus);
 
-        Query nativeQuery = em.createNativeQuery("SELECT order_id FROM orders WHERE restaurant_id = ? AND " + condString + " ORDER BY date_ordered DESC");
+        Query nativeQuery = em.createNativeQuery("SELECT order_id FROM orders WHERE restaurant_id = ?" + condString + " ORDER BY date_ordered DESC");
         nativeQuery.setParameter(1, restaurantId);
         nativeQuery.setMaxResults(pageSize);
         nativeQuery.setFirstResult((pageNumber - 1) * pageSize);
@@ -150,7 +120,7 @@ public class OrderJpaDao implements OrderDao {
         if (idList.isEmpty())
             return new PaginatedResult<>(Collections.emptyList(), pageNumber, pageSize, 0);
 
-        Query countQuery = em.createNativeQuery("SELECT COUNT(*) FROM orders WHERE restaurant_id = ? AND " + condString);
+        Query countQuery = em.createNativeQuery("SELECT COUNT(*) FROM orders WHERE restaurant_id = ?" + condString);
         countQuery.setParameter(1, restaurantId);
         int count = ((Number) countQuery.getSingleResult()).intValue();
 
