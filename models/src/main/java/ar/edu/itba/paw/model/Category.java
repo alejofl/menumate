@@ -47,15 +47,6 @@ public class Category {
         this.orderNum = orderNum;
     }
 
-    // TODO: Remove this constructor, it remains for backwards compatibility until ORM migration is finished
-    public Category(long categoryId, Restaurant restaurant, String name, int orderNum, boolean deleted) {
-        this.categoryId = categoryId;
-        this.restaurant = restaurant;
-        this.name = name;
-        this.orderNum = orderNum;
-        this.deleted = deleted;
-    }
-
     public Long getCategoryId() {
         return categoryId;
     }

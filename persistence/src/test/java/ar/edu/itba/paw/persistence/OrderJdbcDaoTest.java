@@ -78,15 +78,15 @@ public class OrderJdbcDaoTest {
         when(order.getOrderId()).thenReturn(ORDER_ID);
         when(order.getOrderType()).thenReturn(OrderType.fromOrdinal(orderType));
         when(order.getRestaurant()).thenReturn(mock(Restaurant.class));
-        when(order.getRestaurant().getRestaurantId()).thenReturn(RESTAURANT_ID);
+        when(order.getRestaurantId()).thenReturn(RESTAURANT_ID);
         when(order.getUser()).thenReturn(mock(User.class));
-        when(order.getUser().getUserId()).thenReturn(USER_ID);
+        when(order.getUserId()).thenReturn(USER_ID);
         jdbcTemplate.execute("INSERT INTO orders(order_id, order_type, restaurant_id, user_id, address, table_number) VALUES (" + ORDER_ID + ", " + orderType + ", " + RESTAURANT_ID + ", " + USER_ID + ", '" + ADDRESS + "', " + TABLE_NUMBER + ")");
 
         Category category = mock(Category.class);
         when(category.getCategoryId()).thenReturn(CATEGORY_ID);
         when(category.getRestaurant()).thenReturn(mock(Restaurant.class));
-        when(category.getRestaurant().getRestaurantId()).thenReturn(RESTAURANT_ID);
+        when(category.getRestaurantId()).thenReturn(RESTAURANT_ID);
         for (int i = 0; i < 10; i++) {
             long product_id = PRODUCT_ID + i + 1;
             long cateogry_id = CATEGORY_ID;
@@ -108,8 +108,8 @@ public class OrderJdbcDaoTest {
         createRandomItemList(OrderType.DINE_IN.ordinal());
         Order order = orderJdbcDao.createDineIn(RESTAURANT_ID, USER_ID, TABLE_NUMBER, orderItemList);
         Assert.assertEquals(ORDER_TYPE, order.getOrderType());
-        Assert.assertEquals(RESTAURANT_ID, order.getRestaurant().getRestaurantId());
-        Assert.assertEquals(USER_ID, order.getUser().getUserId().longValue());
+        Assert.assertEquals(RESTAURANT_ID, order.getRestaurantId());
+        Assert.assertEquals(USER_ID, order.getUserId().longValue());
 
         // Testing ordered items
         List<OrderItem> dataToTest = order.getItems();
@@ -134,8 +134,8 @@ public class OrderJdbcDaoTest {
         createRandomItemList(OrderType.TAKEAWAY.ordinal());
         Order order = orderJdbcDao.createTakeaway(RESTAURANT_ID, USER_ID, orderItemList);
         Assert.assertEquals(OrderType.TAKEAWAY, order.getOrderType());
-        Assert.assertEquals(RESTAURANT_ID, order.getRestaurant().getRestaurantId());
-        Assert.assertEquals(USER_ID, order.getUser().getUserId().longValue());
+        Assert.assertEquals(RESTAURANT_ID, order.getRestaurantId());
+        Assert.assertEquals(USER_ID, order.getUserId().longValue());
 
         // Testing ordered items
         List<OrderItem> dataToTest = order.getItems();
@@ -160,8 +160,8 @@ public class OrderJdbcDaoTest {
         createRandomItemList(OrderType.DELIVERY.ordinal());
         Order order = orderJdbcDao.createDelivery(RESTAURANT_ID, USER_ID, ADDRESS, orderItemList);
         Assert.assertEquals(OrderType.DELIVERY, order.getOrderType());
-        Assert.assertEquals(RESTAURANT_ID, order.getRestaurant().getRestaurantId());
-        Assert.assertEquals(USER_ID, order.getUser().getUserId().longValue());
+        Assert.assertEquals(RESTAURANT_ID, order.getRestaurantId());
+        Assert.assertEquals(USER_ID, order.getUserId().longValue());
         Assert.assertEquals(ADDRESS, order.getAddress());
 
         // Testing ordered items
@@ -188,8 +188,8 @@ public class OrderJdbcDaoTest {
         Optional<Order> order = orderJdbcDao.getById(ORDER_ID);
         Assert.assertTrue(order.isPresent());
         Assert.assertEquals(ORDER_ID, order.get().getOrderId());
-        Assert.assertEquals(RESTAURANT_ID, order.get().getRestaurant().getRestaurantId());
-        Assert.assertEquals(USER_ID, order.get().getUser().getUserId().longValue());
+        Assert.assertEquals(RESTAURANT_ID, order.get().getRestaurantId());
+        Assert.assertEquals(USER_ID, order.get().getUserId().longValue());
         Assert.assertEquals(ORDER_TYPE, order.get().getOrderType());
         Assert.assertNotNull(order.get().getDateOrdered());
     }
@@ -219,8 +219,8 @@ public class OrderJdbcDaoTest {
             }
 
             Assert.assertEquals(i, order.getOrderId());
-            Assert.assertEquals(RESTAURANT_ID, order.getRestaurant().getRestaurantId());
-            Assert.assertEquals(USER_ID, order.getUser().getUserId().longValue());
+            Assert.assertEquals(RESTAURANT_ID, order.getRestaurantId());
+            Assert.assertEquals(USER_ID, order.getUserId().longValue());
             Assert.assertEquals(ORDER_TYPE, order.getOrderType());
             Assert.assertNotNull(order.getDateOrdered());
         }
@@ -240,8 +240,8 @@ public class OrderJdbcDaoTest {
 
         for (int i = 1; i <= iters; i++) {
             Assert.assertEquals(i, orders.get(i - 1).getOrderId());
-            Assert.assertEquals(RESTAURANT_ID, orders.get(i - 1).getRestaurant().getRestaurantId());
-            Assert.assertEquals(USER_ID, orders.get(i - 1).getUser().getUserId().longValue());
+            Assert.assertEquals(RESTAURANT_ID, orders.get(i - 1).getRestaurantId());
+            Assert.assertEquals(USER_ID, orders.get(i - 1).getUserId().longValue());
             Assert.assertEquals(ORDER_TYPE, orders.get(i - 1).getOrderType());
             Assert.assertNotNull(orders.get(i - 1).getDateOrdered());
         }
@@ -274,8 +274,8 @@ public class OrderJdbcDaoTest {
 
         for (int i = 1; i <= iters; i++) {
             Assert.assertEquals(i, allOrders.get(i - 1).getOrderId());
-            Assert.assertEquals(RESTAURANT_ID, allOrders.get(i - 1).getRestaurant().getRestaurantId());
-            Assert.assertEquals(USER_ID, allOrders.get(i - 1).getUser().getUserId().longValue());
+            Assert.assertEquals(RESTAURANT_ID, allOrders.get(i - 1).getRestaurantId());
+            Assert.assertEquals(USER_ID, allOrders.get(i - 1).getUserId().longValue());
             Assert.assertEquals(ORDER_TYPE, allOrders.get(i - 1).getOrderType());
             Assert.assertNotNull(allOrders.get(i - 1).getDateOrdered());
         }

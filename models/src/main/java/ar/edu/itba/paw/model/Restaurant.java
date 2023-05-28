@@ -86,28 +86,6 @@ public class Restaurant {
         this.deleted = false;
     }
 
-    // TODO: REMOVE THIS CONSTRUCTOR, It's only here for backwards compatibility until ORM migration is finished.
-    public Restaurant(long restaurantId, String name, String email, RestaurantSpecialty specialty, long ownerUserId, Long logoId, Long portrait1Id, Long portrait2Id, String address, String description, int maxTables, boolean isActive, boolean deleted) {
-        this.restaurantId = restaurantId;
-        this.name = name;
-        this.email = email;
-        this.specialty = specialty;
-        this.ownerUserId = ownerUserId;
-        this.owner = new User(ownerUserId, "EMAIL", "PASSWORD", null, true, "en");
-        this.address = address;
-        this.description = description;
-        this.maxTables = maxTables;
-        this.logoId = logoId;
-        this.portrait1Id = portrait1Id;
-        this.portrait2Id = portrait2Id;
-        this.isActive = isActive;
-        this.tags = new ArrayList<>();
-        tags.add(RestaurantTags.KARAOKE); // KARAOKE PARTY
-        tags.add(RestaurantTags.KARAOKE); // KARAOKE PARTY
-        tags.add(RestaurantTags.KARAOKE); // KARAOKE PARTY
-        this.deleted = deleted;
-    }
-
     public Long getRestaurantId() {
         return restaurantId;
     }

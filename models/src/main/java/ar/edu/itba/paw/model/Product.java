@@ -47,18 +47,6 @@ public class Product {
         this.available = available;
     }
 
-    // TODO: Remove this constructor, it only remains for backwards compatibility until ORM migration is finished.
-    public Product(long productId, Category category, String name, BigDecimal price, String description, Long imageId, boolean available, boolean deleted) {
-        this.productId = productId;
-        // this.category = category;
-        this.name = name;
-        this.price = price;
-        this.description = description;
-        this.imageId = imageId;
-        this.available = available;
-        this.deleted = deleted;
-    }
-
     public Long getProductId() {
         return productId;
     }

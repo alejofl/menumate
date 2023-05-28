@@ -129,7 +129,7 @@
         </div>
         <div class="d-flex gap-3">
             <button type="button" class="btn btn-primary ${has_review || order.orderStatus != "DELIVERED" ? "disabled" : ""}" data-bs-toggle="modal" data-bs-target="#review-modal" id="review-modal-button"><spring:message code="userorders.review.make"/></button>
-            <a type="button" class="btn btn-primary" href="<c:url value="/restaurants/${order.restaurant.restaurantId}"/>"><spring:message code="userorders.neworder"/></a>
+            <a type="button" class="btn btn-primary" href="<c:url value="/restaurants/${order.restaurantId}"/>"><spring:message code="userorders.neworder"/></a>
         </div>
     </main>
 

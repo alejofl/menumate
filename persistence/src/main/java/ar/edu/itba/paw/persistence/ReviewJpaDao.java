@@ -31,6 +31,11 @@ public class ReviewJpaDao implements ReviewDao {
     private EntityManager em;
 
     @Override
+    public Optional<Review> getByOrder(long orderId) {
+        return Optional.ofNullable(em.find(Review.class, orderId));
+    }
+
+    @Override
     public void create(long orderId, int rating, String comment) {
         final Review review = new Review(orderId, rating, comment);
         em.persist(review);
@@ -39,16 +44,9 @@ public class ReviewJpaDao implements ReviewDao {
 
     @Override
     public void delete(long orderId) {
-        Optional<Review> review = getByOrder(orderId);
-        if (!review.isPresent())
-            throw new ReviewNotFoundException();
-        em.remove(review.get());
+        Review review = em.getReference(Review.class, orderId);
+        em.remove(review);
         LOGGER.info("Deleted review for order with ID {}", orderId);
-    }
-
-    @Override
-    public Optional<Review> getByOrder(long orderId) {
-        return Optional.ofNullable(em.find(Review.class, orderId));
     }
 
     @Override

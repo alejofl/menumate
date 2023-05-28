@@ -40,17 +40,17 @@ public class AccessValidator {
     public boolean checkOrderOwner(long orderId) {
         Order order = orderService.getById(orderId).orElse(null);
         PawAuthUserDetails currentUserDetails = ControllerUtils.getCurrentUserDetailsOrNull();
-        return order != null && currentUserDetails != null && order.getUser().getUserId() == currentUserDetails.getUserId();
+        return order != null && currentUserDetails != null && order.getUserId() == currentUserDetails.getUserId();
     }
 
     public boolean checkOrderHandler(long orderId) {
         Order order = orderService.getById(orderId).orElse(null);
-        return order != null && checkRestaurantOrderHandler(order.getRestaurant().getRestaurantId());
+        return order != null && checkRestaurantOrderHandler(order.getRestaurantId());
     }
 
     public boolean checkOrderOwnerOrHandler(long orderId) {
         Order order = orderService.getById(orderId).orElse(null);
         PawAuthUserDetails currentUserDetails = ControllerUtils.getCurrentUserDetailsOrNull();
-        return order != null && currentUserDetails != null && (order.getUser().getUserId() == currentUserDetails.getUserId() || checkRestaurantOrderHandler(order.getRestaurant().getRestaurantId()));
+        return order != null && currentUserDetails != null && (order.getUserId() == currentUserDetails.getUserId() || checkRestaurantOrderHandler(order.getRestaurantId()));
     }
 }

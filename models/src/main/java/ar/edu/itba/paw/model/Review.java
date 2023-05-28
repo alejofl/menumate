@@ -24,24 +24,14 @@ public class Review {
     @Column
     private String comment;
 
-    @Transient
-    private OrderItemless orders;
-
     public Review() {
+
     }
 
     public Review(long orderId, int rating, String comment) {
         this.orderId = orderId;
         this.rating = rating;
         this.date = null;
-        this.comment = comment;
-    }
-
-    // TODO: REMOVE THIS CONSTRUCTOR, It's only here for backwards compatibility until ORM migration is finished.
-    public Review(OrderItemless order, int rating, LocalDateTime date, String comment) {
-        this.orders = order;
-        this.rating = rating;
-        this.date = date;
         this.comment = comment;
     }
 

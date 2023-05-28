@@ -20,12 +20,18 @@ public class Order {
     @Column(name = "order_type")
     private OrderType orderType;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
-    @JoinColumn(name = "restaurant_id")
+    @Column(name = "restaurant_id", updatable = false)
+    private long restaurantId;
+
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "restaurant_id", insertable = false, updatable = false)
     private Restaurant restaurant;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
+    @Column(name = "user_id", updatable = false)
+    private long userId;
+
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
     private User user;
 
     @Column(name = "date_ordered", insertable = false, updatable = false)
@@ -54,11 +60,14 @@ public class Order {
     private List<OrderItem> items;
 
     Order() {
+
     }
 
     public Order(OrderType orderType, Restaurant restaurant, User user, String address, Integer tableNumber) {
         this.orderType = orderType;
+        this.restaurantId = restaurant.getRestaurantId();
         this.restaurant = restaurant;
+        this.userId = user.getUserId();
         this.user = user;
         this.dateOrdered = null;
         this.dateConfirmed = null;
@@ -70,22 +79,6 @@ public class Order {
         this.items = new ArrayList<>();
     }
 
-    // TODO: REMOVE THIS CONSTRUCTOR, It's only here for backwards compatibility until ORM migration is finished.
-    public Order(long orderId, OrderType orderType, Restaurant restaurant, User user, LocalDateTime dateOrdered, LocalDateTime dateConfirmed, LocalDateTime dateReady, LocalDateTime dateDelivered, LocalDateTime dateCanceled, String address, int tableNumber, List<OrderItem> items) {
-        this.orderId = orderId;
-        this.orderType = orderType;
-        this.restaurant = restaurant;
-        this.user = user;
-        this.dateOrdered = dateOrdered;
-        this.dateConfirmed = dateConfirmed;
-        this.dateReady = dateReady;
-        this.dateDelivered = dateDelivered;
-        this.dateCancelled = dateCanceled;
-        this.address = address;
-        this.tableNumber = tableNumber;
-        this.items = items;
-    }
-
     public long getOrderId() {
         return orderId;
     }
@@ -94,8 +87,16 @@ public class Order {
         return orderType;
     }
 
+    public long getRestaurantId() {
+        return restaurantId;
+    }
+
     public Restaurant getRestaurant() {
         return restaurant;
+    }
+
+    public long getUserId() {
+        return userId;
     }
 
     public User getUser() {

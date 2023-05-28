@@ -28,6 +28,7 @@ public class OrderItem {
     private String comment;
 
     OrderItem() {
+
     }
 
     public OrderItem(Product product, int lineNumber, int quantity, String comment) {

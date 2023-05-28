@@ -205,8 +205,8 @@ public class RestaurantJdbcDaoTest {
 
         Assert.assertEquals(maxRestaurants, res.getPageSize());
         Assert.assertEquals(RESTAURANTS_QTY, res.getTotalCount());
-        Assert.assertEquals(2, res.getResult().get(0).getRestaurant().getRestaurantId());
-        Assert.assertEquals(1, res.getResult().get(RESTAURANTS_QTY-1).getRestaurant().getRestaurantId());
+        Assert.assertEquals(2, res.getResult().get(0).getRestaurantId());
+        Assert.assertEquals(1, res.getResult().get(RESTAURANTS_QTY-1).getRestaurantId());
 
         Collections.sort(ratingAvg);
         int size = res.getResult().size();
@@ -250,8 +250,8 @@ public class RestaurantJdbcDaoTest {
 
         Assert.assertEquals(maxRestaurants, res.getPageSize());
         Assert.assertEquals(RESTAURANTS_QTY, res.getTotalCount());
-        Assert.assertEquals(1, res.getResult().get(0).getRestaurant().getRestaurantId());
-        Assert.assertEquals(2, res.getResult().get(RESTAURANTS_QTY-1).getRestaurant().getRestaurantId());
+        Assert.assertEquals(1, res.getResult().get(0).getRestaurantId());
+        Assert.assertEquals(2, res.getResult().get(RESTAURANTS_QTY-1).getRestaurantId());
 
         ratingAvg.sort(Collections.reverseOrder());
         int size = res.getResult().size();
@@ -294,8 +294,8 @@ public class RestaurantJdbcDaoTest {
 
         Assert.assertEquals(maxRestaurants, res.getPageSize());
         Assert.assertEquals(RESTAURANTS_QTY, res.getTotalCount());
-        Assert.assertEquals(1, res.getResult().get(0).getRestaurant().getRestaurantId());
-        Assert.assertEquals(2, res.getResult().get(RESTAURANTS_QTY-1).getRestaurant().getRestaurantId());
+        Assert.assertEquals(1, res.getResult().get(0).getRestaurantId());
+        Assert.assertEquals(2, res.getResult().get(RESTAURANTS_QTY-1).getRestaurantId());
 
         avgPrice.sort(Collections.reverseOrder());
         int size = res.getResult().size();
@@ -338,8 +338,8 @@ public class RestaurantJdbcDaoTest {
 
         Assert.assertEquals(maxRestaurants, res.getPageSize());
         Assert.assertEquals(RESTAURANTS_QTY, res.getTotalCount());
-        Assert.assertEquals(2, res.getResult().get(0).getRestaurant().getRestaurantId());
-        Assert.assertEquals(1, res.getResult().get(RESTAURANTS_QTY-1).getRestaurant().getRestaurantId());
+        Assert.assertEquals(2, res.getResult().get(0).getRestaurantId());
+        Assert.assertEquals(1, res.getResult().get(RESTAURANTS_QTY-1).getRestaurantId());
 
         Collections.sort(avgPrice);
         int size = res.getResult().size();
@@ -362,8 +362,8 @@ public class RestaurantJdbcDaoTest {
 
         PaginatedResult<RestaurantDetails> res = restaurantDao.search("", 1, RESTAURANTS_QTY, RestaurantOrderBy.DATE, false, null, null);
         Assert.assertEquals(RESTAURANTS_QTY, res.getResult().size());
-        Assert.assertEquals(1, res.getResult().get(0).getRestaurant().getRestaurantId());
-        Assert.assertEquals(3, res.getResult().get(RESTAURANTS_QTY-1).getRestaurant().getRestaurantId());
+        Assert.assertEquals(1, res.getResult().get(0).getRestaurantId());
+        Assert.assertEquals(3, res.getResult().get(RESTAURANTS_QTY-1).getRestaurantId());
     }
 
     @Test
@@ -380,8 +380,8 @@ public class RestaurantJdbcDaoTest {
 
         PaginatedResult<RestaurantDetails> res = restaurantDao.search("", 1, RESTAURANTS_QTY, RestaurantOrderBy.DATE, true, null, null);
         Assert.assertEquals(RESTAURANTS_QTY, res.getResult().size());
-        Assert.assertEquals(3, res.getResult().get(0).getRestaurant().getRestaurantId());
-        Assert.assertEquals(1, res.getResult().get(RESTAURANTS_QTY-1).getRestaurant().getRestaurantId());
+        Assert.assertEquals(3, res.getResult().get(0).getRestaurantId());
+        Assert.assertEquals(1, res.getResult().get(RESTAURANTS_QTY-1).getRestaurantId());
     }
 
     @Test
@@ -452,7 +452,7 @@ public class RestaurantJdbcDaoTest {
         List<RestaurantTags> tag = Collections.singletonList(RestaurantTags.fromOrdinal(TAG_ID));
         PaginatedResult<RestaurantDetails> res = restaurantDao.search(NAME, 1, RESTAURANTS_QTY, null, false, tag, null);
         Assert.assertEquals(1, res.getResult().size());
-        Assert.assertEquals(ID, res.getResult().get(0).getRestaurant().getRestaurantId());
+        Assert.assertEquals(ID, res.getResult().get(0).getRestaurantId());
     }
     @Test
     public void searchByNameAndSpecialty() throws SQLException {
@@ -462,7 +462,7 @@ public class RestaurantJdbcDaoTest {
         List<RestaurantSpecialty> specialty = Collections.singletonList(RestaurantSpecialty.fromOrdinal(SPECIALTY));
         PaginatedResult<RestaurantDetails> res = restaurantDao.search(NAME, 1, RESTAURANTS_QTY, null, false, null, specialty);
         Assert.assertEquals(1, res.getResult().size());
-        Assert.assertEquals(ID, res.getResult().get(0).getRestaurant().getRestaurantId());
+        Assert.assertEquals(ID, res.getResult().get(0).getRestaurantId());
     }
     @Test
     public void searchByTagAndSpecialty() throws SQLException {

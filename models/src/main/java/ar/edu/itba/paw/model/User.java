@@ -48,16 +48,6 @@ public class User {
         this.preferredLanguage = preferredLanguage;
     }
 
-    // TODO: Remove, old constructor remains for backwards compatibility until ORM migration is finished
-    public User(long userId, String email, String name, Long imageId, boolean isActive, String preferredLanguage) {
-        this.userId = userId;
-        this.name = name;
-        this.email = email;
-        this.imageId = imageId;
-        this.isActive = isActive;
-        this.preferredLanguage = preferredLanguage;
-    }
-
     public Long getUserId() {
         return userId;
     }
