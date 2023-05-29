@@ -1,21 +1,45 @@
 package ar.edu.itba.paw.model;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "order_reviews")
 public class Review {
-    private final OrderItemless order;
-    private final int rating;
-    private final LocalDateTime date;
-    private final String comment;
 
-    public Review(OrderItemless order, int rating, LocalDateTime date, String comment) {
-        this.order = order;
+    @Id
+    @Column(name = "order_id", nullable = false, updatable = false)
+    private long orderId;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "order_id", referencedColumnName = "order_id", insertable = false, updatable = false)
+    private Order order;
+
+    @Column(nullable = false)
+    private int rating;
+
+    @Column(nullable = false, insertable = false, updatable = false)
+    private LocalDateTime date;
+
+    @Column
+    private String comment;
+
+    public Review() {
+
+    }
+
+    public Review(long orderId, int rating, String comment) {
+        this.orderId = orderId;
         this.rating = rating;
-        this.date = date;
+        this.date = null;
         this.comment = comment;
     }
 
-    public OrderItemless getOrder() {
+    public long getOrderId() {
+        return orderId;
+    }
+
+    public Order getOrder() {
         return order;
     }
 

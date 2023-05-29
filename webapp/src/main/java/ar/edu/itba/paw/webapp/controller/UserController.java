@@ -5,7 +5,6 @@ import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.util.PaginatedResult;
 import ar.edu.itba.paw.util.Pair;
-import ar.edu.itba.paw.util.Triplet;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.form.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class UserController {
@@ -27,7 +27,7 @@ public class UserController {
     private OrderService orderService;
 
     @Autowired
-    private RolesService rolesService;
+    private RestaurantRoleService restaurantRoleService;
 
     @Autowired
     private RestaurantService restaurantService;
@@ -47,7 +47,7 @@ public class UserController {
     @RequestMapping(value = "/user/restaurants", method = RequestMethod.GET)
     public ModelAndView myRestaurants() {
         ModelAndView mav = new ModelAndView("user/myrestaurants");
-        List<Triplet<Restaurant, RestaurantRoleLevel, Integer>> restaurants = rolesService.getByUser(ControllerUtils.getCurrentUserIdOrThrow());
+        List<RestaurantRoleDetails> restaurants = restaurantRoleService.getByUser(ControllerUtils.getCurrentUserIdOrThrow());
         mav.addObject("restaurants", restaurants);
         return mav;
     }
@@ -70,13 +70,14 @@ public class UserController {
             paging.clear();
         }
 
-        PaginatedResult<OrderItemless> orders;
+        PaginatedResult<Order> orders;
+        // FIXME
         switch (status) {
             case "inprogress":
-                orders = orderService.getInProgressByUserExcludeItems(ControllerUtils.getCurrentUserIdOrThrow(), paging.getPageOrDefault(), paging.getSizeOrDefault(ControllerUtils.DEFAULT_ORDERS_PAGE_SIZE));
+                orders = orderService.getByUser(ControllerUtils.getCurrentUserIdOrThrow(), paging.getPageOrDefault(), paging.getSizeOrDefault(ControllerUtils.DEFAULT_ORDERS_PAGE_SIZE));
                 break;
             case "all":
-                orders = orderService.getByUserExcludeItems(ControllerUtils.getCurrentUserIdOrThrow(), paging.getPageOrDefault(), paging.getSizeOrDefault(ControllerUtils.DEFAULT_ORDERS_PAGE_SIZE));
+                orders = orderService.getByUser(ControllerUtils.getCurrentUserIdOrThrow(), paging.getPageOrDefault(), paging.getSizeOrDefault(ControllerUtils.DEFAULT_ORDERS_PAGE_SIZE));
                 break;
             default:
                 throw new ResourceNotFoundException();
@@ -137,25 +138,25 @@ public class UserController {
             return createRestaurant(form);
         }
 
+        List<RestaurantTags> tags = form.getTags().stream().map(RestaurantTags::fromOrdinal).collect(Collectors.toList());
+
         PawAuthUserDetails userDetails = ControllerUtils.getCurrentUserDetailsOrThrow();
-        long restaurantId = restaurantService.create(
+        Restaurant restaurant = restaurantService.create(
                 form.getName(),
                 userDetails.getUsername(),
-                form.getSpecialty(),
+                RestaurantSpecialty.fromOrdinal(form.getSpecialty()),
                 userDetails.getUserId(),
-                form.getDescription(),
                 form.getAddress(),
+                form.getDescription(),
                 form.getMaxTables(),
                 form.getLogo().getBytes(),
                 form.getPortrait1().getBytes(),
-                form.getPortrait2().getBytes()
+                form.getPortrait2().getBytes(),
+                true,
+                tags
         );
 
-        for (Integer tag : form.getTags()) {
-            restaurantService.addTag(restaurantId, tag);
-        }
-
-        return new ModelAndView(String.format("redirect:/restaurants/%d/edit", restaurantId));
+        return new ModelAndView(String.format("redirect:/restaurants/%d/edit", restaurant.getRestaurantId()));
     }
 
     @RequestMapping(value = "/restaurants/{id:\\d+}/edit", method = RequestMethod.GET)
@@ -178,10 +179,10 @@ public class UserController {
         final Restaurant restaurant = restaurantService.getById(id).orElseThrow(RestaurantNotFoundException::new);
         mav.addObject("restaurant", restaurant);
 
-        final List<Pair<Category, List<Product>>> menu = restaurantService.getMenu(id);
+        final List<Category> menu = categoryService.getByRestaurantSortedByOrder(id);
         mav.addObject("menu", menu);
 
-        final List<Pair<User, RestaurantRoleLevel>> employees = rolesService.getByRestaurant(id);
+        final List<Pair<User, RestaurantRoleLevel>> employees = restaurantRoleService.getByRestaurant(id);
         mav.addObject("employees", employees);
 
         mav.addObject("roles", RestaurantRoleLevel.VALUES_EXCEPT_OWNER);
@@ -341,7 +342,7 @@ public class UserController {
         }
 
         User user = userService.getByEmail(addEmployeeForm.getEmail()).orElseThrow(UserNotFoundException::new);
-        rolesService.setRole(user.getUserId(), id, RestaurantRoleLevel.fromOrdinal(addEmployeeForm.getRole()));
+        restaurantRoleService.setRole(user.getUserId(), id, RestaurantRoleLevel.fromOrdinal(addEmployeeForm.getRole()));
 
         return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
     }
@@ -362,7 +363,7 @@ public class UserController {
             throw new IllegalStateException();
         }
 
-        rolesService.deleteRole(deleteEmployeeForm.getUserId(), id);
+        restaurantRoleService.deleteRole(deleteEmployeeForm.getUserId(), id);
 
         return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
     }

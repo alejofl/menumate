@@ -161,6 +161,7 @@ main {
     font-weight: 900;
     z-index: -1;
     color: #e5e5e5;
+    width: max-content;
 }
 
 .error-container, .thank-you-container {

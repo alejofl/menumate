@@ -21,22 +21,22 @@
             <h1><spring:message code="navbar.myrestaurants"/></h1>
         </div>
         <main class="restaurant-feed">
-            <c:forEach var="triplet" items="${restaurants}">
-                <a class="clickable-object position-relative" href="<c:url value="/restaurants/${triplet.x.restaurantId}"/>">
+            <c:forEach var="roleDetails" items="${restaurants}">
+                <a class="clickable-object position-relative" href="<c:url value="/restaurants/${roleDetails.restaurantId}"/>">
                     <div class="card restaurant-card">
                         <img
                                 class="card-img restaurant-card-img"
-                                style="--main_image: url(<c:url value="/images/${triplet.x.portraitId1}"/>); --hover_image: url(<c:url value="/images/${triplet.x.portraitId2}"/>)"
+                                style="--main_image: url(<c:url value="/images/${roleDetails.restaurant.portrait1Id}"/>); --hover_image: url(<c:url value="/images/${roleDetails.restaurant.portrait2Id}"/>)"
                         >
                         <div class="card-body">
-                            <h5 class="card-title"><c:out value="${triplet.x.name}"/></h5>
-                            <p class="card-text"><c:out value="${triplet.x.address}"/></p>
+                            <h5 class="card-title"><c:out value="${roleDetails.restaurant.name}"/></h5>
+                            <p class="card-text"><c:out value="${roleDetails.restaurant.address}"/></p>
                         </div>
                     </div>
                     <h4>
-                    <span class="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-${triplet.z == 0 ? "success" : "danger"}">
+                    <span class="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-${roleDetails.pendingOrderCount == 0 ? "success" : "danger"}">
                         <spring:message code="restaurantorders.pending" var="pending"/>
-                        ${triplet.z} ${fn:toLowerCase(pending)}
+                        ${roleDetails.pendingOrderCount} ${fn:toLowerCase(pending)}
                     </span>
                     </h4>
                 </a>

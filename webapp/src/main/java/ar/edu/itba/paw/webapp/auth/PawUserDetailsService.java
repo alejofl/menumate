@@ -2,7 +2,6 @@ package ar.edu.itba.paw.webapp.auth;
 
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.service.UserService;
-import ar.edu.itba.paw.util.Pair;
 import ar.edu.itba.paw.webapp.exception.UserNotVerifiedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,23 +15,18 @@ import java.util.ArrayList;
 public class PawUserDetailsService implements UserDetailsService {
 
     @Autowired
-    private UserService us;
+    private UserService userService;
 
     @Override
     public UserDetails loadUserByUsername(final String email) throws UsernameNotFoundException, UserNotVerifiedException {
-        final Pair<User, String> userAndPassword = us.getByEmailWithPassword(email)
-                .orElseThrow(() -> new UsernameNotFoundException("No user for email " + email));
+        final User user = userService.getByEmail(email).orElseThrow(() -> new UsernameNotFoundException("No user for email " + email));
 
-        User user = userAndPassword.getKey();
-        String userPassword = userAndPassword.getValue();
-        boolean isActive = userAndPassword.getKey().getIsActive();
-
-        if (!isActive)
+        if (!user.getIsActive())
             throw new UserNotVerifiedException("User exists but is not verified", user);
 
-        if (userPassword == null)
+        if (user.getPassword() == null)
             throw new UsernameNotFoundException("User exists but is not consolidated");
 
-        return new PawAuthUserDetails(user.getUserId(), user.getEmail(), userPassword, new ArrayList<>());
+        return new PawAuthUserDetails(user.getUserId(), user.getEmail(), user.getPassword(), new ArrayList<>());
     }
 }

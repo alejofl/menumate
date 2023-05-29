@@ -17,7 +17,7 @@
 <div class="content">
     <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
     <div class="restaurant-header">
-        <img src="<c:url value="/images/${restaurant.portraitId1}"/>" class="menu-item-card-img" alt="${restaurant.name}">
+        <img src="<c:url value="/images/${restaurant.portrait1Id}"/>" class="menu-item-card-img" alt="${restaurant.name}">
     </div>
     <div class="restaurant-information-container">
         <div class="restaurant-information">
@@ -75,7 +75,9 @@
                 <div class="card-body">
                     <div class="nav nav-pills small">
                         <c:forEach items="${menu}" var="entry">
-                            <button class="category-item nav-link" data-category="${entry.key.categoryId}"><c:out value="${entry.key.name}"/></button>
+                            <button class="category-item nav-link" data-category="${entry.categoryId}">
+                                <c:out value="${entry.name}"/>
+                            </button>
                         </c:forEach>
                     </div>
                 </div>
@@ -84,13 +86,13 @@
 
         <div class="items d-flex flex-column px-4">
             <c:forEach items="${menu}" var="entry">
-                <div class="card mb-4" id="category-${entry.key.categoryId}">
+                <div class="card mb-4" id="category-${entry.categoryId}">
                     <div class="card-body d-flex justify-content-between align-items-center">
-                        <h3 class="mb-0"><c:out value="${entry.key.name}"/></h3>
+                        <h3 class="mb-0"><c:out value="${entry.name}"/></h3>
                     </div>
                 </div>
                 <div class="items-container">
-                    <c:forEach var="product" items="${entry.value}">
+                    <c:forEach var="product" items="${entry.products}">
                         <jsp:include page="/WEB-INF/jsp/components/menu_item_card.jsp">
                             <jsp:param name="product_imageId" value="${product.imageId}"/>
                             <jsp:param name="product_productId" value="${product.productId}"/>

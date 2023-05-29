@@ -1,18 +1,14 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.model.*;
+import ar.edu.itba.paw.persistance.ImageDao;
 import ar.edu.itba.paw.persistance.RestaurantDao;
-import ar.edu.itba.paw.service.CategoryService;
-import ar.edu.itba.paw.service.ImageService;
-import ar.edu.itba.paw.service.ProductService;
 import ar.edu.itba.paw.service.RestaurantService;
 import ar.edu.itba.paw.util.PaginatedResult;
-import ar.edu.itba.paw.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,32 +19,21 @@ public class RestaurantServiceImpl implements RestaurantService {
     private RestaurantDao restaurantDao;
 
     @Autowired
-    private ProductService productService;
-
-    @Autowired
-    private ImageService imageService;
-
-    @Autowired
-    private CategoryService categoryService;
+    private ImageDao imageDao;
 
     @Transactional
     @Override
-    public long create(String name, String email, int specialty, long ownerUserId, String description, String address, int maxTables, byte[] logo, byte[] portrait1, byte[] portrait2) {
-        long logoKey = imageService.create(logo);
-        long portrait1Key = imageService.create(portrait1);
-        long portrait2Key = imageService.create(portrait2);
+    public Restaurant create(String name, String email, RestaurantSpecialty specialty, long ownerUserId, String address, String description, int maxTables, byte[] logo, byte[] portrait1, byte[] portrait2, boolean isActive, List<RestaurantTags> tags) {
+        long logoId = imageDao.create(logo);
+        long portrait1Id = imageDao.create(portrait1);
+        long portrait2Id = imageDao.create(portrait2);
 
-        return restaurantDao.create(name, email, specialty, ownerUserId, description, address, maxTables, logoKey, portrait1Key, portrait2Key);
+        return restaurantDao.create(name, email, specialty, ownerUserId, address, description, maxTables, logoId, portrait1Id, portrait2Id, isActive, tags);
     }
 
     @Override
     public Optional<Restaurant> getById(long restaurantId) {
         return restaurantDao.getById(restaurantId);
-    }
-
-    @Override
-    public PaginatedResult<Restaurant> getActive(int pageNumber, int pageSize) {
-        return restaurantDao.getActive(pageNumber, pageSize);
     }
 
     @Override
@@ -59,33 +44,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public List<Pair<Category, List<Product>>> getMenu(long restaurantId) {
-        List<Category> categories = categoryService.getByRestaurantSortedByOrder(restaurantId);
-        List<Pair<Category, List<Product>>> menu = new ArrayList<>();
-        for (Category category : categories) {
-            menu.add(new Pair<>(category, productService.getByCategory(category.getCategoryId())));
-        }
-        return menu;
-    }
-
-    @Override
     public void delete(long restaurantId) {
         restaurantDao.delete(restaurantId);
     }
-
-    @Override
-    public List<RestaurantTags> getTags(long restaurantId) {
-        return restaurantDao.getTags(restaurantId);
-    }
-
-    @Override
-    public void addTag(long restaurantId, long tagId) {
-        restaurantDao.addTag(restaurantId, tagId);
-    }
-
-    @Override
-    public void removeTag(long restaurantId, long tagId) {
-        restaurantDao.removeTag(restaurantId, tagId);
-    }
-
 }

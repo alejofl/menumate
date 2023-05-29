@@ -5,7 +5,6 @@ import ar.edu.itba.paw.exception.RestaurantNotFoundException;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.util.AverageCountPair;
-import ar.edu.itba.paw.util.Pair;
 import ar.edu.itba.paw.webapp.form.CartItem;
 import ar.edu.itba.paw.webapp.form.CheckoutForm;
 import ar.edu.itba.paw.webapp.form.validation.PreProcessingCheckoutFormValidator;
@@ -28,13 +27,16 @@ public class RestaurantsController {
     private RestaurantService restaurantService;
 
     @Autowired
+    private CategoryService categoryService;
+
+    @Autowired
     private OrderService orderService;
 
     @Autowired
     private UserService userService;
 
     @Autowired
-    private RolesService rolesService;
+    private RestaurantRoleService restaurantRoleService;
 
     @Autowired
     private ReviewService reviewService;
@@ -59,7 +61,7 @@ public class RestaurantsController {
         Optional<RestaurantRoleLevel> level;
         boolean admin = false;
         boolean order_viewer = false;
-        if (currentUserId != null && (level = rolesService.getRole(currentUserId, id)).isPresent()) {
+        if (currentUserId != null && (level = restaurantRoleService.getRole(currentUserId, id)).isPresent()) {
             admin = level.get().hasPermissionOf(RestaurantRoleLevel.ADMIN);
             order_viewer = level.get().hasPermissionOf(RestaurantRoleLevel.ORDER_HANDLER);
         }
@@ -71,10 +73,9 @@ public class RestaurantsController {
         mav.addObject("ratingCount", average.getCount());
         final List<Review> reviews = reviewService.getByRestaurant(id, 1, 30).getResult();
         mav.addObject("reviews", reviews);
-        final List<RestaurantTags> tags = restaurantService.getTags(id);
-        mav.addObject("tags", tags);
+        mav.addObject("tags", restaurant.getTags());
 
-        final List<Pair<Category, List<Product>>> menu = restaurantService.getMenu(id);
+        final List<Category> menu = categoryService.getByRestaurantSortedByOrder(id);
         mav.addObject("menu", menu);
 
         mav.addObject("formError", formError);
@@ -96,7 +97,7 @@ public class RestaurantsController {
             // NOTE: The order item ID doesn't matter here; the orderService.createXxx functions will put their own
             // line number values on the items on insertion.
             CartItem cartItem = form.getCart().get(i);
-            items.add(orderService.createOrderItem(cartItem.getProductId(), i, cartItem.getQuantity(), cartItem.getComment()));
+            items.add(orderService.createOrderItem(cartItem.getProductId(), i + 1, cartItem.getQuantity(), cartItem.getComment()));
         }
 
         Order order;

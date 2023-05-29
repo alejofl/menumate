@@ -1,12 +1,15 @@
 package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.User;
-import ar.edu.itba.paw.util.Pair;
 
 import javax.mail.MessagingException;
 import java.util.Optional;
 
 public interface UserService {
+
+    Optional<User> getById(long userId);
+
+    Optional<User> getByEmail(String email);
 
     /**
      * Creates a user, or consolidates it if the user already exists but doesn't have a password, and then sends an
@@ -22,11 +25,17 @@ public interface UserService {
      */
     User createIfNotExists(String email, String name);
 
-    Optional<User> getById(long userId);
-
-    Optional<User> getByEmail(String email);
-
     boolean isUserEmailRegisteredAndConsolidated(String email);
 
-    Optional<Pair<User, String>> getByEmailWithPassword(String email);
+    void sendUserVerificationToken(User user) throws MessagingException;
+
+    void sendPasswordResetToken(User user) throws MessagingException;
+
+    boolean verifyUserAndDeleteVerificationToken(String token);
+
+    boolean updatePasswordAndDeleteResetPasswordToken(String token, String newPassword);
+
+    boolean hasActiveVerificationToken(long userId);
+
+    boolean isValidResetPasswordToken(String token);
 }

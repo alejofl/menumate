@@ -8,6 +8,12 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 public interface ReviewDao {
+
+    /**
+     * Gets an order's review, if it has one.
+     */
+    Optional<Review> getByOrder(long orderId);
+
     /**
      * Creates a review for a given orderId, or updates it if it already exists.
      */
@@ -17,11 +23,6 @@ public interface ReviewDao {
      * Deletes the review attached to an order.
      */
     void delete(long orderId);
-
-    /**
-     * Gets an order's review, if it has one.
-     */
-    Optional<Review> getByOrder(long orderId);
 
     /**
      * Gets a restaurant's average rating from reviews, alongside the amount of reviews.

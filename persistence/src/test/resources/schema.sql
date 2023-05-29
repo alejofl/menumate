@@ -16,17 +16,17 @@ CREATE TABLE IF NOT EXISTS users
     preferred_language VARCHAR(3) NOT NULL DEFAULT 'en'
 );
 
-CREATE TABLE IF NOT EXISTS user_verification_codes
+CREATE TABLE IF NOT EXISTS user_verification_tokens
 (
-    code    VARCHAR(32) PRIMARY KEY,
-    user_id INT UNIQUE REFERENCES users (user_id) ON DELETE CASCADE NOT NULL,
+    user_id INT PRIMARY KEY REFERENCES users (user_id) ON DELETE CASCADE,
+    token   VARCHAR(32) UNIQUE NOT NULL,
     expires TIMESTAMP NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS user_resetpassword_codes
+CREATE TABLE IF NOT EXISTS user_resetpassword_tokens
 (
-    code    VARCHAR(32) PRIMARY KEY,
-    user_id INT UNIQUE REFERENCES users (user_id) ON DELETE CASCADE NOT NULL,
+    user_id INT PRIMARY KEY REFERENCES users (user_id) ON DELETE CASCADE,
+    token   VARCHAR(32) UNIQUE NOT NULL,
     expires TIMESTAMP NOT NULL
 );
 
@@ -80,9 +80,9 @@ CREATE TABLE IF NOT EXISTS products
     product_id  SERIAL PRIMARY KEY,
     category_id INT REFERENCES categories (category_id) ON DELETE CASCADE NOT NULL,
     name        VARCHAR(150) NOT NULL,
-    price       DECIMAL(10, 2) NOT NULL CHECK (price > 0),
     description VARCHAR(300),
     image_id    INT REFERENCES images (image_id) ON DELETE SET NULL,
+    price       DECIMAL(10, 2) NOT NULL CHECK (price > 0),
     available   BOOLEAN NOT NULL DEFAULT TRUE,
     deleted     BOOLEAN NOT NULL DEFAULT FALSE
 );
@@ -105,18 +105,52 @@ CREATE TABLE IF NOT EXISTS orders
 CREATE TABLE IF NOT EXISTS order_items
 (
     order_id    INT REFERENCES orders (order_id) ON DELETE CASCADE NOT NULL,
-    product_id  INT REFERENCES products (product_id) ON DELETE CASCADE NOT NULL,
     line_number SMALLINT NOT NULL CHECK (line_number > 0),
+    product_id  INT REFERENCES products (product_id) ON DELETE CASCADE NOT NULL,
     quantity    SMALLINT NOT NULL CHECK (quantity > 0),
     comment     VARCHAR(120),
 
-    PRIMARY KEY (order_id, product_id, line_number)
+    PRIMARY KEY (order_id, line_number)
 );
 
 CREATE TABLE IF NOT EXISTS order_reviews
 (
-    order_id    INT REFERENCES orders (order_id) ON DELETE CASCADE PRIMARY KEY,
-    rating      SMALLINT NOT NULL CHECK (rating >= 0 AND rating <= 5),
-    date        TIMESTAMP NOT NULL DEFAULT now(),
-    comment     VARCHAR(500)
+    order_id INT REFERENCES orders (order_id) ON DELETE CASCADE PRIMARY KEY,
+    rating   SMALLINT NOT NULL CHECK (rating >= 0 AND rating <= 5),
+    date     TIMESTAMP NOT NULL DEFAULT now(),
+    comment  VARCHAR(500)
+);
+
+
+DROP VIEW IF EXISTS restaurant_details;
+CREATE VIEW restaurant_details AS
+(
+    SELECT restaurants.*,
+    COALESCE(AVG(CAST(order_reviews.rating AS FLOAT)), 0) AS average_rating,
+    COUNT(order_reviews.order_id) AS review_count,
+    (
+        SELECT COALESCE(AVG(products.price), 0) FROM products
+            JOIN categories ON categories.category_id = products.category_id
+            WHERE categories.restaurant_id = restaurants.restaurant_id
+                AND products.deleted = false AND products.available = true
+    ) AS average_price
+    FROM restaurants LEFT OUTER JOIN (orders JOIN order_reviews ON orders.order_id = order_reviews.order_id)
+        ON restaurants.restaurant_id = orders.restaurant_id
+    WHERE restaurants.deleted = false AND restaurants.is_active = true
+    GROUP BY restaurants.restaurant_id
+);
+
+DROP VIEW IF EXISTS restaurant_role_details;
+CREATE VIEW restaurant_role_details AS
+(
+    SELECT roles_grouped.*,
+    (
+        SELECT COUNT(*) FROM orders WHERE orders.restaurant_id = roles_grouped.restaurant_id
+            AND date_delivered IS NULL AND date_cancelled IS NULL
+    ) AS inprogress_order_count
+    FROM (
+        (SELECT user_id, restaurant_id, role_level FROM restaurant_roles)
+        UNION
+        (SELECT owner_user_id AS user_id, restaurant_id, 0 AS role_level FROM restaurants)
+    ) AS roles_grouped
 );

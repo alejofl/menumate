@@ -7,6 +7,7 @@ import ar.edu.itba.paw.util.AverageCountPair;
 import ar.edu.itba.paw.util.PaginatedResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -18,10 +19,13 @@ public class ReviewServiceImpl implements ReviewService {
     private ReviewDao reviewDao;
 
     @Override
+    @Transactional
     public void create(long orderId, int rating, String comment) {
         reviewDao.create(orderId, rating, comment);
     }
 
+    @Override
+    @Transactional
     public void delete(long orderId) {
         reviewDao.delete(orderId);
     }

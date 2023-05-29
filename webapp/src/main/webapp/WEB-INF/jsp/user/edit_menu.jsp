@@ -16,7 +16,7 @@
 <div class="content">
     <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
     <div class="restaurant-header">
-        <img src="<c:url value="/images/${restaurant.portraitId1}"/>" class="menu-item-card-img" alt="<c:out value="${restaurant.name}"/>">
+        <img src="<c:url value="/images/${restaurant.portrait1Id}"/>" class="menu-item-card-img" alt="<c:out value="${restaurant.name}"/>">
     </div>
     <div class="restaurant-information-container">
         <div class="restaurant-information">
@@ -43,12 +43,12 @@
             <c:forEach items="${menu}" var="entry">
                 <div class="card mb-4">
                     <div class="card-body d-flex justify-content-between align-items-center">
-                        <h3 class="mb-0"><c:out value="${entry.key.name}"/></h3>
-                        <a class="delete-category-button" type="button" data-bs-toggle="modal" data-bs-target="#delete-category-modal" data-category-id="${entry.key.categoryId}"><i class="bi bi-trash-fill text-danger"></i></a>
+                        <h3 class="mb-0"><c:out value="${entry.name}"/></h3>
+                        <a class="delete-category-button" type="button" data-bs-toggle="modal" data-bs-target="#delete-category-modal" data-category-id="${entry.categoryId}"><i class="bi bi-trash-fill text-danger"></i></a>
                     </div>
                 </div>
                 <div class="items-container">
-                    <c:forEach var="product" items="${entry.value}">
+                    <c:forEach var="product" items="${entry.products}">
                         <div class="card menu-item-card">
                             <div class="menu-item-card-img-container">
                                 <img src="<c:url value="/images/${product.imageId}"/>" class="img-fluid rounded-start menu-item-card-img" alt="<c:out value="${product.name}"/>">
@@ -75,7 +75,7 @@
                             </div>
                         </div>
                     </c:forEach>
-                    <a class="add-product-button clickable-object" type="button" data-bs-toggle="modal" data-bs-target="#add-item-modal" data-category-id="${entry.key.categoryId}">
+                    <a class="add-product-button clickable-object" type="button" data-bs-toggle="modal" data-bs-target="#add-item-modal" data-category-id="${entry.categoryId}">
                         <div class="card add-item-card edit-menu-add">
                             <div class="card-body d-flex justify-content-center flex-column align-items-center gap-2">
                                 <i class="bi bi-plus-circle-fill"></i>

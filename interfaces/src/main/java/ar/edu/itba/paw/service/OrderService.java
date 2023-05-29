@@ -2,7 +2,6 @@ package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.model.OrderItem;
-import ar.edu.itba.paw.model.OrderItemless;
 import ar.edu.itba.paw.model.OrderStatus;
 import ar.edu.itba.paw.util.PaginatedResult;
 
@@ -26,21 +25,9 @@ public interface OrderService {
 
     Optional<Order> getById(long orderId);
 
-    Optional<OrderItemless> getByIdExcludeItems(long orderId);
-
     PaginatedResult<Order> getByUser(long userId, int pageNumber, int pageSize);
 
-    PaginatedResult<OrderItemless> getByUserExcludeItems(long userId, int pageNumber, int pageSize);
-
-    PaginatedResult<OrderItemless> getInProgressByUserExcludeItems(long userId, int pageNumber, int pageSize);
-
-    PaginatedResult<Order> getByRestaurant(long restaurantId, int pageNumber, int pageSize);
-
-    PaginatedResult<OrderItemless> getByRestaurantExcludeItems(long restaurantId, int pageNumber, int pageSize);
-
     PaginatedResult<Order> getByRestaurant(long restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus);
-
-    PaginatedResult<OrderItemless> getByRestaurantExcludeItems(long restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus);
 
     Optional<Order> markAsConfirmed(long orderId);
 

@@ -7,20 +7,12 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RestaurantDao {
-    long create(String name, String email, int specialty, long ownerUserId, String description, String address, int maxTables, Long logoKey, Long portrait1Kay, Long portrait2Key);
 
     Optional<Restaurant> getById(long restaurantId);
 
-    PaginatedResult<Restaurant> getActive(int pageNumber, int pageSize);
+    Restaurant create(String name, String email, RestaurantSpecialty specialty, long ownerUserId, String address, String description, int maxTables, Long logoId, Long portrait1Id, Long portrait2Id, boolean isActive, List<RestaurantTags> tags);
 
     PaginatedResult<RestaurantDetails> search(String query, int pageNumber, int pageSize, RestaurantOrderBy orderBy, boolean descending, List<RestaurantTags> tags, List<RestaurantSpecialty> specialties);
 
     void delete(long restaurantId);
-
-    List<RestaurantTags> getTags(long restaurantId);
-
-    void addTag(long restaurantId, long tagId);
-
-    void removeTag(long restaurantId, long tagId);
-
 }

@@ -4,7 +4,6 @@ import ar.edu.itba.paw.exception.OrderNotFoundException;
 import ar.edu.itba.paw.exception.RestaurantNotFoundException;
 import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.model.OrderStatus;
-import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.service.OrderService;
 import ar.edu.itba.paw.service.RestaurantService;
 import ar.edu.itba.paw.util.PaginatedResult;
@@ -107,24 +106,24 @@ public class RestaurantOrdersController {
     @RequestMapping(value = "/orders/{orderId:\\d+}/confirm", method = RequestMethod.POST)
     public ModelAndView confirmOrder(@PathVariable final int orderId) {
         Order order = orderService.markAsConfirmed(orderId).orElseThrow(OrderNotFoundException::new);
-        return new ModelAndView(String.format("redirect:/restaurants/%d/orders/pending", order.getRestaurant().getRestaurantId()));
+        return new ModelAndView(String.format("redirect:/restaurants/%d/orders/pending", order.getRestaurantId()));
     }
 
     @RequestMapping(value = "/orders/{orderId:\\d+}/ready", method = RequestMethod.POST)
     public ModelAndView readyOrder(@PathVariable final int orderId) {
         Order order = orderService.markAsReady(orderId).orElseThrow(OrderNotFoundException::new);
-        return new ModelAndView(String.format("redirect:/restaurants/%d/orders/confirmed", order.getRestaurant().getRestaurantId()));
+        return new ModelAndView(String.format("redirect:/restaurants/%d/orders/confirmed", order.getRestaurantId()));
     }
 
     @RequestMapping(value = "/orders/{orderId:\\d+}/deliver", method = RequestMethod.POST)
     public ModelAndView deliverOrder(@PathVariable final int orderId) {
         Order order = orderService.markAsDelivered(orderId).orElseThrow(OrderNotFoundException::new);
-        return new ModelAndView(String.format("redirect:/restaurants/%d/orders/ready", order.getRestaurant().getRestaurantId()));
+        return new ModelAndView(String.format("redirect:/restaurants/%d/orders/ready", order.getRestaurantId()));
     }
 
     @RequestMapping(value = "/orders/{orderId:\\d+}/cancel", method = RequestMethod.POST)
     public ModelAndView cancelOrder(@PathVariable final int orderId) {
         Order order = orderService.markAsCancelled(orderId).orElseThrow(OrderNotFoundException::new);
-        return new ModelAndView(String.format("redirect:/restaurants/%d/orders/pending", order.getRestaurant().getRestaurantId()));
+        return new ModelAndView(String.format("redirect:/restaurants/%d/orders/pending", order.getRestaurantId()));
     }
 }

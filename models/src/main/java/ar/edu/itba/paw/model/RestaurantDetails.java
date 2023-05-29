@@ -1,20 +1,37 @@
 package ar.edu.itba.paw.model;
 
-import java.util.List;
+import org.hibernate.annotations.Immutable;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "restaurant_details")
+@Immutable
 public class RestaurantDetails {
-    private final Restaurant restaurant;
-    private final int averageRating;
-    private final int reviewCount;
-    private final float averageProductPrice;
-    private final List<RestaurantTags> tags;
 
-    public RestaurantDetails(final Restaurant restaurant, final float averageRating, final int reviewCount, final float averageProductPrice, final List<RestaurantTags> tags) {
-        this.restaurant = restaurant;
-        this.averageRating = Math.round(averageRating);
-        this.reviewCount = reviewCount;
-        this.averageProductPrice = averageProductPrice;
-        this.tags = tags;
+    @Id
+    @Column(name = "restaurant_id", nullable = false)
+    private long restaurantId;
+
+    @OneToOne(fetch = FetchType.EAGER, optional = false)
+    @PrimaryKeyJoinColumn(name = "restaurant_id", referencedColumnName = "restaurant_id")
+    private Restaurant restaurant;
+
+    @Column(name = "average_rating", nullable = false)
+    private float averageRating;
+
+    @Column(name = "review_count", nullable = false)
+    private int reviewCount;
+
+    @Column(name = "average_price", nullable = false)
+    private float averageProductPrice;
+
+    RestaurantDetails() {
+
+    }
+
+    public long getRestaurantId() {
+        return restaurantId;
     }
 
     public Restaurant getRestaurant() {
@@ -22,7 +39,7 @@ public class RestaurantDetails {
     }
 
     public int getAverageRating() {
-        return averageRating;
+        return Math.round(averageRating);
     }
 
     public int getReviewCount() {
@@ -31,9 +48,5 @@ public class RestaurantDetails {
 
     public float getAverageProductPrice() {
         return averageProductPrice;
-    }
-
-    public List<RestaurantTags> getTags() {
-        return tags;
     }
 }

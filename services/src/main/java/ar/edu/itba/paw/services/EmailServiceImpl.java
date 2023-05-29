@@ -1,11 +1,9 @@
 package ar.edu.itba.paw.services;
 
-import ar.edu.itba.paw.exception.UserNotFoundException;
 import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.service.EmailService;
-import ar.edu.itba.paw.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,9 +29,6 @@ import java.util.Map;
 public class EmailServiceImpl implements EmailService {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(EmailServiceImpl.class);
-
-    @Autowired
-    private UserService userService;
 
     @Autowired
     private JavaMailSender emailSender;
@@ -94,7 +89,7 @@ public class EmailServiceImpl implements EmailService {
     @Async
     @Override
     public void sendOrderReceivalForRestaurant(Restaurant restaurant, Order order) throws MessagingException {
-        Locale locale = new Locale(userService.getById(restaurant.getOwnerUserId()).orElseThrow(UserNotFoundException::new).getPreferredLanguage());
+        Locale locale = new Locale(restaurant.getOwner().getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
         params.put("userName", order.getUser().getName());
         params.put("orderId", order.getOrderId());
