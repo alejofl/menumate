@@ -28,8 +28,12 @@ body {
     min-height: 100vh;
 }
 
-p {
+p, span, h1, h2, h3, h4, h5, h6 {
     overflow-wrap: anywhere;
+}
+
+.no-wrap {
+    overflow-wrap: normal;
 }
 
 .content {
@@ -603,6 +607,13 @@ input:has(+ .form-error), textarea:has(+ .form-error) {
 .edit-menu-add i {
     font-size: 2rem;
     color: var(--gray);
+}
+
+.edit-menu-add span {
+    font-weight: 900;
+    text-transform: uppercase;
+    color: var(--gray);
+    text-align: center;
 }
 
 .add-item-card {

@@ -156,7 +156,7 @@ public class UserController {
                 tags
         );
 
-        return new ModelAndView(String.format("redirect:/restaurants/%d", restaurant.getRestaurantId()));
+        return new ModelAndView(String.format("redirect:/restaurants/%d/edit", restaurant.getRestaurantId()));
     }
 
     @RequestMapping(value = "/restaurants/{id:\\d+}/edit", method = RequestMethod.GET)

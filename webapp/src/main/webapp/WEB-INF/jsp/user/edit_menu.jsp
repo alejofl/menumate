@@ -77,8 +77,9 @@
                     </c:forEach>
                     <a class="add-product-button clickable-object" type="button" data-bs-toggle="modal" data-bs-target="#add-item-modal" data-category-id="${entry.categoryId}">
                         <div class="card add-item-card edit-menu-add">
-                            <div class="card-body d-flex justify-content-center align-items-center">
+                            <div class="card-body d-flex justify-content-center flex-column align-items-center gap-2">
                                 <i class="bi bi-plus-circle-fill"></i>
+                                <span><spring:message code="editmenu.addproduct.modal.title"/></span>
                             </div>
                         </div>
                     </a>
@@ -86,8 +87,9 @@
             </c:forEach>
             <a type="button" class="clickable-object" id="add-category-button" data-bs-toggle="modal" data-bs-target="#add-category-modal">
                 <div class="card my-4 edit-menu-add">
-                    <div class="card-body d-flex justify-content-center align-items-center">
+                    <div class="card-body d-flex justify-content-center align-items-center gap-2">
                         <i class="bi bi-plus-circle-fill"></i>
+                        <span><spring:message code="editmenu.addcategory.modal.title"/></span>
                     </div>
                 </div>
             </a>
@@ -246,11 +248,14 @@
                             </div>
                             <div class="mb-3">
                                 <form:label path="role" cssClass="form-label"><spring:message code="editmenu.empoyees.modal.role"/></form:label>
-                                <form:select path="role" cssClass="form-select" multiple="false">
+                                <form:select path="role" cssClass="form-select" multiple="false" aria-labelledby="role-help-text">
                                     <c:forEach var="role" items="${roles}">
                                         <form:option value="${role.ordinal()}"><spring:message code="restaurantroles.${role.messageCode}"/></form:option>
                                     </c:forEach>
                                 </form:select>
+                                <div id="role-help-text" class="form-text">
+                                    <spring:message code="editmenu.employees.modal.role.helptext"/>
+                                </div>
                                 <form:errors path="role" element="div" cssClass="form-error"/>
                             </div>
                             <form:input path="restaurantId" type="hidden" value="${restaurant.restaurantId}"/>

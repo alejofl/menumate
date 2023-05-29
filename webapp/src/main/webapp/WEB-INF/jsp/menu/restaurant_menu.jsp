@@ -41,7 +41,7 @@
                             <i class="bi bi-star-fill"></i>
                         </c:forEach>
                     </div>
-                    <small class="text-muted ms-2"">
+                    <small class="text-muted ms-2">
                         <spring:message code="restaurants.ratingcount" arguments="${ratingCount}"/>
                     </small>
                 </div>

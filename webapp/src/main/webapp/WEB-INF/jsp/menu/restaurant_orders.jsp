@@ -19,7 +19,8 @@
         <jsp:include page="/WEB-INF/jsp/components/param_error.jsp"/>
     </c:if>
     <div class="page-title">
-        <h1><spring:message code="restaurantorders.orders" arguments="${restaurant.name}"/></h1>
+        <spring:message code="restaurantorders.orders" arguments="${restaurant.name}" var="pageTitle"/>
+        <h1><c:out value="${pageTitle}"/></h1>
     </div>
     <main class="restaurant-orders-view">
         <nav>
