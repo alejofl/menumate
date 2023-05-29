@@ -21,7 +21,7 @@
             <h1><spring:message code="navbar.myrestaurants"/></h1>
         </div>
         <main class="restaurant-feed">
-            <c:forEach var="roleDetails" items="${restaurants}">|
+            <c:forEach var="roleDetails" items="${restaurants}">
                 <a class="clickable-object position-relative" href="<c:url value="/restaurants/${roleDetails.restaurantId}"/>">
                     <div class="card restaurant-card">
                         <img
