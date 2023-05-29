@@ -1,8 +1,8 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.model.Order;
-import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.model.Restaurant;
+import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.service.EmailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

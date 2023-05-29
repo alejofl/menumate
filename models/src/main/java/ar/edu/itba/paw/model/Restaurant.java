@@ -2,7 +2,6 @@ package ar.edu.itba.paw.model;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -31,7 +30,7 @@ public class Restaurant {
     @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "owner_user_id", referencedColumnName = "user_id", nullable = false)
     private User owner;
-    
+
     @Column(name = "date_created", nullable = false, insertable = false, updatable = false)
     private LocalDateTime dateCreated;
 
@@ -64,9 +63,9 @@ public class Restaurant {
     @Column(name = "tag_id", nullable = false)
     @Enumerated(EnumType.ORDINAL)
     private List<RestaurantTags> tags;
-    
+
     Restaurant() {
-        
+
     }
 
     public Restaurant(String name, String email, RestaurantSpecialty specialty, User owner, String address, String description, int maxTables, Long logoId, Long portrait1Id, Long portrait2Id, boolean isActive, List<RestaurantTags> tags) {

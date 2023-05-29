@@ -126,7 +126,7 @@ public class RestaurantJpaDao implements RestaurantDao {
         nativeQuery.setParameter(2, pageSize);
         nativeQuery.setParameter(3, pageIdx * pageSize);
 
-        final List<Long> idList = nativeQuery.getResultList().stream().mapToLong(n -> ((Number)n).longValue()).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
+        final List<Long> idList = nativeQuery.getResultList().stream().mapToLong(n -> ((Number) n).longValue()).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
 
         if (idList.isEmpty())
             return new PaginatedResult<>(Collections.emptyList(), pageNumber, pageSize, 0);
