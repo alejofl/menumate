@@ -55,4 +55,12 @@ public class UserResetpasswordToken {
     public void setExpires(LocalDateTime expires) {
         this.expires = expires;
     }
+
+    public boolean isFresh() {
+        return expires.isAfter(LocalDateTime.now());
+    }
+
+    public boolean isExpired() {
+        return !isFresh();
+    }
 }
