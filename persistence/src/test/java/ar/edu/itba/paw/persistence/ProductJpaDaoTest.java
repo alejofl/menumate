@@ -18,9 +18,10 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
-public class ProductJdbcDaoTest {
+public class ProductJpaDaoTest {
     /*
     // TODO: Fix tests
     private static final long CATEGORY_ID = 581;

@@ -53,7 +53,7 @@
 //    private DataSource ds;
 //
 //    @Autowired
-//    private ReviewJdbcDao reviewDao;
+//    private ReviewJpaDao reviewDao;
 //
 //    private JdbcTemplate jdbcTemplate;
 //

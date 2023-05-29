@@ -22,9 +22,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
-public class RestaurantRoleJdbcDaoTest {
+public class RestaurantRoleJpaDaoTest {
 /*
 // TODO: Fix tests
 

@@ -19,7 +19,7 @@ import java.util.Optional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
-public class CategoryJdbcDaoTest {
+public class CategoryJpaDaoTest {
 /*
 // TODO: Fix tests
 

@@ -25,9 +25,10 @@ import java.util.Optional;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
-public class OrderJdbcDaoTest {
+public class OrderJpaDaoTest {
 /*
 // TODO: Fix tests
 
@@ -58,7 +59,7 @@ public class OrderJdbcDaoTest {
     private DataSource ds;
 
     @Autowired
-    private OrderJdbcDao orderJdbcDao;
+    private OrderJpaDao orderDao;
     private JdbcTemplate jdbcTemplate;
 
     @Before
@@ -106,7 +107,7 @@ public class OrderJdbcDaoTest {
     @Test
     public void testCreationDineIn() throws SQLException {
         createRandomItemList(OrderType.DINE_IN.ordinal());
-        Order order = orderJdbcDao.createDineIn(RESTAURANT_ID, USER_ID, TABLE_NUMBER, orderItemList);
+        Order order = orderDao.createDineIn(RESTAURANT_ID, USER_ID, TABLE_NUMBER, orderItemList);
         Assert.assertEquals(ORDER_TYPE, order.getOrderType());
         Assert.assertEquals(RESTAURANT_ID, order.getRestaurantId());
         Assert.assertEquals(USER_ID, order.getUserId().longValue());
@@ -132,7 +133,7 @@ public class OrderJdbcDaoTest {
     @Test
     public void testCreationTakeaway() throws SQLException {
         createRandomItemList(OrderType.TAKEAWAY.ordinal());
-        Order order = orderJdbcDao.createTakeaway(RESTAURANT_ID, USER_ID, orderItemList);
+        Order order = orderDao.createTakeaway(RESTAURANT_ID, USER_ID, orderItemList);
         Assert.assertEquals(OrderType.TAKEAWAY, order.getOrderType());
         Assert.assertEquals(RESTAURANT_ID, order.getRestaurantId());
         Assert.assertEquals(USER_ID, order.getUserId().longValue());
@@ -158,7 +159,7 @@ public class OrderJdbcDaoTest {
     @Test
     public void testCreationDelivery() throws SQLException {
         createRandomItemList(OrderType.DELIVERY.ordinal());
-        Order order = orderJdbcDao.createDelivery(RESTAURANT_ID, USER_ID, ADDRESS, orderItemList);
+        Order order = orderDao.createDelivery(RESTAURANT_ID, USER_ID, ADDRESS, orderItemList);
         Assert.assertEquals(OrderType.DELIVERY, order.getOrderType());
         Assert.assertEquals(RESTAURANT_ID, order.getRestaurantId());
         Assert.assertEquals(USER_ID, order.getUserId().longValue());
@@ -185,7 +186,7 @@ public class OrderJdbcDaoTest {
     @Test
     public void testFindOrdersById() throws SQLException {
         jdbcTemplate.execute("INSERT INTO orders (order_id, restaurant_id, user_id, order_type) VALUES (" + ORDER_ID + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + ORDER_TYPE.ordinal() + ")");
-        Optional<Order> order = orderJdbcDao.getById(ORDER_ID);
+        Optional<Order> order = orderDao.getById(ORDER_ID);
         Assert.assertTrue(order.isPresent());
         Assert.assertEquals(ORDER_ID, order.get().getOrderId());
         Assert.assertEquals(RESTAURANT_ID, order.get().getRestaurantId());
@@ -203,7 +204,7 @@ public class OrderJdbcDaoTest {
                 jdbcTemplate.execute("INSERT INTO order_items (order_id, product_id, line_number, quantity) VALUES (" + i + ", " + PRODUCT_ID + ", " + (j + 1) + ", " + (j + 2) + ")");
         }
 
-        List<Order> orders = orderJdbcDao.getByUser(USER_ID, 1, iters).getResult();
+        List<Order> orders = orderDao.getByUser(USER_ID, 1, iters).getResult();
 
         Assert.assertNotNull(orders);
         Assert.assertEquals(iters, orders.size());
@@ -233,7 +234,7 @@ public class OrderJdbcDaoTest {
             jdbcTemplate.update("INSERT INTO orders (order_id, restaurant_id, user_id, order_type, date_ordered) VALUES (" + i + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + ORDER_TYPE.ordinal() + ", ?)", Timestamp.valueOf(LocalDateTime.now().minusDays(i)));
         }
 
-        List<Order> orders = orderJdbcDao.getByRestaurant(RESTAURANT_ID, 1, iters).getResult();
+        List<Order> orders = orderDao.getByRestaurant(RESTAURANT_ID, 1, iters).getResult();
 
         Assert.assertNotNull(orders);
         Assert.assertEquals(iters, orders.size());
@@ -258,7 +259,7 @@ public class OrderJdbcDaoTest {
         int pageCount = (iters + pageSize - 1) / pageSize;
         List<PaginatedResult<Order>> pages = new ArrayList<>();
         for (int i = 1; i <= pageCount; i++) {
-            PaginatedResult<Order> page = orderJdbcDao.getByRestaurant(RESTAURANT_ID, i, pageSize);
+            PaginatedResult<Order> page = orderDao.getByRestaurant(RESTAURANT_ID, i, pageSize);
             pages.add(page);
         }
 
@@ -284,13 +285,13 @@ public class OrderJdbcDaoTest {
     @Test
     public void testUpdateAddress() throws SQLException {
         jdbcTemplate.execute("INSERT INTO orders (order_id, restaurant_id, user_id, order_type, address) VALUES (" + ORDER_ID + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + OrderType.DELIVERY.ordinal() + ", '" + ADDRESS + "')");
-        orderJdbcDao.updateAddress(ORDER_ID, "newAddress");
+        orderDao.updateAddress(ORDER_ID, "newAddress");
     }
 
     @Test
     public void testUpdateTableNumber() throws SQLException {
         jdbcTemplate.execute("INSERT INTO orders (order_id, restaurant_id, user_id, order_type, table_number) VALUES (" + ORDER_ID + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + ORDER_TYPE.ordinal() + ", '" + TABLE_NUMBER + "')");
-        orderJdbcDao.updateTableNumber(ORDER_ID, TABLE_NUMBER + 10);
+        orderDao.updateTableNumber(ORDER_ID, TABLE_NUMBER + 10);
     }
     */
 }

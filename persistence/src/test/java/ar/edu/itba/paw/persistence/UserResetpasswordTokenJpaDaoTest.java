@@ -17,9 +17,10 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
-public class ResetPasswordTokenJdbcDaoTest {
+public class UserResetpasswordTokenJpaDaoTest {
 /*
 // TODO: Fix tests
 
@@ -38,7 +39,7 @@ public class ResetPasswordTokenJdbcDaoTest {
     private DataSource ds;
 
     @Autowired
-    private UserResetpasswordTokenDao resetPasswordTokenDao;
+    private UserResetpasswordTokenJpaDao resetPasswordTokenDao;
 
     private JdbcTemplate jdbcTemplate;
 

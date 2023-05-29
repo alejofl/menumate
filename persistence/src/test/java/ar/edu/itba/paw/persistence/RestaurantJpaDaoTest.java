@@ -21,7 +21,7 @@ import java.util.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
-public class RestaurantJdbcDaoTest {
+public class RestaurantJpaDaoTest {
 /*
 // TODO: Fix tests
 
