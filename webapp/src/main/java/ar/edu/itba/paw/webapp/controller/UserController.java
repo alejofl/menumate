@@ -152,7 +152,7 @@ public class UserController {
                 form.getLogo().getBytes(),
                 form.getPortrait1().getBytes(),
                 form.getPortrait2().getBytes(),
-                false,
+                true,
                 tags
         );
 
