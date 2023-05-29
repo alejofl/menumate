@@ -80,9 +80,9 @@ CREATE TABLE IF NOT EXISTS products
     product_id  SERIAL PRIMARY KEY,
     category_id INT REFERENCES categories (category_id) ON DELETE CASCADE NOT NULL,
     name        VARCHAR(150) NOT NULL,
-    price       DECIMAL(10, 2) NOT NULL CHECK (price > 0),
     description VARCHAR(300),
     image_id    INT REFERENCES images (image_id) ON DELETE SET NULL,
+    price       DECIMAL(10, 2) NOT NULL CHECK (price > 0),
     available   BOOLEAN NOT NULL DEFAULT TRUE,
     deleted     BOOLEAN NOT NULL DEFAULT FALSE
 );
@@ -105,12 +105,12 @@ CREATE TABLE IF NOT EXISTS orders
 CREATE TABLE IF NOT EXISTS order_items
 (
     order_id    INT REFERENCES orders (order_id) ON DELETE CASCADE NOT NULL,
-    product_id  INT REFERENCES products (product_id) ON DELETE CASCADE NOT NULL,
     line_number SMALLINT NOT NULL CHECK (line_number > 0),
+    product_id  INT REFERENCES products (product_id) ON DELETE CASCADE NOT NULL,
     quantity    SMALLINT NOT NULL CHECK (quantity > 0),
     comment     VARCHAR(120),
 
-    PRIMARY KEY (order_id, product_id, line_number)
+    PRIMARY KEY (order_id, line_number)
 );
 
 CREATE TABLE IF NOT EXISTS order_reviews
@@ -138,4 +138,19 @@ CREATE VIEW restaurant_details AS
         ON restaurants.restaurant_id = orders.restaurant_id
     WHERE restaurants.deleted = false AND restaurants.is_active = true
     GROUP BY restaurants.restaurant_id
+);
+
+DROP VIEW IF EXISTS restaurant_role_details;
+CREATE VIEW restaurant_role_details AS
+(
+    SELECT roles_grouped.*,
+    (
+        SELECT COUNT(*) FROM orders WHERE orders.restaurant_id = roles_grouped.restaurant_id
+            AND date_delivered IS NULL AND date_cancelled IS NULL
+    ) AS inprogress_order_count
+    FROM (
+        (SELECT user_id, restaurant_id, role_level FROM restaurant_roles)
+        UNION
+        (SELECT owner_user_id AS user_id, restaurant_id, 0 AS role_level FROM restaurants)
+    ) AS roles_grouped
 );

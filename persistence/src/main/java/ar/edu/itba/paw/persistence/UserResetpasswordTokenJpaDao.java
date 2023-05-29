@@ -6,6 +6,7 @@ import ar.edu.itba.paw.persistance.UserResetpasswordTokenDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -47,9 +48,10 @@ public class UserResetpasswordTokenJpaDao implements UserResetpasswordTokenDao {
         LOGGER.info("Deleted user resetpassword token for user id {}", userResetpasswordToken.getUserId());
     }
 
+    @Transactional
     @Override
     public void deleteStaledTokens() {
-        int count = em.createQuery("DELETE FROM UserResetpasswordToken WHERE expires >= now()").executeUpdate();
+        int count = em.createQuery("DELETE FROM UserResetpasswordToken WHERE expires <= now()").executeUpdate();
         LOGGER.info("Deleted {} staled user resetpassword tokens", count);
     }
 }
