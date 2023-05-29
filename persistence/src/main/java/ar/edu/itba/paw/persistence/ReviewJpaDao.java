@@ -51,19 +51,18 @@ public class ReviewJpaDao implements ReviewDao {
 
     @Override
     public AverageCountPair getRestaurantAverage(long restaurantId) {
-        Query query = em.createNativeQuery("SELECT AVG(CAST(order_reviews.rating AS FLOAT)) AS a, COUNT(*) AS c FROM order_reviews JOIN orders ON order_reviews.order_id = orders.order_id WHERE orders.restaurant_id = ?");
-        query.setParameter(1, restaurantId);
+        Query query = em.createQuery("SELECT COALESCE(AVG(CAST(rating AS float)), 0), COUNT(*) FROM Review WHERE order.restaurantId = :restaurantId");
+        query.setParameter("restaurantId", restaurantId);
         Object[] result = (Object[]) query.getSingleResult();
-        return new AverageCountPair(Utils.coalesce(((Double) result[0]), 0.0).floatValue(), ((BigInteger) result[1]).intValue());
+        return new AverageCountPair(((Number) result[0]).floatValue(), ((Number) result[1]).intValue());
     }
 
     @Override
     public AverageCountPair getRestaurantAverageSince(long restaurantId, LocalDateTime datetime) {
-        Query query = em.createNativeQuery("SELECT AVG(CAST(order_reviews.rating AS FLOAT)) AS a, COUNT(*) AS c FROM order_reviews JOIN orders ON order_reviews.order_id = orders.order_id WHERE order_reviews.date >= ? AND orders.restaurant_id = ?");
-        query.setParameter(1, Timestamp.valueOf(datetime));
-        query.setParameter(2, restaurantId);
+        Query query = em.createQuery("SELECT COALESCE(AVG(CAST(rating AS float)), 0), COUNT(*) FROM Review WHERE date >= now() AND order.restaurantId = :restaurantId");
+        query.setParameter("restaurantId", restaurantId);
         Object[] result = (Object[]) query.getSingleResult();
-        return new AverageCountPair(Utils.coalesce(((Double) result[0]), 0.0).floatValue(), ((BigInteger) result[1]).intValue());
+        return new AverageCountPair(((Number) result[0]).floatValue(), ((Number) result[1]).intValue());
     }
 
     @Override

@@ -78,7 +78,10 @@ public class OrderJpaDao implements OrderDao {
         countQuery.setParameter(1, userId);
         int count = ((Number) countQuery.getSingleResult()).intValue();
 
-        final TypedQuery<Order> query = em.createQuery("FROM Order WHERE orderId IN :idList ORDER BY dateOrdered DESC", Order.class);
+        final TypedQuery<Order> query = em.createQuery(
+                "FROM Order WHERE orderId IN :idList ORDER BY dateOrdered DESC",
+                Order.class
+        );
         query.setParameter("idList", idList);
 
         List<Order> orders = query.getResultList();
@@ -124,7 +127,10 @@ public class OrderJpaDao implements OrderDao {
         countQuery.setParameter(1, restaurantId);
         int count = ((Number) countQuery.getSingleResult()).intValue();
 
-        final TypedQuery<Order> query = em.createQuery("FROM Order WHERE orderId IN :idList ORDER BY dateOrdered DESC", Order.class);
+        final TypedQuery<Order> query = em.createQuery(
+                "FROM Order WHERE orderId IN :idList ORDER BY dateOrdered DESC",
+                Order.class
+        );
         query.setParameter("idList", idList);
 
         List<Order> orders = query.getResultList();

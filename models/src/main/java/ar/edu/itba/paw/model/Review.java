@@ -18,7 +18,7 @@ public class Review {
     @Column(nullable = false)
     private int rating;
 
-    @Column(insertable = false, updatable = false)
+    @Column(nullable = false, insertable = false, updatable = false)
     private LocalDateTime date;
 
     @Column
