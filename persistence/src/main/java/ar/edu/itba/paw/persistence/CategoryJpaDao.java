@@ -36,7 +36,7 @@ public class CategoryJpaDao implements CategoryDao {
         );
         orderNumQuery.setParameter("restaurantId", restaurantId);
 
-        int orderNum = 1 + ((Number) orderNumQuery.getSingleResult()).intValue();
+        int orderNum = 1 + Optional.ofNullable(orderNumQuery.getSingleResult()).orElse(0);
 
         final Restaurant restaurant = em.getReference(Restaurant.class, restaurantId);
         final Category category = new Category(restaurant, name, orderNum);
