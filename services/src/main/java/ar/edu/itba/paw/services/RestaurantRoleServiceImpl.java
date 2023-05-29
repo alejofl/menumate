@@ -48,9 +48,9 @@ public class RestaurantRoleServiceImpl implements RestaurantRoleService {
             throw new IllegalArgumentException("Cannot set a restaurant role level to owner");
         }
 
-        if (level == null)
+        if (level == null) {
             restaurantRoleDao.delete(userId, restaurantId);
-        else {
+        } else {
             Optional<RestaurantRole> role = restaurantRoleDao.getRole(userId, restaurantId);
             if (role.isPresent()) {
                 role.get().setLevel(level);

@@ -43,7 +43,6 @@ public class EmailServiceImpl implements EmailService {
     private MessageSource messageSource;
 
     private void sendHtmlMessage(String to, String subject, String htmlBody) throws MessagingException {
-        LOGGER.info("Sent email to {} with subject {}", to, subject);
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, "UTF-8");
         helper.setTo(to);
@@ -51,20 +50,26 @@ public class EmailServiceImpl implements EmailService {
         helper.setSubject(subject);
         helper.setText(htmlBody, true);
         emailSender.send(message);
+        LOGGER.info("Sent email to {} with body length {} and subject {}", to, htmlBody.length(), subject);
     }
 
     // If a link wants to be passed, set the **path** in params with key "link".
     // This method will concatenate the baseUrl.
     // Only one link should be served for each email.
     private void sendMessageUsingThymeleafTemplate(String template, String to, String subject, Locale locale, Map<String, Object> params) throws MessagingException {
-        Context thymeleafContext = new Context(locale);
-        final String baseUrl = environment.getProperty("email.base_url");
-        if (params.containsKey("link")) {
-            params.put("link", baseUrl + params.get("link"));
+        try {
+            Context thymeleafContext = new Context(locale);
+            final String baseUrl = environment.getProperty("email.base_url");
+            if (params.containsKey("link")) {
+                params.put("link", baseUrl + params.get("link"));
+            }
+            thymeleafContext.setVariables(params);
+            String htmlBody = thymeleafTemplateEngine.process(template, thymeleafContext);
+            sendHtmlMessage(to, subject, htmlBody);
+        } catch (Exception e) {
+            LOGGER.error("Failed to send email to {} with subject {}", to, subject, e);
+            throw e;
         }
-        thymeleafContext.setVariables(params);
-        String htmlBody = thymeleafTemplateEngine.process(template, thymeleafContext);
-        sendHtmlMessage(to, subject, htmlBody);
     }
 
     @Async

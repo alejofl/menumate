@@ -38,7 +38,7 @@ public class OrderServiceImpl implements OrderService {
             emailService.sendOrderReceivalForUser(order);
             emailService.sendOrderReceivalForRestaurant(order.getRestaurant(), order);
         } catch (MessagingException e) {
-            LOGGER.error("Order Receival Email Sending Failed");
+            LOGGER.error("Order receival email sending failed", e);
         }
     }
 
@@ -139,14 +139,16 @@ public class OrderServiceImpl implements OrderService {
             LOGGER.error("Attempted to mark order with id {} as confirmed when the order is {}", orderId, orderStatus);
             throw new IllegalStateException("Invalid order status");
         }
+
         order.setDateConfirmed(LocalDateTime.now());
+
         try {
             emailService.sendOrderConfirmation(order);
-            return Optional.of(order);
         } catch (MessagingException e) {
-            LOGGER.error("Order Confirmation Email Sending Failed");
-            return Optional.empty();
+            LOGGER.error("Order confirmation email sending failed", e);
         }
+
+        return Optional.of(order);
     }
 
     @Transactional
@@ -158,14 +160,16 @@ public class OrderServiceImpl implements OrderService {
             LOGGER.error("Attempted to mark order with id {} as ready when the order is {}", orderId, orderStatus);
             throw new IllegalStateException("Invalid order status");
         }
+
         order.setDateReady(LocalDateTime.now());
+
         try {
             emailService.sendOrderReady(order);
-            return Optional.of(order);
         } catch (MessagingException e) {
-            LOGGER.error("Order Ready Email Sending Failed");
-            return Optional.empty();
+            LOGGER.error("Order ready email sending failed", e);
         }
+
+        return Optional.of(order);
     }
 
     @Transactional
@@ -177,14 +181,16 @@ public class OrderServiceImpl implements OrderService {
             LOGGER.error("Attempted to mark order with id {} as delivered when the order is {}", orderId, orderStatus);
             throw new IllegalStateException("Invalid order status");
         }
+
         order.setDateDelivered(LocalDateTime.now());
+
         try {
             emailService.sendOrderDelivered(order);
-            return Optional.of(order);
         } catch (MessagingException e) {
-            LOGGER.error("Order Delivered Email Sending Failed");
-            return Optional.empty();
+            LOGGER.error("Order delivered email sending failed", e);
         }
+
+        return Optional.of(order);
     }
 
     @Transactional
@@ -196,14 +202,16 @@ public class OrderServiceImpl implements OrderService {
             LOGGER.error("Attempted to cancel order with id {} when the order is already {}", orderId, orderStatus);
             throw new IllegalStateException("Invalid order status");
         }
+
         order.setDateCancelled(LocalDateTime.now());
+
         try {
             emailService.sendOrderCancelled(order);
-            return Optional.of(order);
         } catch (MessagingException e) {
-            LOGGER.error("Order Cancelled Email Sending Failed");
-            return Optional.empty();
+            LOGGER.error("Order cancelled email sending failed", e);
         }
+
+        return Optional.of(order);
     }
 
     @Transactional
@@ -273,7 +281,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         order.setAddress(address.trim());
-        LOGGER.info("Order {} address updated to {}", orderId, address);
+        LOGGER.info("Order {} address updated", orderId);
     }
 
     @Transactional

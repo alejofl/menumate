@@ -115,8 +115,10 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void sendUserVerificationToken(final User user) throws MessagingException {
-        if (user.getIsActive())
+        if (user.getIsActive()) {
+            LOGGER.info("Ignored creating verification token for already active user id {}", user.getUserId());
             return;
+        }
 
         Optional<UserVerificationToken> maybeToken = verificationTokenDao.getByUserId(user.getUserId());
         UserVerificationToken token;
