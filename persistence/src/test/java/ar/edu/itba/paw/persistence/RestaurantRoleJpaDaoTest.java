@@ -22,11 +22,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-
+/*
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
 public class RestaurantRoleJpaDaoTest {
-/*
 // TODO: Fix tests
 
     private static final long USER_ID = 791;
@@ -247,5 +246,5 @@ public class RestaurantRoleJpaDaoTest {
         Assert.assertEquals(0, result.get(1).getZ().intValue());
     }
 }
-*/
 }
+*/

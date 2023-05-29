@@ -25,11 +25,10 @@ import java.util.Optional;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-
+/*
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
 public class OrderJpaDaoTest {
-/*
 // TODO: Fix tests
 
     private static final long ORDER_ID = 8844;
@@ -293,5 +292,5 @@ public class OrderJpaDaoTest {
         jdbcTemplate.execute("INSERT INTO orders (order_id, restaurant_id, user_id, order_type, table_number) VALUES (" + ORDER_ID + ", " + RESTAURANT_ID + ", " + USER_ID + ", " + ORDER_TYPE.ordinal() + ", '" + TABLE_NUMBER + "')");
         orderDao.updateTableNumber(ORDER_ID, TABLE_NUMBER + 10);
     }
-    */
 }
+    */

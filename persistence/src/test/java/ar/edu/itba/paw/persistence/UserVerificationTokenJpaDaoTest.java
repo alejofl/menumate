@@ -16,10 +16,10 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+/*
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
 public class UserVerificationTokenJpaDaoTest {
-/*
 // TODO: Fix tests
 
     private static final long ID1 = 791;
@@ -197,5 +197,5 @@ public class UserVerificationTokenJpaDaoTest {
         Assert.assertEquals(ID1, userId1.get().longValue());
         Assert.assertFalse(userId2.isPresent());
     }
-    */
 }
+    */

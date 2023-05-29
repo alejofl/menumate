@@ -16,10 +16,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
-
+/*
 @RunWith(MockitoJUnitRunner.class)
 public class TokenServiceTest {
-/*
 // TODO: Fix tests
 
     @Mock
@@ -90,5 +89,6 @@ public class TokenServiceTest {
     public void nullablePasswordToken() {
         when(resetPasswordTokenDao.deleteTokenAndRetrieveUserId(null)).thenReturn(Optional.empty());
         Assert.assertFalse(tokenService.updatePasswordAndDeleteResetPasswordToken(null, NEW_PASSWORD));
-    }*/
+    }
 }
+*/
