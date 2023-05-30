@@ -68,7 +68,7 @@ public class TestConfig {
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
 
-        factoryBean.setPackagesToScan("ar.edu.itba.paw.models");
+        factoryBean.setPackagesToScan("ar.edu.itba.paw.model");
         factoryBean.setDataSource(dataSource());
 
         final HibernateJpaVendorAdapter jpaAdapter = new HibernateJpaVendorAdapter();

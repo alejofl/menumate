@@ -8,17 +8,23 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Optional;
 
-/* FIXME
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
+@Transactional
+@Rollback
 public class UserJpaDaoTest {
     private static final long ID = 791;
     private static final String EMAIL = "peter@peter.com";
@@ -32,6 +38,9 @@ public class UserJpaDaoTest {
 
     @Autowired
     private UserJpaDao userDao;
+
+    @PersistenceContext
+    private EntityManager em;
 
     private JdbcTemplate jdbcTemplate;
 
@@ -78,14 +87,12 @@ public class UserJpaDaoTest {
     @Test
     public void testCreate() {
         User user = userDao.create(EMAIL, PASSWORD, NAME, PREFERRED_LANGUAGE);
+        em.flush();
 
         Assert.assertNotNull(user);
         Assert.assertEquals(EMAIL, user.getEmail());
         Assert.assertEquals(NAME, user.getName());
         Assert.assertEquals(PREFERRED_LANGUAGE, user.getPreferredLanguage());
-        Assert.assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "users"));
-
         Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "users", "user_id=" + user.getUserId() + " AND email='" + EMAIL + "' AND password='" + PASSWORD + "' AND name='" + NAME + "' AND preferred_language='" + PREFERRED_LANGUAGE + "'"));
     }
 }
- */
