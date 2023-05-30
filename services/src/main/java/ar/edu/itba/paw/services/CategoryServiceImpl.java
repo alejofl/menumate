@@ -54,15 +54,13 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Transactional
     @Override
-    public Category updateOrder(long categoryId, int orderNum) {
-        final Optional<Category> maybeCategory = categoryDao.getById(categoryId);
-        if (!maybeCategory.isPresent())
-            throw new CategoryNotFoundException();
+    public void swapOrder(long restaurantId, int orderNum1, int orderNum2) {
+        if (orderNum1 == orderNum2) {
+            LOGGER.warn("Attempted to swapOrder between categories of restaurant id {} with the same order {}", restaurantId, orderNum1);
+            return;
+        }
 
-        final Category category = maybeCategory.get();
-        category.setOrderNum(orderNum);
-        LOGGER.error("Updated order of category id {} to {}", categoryId, orderNum);
-        return category;
+        categoryDao.swapOrder(restaurantId, orderNum1, orderNum2);
     }
 
     @Transactional

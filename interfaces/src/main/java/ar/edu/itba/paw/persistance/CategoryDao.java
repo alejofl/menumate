@@ -9,9 +9,13 @@ public interface CategoryDao {
 
     Optional<Category> getById(long categoryId);
 
+    Optional<Category> getByRestaurantAndOrderNum(long restaurantId, int orderNum);
+
     Category create(long restaurantId, String name);
 
     List<Category> getByRestaurantSortedByOrder(long restaurantId);
 
     void delete(long categoryId);
+
+    void swapOrder(long restaurantId, int orderNum1, int orderNum2);
 }

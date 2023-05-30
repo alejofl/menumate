@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS categories
     order_num     SMALLINT NOT NULL,
     deleted       BOOLEAN NOT NULL DEFAULT FALSE,
 
-    UNIQUE (restaurant_id, order_num)
+    UNIQUE (restaurant_id, order_num) DEFERRABLE
 );
 
 CREATE TABLE IF NOT EXISTS products

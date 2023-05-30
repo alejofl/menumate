@@ -31,7 +31,7 @@ public class Category {
     @Column(nullable = false, insertable = false)
     private boolean deleted;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "category_id", referencedColumnName = "category_id")
     @Where(clause = "deleted = false AND available = true")
     private List<Product> products;
