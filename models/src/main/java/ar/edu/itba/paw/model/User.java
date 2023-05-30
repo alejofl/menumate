@@ -22,7 +22,7 @@ public class User {
     @Column(nullable = false)
     private String name;
 
-    @Column(name = "date_joined", nullable = false, insertable = false, updatable = false)
+    @Column(name = "date_joined", insertable = false, updatable = false)
     private LocalDateTime dateJoined;
 
     @Column(name = "image_id")
