@@ -16,6 +16,15 @@ CREATE TABLE IF NOT EXISTS users
     preferred_language VARCHAR(3) NOT NULL DEFAULT 'en'
 );
 
+CREATE TABLE IF NOT EXISTS user_addresses
+(
+    user_id   INT NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
+    address   VARCHAR(200) NOT NULL,
+    last_used TIMESTAMP NOT NULL DEFAULT now(),
+
+    PRIMARY KEY (user_id, address)
+);
+
 CREATE TABLE IF NOT EXISTS user_verification_tokens
 (
     user_id INT PRIMARY KEY REFERENCES users (user_id) ON DELETE CASCADE,

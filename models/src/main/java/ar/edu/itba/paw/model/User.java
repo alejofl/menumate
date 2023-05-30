@@ -2,6 +2,8 @@ package ar.edu.itba.paw.model;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -34,6 +36,11 @@ public class User {
     @Column(name = "preferred_language", nullable = false)
     private String preferredLanguage;
 
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
+    @OrderBy("lastUsed DESC")
+    private List<UserAddress> addresses;
+
     User() {
 
     }
@@ -46,6 +53,7 @@ public class User {
         this.imageId = imageId;
         this.isActive = isActive;
         this.preferredLanguage = preferredLanguage;
+        addresses = Collections.emptyList();
     }
 
     public Long getUserId() {
@@ -102,5 +110,9 @@ public class User {
 
     public void setPreferredLanguage(String preferredLanguage) {
         this.preferredLanguage = preferredLanguage;
+    }
+
+    public List<UserAddress> getAddresses() {
+        return addresses;
     }
 }

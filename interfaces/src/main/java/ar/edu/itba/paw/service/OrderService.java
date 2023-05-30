@@ -9,15 +9,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface OrderService {
-    Order createDelivery(long restaurantId, long userId, String address, List<OrderItem> items);
 
     Order createDelivery(long restaurantId, String name, String email, String address, List<OrderItem> items);
 
-    Order createDineIn(long restaurantId, long userId, int tableNumber, List<OrderItem> items);
-
     Order createDineIn(long restaurantId, String name, String email, int tableNumber, List<OrderItem> items);
-
-    Order createTakeAway(long restaurantId, long userId, List<OrderItem> items);
 
     Order createTakeAway(long restaurantId, String name, String email, List<OrderItem> items);
 

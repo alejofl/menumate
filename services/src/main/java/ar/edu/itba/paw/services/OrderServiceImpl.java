@@ -1,11 +1,9 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.exception.OrderNotFoundException;
-import ar.edu.itba.paw.model.Order;
-import ar.edu.itba.paw.model.OrderItem;
-import ar.edu.itba.paw.model.OrderStatus;
-import ar.edu.itba.paw.model.OrderType;
+import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.persistance.OrderDao;
+import ar.edu.itba.paw.persistance.UserDao;
 import ar.edu.itba.paw.service.EmailService;
 import ar.edu.itba.paw.service.OrderService;
 import ar.edu.itba.paw.service.UserService;
@@ -34,53 +32,33 @@ public class OrderServiceImpl implements OrderService {
     private UserService userService;
 
     @Autowired
+    private UserDao userDao;
+
+    @Autowired
     private EmailService emailService;
 
     private void sendOrderReceivedEmails(Order order) {
         try {
             emailService.sendOrderReceivalForUser(order);
-            emailService.sendOrderReceivalForRestaurant(order.getRestaurant(), order);
+            emailService.sendOrderReceivalForRestaurant(order);
         } catch (MessagingException e) {
             LOGGER.error("Order receival email sending failed", e);
         }
     }
 
-    private long getOrCreateUserId(String name, String email) {
-        return userService.createIfNotExists(email, name).getUserId();
-    }
-
     private void assingOrderItemsToOrder(Order order, List<OrderItem> items) {
+        for (OrderItem item : items)
+            item.setOrderId(order.getOrderId());
         List<OrderItem> orderList = order.getItems();
         orderList.addAll(items);
-        for (OrderItem item : items) {
-            item.setOrderId(order.getOrderId());
-        }
-    }
-
-    // NOTE: create methods that send emails are not transactional, we want the order to remain placed even if the
-    // notification email fails.
-    @Transactional
-    @Override
-    public Order createDelivery(long restaurantId, long userId, String address, List<OrderItem> items) {
-        Order order = orderDao.createDelivery(restaurantId, userId, address);
-        assingOrderItemsToOrder(order, items);
-        sendOrderReceivedEmails(order);
-        return order;
     }
 
     @Transactional
     @Override
     public Order createDelivery(long restaurantId, String name, String email, String address, List<OrderItem> items) {
-        Order order = orderDao.createDelivery(restaurantId, getOrCreateUserId(name, email), address);
-        assingOrderItemsToOrder(order, items);
-        sendOrderReceivedEmails(order);
-        return order;
-    }
-
-    @Transactional
-    @Override
-    public Order createDineIn(long restaurantId, long userId, int tableNumber, List<OrderItem> items) {
-        Order order = orderDao.createDineIn(restaurantId, userId, tableNumber);
+        final User user = userService.createIfNotExists(email, name);
+        Order order = orderDao.createDelivery(restaurantId, user.getUserId(), address);
+        userDao.addOrRefreshAddress(user.getUserId(), address);
         assingOrderItemsToOrder(order, items);
         sendOrderReceivedEmails(order);
         return order;
@@ -89,16 +67,8 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     @Override
     public Order createDineIn(long restaurantId, String name, String email, int tableNumber, List<OrderItem> items) {
-        Order order = orderDao.createDineIn(restaurantId, getOrCreateUserId(name, email), tableNumber);
-        assingOrderItemsToOrder(order, items);
-        sendOrderReceivedEmails(order);
-        return order;
-    }
-
-    @Transactional
-    @Override
-    public Order createTakeAway(long restaurantId, long userId, List<OrderItem> items) {
-        Order order = orderDao.createTakeaway(restaurantId, userId);
+        final User user = userService.createIfNotExists(email, name);
+        Order order = orderDao.createDineIn(restaurantId, user.getUserId(), tableNumber);
         assingOrderItemsToOrder(order, items);
         sendOrderReceivedEmails(order);
         return order;
@@ -107,7 +77,8 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     @Override
     public Order createTakeAway(long restaurantId, String name, String email, List<OrderItem> items) {
-        Order order = orderDao.createTakeaway(restaurantId, getOrCreateUserId(name, email));
+        final User user = userService.createIfNotExists(email, name);
+        Order order = orderDao.createTakeaway(restaurantId, user.getUserId());
         assingOrderItemsToOrder(order, items);
         sendOrderReceivedEmails(order);
         return order;

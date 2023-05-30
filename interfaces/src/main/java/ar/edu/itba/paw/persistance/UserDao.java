@@ -11,4 +11,6 @@ public interface UserDao {
     Optional<User> getByEmail(String email);
 
     User create(String email, String password, String name, String language);
+
+    void addOrRefreshAddress(long userId, String address);
 }
