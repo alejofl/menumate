@@ -37,16 +37,25 @@ public class ProductServiceImpl implements ProductService {
         return productDao.create(categoryId, name, description, imageKey, price);
     }
 
-    @Transactional
-    @Override
-    public Product update(long productId, String name, BigDecimal price, String description) {
-        final Optional<Product> maybeProduct = productDao.getById(productId);
-        if (!maybeProduct.isPresent()) {
+    private Product getAndVerifyForUpdate(long productId) {
+        final Product product = productDao.getById(productId).orElse(null);
+        if (product == null) {
             LOGGER.error("Attempted to update non-existing product id {}", productId);
             throw new ProductNotFoundException();
         }
 
-        final Product product = maybeProduct.get();
+        if (product.getDeleted()) {
+            LOGGER.error("Attempted to update deleted product id {}", product.getProductId());
+            throw new IllegalStateException("Cannot update deleted product");
+        }
+
+        return product;
+    }
+
+    @Transactional
+    @Override
+    public Product update(long productId, String name, BigDecimal price, String description) {
+        final Product product = getAndVerifyForUpdate(productId);
 
         if (product.getPrice().equals(price)) {
             product.setName(name);
@@ -59,6 +68,18 @@ public class ProductServiceImpl implements ProductService {
         final Product newProduct = productDao.create(product.getCategoryId(), name, description, product.getImageId(), price);
         LOGGER.info("Logical-deleted product id {} and inserted {} to update price", product.getProductId(), newProduct.getProductId());
         return newProduct;
+    }
+
+    @Transactional
+    @Override
+    public void updateImage(long productId, byte[] image) {
+        if (image == null)
+            return;
+
+        final Product product = getAndVerifyForUpdate(productId);
+        imageDao.update(product.getImageId(), image);
+
+        LOGGER.info("Updated image of product id {}", product.getProductId());
     }
 
     @Transactional
