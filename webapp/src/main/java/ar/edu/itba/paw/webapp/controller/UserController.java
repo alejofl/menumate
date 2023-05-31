@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.exception.*;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.service.*;
+import ar.edu.itba.paw.util.MyBoolean;
 import ar.edu.itba.paw.util.PaginatedResult;
 import ar.edu.itba.paw.util.Pair;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.io.IOException;
@@ -171,7 +173,7 @@ public class UserController {
             @ModelAttribute("editProductPriceForm") final EditProductPriceForm editProductPriceForm,
             final Boolean addProductErrors,
             final Boolean addCategoryErrors,
-            final Boolean addEmployeeErrors,
+            @ModelAttribute("addEmployeeErrors") final MyBoolean addEmployeeErrors,
             final Boolean editProductErrors
     ) {
         ModelAndView mav = new ModelAndView("user/edit_menu");
@@ -190,7 +192,7 @@ public class UserController {
 
         mav.addObject("addProductErrors", addProductErrors);
         mav.addObject("addCategoryErrors", addCategoryErrors);
-        mav.addObject("addEmployeeErrors", addEmployeeErrors);
+        mav.addObject("addEmployeeErrors", addEmployeeErrors.get());
         mav.addObject("editProductErrors", editProductErrors);
 
         return mav;
@@ -220,7 +222,7 @@ public class UserController {
                     editProductPriceForm,
                     true,
                     false,
-                    false,
+                    new MyBoolean(false),
                     false
             );
         }
@@ -260,7 +262,7 @@ public class UserController {
                     editProductPriceForm,
                     false,
                     true,
-                    false,
+                    new MyBoolean(false),
                     false
             );
         }
@@ -322,7 +324,8 @@ public class UserController {
             @Valid @ModelAttribute("addEmployeeForm") final AddEmployeeForm addEmployeeForm,
             final BindingResult errors,
             @ModelAttribute("deleteEmployeeForm") final DeleteEmployeeForm deleteEmployeeForm,
-            @ModelAttribute("editProductPriceForm") final EditProductPriceForm editProductPriceForm
+            @ModelAttribute("editProductPriceForm") final EditProductPriceForm editProductPriceForm,
+            RedirectAttributes redirectAttributes
     ) {
         if (errors.hasErrors()) {
             return editRestaurant(
@@ -336,7 +339,7 @@ public class UserController {
                     editProductPriceForm,
                     false,
                     false,
-                    true,
+                    new MyBoolean(true),
                     false
             );
         }
@@ -344,6 +347,7 @@ public class UserController {
         User user = userService.getByEmail(addEmployeeForm.getEmail()).orElseThrow(UserNotFoundException::new);
         restaurantRoleService.setRole(user.getUserId(), id, RestaurantRoleLevel.fromOrdinal(addEmployeeForm.getRole()));
 
+        redirectAttributes.addFlashAttribute("addEmployeeErrors", new MyBoolean(true));
         return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
     }
 
@@ -357,7 +361,8 @@ public class UserController {
             @ModelAttribute("addEmployeeForm") final AddEmployeeForm addEmployeeForm,
             @Valid @ModelAttribute("deleteEmployeeForm") final DeleteEmployeeForm deleteEmployeeForm,
             final BindingResult errors,
-            @ModelAttribute("editProductPriceForm") final EditProductPriceForm editProductPriceForm
+            @ModelAttribute("editProductPriceForm") final EditProductPriceForm editProductPriceForm,
+            RedirectAttributes redirectAttributes
     ) {
         if (errors.hasErrors()) {
             throw new IllegalStateException();
@@ -365,6 +370,7 @@ public class UserController {
 
         restaurantRoleService.deleteRole(deleteEmployeeForm.getUserId(), id);
 
+        redirectAttributes.addFlashAttribute("addEmployeeErrors", new MyBoolean(true));
         return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
     }
 
@@ -392,7 +398,7 @@ public class UserController {
                     editProductPriceForm,
                     false,
                     false,
-                    false,
+                    new MyBoolean(true),
                     true
             );
         }
