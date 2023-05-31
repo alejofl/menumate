@@ -66,7 +66,12 @@
                 <form:input path="descending" type="hidden" value="${searchForm.descending ? searchForm.descending : false}" id="descending-input"/>
                 <form:input type="hidden" path="page" value="1"/>
             </div>
-            <input type="submit" class="btn btn-primary" value='<spring:message code="restaurants.search"/>'>
+            <div class="d-flex flex-column gap-2">
+                <input type="submit" class="btn btn-primary flex-grow-1" value='<spring:message code="restaurants.search"/>'>
+                <c:if test="${param.specialties != null || param.tags != null || param.orderBy != null || param.descending != null || param.search != null}">
+                    <a class="btn btn-secondary flex-grow-1 d-flex align-items-center justify-content-center" href="<c:url value="/restaurants"/>"><spring:message code="restaurants.search.clearfilters"/></a>
+                </c:if>
+            </div>
         </form:form>
         <main class="restaurant-feed">
             <c:forEach items="${restaurants}" var="restaurantDetails">
