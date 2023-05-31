@@ -26,12 +26,13 @@
                 <h1><c:out value="${restaurant.name}"/></h1>
                 <c:choose>
                     <c:when test="${not empty restaurant.description}">
-                        <p><c:out value="${restaurant.description}"/></p>
+                        <p class="mb-1"><c:out value="${restaurant.description}"/></p>
                     </c:when>
                     <c:otherwise>
-                        <p><i> <spring:message code="restaurant.menu.nodescription"/></i></p>
+                        <p class="mb-1"><i><spring:message code="restaurant.menu.nodescription"/></i></p>
                     </c:otherwise>
                 </c:choose>
+                <p><i class="bi bi-geo-alt"></i> <c:out value="${restaurant.address}"/></p>
                 <div class="d-flex align-items-baseline">
                     <div class="small-ratings">
                         <c:forEach begin="1" end="${average}">
