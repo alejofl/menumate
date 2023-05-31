@@ -118,7 +118,10 @@
                         </div>
                         <div class="mb-3">
                             <form:label path="price" cssClass="form-label"><spring:message code="editmenu.addproduct.form.price"/></form:label>
-                            <form:input path="price" step="0.01" min="0" type="number" cssClass="form-control" id="add-item-modal-price"/>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <form:input path="price" step="0.01" min="0" type="number" cssClass="form-control" id="add-item-modal-price"/>
+                            </div>
                             <form:errors path="price" element="div" cssClass="form-error"/>
                         </div>
                         <div class="mb-3">
@@ -215,7 +218,10 @@
                     <div class="modal-body">
                         <div class="mb-3">
                             <form:label path="price" cssClass="form-label"><spring:message code="editmenu.editprice.form.newprice"/></form:label>
-                            <form:input path="price" step="0.01" min="0" type="number" cssClass="form-control" id="edit-product-price-form-price"/>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <form:input path="price" step="0.01" min="0" type="number" cssClass="form-control" id="edit-product-price-form-price"/>
+                            </div>
                             <form:errors path="price" element="div" cssClass="form-error"/>
                         </div>
                     </div>
