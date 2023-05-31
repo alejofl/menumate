@@ -29,6 +29,10 @@ public interface UserService {
 
     boolean isUserEmailRegisteredAndConsolidated(String email);
 
+    void registerAddress(long userId, String address, String name);
+
+    void deleteAddress(long userId, String address);
+
     void sendUserVerificationToken(User user) throws MessagingException;
 
     void sendPasswordResetToken(User user) throws MessagingException;

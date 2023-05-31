@@ -13,4 +13,6 @@ public interface UserDao {
     User create(String email, String password, String name, String language);
 
     void registerAddress(long userId, String address, String name);
+
+    void deleteAddress(long userId, String address);
 }

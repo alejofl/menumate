@@ -78,4 +78,18 @@ public class UserJpaDao implements UserDao {
 
         LOGGER.info("Registered {}named address for user id {}, {} old deleted", name == null ? "un" : "", userId, rows);
     }
+
+    @Override
+    public void deleteAddress(long userId, String address) {
+        Query addressQuery = em.createQuery("DELETE FROM UserAddress WHERE userId = :userId AND address = :address");
+        addressQuery.setParameter("userId", userId);
+        addressQuery.setParameter("address", address);
+        int rows = addressQuery.executeUpdate();
+
+        if (rows == 0) {
+            LOGGER.warn("Attempted to delete user address for user id {}, but no such address found", userId);
+        } else {
+            LOGGER.info("Deleted an user address for user id {}", userId);
+        }
+    }
 }
