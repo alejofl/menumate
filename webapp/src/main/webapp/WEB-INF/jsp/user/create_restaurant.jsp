@@ -41,7 +41,8 @@
                 </div>
                 <div class="mb-3">
                     <form:label path="tags" cssClass="form-label"><spring:message code="createrestaurant.form.tags"/></form:label>
-                    <form:select path="tags" cssClass="form-select" multiple="true">
+                    <spring:message code="createrestaurant.form.tags.placeholder" var="tagsPlaceholder"/>
+                    <form:select path="tags" cssClass="form-select" multiple="true" placeholder="${tagsPlaceholder}">
                         <c:forEach var="tag" items="${tags}">
                             <form:option value="${tag.ordinal()}"><spring:message code="restauranttags.${tag.messageCode}"/></form:option>
                         </c:forEach>

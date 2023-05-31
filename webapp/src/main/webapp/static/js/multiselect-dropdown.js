@@ -94,6 +94,7 @@ style.innerHTML = `
 }
 .multiselect-dropdown span.maxselected {width:100%;}
 .multiselect-dropdown-all-selector {border-bottom:solid 1px #999;}
+.placeholder {cursor: default;}
 `;
 document.head.appendChild(style);
 
@@ -101,6 +102,7 @@ function MultiselectDropdown(options){
   var config={
     search:true,
     height:'15rem',
+    width:'100%',
     placeholder:'select',
     txtSelected:'selected',
     txtAll:'All',
@@ -126,7 +128,7 @@ function MultiselectDropdown(options){
   
   document.querySelectorAll("select[multiple]").forEach((el,k)=>{
     
-    var div=newEl('div',{class:'multiselect-dropdown',style:{width:config.style?.width??el.clientWidth+'px',padding:config.style?.padding??''}});
+    var div=newEl('div',{class:'multiselect-dropdown',style:{width:'100%',padding:config.style?.padding??''}});
     el.style.display='none';
     el.parentNode.insertBefore(div,el.nextSibling);
     var listWrap=newEl('div',{class:'multiselect-dropdown-list-wrapper'});
