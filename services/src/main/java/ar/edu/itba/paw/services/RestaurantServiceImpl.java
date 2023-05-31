@@ -65,12 +65,13 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Transactional
     @Override
-    public Restaurant update(long restaurantId, String name, String address, String description) {
+    public Restaurant update(long restaurantId, String name, RestaurantSpecialty specialty, String address, String description) {
         final Restaurant restaurant = getAndVerifyForUpdate(restaurantId);
         restaurant.setName(name);
+        restaurant.setSpecialty(specialty);
         restaurant.setAddress(address);
         restaurant.setDescription(description);
-        LOGGER.info("Updated name, address and description of restaurant id {}", restaurant.getRestaurantId());
+        LOGGER.info("Updated name, specialty, address and description of restaurant id {}", restaurant.getRestaurantId());
         return restaurant;
     }
 
