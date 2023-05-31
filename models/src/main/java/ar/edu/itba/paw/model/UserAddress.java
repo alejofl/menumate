@@ -22,6 +22,9 @@ public class UserAddress {
     @Column(nullable = false, updatable = false)
     private String address;
 
+    @Column
+    private String name;
+
     @Column(name = "last_used", nullable = false)
     private LocalDateTime lastUsed;
 
@@ -29,9 +32,10 @@ public class UserAddress {
 
     }
 
-    public UserAddress(long userId, String address, LocalDateTime lastUsed) {
+    public UserAddress(long userId, String address, String name, LocalDateTime lastUsed) {
         this.userId = userId;
         this.address = address;
+        this.name = name;
         this.lastUsed = lastUsed;
     }
 
@@ -45,6 +49,14 @@ public class UserAddress {
 
     public String getAddress() {
         return address;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public LocalDateTime getLastUsed() {

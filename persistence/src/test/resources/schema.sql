@@ -20,9 +20,11 @@ CREATE TABLE IF NOT EXISTS user_addresses
 (
     user_id   INT NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
     address   VARCHAR(200) NOT NULL,
+    name      VARCHAR(20),
     last_used TIMESTAMP NOT NULL DEFAULT now(),
 
-    PRIMARY KEY (user_id, address)
+    PRIMARY KEY (user_id, address),
+    UNIQUE (user_id, name)
 );
 
 CREATE TABLE IF NOT EXISTS user_verification_tokens

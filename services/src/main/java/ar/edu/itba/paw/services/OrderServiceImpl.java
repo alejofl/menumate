@@ -58,7 +58,7 @@ public class OrderServiceImpl implements OrderService {
     public Order createDelivery(long restaurantId, String name, String email, String address, List<OrderItem> items) {
         final User user = userService.createIfNotExists(email, name);
         Order order = orderDao.createDelivery(restaurantId, user.getUserId(), address);
-        userDao.addOrRefreshAddress(user.getUserId(), address);
+        userDao.registerAddress(user.getUserId(), address, null);
         assingOrderItemsToOrder(order, items);
         sendOrderReceivedEmails(order);
         return order;
