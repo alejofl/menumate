@@ -28,7 +28,7 @@ public class Category {
     @Column(name = "order_num", nullable = false)
     private int orderNum;
 
-    @Column(nullable = false, insertable = false)
+    @Column(insertable = false)
     private boolean deleted;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -45,6 +45,7 @@ public class Category {
         this.restaurant = restaurant;
         this.name = name;
         this.orderNum = orderNum;
+        this.deleted = false;
     }
 
     public Long getCategoryId() {
