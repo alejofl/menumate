@@ -13,5 +13,7 @@ public interface ProductService {
 
     Product update(long productId, String name, BigDecimal price, String description);
 
+    void updateImage(long productId, byte[] image);
+
     void delete(long productId);
 }

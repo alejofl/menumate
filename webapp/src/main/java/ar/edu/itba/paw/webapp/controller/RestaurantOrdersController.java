@@ -105,25 +105,25 @@ public class RestaurantOrdersController {
 
     @RequestMapping(value = "/orders/{orderId:\\d+}/confirm", method = RequestMethod.POST)
     public ModelAndView confirmOrder(@PathVariable final int orderId) {
-        Order order = orderService.markAsConfirmed(orderId).orElseThrow(OrderNotFoundException::new);
+        Order order = orderService.markAsConfirmed(orderId);
         return new ModelAndView(String.format("redirect:/restaurants/%d/orders/pending", order.getRestaurantId()));
     }
 
     @RequestMapping(value = "/orders/{orderId:\\d+}/ready", method = RequestMethod.POST)
     public ModelAndView readyOrder(@PathVariable final int orderId) {
-        Order order = orderService.markAsReady(orderId).orElseThrow(OrderNotFoundException::new);
+        Order order = orderService.markAsReady(orderId);
         return new ModelAndView(String.format("redirect:/restaurants/%d/orders/confirmed", order.getRestaurantId()));
     }
 
     @RequestMapping(value = "/orders/{orderId:\\d+}/deliver", method = RequestMethod.POST)
     public ModelAndView deliverOrder(@PathVariable final int orderId) {
-        Order order = orderService.markAsDelivered(orderId).orElseThrow(OrderNotFoundException::new);
+        Order order = orderService.markAsDelivered(orderId);
         return new ModelAndView(String.format("redirect:/restaurants/%d/orders/ready", order.getRestaurantId()));
     }
 
     @RequestMapping(value = "/orders/{orderId:\\d+}/cancel", method = RequestMethod.POST)
     public ModelAndView cancelOrder(@PathVariable final int orderId) {
-        Order order = orderService.markAsCancelled(orderId).orElseThrow(OrderNotFoundException::new);
+        Order order = orderService.markAsCancelled(orderId);
         return new ModelAndView(String.format("redirect:/restaurants/%d/orders/pending", order.getRestaurantId()));
     }
 }

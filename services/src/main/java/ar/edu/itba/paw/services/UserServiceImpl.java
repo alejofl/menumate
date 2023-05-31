@@ -114,6 +114,18 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
+    public void registerAddress(long userId, String address, String name) {
+        userDao.registerAddress(userId, address, name);
+    }
+
+    @Transactional
+    @Override
+    public void deleteAddress(long userId, String address) {
+        userDao.deleteAddress(userId, address);
+    }
+
+    @Transactional
+    @Override
     public void sendUserVerificationToken(final User user) throws MessagingException {
         if (user.getIsActive()) {
             LOGGER.info("Ignored creating verification token for already active user id {}", user.getUserId());
