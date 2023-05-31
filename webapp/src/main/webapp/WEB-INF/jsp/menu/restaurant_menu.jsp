@@ -244,7 +244,7 @@
         </div>
     </div>
 
-    <div class="toast-container p-3 bottom-0 end-0 position-fixed">
+    <div class="toast-container p-3 bottom-0 end-0 position-fixed restaurant-menu-toasts">
         <c:choose>
             <c:when test="${param.qr == 1}">
                 <div class="toast" role="alert" id="dine-in-toast" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
@@ -269,6 +269,24 @@
                 </div>
             </c:otherwise>
         </c:choose>
+        <div class="toast text-bg-primary" id="persistent-toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <h5 class="m-0">
+                        <c:choose>
+                            <c:when test="${param.qr == 1}">
+                                <i class="bi bi-collection-fill"></i>
+                            </c:when>
+                            <c:otherwise>
+                                <i class="bi bi-car-front-fill"></i>
+                            </c:otherwise>
+                        </c:choose>
+                    </h5>
+                </div>
+            </div>
+        </div>
+
+<%--        --%>
     </div>
 
     <div class="modal fade" id="view-reviews-modal" tabindex="-1">

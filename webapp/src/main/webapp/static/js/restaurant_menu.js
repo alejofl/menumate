@@ -52,8 +52,15 @@ document.addEventListener("DOMContentLoaded", () => {
     let orderType = document.querySelector("#checkout-order-type");
 
     // Show Attention toast
+    const persistentToast = bootstrap.Toast.getOrCreateInstance(document.querySelector(`#persistent-toast`));
+    persistentToast.show()
     const toast = bootstrap.Toast.getOrCreateInstance(document.querySelector(`#${qr ? "dine-in" : "delivery"}-toast`));
     toast.show();
+    document.querySelector(`#persistent-toast`).addEventListener("click", () => {
+        if (!toast.isShown()) {
+            toast.show();
+        }
+    })
 
     // Open Checkout Modal if errors were found
     if (document.querySelector("body").dataset.formError === "true") {

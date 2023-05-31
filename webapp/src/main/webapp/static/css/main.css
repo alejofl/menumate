@@ -777,3 +777,20 @@ input:has(+ .form-error), textarea:has(+ .form-error) {
     padding-top: 12px;
     flex-wrap: wrap;
 }
+
+.restaurant-menu-toasts {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.restaurant-menu-toasts .toast {
+    --bs-toast-spacing: 0.5rem;
+}
+
+#persistent-toast {
+    cursor: pointer;
+    width: auto;
+    color: #fff !important;
+    background-color: var(--primary) !important;
+}
