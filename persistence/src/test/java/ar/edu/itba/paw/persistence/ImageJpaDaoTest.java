@@ -10,15 +10,18 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.Optional;
 import java.util.Random;
 
-/* FIXME
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
+@Transactional
 public class ImageJpaDaoTest {
 
     @Autowired
@@ -28,6 +31,9 @@ public class ImageJpaDaoTest {
     private ImageJpaDao imageDao;
 
     private JdbcTemplate jdbcTemplate;
+
+    @PersistenceContext
+    private EntityManager em;
 
     private static final long IMAGE_ID = 6363;
     private static final byte[] IMG_INFO_1 = new byte[50];
@@ -46,6 +52,7 @@ public class ImageJpaDaoTest {
     @Test
     public void testCreateImg() throws SQLException {
         final long image = imageDao.create(IMG_INFO_1);
+        em.flush();
         Assert.assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "images"));
     }
 
@@ -54,6 +61,7 @@ public class ImageJpaDaoTest {
         jdbcTemplate.update("INSERT INTO images (image_id, bytes) VALUES (?, ?)", IMAGE_ID, IMG_INFO_1);
 
         imageDao.update(IMAGE_ID, IMG_INFO_2);
+        em.flush();
 
         Optional<byte[]> maybeImage = imageDao.getById(IMAGE_ID);
         Assert.assertTrue(maybeImage.isPresent());
@@ -65,6 +73,7 @@ public class ImageJpaDaoTest {
         jdbcTemplate.update("INSERT INTO images (image_id, bytes) VALUES (?, ?)", IMAGE_ID, IMG_INFO_1);
 
         imageDao.delete(IMAGE_ID);
+        em.flush();
         Assert.assertFalse(imageDao.getById(IMAGE_ID).isPresent());
     }
 
@@ -77,4 +86,3 @@ public class ImageJpaDaoTest {
         Assert.assertArrayEquals(IMG_INFO_1, image.get());
     }
 }
-*/

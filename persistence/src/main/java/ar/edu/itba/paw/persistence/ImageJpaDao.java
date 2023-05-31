@@ -35,7 +35,7 @@ public class ImageJpaDao implements ImageDao {
     @Override
     public void update(long imageId, byte[] bytes) {
         final Image image = new Image(imageId, bytes);
-        em.persist(image);
+        em.merge(image);
         LOGGER.info("Updated image with ID {}, length is now {}", image.getImageId(), image.getBytes().length);
     }
 
