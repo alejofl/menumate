@@ -199,17 +199,17 @@
                         <c:choose>
                             <c:when test="${status == 'pending'}">
                                 <form action="<c:url value="/orders/$1/confirm"/>" method="post" id="change-order-status-form">
-                                    <button type="submit" class="btn btn-primary"><spring:message code="restaurantorders.confirm"/></button>
+                                    <button type="submit" class="btn btn-success"><spring:message code="restaurantorders.confirm"/></button>
                                 </form>
                             </c:when>
                             <c:when test="${status == 'confirmed'}">
                                 <form action="<c:url value="/orders/$1/ready"/>" method="post" id="change-order-status-form">
-                                    <button type="submit" class="btn btn-primary"><spring:message code="restaurantorders.ready.action"/></button>
+                                    <button type="submit" class="btn btn-success"><spring:message code="restaurantorders.ready.action"/></button>
                                 </form>
                             </c:when>
                             <c:when test="${status == 'ready'}">
                                 <form action="<c:url value="/orders/$1/deliver"/>" method="post" id="change-order-status-form">
-                                    <button type="submit" class="btn btn-primary"><spring:message code="restaurantorders.deliver"/></button>
+                                    <button type="submit" class="btn btn-success"><spring:message code="restaurantorders.deliver"/></button>
                                 </form>
                             </c:when>
                         </c:choose>
