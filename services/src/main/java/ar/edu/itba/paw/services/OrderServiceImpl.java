@@ -106,7 +106,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional
     @Override
-    public Optional<Order> markAsConfirmed(long orderId) {
+    public Order markAsConfirmed(long orderId) {
         Order order = orderDao.getById(orderId).orElseThrow(OrderNotFoundException::new);
         OrderStatus orderStatus = order.getOrderStatus();
         if (orderStatus != OrderStatus.PENDING) {
@@ -122,12 +122,12 @@ public class OrderServiceImpl implements OrderService {
             LOGGER.error("Order confirmation email sending failed", e);
         }
 
-        return Optional.of(order);
+        return order;
     }
 
     @Transactional
     @Override
-    public Optional<Order> markAsReady(long orderId) {
+    public Order markAsReady(long orderId) {
         Order order = orderDao.getById(orderId).orElseThrow(OrderNotFoundException::new);
         OrderStatus orderStatus = order.getOrderStatus();
         if (orderStatus != OrderStatus.CONFIRMED) {
@@ -143,12 +143,12 @@ public class OrderServiceImpl implements OrderService {
             LOGGER.error("Order ready email sending failed", e);
         }
 
-        return Optional.of(order);
+        return order;
     }
 
     @Transactional
     @Override
-    public Optional<Order> markAsDelivered(long orderId) {
+    public Order markAsDelivered(long orderId) {
         Order order = orderDao.getById(orderId).orElseThrow(OrderNotFoundException::new);
         OrderStatus orderStatus = order.getOrderStatus();
         if (orderStatus != OrderStatus.READY) {
@@ -164,12 +164,12 @@ public class OrderServiceImpl implements OrderService {
             LOGGER.error("Order delivered email sending failed", e);
         }
 
-        return Optional.of(order);
+        return order;
     }
 
     @Transactional
     @Override
-    public Optional<Order> markAsCancelled(long orderId) {
+    public Order markAsCancelled(long orderId) {
         Order order = orderDao.getById(orderId).orElseThrow(OrderNotFoundException::new);
         OrderStatus orderStatus = order.getOrderStatus();
         if (!orderStatus.isInProgress()) {
@@ -185,7 +185,7 @@ public class OrderServiceImpl implements OrderService {
             LOGGER.error("Order cancelled email sending failed", e);
         }
 
-        return Optional.of(order);
+        return order;
     }
 
     @Transactional

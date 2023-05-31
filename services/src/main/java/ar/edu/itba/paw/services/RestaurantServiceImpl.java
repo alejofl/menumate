@@ -1,10 +1,13 @@
 package ar.edu.itba.paw.services;
 
+import ar.edu.itba.paw.exception.RestaurantNotFoundException;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.persistance.ImageDao;
 import ar.edu.itba.paw.persistance.RestaurantDao;
 import ar.edu.itba.paw.service.RestaurantService;
 import ar.edu.itba.paw.util.PaginatedResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +17,8 @@ import java.util.Optional;
 
 @Service
 public class RestaurantServiceImpl implements RestaurantService {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(RestaurantServiceImpl.class);
 
     @Autowired
     private RestaurantDao restaurantDao;
@@ -43,6 +48,50 @@ public class RestaurantServiceImpl implements RestaurantService {
         return restaurantDao.search(query, pageNumber, pageSize, orderBy, descending, tags, specialties);
     }
 
+    private Restaurant getAndVerifyForUpdate(long restaurantId) {
+        final Restaurant restaurant = restaurantDao.getById(restaurantId).orElse(null);
+        if (restaurant == null) {
+            LOGGER.error("Attempted to update nonexisting restaurant id {}", restaurantId);
+            throw new RestaurantNotFoundException();
+        }
+
+        if (restaurant.getDeleted()) {
+            LOGGER.error("Attempted to update deleted restaurant id {}", restaurant.getRestaurantId());
+            throw new IllegalStateException("Cannot update deleted restaurant");
+        }
+
+        return restaurant;
+    }
+
+    @Transactional
+    @Override
+    public Restaurant update(long restaurantId, String name, String address, String description) {
+        final Restaurant restaurant = getAndVerifyForUpdate(restaurantId);
+        restaurant.setName(name);
+        restaurant.setAddress(address);
+        restaurant.setDescription(description);
+        LOGGER.info("Updated name, address and description of restaurant id {}", restaurant.getRestaurantId());
+        return restaurant;
+    }
+
+    @Transactional
+    @Override
+    public void updateImages(long restaurantId, byte[] logo, byte[] portrait1, byte[] portrait2) {
+        if (logo == null && portrait1 == null && portrait2 == null)
+            return;
+
+        final Restaurant restaurant = getAndVerifyForUpdate(restaurantId);
+        if (logo != null)
+            imageDao.update(restaurant.getLogoId(), logo);
+        if (portrait1 != null)
+            imageDao.update(restaurant.getPortrait1Id(), portrait1);
+        if (portrait2 != null)
+            imageDao.update(restaurant.getPortrait2Id(), portrait2);
+
+        LOGGER.info("Updated images of restaurant id {}", restaurant.getRestaurantId());
+    }
+
+    @Transactional
     @Override
     public void delete(long restaurantId) {
         restaurantDao.delete(restaurantId);

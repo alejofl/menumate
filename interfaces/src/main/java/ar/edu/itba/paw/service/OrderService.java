@@ -24,13 +24,13 @@ public interface OrderService {
 
     PaginatedResult<Order> getByRestaurant(long restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus);
 
-    Optional<Order> markAsConfirmed(long orderId);
+    Order markAsConfirmed(long orderId);
 
-    Optional<Order> markAsReady(long orderId);
+    Order markAsReady(long orderId);
 
-    Optional<Order> markAsDelivered(long orderId);
+    Order markAsDelivered(long orderId);
 
-    Optional<Order> markAsCancelled(long orderId);
+    Order markAsCancelled(long orderId);
 
     /**
      * Warning: this method forcedly modifies an order's status. No checks are performed and no

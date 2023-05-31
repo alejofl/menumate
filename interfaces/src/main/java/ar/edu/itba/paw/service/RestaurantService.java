@@ -27,5 +27,9 @@ public interface RestaurantService {
      */
     PaginatedResult<RestaurantDetails> search(String query, int pageNumber, int pageSize, RestaurantOrderBy orderBy, boolean descending, List<RestaurantTags> tags, List<RestaurantSpecialty> specialties);
 
+    Restaurant update(long restaurantId, String name, String address, String description);
+
+    void updateImages(long restaurantId, byte[] logo, byte[] portrait1, byte[] portrait2);
+
     void delete(long restaurantId);
 }
