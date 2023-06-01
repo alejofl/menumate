@@ -1,5 +1,8 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.model.User;
+import ar.edu.itba.paw.model.UserVerificationToken;
+import ar.edu.itba.paw.persistance.UserVerificationTokenDao;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import org.junit.Assert;
 import org.junit.Before;
@@ -10,17 +13,20 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.sql.DataSource;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-/*
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
+@Transactional
 public class UserVerificationTokenJpaDaoTest {
-// TODO: Fix tests
 
     private static final long ID1 = 791;
     private static final long ID2 = 691;
@@ -32,170 +38,142 @@ public class UserVerificationTokenJpaDaoTest {
     private static final String NAME2 = "Pedro Estacionador";
     private static final String TOKEN1 = "8ac27000-c568-4070-b6da-1a80478c";
     private static final String TOKEN2 = "3ab27010-c538-4180-a6pa-1b80581c";
+    private static final boolean IS_ACTIVE = true;
+    private static final String PREFERRED_LANGUAGE = "qx";
+    private static final LocalDateTime EXPIRES = LocalDateTime.now().plusDays(1);
+    private static User user1;
 
     @Autowired
     private DataSource ds;
 
     @Autowired
-    private UserVerificationTokenJpaDao verificationDao;
+    private UserVerificationTokenDao verificationDao;
+
+    @PersistenceContext
+    private EntityManager em;
 
     private JdbcTemplate jdbcTemplate;
 
     @Before
     public void setup() {
         jdbcTemplate = new JdbcTemplate(ds);
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, "user_verification_codes", "users");
-        jdbcTemplate.execute("INSERT INTO users (user_id, email, password, name) VALUES (" + ID1 + ", '" + EMAIL1 + "', '" + PASSWORD1 + "', '" + NAME1 + "')");
-        jdbcTemplate.execute("INSERT INTO users (user_id, email, password, name) VALUES (" + ID2 + ", '" + EMAIL2 + "', '" + PASSWORD2 + "', '" + NAME2 + "')");
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, "user_verification_tokens", "users");
+        jdbcTemplate.execute("INSERT INTO users (user_id, email, password, name, is_active, preferred_language) VALUES (" + ID1 + ", '" + EMAIL1 + "', '" + PASSWORD1 + "', '" + NAME1 + "', " + IS_ACTIVE + ", '" + PREFERRED_LANGUAGE + "')");
+        jdbcTemplate.execute("INSERT INTO users (user_id, email, password, name, is_active, preferred_language) VALUES (" + ID2 + ", '" + EMAIL2 + "', '" + PASSWORD2 + "', '" + NAME2 + "', " + IS_ACTIVE + ", '" + PREFERRED_LANGUAGE + "')");
+        user1 = em.find(User.class, ID1);
     }
 
     @Test
-    public void testCreateTokenWhenNonexisting() {
-        final String token = verificationDao.generateToken(ID1);
+    public void testCreate() {
+        UserVerificationToken token = verificationDao.create(user1, TOKEN1, EXPIRES);
+        em.flush();
         Assert.assertNotNull(token);
+        Assert.assertEquals(TOKEN1, token.getToken());
+        Assert.assertEquals(ID1, token.getUser().getUserId().intValue());
+        Assert.assertEquals(ID1, token.getUserId());
+        Assert.assertEquals(EXPIRES, token.getExpires());
+    }
+
+    @Test(expected = PersistenceException.class)
+    public void testCreateWithExistingToken() {
+        jdbcTemplate.execute("INSERT INTO user_verification_tokens (user_id, token, expires) VALUES (" + ID1 + ", '" + TOKEN1 + "', '" + Timestamp.valueOf(EXPIRES) + "')");
+        UserVerificationToken token = verificationDao.create(user1, TOKEN1, EXPIRES.plusDays(1));
+        em.flush();
     }
 
     @Test
-    public void testCreateTokenWhenExisting() {
-        jdbcTemplate.execute("INSERT INTO user_verification_codes (user_id, code, expires) VALUES (" + ID1 + ", '" + TOKEN1 + "', '" + Timestamp.valueOf(LocalDateTime.now().plusDays(1)) + "')");
+    public void testDelete() {
+        jdbcTemplate.execute("INSERT INTO user_verification_tokens (user_id, token, expires) VALUES (" + ID1 + ", '" + TOKEN1 + "', '" + Timestamp.valueOf(EXPIRES) + "')");
+        UserVerificationToken token = em.find(UserVerificationToken.class, ID1);
 
-        final String token = verificationDao.generateToken(ID1);
+        verificationDao.delete(token);
+        em.flush();
 
-        Assert.assertNotNull(token);
-        Assert.assertEquals(token, jdbcTemplate.queryForObject("SELECT code FROM user_verification_codes WHERE user_id = " + ID1, String.class));
+        Assert.assertEquals(0, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "user_verification_tokens", "token = '" + TOKEN1 + "'"));
     }
 
     @Test
-    public void testCreateTokenWhenExpired() {
-        jdbcTemplate.execute("INSERT INTO user_verification_codes (user_id, code, expires) VALUES (" + ID1 + ", '" + TOKEN1 + "', '" + Timestamp.valueOf(LocalDateTime.now().minusDays(1)) + "')");
-
-        final String token = verificationDao.generateToken(ID1);
-
-        Assert.assertNotNull(token);
-        Assert.assertEquals(token, jdbcTemplate.queryForObject("SELECT code FROM user_verification_codes WHERE user_id = " + ID1, String.class));
+    public void testDeleteNonExistent() {
+        UserVerificationToken token = new UserVerificationToken(user1, TOKEN1, EXPIRES);
+        verificationDao.delete(token);
+        em.flush();
     }
 
     @Test
-    public void testHasActiveTokenExisting() {
-        jdbcTemplate.execute("INSERT INTO user_verification_codes (user_id, code, expires) VALUES (" + ID1 + ", '" + TOKEN1 + "', '" + Timestamp.valueOf(LocalDateTime.now().plusDays(1)) + "')");
-        Assert.assertTrue(verificationDao.hasActiveToken(ID1));
+    public void getByTokenTest() {
+        jdbcTemplate.execute("INSERT INTO user_verification_tokens (user_id, token, expires) VALUES (" + ID1 + ", '" + TOKEN1 + "', '" + Timestamp.valueOf(EXPIRES) + "')");
+        Optional<UserVerificationToken> token = verificationDao.getByToken(TOKEN1);
+
+        Assert.assertTrue(token.isPresent());
+        Assert.assertEquals(TOKEN1, token.get().getToken());
+        Assert.assertEquals(ID1, token.get().getUser().getUserId().intValue());
+        Assert.assertEquals(ID1, token.get().getUserId());
+        Assert.assertEquals(EXPIRES, token.get().getExpires());
     }
 
     @Test
-    public void testHasActiveTokenNonexisting() {
-        Assert.assertFalse(verificationDao.hasActiveToken(ID1));
+    public void getByTokenNonExistentTest() {
+        Optional<UserVerificationToken> token = verificationDao.getByToken(TOKEN2);
+        Assert.assertFalse(token.isPresent());
     }
 
     @Test
-    public void testHasActiveTokenExpired() {
-        jdbcTemplate.execute("INSERT INTO user_verification_codes (user_id, code, expires) VALUES (" + ID1 + ", '" + TOKEN1 + "', '" + Timestamp.valueOf(LocalDateTime.now().minusDays(1)) + "')");
-        Assert.assertFalse(verificationDao.hasActiveToken(ID1));
+    public void getByUserIdTest() {
+        jdbcTemplate.execute("INSERT INTO user_verification_tokens (user_id, token, expires) VALUES (" + ID1 + ", '" + TOKEN1 + "', '" + Timestamp.valueOf(EXPIRES) + "')");
+        Optional<UserVerificationToken> token = verificationDao.getByUserId(ID1);
+
+        Assert.assertTrue(token.isPresent());
+        Assert.assertEquals(TOKEN1, token.get().getToken());
+        Assert.assertEquals(ID1, token.get().getUser().getUserId().intValue());
+        Assert.assertEquals(ID1, token.get().getUserId());
+        Assert.assertEquals(EXPIRES, token.get().getExpires());
+    }
+
+    @Test
+    public void getByUserIdNonExistentTest() {
+        Optional<UserVerificationToken> token = verificationDao.getByUserId(ID2);
+        Assert.assertFalse(token.isPresent());
     }
 
     @Test
     public void testDeleteStaledNoTokens() {
         verificationDao.deleteStaledTokens();
+        em.flush();
     }
 
     @Test
     public void testDeleteStaledNoExpiredTokens() {
-        jdbcTemplate.execute("INSERT INTO user_verification_codes (user_id, code, expires) VALUES (" + ID1 + ", '" + TOKEN1 + "', '" + Timestamp.valueOf(LocalDateTime.now().plusDays(1)) + "')");
-        jdbcTemplate.execute("INSERT INTO user_verification_codes (user_id, code, expires) VALUES (" + ID2 + ", '" + TOKEN2 + "', '" + Timestamp.valueOf(LocalDateTime.now().plusDays(1)) + "')");
+        jdbcTemplate.execute("INSERT INTO user_verification_tokens (user_id, token, expires) VALUES (" + ID1 + ", '" + TOKEN1 + "', '" + Timestamp.valueOf(LocalDateTime.now().plusDays(1)) + "')");
+        jdbcTemplate.execute("INSERT INTO user_verification_tokens (user_id, token, expires) VALUES (" + ID2 + ", '" + TOKEN2 + "', '" + Timestamp.valueOf(LocalDateTime.now().plusDays(1)) + "')");
         verificationDao.deleteStaledTokens();
-        Assert.assertEquals(2, jdbcTemplate.queryForObject("SELECT COUNT(*) FROM user_verification_codes WHERE expires > now()", Integer.class).intValue());
+        em.flush();
+        Assert.assertEquals(2, jdbcTemplate.queryForObject("SELECT COUNT(*) FROM user_verification_tokens WHERE expires > now()", Integer.class).intValue());
     }
 
     @Test
     public void testDeleteStaledSingleToken() {
-        jdbcTemplate.execute("INSERT INTO user_verification_codes (user_id, code, expires) VALUES (" + ID1 + ", '" + TOKEN1 + "', '" + Timestamp.valueOf(LocalDateTime.now().minusDays(1)) + "')");
+        jdbcTemplate.execute("INSERT INTO user_verification_tokens (user_id, token, expires) VALUES (" + ID1 + ", '" + TOKEN1 + "', '" + Timestamp.valueOf(LocalDateTime.now().minusDays(1)) + "')");
         verificationDao.deleteStaledTokens();
-        Assert.assertFalse(jdbcTemplate.queryForObject("SELECT EXISTS(SELECT * FROM user_verification_codes WHERE expires <= now())", Boolean.class));
+        em.flush();
+        Assert.assertFalse(jdbcTemplate.queryForObject("SELECT EXISTS(SELECT * FROM user_verification_tokens WHERE expires <= now())", Boolean.class));
     }
 
     @Test
     public void testDeleteStaledTwoExpiredTokens() {
-        jdbcTemplate.execute("INSERT INTO user_verification_codes (user_id, code, expires) VALUES (" + ID1 + ", '" + TOKEN1 + "', '" + Timestamp.valueOf(LocalDateTime.now().minusDays(1)) + "')");
-        jdbcTemplate.execute("INSERT INTO user_verification_codes (user_id, code, expires) VALUES (" + ID2 + ", '" + TOKEN2 + "', '" + Timestamp.valueOf(LocalDateTime.now().minusDays(1)) + "')");
+        jdbcTemplate.execute("INSERT INTO user_verification_tokens (user_id, token, expires) VALUES (" + ID1 + ", '" + TOKEN1 + "', '" + Timestamp.valueOf(LocalDateTime.now().minusDays(1)) + "')");
+        jdbcTemplate.execute("INSERT INTO user_verification_tokens (user_id, token, expires) VALUES (" + ID2 + ", '" + TOKEN2 + "', '" + Timestamp.valueOf(LocalDateTime.now().minusDays(1)) + "')");
         verificationDao.deleteStaledTokens();
-        Assert.assertFalse(jdbcTemplate.queryForObject("SELECT EXISTS(SELECT * FROM user_verification_codes WHERE expires <= now())", Boolean.class));
+        em.flush();
+        Assert.assertFalse(jdbcTemplate.queryForObject("SELECT EXISTS(SELECT * FROM user_verification_tokens WHERE expires <= now())", Boolean.class));
     }
 
     @Test
     public void testDeleteStaledOneExpiredOneValid() {
-        jdbcTemplate.execute("INSERT INTO user_verification_codes (user_id, code, expires) VALUES (" + ID1 + ", '" + TOKEN1 + "', '" + Timestamp.valueOf(LocalDateTime.now().minusDays(1)) + "')");
-        jdbcTemplate.execute("INSERT INTO user_verification_codes (user_id, code, expires) VALUES (" + ID2 + ", '" + TOKEN2 + "', '" + Timestamp.valueOf(LocalDateTime.now().plusDays(1)) + "')");
+        jdbcTemplate.execute("INSERT INTO user_verification_tokens (user_id, token, expires) VALUES (" + ID1 + ", '" + TOKEN1 + "', '" + Timestamp.valueOf(LocalDateTime.now().minusDays(1)) + "')");
+        jdbcTemplate.execute("INSERT INTO user_verification_tokens (user_id, token, expires) VALUES (" + ID2 + ", '" + TOKEN2 + "', '" + Timestamp.valueOf(LocalDateTime.now().plusDays(1)) + "')");
         verificationDao.deleteStaledTokens();
-        Assert.assertFalse(jdbcTemplate.queryForObject("SELECT EXISTS(SELECT * FROM user_verification_codes WHERE user_id = " + ID1 + ")", Boolean.class));
-        Assert.assertTrue(jdbcTemplate.queryForObject("SELECT EXISTS(SELECT * FROM user_verification_codes WHERE user_id = " + ID2 + ")", Boolean.class));
-    }
-
-    @Test
-    public void testIsValidTokenNoTokens() {
-        Assert.assertFalse(verificationDao.isValidToken(TOKEN1));
-        Assert.assertFalse(verificationDao.isValidToken(TOKEN2));
-    }
-
-    @Test
-    public void testIsValidTokenOneValidOneNonexisting() {
-        jdbcTemplate.execute("INSERT INTO user_verification_codes (user_id, code, expires) VALUES (" + ID1 + ", '" + TOKEN1 + "', '" + Timestamp.valueOf(LocalDateTime.now().plusDays(1)) + "')");
-        Assert.assertTrue(verificationDao.isValidToken(TOKEN1));
-        Assert.assertFalse(verificationDao.isValidToken(TOKEN2));
-    }
-
-    @Test
-    public void testIsValidTokenOneValidOneExpired() {
-        jdbcTemplate.execute("INSERT INTO user_verification_codes (user_id, code, expires) VALUES (" + ID1 + ", '" + TOKEN1 + "', '" + Timestamp.valueOf(LocalDateTime.now().plusDays(1)) + "')");
-        jdbcTemplate.execute("INSERT INTO user_verification_codes (user_id, code, expires) VALUES (" + ID2 + ", '" + TOKEN2 + "', '" + Timestamp.valueOf(LocalDateTime.now().minusDays(1)) + "')");
-        Assert.assertTrue(verificationDao.isValidToken(TOKEN1));
-        Assert.assertFalse(verificationDao.isValidToken(TOKEN2));
-    }
-
-    @Test
-    public void testDeleteGetIdWhenExisting() {
-        jdbcTemplate.execute("INSERT INTO user_verification_codes (user_id, code, expires) VALUES (" + ID1 + ", '" + TOKEN1 + "', '" + Timestamp.valueOf(LocalDateTime.now().plusDays(1)) + "')");
-
-        Optional<Long> userId = verificationDao.deleteTokenAndRetrieveUserId(TOKEN1);
-        Assert.assertTrue(userId.isPresent());
-        Assert.assertEquals(ID1, userId.get().longValue());
-    }
-
-    @Test
-    public void testDeleteGetIdWhenNonexisting() {
-        Optional<Long> userId = verificationDao.deleteTokenAndRetrieveUserId(TOKEN1);
-        Assert.assertFalse(userId.isPresent());
-    }
-
-    @Test
-    public void testDeleteGetIdWhenExpired() {
-        jdbcTemplate.execute("INSERT INTO user_verification_codes (user_id, code, expires) VALUES (" + ID1 + ", '" + TOKEN1 + "', '" + Timestamp.valueOf(LocalDateTime.now().minusDays(1)) + "')");
-
-        Optional<Long> userId = verificationDao.deleteTokenAndRetrieveUserId(TOKEN1);
-        Assert.assertFalse(userId.isPresent());
-    }
-
-    @Test
-    public void testDeleteGetIdWhenOneValidOneNonexisting() {
-        jdbcTemplate.execute("INSERT INTO user_verification_codes (user_id, code, expires) VALUES (" + ID1 + ", '" + TOKEN1 + "', '" + Timestamp.valueOf(LocalDateTime.now().plusDays(1)) + "')");
-
-        Optional<Long> userId1 = verificationDao.deleteTokenAndRetrieveUserId(TOKEN1);
-        Optional<Long> userId2 = verificationDao.deleteTokenAndRetrieveUserId(TOKEN2);
-
-        Assert.assertTrue(userId1.isPresent());
-        Assert.assertEquals(ID1, userId1.get().longValue());
-        Assert.assertFalse(userId2.isPresent());
-    }
-
-    @Test
-    public void testDeleteGetIdWhenOneValidOneExpired() {
-        jdbcTemplate.execute("INSERT INTO user_verification_codes (user_id, code, expires) VALUES (" + ID1 + ", '" + TOKEN1 + "', '" + Timestamp.valueOf(LocalDateTime.now().plusDays(1)) + "')");
-        jdbcTemplate.execute("INSERT INTO user_verification_codes (user_id, code, expires) VALUES (" + ID2 + ", '" + TOKEN2 + "', '" + Timestamp.valueOf(LocalDateTime.now().minusDays(1)) + "')");
-
-        Optional<Long> userId1 = verificationDao.deleteTokenAndRetrieveUserId(TOKEN1);
-        Optional<Long> userId2 = verificationDao.deleteTokenAndRetrieveUserId(TOKEN2);
-
-        Assert.assertTrue(userId1.isPresent());
-        Assert.assertEquals(ID1, userId1.get().longValue());
-        Assert.assertFalse(userId2.isPresent());
+        em.flush();
+        Assert.assertFalse(jdbcTemplate.queryForObject("SELECT EXISTS(SELECT * FROM user_verification_tokens WHERE user_id = " + ID1 + ")", Boolean.class));
+        Assert.assertTrue(jdbcTemplate.queryForObject("SELECT EXISTS(SELECT * FROM user_verification_tokens WHERE user_id = " + ID2 + ")", Boolean.class));
     }
 }
-    */

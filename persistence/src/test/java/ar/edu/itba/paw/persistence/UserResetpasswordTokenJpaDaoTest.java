@@ -39,9 +39,7 @@ public class UserResetpasswordTokenJpaDaoTest {
     private static final boolean IS_ACTIVE = true;
     private static final String TOKEN1 = "8ac27000-c568-4070-b6da-1a80478c";
     private static final String TOKEN2 = "3ab27010-c538-4180-a6pa-1b80581c";
-
     private static User user1;
-    private static User user2;
 
     @Autowired
     private DataSource ds;
@@ -61,7 +59,6 @@ public class UserResetpasswordTokenJpaDaoTest {
         jdbcTemplate.execute("INSERT INTO users (user_id, email, password, name, is_active, preferred_language) VALUES (" + ID1 + ", '" + EMAIL1 + "', '" + PASSWORD1 + "', '" + NAME1 + "', " + IS_ACTIVE + ", '" + PREFERRED_LANGUAGE + "')");
         jdbcTemplate.execute("INSERT INTO users (user_id, email, password, name, is_active, preferred_language) VALUES (" + ID2 + ", '" + EMAIL2 + "', '" + PASSWORD2 + "', '" + NAME2 + "', " + IS_ACTIVE + ", '" + PREFERRED_LANGUAGE + "')");
         user1 = em.find(User.class, ID1);
-        user2 = em.find(User.class, ID2);
     }
 
     @Test
@@ -127,12 +124,7 @@ public class UserResetpasswordTokenJpaDaoTest {
     }
     @Test
     public void testDeleteNoToken() throws SQLException {
-        jdbcTemplate.execute("INSERT INTO user_resetpassword_tokens (user_id, token, expires) VALUES (" + ID1 + ", '" + TOKEN1 + "', '" + Timestamp.valueOf(LocalDateTime.now().plusDays(1)) + "')");
-        final UserResetpasswordToken U = em.find(UserResetpasswordToken.class, ID1);
-
-        resetPasswordTokenDao.delete(U);
-        em.flush();
-
+        final UserResetpasswordToken U = new UserResetpasswordToken(user1, TOKEN1, LocalDateTime.now().plusDays(1));
         resetPasswordTokenDao.delete(U);
         em.flush();
 
