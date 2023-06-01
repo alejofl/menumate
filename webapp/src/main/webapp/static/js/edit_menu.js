@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let deleteProductFormProductId = document.querySelector("#delete-product-form-product-id");
     let deleteCategoryFormCategoryId = document.querySelector("#delete-category-form-category-id");
     let editProductPriceFormProductId = document.querySelector("#edit-product-price-form-product-id");
+    let deleteEmployeeFormUserId = document.querySelector("#delete-employee-form-user-id");
 
     // Open Checkout Modal if errors were found
     if (document.querySelector("body").dataset.addProductErrors === "true") {
@@ -59,6 +60,12 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".delete-category-button").forEach(element => {
         element.addEventListener("click", (event) => {
             deleteCategoryFormCategoryId.value = element.dataset.categoryId;
+        });
+    });
+
+    document.querySelectorAll(".delete-employee-button").forEach(element => {
+        element.addEventListener("click", (event) => {
+            deleteEmployeeFormUserId.value = element.dataset.userId;
         });
     });
 });

@@ -283,11 +283,7 @@
                                                 <spring:message code="restaurantroles.${employee.value.messageCode}"/>
                                             </p>
                                             <c:if test="${employee.value.ordinal() != 0}">
-                                                <c:url value="/restaurants/${restaurant.restaurantId}/employees/delete" var="deleteEmployeeUrl"/>
-                                                <form:form cssClass="m-0" modelAttribute="deleteEmployeeForm" action="${deleteEmployeeUrl}" method="post" id="delete-employee-form">
-                                                    <input type="hidden" name="userId" id="delete-employee-form-user-id" value="<c:out value="${employee.key.userId}"/>">
-                                                    <input type="submit" class="btn btn-danger btn-sm ms-4" value="<spring:message code="editmenu.empoyees.modal.deleteemployee"/>">
-                                                </form:form>
+                                                <a class="delete-employee-button ms-2" type="button" data-bs-toggle="modal" data-bs-target="#delete-employee-modal" data-user-id="${employee.key.userId}"><i class="bi bi-trash-fill text-danger"></i></a>
                                             </c:if>
                                         </div>
                                     </div>
@@ -295,6 +291,24 @@
                             </c:forEach>
                         </ul>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="delete-employee-modal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h1 class="modal-title fs-5"><spring:message code="editmenu.deleteemployee.modal.title"/></h1>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" data-bs-target="#employees-modal" data-bs-toggle="modal" class="btn btn-secondary"><spring:message code="editmenu.form.no"/></button>
+                    <c:url value="/restaurants/${restaurant.restaurantId}/employees/delete" var="deleteEmployeeUrl"/>
+                    <form:form cssClass="m-0" modelAttribute="deleteEmployeeForm" action="${deleteEmployeeUrl}" method="post" id="delete-employee-form">
+                        <input type="hidden" name="userId" id="delete-employee-form-user-id">
+                        <input type="submit" class="btn btn-danger" value="<spring:message code="editmenu.form.yes"/>">
+                    </form:form>
                 </div>
             </div>
         </div>

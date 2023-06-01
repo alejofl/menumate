@@ -496,7 +496,7 @@ input:has(+ .form-error), textarea:has(+ .form-error) {
     color: var(--primary);
 }
 
-.order-card i, .order-details-card i, #order-details i, #employees-modal i {
+.order-card i, .order-details-card i, #order-details i, #employees-modal i:not(.text-danger) {
     margin-right: 8px;
 }
 
