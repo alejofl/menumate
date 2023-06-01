@@ -31,7 +31,7 @@ public class Product {
     @Column(nullable = false)
     private boolean available;
 
-    @Column(nullable = false, insertable = false)
+    @Column(nullable = false)
     private boolean deleted;
 
     Product() {
