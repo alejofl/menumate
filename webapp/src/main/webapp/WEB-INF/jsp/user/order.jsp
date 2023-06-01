@@ -128,9 +128,31 @@
             </div>
         </div>
         <div class="d-flex gap-3">
-            <button type="button" class="btn btn-primary ${has_review || order.orderStatus != "DELIVERED" ? "disabled" : ""}" data-bs-toggle="modal" data-bs-target="#review-modal" id="review-modal-button"><spring:message code="userorders.review.make"/></button>
+            <button type="button" class="btn btn-primary ${review != null || order.orderStatus != "DELIVERED" ? "disabled" : ""}" data-bs-toggle="modal" data-bs-target="#review-modal" id="review-modal-button"><spring:message code="userorders.review.make"/></button>
             <a type="button" class="btn btn-primary" href="<c:url value="/restaurants/${order.restaurantId}"/>"><spring:message code="userorders.neworder"/></a>
         </div>
+        <c:if test="${review != null}">
+            <div class="card order-review-card">
+                <div class="card-body">
+                    <h4 class="card-title"><spring:message code="userorders.review.myreview"/></h4>
+                    <div class="d-flex gap-2 align-items-baseline my-2">
+                        <div class="small-ratings">
+                            <c:forEach begin="1" end="${review.rating}">
+                                <i class="bi bi-star-fill rating-color"></i>
+                            </c:forEach>
+                            <c:forEach begin="1" end="${5 - review.rating}">
+                                <i class="bi bi-star-fill"></i>
+                            </c:forEach>
+                        </div>
+                            <%-- This os a workaround to make LocalDateTime formattable --%>
+                        <fmt:parseDate value="${review.date}" pattern="yyyy-MM-dd'T'HH:mm:ss" var="parsedDateOrdered" type="both"/>
+                        <fmt:formatDate pattern="dd MMMM yyyy - HH:mm" value="${parsedDateOrdered}" var="reviewDate"/>
+                        <small class="text-muted">${reviewDate}</small>
+                    </div>
+                    <p class="mb-0"><c:out value="${review.comment}"/></p>
+                </div>
+            </div>
+        </c:if>
     </main>
 
     <div class="modal fade" id="review-modal" tabindex="-1">

@@ -524,18 +524,18 @@ input:has(+ .form-error), textarea:has(+ .form-error) {
     background-color: var(--primary);
 }
 
-.order-details-card {
+.order-details-card, .order-review-card {
     width: 40%;
 }
 
 @media (max-width: 1200px) {
-    .order-details-card {
+    .order-details-card, .order-review-card {
         width: 60%;
     }
 }
 
 @media (max-width: 768px) {
-    .order-details-card {
+    .order-details-card, .order-review-card {
         width: 80%;
     }
 }

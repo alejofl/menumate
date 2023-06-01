@@ -101,7 +101,7 @@ public class UserController {
     ) {
         ModelAndView mav = new ModelAndView("user/order");
         mav.addObject("order", orderService.getById(id).orElseThrow(OrderNotFoundException::new));
-        mav.addObject("has_review", reviewService.getByOrder(id).isPresent());
+        mav.addObject("review", reviewService.getByOrder(id).orElse(null));
         mav.addObject("error", error);
         return mav;
     }
