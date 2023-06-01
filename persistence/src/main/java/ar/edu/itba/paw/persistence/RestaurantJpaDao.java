@@ -92,6 +92,13 @@ public class RestaurantJpaDao implements RestaurantDao {
         }
     }
 
+    private static final String NAME_SEARCH_CONDITION_SQL = " r.name ILIKE ? OR EXISTS(" +
+            "SELECT * FROM categories LEFT OUTER JOIN products ON categories.category_id = products.category_id" +
+            " WHERE categories.restaurant_id = r.restaurant_id" +
+            " AND categories.deleted = false AND products.deleted = false" +
+            " AND (categories.name ILIKE ? OR products.name ILIKE ?)" +
+            ")";
+
     private static String generateSearchParam(String query) {
         if (query == null)
             return "%";
@@ -113,7 +120,8 @@ public class RestaurantJpaDao implements RestaurantDao {
         String search = generateSearchParam(query);
 
         StringBuilder sqlBuilder = new StringBuilder();
-        sqlBuilder.append("SELECT restaurant_id FROM restaurant_details AS r WHERE r.name ILIKE ?");
+        sqlBuilder.append("SELECT restaurant_id FROM restaurant_details AS r WHERE");
+        sqlBuilder.append(NAME_SEARCH_CONDITION_SQL);
         appendSpecialtiesCondition(sqlBuilder, specialties);
         appendTagsCondition(sqlBuilder, tags);
         sqlBuilder.append(" ORDER BY ").append(orderByColumn).append(' ').append(orderByDirection);
@@ -123,8 +131,10 @@ public class RestaurantJpaDao implements RestaurantDao {
 
         Query nativeQuery = em.createNativeQuery(sqlBuilder.toString());
         nativeQuery.setParameter(1, search);
-        nativeQuery.setParameter(2, pageSize);
-        nativeQuery.setParameter(3, pageIdx * pageSize);
+        nativeQuery.setParameter(2, search);
+        nativeQuery.setParameter(3, search);
+        nativeQuery.setParameter(4, pageSize);
+        nativeQuery.setParameter(5, pageIdx * pageSize);
 
         final List<Long> idList = nativeQuery.getResultList().stream().mapToLong(n -> ((Number) n).longValue()).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
 
@@ -132,12 +142,15 @@ public class RestaurantJpaDao implements RestaurantDao {
             return new PaginatedResult<>(Collections.emptyList(), pageNumber, pageSize, 0);
 
         sqlBuilder.setLength(0);
-        sqlBuilder.append("SELECT COUNT(*) AS c FROM restaurants AS r WHERE deleted = false AND is_active = true AND name ILIKE ?");
+        sqlBuilder.append("SELECT COUNT(*) AS c FROM restaurants AS r WHERE deleted = false AND is_active = true AND ");
+        sqlBuilder.append(NAME_SEARCH_CONDITION_SQL);
         appendSpecialtiesCondition(sqlBuilder, specialties);
         appendTagsCondition(sqlBuilder, tags);
 
         Query countQuery = em.createNativeQuery(sqlBuilder.toString());
         countQuery.setParameter(1, search);
+        countQuery.setParameter(2, search);
+        countQuery.setParameter(3, search);
         int count = ((Number) countQuery.getSingleResult()).intValue();
 
         TypedQuery<RestaurantDetails> resultsQuery = em.createQuery(
