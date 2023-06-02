@@ -31,7 +31,7 @@ public class Restaurant {
     @JoinColumn(name = "owner_user_id", referencedColumnName = "user_id", nullable = false)
     private User owner;
 
-    @Column(name = "date_created", nullable = false, insertable = false, updatable = false)
+    @Column(name = "date_created", insertable = false, updatable = false)
     private LocalDateTime dateCreated;
 
     @Column(nullable = false)
@@ -55,7 +55,7 @@ public class Restaurant {
     @Column(name = "is_active", nullable = false)
     private boolean isActive;
 
-    @Column(nullable = false, insertable = false)
+    @Column(insertable = false)
     private boolean deleted;
 
     @ElementCollection(targetClass = RestaurantTags.class)

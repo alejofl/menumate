@@ -190,7 +190,7 @@ public class RestaurantJpaDao implements RestaurantDao {
         categoryQuery.setParameter("restaurantId", restaurantId);
         int categoryCount = categoryQuery.executeUpdate();
 
-        Query productQuery = em.createQuery("UPDATE Product SET deleted = true WHERE deleted = false AND EXISTS(FROM Category WHERE Product.categoryId = Category.categoryId AND restaurantId = :restaurantId)");
+        Query productQuery = em.createQuery("UPDATE Product p SET p.deleted = true WHERE p.deleted = false AND EXISTS (SELECT c FROM Category c WHERE p.categoryId = c.categoryId AND c.restaurantId = :restaurantId)");
         productQuery.setParameter("restaurantId", restaurantId);
         int productCount = productQuery.executeUpdate();
 
