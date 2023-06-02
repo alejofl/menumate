@@ -92,21 +92,24 @@ public class RestaurantJpaDao implements RestaurantDao {
         }
     }
 
-    private static final String NAME_SEARCH_CONDITION_SQL = " r.name ILIKE ? OR EXISTS(" +
+    private static final String NAME_SEARCH_CONDITION_SQL = " LOWER(r.name) LIKE ? OR EXISTS(" +
             "SELECT * FROM categories LEFT OUTER JOIN products ON categories.category_id = products.category_id" +
             " WHERE categories.restaurant_id = r.restaurant_id" +
             " AND categories.deleted = false AND products.deleted = false" +
-            " AND (categories.name ILIKE ? OR products.name ILIKE ?)" +
+            " AND (LOWER(categories.name) LIKE ? OR LOWER(products.name) LIKE ?)" +
             ")";
 
     private static String generateSearchParam(String query) {
-        if (query == null)
+        if (query == null || query.isEmpty())
             return "%";
 
         String[] tokens = query.trim().toLowerCase().split(" +");
         StringBuilder searchParam = new StringBuilder("%");
-        for (String token : tokens)
-            searchParam.append(token.trim()).append('%');
+        for (String token : tokens) {
+            String trimmed = token.trim();
+            if (!trimmed.isEmpty())
+                searchParam.append(trimmed).append('%');
+        }
         return searchParam.toString();
     }
 

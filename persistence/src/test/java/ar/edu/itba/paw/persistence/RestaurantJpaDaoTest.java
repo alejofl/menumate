@@ -115,16 +115,12 @@ public class RestaurantJpaDaoTest {
         em.flush();
     }
 
-    /*
-    FIXME 2023-06-02
     @Test
     public void searchEmpty() throws SQLException {
         PaginatedResult<RestaurantDetails> res = restaurantDao.search(null, 1, RESTAURANT_EXPECTED_NAMES.length, null, false, null, null);
         Assert.assertEquals(0, res.getResult().size());
     }
-     */
 
- /* FIXME 2023-06-02
     @Test
     public void searchSortedByNameAsc() throws SQLException {
 
@@ -143,9 +139,7 @@ public class RestaurantJpaDaoTest {
             j++;
         }
     }
-*/
 
- /* FIXME 2023-06-02
     @Test
     public void searchSortedByNameDesc() throws SQLException {
 
@@ -164,7 +158,6 @@ public class RestaurantJpaDaoTest {
             j--;
         }
     }
-  */
 
  /* FIXME 2023-06-02
     @Test
