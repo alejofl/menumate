@@ -51,8 +51,6 @@ public class ReviewJdbcDaoTest {
     private static final String RESTAURANT_ADDRESS = "Av. Siempreviva 742";
     private static final String RESTAURANT_DESCRIPTION = "La mejor pizza de la ciudad";
     private static final int MAX_TABLES = 20;
-    private static final long USER_ID_NONE = 1234;
-    private static final long RESTAURANT_ID_NONE = 1234;
     private static final long ORDER_ID1 = 8844;
     private static final long ORDER_ID2 = 9090;
     private static final int RATING1 = 1;
@@ -74,7 +72,7 @@ public class ReviewJdbcDaoTest {
     @Before
     public void setup() {
         jdbcTemplate = new JdbcTemplate(ds);
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, "users", "restaurants", "restaurant_roles");
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, "users", "restaurants", "restaurant_roles", "orders", "order_reviews");
         jdbcTemplate.execute("INSERT INTO users (user_id, email, password, name, is_active, preferred_language) VALUES (" + USER_ID + ", '" + USER_EMAIL + "', '" + USER_PASSWORD + "', '" + USER_NAME + "', " + USER_IS_ACTIVE + ", '" + USER_PREFERRED_LANGUAGE + "')");
         jdbcTemplate.execute("INSERT INTO users (user_id, email, password, name, is_active, preferred_language) VALUES (" + OWNER_ID + ", '" + OWNER_EMAIL + "', '" + OWNER_PASSWORD + "', '" + OWNER_NAME + "', " + USER_IS_ACTIVE + ", '" + USER_PREFERRED_LANGUAGE + "')");
         jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, max_tables, specialty, owner_user_id, address, description, date_created, deleted, is_active) VALUES (" + RESTAURANT_ID1 + ", '" + RESTAURANT_NAME1 + "', '" + RESTAURANT_EMAIL1 + "', " + MAX_TABLES + ", " + RESTAURANT_SPECIALITY + ", " + USER_ID + ", '" + RESTAURANT_ADDRESS + "', '" + RESTAURANT_DESCRIPTION + "', '" + Timestamp.valueOf(LocalDateTime.now()) + "', " + RESTAURANT_DELETED + ", " + RESTAURANT_IS_ACTIVE + ")");
@@ -87,7 +85,8 @@ public class ReviewJdbcDaoTest {
     public void testCreateWhenNonExisting() {
         reviewDao.create(ORDER_ID1, RATING1, null);
         em.flush();
-        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "order_reviews", "order_id=" + ORDER_ID1 + " AND rating=" + RATING1 + " AND comment IS NULL"));
+        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "order_reviews", "order_id=" + ORDER_ID1 +
+                " AND rating=" + RATING1 + " AND comment IS NULL" + " AND date IS NOT NULL"));
     }
 
     @Test
