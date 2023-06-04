@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.webapp.form;
 
 import ar.edu.itba.paw.webapp.form.validation.NotOwnerOfRestaurant;
-import ar.edu.itba.paw.webapp.form.validation.UserExists;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -13,7 +12,6 @@ import javax.validation.constraints.NotNull;
 public class AddEmployeeForm {
     @Email
     @NotBlank
-    @UserExists
     private String email;
 
     @NotNull

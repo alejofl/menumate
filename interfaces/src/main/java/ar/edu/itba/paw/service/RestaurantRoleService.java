@@ -18,7 +18,7 @@ public interface RestaurantRoleService {
     /**
      * Sets a user's role at a restaurant. Specify roleLevel as null to remove a user's role at a restaurant.
      */
-    void setRole(long userId, long restaurantId, RestaurantRoleLevel roleLevel);
+    void setRole(String email, long restaurantId, RestaurantRoleLevel roleLevel);
 
     void deleteRole(long userId, long restaurantId);
 

@@ -103,7 +103,6 @@ public class UserServiceImpl implements UserService {
     public User createIfNotExists(String email, String name) {
         Optional<User> maybeUser = userDao.getByEmail(email);
         return maybeUser.orElseGet(() -> userDao.create(email, null, name, LocaleContextHolder.getLocale().getLanguage()));
-
     }
 
     @Override
