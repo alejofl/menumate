@@ -424,12 +424,9 @@ public class UserController {
         }
 
         User user = userService.getById(ControllerUtils.getCurrentUserIdOrThrow()).orElseThrow(UserNotFoundException::new);
-        List<UserAddress> addresses = user.getAddresses();
         PaginatedResult<Review> reviews = reviewService.getByUser(ControllerUtils.getCurrentUserIdOrThrow(), paging.getPageOrDefault(), paging.getSizeOrDefault(ControllerUtils.DEFAULT_ORDERS_PAGE_SIZE));
 
         mav.addObject("user", user);
-        mav.addObject("addresses", addresses);
-
         mav.addObject("reviews", reviews.getResult());
         mav.addObject("reviewCount", reviews.getTotalCount());
         mav.addObject("pageCount", reviews.getTotalPageCount());

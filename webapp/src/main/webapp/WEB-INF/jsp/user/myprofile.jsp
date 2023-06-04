@@ -34,7 +34,7 @@
                             <div class="my-info-individual">
                                 <label class="form-label"><spring:message code="profile.addresses"/></label>
                                 <ul class="list-group list-group-flush">
-                                    <c:forEach var="address" items="${addresses}">
+                                    <c:forEach var="address" items="${user.addresses}">
                                         <li class="list-group-item d-flex align-items-center">
                                             <i class="bi bi-geo-alt me-3"></i>
                                             <p class="mb-0"><c:out value="${address.address}"/></p>
