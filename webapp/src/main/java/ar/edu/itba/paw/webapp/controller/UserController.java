@@ -20,7 +20,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
@@ -407,5 +409,31 @@ public class UserController {
         productService.update(product.getProductId(), product.getName(), editProductPriceForm.getPrice(), product.getDescription());
 
         return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
+    }
+
+    @RequestMapping(value = "/user", method = RequestMethod.GET)
+    public ModelAndView myProfile(
+            @Valid final PagingForm paging,
+            final BindingResult errors
+    ) {
+        ModelAndView mav = new ModelAndView("user/myprofile");
+
+        if (errors.hasErrors()) {
+            mav.addObject("error", Boolean.TRUE);
+            paging.clear();
+        }
+
+        User user = userService.getById(ControllerUtils.getCurrentUserIdOrThrow()).orElseThrow(UserNotFoundException::new);
+        List<UserAddress> addresses = user.getAddresses();
+        PaginatedResult<Review> reviews = reviewService.getByUser(ControllerUtils.getCurrentUserIdOrThrow(), paging.getPageOrDefault(), paging.getSizeOrDefault(ControllerUtils.DEFAULT_ORDERS_PAGE_SIZE));
+
+        mav.addObject("user", user);
+        mav.addObject("addresses", addresses);
+
+        mav.addObject("reviews", reviews.getResult());
+        mav.addObject("reviewCount", reviews.getTotalCount());
+        mav.addObject("pageCount", reviews.getTotalPageCount());
+
+        return mav;
     }
 }

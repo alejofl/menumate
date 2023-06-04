@@ -794,3 +794,44 @@ input:has(+ .form-error), textarea:has(+ .form-error) {
     color: #fff !important;
     background-color: var(--primary) !important;
 }
+
+.profile-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-content: flex-start;
+}
+
+.my-info-container {
+    display: flex;
+    flex-direction: column;
+    flex: 35% 0 0;
+    justify-content: flex-start;
+    align-content: center;
+
+}
+.my-reviews-container {
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-content: center;
+}
+
+.my-info-individual {
+    margin: 0.5rem 5%;
+}
+
+.my-review-card-header {
+    display: flex;
+    flex-direction: row;
+    justify-content:space-between;
+    align-content: center;
+}
+
+.my-review-card-header-info {
+    display:flex;
+    flex-direction:column;
+    justify-content: flex-end;
+    align-items: flex-start;
+}
