@@ -17,37 +17,36 @@
             <jsp:include page="/WEB-INF/jsp/components/param_error.jsp"/>
         </c:if>
         <div class="profile-container">
-            <%--        A las columnas le tengo que poner: al primero esto flex:  35% 0 0 y al segundo esto flex-grow: 1--%>
             <div class="my-info-container">
-                <div class="page-title">
-                    <h1><spring:message code="profile.title"/></h1>
-                </div>
-                <div class="my-info-individual">
-                    <label for="name" class="form-label"><spring:message code="profile.name"/></label>
-                    <input class="form-control" type="text" value="${user.name}" aria-label="readonly input example" id="name" readonly>
-                </div>
-                <div class="my-info-individual">
-                    <label for="email" class="form-label"><spring:message code="profile.email"/></label>
-                    <input class="form-control" type="text" value="${user.email}" aria-label="readonly input example" id="email" readonly>
-                </div>
-                <%--            <div class="my-info-individual">--%>
-                <%--                <label for="preferred-language" class="form-label"><spring:message code="profile.preferredLanguage"/></label>--%>
-                <%--                <c:if test="${user.preferredLanguage} === 'es'">--%>
-                <%--                    <input class="form-control" type="text" value="Espanol" aria-label="readonly input example" id="preferred-language" readonly>--%>
-                <%--                </c:if>--%>
-                <%--                <c:if test="${user.preferredLanguage} === 'en'">--%>
-                <%--                    <input class="form-control" type="text" value="Ingles" aria-label="readonly input example" id="preferred-language" readonly>--%>
-                <%--                </c:if>--%>
-                <%--            </div>--%>
-                <div class="my-info-individual">
-                    <label class="form-label;"><spring:message code="profile.addresses"/></label>
-                </div>
-                <c:forEach var="address" items="${addresses}">
-                    <div class="my-info-individual">
-                        <input class="form-control" type="text" value="${address.address}" aria-label="readonly input example" readonly>
+                <div class="card">
+                    <div class="card-body">
+                            <div class="profile-title">
+                                <h1><spring:message code="profile.title"/></h1>
+                            </div>
+                            <div class="my-info-individual">
+                                <label for="name" class="form-label"><spring:message code="profile.name"/></label>
+                                <input class="form-control" type="text" value="${user.name}" aria-label="readonly input example" id="name" readonly>
+                            </div>
+                            <div class="my-info-individual">
+                                <label for="email" class="form-label"><spring:message code="profile.email"/></label>
+                                <input class="form-control" type="text" value="${user.email}" aria-label="readonly input example" id="email" readonly>
+                            </div>
+                            <div class="my-info-individual">
+                                <label class="form-label"><spring:message code="profile.addresses"/></label>
+                                <ul class="list-group list-group-flush">
+                                    <c:forEach var="address" items="${addresses}">
+                                        <li class="list-group-item d-flex align-items-center">
+                                            <i class="bi bi-geo-alt me-3"></i>
+                                            <p class="mb-0"><c:out value="${address.address}"/></p>
+                                        </li>
+                                    </c:forEach>
+                                </ul>
+                            </div>
+
                     </div>
-                </c:forEach>
+                </div>
             </div>
+
             <div class="my-reviews-container">
                 <div class="page-title">
                     <h1><spring:message code="profile.reviews"/></h1>

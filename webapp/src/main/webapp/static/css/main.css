@@ -808,7 +808,7 @@ input:has(+ .form-error), textarea:has(+ .form-error) {
     flex: 35% 0 0;
     justify-content: flex-start;
     align-content: center;
-
+    margin: 2% 2%;
 }
 .my-reviews-container {
     display: flex;
@@ -834,4 +834,13 @@ input:has(+ .form-error), textarea:has(+ .form-error) {
     flex-direction:column;
     justify-content: flex-end;
     align-items: flex-start;
+}
+
+.profile-title {
+    text-align: center;
+}
+
+.profile-title h1 {
+    font-size: 30px;
+    font-weight: bold;
 }
