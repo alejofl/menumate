@@ -9,6 +9,11 @@ document.addEventListener("DOMContentLoaded", () => {
     let editProductPriceFormProductId = document.querySelector("#edit-product-price-form-product-id");
     let deleteEmployeeFormUserId = document.querySelector("#delete-employee-form-user-id");
 
+    let namePreview = document.querySelector("#add-item-modal-name-preview");
+    let descriptionPreview = document.querySelector("#add-item-modal-description-preview");
+    let pricePreview = document.querySelector("#add-item-modal-price-preview");
+    let imagePreview = document.querySelector("#add-item-modal-image-preview");
+
     // Open Checkout Modal if errors were found
     if (document.querySelector("body").dataset.addProductErrors === "true") {
         document.querySelector(`.add-product-button`).dispatchEvent(new Event("click"));
@@ -28,6 +33,10 @@ document.addEventListener("DOMContentLoaded", () => {
         changeInputValue("add-item-modal-description", "");
         changeInputValue("add-item-modal-price", "");
         changeInputValue("add-item-modal-image", "");
+        namePreview.innerHTML = namePreview.dataset.default;
+        descriptionPreview.innerHTML = descriptionPreview.dataset.default;
+        pricePreview.innerHTML = pricePreview.dataset.default;
+        imagePreview.src = imagePreview.dataset.default;
     });
     document.querySelector("#add-category-modal").addEventListener("hidden.bs.modal", () => {
         changeInputValue("add-category-modal-name", "");
@@ -97,5 +106,24 @@ document.addEventListener("DOMContentLoaded", () => {
         element.addEventListener("click", (event) => {
             document.querySelector(`#edit-employee-${userId}-edit-enabled form`).submit();
         });
+    });
+
+    // Preview Product on Addition
+    let nameInput = document.querySelector("#add-item-modal-name");
+    let descriptionInput = document.querySelector("#add-item-modal-description");
+    let priceInput = document.querySelector("#add-item-modal-price");
+    let imageInput = document.querySelector("#add-item-modal-image");
+
+    nameInput.addEventListener("change", () => {
+        namePreview.innerHTML = nameInput.value;
+    });
+    descriptionInput.addEventListener("change", () => {
+        descriptionPreview.innerHTML = descriptionInput.value;
+    });
+    priceInput.addEventListener("change", () => {
+        pricePreview.innerHTML = priceInput.value;
+    });
+    imageInput.addEventListener("change", (event) => {
+        imagePreview.src = URL.createObjectURL(event.target.files[0]);
     });
 });

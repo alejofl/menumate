@@ -106,28 +106,45 @@
                 <c:url value="/restaurants/${restaurant.restaurantId}/products/add" var="addProductFormUrl"/>
                 <form:form cssClass="mb-0" modelAttribute="addProductForm" action="${addProductFormUrl}" method="post" id="add-product-form" enctype="multipart/form-data">
                     <div class="modal-body">
-                        <div class="mb-3">
-                            <form:label path="productName" cssClass="form-label"><spring:message code="editmenu.addproduct.form.name"/></form:label>
-                            <form:input path="productName" type="text" cssClass="form-control" id="add-item-modal-name"/>
-                            <form:errors path="productName" element="div" cssClass="form-error"/>
-                        </div>
-                        <div class="mb-3">
-                            <form:label path="description" class="form-label"><spring:message code="editmenu.addproduct.form.description"/></form:label>
-                            <form:textarea class="form-control" path="description" id="add-item-modal-description" rows="3"/>
-                            <form:errors path="description" element="div" cssClass="form-error"/>
-                        </div>
-                        <div class="mb-3">
-                            <form:label path="price" cssClass="form-label"><spring:message code="editmenu.addproduct.form.price"/></form:label>
-                            <div class="input-group">
-                                <span class="input-group-text">$</span>
-                                <form:input path="price" step="0.01" min="0" type="number" cssClass="form-control" id="add-item-modal-price"/>
+                        <div>
+                            <div class="mb-3">
+                                <form:label path="productName" cssClass="form-label"><spring:message code="editmenu.addproduct.form.name"/></form:label>
+                                <form:input path="productName" type="text" cssClass="form-control" id="add-item-modal-name"/>
+                                <form:errors path="productName" element="div" cssClass="form-error"/>
                             </div>
-                            <form:errors path="price" element="div" cssClass="form-error"/>
+                            <div class="mb-3">
+                                <form:label path="description" class="form-label"><spring:message code="editmenu.addproduct.form.description"/></form:label>
+                                <form:textarea class="form-control" path="description" id="add-item-modal-description" rows="3"/>
+                                <form:errors path="description" element="div" cssClass="form-error"/>
+                            </div>
+                            <div class="mb-3">
+                                <form:label path="price" cssClass="form-label"><spring:message code="editmenu.addproduct.form.price"/></form:label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <form:input path="price" step="0.01" min="0" type="number" cssClass="form-control" id="add-item-modal-price"/>
+                                </div>
+                                <form:errors path="price" element="div" cssClass="form-error"/>
+                            </div>
+                            <div class="mb-3">
+                                <form:label path="image" cssClass="form-label"><spring:message code="editmenu.addproduct.form.image"/></form:label>
+                                <form:input path="image" type="file" cssClass="form-control" id="add-item-modal-image" accept="image/*"/>
+                                <form:errors path="image" element="div" cssClass="form-error"/>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <form:label path="image" cssClass="form-label"><spring:message code="editmenu.addproduct.form.image"/></form:label>
-                            <form:input path="image" type="file" cssClass="form-control" id="add-item-modal-image" accept="image/*"/>
-                            <form:errors path="image" element="div" cssClass="form-error"/>
+                        <hr>
+                        <div class="d-flex justify-content-center">
+                            <div class="card menu-item-card">
+                                <div class="menu-item-card-img-container" style="">
+                                    <img src="<c:url value="/static/pictures/image_placeholder.png"/>" class="img-fluid rounded-start menu-item-card-img" id="add-item-modal-image-preview" data-default="<c:url value="/static/pictures/image_placeholder.png"/>">
+                                </div>
+                                <div class="card-body menu-item-card-body">
+                                    <div>
+                                        <p class="card-text" id="add-item-modal-name-preview" data-default="<spring:message code="editmenu.addproduct.preview.name"/>"><spring:message code="editmenu.addproduct.preview.name"/></p>
+                                        <p class="card-text"><small class="text-body-secondary" id="add-item-modal-description-preview" data-default="<spring:message code="editmenu.addproduct.preview.description"/>"><spring:message code="editmenu.addproduct.preview.name"/></small></p>
+                                    </div>
+                                    <h5 class="card-title">$<span id="add-item-modal-price-preview" data-default="1.00">1.00</span></h5>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <input type="hidden" name="categoryId" id="add-product-form-category-id">
