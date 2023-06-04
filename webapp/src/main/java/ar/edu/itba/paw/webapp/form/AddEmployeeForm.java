@@ -18,7 +18,7 @@ public class AddEmployeeForm {
 
     @NotNull
     @Min(1)
-    @Max(3)
+    @Max(2)
     private Integer role;
 
     @NotNull

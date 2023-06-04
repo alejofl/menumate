@@ -34,6 +34,18 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     document.querySelector("#employees-modal").addEventListener("hidden.bs.modal", () => {
         changeInputValue("add-employee-form-email", "");
+        document.querySelectorAll("div[id^='edit-employee-'][id$='-edit-enabled']").forEach(element => {
+            element.style.display = "none";
+        });
+        document.querySelectorAll("div[id^='edit-employee-'][id$='-edit-disabled']").forEach(element => {
+            element.style.display = "block";
+        });
+        document.querySelectorAll("div[id^='edit-employee-'][id$='-edit-enabled-button']").forEach(element => {
+            element.style.display = "none";
+        });
+        document.querySelectorAll("div[id^='edit-employee-'][id$='-edit-disabled-button']").forEach(element => {
+            element.style.display = "block";
+        });
     });
     document.querySelector("#edit-item-price-modal").addEventListener("hidden.bs.modal", () => {
         changeInputValue("edit-product-price-form-price", "");
@@ -66,6 +78,24 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".delete-employee-button").forEach(element => {
         element.addEventListener("click", (event) => {
             deleteEmployeeFormUserId.value = element.dataset.userId;
+        });
+    });
+
+    // Edit Employee Role
+    document.querySelectorAll(".edit-employee-button").forEach(element => {
+        let userId = element.dataset.userId;
+        element.addEventListener("click", (event) => {
+            document.querySelector(`#edit-employee-${userId}-edit-disabled-button`).style.display = "none";
+            document.querySelector(`#edit-employee-${userId}-edit-enabled-button`).style.display = "block";
+            document.querySelector(`#edit-employee-${userId}-edit-disabled`).style.display = "none";
+            document.querySelector(`#edit-employee-${userId}-edit-enabled`).style.display = "block";
+        });
+    });
+
+    document.querySelectorAll(".save-employee-button").forEach(element => {
+        let userId = element.dataset.userId;
+        element.addEventListener("click", (event) => {
+            document.querySelector(`#edit-employee-${userId}-edit-enabled form`).submit();
         });
     });
 });

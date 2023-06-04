@@ -279,11 +279,34 @@
                                             <c:out value="${employee.key.name}"/> &lt;<a href="mailto:<c:out value="${employee.key.email}"/>"><c:out value="${employee.key.email}"/></a>&gt;
                                         </p>
                                         <div class="d-flex align-items-center">
-                                            <p class="mb-0">
-                                                <spring:message code="restaurantroles.${employee.value.messageCode}"/>
-                                            </p>
+                                            <div id="edit-employee-${employee.key.userId}-edit-disabled">
+                                                <p class="mb-0">
+                                                    <spring:message code="restaurantroles.${employee.value.messageCode}"/>
+                                                </p>
+                                            </div>
                                             <c:if test="${employee.value.ordinal() != 0}">
-                                                <a class="delete-employee-button ms-2" type="button" data-bs-toggle="modal" data-bs-target="#delete-employee-modal" data-user-id="${employee.key.userId}"><i class="bi bi-trash-fill text-danger"></i></a>
+                                                <div id="edit-employee-${employee.key.userId}-edit-enabled" style="display: none">
+                                                    <c:url value="/restaurants/${restaurant.restaurantId}/employees/add" var="addEmployeeUrl"/>
+                                                    <form:form cssClass="m-0" modelAttribute="addEmployeeForm" action="${addEmployeeUrl}" method="post">
+                                                        <form:input path="email" type="hidden" value="${employee.key.email}"/>
+                                                        <form:select path="role" cssClass="form-select" multiple="false" >
+                                                            <c:forEach var="role" items="${roles}">
+                                                                <option value="${role.ordinal()}" ${employee.value.ordinal() == role.ordinal() ? "selected" : ""}><spring:message code="restaurantroles.${role.messageCode}"/></option>
+                                                            </c:forEach>
+                                                        </form:select>
+                                                        <form:errors path="role" element="div" cssClass="form-error"/>
+                                                        <form:input path="restaurantId" type="hidden" value="${restaurant.restaurantId}"/>
+                                                    </form:form>
+                                                </div>
+                                            </c:if>
+                                            <c:if test="${employee.value.ordinal() != 0}">
+                                                <div id="edit-employee-${employee.key.userId}-edit-enabled-button" style="display: none">
+                                                    <a class="save-employee-button ms-3" type="button" data-user-id="${employee.key.userId}"><i class="bi bi-check-circle-fill text-success employee-button"></i></a>
+                                                </div>
+                                                <div id="edit-employee-${employee.key.userId}-edit-disabled-button">
+                                                    <a class="edit-employee-button ms-3" type="button" data-user-id="${employee.key.userId}"><i class="bi bi-pencil-fill employee-button"></i></a>
+                                                </div>
+                                                <a class="delete-employee-button ms-3" type="button" data-bs-toggle="modal" data-bs-target="#delete-employee-modal" data-user-id="${employee.key.userId}"><i class="bi bi-trash-fill text-danger employee-button"></i></a>
                                             </c:if>
                                         </div>
                                     </div>
