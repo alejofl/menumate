@@ -49,34 +49,79 @@ public class UserJpaDao implements UserDao {
 
     @Override
     public void registerAddress(long userId, String address, String name) {
-        if (name != null) {
-            // Check for sidecase where an UserAddress with the same userId and name but different address exists, as
-            // well as another UserAddress with the same userId and address, but different name.
-            Query addressQuery = em.createQuery("DELETE FROM UserAddress WHERE userId = :userId AND address <> :address AND name = :name");
-            addressQuery.setParameter("userId", userId);
-            addressQuery.setParameter("address", address);
-            addressQuery.setParameter("name", name);
-            int rows = addressQuery.executeUpdate();
-            if (rows != 0) {
-                LOGGER.info("registerAddress removed {} rows before insertion for user id {}", rows, userId);
-            }
+        // We need to get addresses for the user that might have the same address or name, as to handle a specific
+        // side case where an UserAddress with the same userId and name but different address exists, as well as
+        // another UserAddress with the same userId and address, but different name.
+        // The way we handle this side case is to merge the two entities into a single one.
+        // NOTE: Due to schema constraints this query will return at most 2 results.
+        TypedQuery<UserAddress> query = em.createQuery(
+                "FROM UserAddress WHERE userId = :userId AND (address = :address OR name = :name)",
+                UserAddress.class
+        );
+        query.setParameter("userId", userId);
+        query.setParameter("address", address);
+        query.setParameter("name", name);
+        List<UserAddress> addresses = query.getResultList();
+
+        if (addresses.isEmpty()) {
+            // If there are no such addresses for this user, we can register it without issues.
+            final UserAddress ua = new UserAddress(userId, address, name, LocalDateTime.now());
+            em.persist(ua);
+            return;
         }
 
-        final UserAddress ua = em.merge(new UserAddress(userId, address, name, LocalDateTime.now()));
-        em.flush();
+        // If there is already an UserAddress with this (userId, address) (the primary key), we'll update that one
+        // instead of inserting. Either way, we need to delete the other addresses to prevent conflicts
+        // delete the other UserAddress (if there is another).
+        UserAddress mainAddress = addresses.stream().filter(u -> u.getAddress().equals(address)).findFirst().orElse(null);
+        for (UserAddress lua : addresses)
+            if (lua != mainAddress)
+                em.remove(lua);
+        em.flush(); // Required because Hibernate's flush order would otherwise conflict with schema constraints
 
+        if (mainAddress == null) {
+            final UserAddress ua = new UserAddress(userId, address, name, LocalDateTime.now());
+            em.persist(ua);
+        } else {
+            mainAddress.setName(name);
+            mainAddress.setLastUsed(LocalDateTime.now());
+        }
+
+        LOGGER.info("Registered named address for user id {}", userId);
+    }
+
+    @Override
+    public void refreshAddress(long userId, String address) {
+        // Update the UserAddress if it exists
+        Query updateQuery = em.createQuery("UPDATE UserAddress SET lastUsed = now() WHERE userId = :userId AND address = :address");
+        updateQuery.setParameter("userId", userId);
+        updateQuery.setParameter("address", address);
+        int rows = updateQuery.executeUpdate();
+
+        // If the UserAddress exists and was updated, that's it; it's been refreshed.
+        if (rows != 0) {
+            LOGGER.info("Refreshed address for user id {}", userId);
+            return;
+        }
+
+        // Otherwise, it doesn't exist, so we need to create it
+        final UserAddress ua = new UserAddress(userId, address, null, LocalDateTime.now());
+        em.persist(ua);
+
+        // And since we created an unnamed address, we need to enforce the maximum limit of unnamed addresses.
+        // We make a query to delete old addresses, if necessary.
+        em.flush();
         Query timestampQuery = em.createNativeQuery(GET_LASTUSED_TO_DELETE_SQL);
         List<?> resultList = timestampQuery.getResultList();
 
-        int rows = 0;
         if (!resultList.isEmpty()) {
             LocalDateTime minLastUsed = ((Timestamp) resultList.get(0)).toLocalDateTime();
-            Query query = em.createQuery("DELETE FROM UserAddress WHERE name IS NULL AND lastUsed <= :timestamp");
-            query.setParameter("timestamp", minLastUsed);
-            rows = query.executeUpdate();
+            Query deleteQuery = em.createQuery("DELETE FROM UserAddress WHERE name IS NULL AND lastUsed <= :timestamp");
+            deleteQuery.setParameter("timestamp", minLastUsed);
+            rows = deleteQuery.executeUpdate();
         }
 
-        LOGGER.info("Registered {}named address for user id {}, {} old deleted", name == null ? "un" : "", userId, rows);
+        LOGGER.info("Registered unnamed address for user id {}, {} old deleted", userId, rows);
     }
 
     @Override
