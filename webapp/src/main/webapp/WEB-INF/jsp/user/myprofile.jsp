@@ -6,7 +6,7 @@
 
 <html>
 <head>
-    <spring:message var="title" code="userorders.title"/>
+    <spring:message var="title" code="profile.title"/>
     <jsp:include page="/WEB-INF/jsp/components/head.jsp">
         <jsp:param name="title" value="${title}"/>
     </jsp:include>
@@ -21,45 +21,44 @@
         <div class="profile-container">
             <div class="my-info-container">
                 <div class="card">
-                    <div class="card-body">
-                            <div class="profile-title">
-                                <h1><spring:message code="profile.title"/></h1>
-                            </div>
-                            <div class="my-info-individual">
-                                <label for="name" class="form-label"><spring:message code="profile.name"/></label>
-                                <input class="form-control" type="text" value="${currentUser.name}" aria-label="readonly input example" id="name" readonly>
-                            </div>
-                            <div class="my-info-individual">
-                                <label for="email" class="form-label"><spring:message code="profile.email"/></label>
-                                <input class="form-control" type="text" value="${currentUser.email}" aria-label="readonly input example" id="email" readonly>
-                            </div>
-                            <div class="my-info-individual">
-                                <label class="form-label"><spring:message code="profile.addresses"/></label>
-                                <ul class="list-group list-group-flush">
-                                    <c:forEach var="address" items="${currentUser.addresses}">
-                                        <li class="list-group-item d-flex align-items-center justify-content-between px-0">
-                                            <div class="d-flex align-items-center ">
-                                                <i class="bi bi-geo-alt"></i>
-                                                <div>
-                                                    <c:if test="${address.name != null}">
-                                                        <small class="text-muted"><c:out value="${address.name}"/></small>
-                                                    </c:if>
-                                                    <p class="mb-0">
-                                                        <c:out value="${address.address}"/>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div class="d-flex gap-3">
-                                                <c:if test="${address.name == null}">
-                                                    <a class="" type="button" data-address="<c:out value="${address.address}"/>"><i class="bi bi-save-fill text-success right-button"></i></a>
-                                                </c:if>
-                                                <a class="delete-address-modal-button" type="button" data-bs-toggle="modal" data-bs-target="#delete-address-modal" data-address="<c:out value="${address.address}"/>"><i class="bi bi-trash-fill text-danger right-button"></i></a>
-                                            </div>
-                                        </li>
-                                    </c:forEach>
-                                </ul>
-                            </div>
-
+                    <div class="card-body p-4">
+                        <h3 class="card-title mb-3"><spring:message code="profile.title"/></h3>
+                        <div class="mb-2">
+                            <label for="name" class="form-label"><spring:message code="profile.name"/></label>
+                            <input class="form-control" type="text" value="${currentUser.name}" aria-label="readonly input example" id="name" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label"><spring:message code="profile.email"/></label>
+                            <input class="form-control" type="text" value="${currentUser.email}" aria-label="readonly input example" id="email" readonly>
+                        </div>
+                        <hr>
+                        <h4 class="mb-2"><spring:message code="profile.addresses"/></h4>
+                        <ul class="list-group list-group-flush mb-2">
+                            <c:forEach var="address" items="${currentUser.addresses}">
+                                <li class="list-group-item d-flex align-items-center justify-content-between px-0 address-list">
+                                    <div class="d-flex align-items-center ">
+                                        <i class="bi bi-geo-alt"></i>
+                                        <div>
+                                            <c:if test="${address.name != null}">
+                                                <small class="text-muted"><c:out value="${address.name}"/></small>
+                                            </c:if>
+                                            <p class="mb-0">
+                                                <c:out value="${address.address}"/>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex gap-3">
+                                        <c:if test="${address.name == null}">
+                                            <a class="add-address-modal-button" type="button" data-bs-toggle="modal" data-bs-target="#add-address-modal" data-address="<c:out value="${address.address}"/>"><i class="bi bi-save-fill text-success right-button"></i></a>
+                                        </c:if>
+                                        <a class="delete-address-modal-button" type="button" data-bs-toggle="modal" data-bs-target="#delete-address-modal" data-address="<c:out value="${address.address}"/>"><i class="bi bi-trash-fill text-danger right-button"></i></a>
+                                    </div>
+                                </li>
+                            </c:forEach>
+                        </ul>
+                        <div class="d-flex">
+                            <button class="btn btn-primary flex-grow-1" id="add-address-button" type="button" data-bs-toggle="modal" data-bs-target="#add-address-modal"><spring:message code="profile.addaddress.modal.title"/></button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -164,6 +163,37 @@
                         <input type="submit" class="btn btn-danger" value="<spring:message code="editmenu.form.yes"/>">
                     </form:form>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="add-address-modal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5"><spring:message code="profile.addaddress.modal.title"/></h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <c:url value="/user/addresses/add" var="addAddressUrl"/>
+                <form:form cssClass="mb-0" modelAttribute="addAddressForm" action="${addAddressUrl}" method="post">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <form:label path="name" cssClass="form-label"><spring:message code="profile.addaddress.form.name"/></form:label>
+                            <form:input path="name" type="text" cssClass="form-control" id="add-address-form-name"/>
+                            <form:errors path="name" element="div" cssClass="form-error"/>
+                        </div>
+                        <div class="mb-3">
+                            <form:label path="address" cssClass="form-label"><spring:message code="profile.addaddress.form.address"/></form:label>
+                            <form:input path="address" type="text" cssClass="form-control" id="add-address-form-address"/>
+                            <form:errors path="address" element="div" cssClass="form-error"/>
+                        </div>
+                        <div class="form-text"><spring:message code="profile.addaddress.form.disclaimer"/></div>
+                    </div>
+                    <input type="hidden" name="userId" id="delete-address-form-user-id" value="${currentUser.userId}">
+                    <div class="modal-footer">
+                        <input type="submit" class="btn btn-primary" value="<spring:message code="editmenu.form.add"/>">
+                    </div>
+                </form:form>
             </div>
         </div>
     </div>

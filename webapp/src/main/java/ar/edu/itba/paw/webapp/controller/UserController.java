@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.MapBindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -413,10 +412,10 @@ public class UserController {
     @RequestMapping(value = "/user", method = RequestMethod.GET)
     public ModelAndView myProfile(
             @ModelAttribute("deleteAddressForm") final DeleteAddressForm deleteAddressForm,
-            @ModelAttribute("addNameToAddressForm") final AddNameToAddressForm addNameToAddressForm,
+            @ModelAttribute("addAddressForm") final AddAddressForm addAddressForm,
             @Valid final PagingForm paging,
             final BindingResult errors,
-            final Boolean addNameToAddressFormError
+            final Boolean addAddressFormError
     ) {
 
         ModelAndView mav = new ModelAndView("user/myprofile");
@@ -432,7 +431,7 @@ public class UserController {
         mav.addObject("reviewCount", reviews.getTotalCount());
         mav.addObject("pageCount", reviews.getTotalPageCount());
 
-        mav.addObject("addNameToAddressFormError", addNameToAddressFormError);
+        mav.addObject("addAddressFormError", addAddressFormError);
         return mav;
     }
 
@@ -451,23 +450,32 @@ public class UserController {
     }
 
     @RequestMapping(value = "/user/addresses/add", method = RequestMethod.POST)
-    public ModelAndView addNameToAddress(
+    public ModelAndView addAddress(
             @ModelAttribute("deleteAddressForm") final DeleteAddressForm deleteAddressForm,
-            @Valid @ModelAttribute("addNameToAddressForm") final AddNameToAddressForm addNameToAddressForm,
+            @Valid @ModelAttribute("addAddressForm") final AddAddressForm addAddressForm,
             final BindingResult errors
     ) {
         if (errors.hasErrors()) {
             PagingForm pagingForm = new PagingForm();
             return myProfile(
                     deleteAddressForm,
-                    addNameToAddressForm,
+                    addAddressForm,
                     pagingForm,
                     new BeanPropertyBindingResult(pagingForm, "pagingForm"),
                     true
             );
         }
 
-        userService.registerAddress(addNameToAddressForm.getUserId(), addNameToAddressForm.getAddress(), addNameToAddressForm.getName());
+        String name = null;
+        if (!addAddressForm.getName().equals("")) {
+            name = addAddressForm.getName();
+        }
+
+        userService.registerAddress(
+                addAddressForm.getUserId(),
+                addAddressForm.getAddress(),
+                name
+        );
 
         return new ModelAndView("redirect:/user");
     }

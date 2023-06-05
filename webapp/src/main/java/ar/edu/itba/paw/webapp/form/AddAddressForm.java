@@ -5,14 +5,13 @@ import org.hibernate.validator.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-public class AddNameToAddressForm {
+public class AddAddressForm {
     @NotNull
     private Long userId;
 
     @NotBlank
     private String address;
 
-    @NotBlank
     @Size(max = 20)
     private String name;
 

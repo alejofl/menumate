@@ -492,11 +492,11 @@ input:has(+ .form-error), textarea:has(+ .form-error) {
     margin-right: 12px;
 }
 
-.order-card i, .order-details-card i, #order-details i, #employees-modal i, .restaurant-information i, .my-info-individual i {
+.order-card i, .order-details-card i, #order-details i, #employees-modal i, .restaurant-information i, .address-list i {
     color: var(--primary);
 }
 
-.order-card i, .order-details-card i, #order-details i, #employees-modal i:not(.right-button), .my-info-individual i:not(.right-button) {
+.order-card i, .order-details-card i, #order-details i, #employees-modal i:not(.right-button), .address-list i:not(.right-button) {
     margin-right: 8px;
 }
 
@@ -834,13 +834,4 @@ input:has(+ .form-error), textarea:has(+ .form-error) {
     flex-direction:column;
     justify-content: flex-end;
     align-items: flex-start;
-}
-
-.profile-title {
-    text-align: center;
-}
-
-.profile-title h1 {
-    font-size: 30px;
-    font-weight: bold;
 }
