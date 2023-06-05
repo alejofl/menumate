@@ -346,8 +346,7 @@ public class UserController {
             );
         }
 
-        User user = userService.getByEmail(addEmployeeForm.getEmail()).orElseThrow(UserNotFoundException::new);
-        restaurantRoleService.setRole(user.getUserId(), id, RestaurantRoleLevel.fromOrdinal(addEmployeeForm.getRole()));
+        restaurantRoleService.setRole(addEmployeeForm.getEmail(), id, RestaurantRoleLevel.fromOrdinal(addEmployeeForm.getRole()));
 
         redirectAttributes.addFlashAttribute("addEmployeeErrors", new MyBoolean(true));
         return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));

@@ -106,28 +106,45 @@
                 <c:url value="/restaurants/${restaurant.restaurantId}/products/add" var="addProductFormUrl"/>
                 <form:form cssClass="mb-0" modelAttribute="addProductForm" action="${addProductFormUrl}" method="post" id="add-product-form" enctype="multipart/form-data">
                     <div class="modal-body">
-                        <div class="mb-3">
-                            <form:label path="productName" cssClass="form-label"><spring:message code="editmenu.addproduct.form.name"/></form:label>
-                            <form:input path="productName" type="text" cssClass="form-control" id="add-item-modal-name"/>
-                            <form:errors path="productName" element="div" cssClass="form-error"/>
-                        </div>
-                        <div class="mb-3">
-                            <form:label path="description" class="form-label"><spring:message code="editmenu.addproduct.form.description"/></form:label>
-                            <form:textarea class="form-control" path="description" id="add-item-modal-description" rows="3"/>
-                            <form:errors path="description" element="div" cssClass="form-error"/>
-                        </div>
-                        <div class="mb-3">
-                            <form:label path="price" cssClass="form-label"><spring:message code="editmenu.addproduct.form.price"/></form:label>
-                            <div class="input-group">
-                                <span class="input-group-text">$</span>
-                                <form:input path="price" step="0.01" min="0" type="number" cssClass="form-control" id="add-item-modal-price"/>
+                        <div>
+                            <div class="mb-3">
+                                <form:label path="productName" cssClass="form-label"><spring:message code="editmenu.addproduct.form.name"/></form:label>
+                                <form:input path="productName" type="text" cssClass="form-control" id="add-item-modal-name"/>
+                                <form:errors path="productName" element="div" cssClass="form-error"/>
                             </div>
-                            <form:errors path="price" element="div" cssClass="form-error"/>
+                            <div class="mb-3">
+                                <form:label path="description" class="form-label"><spring:message code="editmenu.addproduct.form.description"/></form:label>
+                                <form:textarea class="form-control" path="description" id="add-item-modal-description" rows="3"/>
+                                <form:errors path="description" element="div" cssClass="form-error"/>
+                            </div>
+                            <div class="mb-3">
+                                <form:label path="price" cssClass="form-label"><spring:message code="editmenu.addproduct.form.price"/></form:label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <form:input path="price" step="0.01" min="0" type="number" cssClass="form-control" id="add-item-modal-price"/>
+                                </div>
+                                <form:errors path="price" element="div" cssClass="form-error"/>
+                            </div>
+                            <div class="mb-3">
+                                <form:label path="image" cssClass="form-label"><spring:message code="editmenu.addproduct.form.image"/></form:label>
+                                <form:input path="image" type="file" cssClass="form-control" id="add-item-modal-image" accept="image/*"/>
+                                <form:errors path="image" element="div" cssClass="form-error"/>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <form:label path="image" cssClass="form-label"><spring:message code="editmenu.addproduct.form.image"/></form:label>
-                            <form:input path="image" type="file" cssClass="form-control" id="add-item-modal-image" accept="image/*"/>
-                            <form:errors path="image" element="div" cssClass="form-error"/>
+                        <hr>
+                        <div class="d-flex justify-content-center">
+                            <div class="card menu-item-card">
+                                <div class="menu-item-card-img-container" style="">
+                                    <img src="<c:url value="/static/pictures/image_placeholder.png"/>" class="img-fluid rounded-start menu-item-card-img" id="add-item-modal-image-preview" data-default="<c:url value="/static/pictures/image_placeholder.png"/>">
+                                </div>
+                                <div class="card-body menu-item-card-body">
+                                    <div>
+                                        <p class="card-text" id="add-item-modal-name-preview" data-default="<spring:message code="editmenu.addproduct.preview.name"/>"><spring:message code="editmenu.addproduct.preview.name"/></p>
+                                        <p class="card-text"><small class="text-body-secondary" id="add-item-modal-description-preview" data-default="<spring:message code="editmenu.addproduct.preview.description"/>"><spring:message code="editmenu.addproduct.preview.name"/></small></p>
+                                    </div>
+                                    <h5 class="card-title">$<span id="add-item-modal-price-preview" data-default="1.00">1.00</span></h5>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <input type="hidden" name="categoryId" id="add-product-form-category-id">
@@ -279,11 +296,34 @@
                                             <c:out value="${employee.key.name}"/> &lt;<a href="mailto:<c:out value="${employee.key.email}"/>"><c:out value="${employee.key.email}"/></a>&gt;
                                         </p>
                                         <div class="d-flex align-items-center">
-                                            <p class="mb-0">
-                                                <spring:message code="restaurantroles.${employee.value.messageCode}"/>
-                                            </p>
+                                            <div id="edit-employee-${employee.key.userId}-edit-disabled">
+                                                <p class="mb-0">
+                                                    <spring:message code="restaurantroles.${employee.value.messageCode}"/>
+                                                </p>
+                                            </div>
                                             <c:if test="${employee.value.ordinal() != 0}">
-                                                <a class="delete-employee-button ms-2" type="button" data-bs-toggle="modal" data-bs-target="#delete-employee-modal" data-user-id="${employee.key.userId}"><i class="bi bi-trash-fill text-danger"></i></a>
+                                                <div id="edit-employee-${employee.key.userId}-edit-enabled" style="display: none">
+                                                    <c:url value="/restaurants/${restaurant.restaurantId}/employees/add" var="addEmployeeUrl"/>
+                                                    <form:form cssClass="m-0" modelAttribute="addEmployeeForm" action="${addEmployeeUrl}" method="post">
+                                                        <form:input path="email" type="hidden" value="${employee.key.email}"/>
+                                                        <form:select path="role" cssClass="form-select" multiple="false" >
+                                                            <c:forEach var="role" items="${roles}">
+                                                                <option value="${role.ordinal()}" ${employee.value.ordinal() == role.ordinal() ? "selected" : ""}><spring:message code="restaurantroles.${role.messageCode}"/></option>
+                                                            </c:forEach>
+                                                        </form:select>
+                                                        <form:errors path="role" element="div" cssClass="form-error"/>
+                                                        <form:input path="restaurantId" type="hidden" value="${restaurant.restaurantId}"/>
+                                                    </form:form>
+                                                </div>
+                                            </c:if>
+                                            <c:if test="${employee.value.ordinal() != 0}">
+                                                <div id="edit-employee-${employee.key.userId}-edit-enabled-button" style="display: none">
+                                                    <a class="save-employee-button ms-3" type="button" data-user-id="${employee.key.userId}"><i class="bi bi-check-circle-fill text-success employee-button"></i></a>
+                                                </div>
+                                                <div id="edit-employee-${employee.key.userId}-edit-disabled-button">
+                                                    <a class="edit-employee-button ms-3" type="button" data-user-id="${employee.key.userId}"><i class="bi bi-pencil-fill employee-button"></i></a>
+                                                </div>
+                                                <a class="delete-employee-button ms-3" type="button" data-bs-toggle="modal" data-bs-target="#delete-employee-modal" data-user-id="${employee.key.userId}"><i class="bi bi-trash-fill text-danger employee-button"></i></a>
                                             </c:if>
                                         </div>
                                     </div>

@@ -1,10 +1,13 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.exception.RestaurantNotFoundException;
+import ar.edu.itba.paw.exception.UserNotFoundException;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.persistance.RestaurantDao;
 import ar.edu.itba.paw.persistance.RestaurantRoleDao;
+import ar.edu.itba.paw.service.EmailService;
 import ar.edu.itba.paw.service.RestaurantRoleService;
+import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.mail.MessagingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +30,12 @@ public class RestaurantRoleServiceImpl implements RestaurantRoleService {
 
     @Autowired
     private RestaurantDao restaurantDao;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private EmailService emailService;
 
     @Override
     public Optional<RestaurantRoleLevel> getRole(long userId, long restaurantId) {
@@ -42,21 +52,30 @@ public class RestaurantRoleServiceImpl implements RestaurantRoleService {
 
     @Transactional
     @Override
-    public void setRole(long userId, long restaurantId, RestaurantRoleLevel level) {
+    public void setRole(String email, long restaurantId, RestaurantRoleLevel level) {
         if (level == RestaurantRoleLevel.OWNER) {
-            LOGGER.error("Attempted to set role of user {} at restaurant {} to owner", userId, restaurantId);
+            LOGGER.error("Attempted to set role of user {} at restaurant {} to owner", email, restaurantId);
             throw new IllegalArgumentException("Cannot set a restaurant role level to owner");
         }
 
+        User user = userService.createIfNotExists(email, "-");
+
         if (level == null) {
-            restaurantRoleDao.delete(userId, restaurantId);
+            restaurantRoleDao.delete(user.getUserId(), restaurantId);
         } else {
-            Optional<RestaurantRole> role = restaurantRoleDao.getRole(userId, restaurantId);
+            Optional<RestaurantRole> role = restaurantRoleDao.getRole(user.getUserId(), restaurantId);
             if (role.isPresent()) {
                 role.get().setLevel(level);
-                LOGGER.info("Updated restaurant role for user {} restaurant {} to level {}", userId, restaurantId, level);
+                LOGGER.info("Updated restaurant role for user {} restaurant {} to level {}", email, restaurantId, level);
             } else {
-                restaurantRoleDao.create(userId, restaurantId, level);
+                if (!userService.isUserEmailRegisteredAndConsolidated(email)) {
+                    try {
+                        emailService.sendInvitationToRestaurantStaff(user, restaurantDao.getById(restaurantId).orElseThrow(RestaurantNotFoundException::new));
+                    } catch (MessagingException e) {
+                        LOGGER.error("Restaurant invitation email sending failed", e);
+                    }
+                }
+                restaurantRoleDao.create(user.getUserId(), restaurantId, level);
             }
         }
     }

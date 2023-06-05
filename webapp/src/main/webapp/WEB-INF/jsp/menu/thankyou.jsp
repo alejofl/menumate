@@ -40,7 +40,7 @@
                     </a>
                 </c:when>
                 <c:otherwise>
-                    <a type="button" class="btn btn-primary" href="<c:url value="/auth/register"/>">
+                    <a type="button" class="btn btn-primary-inverted" href="<c:url value="/auth/register"/>">
                         <spring:message code="thankyou.newuser"/>
                     </a>
                 </c:otherwise>

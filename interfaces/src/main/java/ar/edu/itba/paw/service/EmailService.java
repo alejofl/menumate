@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.Order;
+import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.model.User;
 
 import javax.mail.MessagingException;
@@ -21,4 +22,6 @@ public interface EmailService {
     void sendUserVerificationEmail(User user, String token) throws MessagingException;
 
     void sendResetPasswordEmail(User user, String token) throws MessagingException;
+
+    void sendInvitationToRestaurantStaff(User user, Restaurant restaurant) throws MessagingException;
 }
