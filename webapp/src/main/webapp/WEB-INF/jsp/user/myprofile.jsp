@@ -2,6 +2,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <html>
 <head>
@@ -9,6 +10,7 @@
     <jsp:include page="/WEB-INF/jsp/components/head.jsp">
         <jsp:param name="title" value="${title}"/>
     </jsp:include>
+    <script src="<c:url value="/static/js/myprofile.js"/>"></script>
 </head>
 <body>
     <div class="content">
@@ -25,19 +27,34 @@
                             </div>
                             <div class="my-info-individual">
                                 <label for="name" class="form-label"><spring:message code="profile.name"/></label>
-                                <input class="form-control" type="text" value="${user.name}" aria-label="readonly input example" id="name" readonly>
+                                <input class="form-control" type="text" value="${currentUser.name}" aria-label="readonly input example" id="name" readonly>
                             </div>
                             <div class="my-info-individual">
                                 <label for="email" class="form-label"><spring:message code="profile.email"/></label>
-                                <input class="form-control" type="text" value="${user.email}" aria-label="readonly input example" id="email" readonly>
+                                <input class="form-control" type="text" value="${currentUser.email}" aria-label="readonly input example" id="email" readonly>
                             </div>
                             <div class="my-info-individual">
                                 <label class="form-label"><spring:message code="profile.addresses"/></label>
                                 <ul class="list-group list-group-flush">
-                                    <c:forEach var="address" items="${user.addresses}">
-                                        <li class="list-group-item d-flex align-items-center">
-                                            <i class="bi bi-geo-alt me-3"></i>
-                                            <p class="mb-0"><c:out value="${address.address}"/></p>
+                                    <c:forEach var="address" items="${currentUser.addresses}">
+                                        <li class="list-group-item d-flex align-items-center justify-content-between px-0">
+                                            <div class="d-flex align-items-center ">
+                                                <i class="bi bi-geo-alt"></i>
+                                                <div>
+                                                    <c:if test="${address.name != null}">
+                                                        <small class="text-muted"><c:out value="${address.name}"/></small>
+                                                    </c:if>
+                                                    <p class="mb-0">
+                                                        <c:out value="${address.address}"/>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex gap-3">
+                                                <c:if test="${address.name == null}">
+                                                    <a class="" type="button" data-address="<c:out value="${address.address}"/>"><i class="bi bi-save-fill text-success right-button"></i></a>
+                                                </c:if>
+                                                <a class="delete-address-modal-button" type="button" data-bs-toggle="modal" data-bs-target="#delete-address-modal" data-address="<c:out value="${address.address}"/>"><i class="bi bi-trash-fill text-danger right-button"></i></a>
+                                            </div>
                                         </li>
                                     </c:forEach>
                                 </ul>
@@ -131,6 +148,26 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="delete-address-modal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h1 class="modal-title fs-5"><spring:message code="profile.deleteaddress.modal.title"/></h1>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn btn-secondary"><spring:message code="editmenu.form.no"/></button>
+                    <c:url value="/user/addresses/delete" var="deleteAddressUrl"/>
+                    <form:form cssClass="m-0" modelAttribute="deleteAddressForm" action="${deleteAddressUrl}" method="post" id="delete-address-form">
+                        <input type="hidden" name="userId" id="delete-address-form-user-id" value="${currentUser.userId}">
+                        <input type="hidden" name="address" id="delete-address-form-address">
+                        <input type="submit" class="btn btn-danger" value="<spring:message code="editmenu.form.yes"/>">
+                    </form:form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <jsp:include page="/WEB-INF/jsp/components/footer.jsp"/>
 </body>
 </html>

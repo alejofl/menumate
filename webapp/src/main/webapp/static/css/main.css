@@ -492,11 +492,11 @@ input:has(+ .form-error), textarea:has(+ .form-error) {
     margin-right: 12px;
 }
 
-.order-card i, .order-details-card i, #order-details i, #employees-modal i, .restaurant-information i {
+.order-card i, .order-details-card i, #order-details i, #employees-modal i, .restaurant-information i, .my-info-individual i {
     color: var(--primary);
 }
 
-.order-card i, .order-details-card i, #order-details i, #employees-modal i:not(.employee-button) {
+.order-card i, .order-details-card i, #order-details i, #employees-modal i:not(.right-button), .my-info-individual i:not(.right-button) {
     margin-right: 8px;
 }
 

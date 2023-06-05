@@ -10,7 +10,9 @@ import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.form.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.MapBindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,9 +22,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
@@ -412,9 +412,13 @@ public class UserController {
 
     @RequestMapping(value = "/user", method = RequestMethod.GET)
     public ModelAndView myProfile(
+            @ModelAttribute("deleteAddressForm") final DeleteAddressForm deleteAddressForm,
+            @ModelAttribute("addNameToAddressForm") final AddNameToAddressForm addNameToAddressForm,
             @Valid final PagingForm paging,
-            final BindingResult errors
+            final BindingResult errors,
+            final Boolean addNameToAddressFormError
     ) {
+
         ModelAndView mav = new ModelAndView("user/myprofile");
 
         if (errors.hasErrors()) {
@@ -422,14 +426,49 @@ public class UserController {
             paging.clear();
         }
 
-        User user = userService.getById(ControllerUtils.getCurrentUserIdOrThrow()).orElseThrow(UserNotFoundException::new);
         PaginatedResult<Review> reviews = reviewService.getByUser(ControllerUtils.getCurrentUserIdOrThrow(), paging.getPageOrDefault(), paging.getSizeOrDefault(ControllerUtils.DEFAULT_ORDERS_PAGE_SIZE));
 
-        mav.addObject("user", user);
         mav.addObject("reviews", reviews.getResult());
         mav.addObject("reviewCount", reviews.getTotalCount());
         mav.addObject("pageCount", reviews.getTotalPageCount());
 
+        mav.addObject("addNameToAddressFormError", addNameToAddressFormError);
         return mav;
+    }
+
+    @RequestMapping(value = "/user/addresses/delete", method = RequestMethod.POST)
+    public ModelAndView deleteAddress(
+            @Valid @ModelAttribute("deleteAddressForm") final DeleteAddressForm deleteAddressForm,
+            final BindingResult errors
+    ) {
+        if (errors.hasErrors()) {
+            throw new IllegalStateException("Something went wrong");
+        }
+
+        userService.deleteAddress(deleteAddressForm.getUserId(), deleteAddressForm.getAddress());
+
+        return new ModelAndView("redirect:/user");
+    }
+
+    @RequestMapping(value = "/user/addresses/add", method = RequestMethod.POST)
+    public ModelAndView addNameToAddress(
+            @ModelAttribute("deleteAddressForm") final DeleteAddressForm deleteAddressForm,
+            @Valid @ModelAttribute("addNameToAddressForm") final AddNameToAddressForm addNameToAddressForm,
+            final BindingResult errors
+    ) {
+        if (errors.hasErrors()) {
+            PagingForm pagingForm = new PagingForm();
+            return myProfile(
+                    deleteAddressForm,
+                    addNameToAddressForm,
+                    pagingForm,
+                    new BeanPropertyBindingResult(pagingForm, "pagingForm"),
+                    true
+            );
+        }
+
+        userService.registerAddress(addNameToAddressForm.getUserId(), addNameToAddressForm.getAddress(), addNameToAddressForm.getName());
+
+        return new ModelAndView("redirect:/user");
     }
 }
