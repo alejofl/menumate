@@ -114,7 +114,15 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void registerAddress(long userId, String address, String name) {
+        if (name == null)
+            throw new IllegalArgumentException("Cannot register an address with null name");
         userDao.registerAddress(userId, address, name);
+    }
+
+    @Transactional
+    @Override
+    public void refreshAddress(long userId, String address) {
+        userDao.refreshAddress(userId, address);
     }
 
     @Transactional
