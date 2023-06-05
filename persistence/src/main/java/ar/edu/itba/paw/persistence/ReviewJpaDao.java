@@ -56,8 +56,9 @@ public class ReviewJpaDao implements ReviewDao {
 
     @Override
     public AverageCountPair getRestaurantAverageSince(long restaurantId, LocalDateTime datetime) {
-        Query query = em.createQuery("SELECT COALESCE(AVG(CAST(rating AS float)), 0), COUNT(*) FROM Review WHERE date >= now() AND order.restaurantId = :restaurantId");
+        Query query = em.createQuery("SELECT COALESCE(AVG(CAST(rating AS float)), 0), COUNT(*) FROM Review WHERE date >= :datetime AND order.restaurantId = :restaurantId");
         query.setParameter("restaurantId", restaurantId);
+        query.setParameter("datetime", datetime);
         Object[] result = (Object[]) query.getSingleResult();
         return new AverageCountPair(((Number) result[0]).floatValue(), ((Number) result[1]).intValue());
     }

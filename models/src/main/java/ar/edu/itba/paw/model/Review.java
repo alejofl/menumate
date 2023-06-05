@@ -18,7 +18,7 @@ public class Review {
     @Column(nullable = false)
     private int rating;
 
-    @Column(insertable = false, updatable = false)
+    @Column(updatable = false)
     private LocalDateTime date;
 
     @Column
@@ -31,7 +31,7 @@ public class Review {
     public Review(long orderId, int rating, String comment) {
         this.orderId = orderId;
         this.rating = rating;
-        this.date = null;
+        this.date = LocalDateTime.now();
         this.comment = comment;
     }
 
