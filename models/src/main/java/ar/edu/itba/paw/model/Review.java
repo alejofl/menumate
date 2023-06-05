@@ -24,6 +24,9 @@ public class Review {
     @Column
     private String comment;
 
+    @Column
+    private String reply;
+
     public Review() {
 
     }
@@ -33,7 +36,6 @@ public class Review {
         this.rating = rating;
         this.comment = comment;
     }
-
     public long getOrderId() {
         return orderId;
     }
@@ -52,5 +54,13 @@ public class Review {
 
     public String getComment() {
         return comment;
+    }
+
+    public String getReply() {
+        return reply;
+    }
+
+    public void setReply(String reply) {
+        this.reply = reply;
     }
 }
