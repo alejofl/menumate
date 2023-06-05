@@ -129,7 +129,7 @@ CREATE TABLE IF NOT EXISTS order_reviews
     order_id INT REFERENCES orders (order_id) ON DELETE CASCADE PRIMARY KEY,
     rating   SMALLINT NOT NULL CHECK (rating >= 0 AND rating <= 5),
     date     TIMESTAMP NOT NULL DEFAULT now(),
-    comment  VARCHAR(500)
+    comment  VARCHAR(500),
     reply    VARCHAR(500)
 );
 
