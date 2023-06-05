@@ -129,7 +129,8 @@ CREATE TABLE IF NOT EXISTS order_reviews
     order_id INT REFERENCES orders (order_id) ON DELETE CASCADE PRIMARY KEY,
     rating   SMALLINT NOT NULL CHECK (rating >= 0 AND rating <= 5),
     date     TIMESTAMP NOT NULL DEFAULT now(),
-    comment  VARCHAR(500)
+    comment  VARCHAR(500),
+    reply    VARCHAR(500)
 );
 
 
@@ -165,3 +166,10 @@ CREATE VIEW restaurant_role_details AS
         (SELECT owner_user_id AS user_id, restaurant_id, 0 AS role_level FROM restaurants)
     ) AS roles_grouped
 );
+
+CREATE SEQUENCE categories_category_id_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE images_image_id_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE orders_order_id_seq START WITH 1 increment by 1;
+CREATE SEQUENCE products_product_id_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE restaurants_restaurant_id_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE users_user_id_seq START WITH 1 INCREMENT BY 1;

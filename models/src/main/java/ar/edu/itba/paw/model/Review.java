@@ -18,11 +18,14 @@ public class Review {
     @Column(nullable = false)
     private int rating;
 
-    @Column(updatable = false)
+    @Column(insertable = false, updatable = false)
     private LocalDateTime date;
 
     @Column
     private String comment;
+
+    @Column
+    private String reply;
 
     public Review() {
 
@@ -31,10 +34,8 @@ public class Review {
     public Review(long orderId, int rating, String comment) {
         this.orderId = orderId;
         this.rating = rating;
-        this.date = LocalDateTime.now();
         this.comment = comment;
     }
-
     public long getOrderId() {
         return orderId;
     }
@@ -53,5 +54,13 @@ public class Review {
 
     public String getComment() {
         return comment;
+    }
+
+    public String getReply() {
+        return reply;
+    }
+
+    public void setReply(String reply) {
+        this.reply = reply;
     }
 }
