@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.User;
-import ar.edu.itba.paw.model.UserAddress;
 
 import javax.mail.MessagingException;
 import java.util.Optional;
@@ -33,12 +32,6 @@ public interface UserService {
     void registerAddress(long userId, String address, String name);
 
     void deleteAddress(long userId, String address);
-
-    void updateAddress(long userId, String oldAddress, String newAddress);
-
-    void updateAddressName(long userId, String address, String newName);
-
-    Optional<UserAddress> getAddress(long userId, String address);
 
     void sendUserVerificationToken(User user) throws MessagingException;
 

@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.persistance;
 
 import ar.edu.itba.paw.model.User;
-import ar.edu.itba.paw.model.UserAddress;
 
 import java.util.Optional;
 
@@ -16,10 +15,4 @@ public interface UserDao {
     void registerAddress(long userId, String address, String name);
 
     void deleteAddress(long userId, String address);
-
-    void updateAddress(long userId, String oldAddress, String newAddress);
-
-    void updateAddressName(long userId, String address, String name);
-
-    Optional<UserAddress> getAddress(long userId, String address);
 }
