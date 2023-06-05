@@ -42,4 +42,9 @@ public interface ReviewService {
      * Gets a user's reviews ordered by date descending.
      */
     PaginatedResult<Review> getByUser(long userId, int pageNumber, int pageSize);
+
+    /**
+     * Reply to a review made by an user
+     */
+    void replyToReview(long orderId, String reply);
 }
