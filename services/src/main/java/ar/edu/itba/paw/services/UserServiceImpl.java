@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.model.User;
+import ar.edu.itba.paw.model.UserAddress;
 import ar.edu.itba.paw.model.UserResetpasswordToken;
 import ar.edu.itba.paw.model.UserVerificationToken;
 import ar.edu.itba.paw.persistance.UserDao;
@@ -121,6 +122,48 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteAddress(long userId, String address) {
         userDao.deleteAddress(userId, address);
+    }
+
+    @Transactional
+    @Override
+    public void updateAddress(long userId, String oldAddress, String newAddress) {
+        if (oldAddress.equals(newAddress)){
+            LOGGER.info("Ignored updating address for user id {} with the same address", userId);
+            return;
+        }
+
+        final Optional<UserAddress> userAddress = userDao.getAddress(userId, newAddress);
+        if(userAddress.isPresent()){
+            LOGGER.info("Ignored updating address for user id {} with an already existing address", userId);
+            return;
+        }
+
+        userDao.updateAddress(userId, oldAddress, newAddress);
+    }
+
+    @Transactional
+    @Override
+    public void updateAddressName(long userId, String address, String name) {
+
+        final Optional<UserAddress> userAddress = userDao.getAddress(userId, address);
+
+        if(!userAddress.isPresent()){
+            LOGGER.info("Ignored updating address name for user id {} with a non existing address", userId);
+            return;
+        }
+
+        if(userAddress.get().getName().equals(name)){
+            LOGGER.info("Ignored updating address name for user id {} with the same name", userId);
+            return;
+        }
+
+        userDao.updateAddressName(userId, address, name);
+    }
+
+    @Transactional
+    @Override
+    public Optional<UserAddress> getAddress(long userId, String address) {
+        return userDao.getAddress(userId, address);
     }
 
     @Transactional

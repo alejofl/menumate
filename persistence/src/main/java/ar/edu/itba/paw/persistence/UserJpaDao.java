@@ -92,4 +92,42 @@ public class UserJpaDao implements UserDao {
             LOGGER.info("Deleted an user address for user id {}", userId);
         }
     }
+
+    @Override
+    public void updateAddress(long userId, String oldAddress, String newAddress) {
+        Query addressQuery = em.createQuery("UPDATE UserAddress SET address = :newAddress WHERE userId = :userId AND address = :oldAddress");
+        addressQuery.setParameter("userId", userId);
+        addressQuery.setParameter("oldAddress", oldAddress);
+        addressQuery.setParameter("newAddress", newAddress);
+        int rows = addressQuery.executeUpdate();
+
+        if (rows == 0) {
+            LOGGER.warn("Attempted to update user address for user id {}, but no such address found", userId);
+        } else {
+            LOGGER.info("Updated an user address for user id {}", userId);
+        }
+    }
+
+    @Override
+    public void updateAddressName(long userId, String address, String name) {
+        Query addressQuery = em.createQuery("UPDATE UserAddress SET name = :name WHERE userId = :userId AND address = :address");
+        addressQuery.setParameter("userId", userId);
+        addressQuery.setParameter("address", address);
+        addressQuery.setParameter("name", name);
+        int rows = addressQuery.executeUpdate();
+
+        if (rows == 0) {
+            LOGGER.warn("Attempted to update user address name for user id {}, but no such address found", userId);
+        } else {
+            LOGGER.info("Updated an user address name for user id {}", userId);
+        }
+    }
+
+    @Override
+    public Optional<UserAddress> getAddress(long userId, String address) {
+        TypedQuery<UserAddress> query = em.createQuery("FROM UserAddress WHERE userId = :userId AND address = :address", UserAddress.class);
+        query.setParameter("userId", userId);
+        query.setParameter("address", address);
+        return query.getResultList().stream().findFirst();
+    }
 }
