@@ -138,7 +138,12 @@ public class RestaurantsController {
             paging.clear();
         }
         PaginatedResult<Review> reviews = reviewService.getByRestaurant(id, paging.getPageOrDefault(), paging.getSizeOrDefault(ControllerUtils.DEFAULT_RESTAURANT_PAGE_SIZE));
+        final Restaurant restaurant = restaurantService.getById(id).orElseThrow(RestaurantNotFoundException::new);
+
         mav.addObject("reviews", reviews.getResult());
+        mav.addObject("reviewCount", reviews.getTotalCount());
+        mav.addObject("pageCount", reviews.getTotalPageCount());
+        mav.addObject("restaurant", restaurant);
         return mav;
     }
 }

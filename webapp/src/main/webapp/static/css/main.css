@@ -805,3 +805,10 @@ input:has(+ .form-error), textarea:has(+ .form-error) {
 .restaurant-reviews .card {
     min-width: 400px;
 }
+
+.restaurant-reviews .card-footer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}

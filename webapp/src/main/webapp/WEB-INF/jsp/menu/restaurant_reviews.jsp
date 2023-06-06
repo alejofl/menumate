@@ -17,6 +17,10 @@
         <c:if test="${error || param.error == '1'}">
             <jsp:include page="/WEB-INF/jsp/components/param_error.jsp"/>
         </c:if>
+        <div class="page-title">
+            <spring:message code="restaurant.reviews.title" arguments="${restaurant.name}" var="pageTitle"/>
+            <h1><c:out value="${pageTitle}"/></h1>
+        </div>
         <div class="restaurant-reviews">
             <c:forEach items="${reviews}" var="review">
                 <div class="card m-2">
@@ -42,7 +46,7 @@
                     </div>
                     <div class="card-footer">
                         <a href=""
-                           class="clickable-object"
+                           class="view-order-clickeable"
                            data-bs-toggle="modal"
                            data-bs-target="#view-order-modal"
                            data-order-type="${review.order.orderType.ordinal()}"
@@ -61,9 +65,9 @@
                            data-order-table-number="<c:out value="${review.order.tableNumber}"/>"
                            data-order-address="<c:out value="${review.order.address}"/>"
                         >
-                            <small>View Order</small>
+                            <small><spring:message code="restaurant.reviews.vieworder"/></small>
                         </a>
-                        <a class="btn btn-primary" href="#" role="button">Reply</a>
+                        <a class="btn btn-primary" href="#" role="button"><spring:message code="restaurant.reviews.reply"/></a>
                     </div>
                 </div>
             </c:forEach>
@@ -95,6 +99,7 @@
                             <li class="list-group-item d-flex align-items-center">
                                 <i class="bi bi-person me-3"></i>
                                 <div>
+                                    <small class="text-muted"><spring:message code="restaurantorders.customer"/></small>
                                     <small class="text-muted"><spring:message code="restaurantorders.customer"/></small>
                                     <p class="mb-0" id="order-details-customer">
                                     </p>
@@ -157,7 +162,57 @@
             </div>
         </div>
 
+        <%-- PAGINATION --%>
+        <c:choose>
+            <c:when test="${empty param.page}">
+                <c:set var="currentPage" value="1"/>
+            </c:when>
+            <c:otherwise>
+                <c:set var="currentPage" value="${param.page}"/>
+            </c:otherwise>
+        </c:choose>
+        <c:choose>
+            <c:when test="${empty param.size}">
+                <c:set var="currentSize" value="20"/>
+            </c:when>
+            <c:otherwise>
+                <c:set var="currentSize" value="${param.size}"/>
+            </c:otherwise>
+        </c:choose>
+
+        <nav class="d-flex justify-content-center">
+            <ul class="pagination">
+                <li class="page-item">
+                    <c:url value="/restaurants/${id}/reviews" var="previousUrl">
+                        <c:param name="page" value="${currentPage - 1}"/>
+                        <c:param name="size" value="${currentSize}"/>
+                    </c:url>
+                    <a class="page-link ${currentPage == 1 ? "disabled" : ""}" href="${previousUrl}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <c:forEach begin="1" end="${pageCount}" var="pageNo">
+                    <c:url value="/restaurants/${id}/reviews" var="pageUrl">
+                        <c:param name="page" value="${pageNo}"/>
+                        <c:param name="size" value="${currentSize}"/>
+                    </c:url>
+                    <li class="page-item ${pageNo == currentPage ? "active" : ""}"><a class="page-link" href="${pageUrl}">${pageNo}</a></li>
+                </c:forEach>
+                <li class="page-item">
+                    <c:url value="/restaurants/${id}/reviews" var="nextUrl">
+                        <c:param name="page" value="${currentPage + 1}"/>
+                        <c:param name="size" value="${currentSize}"/>
+                    </c:url>
+                    <a class="page-link ${(currentPage == pageCount || pageCount == 0) ? "disabled" : ""}" href="${nextUrl}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
     </div>
+
+
 
     <jsp:include page="/WEB-INF/jsp/components/footer.jsp"/>
 </body>

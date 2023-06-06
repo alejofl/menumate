@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    document.querySelectorAll(".clickable-object").forEach(element => {
+    document.querySelectorAll(".view-order-clickeable").forEach(element => {
         element.addEventListener("click", event => {
             document.querySelector("#order-title").innerHTML = element.dataset.orderId;
 
