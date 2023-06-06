@@ -13,6 +13,9 @@ INSERT INTO users (user_id, email, password, name, is_active, preferred_language
 INSERT INTO user_resetpassword_tokens (user_id, token, expires)
     VALUES (2000, '8ac27001-c568-4190-b6da-1a80478c', CURRENT_TIMESTAMP + INTERVAL '1' DAY);
 
+INSERT INTO user_verification_tokens (user_id, token, expires)
+    VALUES (2000, '8ac27001-d605-4190-abcd-1a80478c', CURRENT_TIMESTAMP + INTERVAL '1' DAY);
+
 INSERT INTO user_addresses(user_id, address, name, last_used)
     VALUES (420, 'address1', 'home', now());
 
