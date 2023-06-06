@@ -318,12 +318,12 @@
                                             </c:if>
                                             <c:if test="${employee.value.ordinal() != 0}">
                                                 <div id="edit-employee-${employee.key.userId}-edit-enabled-button" style="display: none">
-                                                    <a class="save-employee-button ms-3" type="button" data-user-id="${employee.key.userId}"><i class="bi bi-check-circle-fill text-success employee-button"></i></a>
+                                                    <a class="save-employee-button ms-3" type="button" data-user-id="${employee.key.userId}"><i class="bi bi-check-circle-fill text-success right-button"></i></a>
                                                 </div>
                                                 <div id="edit-employee-${employee.key.userId}-edit-disabled-button">
-                                                    <a class="edit-employee-button ms-3" type="button" data-user-id="${employee.key.userId}"><i class="bi bi-pencil-fill employee-button"></i></a>
+                                                    <a class="edit-employee-button ms-3" type="button" data-user-id="${employee.key.userId}"><i class="bi bi-pencil-fill right-button"></i></a>
                                                 </div>
-                                                <a class="delete-employee-button ms-3" type="button" data-bs-toggle="modal" data-bs-target="#delete-employee-modal" data-user-id="${employee.key.userId}"><i class="bi bi-trash-fill text-danger employee-button"></i></a>
+                                                <a class="delete-employee-button ms-3" type="button" data-bs-toggle="modal" data-bs-target="#delete-employee-modal" data-user-id="${employee.key.userId}"><i class="bi bi-trash-fill text-danger right-button"></i></a>
                                             </c:if>
                                         </div>
                                     </div>
