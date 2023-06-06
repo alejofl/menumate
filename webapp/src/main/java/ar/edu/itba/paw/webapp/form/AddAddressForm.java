@@ -13,6 +13,7 @@ public class AddAddressForm {
     private String address;
 
     @Size(max = 20)
+    @NotBlank
     private String name;
 
     public Long getUserId() {
