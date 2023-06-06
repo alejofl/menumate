@@ -1,18 +1,22 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.exception.ProductNotFoundException;
+import ar.edu.itba.paw.exception.PromotionNotFoundException;
 import ar.edu.itba.paw.model.Product;
 import ar.edu.itba.paw.model.Promotion;
 import ar.edu.itba.paw.persistance.ProductDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -51,11 +55,17 @@ public class ProductJpaDao implements ProductDao {
 
         product.setDeleted(true);
 
+        // Delete products from promotions generated with this product
         Query query = em.createQuery("UPDATE Product SET deleted = true WHERE deleted = false AND EXISTS(FROM Promotion WHERE Promotion.source.productId = :sourceId AND Promotion.destination.productId = Product.productId)");
-        query.setParameter("sourceId", product);
+        query.setParameter("sourceId", product.getProductId());
         int rows = query.executeUpdate();
 
-        LOGGER.info("Logical-deleted product id {} alongside {} promotion copies", product.getProductId(), rows);
+        // Close any promotions generated with this product
+        Query promoQuery = em.createQuery("UPDATE Promotion SET endDate = now() WHERE Promotion.source.productId = :sourceId AND (endDate IS NULL OR endDate > now())");
+        query.setParameter("sourceId", product.getProductId());
+        int promoRows = promoQuery.executeUpdate();
+
+        LOGGER.info("Logical-deleted product id {} alongside {} promotion copies and closed {} promotions", product.getProductId(), rows, promoRows);
     }
 
     @Override
@@ -65,9 +75,84 @@ public class ProductJpaDao implements ProductDao {
         em.persist(destination);
         em.flush();
 
-        final Promotion promotion = new Promotion(source, destination, startDate, endDate, discount);
+        final Promotion promotion = new Promotion(source, destination, startDate, endDate);
         em.persist(promotion);
+        source.setAvailable(false);
         LOGGER.info("Created promotion with source id {} and destination id {} with a discount of {}", source.getProductId(), destination.getProductId(), discount);
         return promotion;
+    }
+
+    @Override
+    public void updateNameAndDescription(Product product, String name, String description) {
+        product.setName(name);
+        product.setDescription(description);
+
+        // Update active promotion copies
+        Query query = em.createQuery(
+                "UPDATE Product p SET p.name = :name, p.description = :description WHERE p.deleted = false AND" +
+                        " EXISTS(FROM Promotion WHERE destination.productId = p.productId AND source.productId = :productId)"
+        );
+        query.setParameter("productId", product.getProductId());
+        query.setParameter("name", name);
+        query.setParameter("description", description);
+        int rows = query.executeUpdate();
+
+        LOGGER.info("Updated name and description of product id {} alongside {} promotion cop{}", product.getProductId(), rows, rows == 1 ? "y" : "ies");
+    }
+
+    @Override
+    public void stopPromotionByDestination(long destinationProductId) {
+        TypedQuery<Promotion> promoQuery = em.createQuery(
+                "FROM Promotion WHERE destination.productId = :destinationId",
+                Promotion.class
+        );
+        promoQuery.setParameter("destinationId", destinationProductId);
+
+        Promotion promotion = promoQuery.getResultList().stream().findFirst().orElseThrow(PromotionNotFoundException::new);
+        if (promotion.hasEnded()) {
+            LOGGER.error("Attempted to stop an already-ended promotion id {}", promotion.getPromotionId());
+            throw new IllegalStateException("Cannot stop a promotion that has already ended");
+        }
+
+        promotion.setEndDate(LocalDateTime.now());
+        promotion.getDestination().setDeleted(true);
+        promotion.getSource().setAvailable(true);
+        LOGGER.info("Stopped promotion id {} by updating end date, logical-deleted product id {}", promotion.getPromotionId(), promotion.getDestination().getProductId());
+    }
+
+    @Override
+    public void stopPromotionsBySource(long sourceProductId) {
+        // Delete products from promotions generated with this product
+        Query delQuery = em.createQuery("UPDATE Product SET deleted = true WHERE deleted = false AND EXISTS(FROM Promotion WHERE Promotion.source.productId = :sourceId AND Promotion.destination.productId = Product.productId)");
+        delQuery.setParameter("sourceId", sourceProductId);
+        int delRows = delQuery.executeUpdate();
+
+        // Close any promotions generated with this product
+        Query promoQuery = em.createQuery("UPDATE Promotion SET endDate = now() WHERE Promotion.source.productId = :sourceId AND (endDate IS NULL OR endDate > now())");
+        delQuery.setParameter("sourceId", sourceProductId);
+        int promoRows = promoQuery.executeUpdate();
+
+        LOGGER.info("Closed {} promotion{} by updating end date, logical-deleted {} product{}", delRows, delRows == 1 ? "" : "s", promoRows, promoRows == 1 ? "" : "s");
+    }
+
+    @Transactional
+    @Override
+    public void closeInactivePromotions() {
+        // Set as available all products whose promotion ended and don't have another active promotion
+        Query avQuery = em.createQuery(
+                "UPDATE Product p SET p.available = true WHERE p.available = false" +
+                        " AND EXISTS(FROM Promotion WHERE source.productId = p.productId AND endDate IS NOT NULL AND endDate <= now())" +
+                        " AND NOT EXISTS(FROM Promotion WHERE source.productId = p.productId AND startDate <= now() AND (endDate IS NULL OR endDate > now()))"
+        );
+        int avRows = avQuery.executeUpdate();
+
+        // Logical-delete all products from inactive promotions
+        Query delQuery = em.createQuery(
+                "UPDATE Product p SET p.deleted = true WHERE p.deleted = false AND" +
+                        " EXISTS(FROM Promotion WHERE destination.productId = p.productId AND endDate IS NOT NULL AND endDate <= now())"
+        );
+        int delRows = delQuery.executeUpdate();
+
+        LOGGER.info("Closed inactive promotions: {} products made available and {} deleted", avRows, delRows);
     }
 }

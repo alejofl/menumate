@@ -9,6 +9,7 @@ import ar.edu.itba.paw.service.ProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,15 +61,14 @@ public class ProductServiceImpl implements ProductService {
         final Product product = getAndVerifyForUpdate(productId);
 
         if (product.getPrice().equals(price)) {
-            product.setName(name);
-            product.setDescription(description);
-            LOGGER.info("Updated name and description of product id {}", product.getProductId());
+            productDao.updateNameAndDescription(product, name, description);
             return product;
         }
 
         product.setDeleted(true);
         final Product newProduct = productDao.create(product.getCategoryId(), name, description, product.getImageId(), price);
         LOGGER.info("Logical-deleted product id {} and inserted {} to update price", product.getProductId(), newProduct.getProductId());
+        productDao.stopPromotionsBySource(productId);
         return newProduct;
     }
 
@@ -119,5 +119,11 @@ public class ProductServiceImpl implements ProductService {
         }
 
         return productDao.createPromotion(source, startDate, endDate, discount);
+    }
+
+
+    @Scheduled(cron = "0 * * * * ?")
+    public void closeInactivePromotions() {
+        productDao.closeInactivePromotions();
     }
 }

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,6 +47,11 @@ public class RestaurantServiceImpl implements RestaurantService {
         // NOTE: If we want for queries to "pizza" to include the tag for PIZZA, we can process the query and add the
         // tag in here.
         return restaurantDao.search(query, pageNumber, pageSize, orderBy, descending, tags, specialties);
+    }
+
+    @Override
+    public List<Promotion> getActivePromotions(long restaurantId) {
+        return restaurantDao.getActivePromotions(restaurantId);
     }
 
     private Restaurant getAndVerifyForUpdate(long restaurantId) {

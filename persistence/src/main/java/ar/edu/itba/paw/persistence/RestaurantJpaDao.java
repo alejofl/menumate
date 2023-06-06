@@ -174,6 +174,16 @@ public class RestaurantJpaDao implements RestaurantDao {
     }
 
     @Override
+    public List<Promotion> getActivePromotions(long restaurantId) {
+        TypedQuery<Promotion> query = em.createQuery(
+                "FROM Promotion WHERE destination.deleted = false AND destination.available = true AND destination.categoryId IN (SELECT categoryId FROM Category WHERE restaurantId = :restaurantId) ORDER BY discountPercentage DESC",
+                Promotion.class
+        );
+        query.setParameter("restaurantId", restaurantId);
+        return query.getResultList();
+    }
+
+    @Override
     public void delete(long restaurantId) {
         final Restaurant restaurant = em.find(Restaurant.class, restaurantId);
         if (restaurant == null) {
@@ -197,6 +207,11 @@ public class RestaurantJpaDao implements RestaurantDao {
         productQuery.setParameter("restaurantId", restaurantId);
         int productCount = productQuery.executeUpdate();
 
-        LOGGER.info("Logical-deleted restaurant id {} with {} categories and {} products", restaurant.getRestaurantId(), categoryCount, productCount);
+        // Close any promotions from this restaurant
+        Query promoQuery = em.createQuery("UPDATE Promotion p SET p.endDate = now() WHERE (p.endDate IS NULL OR p.endDate > now()) AND EXISTS(FROM Category c WHERE c.categoryId = p.source.categoryId AND c.restaurantId = :restaurantId)");
+        promoQuery.setParameter("restaurantId", restaurantId);
+        int promoRows = promoQuery.executeUpdate();
+
+        LOGGER.info("Logical-deleted restaurant id {} with {} categories and {} products, closed {} promotions", restaurant.getRestaurantId(), categoryCount, productCount, promoRows);
     }
 }

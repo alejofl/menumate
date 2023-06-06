@@ -88,7 +88,12 @@ public class CategoryJpaDao implements CategoryDao {
         productQuery.setParameter("categoryId", categoryId);
         int productCount = productQuery.executeUpdate();
 
-        LOGGER.info("Logical-deleted category id {} with {} products", category.getCategoryId(), productCount);
+        // Close any promotions from products from this category
+        Query promoQuery = em.createQuery("UPDATE Promotion p SET p.endDate = now() WHERE (p.endDate IS NULL OR p.endDate > now()) AND p.source.categoryId = :categoryId");
+        promoQuery.setParameter("categoryId", categoryId);
+        int promoRows = promoQuery.executeUpdate();
+
+        LOGGER.info("Logical-deleted category id {} with {} products and closed {} promotions", category.getCategoryId(), productCount, promoRows);
     }
 
     private static final String SWAP_ORDER_SQL = "BEGIN;" +

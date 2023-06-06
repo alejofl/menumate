@@ -5,6 +5,7 @@ import ar.edu.itba.paw.model.Promotion;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface ProductDao {
@@ -16,4 +17,12 @@ public interface ProductDao {
     void delete(long productId);
 
     Promotion createPromotion(Product source, LocalDateTime startDate, LocalDateTime endDate, float discount);
+
+    void updateNameAndDescription(Product product, String name, String description);
+
+    void stopPromotionByDestination(long destinationProductId);
+
+    void stopPromotionsBySource(long sourceProductId);
+
+    void closeInactivePromotions();
 }

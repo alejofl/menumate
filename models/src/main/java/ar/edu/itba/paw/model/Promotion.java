@@ -1,10 +1,14 @@
 package ar.edu.itba.paw.model;
 
+import org.hibernate.annotations.Formula;
+
 import javax.persistence.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "promotion")
+@Table(name = "promotions")
 public class Promotion {
 
     @Id
@@ -27,19 +31,18 @@ public class Promotion {
     @Column(name = "end_date")
     private LocalDateTime endDate;
 
-    @Column(nullable = false)
-    private float discount;
+    @Formula("ROUND(destination.price * 100 / source.price, 0)")
+    private int discountPercentage;
 
     Promotion() {
 
     }
 
-    public Promotion(Product source, Product destination, LocalDateTime startDate, LocalDateTime endDate, float discount) {
+    public Promotion(Product source, Product destination, LocalDateTime startDate, LocalDateTime endDate) {
         this.source = source;
         this.destination = destination;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.discount = discount;
     }
 
     public Long getPromotionId() {
@@ -70,11 +73,20 @@ public class Promotion {
         this.endDate = endDate;
     }
 
-    public float getDiscount() {
-        return discount;
+    public int getDiscountPercentage() {
+        return discountPercentage;
     }
 
-    public void setDiscount(float discount) {
-        this.discount = discount;
+    public boolean isActive() {
+        LocalDateTime now = LocalDateTime.now();
+        return !startDate.isAfter(now) && (endDate == null || endDate.isAfter(now));
+    }
+
+    public boolean hasStarted() {
+        return !startDate.isAfter(LocalDateTime.now());
+    }
+
+    public boolean hasEnded() {
+        return endDate != null && !endDate.isAfter(LocalDateTime.now());
     }
 }
