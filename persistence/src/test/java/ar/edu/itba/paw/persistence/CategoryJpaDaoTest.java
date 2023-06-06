@@ -114,6 +114,7 @@ public class CategoryJpaDaoTest {
 
     @Test
     public void testFindByRestaurantIdWithNoCategories() throws SQLException {
+
         final List<Category> categories = categoryDao.getByRestaurantSortedByOrder(RestaurantConstants.RESTAURANT_IDS[2]);
 
         Assert.assertNotNull(categories);

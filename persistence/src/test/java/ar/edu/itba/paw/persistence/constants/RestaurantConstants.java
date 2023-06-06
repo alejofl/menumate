@@ -21,18 +21,6 @@ public class RestaurantConstants {
     public static final LocalDateTime RESTAURANT_CREATION_DATE = LocalDateTime.now();
     public static final boolean RESTAURANT_IS_ACTIVE = true;
     public static final boolean RESTAURANT_DELETED = false;
-    public static List<List<Double>> VALUES = Arrays.asList(
-            Arrays.asList(1.0, 1.0, 3.0, 5.0, 5.0, 5.0),
-            Arrays.asList(2.0, 2.0, 2.0, 2.0, 2.0, 2.0),
-            Arrays.asList(3.0, 3.0, 3.0, 3.0, 3.0, 3.0)
-    );
-    public static final List<Double> AVERAGE_LIST = VALUES.stream()
-            .mapToDouble(sublist -> sublist.stream()
-                    .mapToDouble(Double::doubleValue)
-                    .average()
-                    .orElse(0.0))
-            .boxed()
-            .collect(Collectors.toList());
     public static final List<List<RestaurantTags>> RESTAURANTS_TAGS = Arrays.asList(
             Arrays.asList(RestaurantTags.fromOrdinal(1), RestaurantTags.fromOrdinal(2), RestaurantTags.fromOrdinal(3)),
             Arrays.asList(RestaurantTags.fromOrdinal(1), RestaurantTags.fromOrdinal(2)),

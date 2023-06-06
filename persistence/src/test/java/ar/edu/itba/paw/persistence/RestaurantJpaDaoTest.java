@@ -2,7 +2,9 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.persistence.config.TestConfig;
+import ar.edu.itba.paw.persistence.constants.ProductConstants;
 import ar.edu.itba.paw.persistence.constants.RestaurantConstants;
+import ar.edu.itba.paw.persistence.constants.ReviewConstants;
 import ar.edu.itba.paw.persistence.constants.UserConstants;
 import ar.edu.itba.paw.util.PaginatedResult;
 import org.junit.Assert;
@@ -20,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
-import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -47,45 +48,6 @@ public class RestaurantJpaDaoTest {
     @Before
     public void setup() {
         jdbcTemplate = new JdbcTemplate(ds);
-    }
-
-    private void insertReviews() {
-        for(int i = 0; i< RestaurantConstants.VALUES.size(); i++) {
-            for (int j=0; j<RestaurantConstants.VALUES.get(0).size(); j++) {
-                Order order = new Order(
-                        OrderType.TAKEAWAY,
-                        em.find(Restaurant.class, RestaurantConstants.RESTAURANT_IDS[i]),
-                        em.find(User.class, UserConstants.RESTAURANT_OWNER_ID),
-                        RestaurantConstants.RESTAURANT_ADDRESS,
-                        RestaurantConstants.MAX_TABLES
-                );
-                em.persist(order);
-                Review review = new Review(
-                        order.getOrderId(),
-                        RestaurantConstants.VALUES.get(i).get(j).intValue(),
-                        "comment"
-                );
-                em.persist(review);
-                em.flush();
-            }
-        }
-    }
-
-    private void insertProducts() {
-        for (int i=0; i < RestaurantConstants.RESTAURANT_IDS.length; i++) {
-            Category category = new Category(em.find(Restaurant.class, RestaurantConstants.RESTAURANT_IDS[i]), String.valueOf(i), i);
-            em.persist(category);
-            for (int j=0; j < RestaurantConstants.VALUES.get(i).size(); j++) {
-                Product product = new Product(
-                        category.getCategoryId(), String.valueOf(j),
-                        String.valueOf(j), null,
-                        BigDecimal.valueOf(RestaurantConstants.VALUES.get(i).get(j)),
-                        true
-                );
-                em.persist(product);
-            }
-            em.flush();
-        }
     }
 
     @Test
@@ -191,10 +153,8 @@ public class RestaurantJpaDaoTest {
     }
 
     @Test
-    @Rollback
     public void searchSortedByRatingAsc() throws SQLException {
-        insertReviews();
-        final List<Double> ratingAvg = RestaurantConstants.AVERAGE_LIST;
+        final List<Double> ratingAvg = ReviewConstants.AVERAGE_LIST;
         ratingAvg.sort(Comparator.naturalOrder());
 
         final int maxRestaurants = RestaurantConstants.RESTAURANT_IDS.length;
@@ -215,10 +175,8 @@ public class RestaurantJpaDaoTest {
     }
 
     @Test
-    @Rollback
     public void searchSortedByRatingDesc() throws SQLException {
-        insertReviews();
-        final List<Double> ratingAvg = RestaurantConstants.AVERAGE_LIST;
+        final List<Double> ratingAvg = ReviewConstants.AVERAGE_LIST;
         ratingAvg.sort(Comparator.reverseOrder());
 
         final int maxRestaurants = RestaurantConstants.RESTAURANT_IDS.length;
@@ -239,11 +197,9 @@ public class RestaurantJpaDaoTest {
     }
 
     @Test
-    @Rollback
     public void searchSortedByPriceAverageDesc() throws SQLException {
-        insertProducts();
         final int maxRestaurants = RestaurantConstants.RESTAURANT_IDS.length;
-        List<Double> avgPrice = RestaurantConstants.AVERAGE_LIST;
+        List<Double> avgPrice = ProductConstants.AVERAGE_LIST;
         avgPrice.sort(Comparator.reverseOrder());
 
         PaginatedResult<RestaurantDetails> res = restaurantDao.search("", 1, maxRestaurants, RestaurantOrderBy.PRICE, true, null, null);
@@ -251,19 +207,17 @@ public class RestaurantJpaDaoTest {
         int size = res.getResult().size();
         Assert.assertEquals(maxRestaurants, res.getPageSize());
         Assert.assertEquals(maxRestaurants, res.getTotalCount());
-        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0].longValue(), res.getResult().get(0).getRestaurantId());
-        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[1].longValue(), res.getResult().get(maxRestaurants-1).getRestaurantId());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[1].longValue(), res.getResult().get(0).getRestaurantId());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[2].longValue(), res.getResult().get(maxRestaurants-1).getRestaurantId());
         for (int i = 0; i < size; i++) {
             Assert.assertEquals(avgPrice.get(i),res.getResult().get(i).getAverageProductPrice(), 0.1);
         }
     }
 
     @Test
-    @Rollback
     public void searchSortedByPriceAverageAsc() throws SQLException {
-        insertProducts();
         final int maxRestaurants = RestaurantConstants.RESTAURANT_IDS.length;
-        List<Double> avgPrice = RestaurantConstants.AVERAGE_LIST;
+        List<Double> avgPrice = ProductConstants.AVERAGE_LIST;
         avgPrice.sort(Comparator.naturalOrder());
 
         PaginatedResult<RestaurantDetails> res = restaurantDao.search("", 1, maxRestaurants, RestaurantOrderBy.PRICE, false, null, null);
@@ -271,8 +225,8 @@ public class RestaurantJpaDaoTest {
         int size = res.getResult().size();
         Assert.assertEquals(maxRestaurants, res.getPageSize());
         Assert.assertEquals(maxRestaurants, res.getTotalCount());
-        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[1].longValue(), res.getResult().get(0).getRestaurantId());
-        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0].longValue(), res.getResult().get(maxRestaurants - 1).getRestaurantId());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[2].longValue(), res.getResult().get(0).getRestaurantId());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[1].longValue(), res.getResult().get(maxRestaurants - 1).getRestaurantId());
         for (int i = 0; i < size; i++) {
             Assert.assertEquals(avgPrice.get(i),res.getResult().get(i).getAverageProductPrice(), 0.1);
         }
