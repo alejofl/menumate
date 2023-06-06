@@ -42,3 +42,18 @@ INSERT INTO restaurant_tags (restaurant_id, tag_id)
 
 INSERT INTO restaurant_tags (restaurant_id, tag_id)
     VALUES (1200, 1);
+
+INSERT INTO categories(category_id, restaurant_id, name, order_num, deleted)
+    VALUES (901, 506, 'category', 1, false);
+
+INSERT INTO categories(category_id, restaurant_id, name, order_num, deleted)
+    VALUES (50, 506, 'category', 2, false);
+
+INSERT INTO categories(category_id, restaurant_id, name, order_num, deleted)
+    VALUES (25, 506, 'category', 3, true);
+
+INSERT INTO categories(category_id, restaurant_id, name, order_num, deleted)
+    VALUES (320, 600, 'category', 1, false);
+
+INSERT INTO categories(category_id, restaurant_id, name, order_num, deleted)
+    VALUES (750, 600, 'category', 2, false);
