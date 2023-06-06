@@ -12,6 +12,9 @@ INSERT INTO users (user_id, email, password, name, is_active, preferred_language
 INSERT INTO users (user_id, email, password, name, is_active, preferred_language)
     VALUES (2000, 'user4@localhost', 'password', 'user', false, 'en');
 
+INSERT INTO users (user_id, email, password, name, is_active, preferred_language)
+    VALUES (3000, 'user5@localhost', 'password', 'user', true, 'en');
+
 -- Tokens for user 2000
 INSERT INTO user_resetpassword_tokens (user_id, token, expires)
     VALUES (2000, '8ac27001-c568-4190-b6da-1a80478c', CURRENT_TIMESTAMP + INTERVAL '1' DAY);
@@ -41,6 +44,10 @@ INSERT INTO restaurants (restaurant_id, name, email, max_tables, specialty, owne
 
 INSERT INTO restaurants (restaurant_id, name, email, max_tables, specialty, owner_user_id, address, description, date_created, deleted, is_active)
     VALUES (1300, 'D', 'restaurant@localhost', 10, 4, 1500, 'somewhere', 'description', CURRENT_TIMESTAMP - INTERVAL '3' DAY, false, true);
+
+-- Give admin role for restaurant 1300 to user 3000
+INSERT INTO restaurant_roles (restaurant_id, user_id, role_level)
+    VALUES (1300, 3000, 1);
 
 -- Tag for restaurant 506
 INSERT INTO restaurant_tags (restaurant_id, tag_id)
