@@ -103,6 +103,7 @@ public class RestaurantJpaDao implements RestaurantDao {
         if (query == null || query.isEmpty())
             return "%";
 
+        query = query.replaceAll("_", " ").replaceAll("%", " ");
         String[] tokens = query.trim().toLowerCase().split(" +");
         StringBuilder searchParam = new StringBuilder("%");
         for (String token : tokens) {
