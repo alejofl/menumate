@@ -7,9 +7,6 @@ import java.util.stream.Collectors;
 
 public final class ReviewConstants {
 
-    public static final Long[] REVIEW_IDS_0 = OrderConstants.ORDER_IDS_RESTAURANT_0;
-    public static final Long[] REVIEW_IDS_1 = OrderConstants.ORDER_IDS_RESTAURANT_1;
-    public static final Long[] REVIEW_IDS_2 = OrderConstants.ORDER_IDS_RESTAURANT_2;
     public static final LocalDateTime[] REVIEW_DATES = {
             LocalDateTime.now().plusDays(1),
             LocalDateTime.now().plusDays(2),
@@ -18,8 +15,11 @@ public final class ReviewConstants {
             LocalDateTime.now().plusDays(5),
             LocalDateTime.now().plusDays(6)
     };
-    public static final String REVIEW_COMMENT = "comment";
-    public static final String REVIEW_REPLY = "reply";
+
+    public static final LocalDateTime DEFAULT_SINCE_WHEN = LocalDateTime.now();
+    public static final String DEFAULT_REVIEW_COMMENT = "comment";
+    public static final String DEFAULT_REVIEW_REPLY = "reply";
+    public static final int DEFAULT_REVIEW_RATING = 5;
 
     public static List<List<Double>> VALUES = Arrays.asList(
             Arrays.asList(1.0, 1.0, 3.0, 5.0, 5.0, 5.0),

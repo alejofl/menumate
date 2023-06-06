@@ -39,6 +39,9 @@ INSERT INTO restaurants (restaurant_id, name, email, max_tables, specialty, owne
 INSERT INTO restaurants (restaurant_id, name, email, max_tables, specialty, owner_user_id, address, description, date_created, deleted, is_active)
     VALUES (1200, 'B', 'restaurant@localhost', 10, 3, 1500, 'somewhere', 'description', CURRENT_TIMESTAMP - INTERVAL '2' DAY, false, true);
 
+INSERT INTO restaurants (restaurant_id, name, email, max_tables, specialty, owner_user_id, address, description, date_created, deleted, is_active)
+    VALUES (1300, 'D', 'restaurant@localhost', 10, 4, 1500, 'somewhere', 'description', CURRENT_TIMESTAMP - INTERVAL '3' DAY, false, true);
+
 -- Tag for restaurant 506
 INSERT INTO restaurant_tags (restaurant_id, tag_id)
     VALUES (506, 1);
@@ -245,3 +248,7 @@ INSERT INTO order_items (order_id, line_number, product_id, quantity, comment)
 
 INSERT INTO order_items (order_id, line_number, product_id, quantity, comment)
     VALUES (1702, 3, 102, 10, 'comment');
+
+-- Adding order with no review for restaurant 1200
+INSERT INTO orders (order_id, restaurant_id, order_type, date_ordered, user_id)
+    VALUES (6000, 1200, 1, now(), 420);

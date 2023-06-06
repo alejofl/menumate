@@ -1,8 +1,11 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.model.OrderType;
 import ar.edu.itba.paw.model.Review;
 import ar.edu.itba.paw.persistence.config.TestConfig;
+import ar.edu.itba.paw.persistence.constants.OrderConstants;
+import ar.edu.itba.paw.persistence.constants.RestaurantConstants;
+import ar.edu.itba.paw.persistence.constants.ReviewConstants;
+import ar.edu.itba.paw.persistence.constants.UserConstants;
 import ar.edu.itba.paw.util.AverageCountPair;
 import ar.edu.itba.paw.util.PaginatedResult;
 import org.junit.Assert;
@@ -11,6 +14,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
@@ -21,42 +25,15 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.sql.DataSource;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
 @Transactional
 public class ReviewJdbcDaoTest {
-    private static final long USER_ID = 791;
-    private static final String USER_EMAIL = "peter@peter.com";
-    private static final String USER_PASSWORD = "super12secret34";
-    private static final String USER_NAME = "Peter Parker";
-    private static final boolean USER_IS_ACTIVE = true;
-    private static final String USER_PREFERRED_LANGUAGE = "qx";
-    private static final long OWNER_ID = 313;
-    private static final String OWNER_EMAIL = "pedro@pedro.com";
-    private static final String OWNER_PASSWORD = "mega12secreto34";
-    private static final String OWNER_NAME = "Pedro Parker";
-    private static final long RESTAURANT_ID1 = 5123;
-    private static final long RESTAURANT_SPECIALITY = 0;
-    private static final String RESTAURANT_NAME1 = "pedros";
-    private static final String RESTAURANT_EMAIL1 = "pedros@frompedros.com";
-    private static final long RESTAURANT_ID2 = 4242;
-    private static final String RESTAURANT_NAME2 = "La Mejor Pizza";
-    private static final String RESTAURANT_EMAIL2 = "pizzeria@pizza.com";
-    private static final boolean RESTAURANT_DELETED = false;
-    private static final boolean RESTAURANT_IS_ACTIVE = true;
-    private static final String RESTAURANT_ADDRESS = "Av. Siempreviva 742";
-    private static final String RESTAURANT_DESCRIPTION = "La mejor pizza de la ciudad";
-    private static final int MAX_TABLES = 20;
-    private static final long ORDER_ID1 = 8844;
-    private static final long ORDER_ID2 = 9090;
-    private static final int RATING1 = 1;
-    private static final int RATING2 = 4;
-    private static final OrderType ORDER_TYPE = OrderType.TAKEAWAY;
-    private static final float FLOAT_DELTA = 0.001f;
 
     @Autowired
     private DataSource ds;
@@ -72,228 +49,148 @@ public class ReviewJdbcDaoTest {
     @Before
     public void setup() {
         jdbcTemplate = new JdbcTemplate(ds);
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, "users", "restaurants", "restaurant_roles", "orders", "order_reviews");
-        jdbcTemplate.execute("INSERT INTO users (user_id, email, password, name, is_active, preferred_language) VALUES (" + USER_ID + ", '" + USER_EMAIL + "', '" + USER_PASSWORD + "', '" + USER_NAME + "', " + USER_IS_ACTIVE + ", '" + USER_PREFERRED_LANGUAGE + "')");
-        jdbcTemplate.execute("INSERT INTO users (user_id, email, password, name, is_active, preferred_language) VALUES (" + OWNER_ID + ", '" + OWNER_EMAIL + "', '" + OWNER_PASSWORD + "', '" + OWNER_NAME + "', " + USER_IS_ACTIVE + ", '" + USER_PREFERRED_LANGUAGE + "')");
-        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, max_tables, specialty, owner_user_id, address, description, date_created, deleted, is_active) VALUES (" + RESTAURANT_ID1 + ", '" + RESTAURANT_NAME1 + "', '" + RESTAURANT_EMAIL1 + "', " + MAX_TABLES + ", " + RESTAURANT_SPECIALITY + ", " + USER_ID + ", '" + RESTAURANT_ADDRESS + "', '" + RESTAURANT_DESCRIPTION + "', '" + Timestamp.valueOf(LocalDateTime.now()) + "', " + RESTAURANT_DELETED + ", " + RESTAURANT_IS_ACTIVE + ")");
-        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, max_tables, specialty, owner_user_id, address, description, date_created, deleted, is_active) VALUES (" + RESTAURANT_ID2 + ", '" + RESTAURANT_NAME2 + "', '" + RESTAURANT_EMAIL2 + "', " + MAX_TABLES + ", " + RESTAURANT_SPECIALITY + ", " + USER_ID + ", '" + RESTAURANT_ADDRESS + "', '" + RESTAURANT_DESCRIPTION + "', '" + Timestamp.valueOf(LocalDateTime.now()) + "', " + RESTAURANT_DELETED + ", " + RESTAURANT_IS_ACTIVE + ")");
-        jdbcTemplate.execute("INSERT INTO orders (order_id, order_type, restaurant_id, user_id, date_ordered, date_delivered, date_confirmed, date_ready) VALUES (" + ORDER_ID1 + ", " + ORDER_TYPE.ordinal() + ", " + RESTAURANT_ID1 + ", " + USER_ID + ", now(), now(), now(), now())");
-        jdbcTemplate.execute("INSERT INTO orders (order_id, order_type, restaurant_id, user_id, date_ordered, date_delivered, date_confirmed, date_ready) VALUES (" + ORDER_ID2 + ", " + ORDER_TYPE.ordinal() + ", " + RESTAURANT_ID2 + ", " + USER_ID + ", now(), now(), now(), now())");
     }
 
     @Test
-    public void testCreateWhenNonExisting() {
-        reviewDao.create(ORDER_ID1, RATING1, null);
+    @Rollback
+    public void testCreateReview() {
+        reviewDao.create(
+                OrderConstants.ORDER_ID_WITH_NO_REVIEW,
+                ReviewConstants.DEFAULT_REVIEW_RATING,
+                ReviewConstants.DEFAULT_REVIEW_COMMENT
+        );
         em.flush();
-        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "order_reviews", "order_id=" + ORDER_ID1 +
-                " AND rating=" + RATING1 + " AND comment IS NULL" + " AND date IS NOT NULL"));
+        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "order_reviews", "order_id = " + OrderConstants.ORDER_ID_WITH_NO_REVIEW));
     }
 
-    @Test
+    @Test(expected = PersistenceException.class)
     public void testCreateWhenExisting() {
-        jdbcTemplate.execute("INSERT INTO order_reviews (order_id, rating, comment) VALUES (" + ORDER_ID1 + ", " + RATING1 + ", null)");
-        reviewDao.create(ORDER_ID1, RATING1, null);
-        Assert.assertThrows(PersistenceException.class, () -> em.flush());
+        reviewDao.create(OrderConstants.ORDER_IDS_RESTAURANT_0[0], ReviewConstants.DEFAULT_REVIEW_RATING, null);
+        em.flush();
     }
 
     @Test
     public void testGetByOrderEmpty() {
-        Optional<Review> review1 = reviewDao.getByOrder(ORDER_ID1);
+        Optional<Review> review1 = reviewDao.getByOrder(OrderConstants.ORDER_ID_WITH_NO_REVIEW);
         Assert.assertFalse(review1.isPresent());
-    }
-
-    @Test
-    public void testGetByOrderBothEmpty() {
-        Optional<Review> review1 = reviewDao.getByOrder(ORDER_ID1);
-        Optional<Review> review2 = reviewDao.getByOrder(ORDER_ID2);
-        Assert.assertFalse(review1.isPresent());
-        Assert.assertFalse(review2.isPresent());
     }
 
     @Test
     public void testGetByOrderExisting() {
-        jdbcTemplate.execute("INSERT INTO order_reviews (order_id, rating, comment) VALUES (" + ORDER_ID1 + ", " + RATING1 + ", null)");
-
-        Optional<Review> review1 = reviewDao.getByOrder(ORDER_ID1);
+        Optional<Review> review1 = reviewDao.getByOrder(OrderConstants.ORDER_IDS_RESTAURANT_0[0]);
 
         Assert.assertTrue(review1.isPresent());
-        Assert.assertEquals(ORDER_ID1, review1.get().getOrder().getOrderId());
-        Assert.assertEquals(RATING1, review1.get().getRating());
-        Assert.assertNull(review1.get().getComment());
-    }
-
-    @Test
-    public void testGetByOrderOneExistingOneNot() {
-        jdbcTemplate.execute("INSERT INTO order_reviews (order_id, rating, comment) VALUES (" + ORDER_ID1 + ", " + RATING1 + ", null)");
-
-        Optional<Review> review1 = reviewDao.getByOrder(ORDER_ID1);
-        Optional<Review> review2 = reviewDao.getByOrder(ORDER_ID2);
-
-        Assert.assertTrue(review1.isPresent());
-        Assert.assertEquals(ORDER_ID1, review1.get().getOrder().getOrderId());
-        Assert.assertEquals(RATING1, review1.get().getRating());
-        Assert.assertNull(review1.get().getComment());
-        Assert.assertFalse(review2.isPresent());
-    }
-
-    @Test
-    public void testGetByOrderBothExisting() {
-        jdbcTemplate.execute("INSERT INTO order_reviews (order_id, rating, comment) VALUES (" + ORDER_ID1 + ", " + RATING1 + ", null)");
-        jdbcTemplate.execute("INSERT INTO order_reviews (order_id, rating, comment) VALUES (" + ORDER_ID2 + ", " + RATING2 + ", null)");
-
-        Optional<Review> review1 = reviewDao.getByOrder(ORDER_ID1);
-        Optional<Review> review2 = reviewDao.getByOrder(ORDER_ID2);
-
-        Assert.assertTrue(review1.isPresent());
-        Assert.assertEquals(ORDER_ID1, review1.get().getOrder().getOrderId());
-        Assert.assertEquals(RATING1, review1.get().getRating());
-        Assert.assertNull(review1.get().getComment());
-        Assert.assertTrue(review2.isPresent());
-        Assert.assertEquals(ORDER_ID2, review2.get().getOrder().getOrderId());
-        Assert.assertEquals(RATING2, review2.get().getRating());
-        Assert.assertNull(review2.get().getComment());
+        Assert.assertEquals(OrderConstants.ORDER_IDS_RESTAURANT_0[0].longValue(), review1.get().getOrder().getOrderId());
+        Assert.assertNotNull(review1.get().getComment());
+        Assert.assertEquals(ReviewConstants.VALUES.get(0).get(0).intValue(), review1.get().getRating());
     }
 
     @Test
     public void testGetByRestaurantEmpty() {
-        PaginatedResult<Review> result = reviewDao.getByRestaurant(RESTAURANT_ID1, 1, 20);
+        PaginatedResult<Review> result = reviewDao.getByRestaurant(RestaurantConstants.RESTAURANT_ID_WITH_NO_ORDERS, 1, 1);
         Assert.assertEquals(0, result.getResult().size());
         Assert.assertEquals(0, result.getTotalCount());
     }
 
     @Test
-    public void testGetByRestaurantNotEmpty() {
-        jdbcTemplate.execute("INSERT INTO order_reviews (order_id, rating, comment) VALUES (" + ORDER_ID1 + ", " + RATING1 + ", null)");
-
-        PaginatedResult<Review> result = reviewDao.getByRestaurant(RESTAURANT_ID1, 1, 20);
-        Assert.assertEquals(result.getResult().size(), 1);
-        Review review = result.getResult().get(0);
-        Assert.assertEquals(ORDER_ID1, review.getOrder().getOrderId());
-        Assert.assertEquals(RATING1, review.getRating());
-        Assert.assertNull(review.getComment());
+    public void testGetByRestaurantExisting() {
+        PaginatedResult<Review> result = reviewDao.getByRestaurant(RestaurantConstants.RESTAURANT_IDS[0], 1, OrderConstants.ORDER_IDS_RESTAURANT_0.length);
+        Assert.assertEquals(OrderConstants.ORDER_IDS_RESTAURANT_0.length, result.getResult().size());
+        Assert.assertEquals(OrderConstants.ORDER_IDS_RESTAURANT_0.length, result.getTotalCount());
     }
 
     @Test
-    public void testGetByRestaurantOneEmptyOneNot() {
-        jdbcTemplate.execute("INSERT INTO order_reviews (order_id, rating, comment) VALUES (" + ORDER_ID2 + ", " + RATING2 + ", null)");
-
-        PaginatedResult<Review> result2 = reviewDao.getByRestaurant(RESTAURANT_ID2, 1, 20);
-        Assert.assertEquals(1, result2.getResult().size());
-        Assert.assertEquals(1, result2.getTotalCount());
-        Review review = result2.getResult().get(0);
-        Assert.assertEquals(ORDER_ID2, review.getOrder().getOrderId());
-        Assert.assertEquals(RATING2, review.getRating());
-        Assert.assertNull(review.getComment());
-
-        PaginatedResult<Review> result1 = reviewDao.getByRestaurant(RESTAURANT_ID1, 1, 20);
-        Assert.assertEquals(0, result1.getResult().size());
-        Assert.assertEquals(0, result1.getTotalCount());
-    }
-
-    @Test
-    public void testGetByRestaurantBothNotEmpty() {
-        jdbcTemplate.execute("INSERT INTO order_reviews (order_id, rating, comment) VALUES (" + ORDER_ID1 + ", " + RATING1 + ", null)");
-        jdbcTemplate.execute("INSERT INTO order_reviews (order_id, rating, comment) VALUES (" + ORDER_ID2 + ", " + RATING2 + ", null)");
-
-        PaginatedResult<Review> result1 = reviewDao.getByRestaurant(RESTAURANT_ID1, 1, 20);
-        Assert.assertEquals(1, result1.getResult().size());
-        Assert.assertEquals(1, result1.getTotalCount());
-        Review review1 = result1.getResult().get(0);
-        Assert.assertEquals(ORDER_ID1, review1.getOrder().getOrderId());
-        Assert.assertEquals(RATING1, review1.getRating());
-        Assert.assertNull(review1.getComment());
-
-        PaginatedResult<Review> result2 = reviewDao.getByRestaurant(RESTAURANT_ID2, 1, 20);
-        Assert.assertEquals(1, result2.getResult().size());
-        Assert.assertEquals(1, result2.getTotalCount());
-        Review review2 = result2.getResult().get(0);
-        Assert.assertEquals(ORDER_ID2, review2.getOrder().getOrderId());
-        Assert.assertEquals(RATING2, review2.getRating());
-        Assert.assertNull(review2.getComment());
+    public void testReviewsByRestaurant() {
+        final int totalOrders = OrderConstants.ORDER_IDS_RESTAURANT_0.length;
+    	PaginatedResult<Review> result = reviewDao.getByRestaurant(RestaurantConstants.RESTAURANT_IDS[0], 1, totalOrders);
+        for(int i=0; i < totalOrders; i++) {
+            Review review = result.getResult().get(i);
+            Assert.assertEquals(OrderConstants.ORDER_IDS_RESTAURANT_0[totalOrders-i-1].longValue(), review.getOrder().getOrderId());
+            Assert.assertNotNull(review.getComment());
+            Assert.assertEquals(ReviewConstants.VALUES.get(0).get(totalOrders-i-1).intValue(), review.getRating());
+        }
     }
 
     @Test
     public void testGetByUserEmpty() {
-        PaginatedResult<Review> result = reviewDao.getByUser(USER_ID, 1, 20);
+        PaginatedResult<Review> result = reviewDao.getByUser(UserConstants.INACTIVE_USER_ID, 1, 20);
         Assert.assertEquals(0, result.getResult().size());
         Assert.assertEquals(0, result.getTotalCount());
     }
 
     @Test
     public void testGetByUserNotEmpty() {
-        jdbcTemplate.execute("INSERT INTO order_reviews (order_id, rating, comment) VALUES (" + ORDER_ID1 + ", " + RATING1 + ", null)");
-
-        PaginatedResult<Review> result = reviewDao.getByUser(USER_ID, 1, 20);
-        Assert.assertEquals(result.getResult().size(), 1);
-        Review review = result.getResult().get(0);
-        Assert.assertEquals(ORDER_ID1, review.getOrder().getOrderId());
-        Assert.assertEquals(RATING1, review.getRating());
-        Assert.assertNull(review.getComment());
+        PaginatedResult<Review> result = reviewDao.getByUser(UserConstants.ACTIVE_USER_ID, 1, OrderConstants.TOTAL_ORDER_COUNT);
+        Assert.assertEquals(OrderConstants.TOTAL_ORDER_COUNT, result.getResult().size());
     }
 
     @Test
-    public void testAverageZeroWhenEmpty() {
-        AverageCountPair ac = reviewDao.getRestaurantAverage(RESTAURANT_ID1);
+    public void testReviewsByUser() {
+        PaginatedResult<Review> result = reviewDao.getByUser(UserConstants.ACTIVE_USER_ID, 1, OrderConstants.TOTAL_ORDER_COUNT);
+        Assert.assertEquals(OrderConstants.TOTAL_ORDER_COUNT, result.getResult().size());
+        for(int i=0; i < OrderConstants.TOTAL_ORDER_COUNT; i++) {
+            Review review = result.getResult().get(i);
+            Assert.assertTrue(
+            Arrays.asList(OrderConstants.ORDER_IDS_RESTAURANT_0).contains(review.getOrder().getOrderId()) ||
+                    Arrays.asList(OrderConstants.ORDER_IDS_RESTAURANT_1).contains(review.getOrder().getOrderId()) ||
+                    Arrays.asList(OrderConstants.ORDER_IDS_RESTAURANT_2).contains(review.getOrder().getOrderId())
+            );
+            Assert.assertNotNull(review.getComment());
+        }
+    }
+
+    @Test
+    public void testAverageByRestaurant() {
+        AverageCountPair ac = reviewDao.getRestaurantAverage(RestaurantConstants.RESTAURANT_IDS[0]);
+        Assert.assertEquals(ReviewConstants.AVERAGE_LIST.get(0), ac.getAverage(), 0.01);
+        Assert.assertEquals(ReviewConstants.VALUES.get(0).size(), ac.getCount());
+    }
+
+    @Test
+    public void testAverageByRestaurantWithNoOrders() {
+        AverageCountPair ac = reviewDao.getRestaurantAverage(RestaurantConstants.RESTAURANT_ID_WITH_NO_ORDERS);
+        Assert.assertEquals(0, ac.getAverage(), 0.01);
         Assert.assertEquals(0, ac.getCount());
     }
 
     @Test
-    public void testAverageWhenOne() {
-        jdbcTemplate.execute("INSERT INTO order_reviews (order_id, rating, comment) VALUES (" + ORDER_ID1 + ", " + RATING1 + ", null)");
+    public void testAverageSinceWhenNone() {
+        AverageCountPair ac = reviewDao.getRestaurantAverageSince(RestaurantConstants.RESTAURANT_ID_WITH_NO_ORDERS, ReviewConstants.DEFAULT_SINCE_WHEN);
+        Assert.assertEquals(0, ac.getCount());
+        Assert.assertEquals(0, ac.getAverage(), 0.1);
+    }
 
-        AverageCountPair ac = reviewDao.getRestaurantAverage(RESTAURANT_ID1);
-        Assert.assertEquals(RATING1, ac.getAverage(), FLOAT_DELTA);
+    @Test
+    public void testAverageSinceWithOne() {
+        final List<Double> averageList = ReviewConstants.VALUES.get(0);
+        final int value = averageList.size() - 1;
+
+        AverageCountPair ac = reviewDao.getRestaurantAverageSince(RestaurantConstants.RESTAURANT_IDS[0], LocalDateTime.now().plusDays(value));
         Assert.assertEquals(1, ac.getCount());
+        Assert.assertEquals(averageList.get(value), ac.getAverage(), 0.01);
     }
 
     @Test
-    public void testAverageWhenTwo() {
-        jdbcTemplate.execute("INSERT INTO orders (order_id, order_type, restaurant_id, user_id, date_ordered, date_delivered, date_confirmed, date_ready) VALUES (" + 7381 + ", " + ORDER_TYPE.ordinal() + ", " + RESTAURANT_ID1 + ", " + USER_ID + ", now(), now(), now(), now())");
-        jdbcTemplate.execute("INSERT INTO order_reviews (order_id, rating, comment) VALUES (" + ORDER_ID1 + ", " + RATING1 + ", null)");
-        jdbcTemplate.execute("INSERT INTO order_reviews (order_id, rating, comment) VALUES (" + 7381 + ", " + RATING2 + ", null)");
+    public void testAverageSinceWithTwo() {
+        final List<Double> averageList = ReviewConstants.VALUES.get(0);
+        final int value = averageList.size() - 2;
 
-        AverageCountPair ac = reviewDao.getRestaurantAverage(RESTAURANT_ID1);
-        Assert.assertEquals((RATING1 + RATING2) / 2f, ac.getAverage(), FLOAT_DELTA);
+        AverageCountPair ac = reviewDao.getRestaurantAverageSince(RestaurantConstants.RESTAURANT_IDS[0], LocalDateTime.now().plusDays(value));
         Assert.assertEquals(2, ac.getCount());
+        Assert.assertEquals((averageList.get(value) + averageList.get(value + 1)) / 2f, ac.getAverage(), 0.01);
     }
 
-    @Test
-    public void testAverageSinceWhenOne() {
-        Review review = new Review(ORDER_ID1, RATING1, null);
-        em.persist(review);
-        em.flush();
-
-        AverageCountPair ac = reviewDao.getRestaurantAverageSince(RESTAURANT_ID1, LocalDateTime.now().minusDays(1));
-        Assert.assertEquals(1, ac.getCount());
-        Assert.assertEquals(RATING1, ac.getAverage(), FLOAT_DELTA);
-    }
-
-    @Test
-    public void testAverageSinceWhenTwo() {
-        jdbcTemplate.execute("INSERT INTO orders (order_id, order_type, restaurant_id, user_id, date_ordered, date_delivered, date_confirmed, date_ready) VALUES (" + 7381 + ", " + ORDER_TYPE.ordinal() + ", " + RESTAURANT_ID1 + ", " + USER_ID + ", now(), now(), now(), now())");
-        Review review1 = new Review(ORDER_ID1, RATING1, null);
-        Review review2 = new Review(7381, RATING2, null);
-        em.persist(review1);
-        em.persist(review2);
-        em.flush();
-
-        AverageCountPair ac = reviewDao.getRestaurantAverageSince(RESTAURANT_ID1, LocalDateTime.now().minusDays(1));
-        Assert.assertEquals((RATING1 + RATING2) / 2f, ac.getAverage(), FLOAT_DELTA);
-        Assert.assertEquals(2, ac.getCount());
-    }
-
-    @Test
+    @Test(expected = EntityNotFoundException.class)
     public void testDeleteWhenNone() {
-        Assert.assertThrows(EntityNotFoundException.class, () -> reviewDao.delete(ORDER_ID1));
+        reviewDao.delete(OrderConstants.ORDER_ID_WITH_NO_REVIEW);
     }
 
     @Test
+    @Rollback
     public void testDeleteWhenExists() {
-        jdbcTemplate.execute("INSERT INTO order_reviews (order_id, rating, comment) VALUES (" + ORDER_ID1 + ", " + RATING1 + ", null)");
-
-        reviewDao.delete(ORDER_ID1);
+        reviewDao.delete(OrderConstants.ORDER_IDS_RESTAURANT_0[0]);
         em.flush();
 
-        Assert.assertEquals(0, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "order_reviews", "order_id = " + ORDER_ID1));
+        Assert.assertEquals(0, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "order_reviews", "order_id = " + OrderConstants.ORDER_IDS_RESTAURANT_0[0]));
     }
 }
