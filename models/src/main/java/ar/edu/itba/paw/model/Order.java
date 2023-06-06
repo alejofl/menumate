@@ -119,6 +119,10 @@ public class Order {
         return dateDelivered;
     }
 
+    public void setOrderId(long orderId) {
+        this.orderId = orderId;
+    }
+
     public void setAddress(String address) {
         this.address = address;
     }
