@@ -1,3 +1,5 @@
+INSERT INTO images(image_id, bytes) VALUES(623, '0x1256');
+
 INSERT INTO users (user_id, email, password, name, is_active, preferred_language)
     VALUES (420, 'user1@localhost', 'password', 'user', true, 'en');
 
