@@ -5,8 +5,11 @@ import ar.edu.itba.paw.exception.RestaurantNotFoundException;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.util.AverageCountPair;
+import ar.edu.itba.paw.util.PaginatedResult;
 import ar.edu.itba.paw.webapp.form.CartItem;
 import ar.edu.itba.paw.webapp.form.CheckoutForm;
+import ar.edu.itba.paw.webapp.form.CreateRestaurantForm;
+import ar.edu.itba.paw.webapp.form.PagingForm;
 import ar.edu.itba.paw.webapp.form.validation.PreProcessingCheckoutFormValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -120,6 +123,22 @@ public class RestaurantsController {
         ModelAndView mav = new ModelAndView("menu/thankyou");
         mav.addObject("orderId", orderId);
         mav.addObject("userExists", userService.isUserEmailRegisteredAndConsolidated(email));
+        return mav;
+    }
+
+    @RequestMapping(value = "/restaurants/{id:\\d+}/reviews", method = RequestMethod.GET)
+    public ModelAndView restaurantReviews(
+            @Valid final PagingForm paging,
+            final BindingResult errors,
+            @PathVariable final int id
+    ) {
+        final ModelAndView mav = new ModelAndView("menu/restaurant_reviews");
+        if (errors.hasErrors()) {
+            mav.addObject("error", Boolean.TRUE);
+            paging.clear();
+        }
+        PaginatedResult<Review> reviews = reviewService.getByRestaurant(id, paging.getPageOrDefault(), paging.getSizeOrDefault(ControllerUtils.DEFAULT_RESTAURANT_PAGE_SIZE));
+        mav.addObject("reviews", reviews.getResult());
         return mav;
     }
 }

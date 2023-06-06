@@ -794,3 +794,14 @@ input:has(+ .form-error), textarea:has(+ .form-error) {
     color: #fff !important;
     background-color: var(--primary) !important;
 }
+
+.restaurant-reviews {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.restaurant-reviews .card {
+    min-width: 400px;
+}
