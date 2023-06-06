@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ProductConstants {
+public final class ProductConstants {
     public static final Long[] PRODUCT_FROM_CATEGORY_RESTAURANT_0 = {100L, 101L, 102L, 103L, 104L, 105L};
     public static final Long[] PRODUCT_FROM_CATEGORY_RESTAURANT_1 = {200L, 201L, 202L, 203L, 204L, 205L};
     public static final Long PRODUCT_DELETED_FROM_CATEGORY_RESTAURANT_0 = 300L;
@@ -32,4 +32,7 @@ public class ProductConstants {
     public static final Long[] PRODUCTS_FOR_ORDER_IDS = {100L, 101L, 102L};
     public static final String DEFAULT_ORDER_ITEM_COMMENT = "comment";
     public static final int DEFAULT_ORDER_ITEM_QUANTITY = 10;
+
+    private ProductConstants() {
+    }
 }

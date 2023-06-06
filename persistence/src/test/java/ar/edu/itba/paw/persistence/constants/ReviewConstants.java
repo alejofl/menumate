@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ReviewConstants {
+public final class ReviewConstants {
 
     public static final Long[] REVIEW_IDS_0 = OrderConstants.ORDER_IDS_RESTAURANT_0;
     public static final Long[] REVIEW_IDS_1 = OrderConstants.ORDER_IDS_RESTAURANT_1;
@@ -33,4 +33,7 @@ public class ReviewConstants {
                     .orElse(0.0))
             .boxed()
             .collect(Collectors.toList());
+
+    private ReviewConstants() {
+    }
 }

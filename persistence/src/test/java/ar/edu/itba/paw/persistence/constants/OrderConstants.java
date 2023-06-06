@@ -5,7 +5,7 @@ import ar.edu.itba.paw.model.OrderType;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public class OrderConstants {
+public final class OrderConstants {
     public static final Long[] ORDER_IDS_RESTAURANT_0 = {1700L, 1701L, 1702L, 1703L, 1704L, 1705L};
     public static final Long[] ORDER_IDS_RESTAURANT_1 = {2000L, 2001L, 2002L, 2003L, 2004L, 2005L};
     public static final Long[] ORDER_IDS_RESTAURANT_2 = {3000L, 3001L, 3002L, 3003L, 3004L, 3005L};
@@ -21,4 +21,7 @@ public class OrderConstants {
             LocalDateTime.now().minusDays(4),
             LocalDateTime.now().minusDays(5)
     };
+
+    private OrderConstants() {
+    }
 }

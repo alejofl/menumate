@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.persistence.constants;
 
-public class CategoryConstants {
+public final class CategoryConstants {
 
     public static final Long[] CATEGORY_IDS_FOR_RESTAURANT_0 = {901L, 50L, 25L};
     public static final Long[] CATEGORY_IDS_FOR_RESTAURANT_1 = {320L, 750L};
@@ -12,5 +12,8 @@ public class CategoryConstants {
     public static final Long DELETED_CATEGORY_ID = 25L;
     public static final String CATEGORY_NAME = "category";
     public static final String CATEGORY_DESCRIPTION = "description";
+
+    private CategoryConstants() {
+    }
 
 }

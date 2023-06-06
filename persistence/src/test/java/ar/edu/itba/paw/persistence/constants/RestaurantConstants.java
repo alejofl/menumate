@@ -6,9 +6,8 @@ import ar.edu.itba.paw.model.RestaurantTags;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
-public class RestaurantConstants {
+public final class RestaurantConstants {
 
     public static final Long[] RESTAURANT_IDS = {506L, 600L, 1200L};
     public static final String[] RESTAURANT_NAMES ={"C", "A", "B"};
@@ -26,4 +25,7 @@ public class RestaurantConstants {
             Arrays.asList(RestaurantTags.fromOrdinal(1), RestaurantTags.fromOrdinal(2)),
             Arrays.asList(RestaurantTags.fromOrdinal(1))
     );
+
+    private RestaurantConstants() {
+    }
 }

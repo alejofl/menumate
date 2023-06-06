@@ -2,7 +2,7 @@ package ar.edu.itba.paw.persistence.constants;
 
 import java.time.LocalDateTime;
 
-public class UserConstants {
+public final class UserConstants {
 
     public static final long ACTIVE_USER_ID = 420;
     public static final long INACTIVE_USER_ID = 1337;
@@ -25,4 +25,6 @@ public class UserConstants {
     public static final String ACTIVE_VERIFICATION_TOKEN = "8ac27001-d605-4190-abcd-1a80478c";
     public static final LocalDateTime TOKEN_EXPIRATION = LocalDateTime.now().plusDays(1);
 
+    private UserConstants() {
+    }
 }
