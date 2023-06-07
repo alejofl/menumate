@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.util;
 
-public class Utils {
+public final class Utils {
     private static final int MAX_PAGINATION_PAGE_SIZE = 100;
 
     private Utils() {

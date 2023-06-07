@@ -31,9 +31,6 @@ public class Promotion {
     @Column(name = "end_date")
     private LocalDateTime endDate;
 
-    @Formula("ROUND(destination.price * 100 / source.price, 0)")
-    private int discountPercentage;
-
     Promotion() {
 
     }
@@ -74,7 +71,7 @@ public class Promotion {
     }
 
     public int getDiscountPercentage() {
-        return discountPercentage;
+        return destination.getPrice().multiply(BigDecimal.valueOf(100)).divide(source.getPrice(), 0, RoundingMode.FLOOR).intValue();
     }
 
     public boolean isActive() {

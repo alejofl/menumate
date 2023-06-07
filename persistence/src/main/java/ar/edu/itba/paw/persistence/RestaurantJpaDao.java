@@ -177,7 +177,7 @@ public class RestaurantJpaDao implements RestaurantDao {
     @Override
     public List<Promotion> getActivePromotions(long restaurantId) {
         TypedQuery<Promotion> query = em.createQuery(
-                "FROM Promotion WHERE destination.deleted = false AND destination.available = true AND destination.categoryId IN (SELECT categoryId FROM Category WHERE restaurantId = :restaurantId) ORDER BY discountPercentage DESC",
+                "FROM Promotion WHERE destination.deleted = false AND destination.available = true AND destination.categoryId IN (SELECT categoryId FROM Category WHERE restaurantId = :restaurantId) ORDER BY (destination.price / source.price) DESC",
                 Promotion.class
         );
         query.setParameter("restaurantId", restaurantId);
