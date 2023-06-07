@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RunWith(MockitoJUnitRunner.class)
-public class OrderServiceTest {
+public class OrderServiceImplTest {
 
     @Mock
     private OrderDao orderDao;
@@ -28,10 +28,8 @@ public class OrderServiceTest {
     private OrderServiceImpl orderServiceImpl = new OrderServiceImpl();
 
     private static final long DEFAULT_ORDER_ID = 1L;
-
     private static final LocalDateTime DEFAULT_DATE_TIME = LocalDateTime.now();
     private static final String DEFAULT_ADDRESS = "address";
-    private static final String DEFAULT_ALIAS_ADDRESS = "aliasAddress";
     private static final int DEFAULT_TABLE_NUMBER = 10;
 
     @Before
@@ -173,7 +171,7 @@ public class OrderServiceTest {
 
     @Test
     public void testSetOrderStatusPending() {
-        Order order = Mockito.spy(Order.class);
+        final Order order = Mockito.spy(Order.class);
         order.setDateConfirmed(DEFAULT_DATE_TIME);
         order.setDateReady(DEFAULT_DATE_TIME);
         order.setDateDelivered(DEFAULT_DATE_TIME);
@@ -190,7 +188,7 @@ public class OrderServiceTest {
 
     @Test
     public void testSetOrderStatusConfirmed() {
-        Order order = Mockito.spy(Order.class);
+        final Order order = Mockito.spy(Order.class);
         order.setDateConfirmed(DEFAULT_DATE_TIME);
         order.setDateReady(DEFAULT_DATE_TIME);
         order.setDateDelivered(DEFAULT_DATE_TIME);
@@ -207,7 +205,7 @@ public class OrderServiceTest {
 
     @Test
     public void testSetOrderStatusReady() {
-        Order order = Mockito.spy(Order.class);
+        final Order order = Mockito.spy(Order.class);
         order.setDateConfirmed(DEFAULT_DATE_TIME);
         order.setDateReady(DEFAULT_DATE_TIME);
         order.setDateDelivered(DEFAULT_DATE_TIME);
@@ -224,7 +222,7 @@ public class OrderServiceTest {
 
     @Test
     public void testSetOrderStatusDelivered() {
-        Order order = Mockito.spy(Order.class);
+        final Order order = Mockito.spy(Order.class);
         order.setDateConfirmed(DEFAULT_DATE_TIME);
         order.setDateReady(DEFAULT_DATE_TIME);
         order.setDateDelivered(DEFAULT_DATE_TIME);
@@ -241,7 +239,7 @@ public class OrderServiceTest {
 
     @Test
     public void testSetOrderStatusCancelled() {
-        Order order = Mockito.spy(Order.class);
+        final Order order = Mockito.spy(Order.class);
         order.setDateConfirmed(DEFAULT_DATE_TIME);
         order.setDateReady(DEFAULT_DATE_TIME);
         order.setDateDelivered(DEFAULT_DATE_TIME);
@@ -258,7 +256,7 @@ public class OrderServiceTest {
 
     @Test
     public void testSetOrderStatusRejected() {
-        Order order = Mockito.spy(Order.class);
+        final Order order = Mockito.spy(Order.class);
         order.setDateCancelled(DEFAULT_DATE_TIME);
         order.setDateConfirmed(DEFAULT_DATE_TIME);
         order.setDateReady(DEFAULT_DATE_TIME);
@@ -282,7 +280,7 @@ public class OrderServiceTest {
 
     @Test
     public void testUpdateAddressValidAddress() {
-        Order order = Mockito.spy(Order.class);
+        final Order order = Mockito.spy(Order.class);
         order.setOrderType(OrderType.DELIVERY);
         order.setDateOrdered(DEFAULT_DATE_TIME);
 
@@ -295,8 +293,8 @@ public class OrderServiceTest {
 
     @Test(expected = IllegalStateException.class)
     public void testUpdateAddressTakeAway() {
-        Order order = Mockito.spy(Order.class);
-        order.setOrderType(OrderType.TAKEAWAY);
+        final Order order = Mockito.mock(Order.class);
+        Mockito.when(order.getOrderType()).thenReturn(OrderType.TAKEAWAY);
 
         Mockito.when(orderDao.getById(DEFAULT_ORDER_ID)).thenReturn(Optional.of(order));
 
@@ -305,8 +303,8 @@ public class OrderServiceTest {
 
     @Test(expected = IllegalStateException.class)
     public void testUpdateAddressDineIn() {
-        Order order = Mockito.spy(Order.class);
-        order.setOrderType(OrderType.DINE_IN);
+        final Order order = Mockito.mock(Order.class);
+        Mockito.when(order.getOrderType()).thenReturn(OrderType.DINE_IN);
 
         Mockito.when(orderDao.getById(DEFAULT_ORDER_ID)).thenReturn(Optional.of(order));
 
@@ -315,7 +313,7 @@ public class OrderServiceTest {
 
     @Test(expected = IllegalStateException.class)
     public void testUpdateAddressClosedOrder() {
-        Order order = Mockito.spy(Order.class);
+        final Order order = Mockito.spy(Order.class);
         order.setOrderType(OrderType.DELIVERY);
         order.setDateConfirmed(DEFAULT_DATE_TIME);
         order.setDateReady(DEFAULT_DATE_TIME);
@@ -328,7 +326,7 @@ public class OrderServiceTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testUpdateAddressNullAddress() {
-        Order order = Mockito.spy(Order.class);
+        final Order order = Mockito.spy(Order.class);
         order.setOrderType(OrderType.DELIVERY);
 
         Mockito.when(orderDao.getById(DEFAULT_ORDER_ID)).thenReturn(Optional.of(order));
@@ -338,7 +336,7 @@ public class OrderServiceTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testUpdateAddressBlankAddress() {
-        Order order = Mockito.spy(Order.class);
+        final Order order = Mockito.spy(Order.class);
         order.setOrderType(OrderType.DELIVERY);
 
         Mockito.when(orderDao.getById(DEFAULT_ORDER_ID)).thenReturn(Optional.of(order));
@@ -348,7 +346,7 @@ public class OrderServiceTest {
 
     @Test
     public void testUpdateTableNumberValidTableNumber() {
-        Order order = Mockito.spy(Order.class);
+        final Order order = Mockito.spy(Order.class);
         order.setOrderType(OrderType.DINE_IN);
         order.setDateOrdered(DEFAULT_DATE_TIME);
         Mockito.when(orderDao.getById(DEFAULT_ORDER_ID)).thenReturn(Optional.of(order));
@@ -360,7 +358,7 @@ public class OrderServiceTest {
 
     @Test(expected = IllegalStateException.class)
     public void testUpdateTableNumberDeliveryOrder() {
-        Order order = Mockito.spy(Order.class);
+        final Order order = Mockito.spy(Order.class);
         order.setOrderType(OrderType.DELIVERY);
         order.setDateOrdered(DEFAULT_DATE_TIME);
 
@@ -371,7 +369,7 @@ public class OrderServiceTest {
 
     @Test(expected = IllegalStateException.class)
     public void testUpdateTableNumberTakeawayOrder() {
-        Order order = Mockito.spy(Order.class);
+        final Order order = Mockito.spy(Order.class);
         order.setOrderType(OrderType.TAKEAWAY);
         order.setDateOrdered(DEFAULT_DATE_TIME);
 
@@ -382,7 +380,7 @@ public class OrderServiceTest {
 
     @Test(expected = IllegalStateException.class)
     public void testUpdateTableNumberClosedOrder() {
-        Order order = Mockito.spy(Order.class);
+        final Order order = Mockito.spy(Order.class);
         order.setOrderType(OrderType.DINE_IN);
         order.setDateOrdered(DEFAULT_DATE_TIME);
         order.setDateConfirmed(DEFAULT_DATE_TIME);

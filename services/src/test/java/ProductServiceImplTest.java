@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ProductServiceTest {
+public class ProductServiceImplTest {
 
     @Mock
     private ProductDao productDao;
@@ -44,9 +44,9 @@ public class ProductServiceTest {
 
     @Test(expected = IllegalStateException.class)
     public void testUpdateDeletedProduct() {
-        Product product = Mockito.spy(Product.class);
-        product.setDeleted(true);
-        product.setProductId(DEFAULT_PRODUCT_ID);
+        final Product product = Mockito.mock(Product.class);
+        Mockito.when(product.getDeleted()).thenReturn(true);
+        Mockito.when(product.getProductId()).thenReturn(DEFAULT_PRODUCT_ID);
 
         Mockito.when(productDao.getById(DEFAULT_PRODUCT_ID)).thenReturn(Optional.of(product));
 
@@ -55,7 +55,7 @@ public class ProductServiceTest {
 
     @Test
     public void testUpdateProductWithSamePrice() {
-        Product product = Mockito.mock(Product.class);
+        final Product product = Mockito.mock(Product.class);
         Mockito.when(product.getPrice()).thenReturn(DEFAULT_PRODUCT_PRICE);
         Mockito.when(product.getDeleted()).thenReturn(false);
 
@@ -68,21 +68,20 @@ public class ProductServiceTest {
 
     @Test
     public void testUpdateProductWithDifferentPrice() {
-        Product existingProduct = Mockito.spy(Product.class);
+        final Product existingProduct = Mockito.spy(Product.class);
         existingProduct.setProductId(DEFAULT_PRODUCT_ID);
         existingProduct.setPrice(DEFAULT_PRODUCT_PRICE);
         existingProduct.setDeleted(false);
 
         Mockito.when(productDao.getById(DEFAULT_PRODUCT_ID)).thenReturn(Optional.of(existingProduct));
 
-        Product newProduct = Mockito.spy(Product.class);
-        newProduct.setProductId(DEFAULT_PRODUCT_ID);
-        newProduct.setPrice(NEW_PRODUCT_PRICE);
-        newProduct.setDeleted(false);
+        final Product newProduct = Mockito.mock(Product.class);
+        Mockito.when(newProduct.getPrice()).thenReturn(NEW_PRODUCT_PRICE);
+        Mockito.when(newProduct.getPrice()).thenReturn(NEW_PRODUCT_PRICE);
 
         Mockito.when(productDao.create(existingProduct.getCategoryId(), DEFAULT_PRODUCT_NAME, DEFAULT_PRODUCT_DESCRIPTION, existingProduct.getImageId(), NEW_PRODUCT_PRICE)).thenReturn(newProduct);
 
-        Product result = productService.update(DEFAULT_PRODUCT_ID, DEFAULT_PRODUCT_NAME, NEW_PRODUCT_PRICE, DEFAULT_PRODUCT_DESCRIPTION);
+        final Product result = productService.update(DEFAULT_PRODUCT_ID, DEFAULT_PRODUCT_NAME, NEW_PRODUCT_PRICE, DEFAULT_PRODUCT_DESCRIPTION);
 
         Assert.assertTrue(existingProduct.getDeleted());
         Assert.assertEquals(NEW_PRODUCT_PRICE, newProduct.getPrice());
@@ -91,17 +90,16 @@ public class ProductServiceTest {
 
     @Test
     public void testCreatePromotion() {
-        Product sourceProduct = Mockito.spy(Product.class);
-        sourceProduct.setProductId(DEFAULT_PRODUCT_ID);
-        sourceProduct.setDeleted(false);
-        sourceProduct.setAvailable(true);
+        final Product sourceProduct = Mockito.mock(Product.class);
+        Mockito.when(sourceProduct.getDeleted()).thenReturn(false);
+        Mockito.when(sourceProduct.getAvailable()).thenReturn(true);
 
         Mockito.when(productDao.getById(DEFAULT_PRODUCT_ID)).thenReturn(Optional.of(sourceProduct));
 
-        Promotion expectedPromotion = Mockito.spy(Promotion.class);
+        final Promotion expectedPromotion = Mockito.mock(Promotion.class);
         Mockito.when(productDao.createPromotion(sourceProduct, DEFAULT_PROMOTION_START_DATE, DEFAULT_PROMOTION_END_DATE, DEFAULT_PROMOTION_DISCOUNT)).thenReturn(expectedPromotion);
 
-        Promotion result = productService.createPromotion(DEFAULT_PRODUCT_ID, DEFAULT_PROMOTION_START_DATE, DEFAULT_PROMOTION_END_DATE, DEFAULT_PROMOTION_DISCOUNT);
+        final Promotion result = productService.createPromotion(DEFAULT_PRODUCT_ID, DEFAULT_PROMOTION_START_DATE, DEFAULT_PROMOTION_END_DATE, DEFAULT_PROMOTION_DISCOUNT);
 
         Mockito.verify(productDao).createPromotion(sourceProduct, DEFAULT_PROMOTION_START_DATE, DEFAULT_PROMOTION_END_DATE, DEFAULT_PROMOTION_DISCOUNT);
         Assert.assertEquals(expectedPromotion, result);
@@ -120,9 +118,8 @@ public class ProductServiceTest {
 
     @Test(expected = IllegalStateException.class)
     public void testCreatePromotionWithDeletedProduct() {
-        Product sourceProduct = Mockito.spy(Product.class);
-        sourceProduct.setProductId(DEFAULT_PRODUCT_ID);
-        sourceProduct.setDeleted(true);
+        final Product sourceProduct = Mockito.mock(Product.class);
+        Mockito.when(sourceProduct.getDeleted()).thenReturn(true);
 
         Mockito.when(productDao.getById(DEFAULT_PRODUCT_ID)).thenReturn(Optional.of(sourceProduct));
 
@@ -131,10 +128,9 @@ public class ProductServiceTest {
 
     @Test(expected = IllegalStateException.class)
     public void testCreatePromotionWithUnavailableProduct() {
-        Product sourceProduct = Mockito.spy(Product.class);
-        sourceProduct.setProductId(DEFAULT_PRODUCT_ID);
-        sourceProduct.setDeleted(false);
-        sourceProduct.setAvailable(false);
+        final Product sourceProduct = Mockito.mock(Product.class);
+        Mockito.when(sourceProduct.getDeleted()).thenReturn(false);
+        Mockito.when(sourceProduct.getAvailable()).thenReturn(false);
 
         Mockito.when(productDao.getById(DEFAULT_PRODUCT_ID)).thenReturn(Optional.of(sourceProduct));
 
@@ -143,10 +139,9 @@ public class ProductServiceTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testCreatePromotionWithEndDateInThePast() {
-        Product sourceProduct = Mockito.spy(Product.class);
-        sourceProduct.setProductId(DEFAULT_PRODUCT_ID);
-        sourceProduct.setDeleted(false);
-        sourceProduct.setAvailable(true);
+        final Product sourceProduct = Mockito.mock(Product.class);
+        Mockito.when(sourceProduct.getDeleted()).thenReturn(false);
+        Mockito.when(sourceProduct.getAvailable()).thenReturn(true);
 
         Mockito.when(productDao.getById(DEFAULT_PRODUCT_ID)).thenReturn(Optional.of(sourceProduct));
 
@@ -155,10 +150,9 @@ public class ProductServiceTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testCreatePromotionWithEndDateEqualToStartDate() {
-        Product sourceProduct = Mockito.spy(Product.class);
-        sourceProduct.setProductId(DEFAULT_PRODUCT_ID);
-        sourceProduct.setDeleted(false);
-        sourceProduct.setAvailable(true);
+        final Product sourceProduct = Mockito.mock(Product.class);
+        Mockito.when(sourceProduct.getDeleted()).thenReturn(false);
+        Mockito.when(sourceProduct.getAvailable()).thenReturn(true);
 
         Mockito.when(productDao.getById(DEFAULT_PRODUCT_ID)).thenReturn(Optional.of(sourceProduct));
 

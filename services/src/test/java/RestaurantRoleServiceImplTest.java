@@ -21,7 +21,7 @@ import javax.mail.MessagingException;
 import java.util.Optional;
 
 @RunWith(MockitoJUnitRunner.class)
-public class RestaurantRoleServiceTest {
+public class RestaurantRoleServiceImplTest {
 
     @Mock
     private RestaurantRoleDao restaurantRoleDao;
@@ -47,11 +47,11 @@ public class RestaurantRoleServiceTest {
 
     @Test
     public void testGetRoleExistingRole() {
-        RestaurantRole restaurantRole = Mockito.mock(RestaurantRole.class);
+        final RestaurantRole restaurantRole = Mockito.mock(RestaurantRole.class);
         Mockito.when(restaurantRole.getLevel()).thenReturn(ORDER_HANDLER_ROLE);
         Mockito.when(restaurantRoleDao.getRole(DEFAULT_USER_ID, DEFAULT_RESTAURANT_ID)).thenReturn(Optional.of(restaurantRole));
 
-        Optional<RestaurantRoleLevel> actualRoleLevel = restaurantRoleServiceImpl.getRole(DEFAULT_USER_ID, DEFAULT_RESTAURANT_ID);
+        final Optional<RestaurantRoleLevel> actualRoleLevel = restaurantRoleServiceImpl.getRole(DEFAULT_USER_ID, DEFAULT_RESTAURANT_ID);
 
         Assert.assertTrue(actualRoleLevel.isPresent());
         Assert.assertEquals(ORDER_HANDLER_ROLE, actualRoleLevel.get());
@@ -59,12 +59,12 @@ public class RestaurantRoleServiceTest {
 
     @Test
     public void testGetRoleOwnerRole() {
-        Restaurant restaurant = Mockito.mock(Restaurant.class);
+        final Restaurant restaurant = Mockito.mock(Restaurant.class);
         Mockito.when(restaurantDao.getById(DEFAULT_RESTAURANT_ID)).thenReturn(Optional.of(restaurant));
         Mockito.when(restaurantRoleDao.getRole(DEFAULT_USER_ID, DEFAULT_RESTAURANT_ID)).thenReturn(Optional.empty());
         Mockito.when(restaurant.getOwnerUserId()).thenReturn(DEFAULT_USER_ID);
 
-        Optional<RestaurantRoleLevel> actualRoleLevel = restaurantRoleServiceImpl.getRole(DEFAULT_USER_ID, DEFAULT_RESTAURANT_ID);
+        final Optional<RestaurantRoleLevel> actualRoleLevel = restaurantRoleServiceImpl.getRole(DEFAULT_USER_ID, DEFAULT_RESTAURANT_ID);
 
         Assert.assertTrue(actualRoleLevel.isPresent());
         Assert.assertEquals(RestaurantRoleLevel.OWNER, actualRoleLevel.get());
@@ -80,19 +80,19 @@ public class RestaurantRoleServiceTest {
 
     @Test
     public void testGetRoleNoRole() {
-        Restaurant restaurant = Mockito.mock(Restaurant.class);
+        final Restaurant restaurant = Mockito.mock(Restaurant.class);
         Mockito.when(restaurantDao.getById(DEFAULT_RESTAURANT_ID)).thenReturn(Optional.of(restaurant));
         Mockito.when(restaurantRoleDao.getRole(DEFAULT_USER_ID, DEFAULT_RESTAURANT_ID)).thenReturn(Optional.empty());
         Mockito.when(restaurant.getOwnerUserId()).thenReturn(OTHER_USER_ID);
 
-        Optional<RestaurantRoleLevel> actualRoleLevel = restaurantRoleServiceImpl.getRole(DEFAULT_USER_ID, DEFAULT_RESTAURANT_ID);
+        final Optional<RestaurantRoleLevel> actualRoleLevel = restaurantRoleServiceImpl.getRole(DEFAULT_USER_ID, DEFAULT_RESTAURANT_ID);
         Assert.assertFalse(actualRoleLevel.isPresent());
     }
 
     @Test
     public void createUserAndSetsRole() throws MessagingException {
-        User user = Mockito.mock(User.class);
-        Restaurant restaurant = Mockito.mock(Restaurant.class);
+        final User user = Mockito.mock(User.class);
+        final Restaurant restaurant = Mockito.mock(Restaurant.class);
 
         Mockito.when(userDao.getByEmail(DEFAULT_USER_EMAIL)).thenReturn(Optional.empty());
         Mockito.when(userDao.create(Mockito.eq(DEFAULT_USER_EMAIL), Mockito.eq(null), Mockito.anyString(), Mockito.anyString())).thenReturn(user);
@@ -107,7 +107,7 @@ public class RestaurantRoleServiceTest {
 
     @Test
     public void deleteRoleOfExistingUser() {
-        User existingUser = Mockito.mock(User.class);
+        final User existingUser = Mockito.mock(User.class);
         Mockito.when(userDao.getByEmail(DEFAULT_USER_EMAIL)).thenReturn(Optional.of(existingUser));
 
         restaurantRoleServiceImpl.setRole(DEFAULT_USER_EMAIL, DEFAULT_RESTAURANT_ID, null);
@@ -117,9 +117,9 @@ public class RestaurantRoleServiceTest {
 
     @Test
     public void updateRoleOfExistingUser() {
-        User existingUser = Mockito.mock(User.class);
+        final User existingUser = Mockito.mock(User.class);
 
-        RestaurantRole existingRole = Mockito.spy(RestaurantRole.class);
+        final RestaurantRole existingRole = Mockito.spy(RestaurantRole.class);
         existingRole.setLevel(ORDER_HANDLER_ROLE);
 
         Mockito.when(userDao.getByEmail(DEFAULT_USER_EMAIL)).thenReturn(Optional.of(existingUser));
@@ -148,7 +148,7 @@ public class RestaurantRoleServiceTest {
 
     @Test
     public void testUserHasOwnerRole() {
-        Restaurant restaurant = Mockito.mock(Restaurant.class);
+        final Restaurant restaurant = Mockito.mock(Restaurant.class);
         Mockito.when(restaurant.getOwnerUserId()).thenReturn(DEFAULT_USER_ID);
         Mockito.when(restaurantDao.getById(DEFAULT_RESTAURANT_ID)).thenReturn(Optional.of(restaurant));
 
@@ -157,7 +157,7 @@ public class RestaurantRoleServiceTest {
 
     @Test
     public void testUserHasSufficientRoleLevel() {
-        RestaurantRole role = Mockito.mock(RestaurantRole.class);
+        final RestaurantRole role = Mockito.mock(RestaurantRole.class);
         Mockito.when(role.getLevel()).thenReturn(ORDER_HANDLER_ROLE);
 
         Mockito.when(restaurantRoleDao.getRole(DEFAULT_USER_ID, DEFAULT_RESTAURANT_ID)).thenReturn(Optional.of(role));
@@ -167,7 +167,7 @@ public class RestaurantRoleServiceTest {
 
     @Test
     public void testUserDoesNotHaveSufficientRoleLevel() {
-        RestaurantRole role = Mockito.mock(RestaurantRole.class);
+        final RestaurantRole role = Mockito.mock(RestaurantRole.class);
         Mockito.when(role.getLevel()).thenReturn(ORDER_HANDLER_ROLE);
 
         Mockito.when(restaurantRoleDao.getRole(DEFAULT_USER_ID, DEFAULT_RESTAURANT_ID)).thenReturn(Optional.of(role));
@@ -177,7 +177,7 @@ public class RestaurantRoleServiceTest {
 
     @Test
     public void testUserRoleLevelNotAvailable() {
-        Restaurant restaurant = Mockito.mock(Restaurant.class);
+        final Restaurant restaurant = Mockito.mock(Restaurant.class);
 
         Mockito.when(restaurantDao.getById(DEFAULT_RESTAURANT_ID)).thenReturn(Optional.of(restaurant));
         Mockito.when(restaurantRoleDao.getRole(DEFAULT_USER_ID, DEFAULT_RESTAURANT_ID)).thenReturn(Optional.empty());

@@ -14,7 +14,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.Optional;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CategoryServiceTest {
+public class CategoryServiceImplTest {
 
     @Mock
     private CategoryDao categoryDao;
@@ -33,11 +33,11 @@ public class CategoryServiceTest {
 
     @Test
     public void testUpdateNameExistingCategory() {
-        Category existingCategory = Mockito.spy(Category.class);
+        final Category existingCategory = Mockito.spy(Category.class);
         existingCategory.setName(ORIGINAL_CATEGORY_NAME);
         Mockito.when(categoryDao.getById(CATEGORY_ID)).thenReturn(Optional.of(existingCategory));
 
-        Category result = categoryServiceImpl.updateName(CATEGORY_ID, NEW_CATEGORY_NAME);
+        final Category result = categoryServiceImpl.updateName(CATEGORY_ID, NEW_CATEGORY_NAME);
 
         Assert.assertEquals(NEW_CATEGORY_NAME, result.getName());
     }

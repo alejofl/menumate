@@ -14,7 +14,7 @@ import org.mockito.Mockito;
 import java.util.Optional;
 
 @RunWith(MockitoJUnitRunner.class)
-public class RestaurantServiceTest {
+public class RestaurantServiceImplTest {
 
     @Mock
     private RestaurantDao restaurantDao;
@@ -34,7 +34,7 @@ public class RestaurantServiceTest {
 
     @Test
     public void testUpdateRestaurant() {
-        Restaurant existingRestaurant = Mockito.spy(Restaurant.class);
+        final Restaurant existingRestaurant = Mockito.spy(Restaurant.class);
         existingRestaurant.setRestaurantId(DEFAULT_RESTAURANT_ID);
         existingRestaurant.setName(DEFAULT_RESTAURANT_NAME);
         existingRestaurant.setSpecialty(DEFAULT_RESTAURANT_SPECIALTY);
@@ -44,7 +44,7 @@ public class RestaurantServiceTest {
 
         Mockito.when(restaurantDao.getById(DEFAULT_RESTAURANT_ID)).thenReturn(Optional.of(existingRestaurant));
 
-        Restaurant updatedRestaurant = restaurantService.update(DEFAULT_RESTAURANT_ID, NEW_RESTAURANT_NAME, NEW_RESTAURANT_SPECIALTY, NEW_RESTAURANT_ADDRESS, NEW_RESTAURANT_DESCRIPTION);
+        final Restaurant updatedRestaurant = restaurantService.update(DEFAULT_RESTAURANT_ID, NEW_RESTAURANT_NAME, NEW_RESTAURANT_SPECIALTY, NEW_RESTAURANT_ADDRESS, NEW_RESTAURANT_DESCRIPTION);
 
         Assert.assertEquals(DEFAULT_RESTAURANT_ID, updatedRestaurant.getRestaurantId().intValue());
         Assert.assertEquals(NEW_RESTAURANT_NAME, updatedRestaurant.getName());
@@ -61,7 +61,7 @@ public class RestaurantServiceTest {
 
     @Test(expected = IllegalStateException.class)
     public void testUpdateDeletedRestaurant() {
-        Restaurant deletedRestaurant = Mockito.spy(Restaurant.class);
+        final Restaurant deletedRestaurant = Mockito.spy(Restaurant.class);
         deletedRestaurant.setDeleted(true);
         Mockito.when(restaurantDao.getById(DEFAULT_RESTAURANT_ID)).thenReturn(Optional.of(deletedRestaurant));
         restaurantService.update(DEFAULT_RESTAURANT_ID, NEW_RESTAURANT_NAME, NEW_RESTAURANT_SPECIALTY, NEW_RESTAURANT_ADDRESS, NEW_RESTAURANT_DESCRIPTION);
@@ -69,7 +69,7 @@ public class RestaurantServiceTest {
 
     @Test
     public void testUpdateRestaurantWithNullValues() {
-        Restaurant existingRestaurant = Mockito.spy(Restaurant.class);
+        final Restaurant existingRestaurant = Mockito.spy(Restaurant.class);
         existingRestaurant.setRestaurantId(DEFAULT_RESTAURANT_ID);
         existingRestaurant.setName(DEFAULT_RESTAURANT_NAME);
         existingRestaurant.setSpecialty(DEFAULT_RESTAURANT_SPECIALTY);
@@ -79,7 +79,7 @@ public class RestaurantServiceTest {
 
         Mockito.when(restaurantDao.getById(DEFAULT_RESTAURANT_ID)).thenReturn(Optional.of(existingRestaurant));
 
-        Restaurant updatedRestaurant = restaurantService.update(DEFAULT_RESTAURANT_ID, null, null, null, null);
+        final Restaurant updatedRestaurant = restaurantService.update(DEFAULT_RESTAURANT_ID, null, null, null, null);
 
         Assert.assertEquals(DEFAULT_RESTAURANT_ID, updatedRestaurant.getRestaurantId().longValue());
         Assert.assertNull(updatedRestaurant.getName());

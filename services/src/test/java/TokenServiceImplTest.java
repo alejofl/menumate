@@ -24,7 +24,7 @@ import java.util.Optional;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class TokenServiceTest {
+public class TokenServiceImplTest {
 
     @Mock
     private UserVerificationTokenDao verificationTokenDao;
