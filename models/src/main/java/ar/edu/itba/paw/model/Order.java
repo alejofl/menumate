@@ -130,6 +130,13 @@ public class Order {
     public void setTableNumber(int tableNumber) {
         this.tableNumber = tableNumber;
     }
+    public void setDateOrdered(LocalDateTime dateOrdered) {
+        this.dateOrdered = dateOrdered;
+    }
+
+    public void setOrderType(OrderType orderType) {
+        this.orderType = orderType;
+    }
 
     public void setDateConfirmed(LocalDateTime dateConfirmed) {
         this.dateConfirmed = dateConfirmed;
