@@ -125,7 +125,7 @@ public class OrderJpaDaoTest {
 
     @Test
     public void testFindActiveOrdersByUserId() throws SQLException {
-        List<Order> orders = orderDao.getByUser(UserConstants.ACTIVE_USER_ID, 1, OrderConstants.TOTAL_ORDER_COUNT * 2).getResult();
+        List<Order> orders = orderDao.getByUser(UserConstants.ACTIVE_USER_ID, 1, OrderConstants.TOTAL_ORDER_COUNT * 2, true).getResult();
 
         Assert.assertNotNull(orders);
         Assert.assertEquals(OrderConstants.TOTAL_ORDER_COUNT, orders.size());
@@ -137,7 +137,7 @@ public class OrderJpaDaoTest {
 
     @Test
     public void testFindEmptyOrdersByUserId() throws SQLException {
-        List<Order> orders = orderDao.getByUser(UserConstants.RESTAURANT_OWNER_ID, 1, OrderConstants.TOTAL_ORDER_COUNT * 2).getResult();
+        List<Order> orders = orderDao.getByUser(UserConstants.RESTAURANT_OWNER_ID, 1, OrderConstants.TOTAL_ORDER_COUNT * 2, true).getResult();
 
         Assert.assertNotNull(orders);
         Assert.assertEquals(0, orders.size());
@@ -146,7 +146,7 @@ public class OrderJpaDaoTest {
     @Test
     public void testFindActiveOrdersByRestaurantIdPagedWithNoOrderStatus() throws SQLException {
         final int totalOrders = OrderConstants.ORDER_IDS_RESTAURANT_0.length;
-        PaginatedResult<Order> page = orderDao.getByRestaurant(RestaurantConstants.RESTAURANT_IDS[0], 1, totalOrders, null);
+        PaginatedResult<Order> page = orderDao.getByRestaurant(RestaurantConstants.RESTAURANT_IDS[0], 1, totalOrders, null, true);
 
         Assert.assertEquals(totalOrders, page.getTotalCount());
         Assert.assertEquals(totalOrders, page.getResult().size());
@@ -170,7 +170,7 @@ public class OrderJpaDaoTest {
             order.setDateConfirmed(LocalDateTime.now());
         }
 
-        PaginatedResult<Order> page = orderDao.getByRestaurant(RestaurantConstants.RESTAURANT_IDS[1], 1, totalOrders, OrderStatus.CONFIRMED);
+        PaginatedResult<Order> page = orderDao.getByRestaurant(RestaurantConstants.RESTAURANT_IDS[1], 1, totalOrders, OrderStatus.CONFIRMED, true);
 
         Assert.assertEquals(totalOrders, page.getTotalCount());
         Assert.assertEquals(totalOrders, page.getResult().size());

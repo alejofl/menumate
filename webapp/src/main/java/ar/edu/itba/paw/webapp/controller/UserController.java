@@ -60,7 +60,7 @@ public class UserController {
         return new ModelAndView("redirect:/user/orders/inprogress");
     }
 
-    @RequestMapping(value = "/user/orders/{status}", method = RequestMethod.GET)
+    @RequestMapping(value = "/user/orders/{status:all|inprogress}", method = RequestMethod.GET)
     public ModelAndView myOrdersByStatus(
             @Valid final PagingForm paging,
             final BindingResult errors,
@@ -73,24 +73,11 @@ public class UserController {
             paging.clear();
         }
 
-        PaginatedResult<Order> orders;
-        // FIXME
-        switch (status) {
-            case "inprogress":
-                orders = orderService.getByUser(ControllerUtils.getCurrentUserIdOrThrow(), paging.getPageOrDefault(), paging.getSizeOrDefault(ControllerUtils.DEFAULT_ORDERS_PAGE_SIZE));
-                break;
-            case "all":
-                orders = orderService.getByUser(ControllerUtils.getCurrentUserIdOrThrow(), paging.getPageOrDefault(), paging.getSizeOrDefault(ControllerUtils.DEFAULT_ORDERS_PAGE_SIZE));
-                break;
-            default:
-                throw new ResourceNotFoundException();
-        }
-
+        PaginatedResult<Order> orders = orderService.getByUser(ControllerUtils.getCurrentUserIdOrThrow(), paging.getPageOrDefault(), paging.getSizeOrDefault(ControllerUtils.DEFAULT_ORDERS_PAGE_SIZE), true);
         mav.addObject("orders", orders.getResult());
         mav.addObject("orderCount", orders.getTotalCount());
         mav.addObject("pageCount", orders.getTotalPageCount());
         mav.addObject("status", status);
-
         return mav;
     }
 

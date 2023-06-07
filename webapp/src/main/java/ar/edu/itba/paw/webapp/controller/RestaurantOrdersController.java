@@ -39,7 +39,7 @@ public class RestaurantOrdersController {
             return mav;
         }
 
-        PaginatedResult<Order> orders = orderService.getByRestaurant(id, paging.getPageOrDefault(), paging.getSizeOrDefault(ControllerUtils.DEFAULT_ORDERS_PAGE_SIZE), orderStatus);
+        PaginatedResult<Order> orders = orderService.getByRestaurant(id, paging.getPageOrDefault(), paging.getSizeOrDefault(ControllerUtils.DEFAULT_ORDERS_PAGE_SIZE), orderStatus, true);
 
         ModelAndView mav = new ModelAndView("menu/restaurant_orders");
 
