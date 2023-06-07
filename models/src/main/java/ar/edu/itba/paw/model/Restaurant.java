@@ -85,6 +85,10 @@ public class Restaurant {
         this.deleted = false;
     }
 
+    public void setRestaurantId(Long restaurantId) {
+        this.restaurantId = restaurantId;
+    }
+
     public Long getRestaurantId() {
         return restaurantId;
     }
