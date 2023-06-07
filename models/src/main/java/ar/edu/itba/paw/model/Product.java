@@ -50,6 +50,9 @@ public class Product {
     public Long getProductId() {
         return productId;
     }
+    public void setProductId(Long productId) {
+        this.productId = productId;
+    }
 
     public long getCategoryId() {
         return categoryId;
@@ -77,6 +80,10 @@ public class Product {
 
     public void setImageId(Long imageId) {
         this.imageId = imageId;
+    }
+
+    public void setPrice(BigDecimal price){
+        this.price = price;
     }
 
     public BigDecimal getPrice() {
