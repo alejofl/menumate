@@ -125,4 +125,25 @@ public class CategoryJpaDao implements CategoryDao {
 
         LOGGER.info("Updated order of categories ids {} and {} to {} and {} respectively", category1.getCategoryId(), category2.getCategoryId(), category1.getOrderNum(), category2.getOrderNum());
     }
+
+    @Override
+    public void moveProduct(long productId, long newCategoryId) {
+        // Update the categoryId of the product with said productId, but also of all active products created from
+        // promotions from this productId.
+        Query query = em.createQuery(
+                "UPDATE Product p SET p.categoryId = :newCategoryId WHERE deleted = false" +
+                        " AND EXISTS(FROM Restaurant res JOIN Category c1 ON res.restaurantId = c1.restaurantId JOIN Category c2 ON res.restaurantId = c2.restaurantId WHERE c1.categoryId = p.categoryId AND c2.categoryId = :newCategoryId)" +
+                        " AND (p.productId = :productId OR EXISTS(FROM Promotion r WHERE r.source.productId = :productId AND r.destination.productId = p.productId))"
+        );
+        query.setParameter("productId", productId);
+        query.setParameter("newCategoryId", newCategoryId);
+        int rows = query.executeUpdate();
+
+        if (rows == 0) {
+            LOGGER.error("Attempted to move product id {} to category id {} but no rows were modified", productId, newCategoryId);
+            throw new IllegalStateException("Either tried to move products between restaurants, or product or category not found");
+        }
+
+        LOGGER.info("Moved product id {} to category {}, {} product{} updated", productId, newCategoryId, rows, rows == 1 ? "" : "s");
+    }
 }

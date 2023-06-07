@@ -54,6 +54,12 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Transactional
     @Override
+    public void delete(long categoryId) {
+        categoryDao.delete(categoryId);
+    }
+
+    @Transactional
+    @Override
     public void swapOrder(long restaurantId, int orderNum1, int orderNum2) {
         if (orderNum1 == orderNum2) {
             LOGGER.warn("Attempted to swapOrder between categories of restaurant id {} with the same order {}", restaurantId, orderNum1);
@@ -65,7 +71,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Transactional
     @Override
-    public void delete(long categoryId) {
-        categoryDao.delete(categoryId);
+    public void moveProduct(long productId, long newCategoryId) {
+        categoryDao.moveProduct(productId, newCategoryId);
     }
 }
