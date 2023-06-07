@@ -54,7 +54,7 @@ public class TokenServiceTest {
 
     @Test
     public void testSendUserVerificationTokenUserIsActive() throws MessagingException {
-        User user = mock(User.class);
+        final User user = mock(User.class);
         Mockito.when(user.getIsActive()).thenReturn(true);
 
         userServiceImpl.sendUserVerificationToken(user);
@@ -66,7 +66,7 @@ public class TokenServiceTest {
 
     @Test
     public void testSendUserVerificationTokenInactiveUserNoExistingToken() throws MessagingException {
-        User user = mock(User.class);
+        final User user = mock(User.class);
         Mockito.when(user.getIsActive()).thenReturn(false);
         Mockito.when(user.getUserId()).thenReturn(USER_ID);
 
@@ -85,7 +85,7 @@ public class TokenServiceTest {
 
     @Test
     public void testSendUserVerificationTokenInactiveUserExpiredToken() throws MessagingException {
-        User user = mock(User.class);
+        final User user = mock(User.class);
         when(user.getIsActive()).thenReturn(false);
         when(user.getUserId()).thenReturn(USER_ID);
 
@@ -105,7 +105,7 @@ public class TokenServiceTest {
 
     @Test
     public void testSendPasswordResetToken() throws MessagingException {
-        User user = mock(User.class);
+        final User user = mock(User.class);
         Mockito.when(user.getIsActive()).thenReturn(true);
         Mockito.when(user.getUserId()).thenReturn(USER_ID);
 
@@ -124,7 +124,7 @@ public class TokenServiceTest {
 
     @Test
     public void testSendPasswordResetTokenInactiveUser() throws MessagingException {
-        User user = mock(User.class);
+        final User user = mock(User.class);
         Mockito.when(user.getIsActive()).thenReturn(false);
         Mockito.when(user.getUserId()).thenReturn(USER_ID);
 
@@ -137,7 +137,7 @@ public class TokenServiceTest {
 
     @Test
     public void testSendPasswordResetTokenExpiredToken() throws MessagingException {
-        User user = mock(User.class);
+        final User user = mock(User.class);
         Mockito.when(user.getIsActive()).thenReturn(true);
         Mockito.when(user.getUserId()).thenReturn(USER_ID);
 
@@ -157,9 +157,9 @@ public class TokenServiceTest {
 
     @Test
     public void testVerifyUserAndDeleteVerificationToken() {
-        UserDetails userDetails = mock(UserDetails.class);
+        final UserDetails userDetails = mock(UserDetails.class);
 
-        UserVerificationToken userToken = mock(UserVerificationToken.class);
+        final UserVerificationToken userToken = mock(UserVerificationToken.class);
         Mockito.when(verificationTokenDao.getByToken(TOKEN)).thenReturn(Optional.of(userToken));
         Mockito.when(userToken.isExpired()).thenReturn(false);
 
@@ -180,8 +180,8 @@ public class TokenServiceTest {
 
     @Test
     public void testVerifyUserAndDeleteVerificationTokenUserAlreadyActive() {
-        UserVerificationToken userToken = mock(UserVerificationToken.class);
-        User user = mock(User.class);
+        final UserVerificationToken userToken = mock(UserVerificationToken.class);
+        final User user = mock(User.class);
 
         Mockito.when(verificationTokenDao.getByToken(TOKEN)).thenReturn(Optional.of(userToken));
         Mockito.when(userToken.isExpired()).thenReturn(false);
@@ -193,8 +193,8 @@ public class TokenServiceTest {
 
     @Test
     public void testUpdatePasswordAndDeleteResetPasswordToken() {
-        UserResetpasswordToken userToken = mock(UserResetpasswordToken.class);
-        User user = mock(User.class);
+        final UserResetpasswordToken userToken = mock(UserResetpasswordToken.class);
+        final User user = mock(User.class);
 
         Mockito.when(resetPasswordTokenDao.getByToken(TOKEN)).thenReturn(Optional.of(userToken));
         Mockito.when(userToken.isExpired()).thenReturn(false);
@@ -212,7 +212,7 @@ public class TokenServiceTest {
 
     @Test
     public void testUpdatePasswordAndDeleteResetPasswordTokenExpiredToken() {
-        UserResetpasswordToken userToken = mock(UserResetpasswordToken.class);
+        final UserResetpasswordToken userToken = mock(UserResetpasswordToken.class);
         Mockito.when(resetPasswordTokenDao.getByToken(TOKEN)).thenReturn(Optional.of(userToken));
         Mockito.when(userToken.isExpired()).thenReturn(true);
 
@@ -226,7 +226,7 @@ public class TokenServiceTest {
 
     @Test
     public void testHasActiveVerificationTokenWithActiveToken() {
-        UserVerificationToken userToken = mock(UserVerificationToken.class);
+        final UserVerificationToken userToken = mock(UserVerificationToken.class);
         Mockito.when(verificationTokenDao.getByUserId(USER_ID)).thenReturn(Optional.of(userToken));
         Mockito.when(userToken.isFresh()).thenReturn(true);
 
@@ -241,7 +241,7 @@ public class TokenServiceTest {
 
     @Test
     public void testHasActiveVerificationTokenWithExpiredToken() {
-        UserVerificationToken userToken = mock(UserVerificationToken.class);
+        final UserVerificationToken userToken = mock(UserVerificationToken.class);
         Mockito.when(verificationTokenDao.getByUserId(USER_ID)).thenReturn(Optional.of(userToken));
         Mockito.when(userToken.isFresh()).thenReturn(false);
 
@@ -250,7 +250,7 @@ public class TokenServiceTest {
 
     @Test
     public void testIsValidResetPasswordTokenWithValidToken() {
-        UserResetpasswordToken userToken = mock(UserResetpasswordToken.class);
+        final UserResetpasswordToken userToken = mock(UserResetpasswordToken.class);
         Mockito.when(resetPasswordTokenDao.getByToken(TOKEN)).thenReturn(Optional.of(userToken));
         Mockito.when(userToken.isFresh()).thenReturn(true);
 
@@ -265,7 +265,7 @@ public class TokenServiceTest {
 
     @Test
     public void testIsValidResetPasswordTokenWithExpiredToken() {
-        UserResetpasswordToken userToken = mock(UserResetpasswordToken.class);
+        final UserResetpasswordToken userToken = mock(UserResetpasswordToken.class);
         Mockito.when(resetPasswordTokenDao.getByToken(TOKEN)).thenReturn(Optional.of(userToken));
         Mockito.when(userToken.isFresh()).thenReturn(false);
 
