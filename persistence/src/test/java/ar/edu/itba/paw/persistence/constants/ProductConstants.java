@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence.constants;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,7 +32,14 @@ public final class ProductConstants {
     public static final Integer[] LINE_NUMBER_FOR_ORDER_IDS = {1, 2, 3};
     public static final Long[] PRODUCTS_FOR_ORDER_IDS = {100L, 101L, 102L};
     public static final String DEFAULT_ORDER_ITEM_COMMENT = "comment";
+    public static final String DEFAULT_STRING = "new";
     public static final int DEFAULT_ORDER_ITEM_QUANTITY = 10;
+    public static final long PROMOTION_PRODUCT_ID = 100L;
+    public static final long PROMOTION_SOURCE_ID = 205L;
+    public static final long PROMOTION_DESTINATION_ID = 500L;
+    public static final float DEFAULT_PROMOTION_DISCOUNT = 0.5f;
+    public static final LocalDateTime DEFAULT_PROMOTION_START_DATE = LocalDateTime.now();
+    public static final LocalDateTime DEFAULT_PROMOTION_END_DATE = LocalDateTime.now().plusDays(4);
 
     private ProductConstants() {
     }

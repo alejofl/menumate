@@ -3,6 +3,7 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.exception.ProductNotFoundException;
 import ar.edu.itba.paw.model.Product;
+import ar.edu.itba.paw.model.Promotion;
 import ar.edu.itba.paw.persistance.ProductDao;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import ar.edu.itba.paw.persistence.constants.*;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.Optional;
 
@@ -102,4 +104,74 @@ public class ProductJpaDaoTest {
         productDao.delete(NON_EXISTENT_PRODUCT_ID);
         em.flush();
     }
+
+    @Test
+    @Rollback
+    public void updateProduct() throws SQLException {
+        final Product product = em.find(Product.class, ProductConstants.PRODUCT_FROM_CATEGORY_RESTAURANT_0[0]);
+        final String oldName = product.getName();
+        final String oldDescription = product.getDescription();
+
+        productDao.updateNameAndDescription(product, ProductConstants.DEFAULT_STRING, ProductConstants.DEFAULT_STRING);
+        em.flush();
+
+        Assert.assertNotEquals(oldDescription, product.getDescription());
+        Assert.assertNotEquals(oldName, product.getName());
+        Assert.assertEquals(ProductConstants.DEFAULT_STRING, product.getName());
+        Assert.assertEquals(ProductConstants.DEFAULT_STRING, product.getDescription());
+    }
+
+    @Test
+    @Rollback
+    public void updateProductAndPromotions() throws SQLException {
+        final Product product = em.find(Product.class, ProductConstants.PROMOTION_SOURCE_ID);
+        final Promotion promotion = em.find(Promotion.class, ProductConstants.PROMOTION_PRODUCT_ID);
+        final String oldName = product.getName();
+        final String oldDescription = product.getDescription();
+
+        productDao.updateNameAndDescription(product, ProductConstants.DEFAULT_STRING, ProductConstants.DEFAULT_STRING);
+        em.flush();
+
+        Assert.assertNotEquals(oldDescription, promotion.getDestination().getDescription());
+        Assert.assertNotEquals(oldName, promotion.getDestination().getName());
+        Assert.assertEquals(ProductConstants.DEFAULT_STRING, promotion.getDestination().getDescription());
+        Assert.assertEquals(ProductConstants.DEFAULT_STRING, promotion.getDestination().getName());
+    }
+
+    @Test
+    public void testCreatePromotion() throws SQLException {
+        final Product product = em.find(Product.class, ProductConstants.PRODUCT_FROM_CATEGORY_RESTAURANT_0[0]);
+        final Promotion promotion = productDao.createPromotion(
+                product,
+                ProductConstants.DEFAULT_PROMOTION_START_DATE,
+                ProductConstants.DEFAULT_PROMOTION_END_DATE,
+                ProductConstants.DEFAULT_PROMOTION_DISCOUNT
+        );
+        em.flush();
+
+        Assert.assertNotNull(promotion);
+        Assert.assertEquals(ProductConstants.DEFAULT_PROMOTION_START_DATE, promotion.getStartDate());
+        Assert.assertEquals(ProductConstants.DEFAULT_PROMOTION_END_DATE, promotion.getEndDate());
+        Assert.assertEquals(product.getProductId(), promotion.getSource().getProductId());
+        Assert.assertEquals(product.getPrice().multiply(BigDecimal.valueOf(ProductConstants.DEFAULT_PROMOTION_DISCOUNT)), promotion.getDestination().getPrice());
+        Assert.assertTrue(promotion.getDestination().getAvailable());
+        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "promotions", "promotion_id = " + promotion.getPromotionId()));
+    }
+
+    @Test
+    @Rollback
+    public void testCreatePromotionProductAlreadyExisting() throws SQLException {
+        final Product product = em.find(Product.class, ProductConstants.PROMOTION_SOURCE_ID);
+        final Promotion promotion = productDao.createPromotion(
+                product,
+                ProductConstants.DEFAULT_PROMOTION_START_DATE,
+                ProductConstants.DEFAULT_PROMOTION_END_DATE,
+                ProductConstants.DEFAULT_PROMOTION_DISCOUNT
+        );
+        em.flush();
+        Assert.assertNotNull(promotion);
+        Assert.assertEquals(2, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "promotions", "source_id = " + product.getProductId()));
+    }
+
+
 }

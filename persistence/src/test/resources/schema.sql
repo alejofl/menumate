@@ -182,3 +182,4 @@ CREATE SEQUENCE orders_order_id_seq START WITH 1 increment by 1;
 CREATE SEQUENCE products_product_id_seq START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE restaurants_restaurant_id_seq START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE users_user_id_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE promotions_promotion_id_seq START WITH 1 INCREMENT BY 1;

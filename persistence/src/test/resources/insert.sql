@@ -259,3 +259,10 @@ INSERT INTO order_items (order_id, line_number, product_id, quantity, comment)
 -- Adding order with no review for restaurant 1200
 INSERT INTO orders (order_id, restaurant_id, order_type, date_ordered, user_id)
     VALUES (6000, 1200, 1, now(), 420);
+
+-- Adding promotion product source 205
+INSERT INTO products (product_id, name, price, category_id, available, description, deleted)
+    VALUES (500, 'product', 600, 320, true, 'description', false);
+
+INSERT INTO promotions (promotion_id, source_id, destination_id, start_date, end_date)
+    VALUES (100, 205, 500, CURRENT_TIMESTAMP - INTERVAL '1' DAY, CURRENT_TIMESTAMP + INTERVAL '1' DAY);
