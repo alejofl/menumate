@@ -14,7 +14,6 @@ public class AddAddressForm {
 
     @NotBlank
     @Size(max = 20)
-    @NotBlank
     private String name;
 
     public Long getUserId() {
