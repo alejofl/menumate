@@ -30,7 +30,13 @@ public class AuthController {
     private UserService userService;
 
     @RequestMapping(value = "/auth/register", method = RequestMethod.GET)
-    public ModelAndView registerForm(@ModelAttribute("registerForm") final RegisterForm registerForm) {
+    public ModelAndView registerForm(
+            @ModelAttribute("registerForm") final RegisterForm registerForm,
+            @RequestParam(value = "email", required = false) final String email
+    ) {
+        if (email != null) {
+            registerForm.setEmail(email);
+        }
         return new ModelAndView("auth/register");
     }
 
@@ -40,7 +46,7 @@ public class AuthController {
             final BindingResult errors
     ) {
         if (errors.hasErrors()) {
-            return registerForm(registerForm);
+            return registerForm(registerForm, null);
         }
 
         try {

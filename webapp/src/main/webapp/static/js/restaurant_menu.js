@@ -62,6 +62,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     })
 
+    // Enable tooltips
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl, {"trigger": "hover"}))
+
     // Open Checkout Modal if errors were found
     if (document.querySelector("body").dataset.formError === "true") {
         document.querySelector("#place-order-button").dispatchEvent(new Event("click"));

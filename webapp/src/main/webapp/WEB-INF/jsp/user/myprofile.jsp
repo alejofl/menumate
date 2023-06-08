@@ -12,7 +12,7 @@
     </jsp:include>
     <script src="<c:url value="/static/js/myprofile.js"/>"></script>
 </head>
-<body>
+<body data-add-address-error="${addAddressFormError}">
     <div class="content">
         <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
         <c:if test="${error}">

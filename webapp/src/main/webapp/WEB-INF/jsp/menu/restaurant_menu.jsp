@@ -295,8 +295,10 @@
                 </div>
             </c:otherwise>
         </c:choose>
+        <spring:message code="restaurant.menu.tootip.delivery" var="deliveryTooltipTitle"/>
+        <spring:message code="restaurant.menu.tootip.dinein"  var="dineninTooltipTitle"/>
         <div class="toast text-bg-primary" id="persistent-toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
-            <div class="d-flex">
+            <div class="d-flex" data-bs-toggle="tooltip" data-bs-title="${param.qr == 1 ? dineninTooltipTitle : deliveryTooltipTitle}">
                 <div class="toast-body">
                     <h5 class="m-0">
                         <c:choose>
