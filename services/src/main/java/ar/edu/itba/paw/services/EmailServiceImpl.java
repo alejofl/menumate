@@ -220,7 +220,7 @@ public class EmailServiceImpl implements EmailService {
     public void sendInvitationToRestaurantStaff(User user, Restaurant restaurant) throws MessagingException {
         Locale locale = new Locale(user.getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
-        params.put("link", "/auth/register");
+        params.put("link", "/auth/register?email=" + user.getEmail());
         params.put("restaurant", restaurant.getName());
         this.sendMessageUsingThymeleafTemplate(
                 "user_restaurant_invitation",
