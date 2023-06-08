@@ -12,6 +12,7 @@ public class AddAddressForm {
     @NotBlank
     private String address;
 
+    @NotBlank
     @Size(max = 20)
     private String name;
 

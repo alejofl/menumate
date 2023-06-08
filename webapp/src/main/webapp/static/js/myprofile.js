@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let addAddressNameInput = document.querySelector("#add-address-form-name");
 
     // Open Checkout Modal if errors were found
-    if (document.querySelector("body").dataset.addAddressErrors === "true") {
+    if (document.querySelector("body").dataset.addAddressError === "true") {
         document.querySelector("#add-address-button").dispatchEvent(new Event("click"));
     }
 
