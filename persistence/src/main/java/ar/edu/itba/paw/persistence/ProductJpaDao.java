@@ -122,13 +122,13 @@ public class ProductJpaDao implements ProductDao {
     @Override
     public void stopPromotionsBySource(long sourceProductId) {
         // Delete products from promotions generated with this product
-        Query delQuery = em.createQuery("UPDATE Product SET deleted = true WHERE deleted = false AND EXISTS(FROM Promotion WHERE Promotion.source.productId = :sourceId AND Promotion.destination.productId = Product.productId)");
+        Query delQuery = em.createQuery("UPDATE Product p SET p.deleted = true WHERE p.deleted = false AND EXISTS(FROM Promotion r WHERE r.source.productId = :sourceId AND r.destination.productId = p.productId)");
         delQuery.setParameter("sourceId", sourceProductId);
         int delRows = delQuery.executeUpdate();
 
         // Close any promotions generated with this product
-        Query promoQuery = em.createQuery("UPDATE Promotion SET endDate = now() WHERE Promotion.source.productId = :sourceId AND (endDate IS NULL OR endDate > now())");
-        delQuery.setParameter("sourceId", sourceProductId);
+        Query promoQuery = em.createQuery("UPDATE Promotion SET endDate = now() WHERE source.productId = :sourceId AND (endDate IS NULL OR endDate > now())");
+        promoQuery.setParameter("sourceId", sourceProductId);
         int promoRows = promoQuery.executeUpdate();
 
         LOGGER.info("Closed {} promotion{} by updating end date, logical-deleted {} product{}", delRows, delRows == 1 ? "" : "s", promoRows, promoRows == 1 ? "" : "s");
