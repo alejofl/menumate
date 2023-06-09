@@ -48,11 +48,28 @@
     </div>
     <main class="edit-menu flex-column px-4 pb-4">
         <div class="d-flex flex-column">
-            <c:forEach items="${menu}" var="entry">
+            <c:forEach items="${menu}" var="entry" varStatus="status">
                 <div class="card mb-4">
                     <div class="card-body d-flex justify-content-between align-items-center">
                         <h3 class="mb-0"><c:out value="${entry.name}"/></h3>
-                        <div class="d-flex gap-2">
+                        <div class="d-flex gap-3">
+                            <c:url value="/restaurants/${restaurant.restaurantId}/categories/move" var="editCategoryOrderUrl"/>
+                            <c:if test="${!status.first}">
+                                <form:form cssClass="mb-0" modelAttribute="editCategoryOrderForm" action="${editCategoryOrderUrl}" method="post">
+                                    <form:input path="restaurantId" type="hidden" value="${restaurant.restaurantId}"/>
+                                    <form:input path="currentOrder" type="hidden" value="${entry.orderNum}"/>
+                                    <form:input path="newOrder" type="hidden" value="${menu[status.index - 1].orderNum}"/>
+                                    <button type="submit" class="btn p-0 text-secondary"><i class="bi bi-arrow-up-circle-fill"></i></button>
+                                </form:form>
+                            </c:if>
+                            <c:if test="${!status.last}">
+                                <form:form cssClass="mb-0" modelAttribute="editCategoryOrderForm" action="${editCategoryOrderUrl}" method="post">
+                                    <form:input path="restaurantId" type="hidden" value="${restaurant.restaurantId}"/>
+                                    <form:input path="currentOrder" type="hidden" value="${entry.orderNum}"/>
+                                    <form:input path="newOrder" type="hidden" value="${menu[status.index + 1].orderNum}"/>
+                                    <button type="submit" class="btn p-0 text-secondary"><i class="bi bi-arrow-down-circle-fill"></i></button>
+                                </form:form>
+                            </c:if>
                             <a
                                     class="edit-category-button"
                                     type="button"

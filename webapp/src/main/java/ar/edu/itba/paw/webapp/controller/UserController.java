@@ -163,6 +163,7 @@ public class UserController {
             final Boolean addCategoryErrors,
             @ModelAttribute("editCategoryForm") final EditCategoryForm editCategoryForm,
             final Boolean editCategoryErrors,
+            @ModelAttribute("editCategoryOrderForm") final EditCategoryOrderForm editCategoryOrderForm,
             @ModelAttribute("deleteCategoryForm") final DeleteCategoryForm deleteCategoryForm,
 
             @ModelAttribute("addEmployeeForm") final AddEmployeeForm addEmployeeForm,
@@ -191,6 +192,7 @@ public class UserController {
         mav.addObject("deleteProductForm", deleteProductForm);
         mav.addObject("addCategoryForm", addCategoryForm);
         mav.addObject("editCategoryForm", editCategoryForm);
+        mav.addObject("editCategoryOrderForm", editCategoryOrderForm);
         mav.addObject("deleteCategoryForm", deleteCategoryForm);
         mav.addObject("addEmployeeForm", addEmployeeForm);
         mav.addObject("deleteEmployeeForm", deleteEmployeeForm);
@@ -222,6 +224,7 @@ public class UserController {
                     false,
                     new EditCategoryForm(),
                     false,
+                    new EditCategoryOrderForm(),
                     new DeleteCategoryForm(),
                     new AddEmployeeForm(),
                     new MyBoolean(false),
@@ -258,6 +261,7 @@ public class UserController {
                     false,
                     new EditCategoryForm(),
                     false,
+                    new EditCategoryOrderForm(),
                     new DeleteCategoryForm(),
                     new AddEmployeeForm(),
                     new MyBoolean(false),
@@ -309,6 +313,7 @@ public class UserController {
                     true,
                     new EditCategoryForm(),
                     false,
+                    new EditCategoryOrderForm(),
                     new DeleteCategoryForm(),
                     new AddEmployeeForm(),
                     new MyBoolean(false),
@@ -322,7 +327,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/restaurants/{id:\\d+}/categories/edit", method = RequestMethod.POST)
-    public ModelAndView addCategoryToRestaurant(
+    public ModelAndView editCategory(
             @PathVariable final int id,
             @Valid @ModelAttribute("editCategoryForm") final EditCategoryForm editCategoryForm,
             final BindingResult errors
@@ -339,6 +344,7 @@ public class UserController {
                     false,
                     editCategoryForm,
                     true,
+                    new EditCategoryOrderForm(),
                     new DeleteCategoryForm(),
                     new AddEmployeeForm(),
                     new MyBoolean(false),
@@ -347,6 +353,21 @@ public class UserController {
         }
 
         categoryService.updateName(editCategoryForm.getCategoryId(), editCategoryForm.getName());
+
+        return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
+    }
+
+    @RequestMapping(value = "/restaurants/{id:\\d+}/categories/move", method = RequestMethod.POST)
+    public ModelAndView editCategoryOrder(
+            @PathVariable final int id,
+            @Valid @ModelAttribute("editCategoryOrderForm") final EditCategoryOrderForm editCategoryOrderForm,
+            final BindingResult errors
+    ) {
+        if (errors.hasErrors()) {
+            throw new IllegalStateException();
+        }
+
+        categoryService.swapOrder(id, editCategoryOrderForm.getCurrentOrder(), editCategoryOrderForm.getNewOrder());
 
         return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
     }
@@ -385,6 +406,7 @@ public class UserController {
                     false,
                     new EditCategoryForm(),
                     false,
+                    new EditCategoryOrderForm(),
                     new DeleteCategoryForm(),
                     addEmployeeForm,
                     new MyBoolean(true),
