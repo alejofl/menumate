@@ -8,6 +8,7 @@ import ar.edu.itba.paw.util.PaginatedResult;
 import ar.edu.itba.paw.util.Pair;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.form.*;
+import org.hibernate.sql.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BeanPropertyBindingResult;
@@ -152,17 +153,20 @@ public class UserController {
     @RequestMapping(value = "/restaurants/{id:\\d+}/edit", method = RequestMethod.GET)
     public ModelAndView editRestaurant(
             @PathVariable final int id,
+
             @ModelAttribute("addProductForm") final AddProductForm addProductForm,
-            @ModelAttribute("addCategoryForm") final AddCategoryForm addCategoryForm,
-            @ModelAttribute("deleteProductForm") final DeleteProductForm deleteProductForm,
-            @ModelAttribute("deleteCategoryForm") final DeleteCategoryForm deleteCategoryForm,
-            @ModelAttribute("addEmployeeForm") final AddEmployeeForm addEmployeeForm,
-            @ModelAttribute("deleteEmployeeForm") final DeleteEmployeeForm deleteEmployeeForm,
-            @ModelAttribute("editProductPriceForm") final EditProductPriceForm editProductPriceForm,
             final Boolean addProductErrors,
+            @ModelAttribute("editProductPriceForm") final EditProductPriceForm editProductPriceForm,
+            final Boolean editProductErrors,
+            @ModelAttribute("deleteProductForm") final DeleteProductForm deleteProductForm,
+
+            @ModelAttribute("addCategoryForm") final AddCategoryForm addCategoryForm,
             final Boolean addCategoryErrors,
+            @ModelAttribute("deleteCategoryForm") final DeleteCategoryForm deleteCategoryForm,
+
+            @ModelAttribute("addEmployeeForm") final AddEmployeeForm addEmployeeForm,
             @ModelAttribute("addEmployeeErrors") final MyBoolean addEmployeeErrors,
-            final Boolean editProductErrors
+            @ModelAttribute("deleteEmployeeForm") final DeleteEmployeeForm deleteEmployeeForm
     ) {
         ModelAndView mav = new ModelAndView("user/edit_menu");
 
@@ -190,28 +194,22 @@ public class UserController {
     public ModelAndView addProductToRestaurant(
             @PathVariable final int id,
             @Valid @ModelAttribute("addProductForm") final AddProductForm addProductForm,
-            final BindingResult errors,
-            @ModelAttribute("addCategoryForm") final AddCategoryForm addCategoryForm,
-            @ModelAttribute("deleteProductForm") final DeleteProductForm deleteProductForm,
-            @ModelAttribute("deleteCategoryForm") final DeleteCategoryForm deleteCategoryForm,
-            @ModelAttribute("addEmployeeForm") final AddEmployeeForm addEmployeeForm,
-            @ModelAttribute("deleteEmployeeForm") final DeleteEmployeeForm deleteEmployeeForm,
-            @ModelAttribute("editProductPriceForm") final EditProductPriceForm editProductPriceForm
+            final BindingResult errors
     ) throws IOException {
         if (errors.hasErrors()) {
             return editRestaurant(
                     id,
                     addProductForm,
-                    addCategoryForm,
-                    deleteProductForm,
-                    deleteCategoryForm,
-                    addEmployeeForm,
-                    deleteEmployeeForm,
-                    editProductPriceForm,
                     true,
+                    new EditProductPriceForm(),
                     false,
+                    new DeleteProductForm(),
+                    new AddCategoryForm(),
+                    false,
+                    new DeleteCategoryForm(),
+                    new AddEmployeeForm(),
                     new MyBoolean(false),
-                    false
+                    new DeleteEmployeeForm()
             );
         }
 
@@ -229,29 +227,23 @@ public class UserController {
     @RequestMapping(value = "/restaurants/{id:\\d+}/categories/add", method = RequestMethod.POST)
     public ModelAndView addCategoryToRestaurant(
             @PathVariable final int id,
-            @ModelAttribute("addProductForm") final AddProductForm addProductForm,
             @Valid @ModelAttribute("addCategoryForm") final AddCategoryForm addCategoryForm,
-            final BindingResult errors,
-            @ModelAttribute("deleteProductForm") final DeleteProductForm deleteProductForm,
-            @ModelAttribute("deleteCategoryForm") final DeleteCategoryForm deleteCategoryForm,
-            @ModelAttribute("addEmployeeForm") final AddEmployeeForm addEmployeeForm,
-            @ModelAttribute("deleteEmployeeForm") final DeleteEmployeeForm deleteEmployeeForm,
-            @ModelAttribute("editProductPriceForm") final EditProductPriceForm editProductPriceForm
+            final BindingResult errors
     ) {
         if (errors.hasErrors()) {
             return editRestaurant(
                     id,
-                    addProductForm,
-                    addCategoryForm,
-                    deleteProductForm,
-                    deleteCategoryForm,
-                    addEmployeeForm,
-                    deleteEmployeeForm,
-                    editProductPriceForm,
+                    new AddProductForm(),
                     false,
+                    new EditProductPriceForm(),
+                    false,
+                    new DeleteProductForm(),
+                    addCategoryForm,
                     true,
+                    new DeleteCategoryForm(),
+                    new AddEmployeeForm(),
                     new MyBoolean(false),
-                    false
+                    new DeleteEmployeeForm()
             );
         }
 
@@ -263,14 +255,8 @@ public class UserController {
     @RequestMapping(value = "/restaurants/{id:\\d+}/products/delete", method = RequestMethod.POST)
     public ModelAndView deleteProductForRestaurant(
             @PathVariable final int id,
-            @ModelAttribute("addProductForm") final AddProductForm addProductForm,
-            @ModelAttribute("addCategoryForm") final AddCategoryForm addCategoryForm,
             @Valid @ModelAttribute("deleteProductForm") final DeleteProductForm deleteProductForm,
-            final BindingResult errors,
-            @ModelAttribute("deleteCategoryForm") final DeleteCategoryForm deleteCategoryForm,
-            @ModelAttribute("addEmployeeForm") final AddEmployeeForm addEmployeeForm,
-            @ModelAttribute("deleteEmployeeForm") final DeleteEmployeeForm deleteEmployeeForm,
-            @ModelAttribute("editProductPriceForm") final EditProductPriceForm editProductPriceForm
+            final BindingResult errors
     ) {
         if (errors.hasErrors()) {
             throw new IllegalStateException();
@@ -284,14 +270,8 @@ public class UserController {
     @RequestMapping(value = "/restaurants/{id:\\d+}/categories/delete", method = RequestMethod.POST)
     public ModelAndView deleteCategoryForRestaurant(
             @PathVariable final int id,
-            @ModelAttribute("addProductForm") final AddProductForm addProductForm,
-            @ModelAttribute("addCategoryForm") final AddCategoryForm addCategoryForm,
-            @ModelAttribute("deleteProductForm") final DeleteProductForm deleteProductForm,
             @Valid @ModelAttribute("deleteCategoryForm") final DeleteCategoryForm deleteCategoryForm,
-            final BindingResult errors,
-            @ModelAttribute("addEmployeeForm") final AddEmployeeForm addEmployeeForm,
-            @ModelAttribute("deleteEmployeeForm") final DeleteEmployeeForm deleteEmployeeForm,
-            @ModelAttribute("editProductPriceForm") final EditProductPriceForm editProductPriceForm
+            final BindingResult errors
     ) {
         if (errors.hasErrors()) {
             throw new IllegalStateException();
@@ -305,30 +285,24 @@ public class UserController {
     @RequestMapping(value = "/restaurants/{id:\\d+}/employees/add", method = RequestMethod.POST)
     public ModelAndView addEmployeeForRestaurant(
             @PathVariable final int id,
-            @ModelAttribute("addProductForm") final AddProductForm addProductForm,
-            @ModelAttribute("addCategoryForm") final AddCategoryForm addCategoryForm,
-            @ModelAttribute("deleteProductForm") final DeleteProductForm deleteProductForm,
-            @ModelAttribute("deleteCategoryForm") final DeleteCategoryForm deleteCategoryForm,
             @Valid @ModelAttribute("addEmployeeForm") final AddEmployeeForm addEmployeeForm,
             final BindingResult errors,
-            @ModelAttribute("deleteEmployeeForm") final DeleteEmployeeForm deleteEmployeeForm,
-            @ModelAttribute("editProductPriceForm") final EditProductPriceForm editProductPriceForm,
             RedirectAttributes redirectAttributes
     ) {
         if (errors.hasErrors()) {
             return editRestaurant(
                     id,
-                    addProductForm,
-                    addCategoryForm,
-                    deleteProductForm,
-                    deleteCategoryForm,
+                    new AddProductForm(),
+                    false,
+                    new EditProductPriceForm(),
+                    false,
+                    new DeleteProductForm(),
+                    new AddCategoryForm(),
+                    false,
+                    new DeleteCategoryForm(),
                     addEmployeeForm,
-                    deleteEmployeeForm,
-                    editProductPriceForm,
-                    false,
-                    false,
                     new MyBoolean(true),
-                    false
+                    new DeleteEmployeeForm()
             );
         }
 
@@ -341,14 +315,8 @@ public class UserController {
     @RequestMapping(value = "/restaurants/{id:\\d+}/employees/delete", method = RequestMethod.POST)
     public ModelAndView deleteEmployeeForRestaurant(
             @PathVariable final int id,
-            @ModelAttribute("addProductForm") final AddProductForm addProductForm,
-            @ModelAttribute("addCategoryForm") final AddCategoryForm addCategoryForm,
-            @ModelAttribute("deleteProductForm") final DeleteProductForm deleteProductForm,
-            @ModelAttribute("deleteCategoryForm") final DeleteCategoryForm deleteCategoryForm,
-            @ModelAttribute("addEmployeeForm") final AddEmployeeForm addEmployeeForm,
             @Valid @ModelAttribute("deleteEmployeeForm") final DeleteEmployeeForm deleteEmployeeForm,
             final BindingResult errors,
-            @ModelAttribute("editProductPriceForm") final EditProductPriceForm editProductPriceForm,
             RedirectAttributes redirectAttributes
     ) {
         if (errors.hasErrors()) {
@@ -364,29 +332,23 @@ public class UserController {
     @RequestMapping(value = "/restaurants/{id:\\d+}/products/edit", method = RequestMethod.POST)
     public ModelAndView editPriceForProduct(
             @PathVariable final int id,
-            @ModelAttribute("addProductForm") final AddProductForm addProductForm,
-            @ModelAttribute("addCategoryForm") final AddCategoryForm addCategoryForm,
-            @ModelAttribute("deleteProductForm") final DeleteProductForm deleteProductForm,
-            @ModelAttribute("deleteCategoryForm") final DeleteCategoryForm deleteCategoryForm,
-            @ModelAttribute("addEmployeeForm") final AddEmployeeForm addEmployeeForm,
-            @ModelAttribute("deleteEmployeeForm") final DeleteEmployeeForm deleteEmployeeForm,
             @Valid @ModelAttribute("editProductPriceForm") final EditProductPriceForm editProductPriceForm,
             final BindingResult errors
     ) {
         if (errors.hasErrors()) {
             return editRestaurant(
                     id,
-                    addProductForm,
-                    addCategoryForm,
-                    deleteProductForm,
-                    deleteCategoryForm,
-                    addEmployeeForm,
-                    deleteEmployeeForm,
+                    new AddProductForm(),
+                    false,
                     editProductPriceForm,
+                    true,
+                    new DeleteProductForm(),
+                    new AddCategoryForm(),
                     false,
-                    false,
-                    new MyBoolean(true),
-                    true
+                    new DeleteCategoryForm(),
+                    new AddEmployeeForm(),
+                    new MyBoolean(false),
+                    new DeleteEmployeeForm()
             );
         }
 
@@ -438,14 +400,13 @@ public class UserController {
 
     @RequestMapping(value = "/user/addresses/add", method = RequestMethod.POST)
     public ModelAndView addAddress(
-            @ModelAttribute("deleteAddressForm") final DeleteAddressForm deleteAddressForm,
             @Valid @ModelAttribute("addAddressForm") final AddAddressForm addAddressForm,
             final BindingResult errors
     ) {
         if (errors.hasErrors()) {
             PagingForm pagingForm = new PagingForm();
             return myProfile(
-                    deleteAddressForm,
+                    new DeleteAddressForm(),
                     addAddressForm,
                     pagingForm,
                     new BeanPropertyBindingResult(pagingForm, "pagingForm"),
@@ -453,15 +414,10 @@ public class UserController {
             );
         }
 
-        String name = null;
-        if (!addAddressForm.getName().equals("")) {
-            name = addAddressForm.getName();
-        }
-
         userService.registerAddress(
                 addAddressForm.getUserId(),
                 addAddressForm.getAddress(),
-                name
+                addAddressForm.getName()
         );
 
         return new ModelAndView("redirect:/user");
