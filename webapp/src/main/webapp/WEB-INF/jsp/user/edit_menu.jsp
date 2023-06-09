@@ -12,7 +12,15 @@
     </jsp:include></head>
     <script src="<c:url value="/static/js/edit_menu.js"/>"></script>
 </head>
-<body data-add-category-errors="${addCategoryErrors}" data-add-product-errors="${addProductErrors}" data-category-id="${addProductErrors ? addProductForm.categoryId : ""}" data-add-employee-errors="${addEmployeeErrors}" data-edit-product-errors="${editProductErrors}" data-product-id="${editProductErrors ? editProductForm.productId : ""}">
+<body
+        data-add-category-errors="${addCategoryErrors}"
+        data-add-product-errors="${addProductErrors}"
+        data-category-id="${addProductErrors ? addProductForm.categoryId : ""}"
+        data-add-employee-errors="${addEmployeeErrors}"
+        data-edit-product-errors="${editProductErrors}"
+        data-product-id="${editProductErrors ? editProductForm.productId : ""}"
+        data-edit-category-errors="${editCategoryErrors}"
+>
 <div class="content">
     <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
     <div class="restaurant-header">
@@ -44,7 +52,19 @@
                 <div class="card mb-4">
                     <div class="card-body d-flex justify-content-between align-items-center">
                         <h3 class="mb-0"><c:out value="${entry.name}"/></h3>
-                        <a class="delete-category-button" type="button" data-bs-toggle="modal" data-bs-target="#delete-category-modal" data-category-id="${entry.categoryId}"><i class="bi bi-trash-fill text-danger"></i></a>
+                        <div class="d-flex gap-2">
+                            <a
+                                    class="edit-category-button"
+                                    type="button"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#edit-category-modal"
+                                    data-category-id="${entry.categoryId}"
+                                    data-category-name="<c:out value="${entry.name}"/>"
+                            >
+                                <i class="bi bi-pencil-fill"></i>
+                            </a>
+                            <a class="delete-category-button" type="button" data-bs-toggle="modal" data-bs-target="#delete-category-modal" data-category-id="${entry.categoryId}"><i class="bi bi-trash-fill text-danger"></i></a>
+                        </div>
                     </div>
                 </div>
                 <div class="items-container">
@@ -189,6 +209,31 @@
                         <input type="submit" class="btn btn-primary" value="<spring:message code="editmenu.form.add"/>">
                     </div>
                     <input type="hidden" name="restaurantId" id="add-category-form-restaurant-id" value="${restaurant.restaurantId}">
+                </form:form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="edit-category-modal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5"><spring:message code="editmenu.editcategory.modal.title"/></h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <c:url value="/restaurants/${restaurant.restaurantId}/categories/edit" var="editCategoryFormUrl"/>
+                <form:form cssClass="mb-0" modelAttribute="editCategoryForm" action="${editCategoryFormUrl}" method="post" id="edit-category-form">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <form:label path="name" cssClass="form-label"><spring:message code="editmenu.editcategory.form.name"/></form:label>
+                            <form:input path="name" type="text" cssClass="form-control" id="edit-category-modal-name"/>
+                            <form:errors path="name" element="div" cssClass="form-error"/>
+                        </div>
+                    </div>
+                    <form:input path="categoryId" type="hidden" cssClass="form-control" id="edit-category-modal-category"/>
+                    <div class="modal-footer">
+                        <input type="submit" class="btn btn-primary" value="<spring:message code="editmenu.form.update"/>">
+                    </div>
                 </form:form>
             </div>
         </div>

@@ -41,6 +41,8 @@ document.addEventListener("DOMContentLoaded", () => {
         editProductImagePreview.src = window.location.href.replace(/restaurants\/\d+\/products\/edit/, "images/" + imageId);
 
         new bootstrap.Modal('#edit-item-modal', null).show()
+    } else if (document.querySelector("body").dataset.editCategoryErrors === "true") {
+        new bootstrap.Modal('#edit-category-modal', null).show()
     }
 
     // Modal dismissal
@@ -127,6 +129,13 @@ document.addEventListener("DOMContentLoaded", () => {
         let userId = element.dataset.userId;
         element.addEventListener("click", (event) => {
             document.querySelector(`#edit-employee-${userId}-edit-enabled form`).submit();
+        });
+    });
+
+    document.querySelectorAll(".edit-category-button").forEach(element => {
+        element.addEventListener("click", (event) => {
+            document.querySelector("#edit-category-modal-category").value = element.dataset.categoryId;
+            document.querySelector("#edit-category-modal-name").value = element.dataset.categoryName;
         });
     });
 

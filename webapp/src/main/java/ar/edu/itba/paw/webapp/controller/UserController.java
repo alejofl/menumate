@@ -161,6 +161,8 @@ public class UserController {
 
             @ModelAttribute("addCategoryForm") final AddCategoryForm addCategoryForm,
             final Boolean addCategoryErrors,
+            @ModelAttribute("editCategoryForm") final EditCategoryForm editCategoryForm,
+            final Boolean editCategoryErrors,
             @ModelAttribute("deleteCategoryForm") final DeleteCategoryForm deleteCategoryForm,
 
             @ModelAttribute("addEmployeeForm") final AddEmployeeForm addEmployeeForm,
@@ -188,14 +190,16 @@ public class UserController {
         mav.addObject("editProductForm", editProductForm);
         mav.addObject("deleteProductForm", deleteProductForm);
         mav.addObject("addCategoryForm", addCategoryForm);
+        mav.addObject("editCategoryForm", editCategoryForm);
         mav.addObject("deleteCategoryForm", deleteCategoryForm);
         mav.addObject("addEmployeeForm", addEmployeeForm);
         mav.addObject("deleteEmployeeForm", deleteEmployeeForm);
 
         mav.addObject("addProductErrors", addProductErrors);
-        mav.addObject("addCategoryErrors", addCategoryErrors);
-        mav.addObject("addEmployeeErrors", addEmployeeErrors.get());
         mav.addObject("editProductErrors", editProductErrors);
+        mav.addObject("addCategoryErrors", addCategoryErrors);
+        mav.addObject("editCategoryErrors", editCategoryErrors);
+        mav.addObject("addEmployeeErrors", addEmployeeErrors.get());
 
         return mav;
     }
@@ -216,6 +220,8 @@ public class UserController {
                     new DeleteProductForm(),
                     new AddCategoryForm(),
                     false,
+                    new EditCategoryForm(),
+                    false,
                     new DeleteCategoryForm(),
                     new AddEmployeeForm(),
                     new MyBoolean(false),
@@ -234,6 +240,57 @@ public class UserController {
         return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
     }
 
+    @RequestMapping(value = "/restaurants/{id:\\d+}/products/edit", method = RequestMethod.POST)
+    public ModelAndView editProduct(
+            @PathVariable final int id,
+            @Valid @ModelAttribute("editProductForm") final EditProductForm editProductForm,
+            final BindingResult errors
+    ) throws IOException {
+        if (errors.hasErrors()) {
+            return editRestaurant(
+                    id,
+                    new AddProductForm(),
+                    false,
+                    editProductForm,
+                    true,
+                    new DeleteProductForm(),
+                    new AddCategoryForm(),
+                    false,
+                    new EditCategoryForm(),
+                    false,
+                    new DeleteCategoryForm(),
+                    new AddEmployeeForm(),
+                    new MyBoolean(false),
+                    new DeleteEmployeeForm()
+            );
+        }
+
+        Product product = productService.getById(editProductForm.getProductId()).orElseThrow(ProductNotFoundException::new);
+        productService.update(editProductForm.getProductId(), editProductForm.getProductName(), editProductForm.getPrice(), editProductForm.getDescription());
+        productService.updateImage(editProductForm.getProductId(), editProductForm.getImage().getBytes());
+        if (product.getCategoryId() != editProductForm.getCategoryId()) {
+            categoryService.moveProduct(editProductForm.getProductId(), editProductForm.getCategoryId());
+        }
+
+        return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
+    }
+
+    @RequestMapping(value = "/restaurants/{id:\\d+}/products/delete", method = RequestMethod.POST)
+    public ModelAndView deleteProductForRestaurant(
+            @PathVariable final int id,
+            @Valid @ModelAttribute("deleteProductForm") final DeleteProductForm deleteProductForm,
+            final BindingResult errors
+    ) {
+        if (errors.hasErrors()) {
+            throw new IllegalStateException();
+        }
+
+        productService.delete(deleteProductForm.getProductId());
+
+        return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
+    }
+
+
     @RequestMapping(value = "/restaurants/{id:\\d+}/categories/add", method = RequestMethod.POST)
     public ModelAndView addCategoryToRestaurant(
             @PathVariable final int id,
@@ -250,6 +307,8 @@ public class UserController {
                     new DeleteProductForm(),
                     addCategoryForm,
                     true,
+                    new EditCategoryForm(),
+                    false,
                     new DeleteCategoryForm(),
                     new AddEmployeeForm(),
                     new MyBoolean(false),
@@ -262,17 +321,32 @@ public class UserController {
         return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
     }
 
-    @RequestMapping(value = "/restaurants/{id:\\d+}/products/delete", method = RequestMethod.POST)
-    public ModelAndView deleteProductForRestaurant(
+    @RequestMapping(value = "/restaurants/{id:\\d+}/categories/edit", method = RequestMethod.POST)
+    public ModelAndView addCategoryToRestaurant(
             @PathVariable final int id,
-            @Valid @ModelAttribute("deleteProductForm") final DeleteProductForm deleteProductForm,
+            @Valid @ModelAttribute("editCategoryForm") final EditCategoryForm editCategoryForm,
             final BindingResult errors
     ) {
         if (errors.hasErrors()) {
-            throw new IllegalStateException();
+            return editRestaurant(
+                    id,
+                    new AddProductForm(),
+                    false,
+                    new EditProductForm(),
+                    false,
+                    new DeleteProductForm(),
+                    new AddCategoryForm(),
+                    false,
+                    editCategoryForm,
+                    true,
+                    new DeleteCategoryForm(),
+                    new AddEmployeeForm(),
+                    new MyBoolean(false),
+                    new DeleteEmployeeForm()
+            );
         }
 
-        productService.delete(deleteProductForm.getProductId());
+        categoryService.updateName(editCategoryForm.getCategoryId(), editCategoryForm.getName());
 
         return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
     }
@@ -309,6 +383,8 @@ public class UserController {
                     new DeleteProductForm(),
                     new AddCategoryForm(),
                     false,
+                    new EditCategoryForm(),
+                    false,
                     new DeleteCategoryForm(),
                     addEmployeeForm,
                     new MyBoolean(true),
@@ -336,39 +412,6 @@ public class UserController {
         restaurantRoleService.deleteRole(deleteEmployeeForm.getUserId(), id);
 
         redirectAttributes.addFlashAttribute("addEmployeeErrors", new MyBoolean(true));
-        return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
-    }
-
-    @RequestMapping(value = "/restaurants/{id:\\d+}/products/edit", method = RequestMethod.POST)
-    public ModelAndView editProduct(
-            @PathVariable final int id,
-            @Valid @ModelAttribute("editProductForm") final EditProductForm editProductForm,
-            final BindingResult errors
-    ) throws IOException {
-        if (errors.hasErrors()) {
-            return editRestaurant(
-                    id,
-                    new AddProductForm(),
-                    false,
-                    editProductForm,
-                    true,
-                    new DeleteProductForm(),
-                    new AddCategoryForm(),
-                    false,
-                    new DeleteCategoryForm(),
-                    new AddEmployeeForm(),
-                    new MyBoolean(false),
-                    new DeleteEmployeeForm()
-            );
-        }
-
-        Product product = productService.getById(editProductForm.getProductId()).orElseThrow(ProductNotFoundException::new);
-        productService.update(editProductForm.getProductId(), editProductForm.getProductName(), editProductForm.getPrice(), editProductForm.getDescription());
-        productService.updateImage(editProductForm.getProductId(), editProductForm.getImage().getBytes());
-        if (product.getCategoryId() != editProductForm.getCategoryId()) {
-            categoryService.moveProduct(editProductForm.getProductId(), editProductForm.getCategoryId());
-        }
-
         return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
     }
 
