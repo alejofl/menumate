@@ -8,7 +8,6 @@ import ar.edu.itba.paw.util.PaginatedResult;
 import ar.edu.itba.paw.util.Pair;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.form.*;
-import org.hibernate.sql.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BeanPropertyBindingResult;
@@ -156,7 +155,7 @@ public class UserController {
 
             @ModelAttribute("addProductForm") final AddProductForm addProductForm,
             final Boolean addProductErrors,
-            @ModelAttribute("editProductPriceForm") final EditProductPriceForm editProductPriceForm,
+            @ModelAttribute("editProductForm") final EditProductForm editProductForm,
             final Boolean editProductErrors,
             @ModelAttribute("deleteProductForm") final DeleteProductForm deleteProductForm,
 
@@ -182,6 +181,17 @@ public class UserController {
         mav.addObject("roles", RestaurantRoleLevel.VALUES_EXCEPT_OWNER);
         mav.addObject("is_owner", restaurant.getOwnerUserId() == ControllerUtils.getCurrentUserIdOrThrow());
 
+        // NOTE: This is a workaround to avoid IllegalStateException.
+        // The problem is that when this method is called from another method (i.e. when there's an error on a form)
+        // the ModelAttributes are not added to the model automatically.
+        mav.addObject("addProductForm", addProductForm);
+        mav.addObject("editProductForm", editProductForm);
+        mav.addObject("deleteProductForm", deleteProductForm);
+        mav.addObject("addCategoryForm", addCategoryForm);
+        mav.addObject("deleteCategoryForm", deleteCategoryForm);
+        mav.addObject("addEmployeeForm", addEmployeeForm);
+        mav.addObject("deleteEmployeeForm", deleteEmployeeForm);
+
         mav.addObject("addProductErrors", addProductErrors);
         mav.addObject("addCategoryErrors", addCategoryErrors);
         mav.addObject("addEmployeeErrors", addEmployeeErrors.get());
@@ -201,7 +211,7 @@ public class UserController {
                     id,
                     addProductForm,
                     true,
-                    new EditProductPriceForm(),
+                    new EditProductForm(),
                     false,
                     new DeleteProductForm(),
                     new AddCategoryForm(),
@@ -235,7 +245,7 @@ public class UserController {
                     id,
                     new AddProductForm(),
                     false,
-                    new EditProductPriceForm(),
+                    new EditProductForm(),
                     false,
                     new DeleteProductForm(),
                     addCategoryForm,
@@ -294,7 +304,7 @@ public class UserController {
                     id,
                     new AddProductForm(),
                     false,
-                    new EditProductPriceForm(),
+                    new EditProductForm(),
                     false,
                     new DeleteProductForm(),
                     new AddCategoryForm(),
@@ -330,17 +340,17 @@ public class UserController {
     }
 
     @RequestMapping(value = "/restaurants/{id:\\d+}/products/edit", method = RequestMethod.POST)
-    public ModelAndView editPriceForProduct(
+    public ModelAndView editProduct(
             @PathVariable final int id,
-            @Valid @ModelAttribute("editProductPriceForm") final EditProductPriceForm editProductPriceForm,
+            @Valid @ModelAttribute("editProductForm") final EditProductForm editProductForm,
             final BindingResult errors
-    ) {
+    ) throws IOException {
         if (errors.hasErrors()) {
             return editRestaurant(
                     id,
                     new AddProductForm(),
                     false,
-                    editProductPriceForm,
+                    editProductForm,
                     true,
                     new DeleteProductForm(),
                     new AddCategoryForm(),
@@ -352,8 +362,12 @@ public class UserController {
             );
         }
 
-        Product product = productService.getById(editProductPriceForm.getProductId()).orElseThrow(ProductNotFoundException::new);
-        productService.update(product.getProductId(), product.getName(), editProductPriceForm.getPrice(), product.getDescription());
+        Product product = productService.getById(editProductForm.getProductId()).orElseThrow(ProductNotFoundException::new);
+        productService.update(editProductForm.getProductId(), editProductForm.getProductName(), editProductForm.getPrice(), editProductForm.getDescription());
+        productService.updateImage(editProductForm.getProductId(), editProductForm.getImage().getBytes());
+        if (product.getCategoryId() != editProductForm.getCategoryId()) {
+            categoryService.moveProduct(editProductForm.getProductId(), editProductForm.getCategoryId());
+        }
 
         return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
     }

@@ -6,13 +6,22 @@ document.addEventListener("DOMContentLoaded", () => {
     let addProductFormCategoryId = document.querySelector("#add-product-form-category-id");
     let deleteProductFormProductId = document.querySelector("#delete-product-form-product-id");
     let deleteCategoryFormCategoryId = document.querySelector("#delete-category-form-category-id");
-    let editProductPriceFormProductId = document.querySelector("#edit-product-price-form-product-id");
     let deleteEmployeeFormUserId = document.querySelector("#delete-employee-form-user-id");
 
-    let namePreview = document.querySelector("#add-item-modal-name-preview");
-    let descriptionPreview = document.querySelector("#add-item-modal-description-preview");
-    let pricePreview = document.querySelector("#add-item-modal-price-preview");
-    let imagePreview = document.querySelector("#add-item-modal-image-preview");
+    let editProductFormName = document.querySelector("#edit-item-modal-name");
+    let editProductFormDescription = document.querySelector("#edit-item-modal-description");
+    let editProductFormPrice = document.querySelector("#edit-item-modal-price");
+    let editProductFormImage = document.querySelector("#edit-item-modal-image");
+
+    let addProductNamePreview = document.querySelector("#add-item-modal-name-preview");
+    let addProductDescriptionPreview = document.querySelector("#add-item-modal-description-preview");
+    let addProductPricePreview = document.querySelector("#add-item-modal-price-preview");
+    let addProductImagePreview = document.querySelector("#add-item-modal-image-preview");
+
+    let editProductNamePreview = document.querySelector("#edit-item-modal-name-preview");
+    let editProductDescriptionPreview = document.querySelector("#edit-item-modal-description-preview");
+    let editProductPricePreview = document.querySelector("#edit-item-modal-price-preview");
+    let editProductImagePreview = document.querySelector("#edit-item-modal-image-preview");
 
     // Open Checkout Modal if errors were found
     if (document.querySelector("body").dataset.addProductErrors === "true") {
@@ -23,8 +32,15 @@ document.addEventListener("DOMContentLoaded", () => {
     } else if (document.querySelector("body").dataset.addEmployeeErrors === "true") {
         document.querySelector("#add-employees-button").dispatchEvent(new Event("click"));
     } else if (document.querySelector("body").dataset.editProductErrors === "true") {
-        document.querySelector(`.edit-product-price-button`).dispatchEvent(new Event("click"));
-        editProductPriceFormProductId.value = document.querySelector("body").dataset.productId;
+        editProductNamePreview.innerHTML = editProductFormName.value;
+        editProductDescriptionPreview.innerHTML = editProductFormDescription.value;
+        editProductPricePreview.innerHTML = editProductFormPrice.value;
+
+        let productId = document.querySelector("body").dataset.productId;
+        let imageId = document.querySelector(`.edit-product-button[data-product-id="${productId}"]`).dataset.imageId;
+        editProductImagePreview.src = window.location.href.replace(/restaurants\/\d+\/products\/edit/, "images/" + imageId);
+
+        new bootstrap.Modal('#edit-item-modal', null).show()
     }
 
     // Modal dismissal
@@ -33,10 +49,10 @@ document.addEventListener("DOMContentLoaded", () => {
         changeInputValue("add-item-modal-description", "");
         changeInputValue("add-item-modal-price", "");
         changeInputValue("add-item-modal-image", "");
-        namePreview.innerHTML = namePreview.dataset.default;
-        descriptionPreview.innerHTML = descriptionPreview.dataset.default;
-        pricePreview.innerHTML = pricePreview.dataset.default;
-        imagePreview.src = imagePreview.dataset.default;
+        addProductNamePreview.innerHTML = addProductNamePreview.dataset.default;
+        addProductDescriptionPreview.innerHTML = addProductDescriptionPreview.dataset.default;
+        addProductPricePreview.innerHTML = addProductPricePreview.dataset.default;
+        addProductImagePreview.src = addProductImagePreview.dataset.default;
     });
     document.querySelector("#add-category-modal").addEventListener("hidden.bs.modal", () => {
         changeInputValue("add-category-modal-name", "");
@@ -56,9 +72,6 @@ document.addEventListener("DOMContentLoaded", () => {
             element.style.display = "block";
         });
     });
-    document.querySelector("#edit-item-price-modal").addEventListener("hidden.bs.modal", () => {
-        changeInputValue("edit-product-price-form-price", "");
-    });
 
     document.querySelectorAll(".add-product-button").forEach(element => {
         element.addEventListener("click", (event) => {
@@ -66,9 +79,18 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    document.querySelectorAll(".edit-product-price-button").forEach(element => {
+    document.querySelectorAll(".edit-product-button").forEach(element => {
         element.addEventListener("click", (event) => {
-            editProductPriceFormProductId.value = element.dataset.productId;
+            editProductFormName.value = element.dataset.productName;
+            editProductFormDescription.value = element.dataset.description;
+            editProductFormPrice.value = element.dataset.productPrice;
+            document.querySelector("#edit-item-modal-category").value = element.dataset.categoryId;
+            document.querySelector("#edit-item-modal-product-id").value = element.dataset.productId;
+
+            editProductNamePreview.innerHTML = element.dataset.productName;
+            editProductDescriptionPreview.innerHTML = element.dataset.description;
+            editProductPricePreview.innerHTML = element.dataset.productPrice;
+            editProductImagePreview.src = window.location.href.replace(/restaurants\/\d+\/edit/, "images/" + element.dataset.imageId)
         });
     });
 
@@ -115,15 +137,28 @@ document.addEventListener("DOMContentLoaded", () => {
     let imageInput = document.querySelector("#add-item-modal-image");
 
     nameInput.addEventListener("change", () => {
-        namePreview.innerHTML = nameInput.value;
+        addProductNamePreview.innerHTML = nameInput.value;
     });
     descriptionInput.addEventListener("change", () => {
-        descriptionPreview.innerHTML = descriptionInput.value;
+        addProductDescriptionPreview.innerHTML = descriptionInput.value;
     });
     priceInput.addEventListener("change", () => {
-        pricePreview.innerHTML = priceInput.value;
+        addProductPricePreview.innerHTML = priceInput.value;
     });
     imageInput.addEventListener("change", (event) => {
-        imagePreview.src = URL.createObjectURL(event.target.files[0]);
+        addProductImagePreview.src = URL.createObjectURL(event.target.files[0]);
+    });
+
+    editProductFormName.addEventListener("change", () => {
+        editProductNamePreview.innerHTML = editProductFormName.value;
+    });
+    editProductFormDescription.addEventListener("change", () => {
+        editProductDescriptionPreview.innerHTML = editProductFormDescription.value;
+    });
+    editProductFormPrice.addEventListener("change", () => {
+        editProductPricePreview.innerHTML = editProductFormPrice.value;
+    });
+    editProductFormImage.addEventListener("change", (event) => {
+        editProductImagePreview.src = URL.createObjectURL(event.target.files[0]);
     });
 });

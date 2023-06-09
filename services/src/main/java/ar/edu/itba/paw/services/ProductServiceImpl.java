@@ -75,7 +75,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     @Override
     public void updateImage(long productId, byte[] image) {
-        if (image == null)
+        if (image == null || image.length == 0)
             return;
 
         final Product product = getAndVerifyForUpdate(productId);

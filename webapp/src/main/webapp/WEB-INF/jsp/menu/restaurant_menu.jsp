@@ -313,8 +313,6 @@
                 </div>
             </div>
         </div>
-
-<%--        --%>
     </div>
 
     <div class="modal fade" id="view-reviews-modal" tabindex="-1">
