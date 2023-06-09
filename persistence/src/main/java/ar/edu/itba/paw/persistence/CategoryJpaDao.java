@@ -89,7 +89,8 @@ public class CategoryJpaDao implements CategoryDao {
         int productCount = productQuery.executeUpdate();
 
         // Close any promotions from products from this category
-        Query promoQuery = em.createQuery("UPDATE Promotion p SET p.endDate = now() WHERE (p.endDate IS NULL OR p.endDate > now()) AND p.source.categoryId = :categoryId");
+        // Query promoQuery = em.createQuery("UPDATE Promotion p SET p.endDate = now() WHERE (p.endDate IS NULL OR p.endDate > now()) AND p.source.categoryId = :categoryId");
+        Query promoQuery = em.createNativeQuery("UPDATE promotions SET end_date = now() WHERE (end_date IS NULL OR end_date > now()) AND EXISTS(SELECT 1 FROM products WHERE products.product_id = promotions.source_id AND products.category_id = :categoryId)");
         promoQuery.setParameter("categoryId", categoryId);
         int promoRows = promoQuery.executeUpdate();
 
