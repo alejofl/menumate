@@ -5,11 +5,12 @@ import ar.edu.itba.paw.exception.RestaurantNotFoundException;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.util.AverageCountPair;
-import ar.edu.itba.paw.webapp.form.CartItem;
-import ar.edu.itba.paw.webapp.form.CheckoutForm;
+import ar.edu.itba.paw.util.PaginatedResult;
+import ar.edu.itba.paw.webapp.form.*;
 import ar.edu.itba.paw.webapp.form.validation.PreProcessingCheckoutFormValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
@@ -121,5 +122,53 @@ public class RestaurantsController {
         mav.addObject("orderId", orderId);
         mav.addObject("userExists", userService.isUserEmailRegisteredAndConsolidated(email));
         return mav;
+    }
+
+    @RequestMapping(value = "/restaurants/{id:\\d+}/reviews", method = RequestMethod.GET)
+    public ModelAndView restaurantReviews(
+            @PathVariable final int id,
+            @ModelAttribute("reviewReplyForm") final ReviewReplyForm reviewReplyForm,
+            final Boolean reviewReplyFormErrors,
+            @Valid final PagingForm paging,
+            final BindingResult errors
+    ) {
+        final ModelAndView mav = new ModelAndView("menu/restaurant_reviews");
+        if (errors.hasErrors()) {
+            mav.addObject("error", Boolean.TRUE);
+            paging.clear();
+        }
+        PaginatedResult<Review> reviews = reviewService.getByRestaurant(id, paging.getPageOrDefault(), paging.getSizeOrDefault(ControllerUtils.DEFAULT_RESTAURANT_PAGE_SIZE));
+        final Restaurant restaurant = restaurantService.getById(id).orElseThrow(RestaurantNotFoundException::new);
+
+        mav.addObject("reviews", reviews.getResult());
+        mav.addObject("reviewCount", reviews.getTotalCount());
+        mav.addObject("pageCount", reviews.getTotalPageCount());
+
+        mav.addObject("restaurant", restaurant);
+        mav.addObject("reviewReplyFormErrors", reviewReplyFormErrors);
+
+        return mav;
+    }
+
+    @RequestMapping(value = "/restaurants/{id:\\d+}/reviews", method = RequestMethod.POST)
+    public ModelAndView replyReview(
+            @PathVariable final int id,
+            @Valid @ModelAttribute("reviewReplyForm") final ReviewReplyForm reviewReplyForm,
+            final BindingResult errors
+    ) {
+        if (errors.hasErrors()) {
+            PagingForm pagingForm = new PagingForm();
+            return restaurantReviews(
+                    id,
+                    reviewReplyForm,
+                    true,
+                    pagingForm,
+                    new BeanPropertyBindingResult(pagingForm, "pagingForm")
+            );
+        }
+
+        reviewService.replyToReview(reviewReplyForm.getOrderId(), reviewReplyForm.getReply());
+
+        return new ModelAndView(String.format("redirect:/restaurants/%d/reviews", id));
     }
 }

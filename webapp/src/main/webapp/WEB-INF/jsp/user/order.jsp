@@ -150,6 +150,12 @@
                         <small class="text-muted">${reviewDate}</small>
                     </div>
                     <p class="mb-0"><c:out value="${review.comment}"/></p>
+                    <c:if test="${review.reply != null}">
+                        <div class="alert alert-light mb-0 mt-2" role="alert">
+                            <b><spring:message code="restaurant.reviews.replyfromrestaurant"/></b>
+                            <p class="m-0"><c:out value="${review.reply}"/></p>
+                        </div>
+                    </c:if>
                 </div>
             </div>
         </c:if>

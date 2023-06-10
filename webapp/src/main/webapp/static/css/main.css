@@ -795,6 +795,24 @@ input:has(+ .form-error), textarea:has(+ .form-error) {
     background-color: var(--primary) !important;
 }
 
+.restaurant-reviews {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.restaurant-reviews .card {
+    min-width: 400px;
+}
+
+.restaurant-reviews .card-footer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
 .profile-container {
     display: flex;
     flex-direction: row;
