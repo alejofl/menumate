@@ -60,13 +60,18 @@ public class OrderJpaDao implements OrderDao {
         return Optional.ofNullable(em.find(Order.class, orderId));
     }
 
+    private static String getConditionString(boolean onlyInProgress) {
+        return onlyInProgress ? " AND date_delivered IS NULL AND date_cancelled IS NULL" : "";
+    }
+
     @Override
-    public PaginatedResult<Order> getByUser(long userId, int pageNumber, int pageSize, boolean descending) {
+    public PaginatedResult<Order> getByUser(long userId, int pageNumber, int pageSize, boolean onlyInProgress, boolean descending) {
         Utils.validatePaginationParams(pageNumber, pageSize);
 
         String orderDir = descending ? "DESC" : "ASC";
+        String condString = getConditionString(onlyInProgress);
 
-        Query nativeQuery = em.createNativeQuery("SELECT order_id FROM orders WHERE user_id = ? ORDER BY date_ordered " + orderDir);
+        Query nativeQuery = em.createNativeQuery("SELECT order_id FROM orders WHERE user_id = ?" + condString + " ORDER BY date_ordered " + orderDir);
         nativeQuery.setParameter(1, userId);
         nativeQuery.setMaxResults(pageSize);
         nativeQuery.setFirstResult((pageNumber - 1) * pageSize);
@@ -76,7 +81,7 @@ public class OrderJpaDao implements OrderDao {
         if (idList.isEmpty())
             return new PaginatedResult<>(Collections.emptyList(), pageNumber, pageSize, 0);
 
-        Query countQuery = em.createNativeQuery("SELECT COUNT(*) FROM orders WHERE user_id = ?");
+        Query countQuery = em.createNativeQuery("SELECT COUNT(*) FROM orders WHERE user_id = ?" + condString);
         countQuery.setParameter(1, userId);
         int count = ((Number) countQuery.getSingleResult()).intValue();
 
@@ -91,7 +96,7 @@ public class OrderJpaDao implements OrderDao {
         return new PaginatedResult<>(orders, pageNumber, pageSize, count);
     }
 
-    private static String getCoditionString(OrderStatus orderStatus) {
+    private static String getConditionString(OrderStatus orderStatus) {
         if (orderStatus == null)
             return "";
 
@@ -113,7 +118,7 @@ public class OrderJpaDao implements OrderDao {
     public PaginatedResult<Order> getByRestaurant(long restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus, boolean descending) {
         Utils.validatePaginationParams(pageNumber, pageSize);
 
-        String condString = getCoditionString(orderStatus);
+        String condString = getConditionString(orderStatus);
         String orderDir = descending ? "DESC" : "ASC";
 
         Query nativeQuery = em.createNativeQuery("SELECT order_id FROM orders WHERE restaurant_id = ?" + condString + " ORDER BY date_ordered " + orderDir);

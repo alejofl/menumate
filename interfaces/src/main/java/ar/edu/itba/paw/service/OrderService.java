@@ -20,7 +20,7 @@ public interface OrderService {
 
     Optional<Order> getById(long orderId);
 
-    PaginatedResult<Order> getByUser(long userId, int pageNumber, int pageSize, boolean descending);
+    PaginatedResult<Order> getByUser(long userId, int pageNumber, int pageSize, boolean onlyInProgress, boolean descending);
 
     PaginatedResult<Order> getByRestaurant(long restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus, boolean descending);
 
