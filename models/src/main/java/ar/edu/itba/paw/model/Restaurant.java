@@ -201,4 +201,8 @@ public class Restaurant {
     public List<RestaurantTags> getTags() {
         return tags;
     }
+
+    public void setTags(List<RestaurantTags> tags) {
+        this.tags = tags;
+    }
 }
