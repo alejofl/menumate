@@ -61,10 +61,12 @@ public class OrderJpaDao implements OrderDao {
     }
 
     @Override
-    public PaginatedResult<Order> getByUser(long userId, int pageNumber, int pageSize) {
+    public PaginatedResult<Order> getByUser(long userId, int pageNumber, int pageSize, boolean descending) {
         Utils.validatePaginationParams(pageNumber, pageSize);
 
-        Query nativeQuery = em.createNativeQuery("SELECT order_id FROM orders WHERE user_id = ? ORDER BY date_ordered DESC");
+        String orderDir = descending ? "DESC" : "ASC";
+
+        Query nativeQuery = em.createNativeQuery("SELECT order_id FROM orders WHERE user_id = ? ORDER BY date_ordered " + orderDir);
         nativeQuery.setParameter(1, userId);
         nativeQuery.setMaxResults(pageSize);
         nativeQuery.setFirstResult((pageNumber - 1) * pageSize);
@@ -79,7 +81,7 @@ public class OrderJpaDao implements OrderDao {
         int count = ((Number) countQuery.getSingleResult()).intValue();
 
         final TypedQuery<Order> query = em.createQuery(
-                "FROM Order WHERE orderId IN :idList ORDER BY dateOrdered DESC",
+                "FROM Order WHERE orderId IN :idList ORDER BY dateOrdered " + orderDir,
                 Order.class
         );
         query.setParameter("idList", idList);
@@ -108,12 +110,13 @@ public class OrderJpaDao implements OrderDao {
     }
 
     @Override
-    public PaginatedResult<Order> getByRestaurant(long restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus) {
+    public PaginatedResult<Order> getByRestaurant(long restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus, boolean descending) {
         Utils.validatePaginationParams(pageNumber, pageSize);
 
         String condString = getCoditionString(orderStatus);
+        String orderDir = descending ? "DESC" : "ASC";
 
-        Query nativeQuery = em.createNativeQuery("SELECT order_id FROM orders WHERE restaurant_id = ?" + condString + " ORDER BY date_ordered DESC");
+        Query nativeQuery = em.createNativeQuery("SELECT order_id FROM orders WHERE restaurant_id = ?" + condString + " ORDER BY date_ordered " + orderDir);
         nativeQuery.setParameter(1, restaurantId);
         nativeQuery.setMaxResults(pageSize);
         nativeQuery.setFirstResult((pageNumber - 1) * pageSize);
@@ -128,7 +131,7 @@ public class OrderJpaDao implements OrderDao {
         int count = ((Number) countQuery.getSingleResult()).intValue();
 
         final TypedQuery<Order> query = em.createQuery(
-                "FROM Order WHERE orderId IN :idList ORDER BY dateOrdered DESC",
+                "FROM Order WHERE orderId IN :idList ORDER BY dateOrdered " + orderDir,
                 Order.class
         );
         query.setParameter("idList", idList);

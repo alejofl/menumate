@@ -119,12 +119,23 @@ public class Order {
         return dateDelivered;
     }
 
+    public void setOrderId(long orderId) {
+        this.orderId = orderId;
+    }
+
     public void setAddress(String address) {
         this.address = address;
     }
 
     public void setTableNumber(int tableNumber) {
         this.tableNumber = tableNumber;
+    }
+    public void setDateOrdered(LocalDateTime dateOrdered) {
+        this.dateOrdered = dateOrdered;
+    }
+
+    public void setOrderType(OrderType orderType) {
+        this.orderType = orderType;
     }
 
     public void setDateConfirmed(LocalDateTime dateConfirmed) {

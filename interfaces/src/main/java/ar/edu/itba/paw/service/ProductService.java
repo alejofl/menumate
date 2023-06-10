@@ -1,8 +1,10 @@
 package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.Product;
+import ar.edu.itba.paw.model.Promotion;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 public interface ProductService {
@@ -16,4 +18,6 @@ public interface ProductService {
     void updateImage(long productId, byte[] image);
 
     void delete(long productId);
+
+    Promotion createPromotion(long sourceProductId, LocalDateTime startDate, LocalDateTime endDate, float discount);
 }

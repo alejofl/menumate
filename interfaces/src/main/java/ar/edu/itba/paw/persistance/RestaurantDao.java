@@ -14,5 +14,7 @@ public interface RestaurantDao {
 
     PaginatedResult<RestaurantDetails> search(String query, int pageNumber, int pageSize, RestaurantOrderBy orderBy, boolean descending, List<RestaurantTags> tags, List<RestaurantSpecialty> specialties);
 
+    List<Promotion> getActivePromotions(long restaurantId);
+
     void delete(long restaurantId);
 }

@@ -61,6 +61,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    @Transactional
     public void replyToReview(long orderId, String reply) {
         Review review = reviewDao.getByOrder(orderId).orElseThrow(ReviewNotFoundException::new);
         review.setReply(reply);

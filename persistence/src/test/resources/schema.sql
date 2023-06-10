@@ -98,6 +98,15 @@ CREATE TABLE IF NOT EXISTS products
     deleted     BOOLEAN NOT NULL DEFAULT FALSE
 );
 
+CREATE TABLE IF NOT EXISTS promotions
+(
+    promotion_id   SERIAL PRIMARY KEY,
+    source_id      INT REFERENCES products (product_id) ON DELETE CASCADE NOT NULL,
+    destination_id INT REFERENCES products (product_id) ON DELETE CASCADE UNIQUE NOT NULL,
+    start_date     TIMESTAMP NOT NULL,
+    end_date       TIMESTAMP
+);
+
 CREATE TABLE IF NOT EXISTS orders
 (
     order_id       SERIAL PRIMARY KEY,
@@ -173,3 +182,4 @@ CREATE SEQUENCE orders_order_id_seq START WITH 1 increment by 1;
 CREATE SEQUENCE products_product_id_seq START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE restaurants_restaurant_id_seq START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE users_user_id_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE promotions_promotion_id_seq START WITH 1 INCREMENT BY 1;

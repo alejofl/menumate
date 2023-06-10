@@ -46,6 +46,10 @@ public class OrderItem {
         return product;
     }
 
+    public long getOrderId() {
+        return orderId;
+    }
+
     public int getLineNumber() {
         return lineNumber;
     }

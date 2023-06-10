@@ -18,11 +18,11 @@ public interface OrderDao {
 
     Optional<Order> getById(long orderId);
 
-    PaginatedResult<Order> getByUser(long userId, int pageNumber, int pageSize);
+    PaginatedResult<Order> getByUser(long userId, int pageNumber, int pageSize, boolean descending);
 
     /**
      * Gets a restaurant's orders, optionally by status, ordered by date descending. orderStatus may be null to bring
      * all orders.
      */
-    PaginatedResult<Order> getByRestaurant(long restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus);
+    PaginatedResult<Order> getByRestaurant(long restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus, boolean descending);
 }

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,6 +49,11 @@ public class RestaurantServiceImpl implements RestaurantService {
         return restaurantDao.search(query, pageNumber, pageSize, orderBy, descending, tags, specialties);
     }
 
+    @Override
+    public List<Promotion> getActivePromotions(long restaurantId) {
+        return restaurantDao.getActivePromotions(restaurantId);
+    }
+
     private Restaurant getAndVerifyForUpdate(long restaurantId) {
         final Restaurant restaurant = restaurantDao.getById(restaurantId).orElse(null);
         if (restaurant == null) {
@@ -65,28 +71,30 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Transactional
     @Override
-    public Restaurant update(long restaurantId, String name, RestaurantSpecialty specialty, String address, String description) {
+    public Restaurant update(long restaurantId, String name, RestaurantSpecialty specialty, String address, String description, List<RestaurantTags> tags) {
         final Restaurant restaurant = getAndVerifyForUpdate(restaurantId);
         restaurant.setName(name);
         restaurant.setSpecialty(specialty);
         restaurant.setAddress(address);
         restaurant.setDescription(description);
-        LOGGER.info("Updated name, specialty, address and description of restaurant id {}", restaurant.getRestaurantId());
+        restaurant.getTags().clear();
+        restaurant.getTags().addAll(tags);
+        LOGGER.info("Updated name, specialty, address, description and tags of restaurant id {}", restaurant.getRestaurantId());
         return restaurant;
     }
 
     @Transactional
     @Override
     public void updateImages(long restaurantId, byte[] logo, byte[] portrait1, byte[] portrait2) {
-        if (logo == null && portrait1 == null && portrait2 == null)
+        if ((logo == null || logo.length == 0) && (portrait1 == null || portrait1.length == 0) && (portrait2 == null || portrait2.length == 0))
             return;
 
         final Restaurant restaurant = getAndVerifyForUpdate(restaurantId);
-        if (logo != null)
+        if (logo != null && logo.length != 0)
             imageDao.update(restaurant.getLogoId(), logo);
-        if (portrait1 != null)
+        if (portrait1 != null && portrait1.length != 0)
             imageDao.update(restaurant.getPortrait1Id(), portrait1);
-        if (portrait2 != null)
+        if (portrait2 != null && portrait2.length != 0)
             imageDao.update(restaurant.getPortrait2Id(), portrait2);
 
         LOGGER.info("Updated images of restaurant id {}", restaurant.getRestaurantId());

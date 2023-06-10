@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import org.junit.Assert;
 import org.junit.Before;
@@ -7,6 +8,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
@@ -15,7 +17,10 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
+import javax.sql.rowset.serial.SerialBlob;
+import javax.xml.bind.DatatypeConverter;
 import java.sql.SQLException;
+import java.sql.SQLOutput;
 import java.util.Optional;
 import java.util.Random;
 
@@ -35,54 +40,45 @@ public class ImageJpaDaoTest {
     @PersistenceContext
     private EntityManager em;
 
-    private static final long IMAGE_ID = 6363;
-    private static final byte[] IMG_INFO_1 = new byte[50];
-    private static final byte[] IMG_INFO_2 = new byte[100];
+    private static final byte[] NON_EXISTING_IMAGE_INFO = {4, 5, 6};
+    private static final long EXISTING_IMAGE_ID = 623;
+    private static final byte[] EXISTING_IMAGE_INFO = {33, 18, 86};
 
     @Before
     public void setup() {
         jdbcTemplate = new JdbcTemplate(ds);
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, "images");
-
-        Random r = new Random();
-        r.nextBytes(IMG_INFO_1);
-        r.nextBytes(IMG_INFO_2);
     }
 
     @Test
+    @Rollback
     public void testCreateImg() throws SQLException {
-        final long image = imageDao.create(IMG_INFO_1);
+        final long image = imageDao.create(NON_EXISTING_IMAGE_INFO);
         em.flush();
-        Assert.assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "images"));
+        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "images", "image_id = " + image));
     }
 
     @Test
+    @Rollback
     public void testUpdateImg() throws SQLException {
-        jdbcTemplate.update("INSERT INTO images (image_id, bytes) VALUES (?, ?)", IMAGE_ID, IMG_INFO_1);
-
-        imageDao.update(IMAGE_ID, IMG_INFO_2);
+        imageDao.update(EXISTING_IMAGE_ID, NON_EXISTING_IMAGE_INFO);
         em.flush();
 
-        Optional<byte[]> maybeImage = imageDao.getById(IMAGE_ID);
-        Assert.assertTrue(maybeImage.isPresent());
-        Assert.assertArrayEquals(IMG_INFO_2, maybeImage.get());
+        Image image = em.find(Image.class, EXISTING_IMAGE_ID);
+        Assert.assertArrayEquals(NON_EXISTING_IMAGE_INFO, image.getBytes());
     }
 
     @Test
+    @Rollback
     public void testDeleteImg() throws SQLException {
-        jdbcTemplate.update("INSERT INTO images (image_id, bytes) VALUES (?, ?)", IMAGE_ID, IMG_INFO_1);
-
-        imageDao.delete(IMAGE_ID);
+        imageDao.delete(EXISTING_IMAGE_ID);
         em.flush();
-        Assert.assertFalse(imageDao.getById(IMAGE_ID).isPresent());
+        Assert.assertEquals(0, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "images", "image_id = " + EXISTING_IMAGE_ID));
     }
 
     @Test
     public void testGetImageById() throws SQLException {
-        jdbcTemplate.update("INSERT INTO images (image_id, bytes) VALUES (?, ?)", IMAGE_ID, IMG_INFO_1);
-
-        Optional<byte[]> image = imageDao.getById(IMAGE_ID);
+        Optional<byte[]> image = imageDao.getById(EXISTING_IMAGE_ID);
         Assert.assertTrue(image.isPresent());
-        Assert.assertArrayEquals(IMG_INFO_1, image.get());
+        Assert.assertArrayEquals(EXISTING_IMAGE_INFO, image.get());
     }
 }

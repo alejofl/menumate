@@ -98,6 +98,15 @@ CREATE TABLE IF NOT EXISTS products
     deleted     BOOLEAN NOT NULL DEFAULT FALSE
 );
 
+CREATE TABLE IF NOT EXISTS promotions
+(
+    promotion_id   SERIAL PRIMARY KEY,
+    source_id      INT REFERENCES products (product_id) ON DELETE CASCADE NOT NULL,
+    destination_id INT REFERENCES products (product_id) ON DELETE CASCADE UNIQUE NOT NULL,
+    start_date     TIMESTAMP NOT NULL,
+    end_date       TIMESTAMP
+);
+
 CREATE TABLE IF NOT EXISTS orders
 (
     order_id       SERIAL PRIMARY KEY,

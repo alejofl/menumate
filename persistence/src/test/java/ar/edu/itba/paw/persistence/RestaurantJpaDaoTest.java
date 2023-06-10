@@ -2,6 +2,10 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.persistence.config.TestConfig;
+import ar.edu.itba.paw.persistence.constants.ProductConstants;
+import ar.edu.itba.paw.persistence.constants.RestaurantConstants;
+import ar.edu.itba.paw.persistence.constants.ReviewConstants;
+import ar.edu.itba.paw.persistence.constants.UserConstants;
 import ar.edu.itba.paw.util.PaginatedResult;
 import org.junit.Assert;
 import org.junit.Before;
@@ -9,6 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
@@ -18,8 +23,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.*;
 
 
@@ -27,35 +30,9 @@ import java.util.*;
 @ContextConfiguration(classes = TestConfig.class)
 @Transactional
 public class RestaurantJpaDaoTest {
-
-    private static final long USER_ID = 791;
-    private static final String USER_EMAIL = "user@user.com";
-    private static final String USER_PASSWORD = "PASSWORD";
-    private static final boolean IS_ACTIVE = true;
-    private static final String PREFERRED_LANGUAGE = "qx";
-    private static final long RESTAURANT_ID = 123;
-    private static final long RESTAURANT_ID2 = 762;
-    private static final long RESTAURANT_ID3 = 500;
-    private static final String RESTAURANT_NAME = "Restaurant Name";
-    private static final String RESTAURANT_NAME2 = "Restaurant Name2";
-    private static final String RESTAURANT_EMAIL = "restaurant@restaurant.com";
-    private static final int MAX_TABLES = 10;
-    private static final int SPECIALTY = 2;
-    private static final String RESTAURANT_ADDRESS = "Restaurant Address";
-    private static final String RESTAURANT_DESCRIPTION = "Restaurant Description";
-    private static final boolean RESTAURANT_DELETED = false;
-    private static final boolean RESTAURANT_IS_ACTIVE = true;
-    private static final RestaurantTags[] RESTAURANT_TAGS = {RestaurantTags.CASUAL, RestaurantTags.HAPPY_HOUR, RestaurantTags.ROMANTIC, RestaurantTags.CHEAP};
-    private static final String[] RESTAURANT_EXPECTED_NAMES = {"B", "A", "C", "F", "E", "D", "G", "H", "J", "I"};
-    private static final String CATEGORY_NAME = "Category Name";
-    private static final boolean CATEGORY_DELETED = false;
-    private static final String PRODUCT_NAME = "Product Name";
-    private static final String PRODUCT_DESCRIPTION = "Product Description";
-    private static final double PRODUCT_PRICE = 100.0;
-    private static final boolean PRODUCT_AVAILABLE= true;
-    private static final boolean PRODUCT_DELETED = false;
-    private static final long TAG_ID = 3;
-
+    private static final long NON_EXISTENT_RESTAURANT_ID = 5000;
+    private static final String NON_EXISTENT_RESTAURANT_NAME = "Nonexistent Restaurant";
+    private static final String NON_EXISTENT_RESTAURANT_EMAIL = "nonexistent@restaurant.com";
 
     @Autowired
     private DataSource ds;
@@ -71,73 +48,87 @@ public class RestaurantJpaDaoTest {
     @Before
     public void setup() {
         jdbcTemplate = new JdbcTemplate(ds);
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, "restaurants", "users", "orders", "order_reviews", "restaurant_tags");
-        jdbcTemplate.execute("INSERT INTO users (user_id, email, password, name, is_active, preferred_language) VALUES (" + USER_ID + ", '" + USER_EMAIL + "', '" + USER_PASSWORD + "', '" + USER_EMAIL + "', " + IS_ACTIVE + ", '" + PREFERRED_LANGUAGE + "')");
     }
 
     @Test
     public void testFindById() throws SQLException {
-        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, max_tables, specialty, owner_user_id, address, description, date_created, deleted, is_active) VALUES (" + RESTAURANT_ID + ", '" + RESTAURANT_NAME + "', '" + RESTAURANT_EMAIL + "', " + MAX_TABLES + ", " + SPECIALTY + ", " + USER_ID + ", '" + RESTAURANT_ADDRESS + "', '" + RESTAURANT_DESCRIPTION + "', '" + Timestamp.valueOf(LocalDateTime.now()) + "', " + RESTAURANT_DELETED + ", " + RESTAURANT_IS_ACTIVE + ")");
-
-        Optional<Restaurant> maybeRestaurant = restaurantDao.getById(RESTAURANT_ID);
+        Optional<Restaurant> maybeRestaurant = restaurantDao.getById(RestaurantConstants.RESTAURANT_IDS[0]);
 
         Assert.assertTrue(maybeRestaurant.isPresent());
-        Assert.assertEquals(RESTAURANT_ID, maybeRestaurant.get().getRestaurantId().intValue());
-        Assert.assertEquals(USER_ID, maybeRestaurant.get().getOwnerUserId());
-        Assert.assertEquals(RESTAURANT_NAME, maybeRestaurant.get().getName());
-        Assert.assertEquals(RESTAURANT_EMAIL, maybeRestaurant.get().getEmail());
-        Assert.assertEquals(SPECIALTY, maybeRestaurant.get().getSpecialty().ordinal());
-        Assert.assertEquals(RESTAURANT_ADDRESS, maybeRestaurant.get().getAddress());
-        Assert.assertEquals(RESTAURANT_DESCRIPTION, maybeRestaurant.get().getDescription());
-        Assert.assertEquals(MAX_TABLES, maybeRestaurant.get().getMaxTables());
-        Assert.assertEquals(RESTAURANT_IS_ACTIVE, maybeRestaurant.get().getIsActive());
-        Assert.assertEquals(RESTAURANT_DELETED, maybeRestaurant.get().getDeleted());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0], maybeRestaurant.get().getRestaurantId());
+        Assert.assertEquals(UserConstants.RESTAURANT_OWNER_ID, maybeRestaurant.get().getOwnerUserId());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_NAMES[0], maybeRestaurant.get().getName());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_EMAIL, maybeRestaurant.get().getEmail());
+        Assert.assertEquals(RestaurantConstants.RESTAURANTS_SPECIALITY.get(0).ordinal(), maybeRestaurant.get().getSpecialty().ordinal());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_ADDRESS, maybeRestaurant.get().getAddress());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_DESCRIPTION, maybeRestaurant.get().getDescription());
+        Assert.assertEquals(RestaurantConstants.MAX_TABLES, maybeRestaurant.get().getMaxTables());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IS_ACTIVE, maybeRestaurant.get().getIsActive());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_DELETED, maybeRestaurant.get().getDeleted());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_CREATION_DATE.getDayOfYear(), maybeRestaurant.get().getDateCreated().getDayOfYear());
     }
 
     @Test
+    public void testFindByIdNotFound() throws SQLException {
+        Optional<Restaurant> maybeRestaurant = restaurantDao.getById(NON_EXISTENT_RESTAURANT_ID);
+
+        Assert.assertFalse(maybeRestaurant.isPresent());
+    }
+
+    @Test
+    @Rollback
     public void testCreation() throws SQLException {
-        Restaurant restaurant = restaurantDao.create(RESTAURANT_NAME, RESTAURANT_EMAIL, RestaurantSpecialty.fromOrdinal(SPECIALTY), USER_ID, RESTAURANT_ADDRESS, RESTAURANT_DESCRIPTION, MAX_TABLES, null, null, null, true, null);
+        Restaurant restaurant = restaurantDao.create(
+                NON_EXISTENT_RESTAURANT_NAME,
+                NON_EXISTENT_RESTAURANT_EMAIL,
+                RestaurantConstants.RESTAURANTS_SPECIALITY.get(0),
+                UserConstants.RESTAURANT_OWNER_ID,
+                RestaurantConstants.RESTAURANT_ADDRESS,
+                RestaurantConstants.RESTAURANT_DESCRIPTION,
+                RestaurantConstants.MAX_TABLES,
+                null, null, null, true, null
+        );
         em.flush();
 
         Assert.assertNotNull(restaurant);
-        Assert.assertEquals(RESTAURANT_NAME, restaurant.getName());
-        Assert.assertEquals(RESTAURANT_EMAIL, restaurant.getEmail());
-        Assert.assertEquals(SPECIALTY, restaurant.getSpecialty().ordinal());
-        Assert.assertEquals(USER_ID, restaurant.getOwnerUserId());
-        Assert.assertEquals(RESTAURANT_ADDRESS, restaurant.getAddress());
-        Assert.assertEquals(RESTAURANT_DESCRIPTION, restaurant.getDescription());
-        Assert.assertEquals(MAX_TABLES, restaurant.getMaxTables());
-        Assert.assertEquals(RESTAURANT_IS_ACTIVE, restaurant.getIsActive());
-        Assert.assertEquals(RESTAURANT_DELETED, restaurant.getDeleted());
-
+        Assert.assertEquals(NON_EXISTENT_RESTAURANT_NAME, restaurant.getName());
+        Assert.assertEquals(NON_EXISTENT_RESTAURANT_EMAIL, restaurant.getEmail());
+        Assert.assertEquals(RestaurantConstants.RESTAURANTS_SPECIALITY.get(0).ordinal(), restaurant.getSpecialty().ordinal());
+        Assert.assertEquals(UserConstants.RESTAURANT_OWNER_ID, restaurant.getOwnerUserId());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_ADDRESS, restaurant.getAddress());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_DESCRIPTION, restaurant.getDescription());
+        Assert.assertEquals(RestaurantConstants.MAX_TABLES, restaurant.getMaxTables());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IS_ACTIVE, restaurant.getIsActive());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_DELETED, restaurant.getDeleted());
     }
 
     @Test
+    @Rollback
     public void testDeletion() throws SQLException {
-        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, max_tables, specialty, owner_user_id, address, description, date_created, deleted, is_active) VALUES (" + RESTAURANT_ID + ", '" + RESTAURANT_NAME + "', '" + RESTAURANT_EMAIL + "', " + MAX_TABLES + ", " + SPECIALTY + ", " + USER_ID + ", '" + RESTAURANT_ADDRESS + "', '" + RESTAURANT_DESCRIPTION + "', '" + Timestamp.valueOf(LocalDateTime.now()) + "', " + RESTAURANT_DELETED + ", " + RESTAURANT_IS_ACTIVE + ")");
-        restaurantDao.delete(RESTAURANT_ID);
+        restaurantDao.delete(RestaurantConstants.RESTAURANT_IDS[0]);
         em.flush();
+
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS.length - 1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "restaurants", "deleted = false"));
+        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "restaurants", "deleted = true"));
     }
 
     @Test
     public void searchEmpty() throws SQLException {
-        PaginatedResult<RestaurantDetails> res = restaurantDao.search(null, 1, RESTAURANT_EXPECTED_NAMES.length, null, false, null, null);
-        Assert.assertEquals(0, res.getResult().size());
+        PaginatedResult<RestaurantDetails> res = restaurantDao.search(null, 1, RestaurantConstants.RESTAURANT_IDS.length, null, false, null, null);
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS.length, res.getResult().size());
     }
 
     @Test
     public void searchSortedByNameAsc() throws SQLException {
+        PaginatedResult<RestaurantDetails> restaurantsDetails = restaurantDao.search(
+                "", 1,
+                RestaurantConstants.RESTAURANT_IDS.length,
+                RestaurantOrderBy.ALPHABETIC,
+                false, null, null
+        );
 
-        for (int i = 0; i < RESTAURANT_EXPECTED_NAMES.length; i++) {
-            jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, max_tables, specialty, owner_user_id, address, description, date_created, deleted, is_active) VALUES (" + (i + 1) + ", '" + RESTAURANT_EXPECTED_NAMES[i] + "', '" + RESTAURANT_EMAIL + "', " + MAX_TABLES + ", " + SPECIALTY + ", " + USER_ID + ", '" + RESTAURANT_ADDRESS + "', '" + RESTAURANT_DESCRIPTION + "', '" + Timestamp.valueOf(LocalDateTime.now()) + "', " + RESTAURANT_DELETED + ", " + RESTAURANT_IS_ACTIVE + ")");
-            jdbcTemplate.execute("INSERT INTO orders (order_id, order_type, restaurant_id, user_id, date_ordered, date_delivered, date_confirmed, date_ready) VALUES (" + (i + 1) + ", " + OrderType.TAKEAWAY.ordinal() + ", " + (i + 1) + ", " + USER_ID + ", now(), now(), now(), now())");
-        }
-
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS.length, restaurantsDetails.getTotalCount());
         int j = 0;
-        final int maxRestaurants = RESTAURANT_EXPECTED_NAMES.length;
-        PaginatedResult<RestaurantDetails> restaurantsDetails = restaurantDao.search("", 1, maxRestaurants, RestaurantOrderBy.ALPHABETIC, false, null, null);
-        Assert.assertEquals(maxRestaurants, restaurantsDetails.getTotalCount());
-
         for (RestaurantDetails rd : restaurantsDetails.getResult()) {
             Assert.assertEquals(Character.toString((char) ('A' + j)), rd.getRestaurant().getName());
             j++;
@@ -146,17 +137,15 @@ public class RestaurantJpaDaoTest {
 
     @Test
     public void searchSortedByNameDesc() throws SQLException {
+        PaginatedResult<RestaurantDetails> restaurantsDetails = restaurantDao.search(
+                "", 1,
+                RestaurantConstants.RESTAURANT_IDS.length,
+                RestaurantOrderBy.ALPHABETIC,
+                true, null, null
+        );
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS.length, restaurantsDetails.getTotalCount());
 
-        for (int i = 0; i < RESTAURANT_EXPECTED_NAMES.length; i++) {
-            jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, max_tables, specialty, owner_user_id, address, description, date_created, deleted, is_active) VALUES (" + (i + 1) + ", '" + RESTAURANT_EXPECTED_NAMES[i] + "', '" + RESTAURANT_EMAIL + "', " + MAX_TABLES + ", " + SPECIALTY + ", " + USER_ID + ", '" + RESTAURANT_ADDRESS + "', '" + RESTAURANT_DESCRIPTION + "', '" + Timestamp.valueOf(LocalDateTime.now()) + "', " + RESTAURANT_DELETED + ", " + RESTAURANT_IS_ACTIVE + ")");
-            jdbcTemplate.execute("INSERT INTO orders (order_id, order_type, restaurant_id, user_id, date_ordered, date_delivered, date_confirmed, date_ready) VALUES (" + (i + 1) + ", " + OrderType.TAKEAWAY.ordinal() + ", " + (i + 1) + ", " + USER_ID + ", now(), now(), now(), now())");
-        }
-
-        int j = RESTAURANT_EXPECTED_NAMES.length - 1;
-        final int maxRestaurants = RESTAURANT_EXPECTED_NAMES.length;
-        PaginatedResult<RestaurantDetails> restaurantsDetails = restaurantDao.search("", 1, maxRestaurants, RestaurantOrderBy.ALPHABETIC, true, null, null);
-        Assert.assertEquals(maxRestaurants, restaurantsDetails.getTotalCount());
-
+        int j = RestaurantConstants.RESTAURANT_IDS.length - 1;
         for (RestaurantDetails rd : restaurantsDetails.getResult()) {
             Assert.assertEquals(Character.toString((char) ('A' + j)), rd.getRestaurant().getName());
             j--;
@@ -165,132 +154,61 @@ public class RestaurantJpaDaoTest {
 
     @Test
     public void searchSortedByRatingAsc() throws SQLException {
-        final int maxRestaurants = 3;
-        List<Double> ratingAvg = new ArrayList<>();
-        final List<Integer> ratings1 = Arrays.asList(1, 1, 3, 5, 5, 5);
-        final List<Integer> ratings2 = Arrays.asList(2, 2, 2, 2, 2, 2);
-        final List<Integer> ratings3 = Arrays.asList(3, 3, 3, 3, 3, 3);
-        ratingAvg.add(ratings1.stream().mapToDouble(Integer::doubleValue).average().orElse(0.0));
-        ratingAvg.add(ratings2.stream().mapToDouble(Integer::doubleValue).average().orElse(0.0));
-        ratingAvg.add(ratings3.stream().mapToDouble(Integer::doubleValue).average().orElse(0.0));
+        final List<Double> ratingAvg = ReviewConstants.AVERAGE_LIST;
+        ratingAvg.sort(Comparator.naturalOrder());
 
-        for (int i = 1; i < maxRestaurants + 1; i++) {
-            jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, max_tables, specialty, owner_user_id, address, description, date_created, deleted, is_active) VALUES (" + i + ", '" + RESTAURANT_EXPECTED_NAMES[i-1] + "', '" + RESTAURANT_EMAIL + "', " + MAX_TABLES + ", " + SPECIALTY + ", " + USER_ID + ", '" + RESTAURANT_ADDRESS + "', '" + RESTAURANT_DESCRIPTION + "', '" + Timestamp.valueOf(LocalDateTime.now()) + "', " + RESTAURANT_DELETED + ", " + RESTAURANT_IS_ACTIVE + ")");
-        }
-        int j=0;
-        for(int i=0; j<ratings1.size(); i++, j++){
-            jdbcTemplate.execute("INSERT INTO orders (order_id, order_type, restaurant_id, user_id, date_ordered, date_delivered, date_confirmed, date_ready) VALUES (" + (j + 1) + ", " + OrderType.TAKEAWAY.ordinal() + ", " + 1 + ", " + USER_ID + ", now(), now(), now(), now())");
-            jdbcTemplate.execute("INSERT INTO order_reviews (order_id, rating, comment, date) VALUES (" + (j + 1) + ", " + ratings1.get(i) + ", 'comment', now())");
-        }
+        final int maxRestaurants = RestaurantConstants.RESTAURANT_IDS.length;
+        PaginatedResult<RestaurantDetails> res = restaurantDao.search(
+                "", 1, maxRestaurants,
+                RestaurantOrderBy.RATING,
+                false, null, null
+        );
 
-        for(int i=0; i<ratings2.size(); i++, j++){
-            jdbcTemplate.execute("INSERT INTO orders (order_id, order_type, restaurant_id, user_id, date_ordered, date_delivered, date_confirmed, date_ready) VALUES (" + (j + 1) + ", " + OrderType.TAKEAWAY.ordinal() + ", " + 2 + ", " + USER_ID + ", now(), now(), now(), now())");
-            jdbcTemplate.execute("INSERT INTO order_reviews (order_id, rating, comment, date) VALUES (" + (j + 1) + ", " + ratings2.get(i) + ", 'comment', now())");
-        }
-
-        for(int i=0; i<ratings3.size(); i++, j++){
-            jdbcTemplate.execute("INSERT INTO orders (order_id, order_type, restaurant_id, user_id, date_ordered, date_delivered, date_confirmed, date_ready) VALUES (" + (j + 1) + ", " + OrderType.TAKEAWAY.ordinal() + ", " + 3 + ", " + USER_ID + ", now(), now(), now(), now())");
-            jdbcTemplate.execute("INSERT INTO order_reviews (order_id, rating, comment, date) VALUES (" + (j + 1) + ", " + ratings3.get(i) + ", 'comment', now())");
-        }
-
-        PaginatedResult<RestaurantDetails> res = restaurantDao.search("", 1, maxRestaurants, RestaurantOrderBy.RATING, false, null, null);
-
-        Assert.assertEquals(maxRestaurants, res.getPageSize());
-        System.out.println(res.getResult());
-        System.out.println(res.getResult().get(0).getRestaurantId());
-        Assert.assertEquals(maxRestaurants, res.getTotalCount());
-        Assert.assertEquals(2, res.getResult().get(0).getRestaurantId());
-        Assert.assertEquals(1, res.getResult().get(maxRestaurants-1).getRestaurantId());
-
-        Collections.sort(ratingAvg);
         int size = res.getResult().size();
+        Assert.assertEquals(maxRestaurants, res.getPageSize());
+        Assert.assertEquals(maxRestaurants, res.getTotalCount());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[1].longValue(), res.getResult().get(0).getRestaurantId());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0].longValue(), res.getResult().get(maxRestaurants-1).getRestaurantId());
         for (int i = 0; i < size; i++) {
-            Assert.assertEquals(ratingAvg.get(i).intValue(),res.getResult().get(i).getAverageRating());
+            Assert.assertEquals(ratingAvg.get(i).intValue(), res.getResult().get(i).getAverageRating());
         }
     }
 
     @Test
     public void searchSortedByRatingDesc() throws SQLException {
-        final int maxRestaurants = 3;
-        List<Double> ratingAvg = new ArrayList<>();
-        final List<Integer> ratings1 = Arrays.asList(1, 1, 3, 5, 5, 5);
-        final List<Integer> ratings2 = Arrays.asList(2, 2, 2, 2, 2, 2);
-        final List<Integer> ratings3 = Arrays.asList(3, 3, 3, 3, 3, 3);
-        ratingAvg.add(ratings1.stream().mapToDouble(Integer::doubleValue).average().orElse(0.0));
-        ratingAvg.add(ratings2.stream().mapToDouble(Integer::doubleValue).average().orElse(0.0));
-        ratingAvg.add(ratings3.stream().mapToDouble(Integer::doubleValue).average().orElse(0.0));
+        final List<Double> ratingAvg = ReviewConstants.AVERAGE_LIST;
+        ratingAvg.sort(Comparator.reverseOrder());
 
-        for (int i = 1; i < maxRestaurants+1; i++) {
-            jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, max_tables, specialty, owner_user_id, address, description, date_created, deleted, is_active) VALUES (" + i + ", '" + RESTAURANT_EXPECTED_NAMES[i-1] + "', '" + RESTAURANT_EMAIL + "', " + MAX_TABLES + ", " + SPECIALTY + ", " + USER_ID + ", '" + RESTAURANT_ADDRESS + "', '" + RESTAURANT_DESCRIPTION + "', '" + Timestamp.valueOf(LocalDateTime.now()) + "', " + RESTAURANT_DELETED + ", " + RESTAURANT_IS_ACTIVE + ")");
-        }
-        int j=0;
-        for(int i=0; j<ratings1.size(); i++, j++){
-            jdbcTemplate.execute("INSERT INTO orders (order_id, order_type, restaurant_id, user_id, date_ordered, date_delivered, date_confirmed, date_ready) VALUES (" + (j + 1) + ", " + OrderType.TAKEAWAY.ordinal() + ", " + 1 + ", " + USER_ID + ", now(), now(), now(), now())");
-            jdbcTemplate.execute("INSERT INTO order_reviews (order_id, rating, comment, date) VALUES (" + (j + 1) + ", " + ratings1.get(i) + ", 'comment', now())");
-        }
+        final int maxRestaurants = RestaurantConstants.RESTAURANT_IDS.length;
+        PaginatedResult<RestaurantDetails> res = restaurantDao.search(
+                "", 1, maxRestaurants,
+                RestaurantOrderBy.RATING,
+                true, null, null
+        );
 
-        for(int i=0; i<ratings2.size(); i++, j++){
-            jdbcTemplate.execute("INSERT INTO orders (order_id, order_type, restaurant_id, user_id, date_ordered, date_delivered, date_confirmed, date_ready) VALUES (" + (j + 1) + ", " + OrderType.TAKEAWAY.ordinal() + ", " + 2 + ", " + USER_ID + ", now(), now(), now(), now())");
-            jdbcTemplate.execute("INSERT INTO order_reviews (order_id, rating, comment, date) VALUES (" + (j + 1) + ", " + ratings2.get(i) + ", 'comment', now())");
-        }
-
-        for(int i=0; i<ratings3.size(); i++, j++){
-            jdbcTemplate.execute("INSERT INTO orders (order_id, order_type, restaurant_id, user_id, date_ordered, date_delivered, date_confirmed, date_ready) VALUES (" + (j + 1) + ", " + OrderType.TAKEAWAY.ordinal() + ", " + 3 + ", " + USER_ID + ", now(), now(), now(), now())");
-            jdbcTemplate.execute("INSERT INTO order_reviews (order_id, rating, comment, date) VALUES (" + (j + 1) + ", " + ratings3.get(i) + ", 'comment', now())");
-        }
-
-        PaginatedResult<RestaurantDetails> res = restaurantDao.search("", 1, maxRestaurants, RestaurantOrderBy.RATING, true, null, null);
-
+        int size = res.getResult().size();
         Assert.assertEquals(maxRestaurants, res.getPageSize());
         Assert.assertEquals(maxRestaurants, res.getTotalCount());
-        Assert.assertEquals(1, res.getResult().get(0).getRestaurantId());
-        Assert.assertEquals(2, res.getResult().get(maxRestaurants-1).getRestaurantId());
-
-        ratingAvg.sort(Collections.reverseOrder());
-        int size = res.getResult().size();
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0].longValue(), res.getResult().get(0).getRestaurantId());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[1].longValue(), res.getResult().get(maxRestaurants-1).getRestaurantId());
         for (int i = 0; i < size; i++) {
-            Assert.assertEquals(ratingAvg.get(i).intValue(),res.getResult().get(i).getAverageRating());
+            Assert.assertEquals(ratingAvg.get(i).intValue(), res.getResult().get(i).getAverageRating());
         }
     }
 
     @Test
     public void searchSortedByPriceAverageDesc() throws SQLException {
-        final int maxRestaurants = 3;
-        for (int i = 1; i < maxRestaurants+1; i++) {
-            jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, max_tables, specialty, owner_user_id, address, description, date_created, deleted, is_active) VALUES (" + i + ", '" + RESTAURANT_EXPECTED_NAMES[i-1] + "', '" + RESTAURANT_EMAIL + "', " + MAX_TABLES + ", " + SPECIALTY + ", " + USER_ID + ", '" + RESTAURANT_ADDRESS + "', '" + RESTAURANT_DESCRIPTION + "', '" + Timestamp.valueOf(LocalDateTime.now()) + "', " + RESTAURANT_DELETED + ", " + RESTAURANT_IS_ACTIVE + ")");
-            jdbcTemplate.execute("INSERT INTO categories (category_id, restaurant_id, name, order_num, deleted) VALUES (" + i + ", " + i + ", '" + CATEGORY_NAME + "', " + i + ", " + CATEGORY_DELETED + ")");
-        }
-
-        List<Double> avgPrice = new ArrayList<>();
-        final List<Integer> prices1 = Arrays.asList(1, 1, 3, 5, 5, 5);
-        final List<Integer> prices2 = Arrays.asList(2, 2, 2, 2, 2, 2);
-        final List<Integer> prices3 = Arrays.asList(3, 3, 3, 3, 3, 3);
-        avgPrice.add(prices1.stream().mapToDouble(Integer::doubleValue).average().orElse(0.0));
-        avgPrice.add(prices2.stream().mapToDouble(Integer::doubleValue).average().orElse(0.0));
-        avgPrice.add(prices3.stream().mapToDouble(Integer::doubleValue).average().orElse(0.0));
-
-        int j=0;
-        for(int i=0; i<prices1.size() ; i++, j++){
-            jdbcTemplate.execute("INSERT INTO products (product_id, name, price, category_id, available, description, deleted) VALUES (" + (j + 1) + ", '" + PRODUCT_NAME + "', " + prices1.get(i) + ", " + 1 + ", " + PRODUCT_AVAILABLE + ", '" + PRODUCT_DESCRIPTION + "', " + PRODUCT_DELETED + ")");
-        }
-
-        for(int i=0; i<prices2.size() ; i++, j++){
-            jdbcTemplate.execute("INSERT INTO products (product_id, name, price, category_id, available, description, deleted) VALUES (" + (j + 1) + ", '" + PRODUCT_NAME + "', " + prices2.get(i) + ", " + 2 + ", " + PRODUCT_AVAILABLE + ", '" + PRODUCT_DESCRIPTION + "', " + PRODUCT_DELETED + ")");
-        }
-
-        for(int i=0; i<prices3.size() ; i++, j++){
-            jdbcTemplate.execute("INSERT INTO products (product_id, name, price, category_id, available, description, deleted) VALUES (" + (j + 1) + ", '" + PRODUCT_NAME + "', " + prices3.get(i) + ", " + 3 + ", " + PRODUCT_AVAILABLE + ", '" + PRODUCT_DESCRIPTION + "', " + PRODUCT_DELETED + ")");
-        }
+        final int maxRestaurants = RestaurantConstants.RESTAURANT_IDS.length;
+        List<Double> avgPrice = ProductConstants.AVERAGE_LIST;
+        avgPrice.sort(Comparator.reverseOrder());
 
         PaginatedResult<RestaurantDetails> res = restaurantDao.search("", 1, maxRestaurants, RestaurantOrderBy.PRICE, true, null, null);
 
+        int size = res.getResult().size();
         Assert.assertEquals(maxRestaurants, res.getPageSize());
         Assert.assertEquals(maxRestaurants, res.getTotalCount());
-        Assert.assertEquals(1, res.getResult().get(0).getRestaurantId());
-        Assert.assertEquals(2, res.getResult().get(maxRestaurants-1).getRestaurantId());
-
-        avgPrice.sort(Collections.reverseOrder());
-        int size = res.getResult().size();
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[1].longValue(), res.getResult().get(0).getRestaurantId());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[2].longValue(), res.getResult().get(maxRestaurants-1).getRestaurantId());
         for (int i = 0; i < size; i++) {
             Assert.assertEquals(avgPrice.get(i),res.getResult().get(i).getAverageProductPrice(), 0.1);
         }
@@ -298,42 +216,17 @@ public class RestaurantJpaDaoTest {
 
     @Test
     public void searchSortedByPriceAverageAsc() throws SQLException {
-        final int maxRestaurants = 3;
-        for (int i = 1; i < maxRestaurants+1; i++) {
-            jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, max_tables, specialty, owner_user_id, address, description, date_created, deleted, is_active) VALUES (" + i + ", '" + RESTAURANT_EXPECTED_NAMES[i-1] + "', '" + RESTAURANT_EMAIL + "', " + MAX_TABLES + ", " + SPECIALTY + ", " + USER_ID + ", '" + RESTAURANT_ADDRESS + "', '" + RESTAURANT_DESCRIPTION + "', '" + Timestamp.valueOf(LocalDateTime.now()) + "', " + RESTAURANT_DELETED + ", " + RESTAURANT_IS_ACTIVE + ")");
-            jdbcTemplate.execute("INSERT INTO categories (category_id, restaurant_id, name, order_num, deleted) VALUES (" + i + ", " + i + ", '" + CATEGORY_NAME + "', " + i + ", " + CATEGORY_DELETED + ")");
-        }
-
-        List<Double> avgPrice = new ArrayList<>();
-        final List<Integer> prices1 = Arrays.asList(1, 1, 3, 5, 5, 5);
-        final List<Integer> prices2 = Arrays.asList(2, 2, 2, 2, 2, 2);
-        final List<Integer> prices3 = Arrays.asList(3, 3, 3, 3, 3, 3);
-        avgPrice.add(prices1.stream().mapToDouble(Integer::doubleValue).average().orElse(0.0));
-        avgPrice.add(prices2.stream().mapToDouble(Integer::doubleValue).average().orElse(0.0));
-        avgPrice.add(prices3.stream().mapToDouble(Integer::doubleValue).average().orElse(0.0));
-
-        int j=0;
-        for(int i=0; i<prices1.size() ; i++, j++){
-            jdbcTemplate.execute("INSERT INTO products (product_id, name, price, category_id, available, description, deleted) VALUES (" + (j + 1) + ", '" + PRODUCT_NAME + "', " + prices1.get(i) + ", " + 1 + ", " + PRODUCT_AVAILABLE + ", '" + PRODUCT_DESCRIPTION + "', " + PRODUCT_DELETED + ")");
-        }
-
-        for(int i=0; i<prices2.size() ; i++, j++){
-            jdbcTemplate.execute("INSERT INTO products (product_id, name, price, category_id, available, description, deleted) VALUES (" + (j + 1) + ", '" + PRODUCT_NAME + "', " + prices2.get(i) + ", " + 2 + ", " + PRODUCT_AVAILABLE + ", '" + PRODUCT_DESCRIPTION + "', " + PRODUCT_DELETED + ")");
-        }
-
-        for(int i=0; i<prices3.size() ; i++, j++){
-            jdbcTemplate.execute("INSERT INTO products (product_id, name, price, category_id, available, description, deleted) VALUES (" + (j + 1) + ", '" + PRODUCT_NAME + "', " + prices3.get(i) + ", " + 3 + ", " + PRODUCT_AVAILABLE + ", '" + PRODUCT_DESCRIPTION + "', " + PRODUCT_DELETED + ")");
-        }
+        final int maxRestaurants = RestaurantConstants.RESTAURANT_IDS.length;
+        List<Double> avgPrice = ProductConstants.AVERAGE_LIST;
+        avgPrice.sort(Comparator.naturalOrder());
 
         PaginatedResult<RestaurantDetails> res = restaurantDao.search("", 1, maxRestaurants, RestaurantOrderBy.PRICE, false, null, null);
 
+        int size = res.getResult().size();
         Assert.assertEquals(maxRestaurants, res.getPageSize());
         Assert.assertEquals(maxRestaurants, res.getTotalCount());
-        Assert.assertEquals(2, res.getResult().get(0).getRestaurantId());
-        Assert.assertEquals(1, res.getResult().get(maxRestaurants - 1).getRestaurantId());
-
-        Collections.sort(avgPrice);
-        int size = res.getResult().size();
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[2].longValue(), res.getResult().get(0).getRestaurantId());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[1].longValue(), res.getResult().get(maxRestaurants - 1).getRestaurantId());
         for (int i = 0; i < size; i++) {
             Assert.assertEquals(avgPrice.get(i),res.getResult().get(i).getAverageProductPrice(), 0.1);
         }
@@ -341,173 +234,133 @@ public class RestaurantJpaDaoTest {
 
     @Test
     public void searchSortedByCreationDateAsc() throws SQLException {
-        final int maxRestaurants = 3;
-        List<Timestamp> mockedDates = new ArrayList<>();
-        mockedDates.add(Timestamp.valueOf("2019-01-01 00:00:00"));
-        mockedDates.add(Timestamp.valueOf("2019-01-02 00:00:00"));
-        mockedDates.add(Timestamp.valueOf("2019-01-03 00:00:00"));
-
-        for(int i=1; i<maxRestaurants+1 ; i++){
-            jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, max_tables, specialty, owner_user_id, address, description, date_created, deleted, is_active) VALUES (" + i + ", '" + RESTAURANT_EXPECTED_NAMES[i-1] + "', '" + RESTAURANT_EMAIL + "', " + MAX_TABLES + ", " + SPECIALTY + ", " + USER_ID + ", '" + RESTAURANT_ADDRESS + "', '" + RESTAURANT_DESCRIPTION + "', '" + mockedDates.get(i-1) + "', " + RESTAURANT_DELETED + ", " + RESTAURANT_IS_ACTIVE + ")");
-        }
-
-        PaginatedResult<RestaurantDetails> res = restaurantDao.search("", 1, maxRestaurants, RestaurantOrderBy.DATE, false, null, null);
+        final int maxRestaurants = RestaurantConstants.RESTAURANT_IDS.length;
+        PaginatedResult<RestaurantDetails> res = restaurantDao.search("", 1, RestaurantConstants.RESTAURANT_IDS.length, RestaurantOrderBy.DATE, false, null, null);
         Assert.assertEquals(maxRestaurants, res.getResult().size());
-        Assert.assertEquals(1, res.getResult().get(0).getRestaurantId());
-        Assert.assertEquals(3, res.getResult().get(maxRestaurants-1).getRestaurantId());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[maxRestaurants-1].longValue(), res.getResult().get(0).getRestaurantId());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0].longValue(), res.getResult().get(maxRestaurants-1).getRestaurantId());
     }
 
     @Test
     public void getSortedByCreationDateDesc() throws SQLException {
-        final int maxRestaurants = 3;
-        List<Timestamp> mockedDates = new ArrayList<>();
-        mockedDates.add(Timestamp.valueOf("2019-01-01 00:00:00"));
-        mockedDates.add(Timestamp.valueOf("2019-01-02 00:00:00"));
-        mockedDates.add(Timestamp.valueOf("2019-01-03 00:00:00"));
-
-        for(int i=1; i<maxRestaurants+1 ; i++){
-            jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, max_tables, specialty, owner_user_id, address, description, date_created, deleted, is_active) VALUES (" + i + ", '" + RESTAURANT_EXPECTED_NAMES[i-1] + "', '" + RESTAURANT_EMAIL + "', " + MAX_TABLES + ", " + SPECIALTY + ", " + USER_ID + ", '" + RESTAURANT_ADDRESS + "', '" + RESTAURANT_DESCRIPTION + "', '" + mockedDates.get(i-1) + "', " + RESTAURANT_DELETED + ", " + RESTAURANT_IS_ACTIVE + ")");
-        }
-
+        final int maxRestaurants = RestaurantConstants.RESTAURANT_IDS.length;
         PaginatedResult<RestaurantDetails> res = restaurantDao.search("", 1, maxRestaurants, RestaurantOrderBy.DATE, true, null, null);
         Assert.assertEquals(maxRestaurants, res.getResult().size());
-        Assert.assertEquals(3, res.getResult().get(0).getRestaurantId());
-        Assert.assertEquals(1, res.getResult().get(maxRestaurants-1).getRestaurantId());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0].longValue(), res.getResult().get(0).getRestaurantId());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[maxRestaurants-1].longValue(), res.getResult().get(maxRestaurants-1).getRestaurantId());
     }
 
     @Test
+    @Rollback
     public void searchByRestaurantName() throws SQLException {
-        final int maxRestaurants = 3;
-        for(int i=1; i<maxRestaurants + 1 ; i++){
-            jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, max_tables, specialty, owner_user_id, address, description, date_created, deleted, is_active) VALUES (" + i + ", '" + RESTAURANT_NAME + "', '" + RESTAURANT_EMAIL + "', " + MAX_TABLES + ", " + SPECIALTY + ", " + USER_ID + ", '" + RESTAURANT_ADDRESS + "', '" + RESTAURANT_DESCRIPTION + "', '" + Timestamp.valueOf(LocalDateTime.now()) + "', " + RESTAURANT_DELETED + ", " + RESTAURANT_IS_ACTIVE + ")");
+        final int maxRestaurants = RestaurantConstants.RESTAURANT_IDS.length;
+        final String restaurantName = RestaurantConstants.RESTAURANT_NAMES[0];
+        for(int i=0; i<maxRestaurants ; i++){
+            Restaurant restaurant = em.find(Restaurant.class, RestaurantConstants.RESTAURANT_IDS[i]);
+            restaurant.setName(restaurantName);
         }
-        PaginatedResult<RestaurantDetails> res = restaurantDao.search(RESTAURANT_NAME, 1, maxRestaurants, null, false, null, null);
+
+        PaginatedResult<RestaurantDetails> res = restaurantDao.search(restaurantName, 1, maxRestaurants, null, false, null, null);
         Assert.assertEquals(maxRestaurants, res.getResult().size());
     }
 
     @Test
     public void searchBySpecialty() throws SQLException {
-        final int maxRestaurants = 3;
-        for(int i=1; i<maxRestaurants+1 ; i++){
-            jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, max_tables, specialty, owner_user_id, address, description, date_created, deleted, is_active) VALUES (" + i + ", '" + RESTAURANT_NAME + "', '" + RESTAURANT_EMAIL + "', " + MAX_TABLES + ", " + SPECIALTY + ", " + USER_ID + ", '" + RESTAURANT_ADDRESS + "', '" + RESTAURANT_DESCRIPTION + "', '" + Timestamp.valueOf(LocalDateTime.now()) + "', " + RESTAURANT_DELETED + ", " + RESTAURANT_IS_ACTIVE + ")");
+        final int maxRestaurants = RestaurantConstants.RESTAURANT_IDS.length;
+        final RestaurantSpecialty restaurantSpeciality = RestaurantConstants.RESTAURANTS_SPECIALITY.get(0);
+        List<RestaurantSpecialty> specialty = Collections.singletonList(restaurantSpeciality);
+        for(int i=0; i<maxRestaurants; i++){
+            Restaurant restaurant = em.find(Restaurant.class, RestaurantConstants.RESTAURANT_IDS[i]);
+            restaurant.setSpecialty(restaurantSpeciality);
         }
-        List<RestaurantSpecialty> specialty = Collections.singletonList(RestaurantSpecialty.fromOrdinal(SPECIALTY));
         PaginatedResult<RestaurantDetails> res = restaurantDao.search("", 1, maxRestaurants, null, false, null, specialty);
         Assert.assertEquals(maxRestaurants, res.getResult().size());
     }
 
     @Test
     public void searchBySpecialties() throws SQLException {
-        final int maxRestaurants = 3;
-        RestaurantSpecialty[] arr = RestaurantSpecialty.values();
-        List<RestaurantSpecialty> specialties = new ArrayList<>();
-        for(int i=1; i<maxRestaurants+1 ; i++){
-            jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, max_tables, specialty, owner_user_id, address, description, date_created, deleted, is_active) VALUES (" + i + ", '" + RESTAURANT_NAME + "', '" + RESTAURANT_EMAIL + "', " + MAX_TABLES + ", " + arr[i].ordinal() + ", " + USER_ID + ", '" + RESTAURANT_ADDRESS + "', '" + RESTAURANT_DESCRIPTION + "', '" + Timestamp.valueOf(LocalDateTime.now()) + "', " + RESTAURANT_DELETED + ", " + RESTAURANT_IS_ACTIVE + ")");
-            specialties.add(RestaurantSpecialty.fromOrdinal(i));
-        }
+        final int maxRestaurants = RestaurantConstants.RESTAURANT_IDS.length;
+        List<RestaurantSpecialty> specialties = RestaurantConstants.RESTAURANTS_SPECIALITY;
         PaginatedResult<RestaurantDetails> res = restaurantDao.search("", 1, maxRestaurants, null, false, null, specialties);
         Assert.assertEquals(maxRestaurants, res.getResult().size());
     }
 
     @Test
     public void searchBySingleTag() throws SQLException {
-
-        final long otherTagId = TAG_ID + 1;
-        final int maxRestaurants = 3;
-        for(int i=1; i<maxRestaurants+1 ; i++){
-            jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, max_tables, specialty, owner_user_id, address, description, date_created, deleted, is_active) VALUES (" + i + ", '" + RESTAURANT_NAME + "', '" + RESTAURANT_EMAIL + "', " + MAX_TABLES + ", " + SPECIALTY + ", " + USER_ID + ", '" + RESTAURANT_ADDRESS + "', '" + RESTAURANT_DESCRIPTION + "', '" + Timestamp.valueOf(LocalDateTime.now()) + "', " + RESTAURANT_DELETED + ", " + RESTAURANT_IS_ACTIVE + ")");
-            jdbcTemplate.execute("INSERT INTO restaurant_tags (restaurant_id, tag_id) VALUES (" + i + ", " + TAG_ID + ")");
-            jdbcTemplate.execute("INSERT INTO restaurant_tags (restaurant_id, tag_id) VALUES (" + i + ", " + otherTagId + ")");
-        }
-        List<RestaurantTags> tag = Collections.singletonList(RestaurantTags.fromOrdinal((int) TAG_ID));
+        final int maxRestaurants = RestaurantConstants.RESTAURANT_IDS.length;
+        List<RestaurantTags> tag = Collections.singletonList(RestaurantTags.fromOrdinal(1));
         PaginatedResult<RestaurantDetails> res = restaurantDao.search("", 1, maxRestaurants, null, false, tag, null);
         Assert.assertEquals(maxRestaurants, res.getResult().size());
     }
 
     @Test
     public void searchByTags() throws SQLException {
-
-        final long otherTagId = TAG_ID + 1;
-        final int maxRestaurants = 3;
-        for(int i=1; i<maxRestaurants+1 ; i++){
-            jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, max_tables, specialty, owner_user_id, address, description, date_created, deleted, is_active) VALUES (" + i + ", '" + RESTAURANT_NAME + "', '" + RESTAURANT_EMAIL + "', " + MAX_TABLES + ", " + SPECIALTY + ", " + USER_ID + ", '" + RESTAURANT_ADDRESS + "', '" + RESTAURANT_DESCRIPTION + "', '" + Timestamp.valueOf(LocalDateTime.now()) + "', " + RESTAURANT_DELETED + ", " + RESTAURANT_IS_ACTIVE + ")");
-            jdbcTemplate.execute("INSERT INTO restaurant_tags (restaurant_id, tag_id) VALUES (" + i + ", " + TAG_ID + ")");
-            jdbcTemplate.execute("INSERT INTO restaurant_tags (restaurant_id, tag_id) VALUES (" + i + ", " + otherTagId + ")");
-        }
-        List<RestaurantTags> tag = Arrays.asList(RestaurantTags.fromOrdinal((int) TAG_ID), RestaurantTags.fromOrdinal((int) otherTagId));
+        final int maxRestaurants = RestaurantConstants.RESTAURANT_IDS.length;
+        List<RestaurantTags> tag = RestaurantConstants.RESTAURANTS_TAGS.get(0);
         PaginatedResult<RestaurantDetails> res = restaurantDao.search("", 1, maxRestaurants, null, false, tag, null);
         Assert.assertEquals(maxRestaurants, res.getResult().size());
     }
 
     @Test
+    @Rollback
     public void searchByNameAndTag() throws SQLException {
-        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, max_tables, specialty, owner_user_id, address, description, date_created, deleted, is_active) VALUES (" + RESTAURANT_ID + ", '" + RESTAURANT_NAME + "', '" + RESTAURANT_EMAIL + "', " + MAX_TABLES + ", " + SPECIALTY + ", " + USER_ID + ", '" + RESTAURANT_ADDRESS + "', '" + RESTAURANT_DESCRIPTION + "', '" + Timestamp.valueOf(LocalDateTime.now()) + "', " + RESTAURANT_DELETED + ", " + RESTAURANT_IS_ACTIVE + ")");
-        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, max_tables, specialty, owner_user_id, address, description, date_created, deleted, is_active) VALUES (" + RESTAURANT_ID2 + ", '" + RESTAURANT_NAME + "', '" + RESTAURANT_EMAIL + "', " + MAX_TABLES + ", " + SPECIALTY + ", " + USER_ID + ", '" + RESTAURANT_ADDRESS + "', '" + RESTAURANT_DESCRIPTION + "', '" + Timestamp.valueOf(LocalDateTime.now()) + "', " + RESTAURANT_DELETED + ", " + RESTAURANT_IS_ACTIVE + ")");
-        jdbcTemplate.execute("INSERT INTO restaurant_tags (restaurant_id, tag_id) VALUES (" + RESTAURANT_ID + ", " + TAG_ID + ")");
-        List<RestaurantTags> tag = Collections.singletonList(RestaurantTags.fromOrdinal((int) TAG_ID));
-        PaginatedResult<RestaurantDetails> res = restaurantDao.search(RESTAURANT_NAME, 1, RESTAURANT_EXPECTED_NAMES.length, null, false, tag, null);
-        Assert.assertEquals(1, res.getResult().size());
-        Assert.assertEquals(RESTAURANT_ID, res.getResult().get(0).getRestaurantId());
+        final int maxRestaurants = RestaurantConstants.RESTAURANT_IDS.length;
+        final String restaurantName = "restaurant";
+        for(int i=0; i<maxRestaurants ; i++){
+            Restaurant restaurant = em.find(Restaurant.class, RestaurantConstants.RESTAURANT_IDS[i]);
+            restaurant.setName(restaurantName);
+        }
+        List<RestaurantTags> tag = Collections.singletonList(RestaurantTags.fromOrdinal(2));
+
+        PaginatedResult<RestaurantDetails> res = restaurantDao.search(restaurantName, 1, maxRestaurants, null, false, tag, null);
+        Assert.assertEquals(maxRestaurants-1, res.getResult().size());
+        for(int i=0; i<res.getResult().size();i++){
+            Assert.assertTrue(res.getResult().get(i).getRestaurantId() != RestaurantConstants.RESTAURANT_IDS[2]);
+        }
     }
 
     @Test
+    @Rollback
     public void searchByNameAndSpecialty() throws SQLException {
-        int otherSpecialty = SPECIALTY + 1;
-        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, max_tables, specialty, owner_user_id, address, description, date_created, deleted, is_active) VALUES (" + RESTAURANT_ID + ", '" + RESTAURANT_NAME + "', '" + RESTAURANT_EMAIL + "', " + MAX_TABLES + ", " + SPECIALTY + ", " + USER_ID + ", '" + RESTAURANT_ADDRESS + "', '" + RESTAURANT_DESCRIPTION + "', '" + Timestamp.valueOf(LocalDateTime.now()) + "', " + RESTAURANT_DELETED + ", " + RESTAURANT_IS_ACTIVE + ")");
-        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, max_tables, specialty, owner_user_id, address, description, date_created, deleted, is_active) VALUES (" + RESTAURANT_ID2 + ", '" + RESTAURANT_NAME + "', '" + RESTAURANT_EMAIL + "', " + MAX_TABLES + ", " + otherSpecialty + ", " + USER_ID + ", '" + RESTAURANT_ADDRESS + "', '" + RESTAURANT_DESCRIPTION + "', '" + Timestamp.valueOf(LocalDateTime.now()) + "', " + RESTAURANT_DELETED + ", " + RESTAURANT_IS_ACTIVE + ")");
-        List<RestaurantSpecialty> specialty = Collections.singletonList(RestaurantSpecialty.fromOrdinal(SPECIALTY));
-        PaginatedResult<RestaurantDetails> res = restaurantDao.search(RESTAURANT_NAME, 1, RESTAURANT_EXPECTED_NAMES.length, null, false, null, specialty);
+        final int maxRestaurants = RestaurantConstants.RESTAURANT_IDS.length;
+        final String restaurantName = "restaurant";
+        for(int i=0; i<maxRestaurants ; i++){
+            Restaurant restaurant = em.find(Restaurant.class, RestaurantConstants.RESTAURANT_IDS[i]);
+            restaurant.setName(restaurantName);
+        }
+        List<RestaurantSpecialty> specialty = Collections.singletonList(RestaurantConstants.RESTAURANTS_SPECIALITY.get(0));
+
+        PaginatedResult<RestaurantDetails> res = restaurantDao.search(restaurantName, 1, maxRestaurants, null, false, null, specialty);
         Assert.assertEquals(1, res.getResult().size());
-        Assert.assertEquals(RESTAURANT_ID, res.getResult().get(0).getRestaurantId());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0].longValue(), res.getResult().get(0).getRestaurantId());
     }
 
     @Test
+    @Rollback
     public void searchByTagAndSpecialty() throws SQLException {
-        RestaurantSpecialty[] specialties = RestaurantSpecialty.values();
-        RestaurantTags[] tags = RestaurantTags.values();
-        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, max_tables, specialty, owner_user_id, address, description, date_created, deleted, is_active) VALUES (" + RESTAURANT_ID + ", '" + RESTAURANT_NAME + "', '" + RESTAURANT_EMAIL + "', " + MAX_TABLES + ", " + specialties[0].ordinal() + ", " + USER_ID + ", '" + RESTAURANT_ADDRESS + "', '" + RESTAURANT_DESCRIPTION + "', '" + Timestamp.valueOf(LocalDateTime.now()) + "', " + RESTAURANT_DELETED + ", " + RESTAURANT_IS_ACTIVE + ")");
-        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, max_tables, specialty, owner_user_id, address, description, date_created, deleted, is_active) VALUES (" + RESTAURANT_ID2 + ", '" + RESTAURANT_NAME + "', '" + RESTAURANT_EMAIL + "', " + MAX_TABLES + ", " + specialties[0].ordinal() + ", " + USER_ID + ", '" + RESTAURANT_ADDRESS + "', '" + RESTAURANT_DESCRIPTION + "', '" + Timestamp.valueOf(LocalDateTime.now()) + "', " + RESTAURANT_DELETED + ", " + RESTAURANT_IS_ACTIVE + ")");
-        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, max_tables, specialty, owner_user_id, address, description, date_created, deleted, is_active) VALUES (" + RESTAURANT_ID3 + ", '" + RESTAURANT_NAME + "', '" + RESTAURANT_EMAIL + "', " + MAX_TABLES + ", " + specialties[1].ordinal() + ", " + USER_ID + ", '" + RESTAURANT_ADDRESS + "', '" + RESTAURANT_DESCRIPTION + "', '" + Timestamp.valueOf(LocalDateTime.now()) + "', " + RESTAURANT_DELETED + ", " + RESTAURANT_IS_ACTIVE + ")");
-        jdbcTemplate.execute("INSERT INTO restaurant_tags (restaurant_id, tag_id) VALUES (" + RESTAURANT_ID + ", " + tags[0].ordinal() + ")");
-        jdbcTemplate.execute("INSERT INTO restaurant_tags (restaurant_id, tag_id) VALUES (" + RESTAURANT_ID + ", " + tags[1].ordinal() + ")");
-        jdbcTemplate.execute("INSERT INTO restaurant_tags (restaurant_id, tag_id) VALUES (" + RESTAURANT_ID2 + ", " + tags[1].ordinal() + ")");
-        jdbcTemplate.execute("INSERT INTO restaurant_tags (restaurant_id, tag_id) VALUES (" + RESTAURANT_ID3 + ", " + tags[0].ordinal() + ")");
+        final int maxRestaurants = RestaurantConstants.RESTAURANT_IDS.length;
+        List<RestaurantSpecialty> specialty = Collections.singletonList(RestaurantConstants.RESTAURANTS_SPECIALITY.get(0));
+        List<RestaurantTags> tag = RestaurantConstants.RESTAURANTS_TAGS.get(0);
 
-        List<RestaurantSpecialty> specialty = Collections.singletonList(specialties[0]);
-        List<RestaurantTags> tag = Arrays.asList(tags[0], tags[1]);
-        PaginatedResult<RestaurantDetails> res = restaurantDao.search(RESTAURANT_NAME, 1, RESTAURANT_EXPECTED_NAMES.length, null, false, tag, specialty);
-        Assert.assertEquals(2, res.getResult().size());
-        for (RestaurantDetails restaurantDetails : res.getResult()) {
-            Assert.assertTrue(restaurantDetails.getRestaurantId() == RESTAURANT_ID || restaurantDetails.getRestaurantId() == RESTAURANT_ID2);
-            Assert.assertEquals(RESTAURANT_NAME, restaurantDetails.getRestaurant().getName());
-            Assert.assertEquals(RestaurantSpecialty.fromOrdinal(specialties[0].ordinal()), restaurantDetails.getRestaurant().getSpecialty());
-        }
+        PaginatedResult<RestaurantDetails> res = restaurantDao.search("", 1, maxRestaurants, null, false, tag, specialty);
+        Assert.assertEquals(1, res.getResult().size());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0].longValue(), res.getResult().get(0).getRestaurantId());
     }
 
     @Test
+    @Rollback
     public void searchByNameAndTagAndSpecialty() throws SQLException {
-        RestaurantSpecialty[] specialties = RestaurantSpecialty.values();
-        RestaurantTags[] tags = RestaurantTags.values();
-        final int maxRestaurants = 3;
-
-        int i=0;
-        for ( ; i < maxRestaurants + 1; i++){
-            jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, max_tables, specialty, owner_user_id, address, description, date_created, deleted, is_active) VALUES (" + i + ", '" + RESTAURANT_NAME + "', '" + RESTAURANT_EMAIL + "', " + MAX_TABLES + ", " + specialties[0].ordinal() + ", " + USER_ID + ", '" + RESTAURANT_ADDRESS + "', '" + RESTAURANT_DESCRIPTION + "', '" + Timestamp.valueOf(LocalDateTime.now()) + "', " + RESTAURANT_DELETED + ", " + RESTAURANT_IS_ACTIVE + ")");
-            jdbcTemplate.execute("INSERT INTO restaurant_tags (restaurant_id, tag_id) VALUES (" + i + ", " + tags[0].ordinal() + ")");
-            jdbcTemplate.execute("INSERT INTO restaurant_tags (restaurant_id, tag_id) VALUES (" + i + ", " + tags[1].ordinal() + ")");
+        final int maxRestaurants = RestaurantConstants.RESTAURANT_IDS.length;
+        List<RestaurantSpecialty> specialty = Collections.singletonList(RestaurantConstants.RESTAURANTS_SPECIALITY.get(0));
+        List<RestaurantTags> tag = RestaurantConstants.RESTAURANTS_TAGS.get(0);
+        final String restaurantName = "restaurant";
+        for(int i=0; i<maxRestaurants ; i++){
+            Restaurant restaurant = em.find(Restaurant.class, RestaurantConstants.RESTAURANT_IDS[i]);
+            restaurant.setName(restaurantName);
         }
 
-        for( ; i<2*(maxRestaurants+1); i++){
-            jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, max_tables, specialty, owner_user_id, address, description, date_created, deleted, is_active) VALUES (" + i + ", '" + RESTAURANT_NAME2 + "', '" + RESTAURANT_EMAIL + "', " + MAX_TABLES + ", " + specialties[0].ordinal() + ", " + USER_ID + ", '" + RESTAURANT_ADDRESS + "', '" + RESTAURANT_DESCRIPTION + "', '" + Timestamp.valueOf(LocalDateTime.now()) + "', " + RESTAURANT_DELETED + ", " + RESTAURANT_IS_ACTIVE + ")");
-            jdbcTemplate.execute("INSERT INTO restaurant_tags (restaurant_id, tag_id) VALUES (" + i + ", " + tags[0].ordinal() + ")");
-            jdbcTemplate.execute("INSERT INTO restaurant_tags (restaurant_id, tag_id) VALUES (" + i + ", " + tags[1].ordinal() + ")");
-        }
-
-        List<RestaurantSpecialty> specialty = Collections.singletonList(specialties[0]);
-        List<RestaurantTags> tag = Arrays.asList(tags[0], tags[1]);
-        PaginatedResult<RestaurantDetails> res = restaurantDao.search(RESTAURANT_NAME, 1, maxRestaurants, null, false, tag, specialty);
-        Assert.assertEquals(maxRestaurants, res.getResult().size());
-        Assert.assertEquals(RESTAURANT_NAME, res.getResult().get(0).getRestaurant().getName());
+        PaginatedResult<RestaurantDetails> res = restaurantDao.search(restaurantName, 1, maxRestaurants, null, false, tag, specialty);
+        Assert.assertEquals(1, res.getResult().size());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0].longValue(), res.getResult().get(0).getRestaurantId());
     }
-
 }

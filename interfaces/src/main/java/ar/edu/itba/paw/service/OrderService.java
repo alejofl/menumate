@@ -20,9 +20,9 @@ public interface OrderService {
 
     Optional<Order> getById(long orderId);
 
-    PaginatedResult<Order> getByUser(long userId, int pageNumber, int pageSize);
+    PaginatedResult<Order> getByUser(long userId, int pageNumber, int pageSize, boolean descending);
 
-    PaginatedResult<Order> getByRestaurant(long restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus);
+    PaginatedResult<Order> getByRestaurant(long restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus, boolean descending);
 
     Order markAsConfirmed(long orderId);
 

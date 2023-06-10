@@ -18,4 +18,6 @@ public interface CategoryDao {
     void delete(long categoryId);
 
     void swapOrder(long restaurantId, int orderNum1, int orderNum2);
+
+    void moveProduct(long productId, long newCategoryId);
 }

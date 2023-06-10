@@ -50,7 +50,22 @@
                     <th class="text-center" scope="col"><spring:message code="restaurantorders.table.order_type"/></th>
                     <th class="text-center" scope="col"><spring:message code="restaurantorders.table.table_number"/></th>
                     <th class="text-center" scope="col"><spring:message code="restaurantorders.table.address"/></th>
-                    <th class="text-end" scope="col"><spring:message code="restaurantorders.table.order_date"/></th>
+                    <th class="text-end" scope="col">
+                        <spring:message code="restaurantorders.table.order_date"/>
+                        <c:url value="/restaurants/${id}/orders/${status}" var="ordersUrl">
+                            <c:param name="descending" value="${param.descending ? false : true}"/>
+                        </c:url>
+                        <a href="${ordersUrl}" class="clickable-object">
+                            <c:choose>
+                                <c:when test="${param.descending}">
+                                    <i class="bi bi-arrow-up-square-fill"></i>
+                                </c:when>
+                                <c:otherwise>
+                                    <i class="bi bi-arrow-down-square-fill"></i>
+                                </c:otherwise>
+                            </c:choose>
+                        </a>
+                    </th>
                 </tr>
                 </thead>
                 <tbody class="table-striped">

@@ -115,4 +115,8 @@ public class User {
     public List<UserAddress> getAddresses() {
         return addresses;
     }
+
+    public void setAddress(List<UserAddress> addresses) {
+        this.addresses = addresses;
+    }
 }

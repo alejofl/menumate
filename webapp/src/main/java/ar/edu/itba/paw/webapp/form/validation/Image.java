@@ -12,7 +12,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({TYPE, FIELD, ANNOTATION_TYPE})
 @Retention(RUNTIME)
 @Constraint(validatedBy = ImageValidatorConstraint.class)
-@Documented
 public @interface Image {
 
     String message() default "Invalid image";
@@ -20,4 +19,6 @@ public @interface Image {
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
+
+    boolean nullable() default false;
 }

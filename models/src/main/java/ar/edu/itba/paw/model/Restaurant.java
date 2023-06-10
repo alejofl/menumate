@@ -85,6 +85,10 @@ public class Restaurant {
         this.deleted = false;
     }
 
+    public void setRestaurantId(Long restaurantId) {
+        this.restaurantId = restaurantId;
+    }
+
     public Long getRestaurantId() {
         return restaurantId;
     }
@@ -196,5 +200,9 @@ public class Restaurant {
 
     public List<RestaurantTags> getTags() {
         return tags;
+    }
+
+    public void setTags(List<RestaurantTags> tags) {
+        this.tags = tags;
     }
 }

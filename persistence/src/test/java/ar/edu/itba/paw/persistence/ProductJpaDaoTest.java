@@ -1,14 +1,19 @@
 package ar.edu.itba.paw.persistence;
 
+
 import ar.edu.itba.paw.exception.ProductNotFoundException;
 import ar.edu.itba.paw.model.Product;
+import ar.edu.itba.paw.model.Promotion;
+import ar.edu.itba.paw.persistance.ProductDao;
 import ar.edu.itba.paw.persistence.config.TestConfig;
+import ar.edu.itba.paw.persistence.constants.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
@@ -19,48 +24,20 @@ import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
-
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
 @Transactional
 public class ProductJpaDaoTest {
-    private static final long CATEGORY_ID = 581;
-    private static final String CATEGORY_NAME = "Entradas";
-    private static final long USER_ID = 791;
-    private static final String USER_EMAIL = "peter@peter.com";
-    private static final String USER_PASSWORD = "super12secret34";
-    private static final String USER_NAME = "Peter Parker";
-    private static final int ORDER = 1;
-    private static final boolean CATEGORY_DELETED = false;
-    private static final long RESTAURANT_ID = 5123;
-    private static final String RESTAURANT_NAME = "Kansas Grill & Bar";
-    private static final String RESTAURANT_EMAIL = "kansas@lovelyrestaurant.com";
-    private static final int MAX_TABLES = 20;
-    private static final int SPECIALTY = 1;
-    private static final long PRODUCT_ID = 912;
-    private static final String PRODUCT_NAME = "Lomito";
-    private static final BigDecimal PRODUCT_PRICE = new BigDecimal("533.55");
-    private static final String DESCRIPTION = "Lomito con papas fritas";
-    private static final boolean PRODUCT_AVAILABLE = true;
-    private static final String PRODUCT_DESCRIPTION = "Product description";
-    private static final boolean IS_ACTIVE = true;
-    private static final String PREFERRED_LANGUAGE = "es";
-    private static final String RESTAURANT_ADDRESS = "Av. Corrientes 1234";
-    private static final String RESTAURANT_DESCRIPTION = "Restaurante de comida americana";
-    private static final LocalDateTime RESTAURANT_CREATION_DATE = LocalDateTime.now().minusDays(1);
-    private static final boolean RESTAURANT_DELETED = false;
-    private static final boolean RESTAURANT_IS_ACTIVE = true;
+
+    private static final long NON_EXISTENT_PRODUCT_ID = 9999L;
 
     @Autowired
     private DataSource ds;
 
     @Autowired
-    private ProductJpaDao productDao;
+    private ProductDao productDao;
 
     @PersistenceContext
     private EntityManager em;
@@ -70,60 +47,131 @@ public class ProductJpaDaoTest {
     @Before
     public void setup() {
         jdbcTemplate = new JdbcTemplate(ds);
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, "categories", "restaurants", "products", "users");
-        jdbcTemplate.execute("INSERT INTO users (user_id, email, password, name, is_active, preferred_language) VALUES (" + USER_ID + ", '" + USER_EMAIL + "', '" + USER_PASSWORD + "', '" + USER_NAME + "', " + IS_ACTIVE + ", '" + PREFERRED_LANGUAGE + "')");
-        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, max_tables, specialty, owner_user_id, address, description, date_created, deleted, is_active) VALUES (" + RESTAURANT_ID + ", '" + RESTAURANT_NAME + "', '" + RESTAURANT_EMAIL + "', " + MAX_TABLES + ", " + SPECIALTY + ", " + USER_ID + ", '" + RESTAURANT_ADDRESS + "', '" + RESTAURANT_DESCRIPTION + "', '" + Timestamp.valueOf(RESTAURANT_CREATION_DATE) + "', " + RESTAURANT_DELETED + ", " + RESTAURANT_IS_ACTIVE + ")");
-        jdbcTemplate.execute("INSERT INTO categories (category_id, restaurant_id, name, order_num, deleted) VALUES (" + CATEGORY_ID + ", " + RESTAURANT_ID + ", '" + CATEGORY_NAME + "', " + ORDER + ", " + CATEGORY_DELETED + ")");
     }
 
     @Test
+    @Rollback
     public void testCreate() throws SQLException {
-        final Product product = productDao.create(CATEGORY_ID, PRODUCT_NAME, DESCRIPTION, null, PRODUCT_PRICE);
+        final Product product = productDao.create(
+                CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_1[0],
+                ProductConstants.DEFAULT_PRODUCT_NAME,
+                ProductConstants.DEFAULT_PRODUCT_DESCRIPTION,
+                null,
+                ProductConstants.DEFAULT_PRODUCT_PRICE
+        );
         em.flush();
 
         Assert.assertNotNull(product);
-        Assert.assertEquals(PRODUCT_NAME, product.getName());
-        Assert.assertEquals(DESCRIPTION, product.getDescription());
-        Assert.assertEquals(PRODUCT_PRICE, product.getPrice());
-        Assert.assertEquals(CATEGORY_ID, product.getCategoryId());
+        Assert.assertEquals(ProductConstants.DEFAULT_PRODUCT_NAME, product.getName());
+        Assert.assertEquals(ProductConstants.DEFAULT_PRODUCT_DESCRIPTION, product.getDescription());
+        Assert.assertEquals(ProductConstants.DEFAULT_PRODUCT_PRICE, product.getPrice());
+        Assert.assertEquals(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_1[0].longValue(), product.getCategoryId());
         Assert.assertTrue(product.getAvailable());
         Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "products", "product_id = " + product.getProductId()));
     }
 
     @Test
     public void testFindProductById() throws SQLException {
-        jdbcTemplate.execute("INSERT INTO products (product_id, name, price, category_id, available, description, deleted) VALUES (" + PRODUCT_ID + ", '" + PRODUCT_NAME + "', " + PRODUCT_PRICE + ", " + CATEGORY_ID + ", " + PRODUCT_AVAILABLE + ", '" + PRODUCT_DESCRIPTION + "', false)");
-        final Optional<Product> product = productDao.getById(PRODUCT_ID);
+        final Optional<Product> product = productDao.getById(ProductConstants.PRODUCT_DELETED_FROM_CATEGORY_RESTAURANT_0);
 
         Assert.assertTrue(product.isPresent());
-        Assert.assertEquals(PRODUCT_ID, product.get().getProductId().intValue());
-        Assert.assertEquals(PRODUCT_NAME, product.get().getName());
-        Assert.assertEquals(PRODUCT_PRICE, product.get().getPrice());
-        Assert.assertEquals(CATEGORY_ID, product.get().getCategoryId());
-        Assert.assertEquals(PRODUCT_AVAILABLE, product.get().getAvailable());
-        Assert.assertFalse(product.get().getDeleted());
-        Assert.assertEquals(PRODUCT_DESCRIPTION, product.get().getDescription());
+        Assert.assertEquals(ProductConstants.PRODUCT_DELETED_FROM_CATEGORY_RESTAURANT_0.longValue(), product.get().getProductId().intValue());
+        Assert.assertEquals(ProductConstants.DEFAULT_PRODUCT_NAME, product.get().getName());
+        Assert.assertEquals(ProductConstants.DEFAULT_PRODUCT_PRICE, product.get().getPrice());
+        Assert.assertEquals(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[0].longValue(), product.get().getCategoryId());
+        Assert.assertEquals(ProductConstants.DEFAULT_PRODUCT_DESCRIPTION, product.get().getDescription());
+        Assert.assertTrue(product.get().getAvailable());
+        Assert.assertTrue(product.get().getDeleted());
     }
 
     @Test
     public void testFindProductByIdNotFound() throws SQLException {
-        final Optional<Product> product = productDao.getById(PRODUCT_ID);
+        final Optional<Product> product = productDao.getById(NON_EXISTENT_PRODUCT_ID);
         Assert.assertFalse(product.isPresent());
     }
 
     @Test
-    public void testDelete() throws SQLException {
-        jdbcTemplate.execute("INSERT INTO products (product_id, name, price, category_id, available, description, deleted) VALUES (" + PRODUCT_ID + ", '" + PRODUCT_NAME + "', " + PRODUCT_PRICE + ", " + CATEGORY_ID + ", " + PRODUCT_AVAILABLE + ", '" + PRODUCT_DESCRIPTION + "', false)");
-
-        productDao.delete(PRODUCT_ID);
+    @Rollback
+    public void testDeleteExistingProduct() throws SQLException {
+        productDao.delete(ProductConstants.PRODUCT_FROM_CATEGORY_RESTAURANT_0[0]);
         em.flush();
 
-        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "products", "product_id = " + PRODUCT_ID + " AND deleted = true"));
+        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "products", "product_id = " + ProductConstants.PRODUCT_FROM_CATEGORY_RESTAURANT_0[0] + " AND deleted = true"));
     }
 
     @Test(expected = ProductNotFoundException.class)
     public void testNoDelete() throws SQLException {
-        productDao.delete(PRODUCT_ID + 1);
+        productDao.delete(NON_EXISTENT_PRODUCT_ID);
         em.flush();
     }
+
+    @Test
+    @Rollback
+    public void updateProduct() throws SQLException {
+        final Product product = em.find(Product.class, ProductConstants.PRODUCT_FROM_CATEGORY_RESTAURANT_0[0]);
+        final String oldName = product.getName();
+        final String oldDescription = product.getDescription();
+
+        productDao.updateNameAndDescription(product, ProductConstants.DEFAULT_STRING, ProductConstants.DEFAULT_STRING);
+        em.flush();
+
+        Assert.assertNotEquals(oldDescription, product.getDescription());
+        Assert.assertNotEquals(oldName, product.getName());
+        Assert.assertEquals(ProductConstants.DEFAULT_STRING, product.getName());
+        Assert.assertEquals(ProductConstants.DEFAULT_STRING, product.getDescription());
+    }
+
+    @Test
+    @Rollback
+    public void updateProductAndPromotions() throws SQLException {
+        final Product product = em.find(Product.class, ProductConstants.PROMOTION_SOURCE_ID);
+        final Promotion promotion = em.find(Promotion.class, ProductConstants.PROMOTION_PRODUCT_ID);
+        final String oldName = product.getName();
+        final String oldDescription = product.getDescription();
+
+        productDao.updateNameAndDescription(product, ProductConstants.DEFAULT_STRING, ProductConstants.DEFAULT_STRING);
+        em.flush();
+
+        Assert.assertNotEquals(oldDescription, promotion.getDestination().getDescription());
+        Assert.assertNotEquals(oldName, promotion.getDestination().getName());
+        Assert.assertEquals(ProductConstants.DEFAULT_STRING, promotion.getDestination().getDescription());
+        Assert.assertEquals(ProductConstants.DEFAULT_STRING, promotion.getDestination().getName());
+    }
+
+    @Test
+    public void testCreatePromotion() throws SQLException {
+        final Product product = em.find(Product.class, ProductConstants.PRODUCT_FROM_CATEGORY_RESTAURANT_0[0]);
+        final Promotion promotion = productDao.createPromotion(
+                product,
+                ProductConstants.DEFAULT_PROMOTION_START_DATE,
+                ProductConstants.DEFAULT_PROMOTION_END_DATE,
+                ProductConstants.DEFAULT_PROMOTION_DISCOUNT
+        );
+        em.flush();
+
+        Assert.assertNotNull(promotion);
+        Assert.assertEquals(ProductConstants.DEFAULT_PROMOTION_START_DATE, promotion.getStartDate());
+        Assert.assertEquals(ProductConstants.DEFAULT_PROMOTION_END_DATE, promotion.getEndDate());
+        Assert.assertEquals(product.getProductId(), promotion.getSource().getProductId());
+        Assert.assertEquals(product.getPrice().multiply(BigDecimal.valueOf(ProductConstants.DEFAULT_PROMOTION_DISCOUNT)), promotion.getDestination().getPrice());
+        Assert.assertTrue(promotion.getDestination().getAvailable());
+        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "promotions", "promotion_id = " + promotion.getPromotionId()));
+    }
+
+    @Test
+    @Rollback
+    public void testCreatePromotionProductAlreadyExisting() throws SQLException {
+        final Product product = em.find(Product.class, ProductConstants.PROMOTION_SOURCE_ID);
+        final Promotion promotion = productDao.createPromotion(
+                product,
+                ProductConstants.DEFAULT_PROMOTION_START_DATE,
+                ProductConstants.DEFAULT_PROMOTION_END_DATE,
+                ProductConstants.DEFAULT_PROMOTION_DISCOUNT
+        );
+        em.flush();
+        Assert.assertNotNull(promotion);
+        Assert.assertEquals(2, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "promotions", "source_id = " + product.getProductId()));
+    }
+
+
 }

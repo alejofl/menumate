@@ -1,13 +1,17 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.exception.CategoryNotFoundException;
 import ar.edu.itba.paw.model.Category;
 import ar.edu.itba.paw.persistence.config.TestConfig;
+import ar.edu.itba.paw.persistence.constants.CategoryConstants;
+import ar.edu.itba.paw.persistence.constants.RestaurantConstants;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
@@ -26,31 +30,7 @@ import java.util.Optional;
 @Transactional
 public class CategoryJpaDaoTest {
 
-    private static final long USER_ID = 791;
-    private static final String USER_EMAIL = "peter@peter.com";
-    private static final String USER_PASSWORD = "super12secret34";
-    private static final String USER_NAME = "Peter Parker";
-    private static final String PREFERRED_LANGUAGE = "qx";
-    private static final boolean IS_ACTIVE = true;
-    private static final long RESTAURANT_ID = 79874;
-    private static final long CATEGORY_ID = 12421L;
-    private static final long CATEGORY_ID_2 = 1111L;
-    private static final boolean CATEGORY_DELETED = false;
-    private static final String CATEGORY_NAME = "Postgres Dulces";
-    private static final String CATEGORY_NAME_2 = "Postgres Salados";
-    private static final String RESTAURANT_NAME = "Cafe Mataderos";
-    private static final String RESTAURANT_EMAIL = "pedro@frompedros.com";
-    private static final String RESTAURANT_ADDRESS = "Av. Juan B. Justo 1234";
-    private static final String RESTAURANT_DESCRIPTION = "Cafe de Mataderos";
-    private static final boolean RESTAURANT_DELETED = false;
-    private static final boolean RESTAURANT_IS_ACTIVE = true;
-    private static final Timestamp RESTAURANT_CREATION_DATE = new Timestamp(123456789);
-    private static final int MAX_TABLES = 20;
-    private static final int ORDER_NUM = 1293;
-    private static final int ORDER_NUM_2 = 5000;
-
-    private static final int SPECIALTY = 1;
-    private static final String[] categoryNames = {"Category 1", "Category 2", "Category 3", "Category 4"};
+    private static final long NON_EXISTING_CATEGORY_ID = 10000;
 
     @Autowired
     private DataSource ds;
@@ -66,81 +46,132 @@ public class CategoryJpaDaoTest {
     @Before
     public void setup() {
         jdbcTemplate = new JdbcTemplate(ds);
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, "categories", "restaurants", "users");
-        jdbcTemplate.execute("INSERT INTO users (user_id, email, password, name, is_active, preferred_language) VALUES (" + USER_ID + ", '" + USER_EMAIL + "', '" + USER_PASSWORD + "', '" + USER_NAME + "', " + IS_ACTIVE + ", '" + PREFERRED_LANGUAGE + "')");
-        jdbcTemplate.execute("INSERT INTO restaurants (restaurant_id, name, email, max_tables, specialty, owner_user_id, address, description, date_created, deleted, is_active) VALUES (" + RESTAURANT_ID + ", '" + RESTAURANT_NAME + "', '" + RESTAURANT_EMAIL + "', " + MAX_TABLES + ", " + SPECIALTY + ", " + USER_ID + ", '" + RESTAURANT_ADDRESS + "', '" + RESTAURANT_DESCRIPTION + "', '" + RESTAURANT_CREATION_DATE + "', " + RESTAURANT_DELETED + ", " + RESTAURANT_IS_ACTIVE + ")");
     }
 
     @Test
+    @Rollback
     public void testCreate() throws SQLException {
-        final Category category = categoryDao.create(RESTAURANT_ID, CATEGORY_NAME);
+        final Category category = categoryDao.create(RestaurantConstants.RESTAURANT_IDS[0], CategoryConstants.CATEGORY_NAME);
         em.flush();
 
         Assert.assertNotNull(category);
-        Assert.assertEquals(CATEGORY_NAME, category.getName());
-        Assert.assertEquals(RESTAURANT_ID, category.getRestaurantId());
-        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "categories", "category_id = " + category.getCategoryId() + " AND name = '" + CATEGORY_NAME + "' AND restaurant_id = " + RESTAURANT_ID));
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0].longValue(), category.getRestaurantId());
+        Assert.assertEquals(CategoryConstants.CATEGORY_NAME, category.getName());
+        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "categories", "category_id = " + category.getCategoryId() + " AND name = '" + category.getName() + "' AND restaurant_id = " + category.getRestaurantId()));
     }
 
     @Test
     public void testGetCategoryById() throws SQLException {
-        jdbcTemplate.execute("INSERT INTO categories (category_id, restaurant_id, name, order_num, deleted) VALUES (" + CATEGORY_ID + ", " + RESTAURANT_ID + ", '" + CATEGORY_NAME + "', " + ORDER_NUM + ", " + CATEGORY_DELETED + ")");
-        final Optional<Category> category = categoryDao.getById(CATEGORY_ID);
+        final Optional<Category> category = categoryDao.getById(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_1[0]);
 
         Assert.assertTrue(category.isPresent());
-        Assert.assertEquals(CATEGORY_ID, category.get().getCategoryId().intValue());
-        Assert.assertEquals(CATEGORY_NAME, category.get().getName());
-        Assert.assertEquals(RESTAURANT_ID, category.get().getRestaurantId());
-        Assert.assertEquals(ORDER_NUM, category.get().getOrderNum());
+        Assert.assertEquals(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_1[0], category.get().getCategoryId());
+        Assert.assertEquals(CategoryConstants.CATEGORY_NAME, category.get().getName());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[1].longValue(), category.get().getRestaurantId());
+        Assert.assertEquals(CategoryConstants.CATEGORY_ORDER_FOR_RESTAURANT_1[0].intValue(), category.get().getOrderNum());
+        Assert.assertFalse(category.get().getDeleted());
+    }
+
+    @Test
+    public void testGetDeletedCategoryById() throws SQLException {
+        final Optional<Category> category = categoryDao.getById(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[2]);
+
+        Assert.assertTrue(category.isPresent());
+        Assert.assertEquals(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[2], category.get().getCategoryId());
+        Assert.assertEquals(CategoryConstants.CATEGORY_NAME, category.get().getName());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0].longValue(), category.get().getRestaurantId());
+        Assert.assertEquals(CategoryConstants.CATEGORY_ORDER_FOR_RESTAURANT_0[2].intValue(), category.get().getOrderNum());
+        Assert.assertTrue(category.get().getDeleted());
     }
 
     @Test
     public void testFindByRestaurantId() throws SQLException {
-        for (int i = categoryNames.length; i > 0; i--)
-            jdbcTemplate.execute("INSERT INTO categories (category_id, name, restaurant_id, order_num, deleted) VALUES (" + i + ", '" + categoryNames[i - 1] + "', " + RESTAURANT_ID + ", " + i + ", " + CATEGORY_DELETED + ")");
+        final List<Category> categories = categoryDao.getByRestaurantSortedByOrder(RestaurantConstants.RESTAURANT_IDS[1]);
 
-        final List<Category> category = categoryDao.getByRestaurantSortedByOrder(RESTAURANT_ID);
-
-        Assert.assertNotNull(category);
-        Assert.assertEquals(categoryNames.length, category.size());
-        for (int i = 0; i < categoryNames.length; i++) {
-            Assert.assertEquals(i + 1, category.get(i).getCategoryId().intValue());
-            Assert.assertEquals(i + 1, category.get(i).getOrderNum());
-            Assert.assertEquals(categoryNames[i], category.get(i).getName());
-            Assert.assertEquals(RESTAURANT_ID, category.get(i).getRestaurantId());
+        Assert.assertNotNull(categories);
+        Assert.assertEquals(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_1.length, categories.size());
+        for (int i=0; i<CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_1.length; i++) {
+            Assert.assertEquals(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_1[i], categories.get(i).getCategoryId());
+            Assert.assertEquals(CategoryConstants.CATEGORY_ORDER_FOR_RESTAURANT_1[i].intValue(), categories.get(i).getOrderNum());
+            Assert.assertEquals(CategoryConstants.CATEGORY_NAME, categories.get(i).getName());
+            Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[1].longValue(), categories.get(i).getRestaurantId());
         }
     }
 
     @Test
-    public void testFindByRestaurantAndOrderNum() throws SQLException {
-        jdbcTemplate.execute("INSERT INTO categories (category_id, name, restaurant_id, order_num, deleted) VALUES (" + CATEGORY_ID + ", '" + CATEGORY_NAME + "', " + RESTAURANT_ID + ", " + ORDER_NUM + ", " + CATEGORY_DELETED + ")");
-        final Optional<Category> category = categoryDao.getByRestaurantAndOrderNum(RESTAURANT_ID, ORDER_NUM);
+    public void testFindByRestaurantIdWithDeletedCategory() throws SQLException {
+        final List<Category> categories = categoryDao.getByRestaurantSortedByOrder(RestaurantConstants.RESTAURANT_IDS[0]);
 
-        Assert.assertTrue(category.isPresent());
-        Assert.assertEquals(CATEGORY_ID, category.get().getCategoryId().intValue());
-        Assert.assertEquals(CATEGORY_NAME, category.get().getName());
-        Assert.assertEquals(RESTAURANT_ID, category.get().getRestaurantId());
-        Assert.assertEquals(ORDER_NUM, category.get().getOrderNum());
+        Assert.assertNotNull(categories);
+        Assert.assertEquals(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0.length - 1, categories.size());
+        for (int i=0; i<CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0.length - 1; i++) {
+            Assert.assertEquals(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[i], categories.get(i).getCategoryId());
+            Assert.assertEquals(CategoryConstants.CATEGORY_ORDER_FOR_RESTAURANT_0[i].intValue(), categories.get(i).getOrderNum());
+            Assert.assertEquals(CategoryConstants.CATEGORY_NAME, categories.get(i).getName());
+            Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0].longValue(), categories.get(i).getRestaurantId());
+        }
     }
 
     @Test
-    public void testDeleteCategory() throws SQLException {
-        jdbcTemplate.execute("INSERT INTO categories (category_id ,restaurant_id, name, order_num, deleted) VALUES (" + CATEGORY_ID + ", " + RESTAURANT_ID + ", '" + CATEGORY_NAME + "'," + ORDER_NUM + ", " + false + ")");
+    public void testFindByRestaurantIdWithNoCategories() throws SQLException {
 
-        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "categories", "category_id = " + CATEGORY_ID + " AND name = '" + CATEGORY_NAME + "' AND restaurant_id = " + RESTAURANT_ID + " AND order_num = " + ORDER_NUM + " AND deleted = " + false));
-        categoryDao.delete(CATEGORY_ID);
-        em.flush();
-        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "categories", "category_id = " + CATEGORY_ID + " AND name = '" + CATEGORY_NAME + "' AND restaurant_id = " + RESTAURANT_ID + " AND order_num = " + ORDER_NUM + " AND deleted = " + true));
+        final List<Category> categories = categoryDao.getByRestaurantSortedByOrder(RestaurantConstants.RESTAURANT_IDS[2]);
+
+        Assert.assertNotNull(categories);
+        Assert.assertEquals(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_2.length, categories.size());
     }
 
-    // FIXME: This test is not working due to BEGIN and COMMIT statements in the DAO
+    @Test
+    public void testFindByRestaurantAndOrderNum() throws SQLException {
+        final Optional<Category> category = categoryDao.getByRestaurantAndOrderNum(RestaurantConstants.RESTAURANT_IDS[0], CategoryConstants.CATEGORY_ORDER_FOR_RESTAURANT_0[0]);
+
+        Assert.assertTrue(category.isPresent());
+        Assert.assertFalse(category.get().getDeleted());
+        Assert.assertEquals(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[0], category.get().getCategoryId());
+        Assert.assertEquals(CategoryConstants.CATEGORY_NAME, category.get().getName());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0].longValue(), category.get().getRestaurantId());
+        Assert.assertEquals(CategoryConstants.CATEGORY_ORDER_FOR_RESTAURANT_0[0].intValue(), category.get().getOrderNum());
+    }
+
+    @Test
+    public void testFindDeletedCategoryByRestaurantAndOrderNum() throws SQLException {
+        final Optional<Category> category = categoryDao.getByRestaurantAndOrderNum(RestaurantConstants.RESTAURANT_IDS[0], CategoryConstants.CATEGORY_ORDER_FOR_RESTAURANT_0[2]);
+
+        Assert.assertTrue(category.isPresent());
+        Assert.assertTrue(category.get().getDeleted());
+        Assert.assertEquals(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[2], category.get().getCategoryId());
+        Assert.assertEquals(CategoryConstants.CATEGORY_NAME, category.get().getName());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0].longValue(), category.get().getRestaurantId());
+        Assert.assertEquals(CategoryConstants.CATEGORY_ORDER_FOR_RESTAURANT_0[2].intValue(), category.get().getOrderNum());
+    }
+
+    @Test(expected = CategoryNotFoundException.class)
+    public void testDeleteNonExistingCategory() throws SQLException {
+        categoryDao.delete(NON_EXISTING_CATEGORY_ID);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testDeleteDeletedCategory() throws SQLException {
+        categoryDao.delete(CategoryConstants.DELETED_CATEGORY_ID);
+    }
+
+    @Test
+    @Rollback
+    public void testDeleteCategory() throws SQLException {
+        categoryDao.delete(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[0]);
+        em.flush();
+        Assert.assertEquals(2, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "categories", "restaurant_id = " + RestaurantConstants.RESTAURANT_IDS[0] + " AND deleted = true"));
+        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "categories", "restaurant_id = " + RestaurantConstants.RESTAURANT_IDS[0] + " AND deleted = false"));
+        Assert.assertEquals(CategoryConstants.TOTAL_COUNT - 2, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "categories", "restaurant_id = " + RestaurantConstants.RESTAURANT_IDS[0]));
+    }
+
 //    @Test
+//    @Rollback
 //    public void testSwapOrder() throws SQLException {
-//        jdbcTemplate.execute("INSERT INTO categories (category_id, restaurant_id, name, order_num, deleted) VALUES (" + CATEGORY_ID + ", " + RESTAURANT_ID + ", '" + CATEGORY_NAME + "', " + ORDER_NUM + ", " + CATEGORY_DELETED + ")");
-//        jdbcTemplate.execute("INSERT INTO categories (category_id, restaurant_id, name, order_num, deleted) VALUES (" + CATEGORY_ID_2 + ", " + RESTAURANT_ID + ", '" + CATEGORY_NAME_2 + "', " + ORDER_NUM_2 + ", " + CATEGORY_DELETED + ")");
-//        categoryDao.swapOrder(RESTAURANT_ID, ORDER_NUM, ORDER_NUM_2);
+//        categoryDao.swapOrder(RestaurantConstants.RESTAURANT_IDS[0], CategoryConstants.CATEGORY_ORDER_FOR_RESTAURANT_0[0], CategoryConstants.CATEGORY_ORDER_FOR_RESTAURANT_0[1]);
 //        em.flush();
-//        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "categories", "category_id = " + CATEGORY_ID + " AND name = '" + CATEGORY_NAME + "' AND restaurant_id = " + RESTAURANT_ID + " AND order_num = " + ORDER_NUM_2 + " AND deleted = " + CATEGORY_DELETED));
-//        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "categories", "category_id = " + CATEGORY_ID_2 + " AND name = '" + CATEGORY_NAME_2 + "' AND restaurant_id = " + RESTAURANT_ID + " AND order_num = " + ORDER_NUM + " AND deleted = " + CATEGORY_DELETED));
+//
+//        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "categories", "category_id = " + CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[0] + " AND name = '" + CategoryConstants.CATEGORY_NAME + "' AND restaurant_id = " + RestaurantConstants.RESTAURANT_IDS[0] + " AND order_num = " + CategoryConstants.CATEGORY_ORDER_FOR_RESTAURANT_0[1]));
+//        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "categories", "category_id = " + CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[1] + " AND name = '" + CategoryConstants.CATEGORY_NAME + "' AND restaurant_id = " + RestaurantConstants.RESTAURANT_IDS[0] + " AND order_num = " + CategoryConstants.CATEGORY_ORDER_FOR_RESTAURANT_0[0] ));
 //    }
 }

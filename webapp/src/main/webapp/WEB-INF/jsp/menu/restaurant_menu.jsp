@@ -204,8 +204,34 @@
                                     </div>
                                     <div class="tab-pane fade" id="checkout-delivery" role="tabpanel" tabindex="0">
                                         <div class="mb-3">
-                                            <form:label path="address" cssClass="form-label"><spring:message code="restaurant.menu.form.address"/></form:label>
-                                            <form:input type="text" path="address" cssClass="form-control" id="checkout-address"/>
+                                            <c:choose>
+                                                <c:when test="${currentUser != null}">
+                                                    <form:label path="address" cssClass="form-label"><spring:message code="restaurant.menu.form.address"/></form:label>
+                                                    <select class="form-select" id="checkout-address-select">
+                                                        <c:forEach var="addr" items="${currentUser.addresses}">
+                                                            <option value="${addr.address}">
+                                                                <c:choose>
+                                                                    <c:when test="${addr.name != null}">
+                                                                        <c:out value="${addr.name}"/> - <c:out value="${addr.address}"/>
+                                                                    </c:when>
+                                                                    <c:otherwise>
+                                                                        <c:out value="${addr.address}"/>
+                                                                    </c:otherwise>
+                                                                </c:choose>
+                                                            </option>
+                                                        </c:forEach>
+                                                        <option value="---"><spring:message code="restaurant.menu.form.address.new"/></option>
+                                                    </select>
+                                                    <div id="new-address-input" class="mt-3" style="display: none">
+                                                        <spring:message code="restaurant.menu.form.address.new" var="addressPlaceholder"/>
+                                                        <form:input type="text" path="address" cssClass="form-control" id="checkout-address" placeholder="${addressPlaceholder}"/>
+                                                    </div>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <form:label path="address" cssClass="form-label"><spring:message code="restaurant.menu.form.address"/></form:label>
+                                                    <form:input type="text" path="address" cssClass="form-control" id="checkout-address"/>
+                                                </c:otherwise>
+                                            </c:choose>
                                             <form:errors path="address" element="div" cssClass="form-error"/>
                                             <form:errors element="div" cssClass="form-error"/> <!-- General errors -->
                                         </div>
@@ -269,8 +295,10 @@
                 </div>
             </c:otherwise>
         </c:choose>
+        <spring:message code="restaurant.menu.tootip.delivery" var="deliveryTooltipTitle"/>
+        <spring:message code="restaurant.menu.tootip.dinein"  var="dineninTooltipTitle"/>
         <div class="toast text-bg-primary" id="persistent-toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
-            <div class="d-flex">
+            <div class="d-flex" data-bs-toggle="tooltip" data-bs-title="${param.qr == 1 ? dineninTooltipTitle : deliveryTooltipTitle}">
                 <div class="toast-body">
                     <h5 class="m-0">
                         <c:choose>
@@ -285,8 +313,6 @@
                 </div>
             </div>
         </div>
-
-<%--        --%>
     </div>
 
     <div class="modal fade" id="view-reviews-modal" tabindex="-1">

@@ -2,16 +2,19 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.exception.ProductNotFoundException;
 import ar.edu.itba.paw.model.Product;
+import ar.edu.itba.paw.model.Promotion;
 import ar.edu.itba.paw.persistance.ImageDao;
 import ar.edu.itba.paw.persistance.ProductDao;
 import ar.edu.itba.paw.service.ProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -58,22 +61,21 @@ public class ProductServiceImpl implements ProductService {
         final Product product = getAndVerifyForUpdate(productId);
 
         if (product.getPrice().equals(price)) {
-            product.setName(name);
-            product.setDescription(description);
-            LOGGER.info("Updated name and description of product id {}", product.getProductId());
+            productDao.updateNameAndDescription(product, name, description);
             return product;
         }
 
         product.setDeleted(true);
         final Product newProduct = productDao.create(product.getCategoryId(), name, description, product.getImageId(), price);
         LOGGER.info("Logical-deleted product id {} and inserted {} to update price", product.getProductId(), newProduct.getProductId());
+        productDao.stopPromotionsBySource(productId);
         return newProduct;
     }
 
     @Transactional
     @Override
     public void updateImage(long productId, byte[] image) {
-        if (image == null)
+        if (image == null || image.length == 0)
             return;
 
         final Product product = getAndVerifyForUpdate(productId);
@@ -86,5 +88,42 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void delete(long productId) {
         productDao.delete(productId);
+    }
+
+    @Transactional
+    @Override
+    public Promotion createPromotion(long sourceProductId, LocalDateTime startDate, LocalDateTime endDate, float discount) {
+        discount = Math.round(discount * 100) / 100f;
+        if (discount < 0 || discount >= 1) {
+            LOGGER.error("Attempted to create product with discount outside range {}", discount);
+            throw new IllegalArgumentException("Discount must be in the range [0, 1)");
+        }
+
+        final Product source = getById(sourceProductId).orElseThrow(ProductNotFoundException::new);
+        if (source.getDeleted() || !source.getAvailable()) {
+            LOGGER.error("Attempted to create a promotion from a{} product", source.getDeleted() ? " deleted" : "n unavailable");
+            throw new IllegalStateException("Product cannot be deleted nor unavailable");
+        }
+
+        if (endDate != null) {
+            if (!endDate.isAfter(startDate)) {
+                LOGGER.error("Attempted to create a promotion with endDate <= startDate");
+                throw new IllegalArgumentException("endDate must be either null, or after startDate");
+            }
+
+            LocalDateTime now = LocalDateTime.now();
+            if (!endDate.isAfter(now)) {
+                LOGGER.error("Attempted to create a promotion with endDate <= now");
+                throw new IllegalArgumentException("endDate must be either null or in the past");
+            }
+        }
+
+        return productDao.createPromotion(source, startDate, endDate, discount);
+    }
+
+
+    @Scheduled(cron = "0 * * * * ?")
+    public void closeInactivePromotions() {
+        productDao.closeInactivePromotions();
     }
 }

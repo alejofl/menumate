@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import ar.edu.itba.paw.exception.OrderNotFoundException;
 import ar.edu.itba.paw.exception.RestaurantNotFoundException;
 import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.model.OrderStatus;
@@ -14,6 +13,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
@@ -30,7 +30,8 @@ public class RestaurantOrdersController {
             final PagingForm paging,
             final BindingResult errors,
             final int id,
-            final OrderStatus orderStatus
+            final OrderStatus orderStatus,
+            final Boolean descending
     ) {
         if (errors.hasErrors()) {
             ModelAndView mav = new ModelAndView("menu/restaurant_orders");
@@ -39,7 +40,7 @@ public class RestaurantOrdersController {
             return mav;
         }
 
-        PaginatedResult<Order> orders = orderService.getByRestaurant(id, paging.getPageOrDefault(), paging.getSizeOrDefault(ControllerUtils.DEFAULT_ORDERS_PAGE_SIZE), orderStatus);
+        PaginatedResult<Order> orders = orderService.getByRestaurant(id, paging.getPageOrDefault(), paging.getSizeOrDefault(ControllerUtils.DEFAULT_ORDERS_PAGE_SIZE), orderStatus, descending);
 
         ModelAndView mav = new ModelAndView("menu/restaurant_orders");
 
@@ -57,45 +58,50 @@ public class RestaurantOrdersController {
     public ModelAndView restaurantOrdersPending(
             @Valid final PagingForm paging,
             final BindingResult errors,
-            @PathVariable final int id
+            @PathVariable final int id,
+            @RequestParam(value = "descending", required = false, defaultValue = "false") final Boolean descending
     ) {
-        return restaurantOrders(paging, errors, id, OrderStatus.PENDING);
+        return restaurantOrders(paging, errors, id, OrderStatus.PENDING, descending);
     }
 
     @RequestMapping(value = "/restaurants/{id:\\d+}/orders/confirmed", method = RequestMethod.GET)
     public ModelAndView restaurantOrdersConfirmed(
             @Valid final PagingForm paging,
             final BindingResult errors,
-            @PathVariable final int id
+            @PathVariable final int id,
+            @RequestParam(value = "descending", required = false, defaultValue = "false") final Boolean descending
     ) {
-        return restaurantOrders(paging, errors, id, OrderStatus.CONFIRMED);
+        return restaurantOrders(paging, errors, id, OrderStatus.CONFIRMED, descending);
     }
 
     @RequestMapping(value = "/restaurants/{id:\\d+}/orders/ready", method = RequestMethod.GET)
     public ModelAndView restaurantOrdersReady(
             @Valid final PagingForm paging,
             final BindingResult errors,
-            @PathVariable final int id
+            @PathVariable final int id,
+            @RequestParam(value = "descending", required = false, defaultValue = "false") final Boolean descending
     ) {
-        return restaurantOrders(paging, errors, id, OrderStatus.READY);
+        return restaurantOrders(paging, errors, id, OrderStatus.READY, descending);
     }
 
     @RequestMapping(value = "/restaurants/{id:\\d+}/orders/delivered", method = RequestMethod.GET)
     public ModelAndView restaurantOrdersDelivered(
             @Valid final PagingForm paging,
             final BindingResult errors,
-            @PathVariable final int id
+            @PathVariable final int id,
+            @RequestParam(value = "descending", required = false, defaultValue = "false") final Boolean descending
     ) {
-        return restaurantOrders(paging, errors, id, OrderStatus.DELIVERED);
+        return restaurantOrders(paging, errors, id, OrderStatus.DELIVERED, descending);
     }
 
     @RequestMapping(value = "/restaurants/{id:\\d+}/orders/cancelled", method = RequestMethod.GET)
     public ModelAndView restaurantOrdersCancelled(
             @Valid final PagingForm paging,
             final BindingResult errors,
-            @PathVariable final int id
+            @PathVariable final int id,
+            @RequestParam(value = "descending", required = false, defaultValue = "false") final Boolean descending
     ) {
-        return restaurantOrders(paging, errors, id, OrderStatus.CANCELLED);
+        return restaurantOrders(paging, errors, id, OrderStatus.CANCELLED, descending);
     }
 
     @RequestMapping(value = "/restaurants/{id:\\d+}/orders", method = RequestMethod.GET)

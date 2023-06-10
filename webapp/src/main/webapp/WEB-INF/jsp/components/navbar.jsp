@@ -35,6 +35,7 @@
                             <i class="bi bi-person-circle"></i> <c:out value="${currentUser.name}"/>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="<c:url value="/user"/>"><spring:message code="navbar.myprofile"/></a></li>
                             <li><a class="dropdown-item" href="<c:url value="/user/orders"/>"><spring:message code="navbar.myorders"/></a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="<c:url value="/restaurants/create"/>"><spring:message code="navbar.createrestaurant"/></a></li>
