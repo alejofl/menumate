@@ -65,6 +65,9 @@
                 <c:if test="${order_viewer}">
                     <a class="btn btn-secondary" href="<c:url value="/restaurants/${restaurant.restaurantId}/orders"/>" role="button"><spring:message code="restaurant.menu.seeorders"/></a>
                 </c:if>
+                <c:if test="${admin}">
+                    <a class="btn btn-secondary" href="<c:url value="/restaurants/${restaurant.restaurantId}/reviews"/>" role="button"><spring:message code="restaurant.menu.viewreviews"/></a>
+                </c:if>
             </div>
 
         </div>
@@ -341,7 +344,13 @@
                                     <fmt:formatDate pattern="dd MMMM yyyy - HH:mm" value="${parsedDateOrdered}" var="reviewDate"/>
                                     <small class="text-muted">${reviewDate}</small>
                                 </div>
-                                <p><c:out value="${review.comment}"/></p>
+                                <p class="mb-${review.reply == null ? "4" : "0"}"><c:out value="${review.comment}"/></p>
+                                <c:if test="${review.reply != null}">
+                                    <div class="alert alert-light mt-2" role="alert">
+                                        <b><spring:message code="restaurant.reviews.replyfromrestaurant"/></b>
+                                        <p class="m-0"><c:out value="${review.reply}"/></p>
+                                    </div>
+                                </c:if>
                             </div>
                         </c:forEach>
 
