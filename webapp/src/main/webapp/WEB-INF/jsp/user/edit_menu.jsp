@@ -20,6 +20,7 @@
         data-edit-product-errors="${editProductErrors}"
         data-product-id="${editProductErrors ? editProductForm.productId : ""}"
         data-edit-category-errors="${editCategoryErrors}"
+        data-edit-information-errors="${editRestaurantErrors}"
 >
 <div class="content">
     <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
@@ -33,15 +34,27 @@
                 <h1><c:out value="${restaurant.name}"/></h1>
                 <c:choose>
                     <c:when test="${not empty restaurant.description}">
-                        <p><c:out value="${restaurant.description}"/></p>
+                        <p class="mb-1"><c:out value="${restaurant.description}"/></p>
                     </c:when>
                     <c:otherwise>
-                        <p><i> <spring:message code="restaurant.menu.nodescription"/></i></p>
+                        <p class="mb-1"><i><spring:message code="restaurant.menu.nodescription"/></i></p>
                     </c:otherwise>
                 </c:choose>
+                <p><i class="bi bi-geo-alt"></i> <c:out value="${restaurant.address}"/></p>
+                <div class="tags-container">
+                    <c:forEach var="tag" items="${restaurant.tags}">
+                        <c:url value="/restaurants" var="tagUrl">
+                            <c:param name="tags" value="${tag.ordinal()}"/>
+                        </c:url>
+                        <a href="${tagUrl}" class="clickable-object">
+                            <span class="badge rounded-pill text-bg-secondary"><spring:message code="restauranttags.${tag.messageCode}"/></span>
+                        </a>
+                    </c:forEach>
+                </div>
             </div>
             <div class="d-flex flex-column gap-2">
                 <a class="btn btn-primary" href="<c:url value="/restaurants/${restaurant.restaurantId}"/>" role="button"><spring:message code="editmenu.done"/></a>
+                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#edit-information-modal"><spring:message code="editmenu.editinformation"/></button>
                 <button type="button" class="btn btn-secondary ${is_owner ? "" : "disabled"}" data-bs-toggle="modal" data-bs-target="#employees-modal" id="add-employees-button"><spring:message code="editmenu.editemployees"/></button>
             </div>
         </div>
@@ -145,6 +158,82 @@
             </a>
         </div>
     </main>
+
+    <div class="modal fade" id="edit-information-modal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5"><spring:message code="editmenu.editinformation.modal.title"/></h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <c:url value="/restaurants/${restaurant.restaurantId}/edit" var="editInformationFormUrl"/>
+                <form:form cssClass="mb-0" modelAttribute="editRestaurantForm" action="${editInformationFormUrl}" method="post" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        <div>
+                            <div class="mb-3">
+                                <form:label path="name" cssClass="form-label"><spring:message code="editmenu.editinformation.form.name"/></form:label>
+                                <form:input path="name" type="text" cssClass="form-control"/>
+                                <form:errors path="name" element="div" cssClass="form-error"/>
+                            </div>
+                            <div class="mb-3">
+                                <form:label path="address" cssClass="form-label"><spring:message code="editmenu.editinformation.form.address"/></form:label>
+                                <form:input path="address" type="text" cssClass="form-control"/>
+                                <form:errors path="address" element="div" cssClass="form-error"/>
+                            </div>
+                            <div class="mb-3">
+                                <form:label path="specialty" cssClass="form-label"><spring:message code="editmenu.editinformation.form.specialty"/></form:label>
+                                <form:select path="specialty" cssClass="form-select" multiple="false">
+                                    <c:forEach var="spec" items="${specialties}">
+                                        <form:option value="${spec.ordinal()}"><spring:message code="restaurantspecialties.${spec.messageCode}"/></form:option>
+                                    </c:forEach>
+                                </form:select>
+                                <form:errors path="specialty" element="div" cssClass="form-error"/>
+                            </div>
+                            <div class="mb-3">
+                                <form:label path="description" class="form-label"><spring:message code="editmenu.editinformation.form.description"/></form:label>
+                                <form:textarea class="form-control" path="description" rows="3"/>
+                                <form:errors path="description" element="div" cssClass="form-error"/>
+                            </div>
+                            <div class="mb-3">
+                                <form:label path="maxTables" cssClass="form-label"><spring:message code="editmenu.editinformation.form.maxtables"/></form:label>
+                                <form:input type="number" path="maxTables" class="form-control" id="create-restaurant-max-tables"/>
+                                <form:errors path="maxTables" element="div" cssClass="form-error"/>
+                            </div>
+                            <div class="mb-3">
+                                <form:label path="tags" cssClass="form-label"><spring:message code="editmenu.editinformation.form.tags"/></form:label>
+                                <spring:message code="createrestaurant.form.tags.placeholder" var="tagsPlaceholder"/>
+                                <form:select path="tags" cssClass="form-select" multiple="true" placeholder="${tagsPlaceholder}">
+                                    <c:forEach var="tag" items="${tags}">
+                                        <form:option value="${tag.ordinal()}"><spring:message code="restauranttags.${tag.messageCode}"/></form:option>
+                                    </c:forEach>
+                                </form:select>
+                                <form:errors path="tags" element="div" cssClass="form-error"/>
+                            </div>
+                            <div class="mb-3">
+                                <form:label path="logo" cssClass="form-label"><spring:message code="editmenu.addproduct.form.logo"/></form:label>
+                                <form:input path="logo" type="file" cssClass="form-control" accept="image/*"/>
+                                <form:errors path="logo" element="div" cssClass="form-error"/>
+                            </div>
+                            <div class="mb-3">
+                                <form:label path="portrait1" cssClass="form-label"><spring:message code="editmenu.addproduct.form.portrait1"/></form:label>
+                                <form:input path="portrait1" type="file" cssClass="form-control" accept="image/*"/>
+                                <form:errors path="portrait1" element="div" cssClass="form-error"/>
+                            </div>
+                            <div class="mb-3">
+                                <form:label path="portrait2" cssClass="form-label"><spring:message code="editmenu.addproduct.form.portrait2"/></form:label>
+                                <form:input path="portrait2" type="file" cssClass="form-control" accept="image/*"/>
+                                <form:errors path="portrait2" element="div" cssClass="form-error"/>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" name="restaurantId" value="${restaurant.restaurantId}">
+                    <div class="modal-footer">
+                        <input type="submit" class="btn btn-primary" value="<spring:message code="editmenu.form.update"/>">
+                    </div>
+                </form:form>
+            </div>
+        </div>
+    </div>
 
     <div class="modal fade" id="add-item-modal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">

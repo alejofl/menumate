@@ -153,6 +153,9 @@ public class UserController {
     public ModelAndView editRestaurant(
             @PathVariable final int id,
 
+            @ModelAttribute("editRestaurantForm") final EditRestaurantForm editRestaurantForm,
+            final Boolean editRestaurantErrors,
+
             @ModelAttribute("addProductForm") final AddProductForm addProductForm,
             final Boolean addProductErrors,
             @ModelAttribute("editProductForm") final EditProductForm editProductForm,
@@ -184,9 +187,21 @@ public class UserController {
         mav.addObject("roles", RestaurantRoleLevel.VALUES_EXCEPT_OWNER);
         mav.addObject("is_owner", restaurant.getOwnerUserId() == ControllerUtils.getCurrentUserIdOrThrow());
 
+        mav.addObject("specialties", RestaurantSpecialty.values());
+        mav.addObject("tags", RestaurantTags.values());
+
+        editRestaurantForm.setRestaurantId(id);
+        editRestaurantForm.setName(restaurant.getName());
+        editRestaurantForm.setAddress(restaurant.getAddress());
+        editRestaurantForm.setSpecialty(restaurant.getSpecialty().ordinal());
+        editRestaurantForm.setDescription(restaurant.getDescription());
+        editRestaurantForm.setMaxTables(restaurant.getMaxTables());
+        editRestaurantForm.setTags(restaurant.getTags().stream().map(Enum::ordinal).collect(Collectors.toList()));
+
         // NOTE: This is a workaround to avoid IllegalStateException.
         // The problem is that when this method is called from another method (i.e. when there's an error on a form)
         // the ModelAttributes are not added to the model automatically.
+        mav.addObject("editRestaurantForm", editRestaurantForm);
         mav.addObject("addProductForm", addProductForm);
         mav.addObject("editProductForm", editProductForm);
         mav.addObject("deleteProductForm", deleteProductForm);
@@ -197,6 +212,7 @@ public class UserController {
         mav.addObject("addEmployeeForm", addEmployeeForm);
         mav.addObject("deleteEmployeeForm", deleteEmployeeForm);
 
+        mav.addObject("editRestaurantErrors", editRestaurantErrors);
         mav.addObject("addProductErrors", addProductErrors);
         mav.addObject("editProductErrors", editProductErrors);
         mav.addObject("addCategoryErrors", addCategoryErrors);
@@ -204,6 +220,52 @@ public class UserController {
         mav.addObject("addEmployeeErrors", addEmployeeErrors.get());
 
         return mav;
+    }
+
+    @RequestMapping(value = "/restaurants/{id:\\d+}/edit", method = RequestMethod.POST)
+    public ModelAndView editRestaurantInformation(
+            @PathVariable final int id,
+            @Valid @ModelAttribute("editRestaurantForm") final EditRestaurantForm editRestaurantForm,
+            final BindingResult errors
+    ) throws IOException {
+        if (errors.hasErrors()) {
+            return editRestaurant(
+                    id,
+                    editRestaurantForm,
+                    true,
+                    new AddProductForm(),
+                    false,
+                    new EditProductForm(),
+                    false,
+                    new DeleteProductForm(),
+                    new AddCategoryForm(),
+                    false,
+                    new EditCategoryForm(),
+                    false,
+                    new EditCategoryOrderForm(),
+                    new DeleteCategoryForm(),
+                    new AddEmployeeForm(),
+                    new MyBoolean(false),
+                    new DeleteEmployeeForm()
+            );
+        }
+
+        restaurantService.update(
+                editRestaurantForm.getRestaurantId(),
+                editRestaurantForm.getName(),
+                RestaurantSpecialty.fromOrdinal(editRestaurantForm.getSpecialty()),
+                editRestaurantForm.getAddress(),
+                editRestaurantForm.getDescription(),
+                editRestaurantForm.getTags().stream().map(RestaurantTags::fromOrdinal).collect(Collectors.toList())
+        );
+        restaurantService.updateImages(
+                editRestaurantForm.getRestaurantId(),
+                editRestaurantForm.getLogo().getBytes(),
+                editRestaurantForm.getPortrait1().getBytes(),
+                editRestaurantForm.getPortrait2().getBytes()
+        );
+
+        return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
     }
 
     @RequestMapping(value = "/restaurants/{id:\\d+}/products/add", method = RequestMethod.POST)
@@ -215,6 +277,8 @@ public class UserController {
         if (errors.hasErrors()) {
             return editRestaurant(
                     id,
+                    new EditRestaurantForm(),
+                    false,
                     addProductForm,
                     true,
                     new EditProductForm(),
@@ -252,6 +316,8 @@ public class UserController {
         if (errors.hasErrors()) {
             return editRestaurant(
                     id,
+                    new EditRestaurantForm(),
+                    false,
                     new AddProductForm(),
                     false,
                     editProductForm,
@@ -304,6 +370,8 @@ public class UserController {
         if (errors.hasErrors()) {
             return editRestaurant(
                     id,
+                    new EditRestaurantForm(),
+                    false,
                     new AddProductForm(),
                     false,
                     new EditProductForm(),
@@ -335,6 +403,8 @@ public class UserController {
         if (errors.hasErrors()) {
             return editRestaurant(
                     id,
+                    new EditRestaurantForm(),
+                    false,
                     new AddProductForm(),
                     false,
                     new EditProductForm(),
@@ -397,6 +467,8 @@ public class UserController {
         if (errors.hasErrors()) {
             return editRestaurant(
                     id,
+                    new EditRestaurantForm(),
+                    false,
                     new AddProductForm(),
                     false,
                     new EditProductForm(),

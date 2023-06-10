@@ -43,6 +43,8 @@ document.addEventListener("DOMContentLoaded", () => {
         new bootstrap.Modal('#edit-item-modal', null).show()
     } else if (document.querySelector("body").dataset.editCategoryErrors === "true") {
         new bootstrap.Modal('#edit-category-modal', null).show()
+    } else if (document.querySelector("body").dataset.editInformationErrors === "true") {
+        new bootstrap.Modal('#edit-information-modal', null).show()
     }
 
     // Modal dismissal
