@@ -3,6 +3,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <html>
 <head>
     <spring:message code="restaurantorders.head" var="title" arguments="${restaurant.name}"/>
@@ -11,7 +12,7 @@
     </jsp:include>
     <script src="<c:url value="/static/js/restaurant_reviews.js"/>"></script>
 </head>
-<body>
+<body data-review-reply-form-errors="${reviewReplyFormErrors}">
     <div class="content">
         <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
         <c:if test="${error || param.error == '1'}">
@@ -25,8 +26,10 @@
             <c:forEach items="${reviews}" var="review">
                 <div class="card m-2">
                     <div class="card-header">
-                        <b><c:out value="${review.order.user.name}"/></b>
-                        <div class="d-flex gap-2 align-items-baseline my-2">
+                        <div class="mt-2">
+                            <b><c:out value="${review.order.user.name}"/></b>
+                        </div>
+                        <div class="d-flex gap-2 align-items-baseline mb-2">
                             <div class="small-ratings">
                                 <c:forEach begin="1" end="${review.rating}">
                                     <i class="bi bi-star-fill rating-color"></i>
@@ -67,10 +70,61 @@
                         >
                             <small><spring:message code="restaurant.reviews.vieworder"/></small>
                         </a>
-                        <a class="btn btn-primary" href="#" role="button"><spring:message code="restaurant.reviews.reply"/></a>
+                        <c:choose>
+                            <c:when test="${review.reply != null}">
+                                <button class="btn btn-primary view-reply-button" data-bs-toggle="modal" data-bs-target="#view-reply-modal" data-reply="<c:out value="${review.reply}"/>" role="button">
+                                    <spring:message code="restaurant.reviews.viewreply"/>
+                                </button>
+                            </c:when>
+                            <c:otherwise>
+                                <button class="btn btn-primary reply-review-button" data-bs-toggle="modal" data-bs-target="#reply-review-modal" data-order-id="${review.orderId}" role="button">
+                                    <spring:message code="restaurant.reviews.reply"/>
+                                </button>
+                            </c:otherwise>
+                        </c:choose>
                     </div>
                 </div>
             </c:forEach>
+        </div>
+
+
+        <div class="modal fade" id="view-reply-modal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5"><spring:message code="restaurant.reviews.viewreply.modal.title"/></h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p id="view-reply-container"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="reply-review-modal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5"><spring:message code="restaurant.reviews.reply.modal.title"/></h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <c:url value="/restaurants/${restaurant.restaurantId}/reviews" var="reviewReplyUrl"/>
+                    <form:form cssClass="mb-0" modelAttribute="reviewReplyForm" action="${reviewReplyUrl}" method="post">
+                        <div class="modal-body">
+                            <div>
+                                <spring:message code="restaurant.reviews.reply.form.label" var="replyLabel"/>
+                                <form:textarea class="form-control" path="reply" rows="3" id="reply-review-form-reply" placeholder="${replyLabel}"/>
+                                <form:errors path="reply" element="div" cssClass="form-error"/>
+                            </div>
+                        </div>
+                        <form:input type="hidden" path="orderId" id="reply-review-form-order-id"/>
+                        <div class="modal-footer">
+                            <input type="submit" class="btn btn-primary" value="<spring:message code="restaurant.reviews.reply"/>">
+                        </div>
+                    </form:form>
+                </div>
+            </div>
         </div>
 
         <div class="modal fade" id="view-order-modal" tabindex="-1">
@@ -180,7 +234,7 @@
             </c:otherwise>
         </c:choose>
 
-        <nav class="d-flex justify-content-center">
+        <nav class="d-flex justify-content-center mt-4">
             <ul class="pagination">
                 <li class="page-item">
                     <c:url value="/restaurants/${id}/reviews" var="previousUrl">

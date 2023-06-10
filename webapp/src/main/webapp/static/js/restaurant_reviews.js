@@ -1,4 +1,30 @@
 document.addEventListener("DOMContentLoaded", () => {
+    let reviewReplyFormReply = document.querySelector("#reply-review-form-reply");
+    let reviewReplyFormOrderId = document.querySelector("#reply-review-form-order-id");
+
+    // Open modal if errors occurred
+    if (document.querySelector("body").dataset.reviewReplyFormErrors === "true") {
+        new bootstrap.Modal('#reply-review-modal', null).show()
+    }
+
+    // Modal Dismissal
+    document.querySelector("#reply-review-modal").addEventListener("hidden.bs.modal", () => {
+        reviewReplyFormReply.value = "";
+    });
+
+    document.querySelectorAll(".reply-review-button").forEach(element => {
+        element.addEventListener("click", (event) => {
+            reviewReplyFormOrderId.value = element.dataset.orderId;
+        });
+    });
+
+    document.querySelectorAll(".view-reply-button").forEach(element => {
+        element.addEventListener("click", (event) => {
+            document.querySelector("#view-reply-container").innerHTML = escapeHtml(element.dataset.reply);
+        });
+    });
+
+
     document.querySelectorAll(".view-order-clickeable").forEach(element => {
         element.addEventListener("click", event => {
             document.querySelector("#order-title").innerHTML = element.dataset.orderId;
