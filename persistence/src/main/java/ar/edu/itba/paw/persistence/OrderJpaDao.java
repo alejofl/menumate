@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.exception.ProductNotFoundException;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.persistance.OrderDao;
 import ar.edu.itba.paw.util.PaginatedResult;
@@ -50,8 +51,16 @@ public class OrderJpaDao implements OrderDao {
     }
 
     @Override
-    public OrderItem createOrderItem(long productId, int lineNumber, int quantity, String comment) {
-        final Product product = em.getReference(Product.class, productId);
+    public OrderItem createOrderItem(long restaurantId, long productId, int lineNumber, int quantity, String comment) {
+        final Product product = em.find(Product.class, productId);
+        if (product == null)
+            throw new ProductNotFoundException();
+        if (product.getDeleted() || !product.getAvailable())
+            throw new IllegalStateException("The product is unavailable or has been deleted");
+        final Category category = em.find(Category.class, product.getCategoryId());
+        if (category.getRestaurantId() != restaurantId)
+            throw new IllegalStateException("Product does not belong to the restaurant");
+
         return new OrderItem(product, lineNumber, quantity, comment);
     }
 

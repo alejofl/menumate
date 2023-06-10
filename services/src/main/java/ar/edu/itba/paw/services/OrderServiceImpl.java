@@ -85,8 +85,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderItem createOrderItem(long productId, int lineNumber, int quantity, String comment) {
-        return orderDao.createOrderItem(productId, lineNumber, quantity, comment);
+    public OrderItem createOrderItem(long restaurantId, long productId, int lineNumber, int quantity, String comment) {
+        comment = comment.trim();
+        if (comment.isEmpty())
+            comment = null;
+        return orderDao.createOrderItem(restaurantId, productId, lineNumber, quantity, comment);
     }
 
     @Override

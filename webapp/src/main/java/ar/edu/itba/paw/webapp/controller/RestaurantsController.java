@@ -96,7 +96,7 @@ public class RestaurantsController {
         List<OrderItem> items = new ArrayList<>();
         for (int i = 0; i < form.getCart().size(); i++) {
             CartItem cartItem = form.getCart().get(i);
-            items.add(orderService.createOrderItem(cartItem.getProductId(), i + 1, cartItem.getQuantity(), cartItem.getComment()));
+            items.add(orderService.createOrderItem(id, cartItem.getProductId(), i + 1, cartItem.getQuantity(), cartItem.getComment()));
         }
 
         Order order;

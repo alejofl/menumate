@@ -16,7 +16,7 @@ public interface OrderService {
 
     Order createTakeAway(long restaurantId, String name, String email, List<OrderItem> items);
 
-    OrderItem createOrderItem(long productId, int i, int quantity, String comment);
+    OrderItem createOrderItem(long restaurantId, long productId, int i, int quantity, String comment);
 
     Optional<Order> getById(long orderId);
 
