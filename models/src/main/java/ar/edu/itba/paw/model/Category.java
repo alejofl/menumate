@@ -33,7 +33,7 @@ public class Category {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "category_id", referencedColumnName = "category_id")
-    @Where(clause = "deleted = false AND available = true")
+    @Where(clause = "deleted = false AND available = true AND NOT EXISTS(SELECT 1 FROM promotions WHERE promotions.destination_id = product_id)")
     private List<Product> products;
 
     Category() {

@@ -24,5 +24,7 @@ public interface ProductDao {
 
     void stopPromotionsBySource(long sourceProductId);
 
+    void startActivePromotions();
+
     void closeInactivePromotions();
 }

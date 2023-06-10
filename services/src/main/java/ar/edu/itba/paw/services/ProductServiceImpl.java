@@ -123,7 +123,8 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Scheduled(cron = "0 * * * * ?")
-    public void closeInactivePromotions() {
+    public void updatePromotionsByTime() {
+        productDao.startActivePromotions();
         productDao.closeInactivePromotions();
     }
 }

@@ -76,7 +76,12 @@ public class ProductJpaDao implements ProductDao {
 
         final Promotion promotion = new Promotion(source, destination, startDate, endDate);
         em.persist(promotion);
-        source.setAvailable(false);
+        if (promotion.isActive()) {
+            source.setAvailable(false);
+            destination.setAvailable(true);
+        } else {
+            destination.setAvailable(false);
+        }
         LOGGER.info("Created promotion with source id {} and destination id {} with a discount of {}", source.getProductId(), destination.getProductId(), discount);
         return promotion;
     }
@@ -121,6 +126,9 @@ public class ProductJpaDao implements ProductDao {
 
     @Override
     public void stopPromotionsBySource(long sourceProductId) {
+        final Product product = getById(sourceProductId).orElseThrow(PromotionNotFoundException::new);
+        product.setAvailable(true);
+
         // Delete products from promotions generated with this product
         Query delQuery = em.createQuery("UPDATE Product p SET p.deleted = true WHERE p.deleted = false AND EXISTS(FROM Promotion r WHERE r.source.productId = :sourceId AND r.destination.productId = p.productId)");
         delQuery.setParameter("sourceId", sourceProductId);
@@ -132,6 +140,24 @@ public class ProductJpaDao implements ProductDao {
         int promoRows = promoQuery.executeUpdate();
 
         LOGGER.info("Closed {} promotion{} by updating end date, logical-deleted {} product{}", delRows, delRows == 1 ? "" : "s", promoRows, promoRows == 1 ? "" : "s");
+    }
+
+    @Transactional
+    @Override
+    public void startActivePromotions() {
+        // Set as unavailable all products that have an active promotion
+        Query unavQuery = em.createQuery("UPDATE Product p SET p.available = false WHERE p.available = true AND p.deleted = false" +
+                " AND EXISTS(FROM Promotion WHERE source.productId = p.productId AND startDate <= now() AND (endDate IS NULL OR endDate > now()))"
+        );
+        int unavRows = unavQuery.executeUpdate();
+
+        // Set as available all destination products from those promotions
+        Query avQuery = em.createQuery("UPDATE Product p SET p.available = true WHERE p.available = false AND p.deleted = false" +
+                " AND EXISTS(FROM Promotion WHERE destination.productId = p.productId AND startDate <= now() AND (endDate IS NULL OR endDate > now()))"
+        );
+        int avRows = avQuery.executeUpdate();
+
+        LOGGER.info("Started active promotions: {} source products disabled and {} destination products enabled", unavRows, avRows);
     }
 
     @Transactional
