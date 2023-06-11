@@ -187,7 +187,6 @@
                             <form:input path="address" type="text" cssClass="form-control" id="add-address-form-address"/>
                             <form:errors path="address" element="div" cssClass="form-error"/>
                         </div>
-                        <div class="form-text"><spring:message code="profile.addaddress.form.disclaimer"/></div>
                     </div>
                     <input type="hidden" name="userId" id="delete-address-form-user-id" value="${currentUser.userId}">
                     <div class="modal-footer">

@@ -247,6 +247,7 @@
                                                     <div id="new-address-input" class="mt-3" style="display: none">
                                                         <spring:message code="restaurant.menu.form.address.new" var="addressPlaceholder"/>
                                                         <form:input type="text" path="address" cssClass="form-control" id="checkout-address" placeholder="${addressPlaceholder}"/>
+                                                        <div class="form-text"><spring:message code="profile.addaddress.form.disclaimer"/></div>
                                                     </div>
                                                 </c:when>
                                                 <c:otherwise>
