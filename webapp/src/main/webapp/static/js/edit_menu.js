@@ -112,6 +112,12 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+    document.querySelectorAll(".stop-promotion-button").forEach(element => {
+        element.addEventListener("click", (event) => {
+            document.querySelector("#stop-promotion-form-product-id").value = element.dataset.productId;
+        });
+    });
+
     document.querySelectorAll(".delete-category-button").forEach(element => {
         element.addEventListener("click", (event) => {
             deleteCategoryFormCategoryId.value = element.dataset.categoryId;

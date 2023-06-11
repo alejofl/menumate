@@ -31,7 +31,12 @@
             </c:otherwise>
           </c:choose>
         </div>
-        <h5 class="card-title">$${param.product_price}</h5>
+        <h5 class="card-title">
+          $${param.product_price}
+          <c:if test="${param.discount != null}">
+            <span class="badge bg-promotion">-${param.discount}%</span>
+          </c:if>
+        </h5>
       </div>
     </div>
   </a>

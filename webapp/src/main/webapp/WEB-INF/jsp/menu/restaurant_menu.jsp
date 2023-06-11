@@ -89,6 +89,25 @@
         </div>
 
         <div class="items d-flex flex-column px-4">
+            <c:if test="${not empty promotions}">
+                <div class="card mb-4 bg-promotion">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <h3 class="mb-0 text-white"><spring:message code="editmenu.promotions.title"/></h3>
+                    </div>
+                </div>
+                <div class="items-container">
+                    <c:forEach var="promotion" items="${promotions}">
+                        <jsp:include page="/WEB-INF/jsp/components/menu_item_card.jsp">
+                            <jsp:param name="product_imageId" value="${promotion.destination.imageId}"/>
+                            <jsp:param name="product_productId" value="${promotion.destination.productId}"/>
+                            <jsp:param name="product_name" value="${promotion.destination.name}"/>
+                            <jsp:param name="product_description" value="${promotion.destination.description}"/>
+                            <jsp:param name="product_price" value="${promotion.destination.price}"/>
+                            <jsp:param name="discount" value="${promotion.discountPercentage}"/>
+                        </jsp:include>
+                    </c:forEach>
+                </div>
+            </c:if>
             <c:forEach items="${menu}" var="entry">
                 <div class="card mb-4" id="category-${entry.categoryId}">
                     <div class="card-body d-flex justify-content-between align-items-center">

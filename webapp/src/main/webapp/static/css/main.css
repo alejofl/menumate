@@ -882,3 +882,7 @@ input:has(+ .form-error), textarea:has(+ .form-error) {
     --bs-link-color-rgb: var(--promotion-rgb);
     --bs-link-hover-color-rgb: var(--promotion-dark-rgb);
 }
+
+.bg-promotion {
+    background-color: rgba(var(--promotion-rgb),1)!important;
+}

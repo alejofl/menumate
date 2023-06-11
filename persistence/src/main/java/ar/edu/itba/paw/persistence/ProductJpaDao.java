@@ -69,7 +69,7 @@ public class ProductJpaDao implements ProductDao {
 
     @Override
     public Promotion createPromotion(Product source, LocalDateTime startDate, LocalDateTime endDate, float discount) {
-        BigDecimal promotionPrice = source.getPrice().multiply(BigDecimal.valueOf(discount));
+        BigDecimal promotionPrice = source.getPrice().multiply(BigDecimal.valueOf(1 - discount));
         final Product destination = new Product(source.getCategoryId(), source.getName(), source.getDescription(), source.getImageId(), promotionPrice, true);
         em.persist(destination);
         em.flush();

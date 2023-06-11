@@ -78,6 +78,8 @@ public class RestaurantsController {
 
         final List<Category> menu = categoryService.getByRestaurantSortedByOrder(id);
         mav.addObject("menu", menu);
+        final List<Promotion> promotions = restaurantService.getActivePromotions(id);
+        mav.addObject("promotions", promotions);
 
         mav.addObject("formError", formError);
         return mav;

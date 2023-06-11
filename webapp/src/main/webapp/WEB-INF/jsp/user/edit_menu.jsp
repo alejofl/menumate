@@ -62,6 +62,41 @@
     </div>
     <main class="edit-menu flex-column px-4 pb-4">
         <div class="d-flex flex-column">
+            <c:if test="${not empty promotions}">
+                <div class="card mb-4 bg-promotion">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <h3 class="mb-0 text-white"><spring:message code="editmenu.promotions.title"/></h3>
+                    </div>
+                </div>
+                <div class="items-container">
+                    <c:forEach var="promotion" items="${promotions}">
+                        <div class="card menu-item-card">
+                            <div class="menu-item-card-img-container">
+                                <img src="<c:url value="/images/${promotion.destination.imageId}"/>" class="img-fluid rounded-start menu-item-card-img" alt="<c:out value="${promotion.destination.name}"/>">
+                            </div>
+                            <div class="card-body menu-item-card-body">
+                                <div>
+                                    <div class="d-flex justify-content-between">
+                                        <p class="card-text"><c:out value="${promotion.destination.name}"/></p>
+                                        <div class="d-flex gap-2 ps-2">
+                                            <a class="stop-promotion-button" type="button" data-bs-toggle="modal" data-bs-target="#stop-promotion-modal" data-product-id="${promotion.destination.productId}"><i class="bi bi-trash-fill text-danger"></i></a>
+                                        </div>
+                                    </div>
+                                    <c:choose>
+                                        <c:when test="${not empty promotion.destination.description}">
+                                            <p class="card-text"><small class="text-body-secondary"><c:out value="${promotion.destination.description}"/></small></p>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <p class="card-text"><small class="text-body-secondary"><i><spring:message code="menuitem.product.nodescription"/></i></small></p>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </div>
+                                <h5 class="card-title">$${promotion.destination.price} <span class="badge bg-promotion">-${promotion.discountPercentage}%</span></h5>
+                            </div>
+                        </div>
+                    </c:forEach>
+                </div>
+            </c:if>
             <c:forEach items="${menu}" var="entry" varStatus="status">
                 <div class="card mb-4">
                     <div class="card-body d-flex justify-content-between align-items-center">
@@ -196,6 +231,27 @@
                         <input type="submit" class="btn btn-primary promotion-button" value="<spring:message code="editmenu.form.create"/>">
                     </div>
                 </form:form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="stop-promotion-modal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h1 class="modal-title fs-5"><spring:message code="editmenu.stoppromotion.modal.title"/></h1>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><spring:message code="editmenu.form.no"/></button>
+                    <c:url value="/restaurants/${restaurant.restaurantId}/promotions/stop" var="stopPromotionFormUrl"/>
+                    <form:form cssClass="m-0" modelAttribute="deleteProductForm" action="${stopPromotionFormUrl}" method="post">
+                        <input type="hidden" name="productId" id="stop-promotion-form-product-id">
+                        <input type="submit" class="btn btn-danger" value="<spring:message code="editmenu.form.yes"/>">
+                    </form:form>
+                </div>
             </div>
         </div>
     </div>

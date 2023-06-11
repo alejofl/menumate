@@ -121,7 +121,12 @@ public class ProductServiceImpl implements ProductService {
         return productDao.createPromotion(source, startDate, endDate, discount);
     }
 
-
+    @Transactional
+    @Override
+    public void stopPromotionByDestination(long destinationProductId) {
+        productDao.stopPromotionByDestination(destinationProductId);
+    }
+    
     @Scheduled(cron = "0 * * * * ?")
     public void updatePromotionsByTime() {
         productDao.startActivePromotions();

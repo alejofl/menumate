@@ -184,6 +184,8 @@ public class UserController {
 
         final List<Category> menu = categoryService.getByRestaurantSortedByOrder(id);
         mav.addObject("menu", menu);
+        final List<Promotion> promotions = restaurantService.getActivePromotions(id);
+        mav.addObject("promotions", promotions);
 
         final List<Pair<User, RestaurantRoleLevel>> employees = restaurantRoleService.getByRestaurant(id);
         mav.addObject("employees", employees);
@@ -368,6 +370,21 @@ public class UserController {
         }
 
         productService.delete(deleteProductForm.getProductId());
+
+        return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
+    }
+
+    @RequestMapping(value = "/restaurants/{id:\\d+}/promotions/stop", method = RequestMethod.POST)
+    public ModelAndView stopPromotionForProduct(
+            @PathVariable final int id,
+            @Valid @ModelAttribute("deleteProductForm") final DeleteProductForm deleteProductForm,
+            final BindingResult errors
+    ) {
+        if (errors.hasErrors()) {
+            throw new IllegalStateException();
+        }
+
+        productService.stopPromotionByDestination(deleteProductForm.getProductId());
 
         return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
     }

@@ -19,5 +19,7 @@ public interface ProductService {
 
     void delete(long productId);
 
+    void stopPromotionByDestination(long destinationProductId);
+
     Promotion createPromotion(long sourceProductId, LocalDateTime startDate, LocalDateTime endDate, float discount);
 }
