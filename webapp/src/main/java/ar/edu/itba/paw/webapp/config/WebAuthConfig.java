@@ -87,7 +87,8 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
                 // User pages
                 .antMatchers(HttpMethod.GET, "/user/**").authenticated()
-
+                .antMatchers(HttpMethod.POST, "/user/addresses/**").authenticated()
+                
                 // Restaurant public pages
                 .antMatchers(HttpMethod.GET, "/restaurants/{restaurant_id:\\d+}").permitAll()
                 .antMatchers(HttpMethod.POST, "/restaurants/{restaurant_id:\\d+}/orders").permitAll()
@@ -97,7 +98,8 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/restaurants/{restaurant_id:\\d+}/employees/**").access("@accessValidator.checkRestaurantOwner(#restaurant_id)")
                 .antMatchers(HttpMethod.POST, "/restaurants/{restaurant_id:\\d+}/categories/**").access("@accessValidator.checkRestaurantAdmin(#restaurant_id)")
                 .antMatchers(HttpMethod.POST, "/restaurants/{restaurant_id:\\d+}/products/**").access("@accessValidator.checkRestaurantAdmin(#restaurant_id)")
-
+                .antMatchers(HttpMethod.POST, "/restaurants/{restaurant_id:\\d+}/promotions/**").access("@accessValidator.checkRestaurantAdmin(#restaurant_id)")
+                .antMatchers("/restaurants/{restaurant_id:\\d+}/reviews").access("@accessValidator.checkRestaurantAdmin(#restaurant_id)")
                 // Restaurant orders pages
                 .antMatchers(HttpMethod.GET, "/restaurants/{restaurant_id:\\d+}/orders/**").access("@accessValidator.checkRestaurantOrderHandler(#restaurant_id)")
 
