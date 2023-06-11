@@ -21,6 +21,7 @@
         data-product-id="${editProductErrors ? editProductForm.productId : ""}"
         data-edit-category-errors="${editCategoryErrors}"
         data-edit-information-errors="${editRestaurantErrors}"
+        data-create-promotion-errors="${createPromotionErrors}"
 >
 <div class="content">
     <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
@@ -108,6 +109,7 @@
                                     <div class="d-flex justify-content-between">
                                         <p class="card-text"><c:out value="${product.name}"/></p>
                                         <div class="d-flex gap-2 ps-2">
+                                            <a class="create-promotion-button promotion-anchor" type="button" data-bs-toggle="modal" data-bs-target="#create-promotion-modal" data-product-id="${product.productId}"><i class="bi bi-percent"></i></a>
                                             <a
                                                 class="edit-product-button"
                                                 type="button"
@@ -158,6 +160,45 @@
             </a>
         </div>
     </main>
+
+    <div class="modal fade" id="create-promotion-modal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5"><spring:message code="editmenu.createpromotion.modal.title"/></h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <c:url value="/restaurants/${restaurant.restaurantId}/promotions/add" var="createPromotionFormUrl"/>
+                <form:form cssClass="mb-0" modelAttribute="createPromotionForm" action="${createPromotionFormUrl}" method="post">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <form:label path="percentage" cssClass="form-label"><spring:message code="editmenu.createpromotion.form.percentage"/></form:label>
+                            <div class="input-group">
+                                <form:input path="percentage" type="number" min="1" max="99" cssClass="form-control" id="create-promotion-modal-percentage"/>
+                                <span class="input-group-text">%</span>
+                            </div>
+                            <form:errors path="percentage" element="div" cssClass="form-error"/>
+                        </div>
+                        <div class="mb-3">
+                            <form:label path="startDateTime" cssClass="form-label"><spring:message code="editmenu.createpromotion.form.startdate"/></form:label>
+                            <form:input path="startDateTime" type="datetime-local" cssClass="form-control" id="create-promotion-modal-start-datetime"/>
+                            <form:errors path="startDateTime" element="div" cssClass="form-error"/>
+                        </div>
+                        <div class="mb-3">
+                            <form:label path="endDateTime" cssClass="form-label"><spring:message code="editmenu.createpromotion.form.enddate"/></form:label>
+                            <form:input path="endDateTime" type="datetime-local" cssClass="form-control" id="create-promotion-modal-end-datetime"/>
+                            <form:errors path="endDateTime" element="div" cssClass="form-error"/>
+                            <form:errors element="div" cssClass="form-error"/>
+                        </div>
+                    </div>
+                    <form:input path="sourceProductId" type="hidden" cssClass="form-control" id="create-promotion-modal-source-product-id"/>
+                    <div class="modal-footer">
+                        <input type="submit" class="btn btn-primary promotion-button" value="<spring:message code="editmenu.form.create"/>">
+                    </div>
+                </form:form>
+            </div>
+        </div>
+    </div>
 
     <div class="modal fade" id="edit-information-modal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">

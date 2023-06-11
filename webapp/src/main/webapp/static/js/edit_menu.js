@@ -45,6 +45,8 @@ document.addEventListener("DOMContentLoaded", () => {
         new bootstrap.Modal('#edit-category-modal', null).show()
     } else if (document.querySelector("body").dataset.editInformationErrors === "true") {
         new bootstrap.Modal('#edit-information-modal', null).show()
+    } else if (document.querySelector("body").dataset.createPromotionErrors === "true") {
+        new bootstrap.Modal('#create-promotion-modal', null).show()
     }
 
     // Modal dismissal
@@ -75,6 +77,12 @@ document.addEventListener("DOMContentLoaded", () => {
         document.querySelectorAll("div[id^='edit-employee-'][id$='-edit-disabled-button']").forEach(element => {
             element.style.display = "block";
         });
+    });
+    document.querySelector("#create-promotion-modal").addEventListener("hidden.bs.modal", () => {
+        changeInputValue("create-promotion-modal-percentage", "");
+        changeInputValue("create-promotion-modal-start-date-time", "");
+        changeInputValue("create-promotion-modal-end-date-time", "");
+        changeInputValue("create-promotion-modal-source-product-id", "");
     });
 
     document.querySelectorAll(".add-product-button").forEach(element => {
@@ -138,6 +146,12 @@ document.addEventListener("DOMContentLoaded", () => {
         element.addEventListener("click", (event) => {
             document.querySelector("#edit-category-modal-category").value = element.dataset.categoryId;
             document.querySelector("#edit-category-modal-name").value = element.dataset.categoryName;
+        });
+    });
+
+    document.querySelectorAll(".create-promotion-button").forEach(element => {
+        element.addEventListener("click", (event) => {
+            document.querySelector("#create-promotion-modal-source-product-id").value = element.dataset.productId;
         });
     });
 

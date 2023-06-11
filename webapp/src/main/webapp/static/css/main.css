@@ -11,6 +11,11 @@
     --light: #f4f4f4;
     --form-invalid-color: #dc3545;
     --gray: #c9c9c9;
+    --promotion: #3596a6;
+    --promotion-rgb: 53,150,166;
+    --promotion-dark: #1f606b;
+    --promotion-dark-rgb: 31,96,107;
+    --promotion-light: #89acaf;
 
     --bs-primary: var(--primary);
     --bs-danger: var(--form-invalid-color);
@@ -852,4 +857,28 @@ input:has(+ .form-error), textarea:has(+ .form-error) {
     flex-direction:column;
     justify-content: flex-end;
     align-items: flex-start;
+}
+
+.btn-primary.promotion-button {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: var(--promotion);
+    --bs-btn-border-color: var(--promotion);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: var(--promotion-dark);
+    --bs-btn-hover-border-color: var(--promotion-dark);
+    --bs-btn-focus-shadow-rgb: 49,132,253;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: var(--promotion-dark);
+    --bs-btn-active-border-color: var(--promotion-dark);
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: var(--promotion-light);
+    --bs-btn-disabled-border-color: var(--promotion-light);
+}
+
+.promotion-anchor {
+    --bs-link-color: var(--promotion);
+    --bs-link-hover-color: var(--promotion-dark);
+    --bs-link-color-rgb: var(--promotion-rgb);
+    --bs-link-hover-color-rgb: var(--promotion-dark-rgb);
 }

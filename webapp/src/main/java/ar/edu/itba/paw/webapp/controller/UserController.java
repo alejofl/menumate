@@ -163,6 +163,9 @@ public class UserController {
             final Boolean editProductErrors,
             @ModelAttribute("deleteProductForm") final DeleteProductForm deleteProductForm,
 
+            @ModelAttribute("createPromotionForm") final CreatePromotionForm createPromotionForm,
+            final Boolean createPromotionErrors,
+
             @ModelAttribute("addCategoryForm") final AddCategoryForm addCategoryForm,
             final Boolean addCategoryErrors,
             @ModelAttribute("editCategoryForm") final EditCategoryForm editCategoryForm,
@@ -206,6 +209,7 @@ public class UserController {
         mav.addObject("addProductForm", addProductForm);
         mav.addObject("editProductForm", editProductForm);
         mav.addObject("deleteProductForm", deleteProductForm);
+        mav.addObject("createPromotionForm", createPromotionForm);
         mav.addObject("addCategoryForm", addCategoryForm);
         mav.addObject("editCategoryForm", editCategoryForm);
         mav.addObject("editCategoryOrderForm", editCategoryOrderForm);
@@ -216,6 +220,7 @@ public class UserController {
         mav.addObject("editRestaurantErrors", editRestaurantErrors);
         mav.addObject("addProductErrors", addProductErrors);
         mav.addObject("editProductErrors", editProductErrors);
+        mav.addObject("createPromotionErrors", createPromotionErrors);
         mav.addObject("addCategoryErrors", addCategoryErrors);
         mav.addObject("editCategoryErrors", editCategoryErrors);
         mav.addObject("addEmployeeErrors", addEmployeeErrors.get());
@@ -239,6 +244,8 @@ public class UserController {
                     new EditProductForm(),
                     false,
                     new DeleteProductForm(),
+                    new CreatePromotionForm(),
+                    false,
                     new AddCategoryForm(),
                     false,
                     new EditCategoryForm(),
@@ -285,6 +292,8 @@ public class UserController {
                     new EditProductForm(),
                     false,
                     new DeleteProductForm(),
+                    new CreatePromotionForm(),
+                    false,
                     new AddCategoryForm(),
                     false,
                     new EditCategoryForm(),
@@ -324,6 +333,8 @@ public class UserController {
                     editProductForm,
                     true,
                     new DeleteProductForm(),
+                    new CreatePromotionForm(),
+                    false,
                     new AddCategoryForm(),
                     false,
                     new EditCategoryForm(),
@@ -361,6 +372,45 @@ public class UserController {
         return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
     }
 
+    @RequestMapping(value = "/restaurants/{id:\\d+}/promotions/add", method = RequestMethod.POST)
+    public ModelAndView createPromotionForProduct(
+            @PathVariable final int id,
+            @Valid @ModelAttribute("createPromotionForm") final CreatePromotionForm createPromotionForm,
+            final BindingResult errors
+    ) throws IOException {
+        if (errors.hasErrors()) {
+            return editRestaurant(
+                    id,
+                    new EditRestaurantForm(),
+                    false,
+                    new AddProductForm(),
+                    false,
+                    new EditProductForm(),
+                    false,
+                    new DeleteProductForm(),
+                    createPromotionForm,
+                    true,
+                    new AddCategoryForm(),
+                    false,
+                    new EditCategoryForm(),
+                    false,
+                    new EditCategoryOrderForm(),
+                    new DeleteCategoryForm(),
+                    new AddEmployeeForm(),
+                    new MyBoolean(false),
+                    new DeleteEmployeeForm()
+            );
+        }
+
+        productService.createPromotion(
+                createPromotionForm.getSourceProductId(),
+                createPromotionForm.getStartDateTime(),
+                createPromotionForm.getEndDateTime(),
+                createPromotionForm.getNormalizedPercentage()
+        );
+
+        return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
+    }
 
     @RequestMapping(value = "/restaurants/{id:\\d+}/categories/add", method = RequestMethod.POST)
     public ModelAndView addCategoryToRestaurant(
@@ -378,6 +428,8 @@ public class UserController {
                     new EditProductForm(),
                     false,
                     new DeleteProductForm(),
+                    new CreatePromotionForm(),
+                    false,
                     addCategoryForm,
                     true,
                     new EditCategoryForm(),
@@ -411,6 +463,8 @@ public class UserController {
                     new EditProductForm(),
                     false,
                     new DeleteProductForm(),
+                    new CreatePromotionForm(),
+                    false,
                     new AddCategoryForm(),
                     false,
                     editCategoryForm,
@@ -475,6 +529,8 @@ public class UserController {
                     new EditProductForm(),
                     false,
                     new DeleteProductForm(),
+                    new CreatePromotionForm(),
+                    false,
                     new AddCategoryForm(),
                     false,
                     new EditCategoryForm(),
