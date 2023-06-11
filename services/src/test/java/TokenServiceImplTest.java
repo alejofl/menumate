@@ -42,7 +42,7 @@ public class TokenServiceImplTest {
     private UserDetailsService userDetailsService;
 
     @InjectMocks
-    private UserServiceImpl userServiceImpl = new UserServiceImpl();
+    private final UserServiceImpl userServiceImpl = new UserServiceImpl();
 
     private static final long USER_ID = 1L;
     private static final String TOKEN = "token";

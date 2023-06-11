@@ -4,7 +4,6 @@ import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import ar.edu.itba.paw.persistence.constants.*;
 import ar.edu.itba.paw.util.PaginatedResult;
-import net.bytebuddy.asm.Advice;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,16 +19,10 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
-import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-
-import static org.mockito.Mockito.mock;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)

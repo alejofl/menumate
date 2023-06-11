@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.User;
-import ar.edu.itba.paw.model.UserResetpasswordToken;
 import ar.edu.itba.paw.model.UserVerificationToken;
 import ar.edu.itba.paw.persistance.UserVerificationTokenDao;
 import ar.edu.itba.paw.persistence.config.TestConfig;
@@ -23,7 +22,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.sql.DataSource;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Optional;
 

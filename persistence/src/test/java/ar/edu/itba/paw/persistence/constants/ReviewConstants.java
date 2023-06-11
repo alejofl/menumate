@@ -21,7 +21,7 @@ public final class ReviewConstants {
     public static final String DEFAULT_REVIEW_REPLY = "reply";
     public static final int DEFAULT_REVIEW_RATING = 5;
 
-    public static List<List<Double>> VALUES = Arrays.asList(
+    public static final List<List<Double>> VALUES = Arrays.asList(
             Arrays.asList(1.0, 1.0, 3.0, 5.0, 5.0, 5.0),
             Arrays.asList(2.0, 2.0, 2.0, 2.0, 2.0, 2.0),
             Arrays.asList(3.0, 3.0, 3.0, 3.0, 3.0, 3.0)

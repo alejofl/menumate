@@ -36,7 +36,7 @@ public class RestaurantRoleServiceImplTest {
     private EmailService emailService;
 
     @InjectMocks
-    private RestaurantRoleServiceImpl restaurantRoleServiceImpl = new RestaurantRoleServiceImpl();
+    private final RestaurantRoleServiceImpl restaurantRoleServiceImpl = new RestaurantRoleServiceImpl();
 
     private static final long DEFAULT_USER_ID = 123L;
     private static final long DEFAULT_RESTAURANT_ID = 456L;

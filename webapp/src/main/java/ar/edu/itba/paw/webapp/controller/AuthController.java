@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.mail.MessagingException;
 import javax.validation.Valid;
 
 @Controller
@@ -141,7 +140,7 @@ public class AuthController {
 
     @RequestMapping(value = "/auth/reset-password-form", method = RequestMethod.POST)
     public ModelAndView resetPassword(
-            @RequestParam(value = "token", required = true) @Length(min = 32, max = 32) final String token,
+            @RequestParam(value = "token") @Length(min = 32, max = 32) final String token,
             @Valid @ModelAttribute("resetPasswordForm") final ResetPasswordForm resetPasswordForm,
             final BindingResult errors
     ) {

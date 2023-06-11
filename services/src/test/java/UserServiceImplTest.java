@@ -41,7 +41,7 @@ public class UserServiceImplTest {
     private UserDao userDao;
 
     @InjectMocks
-    private UserServiceImpl userServiceImpl = new UserServiceImpl();
+    private final UserServiceImpl userServiceImpl = new UserServiceImpl();
 
     private static final long USER_ID = 1L;
     private static final String USERNAME = "username";

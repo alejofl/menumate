@@ -2,7 +2,6 @@ package ar.edu.itba.paw.persistence.constants;
 
 import ar.edu.itba.paw.model.OrderType;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public final class OrderConstants {

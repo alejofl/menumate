@@ -2,7 +2,6 @@ package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.User;
 
-import javax.mail.MessagingException;
 import java.util.Optional;
 
 public interface UserService {

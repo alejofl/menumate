@@ -17,12 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
-import javax.sql.rowset.serial.SerialBlob;
-import javax.xml.bind.DatatypeConverter;
 import java.sql.SQLException;
-import java.sql.SQLOutput;
 import java.util.Optional;
-import java.util.Random;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)

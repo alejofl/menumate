@@ -20,7 +20,7 @@ public class CategoryServiceImplTest {
     private CategoryDao categoryDao;
 
     @InjectMocks
-    private CategoryServiceImpl categoryServiceImpl = new CategoryServiceImpl();
+    private final CategoryServiceImpl categoryServiceImpl = new CategoryServiceImpl();
 
     private static final long CATEGORY_ID = 1L;
     private static final String ORIGINAL_CATEGORY_NAME = "Category Name";

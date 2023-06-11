@@ -25,7 +25,7 @@ public class OrderServiceImplTest {
     private EmailService emailService;
 
     @InjectMocks
-    private OrderServiceImpl orderServiceImpl = new OrderServiceImpl();
+    private final OrderServiceImpl orderServiceImpl = new OrderServiceImpl();
 
     private static final long DEFAULT_ORDER_ID = 1L;
     private static final LocalDateTime DEFAULT_DATE_TIME = LocalDateTime.now();

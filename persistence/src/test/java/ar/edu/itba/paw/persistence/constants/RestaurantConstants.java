@@ -5,6 +5,7 @@ import ar.edu.itba.paw.model.RestaurantTags;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public final class RestaurantConstants {
@@ -24,7 +25,7 @@ public final class RestaurantConstants {
     public static final List<List<RestaurantTags>> RESTAURANTS_TAGS = Arrays.asList(
             Arrays.asList(RestaurantTags.fromOrdinal(1), RestaurantTags.fromOrdinal(2), RestaurantTags.fromOrdinal(3)),
             Arrays.asList(RestaurantTags.fromOrdinal(1), RestaurantTags.fromOrdinal(2)),
-            Arrays.asList(RestaurantTags.fromOrdinal(1))
+            Collections.singletonList(RestaurantTags.fromOrdinal(1))
     );
 
     private RestaurantConstants() {

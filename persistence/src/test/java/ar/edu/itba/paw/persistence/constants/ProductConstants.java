@@ -3,6 +3,7 @@ package ar.edu.itba.paw.persistence.constants;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,10 +16,10 @@ public final class ProductConstants {
     public static final String DEFAULT_PRODUCT_DESCRIPTION = "description";
     public static final BigDecimal DEFAULT_PRODUCT_PRICE = BigDecimal.valueOf(535.55);
 
-    public static List<List<Double>> VALUES = Arrays.asList(
+    public static final List<List<Double>> VALUES = Arrays.asList(
             Arrays.asList(100.0, 200.0, 300.0, 400.0, 500.0, 600.0),
             Arrays.asList(700.0, 800.0, 900.0, 1000.0, 1100.0, 1200.0),
-            Arrays.asList(0.0)
+            Collections.singletonList(0.0)
     );
     public static final List<Double> AVERAGE_LIST = VALUES.stream()
             .mapToDouble(sublist -> sublist.stream()

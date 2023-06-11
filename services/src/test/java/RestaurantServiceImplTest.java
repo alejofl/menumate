@@ -24,7 +24,7 @@ public class RestaurantServiceImplTest {
     private RestaurantDao restaurantDao;
 
     @InjectMocks
-    private RestaurantServiceImpl restaurantService = new RestaurantServiceImpl();
+    private final RestaurantServiceImpl restaurantService = new RestaurantServiceImpl();
 
     private static final long DEFAULT_RESTAURANT_ID = 1L;
     private static final String DEFAULT_RESTAURANT_NAME = "Default Name";

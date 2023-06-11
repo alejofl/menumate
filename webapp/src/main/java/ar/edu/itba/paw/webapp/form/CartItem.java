@@ -15,7 +15,7 @@ public class CartItem {
     @NotNull
     private Integer quantity;
 
-    @Size(min = 0, max = 120)
+    @Size(max = 120)
     private String comment;
 
     public int getProductId() {

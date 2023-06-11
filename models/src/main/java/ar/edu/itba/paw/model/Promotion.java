@@ -1,7 +1,5 @@
 package ar.edu.itba.paw.model;
 
-import org.hibernate.annotations.Formula;
-
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;

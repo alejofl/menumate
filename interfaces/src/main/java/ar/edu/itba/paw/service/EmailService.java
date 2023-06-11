@@ -4,8 +4,6 @@ import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.model.User;
 
-import javax.mail.MessagingException;
-
 public interface EmailService {
     void sendOrderReceivalForUser(Order order);
 

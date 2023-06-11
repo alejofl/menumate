@@ -22,7 +22,7 @@ public class ProductServiceImplTest {
     private ProductDao productDao;
 
     @InjectMocks
-    private ProductServiceImpl productService = new ProductServiceImpl();
+    private final ProductServiceImpl productService = new ProductServiceImpl();
 
     private static final long DEFAULT_PRODUCT_ID = 1L;
     private static final String DEFAULT_PRODUCT_DESCRIPTION = "Default Description";
