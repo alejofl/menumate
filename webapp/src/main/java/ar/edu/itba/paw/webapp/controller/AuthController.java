@@ -49,12 +49,7 @@ public class AuthController {
             return registerForm(registerForm, null);
         }
 
-        try {
-            userService.createOrConsolidate(registerForm.getEmail(), registerForm.getPassword(), registerForm.getName());
-        } catch (MessagingException e) {
-            LOGGER.error("User Registered Email Sending Failed");
-            return new ModelAndView("redirect:/auth/login?error=mailer_error");
-        }
+        userService.createOrConsolidate(registerForm.getEmail(), registerForm.getPassword(), registerForm.getName());
         return new ModelAndView("redirect:/auth/login?type=verify-emailed");
     }
 
@@ -95,9 +90,6 @@ public class AuthController {
         } catch (UserNotFoundException e) {
             LOGGER.error("User not found when verifying account");
             return new ModelAndView("redirect:/auth/login?type=verify-emailed");
-        } catch (MessagingException e) {
-            LOGGER.error("Verify Token Email Sending Failed");
-            return new ModelAndView("redirect:/auth/login?error=mailer_error");
         }
     }
 
@@ -133,9 +125,6 @@ public class AuthController {
         } catch (UserNotFoundException e) {
             LOGGER.error("User not found when resetting password");
             return new ModelAndView("redirect:/auth/login?type=reset-password-emailed");
-        } catch (MessagingException e) {
-            LOGGER.error("Reset Password Email Sending Failed");
-            return new ModelAndView("redirect:/auth/login?error=mailer_error");
         }
     }
 

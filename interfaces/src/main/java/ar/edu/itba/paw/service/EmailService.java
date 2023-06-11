@@ -7,21 +7,21 @@ import ar.edu.itba.paw.model.User;
 import javax.mail.MessagingException;
 
 public interface EmailService {
-    void sendOrderReceivalForUser(Order order) throws MessagingException;
+    void sendOrderReceivalForUser(Order order);
 
-    void sendOrderReceivalForRestaurant(Order order) throws MessagingException;
+    void sendOrderReceivalForRestaurant(Order order);
 
-    void sendOrderConfirmation(Order order) throws MessagingException;
+    void sendOrderConfirmation(Order order);
 
-    void sendOrderReady(Order order) throws MessagingException;
+    void sendOrderReady(Order order);
 
-    void sendOrderDelivered(Order order) throws MessagingException;
+    void sendOrderDelivered(Order order);
 
-    void sendOrderCancelled(Order order) throws MessagingException;
+    void sendOrderCancelled(Order order);
 
-    void sendUserVerificationEmail(User user, String token) throws MessagingException;
+    void sendUserVerificationEmail(User user, String token);
 
-    void sendResetPasswordEmail(User user, String token) throws MessagingException;
+    void sendResetPasswordEmail(User user, String token);
 
-    void sendInvitationToRestaurantStaff(User user, Restaurant restaurant) throws MessagingException;
+    void sendInvitationToRestaurantStaff(User user, Restaurant restaurant);
 }

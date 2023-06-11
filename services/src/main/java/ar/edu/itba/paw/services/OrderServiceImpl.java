@@ -38,12 +38,8 @@ public class OrderServiceImpl implements OrderService {
     private EmailService emailService;
 
     private void sendOrderReceivedEmails(Order order) {
-        try {
-            emailService.sendOrderReceivalForUser(order);
-            emailService.sendOrderReceivalForRestaurant(order);
-        } catch (MessagingException e) {
-            LOGGER.error("Order receival email sending failed", e);
-        }
+        emailService.sendOrderReceivalForUser(order);
+        emailService.sendOrderReceivalForRestaurant(order);
     }
 
     private void assingOrderItemsToOrder(Order order, List<OrderItem> items) {
@@ -119,11 +115,7 @@ public class OrderServiceImpl implements OrderService {
 
         order.setDateConfirmed(LocalDateTime.now());
 
-        try {
-            emailService.sendOrderConfirmation(order);
-        } catch (MessagingException e) {
-            LOGGER.error("Order confirmation email sending failed", e);
-        }
+        emailService.sendOrderConfirmation(order);
 
         return order;
     }
@@ -140,11 +132,7 @@ public class OrderServiceImpl implements OrderService {
 
         order.setDateReady(LocalDateTime.now());
 
-        try {
-            emailService.sendOrderReady(order);
-        } catch (MessagingException e) {
-            LOGGER.error("Order ready email sending failed", e);
-        }
+        emailService.sendOrderReady(order);
 
         return order;
     }
@@ -161,11 +149,7 @@ public class OrderServiceImpl implements OrderService {
 
         order.setDateDelivered(LocalDateTime.now());
 
-        try {
-            emailService.sendOrderDelivered(order);
-        } catch (MessagingException e) {
-            LOGGER.error("Order delivered email sending failed", e);
-        }
+        emailService.sendOrderDelivered(order);
 
         return order;
     }
@@ -182,11 +166,7 @@ public class OrderServiceImpl implements OrderService {
 
         order.setDateCancelled(LocalDateTime.now());
 
-        try {
-            emailService.sendOrderCancelled(order);
-        } catch (MessagingException e) {
-            LOGGER.error("Order cancelled email sending failed", e);
-        }
+        emailService.sendOrderCancelled(order);
 
         return order;
     }

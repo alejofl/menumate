@@ -42,39 +42,38 @@ public class EmailServiceImpl implements EmailService {
     @Autowired
     private MessageSource messageSource;
 
-    private void sendHtmlMessage(String to, String subject, String htmlBody) throws MessagingException {
-        MimeMessage message = emailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message, "UTF-8");
-        helper.setTo(to);
-        helper.setFrom(environment.getProperty("email.address"));
-        helper.setSubject(subject);
-        helper.setText(htmlBody, true);
-        emailSender.send(message);
-        LOGGER.info("Sent email to {} with body length {} and subject {}", to, htmlBody.length(), subject);
+    private void sendHtmlMessage(String to, String subject, String htmlBody) {
+        try {
+            MimeMessage message = emailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, "UTF-8");
+            helper.setTo(to);
+            helper.setFrom(environment.getProperty("email.address"));
+            helper.setSubject(subject);
+            helper.setText(htmlBody, true);
+            emailSender.send(message);
+            LOGGER.info("Sent email to {} with body length {} and subject {}", to, htmlBody.length(), subject);
+        } catch (MessagingException e) {
+            LOGGER.error("Failed to send email to {} with subject {}", to, subject, e);
+        }
     }
 
     // If a link wants to be passed, set the **path** in params with key "link".
     // This method will concatenate the baseUrl.
     // Only one link should be served for each email.
-    private void sendMessageUsingThymeleafTemplate(String template, String to, String subject, Locale locale, Map<String, Object> params) throws MessagingException {
-        try {
-            Context thymeleafContext = new Context(locale);
-            final String baseUrl = environment.getProperty("email.base_url");
-            if (params.containsKey("link")) {
-                params.put("link", baseUrl + params.get("link"));
-            }
-            thymeleafContext.setVariables(params);
-            String htmlBody = thymeleafTemplateEngine.process(template, thymeleafContext);
-            sendHtmlMessage(to, subject, htmlBody);
-        } catch (Exception e) {
-            LOGGER.error("Failed to send email to {} with subject {}", to, subject, e);
-            throw e;
+    private void sendMessageUsingThymeleafTemplate(String template, String to, String subject, Locale locale, Map<String, Object> params) {
+        Context thymeleafContext = new Context(locale);
+        final String baseUrl = environment.getProperty("email.base_url");
+        if (params.containsKey("link")) {
+            params.put("link", baseUrl + params.get("link"));
         }
+        thymeleafContext.setVariables(params);
+        String htmlBody = thymeleafTemplateEngine.process(template, thymeleafContext);
+        sendHtmlMessage(to, subject, htmlBody);
     }
 
     @Async
     @Override
-    public void sendOrderReceivalForUser(Order order) throws MessagingException {
+    public void sendOrderReceivalForUser(Order order) {
         Locale locale = new Locale(order.getUser().getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
         params.put("recipientName", order.getUser().getName());
@@ -93,7 +92,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Async
     @Override
-    public void sendOrderReceivalForRestaurant(Order order) throws MessagingException {
+    public void sendOrderReceivalForRestaurant(Order order) {
         Restaurant restaurant = order.getRestaurant();
         Locale locale = new Locale(restaurant.getOwner().getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
@@ -113,7 +112,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Async
     @Override
-    public void sendOrderConfirmation(Order order) throws MessagingException {
+    public void sendOrderConfirmation(Order order) {
         Locale locale = new Locale(order.getUser().getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
         params.put("recipientName", order.getUser().getName());
@@ -131,7 +130,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Async
     @Override
-    public void sendOrderReady(Order order) throws MessagingException {
+    public void sendOrderReady(Order order) {
         Locale locale = new Locale(order.getUser().getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
         params.put("recipientName", order.getUser().getName());
@@ -149,7 +148,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Async
     @Override
-    public void sendOrderDelivered(Order order) throws MessagingException {
+    public void sendOrderDelivered(Order order) {
         Locale locale = new Locale(order.getUser().getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
         params.put("recipientName", order.getUser().getName());
@@ -167,7 +166,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Async
     @Override
-    public void sendOrderCancelled(Order order) throws MessagingException {
+    public void sendOrderCancelled(Order order) {
         Locale locale = new Locale(order.getUser().getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
         params.put("recipientName", order.getUser().getName());
@@ -185,7 +184,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Async
     @Override
-    public void sendUserVerificationEmail(User user, String token) throws MessagingException {
+    public void sendUserVerificationEmail(User user, String token) {
         Locale locale = new Locale(user.getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
         params.put("link", "/auth/verify?token=" + token);
@@ -201,7 +200,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Async
     @Override
-    public void sendResetPasswordEmail(User user, String token) throws MessagingException {
+    public void sendResetPasswordEmail(User user, String token) {
         Locale locale = new Locale(user.getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
         params.put("link", "/auth/reset-password?token=" + token);
@@ -217,7 +216,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Async
     @Override
-    public void sendInvitationToRestaurantStaff(User user, Restaurant restaurant) throws MessagingException {
+    public void sendInvitationToRestaurantStaff(User user, Restaurant restaurant) {
         Locale locale = new Locale(user.getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
         params.put("link", "/auth/register?email=" + user.getEmail());

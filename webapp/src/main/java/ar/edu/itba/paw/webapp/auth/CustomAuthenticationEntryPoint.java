@@ -31,12 +31,8 @@ public class CustomAuthenticationEntryPoint extends SimpleUrlAuthenticationFailu
         if (exception.getCause() instanceof UserNotVerifiedException) {
             UserNotVerifiedException e = (UserNotVerifiedException) exception.getCause();
             if (!userService.hasActiveVerificationToken(e.getUser().getUserId())) {
-                try {
-                    userService.sendUserVerificationToken(e.getUser());
-                    setDefaultFailureUrl(LOGIN_URL + VERIFY_EMAIL_ERROR);
-                } catch (MessagingException ex) {
-                    setDefaultFailureUrl(LOGIN_URL + MAILER_ERROR);
-                }
+                userService.sendUserVerificationToken(e.getUser());
+                setDefaultFailureUrl(LOGIN_URL + VERIFY_EMAIL_ERROR);
             } else {
                 setDefaultFailureUrl(LOGIN_URL + NOT_VERIFIED_ERROR);
             }

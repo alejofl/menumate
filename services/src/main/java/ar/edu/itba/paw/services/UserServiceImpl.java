@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public User createOrConsolidate(String email, String password, String name) throws MessagingException {
+    public User createOrConsolidate(String email, String password, String name) {
         password = password == null ? null : passwordEncoder.encode(password);
 
         final Optional<User> maybeUser = userDao.getByEmail(email);
@@ -136,7 +136,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void sendUserVerificationToken(final User user) throws MessagingException {
+    public void sendUserVerificationToken(final User user) {
         if (user.getIsActive()) {
             LOGGER.info("Ignored creating verification token for already active user id {}", user.getUserId());
             return;
@@ -160,7 +160,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void sendPasswordResetToken(User user) throws MessagingException {
+    public void sendPasswordResetToken(User user) {
         if (!user.getIsActive()) {
             LOGGER.info("Ignored creating password reset token for inactive user id {}", user.getUserId());
             return;

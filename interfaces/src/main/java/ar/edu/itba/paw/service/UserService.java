@@ -16,9 +16,8 @@ public interface UserService {
      * email with a verification code.
      *
      * @return The created User
-     * @throws MessagingException When sending the email fails.
      */
-    User createOrConsolidate(String email, String password, String name) throws MessagingException;
+    User createOrConsolidate(String email, String password, String name);
 
     /**
      * Gets a user by email, or creates it as not-consolidated (no password) if it doesn't exist.
@@ -35,9 +34,9 @@ public interface UserService {
 
     void deleteAddress(long userId, String address);
 
-    void sendUserVerificationToken(User user) throws MessagingException;
+    void sendUserVerificationToken(User user);
 
-    void sendPasswordResetToken(User user) throws MessagingException;
+    void sendPasswordResetToken(User user);
 
     boolean verifyUserAndDeleteVerificationToken(String token);
 

@@ -60,11 +60,7 @@ public class RestaurantRoleServiceImpl implements RestaurantRoleService {
         String name = email.split("@")[0];
         User user = userDao.create(email, null, name, LocaleContextHolder.getLocale().getLanguage());
         restaurantRoleDao.create(user.getUserId(), restaurantId, level);
-        try {
-            emailService.sendInvitationToRestaurantStaff(user, restaurantDao.getById(restaurantId).orElseThrow(RestaurantNotFoundException::new));
-        } catch (MessagingException e) {
-            LOGGER.error("Restaurant invitation email sending failed", e);
-        }
+        emailService.sendInvitationToRestaurantStaff(user, restaurantDao.getById(restaurantId).orElseThrow(RestaurantNotFoundException::new));
     }
 
     @Transactional
