@@ -126,7 +126,7 @@ public class ProductServiceImpl implements ProductService {
     public void stopPromotionByDestination(long destinationProductId) {
         productDao.stopPromotionByDestination(destinationProductId);
     }
-    
+
     @Scheduled(cron = "0 * * * * ?")
     public void updatePromotionsByTime() {
         productDao.startActivePromotions();

@@ -627,7 +627,8 @@ input:has(+ .form-error), textarea:has(+ .form-error) {
 
 .add-item-card {
     width: 200px;
-    height: 200px;
+    min-height: 200px;
+    height: 100%;
 }
 
 .restaurant-orders-view {
