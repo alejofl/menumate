@@ -124,14 +124,13 @@ public class ProductJpaDaoTest {
     @Test
     @Rollback
     public void updateProductAndPromotions() throws SQLException {
-        final Product product = em.find(Product.class, ProductConstants.PROMOTION_SOURCE_ID);
+        final Product product = em.find(Product.class, ProductConstants.PROMOTION_DESTINATION_ID);
         final Promotion promotion = em.find(Promotion.class, ProductConstants.PROMOTION_PRODUCT_ID);
         final String oldName = product.getName();
         final String oldDescription = product.getDescription();
 
         productDao.updateNameAndDescription(product, ProductConstants.DEFAULT_STRING, ProductConstants.DEFAULT_STRING);
         em.flush();
-
         Assert.assertNotEquals(oldDescription, promotion.getDestination().getDescription());
         Assert.assertNotEquals(oldName, promotion.getDestination().getName());
         Assert.assertEquals(ProductConstants.DEFAULT_STRING, promotion.getDestination().getDescription());

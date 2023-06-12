@@ -19,7 +19,8 @@ public final class ProductConstants {
     public static final List<List<Double>> VALUES = Arrays.asList(
             Arrays.asList(100.0, 200.0, 300.0, 400.0, 500.0, 600.0),
             Arrays.asList(700.0, 800.0, 900.0, 1000.0, 1100.0, 1200.0),
-            Collections.singletonList(0.0)
+            Collections.singletonList(0.0),
+            Collections.singletonList(100.0)
     );
     public static final List<Double> AVERAGE_LIST = VALUES.stream()
             .mapToDouble(sublist -> sublist.stream()
@@ -36,7 +37,7 @@ public final class ProductConstants {
     public static final String DEFAULT_STRING = "new";
     public static final int DEFAULT_ORDER_ITEM_QUANTITY = 10;
     public static final long PROMOTION_PRODUCT_ID = 100L;
-    public static final long PROMOTION_SOURCE_ID = 205L;
+    public static final long PROMOTION_SOURCE_ID = 501L;
     public static final long PROMOTION_DESTINATION_ID = 500L;
     public static final float DEFAULT_PROMOTION_DISCOUNT = 0.5f;
     public static final LocalDateTime DEFAULT_PROMOTION_START_DATE = LocalDateTime.now();

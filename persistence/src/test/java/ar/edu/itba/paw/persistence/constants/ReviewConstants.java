@@ -24,7 +24,8 @@ public final class ReviewConstants {
     public static final List<List<Double>> VALUES = Arrays.asList(
             Arrays.asList(1.0, 1.0, 3.0, 5.0, 5.0, 5.0),
             Arrays.asList(2.0, 2.0, 2.0, 2.0, 2.0, 2.0),
-            Arrays.asList(3.0, 3.0, 3.0, 3.0, 3.0, 3.0)
+            Arrays.asList(3.0, 3.0, 3.0, 3.0, 3.0, 3.0),
+            Arrays.asList(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
     );
     public static final List<Double> AVERAGE_LIST = VALUES.stream()
             .mapToDouble(sublist -> sublist.stream()

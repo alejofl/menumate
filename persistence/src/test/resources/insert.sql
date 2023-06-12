@@ -42,6 +42,12 @@ INSERT INTO restaurants (restaurant_id, name, email, max_tables, specialty, owne
 INSERT INTO restaurants (restaurant_id, name, email, max_tables, specialty, owner_user_id, address, description, date_created, deleted, is_active)
     VALUES (1200, 'B', 'restaurant@localhost', 10, 3, 1500, 'somewhere', 'description', CURRENT_TIMESTAMP - INTERVAL '2' DAY, false, true);
 
+INSERT INTO restaurants (restaurant_id, name, email, max_tables, specialty, owner_user_id, address, description, date_created, deleted, is_active)
+    VALUES (1300, 'D', 'restaurant@localhost', 10, 4, 1500, 'somewhere', 'description', CURRENT_TIMESTAMP - INTERVAL '3' DAY, false, true);
+
+INSERT INTO restaurant_roles (restaurant_id, user_id, role_level)
+    VALUES (1300, 3000, 1);
+
 -- Tag for restaurant 506
 INSERT INTO restaurant_tags (restaurant_id, tag_id)
     VALUES (506, 1);
@@ -79,6 +85,10 @@ INSERT INTO categories(category_id, restaurant_id, name, order_num, deleted)
 
 INSERT INTO categories(category_id, restaurant_id, name, order_num, deleted)
     VALUES (750, 600, 'category', 2, false);
+
+--Category for restaurant 1300
+INSERT INTO categories(category_id, restaurant_id, name, order_num, deleted)
+    VALUES (406, 1300, 'category', 1, false);
 
 -- Order and reviews for restaurant 506
 INSERT INTO orders (order_id, restaurant_id, order_type, date_ordered, user_id)
@@ -252,3 +262,13 @@ INSERT INTO order_items (order_id, line_number, product_id, quantity, comment)
 -- Adding order with no review for restaurant 1200
 INSERT INTO orders (order_id, restaurant_id, order_type, date_ordered, user_id)
     VALUES (6000, 1200, 1, now(), 3000);
+
+INSERT INTO products (product_id, name, price, category_id, available, description, deleted)
+    VALUES (500, 'product', 200, 406, false, 'description', false);
+
+INSERT INTO products (product_id, name, price, category_id, available, description, deleted)
+    VALUES (501, 'product', 100, 406, true, 'description', false);
+
+INSERT INTO promotions (promotion_id, source_id, destination_id, start_date, end_date)
+    VALUES (100, 501, 500, CURRENT_TIMESTAMP - INTERVAL '1' DAY, CURRENT_TIMESTAMP + INTERVAL '1' DAY);
+
