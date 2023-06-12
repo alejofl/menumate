@@ -2,6 +2,7 @@ package ar.edu.itba.paw.persistence;
 
 
 import ar.edu.itba.paw.exception.ProductNotFoundException;
+import ar.edu.itba.paw.exception.PromotionNotFoundException;
 import ar.edu.itba.paw.model.Product;
 import ar.edu.itba.paw.model.Promotion;
 import ar.edu.itba.paw.persistance.ProductDao;
@@ -24,6 +25,7 @@ import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -172,5 +174,80 @@ public class ProductJpaDaoTest {
         Assert.assertEquals(2, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "promotions", "source_id = " + product.getProductId()));
     }
 
+    @Test
+    @Rollback
+    public void testStopPromotionByDestination() throws SQLException {
+        Product destination = em.find(Product.class, ProductConstants.PROMOTION_DESTINATION_ID);
+        Product source = em.find(Product.class, ProductConstants.PROMOTION_SOURCE_ID);
+
+        productDao.stopPromotionByDestination(ProductConstants.PROMOTION_DESTINATION_ID);
+        em.flush();
+
+        Assert.assertFalse(destination.getAvailable());
+        Assert.assertTrue(source.getAvailable());
+    }
+
+    @Test
+    @Rollback
+    public void testStopPromotionBySource() throws SQLException {
+        Product destination = em.find(Product.class, ProductConstants.PROMOTION_DESTINATION_ID);
+        Product source = em.find(Product.class, ProductConstants.PROMOTION_SOURCE_ID);
+
+        productDao.stopPromotionsBySource(ProductConstants.PROMOTION_SOURCE_ID);
+        em.flush();
+
+        Assert.assertFalse(destination.getAvailable());
+        Assert.assertTrue(source.getAvailable());
+    }
+
+    @Test(expected = PromotionNotFoundException.class)
+    public void testStopPromotionBySourceInvalidId() throws SQLException {
+        productDao.stopPromotionsBySource(NON_EXISTENT_PRODUCT_ID);
+        em.flush();
+    }
+
+    @Test(expected = PromotionNotFoundException.class)
+    public void testStopPromotionByDestinationInvalidId() throws SQLException {
+        productDao.stopPromotionByDestination(NON_EXISTENT_PRODUCT_ID);
+        em.flush();
+    }
+
+    @Test(expected = IllegalStateException.class)
+    @Rollback
+    public void testStopPromotionByDestinationAlreadyEnded() throws SQLException {
+        Promotion promotion = em.find(Promotion.class, ProductConstants.PROMOTION_PRODUCT_ID);
+        promotion.setEndDate(LocalDateTime.now().minusDays(1));
+
+        productDao.stopPromotionByDestination(ProductConstants.PROMOTION_DESTINATION_ID);
+        em.flush();
+    }
+
+    @Test
+    @Rollback
+    public void testStartActivePromotions() throws SQLException {
+        Product destination = em.find(Product.class, ProductConstants.PROMOTION_DESTINATION_ID);
+        Product source = em.find(Product.class, ProductConstants.PROMOTION_SOURCE_ID);
+        destination.setAvailable(false);
+        source.setAvailable(true);
+
+        productDao.startActivePromotions();
+        em.flush();
+
+        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "products", "product_id = " + destination.getProductId() + " AND available = true"));
+        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "products", "product_id = " + source.getProductId() + " AND available = false"));
+    }
+
+    @Test
+    @Rollback
+    public void testStopActivePromotions() throws SQLException {
+        Promotion promotion = em.find(Promotion.class, ProductConstants.PROMOTION_PRODUCT_ID);
+        promotion.setEndDate(LocalDateTime.now().minusDays(1));
+
+        productDao.closeInactivePromotions();
+        em.flush();
+
+        Assert.assertFalse(promotion.getDestination().getAvailable());
+        Assert.assertTrue(promotion.getSource().getAvailable());
+    }
 
 }
