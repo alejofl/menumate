@@ -244,7 +244,7 @@
                                                         </c:forEach>
                                                         <option value="---"><spring:message code="restaurant.menu.form.address.new"/></option>
                                                     </select>
-                                                    <div id="new-address-input" class="mt-3" style="display: none">
+                                                    <div id="new-address-input" class="mt-3" style="display: ${not empty currentUser.addresses ? "none" : "block"}">
                                                         <spring:message code="restaurant.menu.form.address.new" var="addressPlaceholder"/>
                                                         <form:input type="text" path="address" cssClass="form-control" id="checkout-address" placeholder="${addressPlaceholder}"/>
                                                         <div class="form-text"><spring:message code="profile.addaddress.form.disclaimer"/></div>
