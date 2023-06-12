@@ -22,7 +22,7 @@ public final class MyBoolean {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MyBoolean myBoolean = (MyBoolean) o;
-        return bool == myBoolean.bool;
+        return Objects.equals(bool, myBoolean.bool);
     }
 
     @Override
