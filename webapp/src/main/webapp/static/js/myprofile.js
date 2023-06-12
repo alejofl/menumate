@@ -12,7 +12,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelector("#add-address-modal").addEventListener("hidden.bs.modal", () => {
         addAddressNameInput.value = "";
         addAddressAddressInput.value = "";
-        addAddressAddressInput.removeAttribute("disabled");
         addAddressAddressInput.removeAttribute("readonly");
     });
 
@@ -25,7 +24,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".add-address-modal-button").forEach(element => {
         element.addEventListener("click", (event) => {
             addAddressAddressInput.value = element.dataset.address;
-            addAddressAddressInput.setAttribute("disabled", "");
             addAddressAddressInput.setAttribute("readonly", "");
         });
     });
