@@ -12,6 +12,6 @@ public class FutureOrPresentValidator implements ConstraintValidator<FutureOrPre
 
     @Override
     public boolean isValid(LocalDateTime datetime, ConstraintValidatorContext constraintValidatorContext) {
-        return datetime != null && (datetime.isEqual(LocalDateTime.now()) || datetime.isAfter(LocalDateTime.now()));
+        return datetime == null || !datetime.isBefore(LocalDateTime.now());
     }
 }

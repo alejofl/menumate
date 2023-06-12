@@ -21,12 +21,10 @@ public class CreatePromotionForm {
 
     @NotNull
     @FutureOrPresent
-//    @DateTimeFormat(pattern = "yyyy-mm-dd'T'hh:mm")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime startDateTime;
 
     @NotNull
-//    @DateTimeFormat(pattern = "yyyy-mm-dd'T'hh:mm")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime endDateTime;
 

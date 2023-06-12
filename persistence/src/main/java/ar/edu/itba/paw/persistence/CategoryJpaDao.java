@@ -97,11 +97,9 @@ public class CategoryJpaDao implements CategoryDao {
         LOGGER.info("Logical-deleted category id {} with {} products and closed {} promotions", category.getCategoryId(), productCount, promoRows);
     }
 
-    private static final String SWAP_ORDER_SQL = "BEGIN;" +
-            "SET CONSTRAINTS ALL DEFERRED;" +
+    private static final String SWAP_ORDER_SQL = "SET CONSTRAINTS ALL DEFERRED;" +
             "UPDATE categories SET order_num = ? WHERE deleted = false AND category_id = ?;" +
-            "UPDATE categories SET order_num = ? WHERE deleted = false AND category_id = ?;" +
-            "COMMIT;";
+            "UPDATE categories SET order_num = ? WHERE deleted = false AND category_id = ?;";
 
     @Override
     public void swapOrder(long restaurantId, int orderNum1, int orderNum2) {
