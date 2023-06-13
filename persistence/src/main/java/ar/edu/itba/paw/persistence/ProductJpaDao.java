@@ -16,6 +16,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -84,6 +85,21 @@ public class ProductJpaDao implements ProductDao {
         }
         LOGGER.info("Created promotion with source id {} and destination id {} with a discount of {}", source.getProductId(), destination.getProductId(), discount);
         return promotion;
+    }
+
+    @Override
+    public Optional<Promotion> hasPromotionInRange(long sourceProductId, LocalDateTime startDate, LocalDateTime endDate) {
+        final Query nativeQuery = em.createNativeQuery("SELECT promotion_id FROM promotions WHERE source_id = :sourceId AND (end_date IS NULL OR start_date < end_date) AND (end_date IS NULL OR end_date >= :startDate) AND start_date < :endDate LIMIT 1");
+        nativeQuery.setParameter("sourceId", sourceProductId);
+        nativeQuery.setParameter("startDate", startDate);
+        nativeQuery.setParameter("endDate", endDate);
+
+        final List<?> resultList = nativeQuery.getResultList();
+        if (resultList.isEmpty())
+            return Optional.empty();
+
+        long promotionId = ((Number) resultList.get(0)).longValue();
+        return Optional.of(em.find(Promotion.class, promotionId));
     }
 
     @Override

@@ -93,10 +93,9 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     @Override
     public Promotion createPromotion(long sourceProductId, LocalDateTime startDate, LocalDateTime endDate, float discount) {
-        discount = Math.round(discount * 100) / 100f;
-        if (discount < 0 || discount >= 1) {
+        if (discount <= 0 || discount > 1) {
             LOGGER.error("Attempted to create product with discount outside range {}", discount);
-            throw new IllegalArgumentException("Discount must be in the range [0, 1)");
+            throw new IllegalArgumentException("Discount must be in the range (0, 1]");
         }
 
         final Product source = getById(sourceProductId).orElseThrow(ProductNotFoundException::new);
@@ -119,6 +118,14 @@ public class ProductServiceImpl implements ProductService {
         }
 
         return productDao.createPromotion(source, startDate, endDate, discount);
+    }
+
+    @Override
+    public Optional<Promotion> hasPromotionInRange(long sourceProductId, LocalDateTime startDate, LocalDateTime endDate) {
+        if (!startDate.isBefore(endDate))
+            throw new IllegalArgumentException("endDate must be after startDate");
+
+        return productDao.hasPromotionInRange(sourceProductId, startDate, endDate);
     }
 
     @Transactional

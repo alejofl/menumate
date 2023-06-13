@@ -17,6 +17,8 @@ public interface ProductDao {
 
     Promotion createPromotion(Product source, LocalDateTime startDate, LocalDateTime endDate, float discount);
 
+    Optional<Promotion> hasPromotionInRange(long sourceProductId, LocalDateTime startDate, LocalDateTime endDate);
+
     void updateNameAndDescription(Product product, String name, String description);
 
     void stopPromotionByDestination(long destinationProductId);

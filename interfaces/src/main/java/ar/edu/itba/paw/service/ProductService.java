@@ -19,7 +19,13 @@ public interface ProductService {
 
     void delete(long productId);
 
-    void stopPromotionByDestination(long destinationProductId);
-
     Promotion createPromotion(long sourceProductId, LocalDateTime startDate, LocalDateTime endDate, float discount);
+
+    /**
+     * Gets whether a product has any promotions whose active time range intersects with the specified time range.
+     * @return An empty optional if no promotions were found, or one (any) promotion if at least one was found.
+     */
+    Optional<Promotion> hasPromotionInRange(long sourceProductId, LocalDateTime startDate, LocalDateTime endDate);
+
+    void stopPromotionByDestination(long destinationProductId);
 }

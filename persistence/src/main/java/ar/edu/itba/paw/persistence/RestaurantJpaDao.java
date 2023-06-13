@@ -13,6 +13,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Repository
@@ -177,7 +178,17 @@ public class RestaurantJpaDao implements RestaurantDao {
     @Override
     public List<Promotion> getActivePromotions(long restaurantId) {
         TypedQuery<Promotion> query = em.createQuery(
-                "FROM Promotion WHERE destination.deleted = false AND destination.available = true AND destination.categoryId IN (SELECT categoryId FROM Category WHERE restaurantId = :restaurantId) ORDER BY (destination.price / source.price) DESC",
+                "FROM Promotion WHERE destination.deleted = false AND destination.available = true AND destination.categoryId IN (SELECT categoryId FROM Category WHERE restaurantId = :restaurantId) ORDER BY (destination.price / source.price) ASC",
+                Promotion.class
+        );
+        query.setParameter("restaurantId", restaurantId);
+        return query.getResultList();
+    }
+
+    @Override
+    public List<Promotion> getLivingPromotions(long restaurantId) {
+        TypedQuery<Promotion> query = em.createQuery(
+                "FROM Promotion WHERE destination.deleted = false AND destination.categoryId IN (SELECT categoryId FROM Category WHERE restaurantId = :restaurantId) ORDER BY startDate DESC",
                 Promotion.class
         );
         query.setParameter("restaurantId", restaurantId);
