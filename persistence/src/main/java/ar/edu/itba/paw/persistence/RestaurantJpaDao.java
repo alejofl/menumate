@@ -13,6 +13,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -193,6 +194,19 @@ public class RestaurantJpaDao implements RestaurantDao {
         );
         query.setParameter("restaurantId", restaurantId);
         return query.getResultList();
+    }
+
+    @Override
+    public Optional<Duration> getAverageOrderCompletionTime(long restaurantId, OrderType orderType, LocalDateTime since) {
+        Query query = em.createNativeQuery("SELECT EXTRACT(SECONDS FROM AVG(date_delivered - date_ordered)) FROM orders WHERE restaurant_id = :restaurantId AND order_type = :orderType AND date_delivered IS NOT NULL AND date_ordered >= :since");
+        query.setParameter("restaurantId", restaurantId);
+        query.setParameter("orderType", orderType.ordinal());
+        query.setParameter("since", since);
+
+        List<?> resultList = query.getResultList();
+        if (resultList.isEmpty() || resultList.get(0) == null)
+            return Optional.empty();
+        return Optional.of(Duration.ofSeconds(((Number) resultList.get(0)).longValue()));
     }
 
     @Override
