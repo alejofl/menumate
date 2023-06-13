@@ -8,6 +8,7 @@ import ar.edu.itba.paw.persistance.RestaurantRoleDao;
 import ar.edu.itba.paw.persistance.UserDao;
 import ar.edu.itba.paw.service.EmailService;
 import ar.edu.itba.paw.service.RestaurantRoleService;
+import ar.edu.itba.paw.util.PaginatedResult;
 import ar.edu.itba.paw.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -126,7 +127,7 @@ public class RestaurantRoleServiceImpl implements RestaurantRoleService {
     }
 
     @Override
-    public List<RestaurantRoleDetails> getByUser(long userId) {
-        return restaurantRoleDao.getByUser(userId);
+    public PaginatedResult<RestaurantRoleDetails> getByUser(long userId, int pageNumber, int pageSize) {
+        return restaurantRoleDao.getByUser(userId, pageNumber, pageSize);
     }
 }

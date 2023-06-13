@@ -3,6 +3,7 @@ package ar.edu.itba.paw.service;
 import ar.edu.itba.paw.model.RestaurantRoleDetails;
 import ar.edu.itba.paw.model.RestaurantRoleLevel;
 import ar.edu.itba.paw.model.User;
+import ar.edu.itba.paw.util.PaginatedResult;
 import ar.edu.itba.paw.util.Pair;
 
 import java.util.List;
@@ -35,5 +36,5 @@ public interface RestaurantRoleService {
     /**
      * Gets the restaurants and roles for a given user, and the amount of non-finalized orders.
      */
-    List<RestaurantRoleDetails> getByUser(long userId);
+    PaginatedResult<RestaurantRoleDetails> getByUser(long userId, int pageNumber, int pageSize);
 }

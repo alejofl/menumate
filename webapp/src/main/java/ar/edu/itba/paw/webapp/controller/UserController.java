@@ -48,10 +48,22 @@ public class UserController {
     private ReviewService reviewService;
 
     @RequestMapping(value = "/user/restaurants", method = RequestMethod.GET)
-    public ModelAndView myRestaurants() {
+    public ModelAndView myRestaurants(
+            @Valid final PagingForm paging,
+            final BindingResult errors
+    ) {
         ModelAndView mav = new ModelAndView("user/myrestaurants");
-        List<RestaurantRoleDetails> restaurants = restaurantRoleService.getByUser(ControllerUtils.getCurrentUserIdOrThrow());
-        mav.addObject("restaurants", restaurants);
+
+        if (errors.hasErrors()) {
+            mav.addObject("error", Boolean.TRUE);
+            paging.clear();
+        }
+
+        // TODO: Implement paging on frontend
+        PaginatedResult<RestaurantRoleDetails> restaurants = restaurantRoleService.getByUser(ControllerUtils.getCurrentUserIdOrThrow(), paging.getPageOrDefault(), paging.getSizeOrDefault(ControllerUtils.DEFAULT_MYRESTAURANTS_PAGE_SIZE));
+        mav.addObject("restaurants", restaurants.getResult());
+        mav.addObject("restaurantCount", restaurants.getTotalCount());
+        mav.addObject("pageCount", restaurants.getTotalPageCount());
         return mav;
     }
 

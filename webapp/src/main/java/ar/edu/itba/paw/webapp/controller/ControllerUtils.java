@@ -10,6 +10,7 @@ public final class ControllerUtils {
     static final int DEFAULT_ORDERS_PAGE_SIZE = 20;
     static final int DEFAULT_SEARCH_PAGE_SIZE = 12;
     static final int DEFAULT_RESTAURANT_PAGE_SIZE = 12;
+    static final int DEFAULT_MYRESTAURANTS_PAGE_SIZE = 20;
 
     private ControllerUtils() {
 

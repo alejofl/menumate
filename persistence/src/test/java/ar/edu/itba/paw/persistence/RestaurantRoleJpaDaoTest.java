@@ -5,6 +5,7 @@ import ar.edu.itba.paw.model.RestaurantRoleDetails;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import ar.edu.itba.paw.persistence.constants.RestaurantConstants;
 import ar.edu.itba.paw.persistence.constants.UserConstants;
+import ar.edu.itba.paw.util.PaginatedResult;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -132,15 +133,15 @@ public class RestaurantRoleJpaDaoTest {
 
     @Test
     public void testGetByUserNone() {
-        List<RestaurantRoleDetails> result = rolesDao.getByUser(USER_ID_NONE);
-        Assert.assertEquals(0, result.size());
+        PaginatedResult<RestaurantRoleDetails> result = rolesDao.getByUser(USER_ID_NONE, 1, 10);
+        Assert.assertEquals(0, result.getTotalCount());
     }
 
     @Test
     public void testGetByUser() {
-        List<RestaurantRoleDetails> result = rolesDao.getByUser(UserConstants.USER_ADMIN_ROLE);
-        Assert.assertEquals(1, result.size());
-        Assert.assertEquals(UserConstants.ADMIN_ROLE, result.get(0).getLevel());
-        Assert.assertEquals(RestaurantConstants.RESTAURANT_ID_WITH_NO_ORDERS, result.get(0).getRestaurantId());
+        PaginatedResult<RestaurantRoleDetails> result = rolesDao.getByUser(UserConstants.USER_ADMIN_ROLE, 1, 10);
+        Assert.assertEquals(1, result.getTotalCount());
+        Assert.assertEquals(UserConstants.ADMIN_ROLE, result.getResult().get(0).getLevel());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_ID_WITH_NO_ORDERS, result.getResult().get(0).getRestaurantId());
     }
 }

@@ -3,6 +3,7 @@ package ar.edu.itba.paw.persistance;
 import ar.edu.itba.paw.model.RestaurantRole;
 import ar.edu.itba.paw.model.RestaurantRoleDetails;
 import ar.edu.itba.paw.model.RestaurantRoleLevel;
+import ar.edu.itba.paw.util.PaginatedResult;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,5 +30,5 @@ public interface RestaurantRoleDao {
     /**
      * Gets the restaurants and roles for a given user, and the amount of non-finalized orders.
      */
-    List<RestaurantRoleDetails> getByUser(long userId);
+    PaginatedResult<RestaurantRoleDetails> getByUser(long userId, int pageNumber, int pageSize);
 }
