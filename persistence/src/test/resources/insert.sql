@@ -15,6 +15,13 @@ INSERT INTO users (user_id, email, password, name, is_active, preferred_language
 INSERT INTO users (user_id, email, password, name, is_active, preferred_language)
     VALUES (3000, 'user5@localhost', 'password', 'user', true, 'en');
 
+-- Adding moderator role (0) to user 3500
+INSERT INTO users(user_id, email, password, name, is_active, preferred_language)
+    VALUES (3500, 'moderator@localhost', 'password', 'user', true, 'en');
+
+INSERT INTO user_roles (user_id, role_level)
+    VALUES (3500, 0);
+
 -- Tokens for user 2000
 INSERT INTO user_resetpassword_tokens (user_id, token, expires)
     VALUES (2000, '8ac27001-c568-4190-b6da-1a80478c', CURRENT_TIMESTAMP + INTERVAL '1' DAY);

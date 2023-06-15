@@ -10,7 +10,7 @@ public class UserRole {
     @Column(name = "user_id", nullable = false, updatable = false)
     private long userId;
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", insertable = false, updatable = false)
     private User user;
 
@@ -31,6 +31,10 @@ public class UserRole {
         return userId;
     }
 
+    public User getUser() {
+        return user;
+    }
+
     public UserRoleLevel getLevel() {
         return level;
     }
@@ -41,5 +45,9 @@ public class UserRole {
 
     public void setUserId(long userId) {
         this.userId = userId;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
