@@ -7,7 +7,7 @@ package ar.edu.itba.paw.model;
 public enum UserRoleLevel {
 
     /**
-     * Has full permissions over the application.
+     * Has full delete permissions over the application.
      */
     MODERATOR("ROLE_MODERATOR");
 

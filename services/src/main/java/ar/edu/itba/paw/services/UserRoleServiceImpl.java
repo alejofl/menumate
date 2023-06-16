@@ -30,8 +30,6 @@ public class UserRoleServiceImpl implements UserRoleService {
     @Autowired
     private EmailService emailService;
 
-
-    @Transactional
     @Override
     public boolean doesUserHaveRole(long userId, UserRoleLevel roleLevel) {
         if (roleLevel == null) {
@@ -42,7 +40,6 @@ public class UserRoleServiceImpl implements UserRoleService {
         return userRole.isPresent() && roleLevel.equals(userRole.get().getLevel());
     }
 
-    @Transactional
     @Override
     public Optional<UserRoleLevel> getRole(long userId) {
         Optional<UserRole> userRole = userRoleDao.getRole(userId);
@@ -66,14 +63,14 @@ public class UserRoleServiceImpl implements UserRoleService {
 
         Optional<User> user = userDao.getByEmail(email);
         if (!user.isPresent()) {
-            LOGGER.info("User {} does not exist. Creating user and setting role", email);
+            LOGGER.info("User {} does not exist. Creating user and setting role {}", email, roleLevel);
             createUserAndSetRole(email, roleLevel);
             return true;
         }
         Optional<UserRole> currentRole = userRoleDao.getRole(user.get().getUserId());
         if (currentRole.isPresent()) {
             currentRole.get().setLevel(roleLevel);
-            LOGGER.info("User already has a role. Changing role from {} to {}", currentRole, roleLevel);
+            LOGGER.info("User already has a role. Changing role from {} to {}", currentRole.get(), roleLevel);
         } else {
             userRoleDao.create(user.get().getUserId(), roleLevel);
             LOGGER.info("User {} has been set to role {}", email, roleLevel);
@@ -87,7 +84,6 @@ public class UserRoleServiceImpl implements UserRoleService {
         userRoleDao.delete(userId);
     }
 
-    @Transactional
     @Override
     public PaginatedResult<User> getByRole(UserRoleLevel roleLevel, int pageNumber, int pageSize) {
         return userRoleDao.getByRole(roleLevel, pageNumber, pageSize);

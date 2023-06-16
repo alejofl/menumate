@@ -63,7 +63,7 @@ public class UserRoleJpaDao implements UserRoleDao {
         int count = ((Number) countQuery.getSingleResult()).intValue();
 
         final TypedQuery<User> query = em.createQuery(
-                "FROM User WHERE id IN :idList ORDER BY id DESC",
+                "FROM User WHERE userId IN :idList ORDER BY userId DESC",
                 User.class
         );
         query.setParameter("idList", idList);
