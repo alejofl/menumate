@@ -57,6 +57,24 @@ public class RestaurantJpaDao implements RestaurantDao {
         }
     }
 
+    private static String getOrderByColumnHql(RestaurantOrderBy orderBy, String direction) {
+        if (orderBy == null)
+            return "restaurantId " + direction;
+
+        switch (orderBy) {
+            case DATE:
+                return "restaurant.dateCreated " + direction + ", restaurantId";
+            case ALPHABETIC:
+                return "lower(restaurant.name) " + direction + ", restaurantId";
+            case RATING:
+                return "averageRating " + direction + ", restaurantId";
+            case PRICE:
+                return "averageProductPrice " + direction + ", restaurantId";
+            default:
+                throw new IllegalArgumentException("Invalid or not implemented RestaurantOrderBy: " + orderBy);
+        }
+    }
+
     private static void appendSpecialtiesCondition(StringBuilder sqlBuilder, List<RestaurantSpecialty> specialties) {
         if (specialties == null || specialties.isEmpty())
             return;
@@ -160,18 +178,11 @@ public class RestaurantJpaDao implements RestaurantDao {
         int count = ((Number) countQuery.getSingleResult()).intValue();
 
         TypedQuery<RestaurantDetails> resultsQuery = em.createQuery(
-                "FROM RestaurantDetails WHERE restaurantId IN :ids",
+                "FROM RestaurantDetails WHERE restaurantId IN :ids ORDER BY " + getOrderByColumnHql(orderBy, orderByDirection),
                 RestaurantDetails.class
         );
         resultsQuery.setParameter("ids", idList);
         final List<RestaurantDetails> results = resultsQuery.getResultList();
-
-        // Even though the results are sorted by the native query, when the page is brought by the HQL typed query
-        // they are not sorted. Since the column to sort with might not be in RestaurantDetails but rather in
-        // Restaurant, and the idList is already sorted as desired, we'll just sort them here.
-        // This isn't an issue because the native query is sorted, it's just that getting the page with HQL does not
-        // preserve that order.
-        results.sort(Comparator.comparing(r -> idList.indexOf(r.getRestaurantId())));
 
         return new PaginatedResult<>(results, pageNumber, pageSize, count);
     }
