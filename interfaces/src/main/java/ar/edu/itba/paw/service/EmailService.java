@@ -22,4 +22,6 @@ public interface EmailService {
     void sendResetPasswordEmail(User user, String token);
 
     void sendInvitationToRestaurantStaff(User user, Restaurant restaurant);
+
+    void sendInvitationToUser(User user, String level);
 }

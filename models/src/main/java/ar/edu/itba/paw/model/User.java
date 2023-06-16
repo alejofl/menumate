@@ -41,9 +41,6 @@ public class User {
     @OrderBy("(name IS NULL) ASC, lastUsed DESC")
     private List<UserAddress> addresses;
 
-    @OneToOne(mappedBy = "user", fetch = FetchType.EAGER)
-    private UserRole role;
-
     User() {
 
     }
@@ -121,20 +118,5 @@ public class User {
 
     public void setAddress(List<UserAddress> addresses) {
         this.addresses = addresses;
-    }
-
-    public UserRoleLevel getRole() {
-        if (role != null) {
-            return role.getLevel();
-        }
-        return null;
-    }
-
-    public void setRole(UserRoleLevel role) {
-        if (this.role != null) {
-            this.role.setLevel(role);
-        } else {
-            this.role = new UserRole(userId, role);
-        }
     }
 }
