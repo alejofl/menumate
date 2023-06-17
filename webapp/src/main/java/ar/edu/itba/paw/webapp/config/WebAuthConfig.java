@@ -93,23 +93,30 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/restaurants/{restaurant_id:\\d+}").permitAll()
                 .antMatchers(HttpMethod.POST, "/restaurants/{restaurant_id:\\d+}/orders").permitAll()
 
+                // Delete restaurant
+                .antMatchers(HttpMethod.DELETE, "/restaurants/{restaurant_id:\\d+}/delete").access("hasRole('ROLE_MODERATOR') or @accessValidator.checkRestaurantOwner(#restaurant_id)")
+
+                // Delete review
+                .antMatchers(HttpMethod.DELETE, "/restaurants/{restaurant_id:\\d+}/reviews/{review_id:\\d+}/delete").access("hasRole('ROLE_MODERATOR') or @accessValidator.checkRestaurantOwner(#restaurant_id)")
+
                 // Restaurants edit pages
-                .antMatchers("/restaurants/{restaurant_id:\\d+}/edit/**").access("hasRole('ROLE_MODERATOR') or @accessValidator.checkRestaurantAdmin(#restaurant_id)")
-                .antMatchers(HttpMethod.POST, "/restaurants/{restaurant_id:\\d+}/employees/**").access("hasRole('ROLE_MODERATOR') or @accessValidator.checkRestaurantOwner(#restaurant_id)")
-                .antMatchers(HttpMethod.POST, "/restaurants/{restaurant_id:\\d+}/categories/**").access("hasRole('ROLE_MODERATOR') or @accessValidator.checkRestaurantAdmin(#restaurant_id)")
-                .antMatchers(HttpMethod.POST, "/restaurants/{restaurant_id:\\d+}/products/**").access("hasRole('ROLE_MODERATOR') or @accessValidator.checkRestaurantAdmin(#restaurant_id)")
-                .antMatchers(HttpMethod.POST, "/restaurants/{restaurant_id:\\d+}/promotions/**").access("hasRole('ROLE_MODERATOR') or @accessValidator.checkRestaurantAdmin(#restaurant_id)")
+                .antMatchers("/restaurants/{restaurant_id:\\d+}/edit/**").access("@accessValidator.checkRestaurantAdmin(#restaurant_id)")
+                .antMatchers(HttpMethod.POST, "/restaurants/{restaurant_id:\\d+}/employees/**").access("@accessValidator.checkRestaurantOwner(#restaurant_id)")
+                .antMatchers(HttpMethod.POST, "/restaurants/{restaurant_id:\\d+}/categories/**").access("@accessValidator.checkRestaurantAdmin(#restaurant_id)")
+                .antMatchers(HttpMethod.POST, "/restaurants/{restaurant_id:\\d+}/products/**").access("@accessValidator.checkRestaurantAdmin(#restaurant_id)")
+                .antMatchers(HttpMethod.POST, "/restaurants/{restaurant_id:\\d+}/promotions/**").access("@accessValidator.checkRestaurantAdmin(#restaurant_id)")
                 .antMatchers("/restaurants/{restaurant_id:\\d+}/reviews").access("hasRole('ROLE_MODERATOR') or @accessValidator.checkRestaurantAdmin(#restaurant_id)")
+
                 // Restaurant orders pages
-                .antMatchers(HttpMethod.GET, "/restaurants/{restaurant_id:\\d+}/orders/**").access("hasRole('ROLE_MODERATOR') or @accessValidator.checkRestaurantOrderHandler(#restaurant_id)")
+                .antMatchers(HttpMethod.GET, "/restaurants/{restaurant_id:\\d+}/orders/**").access("@accessValidator.checkRestaurantOrderHandler(#restaurant_id)")
 
                 // Create restaurant pages
                 .antMatchers("/restaurants/create").authenticated()
 
                 // Orders pages
                 .antMatchers(HttpMethod.GET, "/orders/{order_id:\\d+}").access("hasRole('ROLE_MODERATOR') or @accessValidator.checkOrderOwner(#order_id)")
-                .antMatchers(HttpMethod.POST, "/orders/{order_id:\\d+}/{status:confirm|ready|deliver|cancel}").access("hasRole('ROLE_MODERATOR') or @accessValidator.checkOrderHandler(#order_id)")
-                .antMatchers(HttpMethod.POST, "/orders/{order_id:\\d+}/review").access("hasRole('ROLE_MODERATOR') or @accessValidator.checkOrderOwner(#order_id)")
+                .antMatchers(HttpMethod.POST, "/orders/{order_id:\\d+}/{status:confirm|ready|deliver|cancel}").access("@accessValidator.checkOrderHandler(#order_id)")
+                .antMatchers(HttpMethod.POST, "/orders/{order_id:\\d+}/review").access("@accessValidator.checkOrderOwner(#order_id)")
 
                 .and().exceptionHandling()
                 .accessDeniedPage("/403")
