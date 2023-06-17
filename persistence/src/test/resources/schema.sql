@@ -150,6 +150,17 @@ CREATE TABLE IF NOT EXISTS order_reviews
     reply    VARCHAR(500)
 );
 
+CREATE TABLE IF NOT EXISTS restaurant_reports
+(
+    report_id SERIAL PRIMARY KEY,
+    restaurant_id INT NOT NULL REFERENCES restaurants (restaurant_id) ON DELETE CASCADE,
+    reporter_user_id INT REFERENCES users (user_id) ON DELETE SET NULL,
+    handler_user_id INT REFERENCES users(user_id) ON DELETE SET NULL,
+    date_reported TIMESTAMP NOT NULL DEFAULT now(),
+    date_handled TIMESTAMP,
+    comment VARCHAR(500)
+);
+
 
 DROP VIEW IF EXISTS restaurant_details;
 CREATE VIEW restaurant_details AS
