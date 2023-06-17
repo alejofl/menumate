@@ -249,6 +249,11 @@ public class RestaurantJpaDao implements RestaurantDao {
         promoQuery.setParameter("restaurantId", restaurantId);
         int promoRows = promoQuery.executeUpdate();
 
-        LOGGER.info("Logical-deleted restaurant id {} with {} categories and {} products, closed {} promotions", restaurant.getRestaurantId(), categoryCount, productCount, promoRows);
+        // Close any waiting reports for this restaurant
+        Query reportQuery = em.createQuery("UPDATE Report SET dateHandled = now() WHERE dateHandled IS NULL AND restaurantId = :restaurantId");
+        reportQuery.setParameter("restaurantId", restaurantId);
+        int reportRows = reportQuery.executeUpdate();
+
+        LOGGER.info("Logical-deleted restaurant id {} with {} categories and {} products, closed {} promotions and {} reports", restaurant.getRestaurantId(), categoryCount, productCount, promoRows, reportRows);
     }
 }
