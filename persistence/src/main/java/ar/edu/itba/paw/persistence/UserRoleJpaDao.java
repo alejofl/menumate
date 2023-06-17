@@ -5,6 +5,7 @@ import ar.edu.itba.paw.model.UserRole;
 import ar.edu.itba.paw.model.UserRoleLevel;
 import ar.edu.itba.paw.persistance.UserRoleDao;
 import ar.edu.itba.paw.util.PaginatedResult;
+import ar.edu.itba.paw.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -48,6 +49,8 @@ public class UserRoleJpaDao implements UserRoleDao {
 
     @Override
     public PaginatedResult<User> getByRole(UserRoleLevel roleLevel, int pageNumber, int pageSize) {
+        Utils.validatePaginationParams(pageNumber, pageSize);
+
         Query nativeQuery = em.createNativeQuery("SELECT user_id FROM user_roles WHERE role_level = ? ORDER BY user_id DESC");
         nativeQuery.setParameter(1, roleLevel.ordinal());
         nativeQuery.setMaxResults(pageSize);

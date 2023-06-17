@@ -5,6 +5,7 @@ import ar.edu.itba.paw.model.RestaurantRoleDetails;
 import ar.edu.itba.paw.model.RestaurantRoleLevel;
 import ar.edu.itba.paw.persistance.RestaurantRoleDao;
 import ar.edu.itba.paw.util.PaginatedResult;
+import ar.edu.itba.paw.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -59,6 +60,8 @@ public class RestaurantRoleJpaDao implements RestaurantRoleDao {
 
     @Override
     public PaginatedResult<RestaurantRoleDetails> getByUser(long userId, int pageNumber, int pageSize) {
+        Utils.validatePaginationParams(pageNumber, pageSize);
+
         Query nativeQuery = em.createNativeQuery("SELECT restaurant_id FROM restaurant_role_details WHERE user_id = ? ORDER BY inprogress_order_count DESC, restaurant_id");
         nativeQuery.setParameter(1, userId);
         nativeQuery.setMaxResults(pageSize);

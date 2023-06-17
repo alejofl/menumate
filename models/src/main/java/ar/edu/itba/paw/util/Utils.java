@@ -12,7 +12,7 @@ public final class Utils {
             throw new IllegalArgumentException("pageNumber must be greater than 0");
 
         if (pageSize <= 0 || pageSize > MAX_PAGINATION_PAGE_SIZE)
-            throw new IllegalArgumentException("pageSize must be greater than 0 but not greater than 100");
+            throw new IllegalArgumentException("pageSize must be greater than 0 but not greater than " + MAX_PAGINATION_PAGE_SIZE);
     }
 
     public static <T> T coalesce(T a, T b) {
