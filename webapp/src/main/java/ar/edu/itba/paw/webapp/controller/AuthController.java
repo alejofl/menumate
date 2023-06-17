@@ -33,6 +33,10 @@ public class AuthController {
             @ModelAttribute("registerForm") final RegisterForm registerForm,
             @RequestParam(value = "email", required = false) final String email
     ) {
+        if (ControllerUtils.getCurrentUserDetailsOrNull() != null) {
+            return new ModelAndView("redirect:/");
+        }
+
         if (email != null) {
             registerForm.setEmail(email);
         }
@@ -54,6 +58,10 @@ public class AuthController {
 
     @RequestMapping(value = "/auth/login", method = RequestMethod.GET)
     public ModelAndView loginForm(@RequestParam(value = "type", required = false) String type) {
+        if (ControllerUtils.getCurrentUserDetailsOrNull() != null) {
+            return new ModelAndView("redirect:/");
+        }
+
         return new ModelAndView("auth/login").addObject("type", type);
     }
 
