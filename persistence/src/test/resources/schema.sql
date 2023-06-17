@@ -150,6 +150,17 @@ CREATE TABLE IF NOT EXISTS order_reviews
     reply    VARCHAR(500)
 );
 
+CREATE TABLE IF NOT EXISTS restaurant_reports
+(
+    report_id SERIAL PRIMARY KEY,
+    restaurant_id INT NOT NULL REFERENCES restaurants (restaurant_id) ON DELETE CASCADE,
+    reporter_user_id INT REFERENCES users (user_id) ON DELETE SET NULL,
+    handler_user_id INT REFERENCES users(user_id) ON DELETE SET NULL,
+    date_reported TIMESTAMP NOT NULL DEFAULT now(),
+    date_handled TIMESTAMP,
+    comment VARCHAR(500)
+);
+
 
 DROP VIEW IF EXISTS restaurant_details;
 CREATE VIEW restaurant_details AS
@@ -191,3 +202,4 @@ CREATE SEQUENCE products_product_id_seq START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE restaurants_restaurant_id_seq START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE users_user_id_seq START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE promotions_promotion_id_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE reports_report_id_seq START WITH 1 INCREMENT BY 1;
