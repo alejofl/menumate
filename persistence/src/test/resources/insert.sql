@@ -279,3 +279,8 @@ INSERT INTO products (product_id, name, price, category_id, available, descripti
 INSERT INTO promotions (promotion_id, source_id, destination_id, start_date, end_date)
     VALUES (100, 501, 500, CURRENT_TIMESTAMP - INTERVAL '1' DAY, CURRENT_TIMESTAMP + INTERVAL '1' DAY);
 
+INSERT INTO restaurant_reports (report_id, restaurant_id, reporter_user_id, handler_user_id, date_reported, date_handled, comment)
+    VALUES (7711, 506, 420, null, CURRENT_TIMESTAMP - INTERVAL '6' DAY, null, 'A report on restaurant id 506'),
+           (7064, 1200, null, 3500, CURRENT_TIMESTAMP - INTERVAL '8' DAY, CURRENT_TIMESTAMP - INTERVAL '2' DAY, 'A report on restaurant id 1200'),
+           (6987, 1200, 1337, 3500, CURRENT_TIMESTAMP - INTERVAL '7' DAY, CURRENT_TIMESTAMP - INTERVAL '3' DAY, 'Another report on restaurant id 1200'),
+           (4040, 1300, 3500, null, CURRENT_TIMESTAMP - INTERVAL '2' DAY, null, 'A report on restaurant id 1300');

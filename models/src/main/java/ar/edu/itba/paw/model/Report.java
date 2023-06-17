@@ -8,7 +8,9 @@ import java.time.LocalDateTime;
 public class Report {
 
     @Id
-    @Column(name = "report_id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "reports_report_id_seq")
+    @SequenceGenerator(sequenceName = "reports_report_id_seq", name = "reports_report_id_seq", allocationSize = 1)
+    @Column(name = "report_id", nullable = false)
     private Long reportId;
 
     @Column(name = "restaurant_id", updatable = false)

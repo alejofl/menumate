@@ -62,7 +62,7 @@ public class ReportJpaDao implements ReportDao {
         if (isHandled != null) {
             sqlBuilder.append(isFirst ? " WHERE" : " AND");
             isFirst = false;
-            sqlBuilder.append("date_handled IS ").append(isHandled ? " NOT NULL" : "NULL");
+            sqlBuilder.append(" date_handled IS ").append(isHandled ? "NOT NULL" : "NULL");
         }
     }
 
@@ -75,12 +75,13 @@ public class ReportJpaDao implements ReportDao {
 
         sqlBuilder.append(" ORDER BY ")
                 .append(isHandled != null && isHandled ? "date_handled" : "date_reported")
-                .append(descending ? " DESC" : " ASC");
+                .append(descending ? " DESC" : " ASC")
+                .append(", report_id");
 
         Query nativeQuery = em.createNativeQuery(sqlBuilder.toString());
         nativeQuery.setMaxResults(pageSize);
         nativeQuery.setFirstResult((pageNumber - 1) * pageSize);
-        if (restaurantId != null) nativeQuery.setParameter("restaurantId", reporterUserId);
+        if (restaurantId != null) nativeQuery.setParameter("restaurantId", restaurantId);
         if (reporterUserId != null) nativeQuery.setParameter("reporterId", reporterUserId);
         if (handlerUserId != null) nativeQuery.setParameter("handlerId", handlerUserId);
 
@@ -91,9 +92,9 @@ public class ReportJpaDao implements ReportDao {
         appendFilterConditions(sqlBuilder, restaurantId, reporterUserId, handlerUserId, isHandled);
 
         Query countQuery = em.createNativeQuery(sqlBuilder.toString());
-        if (restaurantId != null) nativeQuery.setParameter("restaurantId", reporterUserId);
-        if (reporterUserId != null) nativeQuery.setParameter("reporterId", reporterUserId);
-        if (handlerUserId != null) nativeQuery.setParameter("handlerId", handlerUserId);
+        if (restaurantId != null) countQuery.setParameter("restaurantId", restaurantId);
+        if (reporterUserId != null) countQuery.setParameter("reporterId", reporterUserId);
+        if (handlerUserId != null) countQuery.setParameter("handlerId", handlerUserId);
         int count = ((Number) countQuery.getSingleResult()).intValue();
 
         if (idList.isEmpty())
@@ -102,7 +103,8 @@ public class ReportJpaDao implements ReportDao {
         sqlBuilder.setLength(0);
         sqlBuilder.append("FROM Report WHERE reportId IN :idList ORDER BY ")
                 .append(isHandled != null && isHandled ? "dateHandled" : "dateReported")
-                .append(descending ? " DESC" : " ASC");
+                .append(descending ? " DESC" : " ASC")
+                .append(", reportId");
 
         TypedQuery<Report> resultsQuery = em.createQuery(
                 sqlBuilder.toString(),
