@@ -87,12 +87,12 @@ public class OrderJpaDao implements OrderDao {
 
         final List<Long> idList = nativeQuery.getResultList().stream().mapToLong(n -> ((Number) n).longValue()).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
 
-        if (idList.isEmpty())
-            return new PaginatedResult<>(Collections.emptyList(), pageNumber, pageSize, 0);
-
         Query countQuery = em.createNativeQuery("SELECT COUNT(*) FROM orders WHERE user_id = ?" + condString);
         countQuery.setParameter(1, userId);
         int count = ((Number) countQuery.getSingleResult()).intValue();
+
+        if (idList.isEmpty())
+            return new PaginatedResult<>(Collections.emptyList(), pageNumber, pageSize, count);
 
         final TypedQuery<Order> query = em.createQuery(
                 "FROM Order WHERE orderId IN :idList ORDER BY dateOrdered " + orderDir,
@@ -137,12 +137,12 @@ public class OrderJpaDao implements OrderDao {
 
         final List<Long> idList = nativeQuery.getResultList().stream().mapToLong(n -> ((Number) n).longValue()).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
 
-        if (idList.isEmpty())
-            return new PaginatedResult<>(Collections.emptyList(), pageNumber, pageSize, 0);
-
         Query countQuery = em.createNativeQuery("SELECT COUNT(*) FROM orders WHERE restaurant_id = ?" + condString);
         countQuery.setParameter(1, restaurantId);
         int count = ((Number) countQuery.getSingleResult()).intValue();
+
+        if (idList.isEmpty())
+            return new PaginatedResult<>(Collections.emptyList(), pageNumber, pageSize, count);
 
         final TypedQuery<Order> query = em.createQuery(
                 "FROM Order WHERE orderId IN :idList ORDER BY dateOrdered " + orderDir,

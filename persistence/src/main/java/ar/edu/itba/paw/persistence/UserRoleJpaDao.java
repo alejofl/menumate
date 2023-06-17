@@ -58,12 +58,12 @@ public class UserRoleJpaDao implements UserRoleDao {
 
         final List<Long> idList = nativeQuery.getResultList().stream().mapToLong(n -> ((Number) n).longValue()).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
 
-        if (idList.isEmpty())
-            return new PaginatedResult<>(Collections.emptyList(), pageNumber, pageSize, 0);
-
         Query countQuery = em.createNativeQuery("SELECT COUNT(*) FROM user_roles WHERE role_level = ?");
         countQuery.setParameter(1, roleLevel.ordinal());
         int count = ((Number) countQuery.getSingleResult()).intValue();
+
+        if (idList.isEmpty())
+            return new PaginatedResult<>(Collections.emptyList(), pageNumber, pageSize, count);
 
         final TypedQuery<User> query = em.createQuery(
                 "FROM User WHERE userId IN :idList ORDER BY userId DESC",

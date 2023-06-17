@@ -69,12 +69,12 @@ public class RestaurantRoleJpaDao implements RestaurantRoleDao {
 
         final List<Long> idList = nativeQuery.getResultList().stream().mapToLong(n -> ((Number) n).longValue()).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
 
-        if (idList.isEmpty())
-            return new PaginatedResult<>(Collections.emptyList(), pageNumber, pageSize, 0);
-
         Query countQuery = em.createNativeQuery("SELECT COUNT(*) FROM restaurant_role_details WHERE user_id = ?");
         countQuery.setParameter(1, userId);
         int count = ((Number) countQuery.getSingleResult()).intValue();
+
+        if (idList.isEmpty())
+            return new PaginatedResult<>(Collections.emptyList(), pageNumber, pageSize, count);
 
         final TypedQuery<RestaurantRoleDetails> query = em.createQuery(
                 "FROM RestaurantRoleDetails WHERE userId = :userId AND restaurantId IN :idList ORDER BY pendingOrderCount DESC, restaurantId",

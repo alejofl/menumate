@@ -162,9 +162,6 @@ public class RestaurantJpaDao implements RestaurantDao {
 
         final List<Long> idList = nativeQuery.getResultList().stream().mapToLong(n -> ((Number) n).longValue()).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
 
-        if (idList.isEmpty())
-            return new PaginatedResult<>(Collections.emptyList(), pageNumber, pageSize, 0);
-
         sqlBuilder.setLength(0);
         sqlBuilder.append("SELECT COUNT(*) AS c FROM restaurants AS r WHERE deleted = false AND is_active = true AND ");
         sqlBuilder.append(NAME_SEARCH_CONDITION_SQL);
@@ -176,6 +173,9 @@ public class RestaurantJpaDao implements RestaurantDao {
         countQuery.setParameter(2, search);
         countQuery.setParameter(3, search);
         int count = ((Number) countQuery.getSingleResult()).intValue();
+
+        if (idList.isEmpty())
+            return new PaginatedResult<>(Collections.emptyList(), pageNumber, pageSize, count);
 
         TypedQuery<RestaurantDetails> resultsQuery = em.createQuery(
                 "FROM RestaurantDetails WHERE restaurantId IN :ids ORDER BY " + getOrderByColumnHql(orderBy, orderByDirection),
