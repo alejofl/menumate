@@ -57,7 +57,7 @@ public class RestaurantRoleJpaDaoTest {
 
     @Test(expected = PersistenceException.class)
     public void testCreateExistingRoleForRestaurant() {
-        rolesDao.create(UserConstants.USER_ADMIN_ROLE, RestaurantConstants.RESTAURANT_ID_WITH_NO_ORDERS, UserConstants.ADMIN_ROLE);
+        rolesDao.create(UserConstants.USER_ID_RESTAURANT_ADMIN_ROLE, RestaurantConstants.RESTAURANT_ID_WITH_NO_ORDERS, UserConstants.ADMIN_ROLE);
         em.flush();
     }
 
@@ -76,15 +76,15 @@ public class RestaurantRoleJpaDaoTest {
     @Test
     @Rollback
     public void testDeleteWhenExisting() {
-        rolesDao.delete(UserConstants.USER_ADMIN_ROLE, RestaurantConstants.RESTAURANT_ID_WITH_NO_ORDERS);
+        rolesDao.delete(UserConstants.USER_ID_RESTAURANT_ADMIN_ROLE, RestaurantConstants.RESTAURANT_ID_WITH_NO_ORDERS);
         em.flush();
-        Assert.assertEquals(0, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "restaurant_roles", "user_id=" + UserConstants.USER_ADMIN_ROLE + " AND restaurant_id=" + RestaurantConstants.RESTAURANT_ID_WITH_NO_ORDERS + " AND role_level=" + UserConstants.ADMIN_ROLE.ordinal()));
+        Assert.assertEquals(0, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "restaurant_roles", "user_id=" + UserConstants.USER_ID_RESTAURANT_ADMIN_ROLE + " AND restaurant_id=" + RestaurantConstants.RESTAURANT_ID_WITH_NO_ORDERS + " AND role_level=" + UserConstants.ADMIN_ROLE.ordinal()));
     }
 
     @Test
     public void testDeleteWhenNonExistingWithOtherRolePresent() {
-        Assert.assertThrows(EntityNotFoundException.class, () -> rolesDao.delete(UserConstants.USER_ADMIN_ROLE, RestaurantConstants.RESTAURANT_IDS[0]));
-        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "restaurant_roles", "user_id=" + UserConstants.USER_ADMIN_ROLE + " AND restaurant_id=" + RestaurantConstants.RESTAURANT_ID_WITH_NO_ORDERS));
+        Assert.assertThrows(EntityNotFoundException.class, () -> rolesDao.delete(UserConstants.USER_ID_RESTAURANT_ADMIN_ROLE, RestaurantConstants.RESTAURANT_IDS[0]));
+        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "restaurant_roles", "user_id=" + UserConstants.USER_ID_RESTAURANT_ADMIN_ROLE + " AND restaurant_id=" + RestaurantConstants.RESTAURANT_ID_WITH_NO_ORDERS));
     }
 
     @Test
@@ -112,7 +112,7 @@ public class RestaurantRoleJpaDaoTest {
 
     @Test
     public void testGetRole() {
-        Optional<RestaurantRole> role = rolesDao.getRole(UserConstants.USER_ADMIN_ROLE, RestaurantConstants.RESTAURANT_ID_WITH_NO_ORDERS);
+        Optional<RestaurantRole> role = rolesDao.getRole(UserConstants.USER_ID_RESTAURANT_ADMIN_ROLE, RestaurantConstants.RESTAURANT_ID_WITH_NO_ORDERS);
 
         Assert.assertTrue(role.isPresent());
         Assert.assertEquals(UserConstants.ADMIN_ROLE, role.get().getLevel());
@@ -139,7 +139,7 @@ public class RestaurantRoleJpaDaoTest {
 
     @Test
     public void testGetByUser() {
-        PaginatedResult<RestaurantRoleDetails> result = rolesDao.getByUser(UserConstants.USER_ADMIN_ROLE, 1, 10);
+        PaginatedResult<RestaurantRoleDetails> result = rolesDao.getByUser(UserConstants.USER_ID_RESTAURANT_ADMIN_ROLE, 1, 10);
         Assert.assertEquals(1, result.getTotalCount());
         Assert.assertEquals(UserConstants.ADMIN_ROLE, result.getResult().get(0).getLevel());
         Assert.assertEquals(RestaurantConstants.RESTAURANT_ID_WITH_NO_ORDERS, result.getResult().get(0).getRestaurantId());

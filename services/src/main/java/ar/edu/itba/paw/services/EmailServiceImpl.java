@@ -229,4 +229,20 @@ public class EmailServiceImpl implements EmailService {
                 params
         );
     }
+
+    @Async
+    @Override
+    public void sendInvitationToUser(User user, String role) {
+        Locale locale = new Locale(user.getPreferredLanguage());
+        final Map<String, Object> params = new HashMap<>();
+        params.put("link", "/auth/register?email=" + user.getEmail());
+        final String roleLocale = messageSource.getMessage("email.userrole." + role, new Object[]{}, locale);
+        this.sendMessageUsingThymeleafTemplate(
+                "user_invitation",
+                user.getEmail(),
+                messageSource.getMessage("email.userroleinvitation.subject", new Object[]{roleLocale}, locale),
+                locale,
+                params
+        );
+    }
 }

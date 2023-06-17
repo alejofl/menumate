@@ -59,6 +59,14 @@ CREATE TABLE IF NOT EXISTS restaurants
     deleted       BOOLEAN NOT NULL DEFAULT FALSE
 );
 
+CREATE TABLE IF NOT EXISTS user_roles
+(
+    user_id INT REFERENCES users (user_id) ON DELETE CASCADE NOT NULL,
+    role_level SMALLINT NOT NULL,
+
+    PRIMARY KEY (user_id)
+);
+
 CREATE TABLE IF NOT EXISTS restaurant_roles
 (
     user_id       INT REFERENCES users (user_id) ON DELETE CASCADE NOT NULL,
