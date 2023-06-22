@@ -54,7 +54,7 @@ public class RestaurantJpaDaoTest {
         Optional<Restaurant> maybeRestaurant = restaurantDao.getById(RestaurantConstants.RESTAURANT_IDS[0]);
 
         Assert.assertTrue(maybeRestaurant.isPresent());
-        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0], maybeRestaurant.get().getRestaurantId());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0], maybeRestaurant.get().getRestaurantId().longValue());
         Assert.assertEquals(UserConstants.RESTAURANT_OWNER_ID, maybeRestaurant.get().getOwnerUserId());
         Assert.assertEquals(RestaurantConstants.RESTAURANT_NAMES[0], maybeRestaurant.get().getName());
         Assert.assertEquals(RestaurantConstants.RESTAURANT_EMAIL, maybeRestaurant.get().getEmail());
@@ -166,8 +166,8 @@ public class RestaurantJpaDaoTest {
         int size = res.getResult().size();
         Assert.assertEquals(maxRestaurants, res.getPageSize());
         Assert.assertEquals(maxRestaurants, res.getTotalCount());
-        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[3].longValue(), res.getResult().get(0).getRestaurantId());
-        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0].longValue(), res.getResult().get(maxRestaurants-1).getRestaurantId());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[3], res.getResult().get(0).getRestaurantId());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0], res.getResult().get(maxRestaurants-1).getRestaurantId());
         for (int i = 0; i < size; i++) {
             Assert.assertEquals(ratingAvg.get(i).intValue(), res.getResult().get(i).getAverageRating());
         }
@@ -188,8 +188,8 @@ public class RestaurantJpaDaoTest {
         int size = res.getResult().size();
         Assert.assertEquals(maxRestaurants, res.getPageSize());
         Assert.assertEquals(maxRestaurants, res.getTotalCount());
-        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0].longValue(), res.getResult().get(0).getRestaurantId());
-        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[3].longValue(), res.getResult().get(maxRestaurants-1).getRestaurantId());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0], res.getResult().get(0).getRestaurantId());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[3], res.getResult().get(maxRestaurants-1).getRestaurantId());
         for (int i = 0; i < size; i++) {
             Assert.assertEquals(ratingAvg.get(i).intValue(), res.getResult().get(i).getAverageRating());
         }
@@ -206,8 +206,8 @@ public class RestaurantJpaDaoTest {
         int size = res.getResult().size();
         Assert.assertEquals(maxRestaurants, res.getPageSize());
         Assert.assertEquals(maxRestaurants, res.getTotalCount());
-        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[1].longValue(), res.getResult().get(0).getRestaurantId());
-        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[2].longValue(), res.getResult().get(maxRestaurants-1).getRestaurantId());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[1], res.getResult().get(0).getRestaurantId());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[2], res.getResult().get(maxRestaurants-1).getRestaurantId());
         for (int i = 0; i < size; i++) {
             Assert.assertEquals(avgPrice.get(i),res.getResult().get(i).getAverageProductPrice(), 0.1);
         }
@@ -224,8 +224,8 @@ public class RestaurantJpaDaoTest {
         int size = res.getResult().size();
         Assert.assertEquals(maxRestaurants, res.getPageSize());
         Assert.assertEquals(maxRestaurants, res.getTotalCount());
-        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[2].longValue(), res.getResult().get(0).getRestaurantId());
-        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[1].longValue(), res.getResult().get(maxRestaurants - 1).getRestaurantId());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[2], res.getResult().get(0).getRestaurantId());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[1], res.getResult().get(maxRestaurants - 1).getRestaurantId());
         for (int i = 0; i < size; i++) {
             Assert.assertEquals(avgPrice.get(i),res.getResult().get(i).getAverageProductPrice(), 0.1);
         }
@@ -236,8 +236,8 @@ public class RestaurantJpaDaoTest {
         final int maxRestaurants = RestaurantConstants.RESTAURANT_IDS.length;
         PaginatedResult<RestaurantDetails> res = restaurantDao.search("", 1, RestaurantConstants.RESTAURANT_IDS.length, RestaurantOrderBy.DATE, false, null, null);
         Assert.assertEquals(maxRestaurants, res.getResult().size());
-        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[maxRestaurants-1].longValue(), res.getResult().get(0).getRestaurantId());
-        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0].longValue(), res.getResult().get(maxRestaurants-1).getRestaurantId());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[maxRestaurants-1], res.getResult().get(0).getRestaurantId());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0], res.getResult().get(maxRestaurants-1).getRestaurantId());
     }
 
     @Test
@@ -245,8 +245,8 @@ public class RestaurantJpaDaoTest {
         final int maxRestaurants = RestaurantConstants.RESTAURANT_IDS.length;
         PaginatedResult<RestaurantDetails> res = restaurantDao.search("", 1, maxRestaurants, RestaurantOrderBy.DATE, true, null, null);
         Assert.assertEquals(maxRestaurants, res.getResult().size());
-        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0].longValue(), res.getResult().get(0).getRestaurantId());
-        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[maxRestaurants-1].longValue(), res.getResult().get(maxRestaurants-1).getRestaurantId());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0], res.getResult().get(0).getRestaurantId());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[maxRestaurants-1], res.getResult().get(maxRestaurants-1).getRestaurantId());
     }
 
     @Test
@@ -331,7 +331,7 @@ public class RestaurantJpaDaoTest {
 
         PaginatedResult<RestaurantDetails> res = restaurantDao.search(restaurantName, 1, maxRestaurants, null, false, null, specialty);
         Assert.assertEquals(1, res.getResult().size());
-        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0].longValue(), res.getResult().get(0).getRestaurantId());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0], res.getResult().get(0).getRestaurantId());
     }
 
     @Test
@@ -343,7 +343,7 @@ public class RestaurantJpaDaoTest {
 
         PaginatedResult<RestaurantDetails> res = restaurantDao.search("", 1, maxRestaurants, null, false, tag, specialty);
         Assert.assertEquals(1, res.getResult().size());
-        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0].longValue(), res.getResult().get(0).getRestaurantId());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0], res.getResult().get(0).getRestaurantId());
     }
 
     @Test
@@ -360,6 +360,6 @@ public class RestaurantJpaDaoTest {
 
         PaginatedResult<RestaurantDetails> res = restaurantDao.search(restaurantName, 1, maxRestaurants, null, false, tag, specialty);
         Assert.assertEquals(1, res.getResult().size());
-        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0].longValue(), res.getResult().get(0).getRestaurantId());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0], res.getResult().get(0).getRestaurantId());
     }
 }

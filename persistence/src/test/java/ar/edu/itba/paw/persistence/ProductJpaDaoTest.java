@@ -66,7 +66,7 @@ public class ProductJpaDaoTest {
         Assert.assertEquals(ProductConstants.DEFAULT_PRODUCT_NAME, product.getName());
         Assert.assertEquals(ProductConstants.DEFAULT_PRODUCT_DESCRIPTION, product.getDescription());
         Assert.assertEquals(ProductConstants.DEFAULT_PRODUCT_PRICE, product.getPrice());
-        Assert.assertEquals(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_1[0].longValue(), product.getCategoryId());
+        Assert.assertEquals(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_1[0], product.getCategoryId());
         Assert.assertTrue(product.getAvailable());
         Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "products", "product_id = " + product.getProductId()));
     }
@@ -76,10 +76,10 @@ public class ProductJpaDaoTest {
         final Optional<Product> product = productDao.getById(ProductConstants.PRODUCT_DELETED_FROM_CATEGORY_RESTAURANT_0);
 
         Assert.assertTrue(product.isPresent());
-        Assert.assertEquals(ProductConstants.PRODUCT_DELETED_FROM_CATEGORY_RESTAURANT_0.longValue(), product.get().getProductId().intValue());
+        Assert.assertEquals(ProductConstants.PRODUCT_DELETED_FROM_CATEGORY_RESTAURANT_0, product.get().getProductId().longValue());
         Assert.assertEquals(ProductConstants.DEFAULT_PRODUCT_NAME, product.get().getName());
         Assert.assertEquals(ProductConstants.DEFAULT_PRODUCT_PRICE, product.get().getPrice());
-        Assert.assertEquals(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[0].longValue(), product.get().getCategoryId());
+        Assert.assertEquals(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[0], product.get().getCategoryId());
         Assert.assertEquals(ProductConstants.DEFAULT_PRODUCT_DESCRIPTION, product.get().getDescription());
         Assert.assertTrue(product.get().getAvailable());
         Assert.assertTrue(product.get().getDeleted());

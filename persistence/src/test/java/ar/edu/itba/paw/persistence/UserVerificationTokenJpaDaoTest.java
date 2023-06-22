@@ -58,7 +58,7 @@ public class UserVerificationTokenJpaDaoTest {
 
         Assert.assertNotNull(uvt);
         Assert.assertEquals(inactiveUser.getUserId(), uvt.getUser().getUserId());
-        Assert.assertEquals(inactiveUser.getUserId().intValue(), uvt.getUserId());
+        Assert.assertEquals(inactiveUser.getUserId().longValue(), uvt.getUserId());
         Assert.assertEquals(UserConstants.TOKEN1, uvt.getToken());
         Assert.assertEquals(UserConstants.TOKEN_EXPIRATION.getDayOfYear(), uvt.getExpires().getDayOfYear());
         Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "user_verification_tokens", "user_id = " + inactiveUser.getUserId() + " AND token = '" + UserConstants.TOKEN1 + "'"));
@@ -77,7 +77,7 @@ public class UserVerificationTokenJpaDaoTest {
 
         Assert.assertNotNull(uvt);
         Assert.assertEquals(activeUser.getUserId(), uvt.getUser().getUserId());
-        Assert.assertEquals(activeUser.getUserId().intValue(), uvt.getUserId());
+        Assert.assertEquals(activeUser.getUserId().longValue(), uvt.getUserId());
         Assert.assertEquals(UserConstants.TOKEN2, uvt.getToken());
         Assert.assertEquals(UserConstants.TOKEN_EXPIRATION.getDayOfYear(), uvt.getExpires().getDayOfYear());
         Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "user_verification_tokens", "user_id = " + activeUser.getUserId() + " AND token = '" + UserConstants.TOKEN2 + "'"));
@@ -101,7 +101,7 @@ public class UserVerificationTokenJpaDaoTest {
 
         Assert.assertTrue(uvt.isPresent());
         Assert.assertEquals(UserConstants.USER_ID_WITH_TOKENS, uvt.get().getUserId());
-        Assert.assertEquals(UserConstants.USER_ID_WITH_TOKENS, uvt.get().getUser().getUserId().intValue());
+        Assert.assertEquals(UserConstants.USER_ID_WITH_TOKENS, uvt.get().getUser().getUserId().longValue());
         Assert.assertEquals(UserConstants.ACTIVE_VERIFICATION_TOKEN, uvt.get().getToken());
         Assert.assertEquals(UserConstants.TOKEN_EXPIRATION.getDayOfYear(), uvt.get().getExpires().getDayOfYear());
     }
@@ -118,7 +118,7 @@ public class UserVerificationTokenJpaDaoTest {
 
         Assert.assertTrue(uvt.isPresent());
         Assert.assertEquals(UserConstants.USER_ID_WITH_TOKENS, uvt.get().getUserId());
-        Assert.assertEquals(UserConstants.USER_ID_WITH_TOKENS, uvt.get().getUser().getUserId().intValue());
+        Assert.assertEquals(UserConstants.USER_ID_WITH_TOKENS, uvt.get().getUser().getUserId().longValue());
         Assert.assertEquals(UserConstants.ACTIVE_VERIFICATION_TOKEN, uvt.get().getToken());
         Assert.assertEquals(UserConstants.TOKEN_EXPIRATION.getDayOfYear(), uvt.get().getExpires().getDayOfYear());
     }
@@ -162,7 +162,7 @@ public class UserVerificationTokenJpaDaoTest {
     public void testDeleteStaledNoExpiredTokens() {
         verificationDao.deleteStaledTokens();
         em.flush();
-        Assert.assertEquals(1, jdbcTemplate.queryForObject("SELECT COUNT(*) FROM user_verification_tokens WHERE expires > now()", Integer.class).intValue());
+        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "user_verification_tokens", "expires > now()"));
     }
 
     @Test

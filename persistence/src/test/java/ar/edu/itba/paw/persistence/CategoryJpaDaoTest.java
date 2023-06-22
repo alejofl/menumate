@@ -53,7 +53,7 @@ public class CategoryJpaDaoTest {
         em.flush();
 
         Assert.assertNotNull(category);
-        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0].longValue(), category.getRestaurantId());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0], category.getRestaurantId());
         Assert.assertEquals(CategoryConstants.CATEGORY_NAME, category.getName());
         Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "categories", "category_id = " + category.getCategoryId() + " AND name = '" + category.getName() + "' AND restaurant_id = " + category.getRestaurantId()));
     }
@@ -63,10 +63,10 @@ public class CategoryJpaDaoTest {
         final Optional<Category> category = categoryDao.getById(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_1[0]);
 
         Assert.assertTrue(category.isPresent());
-        Assert.assertEquals(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_1[0], category.get().getCategoryId());
+        Assert.assertEquals(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_1[0], category.get().getCategoryId().longValue());
         Assert.assertEquals(CategoryConstants.CATEGORY_NAME, category.get().getName());
-        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[1].longValue(), category.get().getRestaurantId());
-        Assert.assertEquals(CategoryConstants.CATEGORY_ORDER_FOR_RESTAURANT_1[0].intValue(), category.get().getOrderNum());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[1], category.get().getRestaurantId());
+        Assert.assertEquals(CategoryConstants.CATEGORY_ORDER_FOR_RESTAURANT_1[0], category.get().getOrderNum());
         Assert.assertFalse(category.get().getDeleted());
     }
 
@@ -75,10 +75,10 @@ public class CategoryJpaDaoTest {
         final Optional<Category> category = categoryDao.getById(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[2]);
 
         Assert.assertTrue(category.isPresent());
-        Assert.assertEquals(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[2], category.get().getCategoryId());
+        Assert.assertEquals(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[2], category.get().getCategoryId().longValue());
         Assert.assertEquals(CategoryConstants.CATEGORY_NAME, category.get().getName());
-        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0].longValue(), category.get().getRestaurantId());
-        Assert.assertEquals(CategoryConstants.CATEGORY_ORDER_FOR_RESTAURANT_0[2].intValue(), category.get().getOrderNum());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0], category.get().getRestaurantId());
+        Assert.assertEquals(CategoryConstants.CATEGORY_ORDER_FOR_RESTAURANT_0[2], category.get().getOrderNum());
         Assert.assertTrue(category.get().getDeleted());
     }
 
@@ -89,10 +89,10 @@ public class CategoryJpaDaoTest {
         Assert.assertNotNull(categories);
         Assert.assertEquals(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_1.length, categories.size());
         for (int i=0; i<CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_1.length; i++) {
-            Assert.assertEquals(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_1[i], categories.get(i).getCategoryId());
-            Assert.assertEquals(CategoryConstants.CATEGORY_ORDER_FOR_RESTAURANT_1[i].intValue(), categories.get(i).getOrderNum());
+            Assert.assertEquals(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_1[i], categories.get(i).getCategoryId().longValue());
+            Assert.assertEquals(CategoryConstants.CATEGORY_ORDER_FOR_RESTAURANT_1[i], categories.get(i).getOrderNum());
             Assert.assertEquals(CategoryConstants.CATEGORY_NAME, categories.get(i).getName());
-            Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[1].longValue(), categories.get(i).getRestaurantId());
+            Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[1], categories.get(i).getRestaurantId());
         }
     }
 
@@ -103,10 +103,10 @@ public class CategoryJpaDaoTest {
         Assert.assertNotNull(categories);
         Assert.assertEquals(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0.length - 1, categories.size());
         for (int i=0; i<CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0.length - 1; i++) {
-            Assert.assertEquals(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[i], categories.get(i).getCategoryId());
-            Assert.assertEquals(CategoryConstants.CATEGORY_ORDER_FOR_RESTAURANT_0[i].intValue(), categories.get(i).getOrderNum());
+            Assert.assertEquals(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[i], categories.get(i).getCategoryId().longValue());
+            Assert.assertEquals(CategoryConstants.CATEGORY_ORDER_FOR_RESTAURANT_0[i], categories.get(i).getOrderNum());
             Assert.assertEquals(CategoryConstants.CATEGORY_NAME, categories.get(i).getName());
-            Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0].longValue(), categories.get(i).getRestaurantId());
+            Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0], categories.get(i).getRestaurantId());
         }
     }
 
@@ -125,10 +125,10 @@ public class CategoryJpaDaoTest {
 
         Assert.assertTrue(category.isPresent());
         Assert.assertFalse(category.get().getDeleted());
-        Assert.assertEquals(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[0], category.get().getCategoryId());
+        Assert.assertEquals(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[0], category.get().getCategoryId().longValue());
         Assert.assertEquals(CategoryConstants.CATEGORY_NAME, category.get().getName());
-        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0].longValue(), category.get().getRestaurantId());
-        Assert.assertEquals(CategoryConstants.CATEGORY_ORDER_FOR_RESTAURANT_0[0].intValue(), category.get().getOrderNum());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0], category.get().getRestaurantId());
+        Assert.assertEquals(CategoryConstants.CATEGORY_ORDER_FOR_RESTAURANT_0[0], category.get().getOrderNum());
     }
 
     @Test
@@ -137,10 +137,10 @@ public class CategoryJpaDaoTest {
 
         Assert.assertTrue(category.isPresent());
         Assert.assertTrue(category.get().getDeleted());
-        Assert.assertEquals(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[2], category.get().getCategoryId());
+        Assert.assertEquals(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[2], category.get().getCategoryId().longValue());
         Assert.assertEquals(CategoryConstants.CATEGORY_NAME, category.get().getName());
-        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0].longValue(), category.get().getRestaurantId());
-        Assert.assertEquals(CategoryConstants.CATEGORY_ORDER_FOR_RESTAURANT_0[2].intValue(), category.get().getOrderNum());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0], category.get().getRestaurantId());
+        Assert.assertEquals(CategoryConstants.CATEGORY_ORDER_FOR_RESTAURANT_0[2], category.get().getOrderNum());
     }
 
     @Test(expected = CategoryNotFoundException.class)
@@ -163,9 +163,10 @@ public class CategoryJpaDaoTest {
         Assert.assertEquals(CategoryConstants.TOTAL_COUNT - 2, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "categories", "restaurant_id = " + RestaurantConstants.RESTAURANT_IDS[0]));
     }
 
+// NOTE: This currently can't be tested because swapOrder uses deferred constraints, which HSQLDB doesn't support.
 //    @Test
 //    @Rollback
-//    public void testSwapOrder() throws SQLException {
+//    public void testSwapOrder() {
 //        categoryDao.swapOrder(RestaurantConstants.RESTAURANT_IDS[0], CategoryConstants.CATEGORY_ORDER_FOR_RESTAURANT_0[0], CategoryConstants.CATEGORY_ORDER_FOR_RESTAURANT_0[1]);
 //        em.flush();
 //

@@ -14,7 +14,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "orders_order_id_seq")
     @SequenceGenerator(sequenceName = "orders_order_id_seq", name = "orders_order_id_seq", allocationSize = 1)
     @Column(name = "order_id")
-    private long orderId;
+    private Long orderId;
 
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "order_type")
@@ -79,7 +79,7 @@ public class Order {
         this.items = new ArrayList<>();
     }
 
-    public long getOrderId() {
+    public Long getOrderId() {
         return orderId;
     }
 

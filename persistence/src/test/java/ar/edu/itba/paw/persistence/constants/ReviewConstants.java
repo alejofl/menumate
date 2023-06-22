@@ -21,15 +21,15 @@ public final class ReviewConstants {
     public static final String DEFAULT_REVIEW_REPLY = "reply";
     public static final int DEFAULT_REVIEW_RATING = 5;
 
-    public static final List<List<Double>> VALUES = Arrays.asList(
-            Arrays.asList(1.0, 1.0, 3.0, 5.0, 5.0, 5.0),
-            Arrays.asList(2.0, 2.0, 2.0, 2.0, 2.0, 2.0),
-            Arrays.asList(3.0, 3.0, 3.0, 3.0, 3.0, 3.0),
-            Arrays.asList(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    public static final List<List<Integer>> VALUES = Arrays.asList(
+            Arrays.asList(1, 1, 3, 5, 5, 5),
+            Arrays.asList(2, 2, 2, 2, 2, 2),
+            Arrays.asList(3, 3, 3, 3, 3, 3),
+            Arrays.asList(0, 0, 0, 0, 0, 0)
     );
     public static final List<Double> AVERAGE_LIST = VALUES.stream()
             .mapToDouble(sublist -> sublist.stream()
-                    .mapToDouble(Double::doubleValue)
+                    .mapToDouble(Integer::doubleValue)
                     .average()
                     .orElse(0.0))
             .boxed()

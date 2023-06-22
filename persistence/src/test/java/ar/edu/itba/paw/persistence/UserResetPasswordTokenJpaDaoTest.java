@@ -58,7 +58,7 @@ public class UserResetPasswordTokenJpaDaoTest {
 
         Assert.assertNotNull(urpt);
         Assert.assertEquals(inactiveUser.getUserId(), urpt.getUser().getUserId());
-        Assert.assertEquals(inactiveUser.getUserId().intValue(), urpt.getUserId());
+        Assert.assertEquals(inactiveUser.getUserId().longValue(), urpt.getUserId());
         Assert.assertEquals(UserConstants.TOKEN1, urpt.getToken());
         Assert.assertEquals(UserConstants.TOKEN_EXPIRATION.getDayOfYear(), urpt.getExpires().getDayOfYear());
         Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "user_resetpassword_tokens", "user_id = " + inactiveUser.getUserId() + " AND token = '" + UserConstants.TOKEN1 + "'"));
@@ -77,7 +77,7 @@ public class UserResetPasswordTokenJpaDaoTest {
 
         Assert.assertNotNull(urpt);
         Assert.assertEquals(activeUser.getUserId(), urpt.getUser().getUserId());
-        Assert.assertEquals(activeUser.getUserId().intValue(), urpt.getUserId());
+        Assert.assertEquals(activeUser.getUserId().longValue(), urpt.getUserId());
         Assert.assertEquals(UserConstants.TOKEN2, urpt.getToken());
         Assert.assertEquals(UserConstants.TOKEN_EXPIRATION.getDayOfYear(), urpt.getExpires().getDayOfYear());
         Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "user_resetpassword_tokens", "user_id = " + activeUser.getUserId() + " AND token = '" + UserConstants.TOKEN2 + "'"));
@@ -101,7 +101,7 @@ public class UserResetPasswordTokenJpaDaoTest {
 
         Assert.assertTrue(urpt.isPresent());
         Assert.assertEquals(UserConstants.USER_ID_WITH_TOKENS, urpt.get().getUserId());
-        Assert.assertEquals(UserConstants.USER_ID_WITH_TOKENS, urpt.get().getUser().getUserId().intValue());
+        Assert.assertEquals(UserConstants.USER_ID_WITH_TOKENS, urpt.get().getUser().getUserId().longValue());
         Assert.assertEquals(UserConstants.ACTIVE_RESET_PASSWORD_TOKEN, urpt.get().getToken());
         Assert.assertEquals(UserConstants.TOKEN_EXPIRATION.getDayOfYear(), urpt.get().getExpires().getDayOfYear());
     }
@@ -118,7 +118,7 @@ public class UserResetPasswordTokenJpaDaoTest {
 
         Assert.assertTrue(urpt.isPresent());
         Assert.assertEquals(UserConstants.USER_ID_WITH_TOKENS, urpt.get().getUserId());
-        Assert.assertEquals(UserConstants.USER_ID_WITH_TOKENS, urpt.get().getUser().getUserId().intValue());
+        Assert.assertEquals(UserConstants.USER_ID_WITH_TOKENS, urpt.get().getUser().getUserId().longValue());
         Assert.assertEquals(UserConstants.ACTIVE_RESET_PASSWORD_TOKEN, urpt.get().getToken());
         Assert.assertEquals(UserConstants.TOKEN_EXPIRATION.getDayOfYear(), urpt.get().getExpires().getDayOfYear());
     }
@@ -162,7 +162,7 @@ public class UserResetPasswordTokenJpaDaoTest {
     public void testDeleteStaledNoExpiredTokens() {
         resetPasswordTokenDao.deleteStaledTokens();
         em.flush();
-        Assert.assertEquals(1, jdbcTemplate.queryForObject("SELECT COUNT(*) FROM user_resetpassword_tokens WHERE expires > now()", Integer.class).intValue());
+        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "user_resetpassword_tokens", "expires > now()"));
     }
 
     @Test

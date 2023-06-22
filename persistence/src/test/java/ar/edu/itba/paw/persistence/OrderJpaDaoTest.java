@@ -53,7 +53,7 @@ public class OrderJpaDaoTest {
         em.flush();
 
         Assert.assertEquals(OrderType.DINE_IN, order.getOrderType());
-        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0].longValue(), order.getRestaurantId());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0], order.getRestaurantId());
         Assert.assertEquals(UserConstants.ACTIVE_USER_ID, order.getUserId());
     }
 
@@ -64,7 +64,7 @@ public class OrderJpaDaoTest {
         em.flush();
 
         Assert.assertEquals(OrderType.TAKEAWAY, order.getOrderType());
-        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0].longValue(), order.getRestaurantId());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0], order.getRestaurantId());
         Assert.assertEquals(UserConstants.ACTIVE_USER_ID, order.getUserId());
     }
 
@@ -75,7 +75,7 @@ public class OrderJpaDaoTest {
         em.flush();
 
         Assert.assertEquals(OrderType.DELIVERY, order.getOrderType());
-        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0].longValue(), order.getRestaurantId());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0], order.getRestaurantId());
         Assert.assertEquals(UserConstants.ACTIVE_USER_ID, order.getUserId());
         Assert.assertEquals(OrderConstants.DEFAULT_ORDER_ADDRESS, order.getAddress());
     }
@@ -85,8 +85,8 @@ public class OrderJpaDaoTest {
         Optional<Order> order = orderDao.getById(OrderConstants.ORDER_IDS_RESTAURANT_0[0]);
 
         Assert.assertTrue(order.isPresent());
-        Assert.assertEquals(OrderConstants.ORDER_IDS_RESTAURANT_0[0].longValue(), order.get().getOrderId());
-        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0].longValue(), order.get().getRestaurantId());
+        Assert.assertEquals(OrderConstants.ORDER_IDS_RESTAURANT_0[0], order.get().getOrderId().longValue());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0], order.get().getRestaurantId());
         Assert.assertEquals(UserConstants.ACTIVE_USER_ID, order.get().getUserId());
         Assert.assertEquals(OrderConstants.DEFAULT_ORDER_TYPE, order.get().getOrderType());
         Assert.assertNotNull(order.get().getDateOrdered());
@@ -101,10 +101,10 @@ public class OrderJpaDaoTest {
         Assert.assertNotNull(orderItems);
         Assert.assertEquals(1, orderItems.size());
         for (OrderItem oi: orderItems) {
-            Assert.assertEquals(ProductConstants.PRODUCTS_FOR_ORDER_IDS[0], oi.getProduct().getProductId());
+            Assert.assertEquals(ProductConstants.PRODUCTS_FOR_ORDER_IDS[0], oi.getProduct().getProductId().longValue());
             Assert.assertEquals(ProductConstants.DEFAULT_ORDER_ITEM_QUANTITY, oi.getQuantity());
             Assert.assertEquals(ProductConstants.DEFAULT_ORDER_ITEM_COMMENT, oi.getComment());
-            Assert.assertEquals(ProductConstants.LINE_NUMBER_FOR_ORDER_IDS[0].longValue(), oi.getLineNumber());
+            Assert.assertEquals(ProductConstants.LINE_NUMBER_FOR_ORDER_IDS[0], oi.getLineNumber());
         }
     }
 
@@ -145,8 +145,8 @@ public class OrderJpaDaoTest {
 
         List<Order> allOrders = page.getResult();
         for (int i = 0; i < totalOrders; i++) {
-            Assert.assertEquals(OrderConstants.ORDER_IDS_RESTAURANT_0[i].longValue(), allOrders.get(i).getOrderId());
-            Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0], allOrders.get(i).getRestaurant().getRestaurantId());
+            Assert.assertEquals(OrderConstants.ORDER_IDS_RESTAURANT_0[i], allOrders.get(i).getOrderId().longValue());
+            Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0], allOrders.get(i).getRestaurantId());
             Assert.assertEquals(UserConstants.ACTIVE_USER_ID, allOrders.get(i).getUserId());
             Assert.assertEquals(OrderConstants.DEFAULT_ORDER_TYPE, allOrders.get(i).getOrderType());
             Assert.assertNotNull(allOrders.get(i).getDateOrdered());
@@ -169,8 +169,8 @@ public class OrderJpaDaoTest {
 
         List<Order> allOrders = page.getResult();
         for (int i = 0; i < totalOrders; i++) {
-            Assert.assertEquals(OrderConstants.ORDER_IDS_RESTAURANT_1[i].longValue(), allOrders.get(i).getOrderId());
-            Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[1], allOrders.get(i).getRestaurant().getRestaurantId());
+            Assert.assertEquals(OrderConstants.ORDER_IDS_RESTAURANT_1[i], allOrders.get(i).getOrderId().longValue());
+            Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[1], allOrders.get(i).getRestaurantId());
             Assert.assertEquals(UserConstants.ACTIVE_USER_ID, allOrders.get(i).getUserId());
             Assert.assertEquals(OrderConstants.DEFAULT_ORDER_TYPE, allOrders.get(i).getOrderType());
             Assert.assertNotNull(allOrders.get(i).getDateOrdered());

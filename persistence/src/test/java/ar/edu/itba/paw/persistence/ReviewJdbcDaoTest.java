@@ -80,7 +80,7 @@ public class ReviewJdbcDaoTest {
         Optional<Review> review1 = reviewDao.getByOrder(OrderConstants.ORDER_IDS_RESTAURANT_0[0]);
 
         Assert.assertTrue(review1.isPresent());
-        Assert.assertEquals(OrderConstants.ORDER_IDS_RESTAURANT_0[0].longValue(), review1.get().getOrder().getOrderId());
+        Assert.assertEquals(OrderConstants.ORDER_IDS_RESTAURANT_0[0], review1.get().getOrder().getOrderId().longValue());
         Assert.assertNotNull(review1.get().getComment());
         Assert.assertEquals(ReviewConstants.VALUES.get(0).get(0).intValue(), review1.get().getRating());
     }
@@ -105,7 +105,7 @@ public class ReviewJdbcDaoTest {
     	PaginatedResult<Review> result = reviewDao.getByRestaurant(RestaurantConstants.RESTAURANT_IDS[0], 1, totalOrders);
         for(int i=0; i < totalOrders; i++) {
             Review review = result.getResult().get(i);
-            Assert.assertEquals(OrderConstants.ORDER_IDS_RESTAURANT_0[totalOrders-i-1].longValue(), review.getOrder().getOrderId());
+            Assert.assertEquals(OrderConstants.ORDER_IDS_RESTAURANT_0[totalOrders-i-1], review.getOrder().getOrderId().longValue());
             Assert.assertNotNull(review.getComment());
             Assert.assertEquals(ReviewConstants.VALUES.get(0).get(totalOrders-i-1).intValue(), review.getRating());
         }
@@ -130,11 +130,13 @@ public class ReviewJdbcDaoTest {
         Assert.assertEquals(OrderConstants.TOTAL_ORDER_COUNT, result.getResult().size());
         for(int i=0; i < OrderConstants.TOTAL_ORDER_COUNT; i++) {
             Review review = result.getResult().get(i);
+
             Assert.assertTrue(
-            Arrays.asList(OrderConstants.ORDER_IDS_RESTAURANT_0).contains(review.getOrder().getOrderId()) ||
-                    Arrays.asList(OrderConstants.ORDER_IDS_RESTAURANT_1).contains(review.getOrder().getOrderId()) ||
-                    Arrays.asList(OrderConstants.ORDER_IDS_RESTAURANT_2).contains(review.getOrder().getOrderId())
+            Arrays.stream(OrderConstants.ORDER_IDS_RESTAURANT_0).anyMatch(id -> id == review.getOrder().getOrderId()) ||
+                    Arrays.stream(OrderConstants.ORDER_IDS_RESTAURANT_1).anyMatch(id -> id == review.getOrder().getOrderId().longValue()) ||
+                    Arrays.stream(OrderConstants.ORDER_IDS_RESTAURANT_2).anyMatch(id -> id == review.getOrder().getOrderId().longValue())
             );
+
             Assert.assertNotNull(review.getComment());
         }
     }
@@ -162,7 +164,7 @@ public class ReviewJdbcDaoTest {
 
     @Test
     public void testAverageSinceWithOne() {
-        final List<Double> averageList = ReviewConstants.VALUES.get(0);
+        final List<Integer> averageList = ReviewConstants.VALUES.get(0);
         final int value = averageList.size() - 1;
 
         AverageCountPair ac = reviewDao.getRestaurantAverageSince(RestaurantConstants.RESTAURANT_IDS[0], LocalDateTime.now().plusDays(value));
@@ -172,7 +174,7 @@ public class ReviewJdbcDaoTest {
 
     @Test
     public void testAverageSinceWithTwo() {
-        final List<Double> averageList = ReviewConstants.VALUES.get(0);
+        final List<Integer> averageList = ReviewConstants.VALUES.get(0);
         final int value = averageList.size() - 2;
 
         AverageCountPair ac = reviewDao.getRestaurantAverageSince(RestaurantConstants.RESTAURANT_IDS[0], LocalDateTime.now().plusDays(value));
