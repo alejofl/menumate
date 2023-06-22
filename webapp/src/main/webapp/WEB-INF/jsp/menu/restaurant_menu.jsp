@@ -33,20 +33,31 @@
                     </c:otherwise>
                 </c:choose>
                 <p><i class="bi bi-geo-alt"></i> <c:out value="${restaurant.address}"/></p>
-                <div class="d-flex align-items-baseline">
-                    <div class="small-ratings">
-                        <c:forEach begin="1" end="${average}">
-                            <i class="bi bi-star-fill rating-color"></i>
-                        </c:forEach>
-                        <c:forEach begin="1" end="${5 - average}">
-                            <i class="bi bi-star-fill"></i>
-                        </c:forEach>
-                    </div>
-                    <small class="text-muted ms-2">
-                        <spring:message code="restaurants.ratingcount" arguments="${ratingCount}"/>
-                    </small>
-                </div>
-                <a href="" data-bs-toggle="modal" data-bs-target="#view-reviews-modal"><small><spring:message code="restaurant.menu.viewreviews"/></small></a>
+                <c:choose>
+                    <c:when test="${ratingCount == 0}">
+                        <small class="text-muted">
+                            <spring:message code="restaurants.noreviews"/>
+                        </small>
+                    </c:when>
+                    <c:otherwise>
+                        <div class="d-flex align-items-baseline">
+                            <div class="small-ratings">
+                                <c:forEach begin="1" end="${average}">
+                                    <i class="bi bi-star-fill rating-color"></i>
+                                </c:forEach>
+                                <c:forEach begin="1" end="${5 - average}">
+                                    <i class="bi bi-star-fill"></i>
+                                </c:forEach>
+                            </div>
+                            <small class="text-muted ms-2">
+                                <spring:message code="restaurants.ratingcount" arguments="${ratingCount}"/>
+                            </small>
+                        </div>
+                        <a href="" data-bs-toggle="modal" data-bs-target="#view-reviews-modal">
+                            <small><spring:message code="restaurant.menu.viewreviews"/></small>
+                        </a>
+                    </c:otherwise>
+                </c:choose>
                 <div class="tags-container">
                     <c:forEach var="tag" items="${tags}">
                         <c:url value="/restaurants" var="tagUrl">
