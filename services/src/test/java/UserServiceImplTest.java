@@ -16,7 +16,6 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import javax.mail.MessagingException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -58,7 +57,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void testCreateOrConsolidateNewUser() throws MessagingException {
+    public void testCreateOrConsolidateNewUser() {
         final User user = mock(User.class);
         Mockito.when(user.getEmail()).thenReturn(EMAIL);
         Mockito.when(user.getPassword()).thenReturn(PASSWORD);
@@ -75,7 +74,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void testConsolidate() throws MessagingException {
+    public void testConsolidate() {
         final User user = Mockito.spy(User.class);
         user.setName(null);
         user.setPassword(null);
@@ -94,7 +93,7 @@ public class UserServiceImplTest {
     }
 
     @Test(expected = IllegalStateException.class)
-    public void testConsolidateExistingUser() throws MessagingException {
+    public void testConsolidateExistingUser() {
         final User existingUser = mock(User.class);
         Mockito.when(existingUser.getPassword()).thenReturn(PASSWORD);
         Mockito.when(userDao.getByEmail(EMAIL)).thenReturn(Optional.of(existingUser));
@@ -103,7 +102,7 @@ public class UserServiceImplTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testConsolidateExistingUserWithNullPassword() throws MessagingException {
+    public void testConsolidateExistingUserWithNullPassword() {
         final User consolidated = Mockito.spy(User.class);
         Mockito.when(userDao.getByEmail(EMAIL)).thenReturn(Optional.of(consolidated));
 

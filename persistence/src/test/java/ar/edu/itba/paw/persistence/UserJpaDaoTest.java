@@ -18,7 +18,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.sql.DataSource;
-import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -49,7 +48,7 @@ public class UserJpaDaoTest {
     }
 
     @Test
-    public void testFindActiveUserById() throws SQLException {
+    public void testFindActiveUserById() {
         Optional<User> maybeUser = userDao.getById(UserConstants.ACTIVE_USER_ID);
 
         Assert.assertTrue(maybeUser.isPresent());
@@ -61,7 +60,7 @@ public class UserJpaDaoTest {
     }
 
     @Test
-    public void testFindNonActiveUserById() throws SQLException {
+    public void testFindNonActiveUserById() {
         Optional<User> maybeUser = userDao.getById(UserConstants.INACTIVE_USER_ID);
 
         Assert.assertTrue(maybeUser.isPresent());
@@ -73,7 +72,7 @@ public class UserJpaDaoTest {
     }
 
     @Test
-    public void testFindActiveUserByEmail() throws SQLException {
+    public void testFindActiveUserByEmail() {
         Optional<User> maybeUser = userDao.getByEmail(UserConstants.ACTIVE_USER_EMAIL);
 
         Assert.assertTrue(maybeUser.isPresent());
@@ -86,13 +85,13 @@ public class UserJpaDaoTest {
     }
 
     @Test
-    public void testFindByIdDoesNotExist() throws SQLException {
+    public void testFindByIdDoesNotExist() {
         Optional<User> maybeUser = userDao.getById(NON_EXISTENT_USER_ID);
         Assert.assertFalse(maybeUser.isPresent());
     }
 
     @Test
-    public void testFindByEmailDoesNotExist() throws SQLException {
+    public void testFindByEmailDoesNotExist() {
         Optional<User> maybeUser = userDao.getByEmail(NON_EXISTENT_USER_EMAIL);
         Assert.assertFalse(maybeUser.isPresent());
     }

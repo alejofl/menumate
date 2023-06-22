@@ -12,7 +12,7 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
     private static final Logger LOGGER = LoggerFactory.getLogger(LoggerInterceptor.class);
 
     @Override
-    public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
+    public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) {
         LOGGER.info("[{}] {}", httpServletRequest.getMethod(), httpServletRequest.getRequestURI());
         return true;
     }

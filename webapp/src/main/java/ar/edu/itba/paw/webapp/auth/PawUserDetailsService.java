@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.webapp.auth;
 
 import ar.edu.itba.paw.model.User;
-import ar.edu.itba.paw.model.UserRole;
 import ar.edu.itba.paw.model.UserRoleLevel;
 import ar.edu.itba.paw.service.UserRoleService;
 import ar.edu.itba.paw.service.UserService;

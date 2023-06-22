@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,7 +48,7 @@ public class CategoryJpaDaoTest {
 
     @Test
     @Rollback
-    public void testCreate() throws SQLException {
+    public void testCreate() {
         final Category category = categoryDao.create(RestaurantConstants.RESTAURANT_IDS[0], CategoryConstants.CATEGORY_NAME);
         em.flush();
 
@@ -60,7 +59,7 @@ public class CategoryJpaDaoTest {
     }
 
     @Test
-    public void testGetCategoryById() throws SQLException {
+    public void testGetCategoryById() {
         final Optional<Category> category = categoryDao.getById(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_1[0]);
 
         Assert.assertTrue(category.isPresent());
@@ -72,7 +71,7 @@ public class CategoryJpaDaoTest {
     }
 
     @Test
-    public void testGetDeletedCategoryById() throws SQLException {
+    public void testGetDeletedCategoryById() {
         final Optional<Category> category = categoryDao.getById(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[2]);
 
         Assert.assertTrue(category.isPresent());
@@ -84,7 +83,7 @@ public class CategoryJpaDaoTest {
     }
 
     @Test
-    public void testFindByRestaurantId() throws SQLException {
+    public void testFindByRestaurantId() {
         final List<Category> categories = categoryDao.getByRestaurantSortedByOrder(RestaurantConstants.RESTAURANT_IDS[1]);
 
         Assert.assertNotNull(categories);
@@ -98,7 +97,7 @@ public class CategoryJpaDaoTest {
     }
 
     @Test
-    public void testFindByRestaurantIdWithDeletedCategory() throws SQLException {
+    public void testFindByRestaurantIdWithDeletedCategory() {
         final List<Category> categories = categoryDao.getByRestaurantSortedByOrder(RestaurantConstants.RESTAURANT_IDS[0]);
 
         Assert.assertNotNull(categories);
@@ -112,7 +111,7 @@ public class CategoryJpaDaoTest {
     }
 
     @Test
-    public void testFindByRestaurantIdWithNoCategories() throws SQLException {
+    public void testFindByRestaurantIdWithNoCategories() {
 
         final List<Category> categories = categoryDao.getByRestaurantSortedByOrder(RestaurantConstants.RESTAURANT_IDS[2]);
 
@@ -121,7 +120,7 @@ public class CategoryJpaDaoTest {
     }
 
     @Test
-    public void testFindByRestaurantAndOrderNum() throws SQLException {
+    public void testFindByRestaurantAndOrderNum() {
         final Optional<Category> category = categoryDao.getByRestaurantAndOrderNum(RestaurantConstants.RESTAURANT_IDS[0], CategoryConstants.CATEGORY_ORDER_FOR_RESTAURANT_0[0]);
 
         Assert.assertTrue(category.isPresent());
@@ -133,7 +132,7 @@ public class CategoryJpaDaoTest {
     }
 
     @Test
-    public void testFindDeletedCategoryByRestaurantAndOrderNum() throws SQLException {
+    public void testFindDeletedCategoryByRestaurantAndOrderNum() {
         final Optional<Category> category = categoryDao.getByRestaurantAndOrderNum(RestaurantConstants.RESTAURANT_IDS[0], CategoryConstants.CATEGORY_ORDER_FOR_RESTAURANT_0[2]);
 
         Assert.assertTrue(category.isPresent());
@@ -145,18 +144,18 @@ public class CategoryJpaDaoTest {
     }
 
     @Test(expected = CategoryNotFoundException.class)
-    public void testDeleteNonExistingCategory() throws SQLException {
+    public void testDeleteNonExistingCategory() {
         categoryDao.delete(NON_EXISTING_CATEGORY_ID);
     }
 
     @Test(expected = IllegalStateException.class)
-    public void testDeleteDeletedCategory() throws SQLException {
+    public void testDeleteDeletedCategory() {
         categoryDao.delete(CategoryConstants.DELETED_CATEGORY_ID);
     }
 
     @Test
     @Rollback
-    public void testDeleteCategory() throws SQLException {
+    public void testDeleteCategory() {
         categoryDao.delete(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[0]);
         em.flush();
         Assert.assertEquals(2, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "categories", "restaurant_id = " + RestaurantConstants.RESTAURANT_IDS[0] + " AND deleted = true"));

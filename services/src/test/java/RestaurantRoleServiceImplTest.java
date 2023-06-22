@@ -17,7 +17,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.junit.*;
 
-import javax.mail.MessagingException;
 import java.util.Optional;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -90,7 +89,7 @@ public class RestaurantRoleServiceImplTest {
     }
 
     @Test
-    public void createUserAndSetsRole() throws MessagingException {
+    public void createUserAndSetsRole() {
         final User user = Mockito.mock(User.class);
         final Restaurant restaurant = Mockito.mock(Restaurant.class);
 

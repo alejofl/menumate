@@ -17,7 +17,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import javax.mail.MessagingException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -53,7 +52,7 @@ public class TokenServiceImplTest {
     }
 
     @Test
-    public void testSendUserVerificationTokenUserIsActive() throws MessagingException {
+    public void testSendUserVerificationTokenUserIsActive() {
         final User user = mock(User.class);
         Mockito.when(user.getIsActive()).thenReturn(true);
 
@@ -65,7 +64,7 @@ public class TokenServiceImplTest {
     }
 
     @Test
-    public void testSendUserVerificationTokenInactiveUserNoExistingToken() throws MessagingException {
+    public void testSendUserVerificationTokenInactiveUserNoExistingToken() {
         final User user = mock(User.class);
         Mockito.when(user.getIsActive()).thenReturn(false);
         Mockito.when(user.getUserId()).thenReturn(USER_ID);
@@ -84,7 +83,7 @@ public class TokenServiceImplTest {
     }
 
     @Test
-    public void testSendUserVerificationTokenInactiveUserExpiredToken() throws MessagingException {
+    public void testSendUserVerificationTokenInactiveUserExpiredToken() {
         final User user = mock(User.class);
         when(user.getIsActive()).thenReturn(false);
         when(user.getUserId()).thenReturn(USER_ID);
@@ -104,7 +103,7 @@ public class TokenServiceImplTest {
     }
 
     @Test
-    public void testSendPasswordResetToken() throws MessagingException {
+    public void testSendPasswordResetToken() {
         final User user = mock(User.class);
         Mockito.when(user.getIsActive()).thenReturn(true);
         Mockito.when(user.getUserId()).thenReturn(USER_ID);
@@ -123,7 +122,7 @@ public class TokenServiceImplTest {
     }
 
     @Test
-    public void testSendPasswordResetTokenInactiveUser() throws MessagingException {
+    public void testSendPasswordResetTokenInactiveUser() {
         final User user = mock(User.class);
         Mockito.when(user.getIsActive()).thenReturn(false);
         Mockito.when(user.getUserId()).thenReturn(USER_ID);
@@ -136,7 +135,7 @@ public class TokenServiceImplTest {
     }
 
     @Test
-    public void testSendPasswordResetTokenExpiredToken() throws MessagingException {
+    public void testSendPasswordResetTokenExpiredToken() {
         final User user = mock(User.class);
         Mockito.when(user.getIsActive()).thenReturn(true);
         Mockito.when(user.getUserId()).thenReturn(USER_ID);

@@ -406,7 +406,7 @@ public class UserController {
             @PathVariable final int id,
             @Valid @ModelAttribute("createPromotionForm") final CreatePromotionForm createPromotionForm,
             final BindingResult errors
-    ) throws IOException {
+    ) {
         if (errors.hasErrors()) {
             return editRestaurant(
                     id,

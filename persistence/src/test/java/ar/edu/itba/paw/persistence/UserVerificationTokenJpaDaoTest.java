@@ -21,7 +21,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.sql.DataSource;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -48,7 +47,7 @@ public class UserVerificationTokenJpaDaoTest {
 
     @Test
     @Rollback
-    public void testCreateForInactiveUser() throws SQLException {
+    public void testCreateForInactiveUser() {
         final User inactiveUser = em.find(User.class, UserConstants.INACTIVE_USER_ID);
         final UserVerificationToken uvt = verificationDao.create(
                 inactiveUser,
@@ -67,7 +66,7 @@ public class UserVerificationTokenJpaDaoTest {
 
     @Test
     @Rollback
-    public void testCreateForActiveUser() throws SQLException {
+    public void testCreateForActiveUser() {
         final User activeUser = em.find(User.class, UserConstants.ACTIVE_USER_ID);
         final UserVerificationToken uvt = verificationDao.create(
                 activeUser,
@@ -86,7 +85,7 @@ public class UserVerificationTokenJpaDaoTest {
 
     @Test(expected = PersistenceException.class)
     @Rollback
-    public void testCreateForUserWithActiveToken() throws SQLException {
+    public void testCreateForUserWithActiveToken() {
         User userWithToken = em.find(User.class, UserConstants.USER_ID_WITH_TOKENS);
         final UserVerificationToken uvt = verificationDao.create(
                 userWithToken,
@@ -97,7 +96,7 @@ public class UserVerificationTokenJpaDaoTest {
     }
 
     @Test
-    public void testGetByUserId() throws SQLException {
+    public void testGetByUserId() {
         final Optional<UserVerificationToken> uvt = verificationDao.getByUserId(UserConstants.USER_ID_WITH_TOKENS);
 
         Assert.assertTrue(uvt.isPresent());
@@ -108,13 +107,13 @@ public class UserVerificationTokenJpaDaoTest {
     }
 
     @Test
-    public void testGetByUserIdNoActiveToken() throws SQLException {
+    public void testGetByUserIdNoActiveToken() {
         final Optional<UserVerificationToken> uvt = verificationDao.getByUserId(UserConstants.INACTIVE_USER_ID);
         Assert.assertFalse(uvt.isPresent());
     }
 
     @Test
-    public void testGetByToken() throws SQLException {
+    public void testGetByToken() {
         final Optional<UserVerificationToken> uvt = verificationDao.getByToken(UserConstants.ACTIVE_VERIFICATION_TOKEN);
 
         Assert.assertTrue(uvt.isPresent());
@@ -125,14 +124,14 @@ public class UserVerificationTokenJpaDaoTest {
     }
 
     @Test
-    public void testGetByTokenNoActiveToken() throws SQLException {
+    public void testGetByTokenNoActiveToken() {
         final Optional<UserVerificationToken> uvt = verificationDao.getByToken(UserConstants.TOKEN1);
         Assert.assertFalse(uvt.isPresent());
     }
 
     @Test
     @Rollback
-    public void testDeleteToken() throws SQLException {
+    public void testDeleteToken() {
         final UserVerificationToken uvt = em.find(UserVerificationToken.class, UserConstants.USER_ID_WITH_TOKENS);
 
         verificationDao.delete(uvt);
@@ -142,7 +141,7 @@ public class UserVerificationTokenJpaDaoTest {
     }
 
     @Test
-    public void testDeleteNoToken() throws SQLException {
+    public void testDeleteNoToken() {
         final User user = em.find(User.class, UserConstants.INACTIVE_USER_ID);
         final UserVerificationToken uvt = new UserVerificationToken(user, UserConstants.ACTIVE_RESET_PASSWORD_TOKEN, UserConstants.TOKEN_EXPIRATION);
         verificationDao.delete(uvt);
@@ -154,13 +153,13 @@ public class UserVerificationTokenJpaDaoTest {
 
     @Test
     @Rollback
-    public void testDeleteStaledNoTokens() throws SQLException {
+    public void testDeleteStaledNoTokens() {
         verificationDao.deleteStaledTokens();
         em.flush();
     }
 
     @Test
-    public void testDeleteStaledNoExpiredTokens() throws SQLException {
+    public void testDeleteStaledNoExpiredTokens() {
         verificationDao.deleteStaledTokens();
         em.flush();
         Assert.assertEquals(1, jdbcTemplate.queryForObject("SELECT COUNT(*) FROM user_verification_tokens WHERE expires > now()", Integer.class).intValue());
@@ -168,7 +167,7 @@ public class UserVerificationTokenJpaDaoTest {
 
     @Test
     @Rollback
-    public void testDeleteStaledSingleToken() throws SQLException {
+    public void testDeleteStaledSingleToken() {
         final UserVerificationToken uvt = em.find(UserVerificationToken.class, UserConstants.USER_ID_WITH_TOKENS);
         uvt.setExpires(LocalDateTime.now().minusDays(5));
 
@@ -178,7 +177,7 @@ public class UserVerificationTokenJpaDaoTest {
 
     @Test
     @Rollback
-    public void testDeleteStaledOneExpiredOneValid() throws SQLException {
+    public void testDeleteStaledOneExpiredOneValid() {
         final UserVerificationToken uvt = em.find(UserVerificationToken.class, UserConstants.USER_ID_WITH_TOKENS);
         uvt.setExpires(LocalDateTime.now().minusDays(5));
         final UserVerificationToken uvt2 = new UserVerificationToken(em.find(User.class, UserConstants.INACTIVE_USER_ID), UserConstants.TOKEN1, UserConstants.TOKEN_EXPIRATION);

@@ -22,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
-import java.sql.SQLException;
 import java.util.*;
 
 
@@ -51,7 +50,7 @@ public class RestaurantJpaDaoTest {
     }
 
     @Test
-    public void testFindById() throws SQLException {
+    public void testFindById() {
         Optional<Restaurant> maybeRestaurant = restaurantDao.getById(RestaurantConstants.RESTAURANT_IDS[0]);
 
         Assert.assertTrue(maybeRestaurant.isPresent());
@@ -69,7 +68,7 @@ public class RestaurantJpaDaoTest {
     }
 
     @Test
-    public void testFindByIdNotFound() throws SQLException {
+    public void testFindByIdNotFound() {
         Optional<Restaurant> maybeRestaurant = restaurantDao.getById(NON_EXISTENT_RESTAURANT_ID);
 
         Assert.assertFalse(maybeRestaurant.isPresent());
@@ -77,7 +76,7 @@ public class RestaurantJpaDaoTest {
 
     @Test
     @Rollback
-    public void testCreation() throws SQLException {
+    public void testCreation() {
         Restaurant restaurant = restaurantDao.create(
                 NON_EXISTENT_RESTAURANT_NAME,
                 NON_EXISTENT_RESTAURANT_EMAIL,
@@ -104,7 +103,7 @@ public class RestaurantJpaDaoTest {
 
     @Test
     @Rollback
-    public void testDeletion() throws SQLException {
+    public void testDeletion() {
         restaurantDao.delete(RestaurantConstants.RESTAURANT_IDS[0]);
         em.flush();
 
@@ -113,13 +112,13 @@ public class RestaurantJpaDaoTest {
     }
 
     @Test
-    public void searchEmpty() throws SQLException {
+    public void searchEmpty() {
         PaginatedResult<RestaurantDetails> res = restaurantDao.search(null, 1, RestaurantConstants.RESTAURANT_IDS.length, null, false, null, null);
         Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS.length, res.getResult().size());
     }
 
     @Test
-    public void searchSortedByNameAsc() throws SQLException {
+    public void searchSortedByNameAsc() {
         PaginatedResult<RestaurantDetails> restaurantsDetails = restaurantDao.search(
                 "", 1,
                 RestaurantConstants.RESTAURANT_IDS.length,
@@ -136,7 +135,7 @@ public class RestaurantJpaDaoTest {
     }
 
     @Test
-    public void searchSortedByNameDesc() throws SQLException {
+    public void searchSortedByNameDesc() {
         PaginatedResult<RestaurantDetails> restaurantsDetails = restaurantDao.search(
                 "", 1,
                 RestaurantConstants.RESTAURANT_IDS.length,
@@ -153,7 +152,7 @@ public class RestaurantJpaDaoTest {
     }
 
     @Test
-    public void searchSortedByRatingAsc() throws SQLException {
+    public void searchSortedByRatingAsc() {
         final List<Double> ratingAvg = ReviewConstants.AVERAGE_LIST;
         ratingAvg.sort(Comparator.naturalOrder());
 
@@ -175,7 +174,7 @@ public class RestaurantJpaDaoTest {
     }
 
     @Test
-    public void searchSortedByRatingDesc() throws SQLException {
+    public void searchSortedByRatingDesc() {
         final List<Double> ratingAvg = ReviewConstants.AVERAGE_LIST;
         ratingAvg.sort(Comparator.reverseOrder());
 
@@ -197,7 +196,7 @@ public class RestaurantJpaDaoTest {
     }
 
     @Test
-    public void searchSortedByPriceAverageDesc() throws SQLException {
+    public void searchSortedByPriceAverageDesc() {
         final int maxRestaurants = RestaurantConstants.RESTAURANT_IDS.length;
         List<Double> avgPrice = ProductConstants.AVERAGE_LIST;
         avgPrice.sort(Comparator.reverseOrder());
@@ -215,7 +214,7 @@ public class RestaurantJpaDaoTest {
     }
 
     @Test
-    public void searchSortedByPriceAverageAsc() throws SQLException {
+    public void searchSortedByPriceAverageAsc() {
         final int maxRestaurants = RestaurantConstants.RESTAURANT_IDS.length;
         List<Double> avgPrice = ProductConstants.AVERAGE_LIST;
         avgPrice.sort(Comparator.naturalOrder());
@@ -233,7 +232,7 @@ public class RestaurantJpaDaoTest {
     }
 
     @Test
-    public void searchSortedByCreationDateAsc() throws SQLException {
+    public void searchSortedByCreationDateAsc() {
         final int maxRestaurants = RestaurantConstants.RESTAURANT_IDS.length;
         PaginatedResult<RestaurantDetails> res = restaurantDao.search("", 1, RestaurantConstants.RESTAURANT_IDS.length, RestaurantOrderBy.DATE, false, null, null);
         Assert.assertEquals(maxRestaurants, res.getResult().size());
@@ -242,7 +241,7 @@ public class RestaurantJpaDaoTest {
     }
 
     @Test
-    public void getSortedByCreationDateDesc() throws SQLException {
+    public void getSortedByCreationDateDesc() {
         final int maxRestaurants = RestaurantConstants.RESTAURANT_IDS.length;
         PaginatedResult<RestaurantDetails> res = restaurantDao.search("", 1, maxRestaurants, RestaurantOrderBy.DATE, true, null, null);
         Assert.assertEquals(maxRestaurants, res.getResult().size());
@@ -252,7 +251,7 @@ public class RestaurantJpaDaoTest {
 
     @Test
     @Rollback
-    public void searchByRestaurantName() throws SQLException {
+    public void searchByRestaurantName() {
         final int maxRestaurants = RestaurantConstants.RESTAURANT_IDS.length;
         final String restaurantName = RestaurantConstants.RESTAURANT_NAMES[0];
         for(int i=0; i<maxRestaurants ; i++){
@@ -265,7 +264,7 @@ public class RestaurantJpaDaoTest {
     }
 
     @Test
-    public void searchBySpecialty() throws SQLException {
+    public void searchBySpecialty() {
         final int maxRestaurants = RestaurantConstants.RESTAURANT_IDS.length;
         final RestaurantSpecialty restaurantSpeciality = RestaurantConstants.RESTAURANTS_SPECIALITY.get(0);
         List<RestaurantSpecialty> specialty = Collections.singletonList(restaurantSpeciality);
@@ -278,7 +277,7 @@ public class RestaurantJpaDaoTest {
     }
 
     @Test
-    public void searchBySpecialties() throws SQLException {
+    public void searchBySpecialties() {
         final int maxRestaurants = RestaurantConstants.RESTAURANT_IDS.length;
         List<RestaurantSpecialty> specialties = RestaurantConstants.RESTAURANTS_SPECIALITY;
         PaginatedResult<RestaurantDetails> res = restaurantDao.search("", 1, maxRestaurants, null, false, null, specialties);
@@ -286,7 +285,7 @@ public class RestaurantJpaDaoTest {
     }
 
     @Test
-    public void searchBySingleTag() throws SQLException {
+    public void searchBySingleTag() {
         final int maxRestaurants = RestaurantConstants.RESTAURANT_IDS.length;
         List<RestaurantTags> tag = Collections.singletonList(RestaurantTags.fromOrdinal(1));
         PaginatedResult<RestaurantDetails> res = restaurantDao.search("", 1, maxRestaurants, null, false, tag, null);
@@ -294,7 +293,7 @@ public class RestaurantJpaDaoTest {
     }
 
     @Test
-    public void searchByTags() throws SQLException {
+    public void searchByTags() {
         final int maxRestaurants = RestaurantConstants.RESTAURANT_IDS.length;
         List<RestaurantTags> tag = RestaurantConstants.RESTAURANTS_TAGS.get(0);
         PaginatedResult<RestaurantDetails> res = restaurantDao.search("", 1, maxRestaurants, null, false, tag, null);
@@ -303,7 +302,7 @@ public class RestaurantJpaDaoTest {
 
     @Test
     @Rollback
-    public void searchByNameAndTag() throws SQLException {
+    public void searchByNameAndTag() {
         final int maxRestaurants = RestaurantConstants.RESTAURANT_IDS.length;
         final String restaurantName = "restaurant";
         for(int i=0; i<maxRestaurants ; i++){
@@ -321,7 +320,7 @@ public class RestaurantJpaDaoTest {
 
     @Test
     @Rollback
-    public void searchByNameAndSpecialty() throws SQLException {
+    public void searchByNameAndSpecialty() {
         final int maxRestaurants = RestaurantConstants.RESTAURANT_IDS.length;
         final String restaurantName = "restaurant";
         for(int i=0; i<maxRestaurants ; i++){
@@ -337,7 +336,7 @@ public class RestaurantJpaDaoTest {
 
     @Test
     @Rollback
-    public void searchByTagAndSpecialty() throws SQLException {
+    public void searchByTagAndSpecialty() {
         final int maxRestaurants = RestaurantConstants.RESTAURANT_IDS.length;
         List<RestaurantSpecialty> specialty = Collections.singletonList(RestaurantConstants.RESTAURANTS_SPECIALITY.get(0));
         List<RestaurantTags> tag = RestaurantConstants.RESTAURANTS_TAGS.get(0);
@@ -349,7 +348,7 @@ public class RestaurantJpaDaoTest {
 
     @Test
     @Rollback
-    public void searchByNameAndTagAndSpecialty() throws SQLException {
+    public void searchByNameAndTagAndSpecialty() {
         final int maxRestaurants = RestaurantConstants.RESTAURANT_IDS.length;
         List<RestaurantSpecialty> specialty = Collections.singletonList(RestaurantConstants.RESTAURANTS_SPECIALITY.get(0));
         List<RestaurantTags> tag = RestaurantConstants.RESTAURANTS_TAGS.get(0);

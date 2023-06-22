@@ -24,7 +24,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -53,7 +52,7 @@ public class ProductJpaDaoTest {
 
     @Test
     @Rollback
-    public void testCreate() throws SQLException {
+    public void testCreate() {
         final Product product = productDao.create(
                 CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_1[0],
                 ProductConstants.DEFAULT_PRODUCT_NAME,
@@ -73,7 +72,7 @@ public class ProductJpaDaoTest {
     }
 
     @Test
-    public void testFindProductById() throws SQLException {
+    public void testFindProductById() {
         final Optional<Product> product = productDao.getById(ProductConstants.PRODUCT_DELETED_FROM_CATEGORY_RESTAURANT_0);
 
         Assert.assertTrue(product.isPresent());
@@ -87,14 +86,14 @@ public class ProductJpaDaoTest {
     }
 
     @Test
-    public void testFindProductByIdNotFound() throws SQLException {
+    public void testFindProductByIdNotFound() {
         final Optional<Product> product = productDao.getById(NON_EXISTENT_PRODUCT_ID);
         Assert.assertFalse(product.isPresent());
     }
 
     @Test
     @Rollback
-    public void testDeleteExistingProduct() throws SQLException {
+    public void testDeleteExistingProduct() {
         productDao.delete(ProductConstants.PRODUCT_FROM_CATEGORY_RESTAURANT_0[0]);
         em.flush();
 
@@ -102,14 +101,14 @@ public class ProductJpaDaoTest {
     }
 
     @Test(expected = ProductNotFoundException.class)
-    public void testNoDelete() throws SQLException {
+    public void testNoDelete() {
         productDao.delete(NON_EXISTENT_PRODUCT_ID);
         em.flush();
     }
 
     @Test
     @Rollback
-    public void updateProduct() throws SQLException {
+    public void updateProduct() {
         final Product product = em.find(Product.class, ProductConstants.PRODUCT_FROM_CATEGORY_RESTAURANT_0[0]);
         final String oldName = product.getName();
         final String oldDescription = product.getDescription();
@@ -125,7 +124,7 @@ public class ProductJpaDaoTest {
 
     @Test
     @Rollback
-    public void updateProductAndPromotions() throws SQLException {
+    public void updateProductAndPromotions() {
         final Product product = em.find(Product.class, ProductConstants.PROMOTION_DESTINATION_ID);
         final Promotion promotion = em.find(Promotion.class, ProductConstants.PROMOTION_PRODUCT_ID);
         final String oldName = product.getName();
@@ -140,7 +139,7 @@ public class ProductJpaDaoTest {
     }
 
     @Test
-    public void testCreatePromotion() throws SQLException {
+    public void testCreatePromotion() {
         final Product product = em.find(Product.class, ProductConstants.PRODUCT_FROM_CATEGORY_RESTAURANT_0[0]);
         final Promotion promotion = productDao.createPromotion(
                 product,
@@ -161,7 +160,7 @@ public class ProductJpaDaoTest {
 
     @Test
     @Rollback
-    public void testCreatePromotionProductAlreadyExisting() throws SQLException {
+    public void testCreatePromotionProductAlreadyExisting() {
         final Product product = em.find(Product.class, ProductConstants.PROMOTION_SOURCE_ID);
         final Promotion promotion = productDao.createPromotion(
                 product,
@@ -176,7 +175,7 @@ public class ProductJpaDaoTest {
 
     @Test
     @Rollback
-    public void testStopPromotionByDestination() throws SQLException {
+    public void testStopPromotionByDestination() {
         Product destination = em.find(Product.class, ProductConstants.PROMOTION_DESTINATION_ID);
         Product source = em.find(Product.class, ProductConstants.PROMOTION_SOURCE_ID);
 
@@ -189,7 +188,7 @@ public class ProductJpaDaoTest {
 
     @Test
     @Rollback
-    public void testStopPromotionBySource() throws SQLException {
+    public void testStopPromotionBySource() {
         Product destination = em.find(Product.class, ProductConstants.PROMOTION_DESTINATION_ID);
         Product source = em.find(Product.class, ProductConstants.PROMOTION_SOURCE_ID);
 
@@ -201,20 +200,20 @@ public class ProductJpaDaoTest {
     }
 
     @Test(expected = PromotionNotFoundException.class)
-    public void testStopPromotionBySourceInvalidId() throws SQLException {
+    public void testStopPromotionBySourceInvalidId() {
         productDao.stopPromotionsBySource(NON_EXISTENT_PRODUCT_ID);
         em.flush();
     }
 
     @Test(expected = PromotionNotFoundException.class)
-    public void testStopPromotionByDestinationInvalidId() throws SQLException {
+    public void testStopPromotionByDestinationInvalidId() {
         productDao.stopPromotionByDestination(NON_EXISTENT_PRODUCT_ID);
         em.flush();
     }
 
     @Test(expected = IllegalStateException.class)
     @Rollback
-    public void testStopPromotionByDestinationAlreadyEnded() throws SQLException {
+    public void testStopPromotionByDestinationAlreadyEnded() {
         Promotion promotion = em.find(Promotion.class, ProductConstants.PROMOTION_PRODUCT_ID);
         promotion.setEndDate(LocalDateTime.now().minusDays(1));
 
@@ -224,7 +223,7 @@ public class ProductJpaDaoTest {
 
     @Test
     @Rollback
-    public void testStartActivePromotions() throws SQLException {
+    public void testStartActivePromotions() {
         Product destination = em.find(Product.class, ProductConstants.PROMOTION_DESTINATION_ID);
         Product source = em.find(Product.class, ProductConstants.PROMOTION_SOURCE_ID);
         destination.setAvailable(false);
@@ -239,7 +238,7 @@ public class ProductJpaDaoTest {
 
     @Test
     @Rollback
-    public void testStopActivePromotions() throws SQLException {
+    public void testStopActivePromotions() {
         Promotion promotion = em.find(Promotion.class, ProductConstants.PROMOTION_PRODUCT_ID);
         promotion.setEndDate(LocalDateTime.now().minusDays(1));
 

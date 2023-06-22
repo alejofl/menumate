@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
-import java.sql.SQLException;
 import java.util.Optional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -47,7 +46,7 @@ public class ImageJpaDaoTest {
 
     @Test
     @Rollback
-    public void testCreateImg() throws SQLException {
+    public void testCreateImg() {
         final long image = imageDao.create(NON_EXISTING_IMAGE_INFO);
         em.flush();
         Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "images", "image_id = " + image));
@@ -55,7 +54,7 @@ public class ImageJpaDaoTest {
 
     @Test
     @Rollback
-    public void testUpdateImg() throws SQLException {
+    public void testUpdateImg() {
         imageDao.update(EXISTING_IMAGE_ID, NON_EXISTING_IMAGE_INFO);
         em.flush();
 
@@ -65,14 +64,14 @@ public class ImageJpaDaoTest {
 
     @Test
     @Rollback
-    public void testDeleteImg() throws SQLException {
+    public void testDeleteImg() {
         imageDao.delete(EXISTING_IMAGE_ID);
         em.flush();
         Assert.assertEquals(0, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "images", "image_id = " + EXISTING_IMAGE_ID));
     }
 
     @Test
-    public void testGetImageById() throws SQLException {
+    public void testGetImageById() {
         Optional<byte[]> image = imageDao.getById(EXISTING_IMAGE_ID);
         Assert.assertTrue(image.isPresent());
         Assert.assertArrayEquals(EXISTING_IMAGE_INFO, image.get());

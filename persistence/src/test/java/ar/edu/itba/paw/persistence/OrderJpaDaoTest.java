@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -49,7 +48,7 @@ public class OrderJpaDaoTest {
 
     @Test
     @Rollback
-    public void testCreationDineIn() throws SQLException {
+    public void testCreationDineIn() {
         Order order = orderDao.createDineIn(RestaurantConstants.RESTAURANT_IDS[0], UserConstants.ACTIVE_USER_ID, OrderConstants.DEFAULT_ORDER_TABLE);
         em.flush();
 
@@ -60,7 +59,7 @@ public class OrderJpaDaoTest {
 
     @Test
     @Rollback
-    public void testCreationTakeaway() throws SQLException {
+    public void testCreationTakeaway() {
         Order order = orderDao.createTakeaway(RestaurantConstants.RESTAURANT_IDS[0], UserConstants.ACTIVE_USER_ID);
         em.flush();
 
@@ -71,7 +70,7 @@ public class OrderJpaDaoTest {
 
     @Test
     @Rollback
-    public void testCreationDelivery() throws SQLException {
+    public void testCreationDelivery() {
         Order order = orderDao.createDelivery(RestaurantConstants.RESTAURANT_IDS[0], UserConstants.ACTIVE_USER_ID, OrderConstants.DEFAULT_ORDER_ADDRESS);
         em.flush();
 
@@ -82,7 +81,7 @@ public class OrderJpaDaoTest {
     }
 
     @Test
-    public void testFindActiveOrdersById() throws SQLException {
+    public void testFindActiveOrdersById() {
         Optional<Order> order = orderDao.getById(OrderConstants.ORDER_IDS_RESTAURANT_0[0]);
 
         Assert.assertTrue(order.isPresent());
@@ -94,7 +93,7 @@ public class OrderJpaDaoTest {
     }
 
     @Test
-    public void testGetOrderByIdWithOrderItems() throws SQLException {
+    public void testGetOrderByIdWithOrderItems() {
         Optional<Order> order = orderDao.getById(ProductConstants.ORDER_ITEMS_FOR_ORDER_IDS[0]);
 
         Assert.assertTrue(order.isPresent());
@@ -110,14 +109,14 @@ public class OrderJpaDaoTest {
     }
 
     @Test
-    public void testFindNoOrderById() throws SQLException {
+    public void testFindNoOrderById() {
         Optional<Order> order = orderDao.getById(NON_EXISTING_ORDER_ID);
 
         Assert.assertFalse(order.isPresent());
     }
 
     @Test
-    public void testFindActiveOrdersByUserId() throws SQLException {
+    public void testFindActiveOrdersByUserId() {
         List<Order> orders = orderDao.getByUser(UserConstants.ACTIVE_USER_ID, 1, OrderConstants.TOTAL_ORDER_COUNT * 2, false, true).getResult();
 
         Assert.assertNotNull(orders);
@@ -129,7 +128,7 @@ public class OrderJpaDaoTest {
     }
 
     @Test
-    public void testFindEmptyOrdersByUserId() throws SQLException {
+    public void testFindEmptyOrdersByUserId() {
         List<Order> orders = orderDao.getByUser(UserConstants.RESTAURANT_OWNER_ID, 1, OrderConstants.TOTAL_ORDER_COUNT * 2, false, true).getResult();
 
         Assert.assertNotNull(orders);
@@ -137,7 +136,7 @@ public class OrderJpaDaoTest {
     }
 
     @Test
-    public void testFindActiveOrdersByRestaurantIdPagedWithNoOrderStatus() throws SQLException {
+    public void testFindActiveOrdersByRestaurantIdPagedWithNoOrderStatus() {
         final int totalOrders = OrderConstants.ORDER_IDS_RESTAURANT_0.length;
         PaginatedResult<Order> page = orderDao.getByRestaurant(RestaurantConstants.RESTAURANT_IDS[0], 1, totalOrders, null, true);
 
