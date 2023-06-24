@@ -162,15 +162,4 @@ public class CategoryJpaDaoTest {
         Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "categories", "restaurant_id = " + RestaurantConstants.RESTAURANT_IDS[0] + " AND deleted = false"));
         Assert.assertEquals(CategoryConstants.TOTAL_COUNT - 2, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "categories", "restaurant_id = " + RestaurantConstants.RESTAURANT_IDS[0]));
     }
-
-// NOTE: This currently can't be tested because swapOrder uses deferred constraints, which HSQLDB doesn't support.
-//    @Test
-//    @Rollback
-//    public void testSwapOrder() {
-//        categoryDao.swapOrder(RestaurantConstants.RESTAURANT_IDS[0], CategoryConstants.CATEGORY_ORDER_FOR_RESTAURANT_0[0], CategoryConstants.CATEGORY_ORDER_FOR_RESTAURANT_0[1]);
-//        em.flush();
-//
-//        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "categories", "category_id = " + CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[0] + " AND name = '" + CategoryConstants.CATEGORY_NAME + "' AND restaurant_id = " + RestaurantConstants.RESTAURANT_IDS[0] + " AND order_num = " + CategoryConstants.CATEGORY_ORDER_FOR_RESTAURANT_0[1]));
-//        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "categories", "category_id = " + CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[1] + " AND name = '" + CategoryConstants.CATEGORY_NAME + "' AND restaurant_id = " + RestaurantConstants.RESTAURANT_IDS[0] + " AND order_num = " + CategoryConstants.CATEGORY_ORDER_FOR_RESTAURANT_0[0] ));
-//    }
 }
