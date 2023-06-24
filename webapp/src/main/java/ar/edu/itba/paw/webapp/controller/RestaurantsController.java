@@ -81,6 +81,10 @@ public class RestaurantsController {
         final List<Promotion> promotions = restaurantService.getActivePromotions(id);
         mav.addObject("promotions", promotions);
 
+        mav.addObject("dinein_wait_time", restaurantService.getAverageOrderCompletionTime(id, OrderType.DINE_IN, null).orElse(null));
+        mav.addObject("takeaway_wait_time", restaurantService.getAverageOrderCompletionTime(id, OrderType.TAKEAWAY, null).orElse(null));
+        mav.addObject("delivery_wait_time", restaurantService.getAverageOrderCompletionTime(id, OrderType.DELIVERY, null).orElse(null));
+
         mav.addObject("formError", formError);
         return mav;
     }

@@ -235,11 +235,16 @@
                                             <form:errors path="tableNumber" element="div" cssClass="form-error"/>
                                             <form:errors element="div" cssClass="form-error"/> <!-- General errors -->
                                         </div>
+                                        <c:if test="${dinein_wait_time != null}">
+                                            <p><spring:message code="restaurant.menu.form.waittime.message" arguments="${dinein_wait_time.toMinutes()}"/></p>
+                                        </c:if>
                                     </div>
                                 </c:when>
                                 <c:otherwise>
                                     <div class="tab-pane fade" id="checkout-takeaway" role="tabpanel" tabindex="0">
-                                        <p><spring:message code="restaurant.menu.form.takeaway.message"/></p>
+                                        <c:if test="${takeaway_wait_time != null}">
+                                            <p><spring:message code="restaurant.menu.form.waittime.message" arguments="${takeaway_wait_time.toMinutes()}"/></p>
+                                        </c:if>
                                     </div>
                                     <div class="tab-pane fade" id="checkout-delivery" role="tabpanel" tabindex="0">
                                         <div class="mb-3">
@@ -265,6 +270,9 @@
                                             <form:errors path="address" element="div" cssClass="form-error"/>
                                             <form:errors element="div" cssClass="form-error"/> <!-- General errors -->
                                         </div>
+                                        <c:if test="${delivery_wait_time != null}">
+                                            <p><spring:message code="restaurant.menu.form.waittime.message" arguments="${delivery_wait_time.toMinutes()}"/></p>
+                                        </c:if>
                                     </div>
                                 </c:otherwise>
                             </c:choose>

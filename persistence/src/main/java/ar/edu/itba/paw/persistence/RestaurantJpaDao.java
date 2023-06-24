@@ -209,7 +209,7 @@ public class RestaurantJpaDao implements RestaurantDao {
 
     @Override
     public Optional<Duration> getAverageOrderCompletionTime(long restaurantId, OrderType orderType, LocalDateTime since) {
-        Query query = em.createNativeQuery("SELECT EXTRACT(SECONDS FROM AVG(date_delivered - date_ordered)) FROM orders WHERE restaurant_id = :restaurantId AND order_type = :orderType AND date_delivered IS NOT NULL AND date_ordered >= :since");
+        Query query = em.createNativeQuery("SELECT EXTRACT(EPOCH FROM AVG(date_delivered - date_ordered)) FROM orders WHERE restaurant_id = :restaurantId AND order_type = :orderType AND date_delivered IS NOT NULL AND date_ordered >= :since");
         query.setParameter("restaurantId", restaurantId);
         query.setParameter("orderType", orderType.ordinal());
         query.setParameter("since", since);

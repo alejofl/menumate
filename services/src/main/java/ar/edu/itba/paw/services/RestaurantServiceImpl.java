@@ -22,6 +22,8 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(RestaurantServiceImpl.class);
 
+    static final LocalDateTime MINIMUM_DATETIME = LocalDateTime.of(1970, 1, 1, 0, 0);
+
     @Autowired
     private RestaurantDao restaurantDao;
 
@@ -62,6 +64,9 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public Optional<Duration> getAverageOrderCompletionTime(long restaurantId, OrderType orderType, LocalDateTime since) {
+        if (since == null) {
+            since = MINIMUM_DATETIME;
+        }
         return restaurantDao.getAverageOrderCompletionTime(restaurantId, orderType, since);
     }
 
