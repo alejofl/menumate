@@ -394,6 +394,12 @@ main {
     --bs-nav-pills-link-active-bg: var(--secondary);
 }
 
+#create-promotion-modal .nav {
+    --bs-nav-link-color: var(--promotion);
+    --bs-nav-link-hover-color: var(--promotion-dark);
+    --bs-nav-pills-link-active-bg: var(--promotion);
+}
+
 #checkout-form {
     margin: 0;
 }

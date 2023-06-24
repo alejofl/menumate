@@ -228,16 +228,27 @@
                             </div>
                             <form:errors path="percentage" element="div" cssClass="form-error"/>
                         </div>
-                        <div class="mb-3">
-                            <form:label path="startDateTime" cssClass="form-label"><spring:message code="editmenu.createpromotion.form.startdate"/></form:label>
-                            <form:input path="startDateTime" type="datetime-local" cssClass="form-control" id="create-promotion-modal-start-datetime"/>
-                            <form:errors path="startDateTime" element="div" cssClass="form-error"/>
+                        <div class="nav nav-pills nav-justified mb-3" role="tablist">
+                            <button class="nav-link active" id="promotion-instant-tab" data-bs-toggle="tab" data-bs-target="#promotion-instant" type="button" role="tab"><spring:message code="editmenu.createpromotion.form.instant"/></button>
+                            <button class="nav-link" id="promotion-scheduled-tab" data-bs-toggle="tab" data-bs-target="#promotion-scheduled" type="button" role="tab"><spring:message code="editmenu.createpromotion.form.scheduled"/></button>
                         </div>
-                        <div class="mb-3">
-                            <form:label path="endDateTime" cssClass="form-label"><spring:message code="editmenu.createpromotion.form.enddate"/></form:label>
-                            <form:input path="endDateTime" type="datetime-local" cssClass="form-control" id="create-promotion-modal-end-datetime"/>
-                            <form:errors path="endDateTime" element="div" cssClass="form-error"/>
-                            <form:errors element="div" cssClass="form-error"/>
+                        <div class="tab-content">
+                            <div class="tab-pane fade show active" id="promotion-instant" role="tabpanel" tabindex="0">
+
+                            </div>
+                            <div class="tab-pane fade" id="promotion-scheduled" role="tabpanel" tabindex="0">
+                                <div class="mb-3">
+                                    <form:label path="startDateTime" cssClass="form-label"><spring:message code="editmenu.createpromotion.form.startdate"/></form:label>
+                                    <form:input path="startDateTime" type="datetime-local" cssClass="form-control" id="create-promotion-modal-start-datetime"/>
+                                    <form:errors path="startDateTime" element="div" cssClass="form-error"/>
+                                </div>
+                                <div class="mb-3">
+                                    <form:label path="endDateTime" cssClass="form-label"><spring:message code="editmenu.createpromotion.form.enddate"/></form:label>
+                                    <form:input path="endDateTime" type="datetime-local" cssClass="form-control" id="create-promotion-modal-end-datetime"/>
+                                    <form:errors path="endDateTime" element="div" cssClass="form-error"/>
+                                    <form:errors element="div" cssClass="form-error"/>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <form:input path="sourceProductId" type="hidden" cssClass="form-control" id="create-promotion-modal-source-product-id"/>
