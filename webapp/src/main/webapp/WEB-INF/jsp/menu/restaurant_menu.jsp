@@ -53,9 +53,18 @@
                                 <spring:message code="restaurants.ratingcount" arguments="${ratingCount}"/>
                             </small>
                         </div>
-                        <a href="" data-bs-toggle="modal" data-bs-target="#view-reviews-modal">
-                            <small><spring:message code="restaurant.menu.viewreviews"/></small>
-                        </a>
+                        <c:choose>
+                            <c:when test="${admin}">
+                                <a href="<c:url value="/restaurants/${restaurant.restaurantId}/reviews"/>">
+                                    <small><spring:message code="restaurant.menu.viewreviews"/></small>
+                                </a>
+                            </c:when>
+                            <c:otherwise>
+                                <a href="" data-bs-toggle="modal" data-bs-target="#view-reviews-modal">
+                                    <small><spring:message code="restaurant.menu.viewreviews"/></small>
+                                </a>
+                            </c:otherwise>
+                        </c:choose>
                     </c:otherwise>
                 </c:choose>
                 <div class="tags-container">
@@ -75,9 +84,6 @@
                 </c:if>
                 <c:if test="${order_viewer}">
                     <a class="btn btn-secondary" href="<c:url value="/restaurants/${restaurant.restaurantId}/orders"/>" role="button"><spring:message code="restaurant.menu.seeorders"/></a>
-                </c:if>
-                <c:if test="${admin}">
-                    <a class="btn btn-secondary" href="<c:url value="/restaurants/${restaurant.restaurantId}/reviews"/>" role="button"><spring:message code="restaurant.menu.viewreviews"/></a>
                 </c:if>
             </div>
 
