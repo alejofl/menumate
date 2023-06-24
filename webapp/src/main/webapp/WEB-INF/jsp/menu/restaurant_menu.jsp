@@ -85,6 +85,9 @@
                 <c:if test="${order_viewer}">
                     <a class="btn btn-secondary" href="<c:url value="/restaurants/${restaurant.restaurantId}/orders"/>" role="button"><spring:message code="restaurant.menu.seeorders"/></a>
                 </c:if>
+                <c:if test="${owner}">
+                    <a class="btn btn-danger" role="button" data-bs-toggle="modal" data-bs-target="#delete-restaurant-modal"><spring:message code="restaurant.menu.deleterestaurant"/></a>
+                </c:if>
             </div>
 
         </div>
@@ -396,6 +399,23 @@
                             </div>
                         </c:if>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="delete-restaurant-modal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h1 class="modal-title fs-5"><spring:message code="restaurant.menu.deleterestaurant.modal.title"/></h1>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" data-bs-target="#employees-modal" data-bs-toggle="modal" class="btn btn-secondary"><spring:message code="editmenu.form.no"/></button>
+                    <c:url value="/restaurants/${restaurant.restaurantId}/delete" var="deleteRestaurantUrl"/>
+                    <form action="${deleteRestaurantUrl}" method="post">
+                        <input type="submit" class="btn btn-danger" value="<spring:message code="editmenu.form.yes"/>">
+                    </form>
                 </div>
             </div>
         </div>

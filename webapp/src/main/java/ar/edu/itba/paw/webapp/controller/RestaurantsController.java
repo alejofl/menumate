@@ -60,12 +60,15 @@ public class RestaurantsController {
 
         Long currentUserId = ControllerUtils.getCurrentUserIdOrNull();
         Optional<RestaurantRoleLevel> level;
+        boolean owner = false;
         boolean admin = false;
         boolean order_viewer = false;
         if (currentUserId != null && (level = restaurantRoleService.getRole(currentUserId, id)).isPresent()) {
+            owner = level.get().hasPermissionOf(RestaurantRoleLevel.OWNER);
             admin = level.get().hasPermissionOf(RestaurantRoleLevel.ADMIN);
             order_viewer = level.get().hasPermissionOf(RestaurantRoleLevel.ORDER_HANDLER);
         }
+        mav.addObject("owner", owner);
         mav.addObject("admin", admin);
         mav.addObject("order_viewer", order_viewer);
 
@@ -176,5 +179,11 @@ public class RestaurantsController {
         reviewService.replyToReview(reviewReplyForm.getOrderId(), reviewReplyForm.getReply());
 
         return new ModelAndView(String.format("redirect:/restaurants/%d/reviews", id));
+    }
+
+    @RequestMapping(value = "/restaurants/{id:\\d+}/delete", method = RequestMethod.POST)
+    public ModelAndView restaurantMenu(@PathVariable final int id) {
+        restaurantService.delete(id);
+        return new ModelAndView("redirect:/restaurants");
     }
 }
