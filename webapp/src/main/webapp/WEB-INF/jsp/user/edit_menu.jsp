@@ -79,7 +79,7 @@
                                     <div class="d-flex justify-content-between">
                                         <p class="card-text"><c:out value="${promotion.destination.name}"/></p>
                                         <div class="d-flex gap-2 ps-2">
-                                            <a class="stop-promotion-button" type="button" data-bs-toggle="modal" data-bs-target="#stop-promotion-modal" data-product-id="${promotion.destination.productId}"><i class="bi bi-trash-fill text-danger"></i></a>
+                                            <a class="stop-promotion-button" type="button" data-bs-toggle="modal" data-bs-target="#stop-promotion-modal" data-product-id="${promotion.destination.productId}"><i class="bi bi-x-circle"></i></a>
                                         </div>
                                     </div>
                                     <c:choose>
