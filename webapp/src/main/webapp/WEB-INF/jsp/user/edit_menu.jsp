@@ -72,7 +72,14 @@
                     <c:forEach var="promotion" items="${promotions}">
                         <div class="card menu-item-card">
                             <div class="menu-item-card-img-container">
-                                <img src="<c:url value="/images/${promotion.destination.imageId}"/>" class="img-fluid rounded-start menu-item-card-img" alt="<c:out value="${promotion.destination.name}"/>">
+                                <c:choose>
+                                    <c:when test="${promotion.destination.imageId == null}">
+                                        <img src="<c:url value="/static/pictures/image_placeholder.png"/>" class="img-fluid rounded-start menu-item-card-img" alt="<c:out value="${promotion.destination.name}"/>">
+                                    </c:when>
+                                    <c:otherwise>
+                                        <img src="<c:url value="/images/${promotion.destination.imageId}"/>" class="img-fluid rounded-start menu-item-card-img" alt="<c:out value="${promotion.destination.name}"/>">
+                                    </c:otherwise>
+                                </c:choose>
                             </div>
                             <div class="card-body menu-item-card-body">
                                 <div>
@@ -137,7 +144,14 @@
                     <c:forEach var="product" items="${entry.products}">
                         <div class="card menu-item-card">
                             <div class="menu-item-card-img-container">
-                                <img src="<c:url value="/images/${product.imageId}"/>" class="img-fluid rounded-start menu-item-card-img" alt="<c:out value="${product.name}"/>">
+                                <c:choose>
+                                    <c:when test="${product.imageId == null}">
+                                        <img src="<c:url value="/static/pictures/image_placeholder.png"/>" class="img-fluid rounded-start menu-item-card-img" alt="<c:out value="${product.name}"/>">
+                                    </c:when>
+                                    <c:otherwise>
+                                        <img src="<c:url value="/images/${product.imageId}"/>" class="img-fluid rounded-start menu-item-card-img" alt="<c:out value="${product.name}"/>">
+                                    </c:otherwise>
+                                </c:choose>
                             </div>
                             <div class="card-body menu-item-card-body">
                                 <div>

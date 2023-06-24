@@ -9,7 +9,14 @@
     href=""
     data-bs-toggle="modal"
     data-bs-target="#add-item-to-cart"
-    data-info-image="<c:url value="/images/${param.product_imageId}"/>"
+    <c:choose>
+      <c:when test="${param.product_imageId == null || param.product_imageId == ''}">
+        data-info-image="<c:url value="/static/pictures/image_placeholder.png"/>"
+      </c:when>
+      <c:otherwise>
+        data-info-image="<c:url value="/images/${param.product_imageId}"/>"
+      </c:otherwise>
+    </c:choose>
     data-info-title="<c:out value="${param.product_name}"/>"
     data-info-description="<c:out value="${param.product_description}"/>"
     data-info-price="${param.product_price}"
@@ -17,7 +24,14 @@
   >
     <div class="card menu-item-card">
       <div class="menu-item-card-img-container" style="">
-        <img src="<c:url value="/images/${param.product_imageId}"/>" class="img-fluid rounded-start menu-item-card-img" alt="<c:out value="${param.product_name}"/>">
+        <c:choose>
+          <c:when test="${param.product_imageId == null  || param.product_imageId == ''}">
+            <img src="<c:url value="/static/pictures/image_placeholder.png"/>" class="img-fluid rounded-start menu-item-card-img" alt="<c:out value="${param.product_name}"/>">
+          </c:when>
+          <c:otherwise>
+            <img src="<c:url value="/images/${param.product_imageId}"/>" class="img-fluid rounded-start menu-item-card-img" alt="<c:out value="${param.product_name}"/>">
+          </c:otherwise>
+        </c:choose>
       </div>
       <div class="card-body menu-item-card-body">
         <div>

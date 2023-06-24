@@ -324,7 +324,7 @@ public class UserController {
                 addProductForm.getCategoryId(),
                 addProductForm.getProductName(),
                 addProductForm.getDescription(),
-                addProductForm.getImage().getBytes(),
+                addProductForm.getImage().isEmpty() ? null : addProductForm.getImage().getBytes(),
                 addProductForm.getPrice()
         );
 

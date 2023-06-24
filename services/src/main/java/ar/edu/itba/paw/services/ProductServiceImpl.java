@@ -36,7 +36,10 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     @Override
     public Product create(long categoryId, String name, String description, byte[] image, BigDecimal price) {
-        long imageKey = imageDao.create(image);
+        Long imageKey = null;
+        if (image != null) {
+            imageKey = imageDao.create(image);
+        }
         return productDao.create(categoryId, name, description, imageKey, price);
     }
 

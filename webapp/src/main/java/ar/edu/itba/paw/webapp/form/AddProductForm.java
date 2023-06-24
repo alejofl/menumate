@@ -21,7 +21,7 @@ public class AddProductForm {
     @Size(max = 300)
     private String description;
 
-    @Image
+    @Image(nullable = true)
     private MultipartFile image;
 
     @NotNull
