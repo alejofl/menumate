@@ -233,8 +233,22 @@
                             <button class="nav-link" id="promotion-scheduled-tab" data-bs-toggle="tab" data-bs-target="#promotion-scheduled" type="button" role="tab"><spring:message code="editmenu.createpromotion.form.scheduled"/></button>
                         </div>
                         <div class="tab-content">
+                            <label class="form-label"><spring:message code="editmenu.createpromotion.form.instant.title"/></label>
                             <div class="tab-pane fade show active" id="promotion-instant" role="tabpanel" tabindex="0">
-
+                                <div class="d-flex gap-3">
+                                    <div class="input-group mb-3">
+                                        <input type="number" min="0" class="form-control promotion-instant-duration" id="promotion-instant-days" value="0">
+                                        <span class="input-group-text"><spring:message code="editmenu.createpromotion.form.instant.days"/></span>
+                                    </div>
+                                    <div class="input-group mb-3">
+                                        <input type="number" min="0" class="form-control promotion-instant-duration" id="promotion-instant-hours" value="0">
+                                        <span class="input-group-text"><spring:message code="editmenu.createpromotion.form.instant.hours"/></span>
+                                    </div>
+                                    <div class="input-group mb-3">
+                                        <input type="number" min="0" class="form-control promotion-instant-duration" id="promotion-instant-minutes" value="0">
+                                        <span class="input-group-text"><spring:message code="editmenu.createpromotion.form.instant.minutes"/></span>
+                                    </div>
+                                </div>
                             </div>
                             <div class="tab-pane fade" id="promotion-scheduled" role="tabpanel" tabindex="0">
                                 <div class="mb-3">
@@ -251,9 +265,10 @@
                             </div>
                         </div>
                     </div>
+                    <form:input path="type" type="hidden" id="create-promotion-modal-promotion-type"/>
                     <form:input path="sourceProductId" type="hidden" cssClass="form-control" id="create-promotion-modal-source-product-id"/>
                     <div class="modal-footer">
-                        <input type="submit" class="btn btn-primary promotion-button" value="<spring:message code="editmenu.form.create"/>">
+                        <input type="submit" id="add-promotion" class="btn btn-primary promotion-button" value="<spring:message code="editmenu.form.create"/>">
                     </div>
                 </form:form>
             </div>

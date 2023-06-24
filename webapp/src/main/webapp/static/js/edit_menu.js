@@ -1,6 +1,3 @@
-function changeInputValue(id, value) {
-    document.querySelector(`#${id}`).value = value;
-}
 
 document.addEventListener("DOMContentLoaded", () => {
     let addProductFormCategoryId = document.querySelector("#add-product-form-category-id");
@@ -191,5 +188,59 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     editProductFormImage.addEventListener("change", (event) => {
         editProductImagePreview.src = URL.createObjectURL(event.target.files[0]);
+    });
+
+    let promotionInstantInputs = document.querySelectorAll(".promotion-instant-duration");
+    let promotionInstantDays = document.querySelector("#promotion-instant-days");
+    let promotionInstantHours = document.querySelector("#promotion-instant-hours");
+    let promotionInstantMinutes = document.querySelector("#promotion-instant-minutes");
+
+    // Prevent non-number characters in Quantity input
+    promotionInstantInputs.forEach(element => {
+        element.addEventListener("keypress", (event) => {
+            if (event.key.length !== 1) {
+                return true;
+            }
+            if (event.target.value.length > 0) {
+                if ("0123456789".indexOf(event.key) === -1) {
+                    event.preventDefault();
+                    return false;
+                }
+            } else {
+                if ("123456789".indexOf(event.key) === -1) {
+                    event.preventDefault();
+                    return false;
+                }
+            }
+        });
+    });
+
+    promotionInstantMinutes.addEventListener("change", (event) => {
+        let value = parseInt(event.target.value);
+        if (value >= 60) {
+            let hours = Math.floor(value / 60);
+            promotionInstantMinutes.value = value % 60;
+            promotionInstantHours.value = (promotionInstantHours.value === "" ? 0 : parseInt(promotionInstantHours.value)) + hours;
+            promotionInstantHours.dispatchEvent(new Event("change"));
+        }
+    });
+    promotionInstantHours.addEventListener("change", (event) => {
+        let value = parseInt(event.target.value);
+        if (value >= 24) {
+            let days = Math.floor(value / 24);
+            promotionInstantHours.value = value % 24;
+            promotionInstantDays.value = (promotionInstantDays.value === "" ? 0 : parseInt(promotionInstantDays.value)) + days;
+        }
+    })
+
+
+
+    // Promotion Type: 0 -> instant ; 1 -> scheduled
+    let promotionType = document.querySelector("#create-promotion-modal-promotion-type");
+    document.querySelector("#promotion-instant-tab").addEventListener("click", () => {
+        promotionType.value = 0;
+    });
+    document.querySelector("#promotion-scheduled-tab").addEventListener("click", () => {
+        promotionType.value = 1;
     });
 });
