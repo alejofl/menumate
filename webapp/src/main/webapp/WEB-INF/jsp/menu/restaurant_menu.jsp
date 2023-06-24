@@ -243,35 +243,25 @@
                                     </div>
                                     <div class="tab-pane fade" id="checkout-delivery" role="tabpanel" tabindex="0">
                                         <div class="mb-3">
-                                            <c:choose>
-                                                <c:when test="${currentUser != null}">
-                                                    <form:label path="address" cssClass="form-label"><spring:message code="restaurant.menu.form.address"/></form:label>
-                                                    <select class="form-select" id="checkout-address-select">
-                                                        <c:forEach var="addr" items="${currentUser.addresses}">
-                                                            <option value="${addr.address}">
-                                                                <c:choose>
-                                                                    <c:when test="${addr.name != null}">
-                                                                        <c:out value="${addr.name}"/> - <c:out value="${addr.address}"/>
-                                                                    </c:when>
-                                                                    <c:otherwise>
-                                                                        <c:out value="${addr.address}"/>
-                                                                    </c:otherwise>
-                                                                </c:choose>
-                                                            </option>
-                                                        </c:forEach>
-                                                        <option value="---"><spring:message code="restaurant.menu.form.address.new"/></option>
-                                                    </select>
-                                                    <div id="new-address-input" class="mt-3" style="display: ${not empty currentUser.addresses ? "none" : "block"}">
-                                                        <spring:message code="restaurant.menu.form.address.new" var="addressPlaceholder"/>
-                                                        <form:input type="text" path="address" cssClass="form-control" id="checkout-address" placeholder="${addressPlaceholder}"/>
-                                                        <div class="form-text"><spring:message code="profile.addaddress.form.disclaimer"/></div>
-                                                    </div>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <form:label path="address" cssClass="form-label"><spring:message code="restaurant.menu.form.address"/></form:label>
-                                                    <form:input type="text" path="address" cssClass="form-control" id="checkout-address"/>
-                                                </c:otherwise>
-                                            </c:choose>
+                                            <form:label path="address" cssClass="form-label"><spring:message code="restaurant.menu.form.address"/></form:label>
+                                            <form:input type="text" path="address" cssClass="form-control" id="checkout-address" list="addresses-list"/>
+                                            <c:if test="${currentUser != null}">
+                                                <datalist id="addresses-list">
+                                                    <c:forEach var="addr" items="${currentUser.addresses}">
+                                                        <option value="${addr.address}">
+                                                            <c:choose>
+                                                                <c:when test="${addr.name != null}">
+                                                                    <c:out value="${addr.name}"/>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <c:out value="${addr.address}"/>
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                        </option>
+                                                    </c:forEach>
+                                                </datalist>
+                                            </c:if>
+                                            <div class="form-text"><spring:message code="profile.addaddress.form.disclaimer"/></div>
                                             <form:errors path="address" element="div" cssClass="form-error"/>
                                             <form:errors element="div" cssClass="form-error"/> <!-- General errors -->
                                         </div>
