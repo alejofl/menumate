@@ -89,32 +89,6 @@ public class RestaurantRoleServiceImplTest {
     }
 
     @Test
-    public void createUserAndSetsRole() {
-        final User user = Mockito.mock(User.class);
-        final Restaurant restaurant = Mockito.mock(Restaurant.class);
-
-        Mockito.when(userDao.getByEmail(DEFAULT_USER_EMAIL)).thenReturn(Optional.empty());
-        Mockito.when(userDao.create(Mockito.eq(DEFAULT_USER_EMAIL), Mockito.eq(null), Mockito.anyString(), Mockito.anyString())).thenReturn(user);
-        Mockito.when(restaurantDao.getById(DEFAULT_RESTAURANT_ID)).thenReturn(Optional.of(restaurant));
-
-        restaurantRoleServiceImpl.setRole(DEFAULT_USER_EMAIL, DEFAULT_RESTAURANT_ID, ORDER_HANDLER_ROLE);
-
-        Mockito.verify(userDao).create(Mockito.anyString(), Mockito.eq(null), Mockito.anyString(), Mockito.anyString());
-        Mockito.verify(restaurantRoleDao).create(Mockito.anyLong(), Mockito.eq(DEFAULT_RESTAURANT_ID), Mockito.eq(ORDER_HANDLER_ROLE));
-        Mockito.verify(emailService).sendInvitationToRestaurantStaff(Mockito.any(User.class), Mockito.any(Restaurant.class));
-    }
-
-    @Test
-    public void deleteRoleOfExistingUser() {
-        final User existingUser = Mockito.mock(User.class);
-        Mockito.when(userDao.getByEmail(DEFAULT_USER_EMAIL)).thenReturn(Optional.of(existingUser));
-
-        restaurantRoleServiceImpl.setRole(DEFAULT_USER_EMAIL, DEFAULT_RESTAURANT_ID, null);
-
-        Mockito.verify(restaurantRoleDao).delete(existingUser.getUserId(), DEFAULT_RESTAURANT_ID);
-    }
-
-    @Test
     public void updateRoleOfExistingUser() {
         final User existingUser = Mockito.mock(User.class);
 

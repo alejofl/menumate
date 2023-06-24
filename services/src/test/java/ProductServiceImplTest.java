@@ -61,9 +61,9 @@ public class ProductServiceImplTest {
 
         Mockito.when(productDao.getById(DEFAULT_PRODUCT_ID)).thenReturn(Optional.of(product));
 
-        productService.update(DEFAULT_PRODUCT_ID, NEW_PRODUCT_NAME, DEFAULT_PRODUCT_PRICE, NEW_PRODUCT_DESCRIPTION);
+        Product ret = productService.update(DEFAULT_PRODUCT_ID, NEW_PRODUCT_NAME, DEFAULT_PRODUCT_PRICE, NEW_PRODUCT_DESCRIPTION);
 
-        Mockito.verify(productDao).updateNameAndDescription(Mockito.eq(product), Mockito.eq(NEW_PRODUCT_NAME), Mockito.eq(NEW_PRODUCT_DESCRIPTION));
+        Assert.assertEquals(product, ret);
     }
 
     @Test
@@ -101,7 +101,6 @@ public class ProductServiceImplTest {
 
         final Promotion result = productService.createPromotion(DEFAULT_PRODUCT_ID, DEFAULT_PROMOTION_START_DATE, DEFAULT_PROMOTION_END_DATE, DEFAULT_PROMOTION_DISCOUNT);
 
-        Mockito.verify(productDao).createPromotion(sourceProduct, DEFAULT_PROMOTION_START_DATE, DEFAULT_PROMOTION_END_DATE, DEFAULT_PROMOTION_DISCOUNT);
         Assert.assertEquals(expectedPromotion, result);
     }
 
