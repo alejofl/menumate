@@ -18,7 +18,7 @@ import java.time.temporal.TemporalAmount;
 @EndDateTimeAfterStartDateTime(typeField = "type", startDateTimeField = "startDateTime", endDateTimeField = "endDateTime")
 public class CreatePromotionForm {
     @NotNull
-    private Long sourceProductId;
+    private Integer sourceProductId;
 
     @NotNull
     @Min(1)
@@ -43,11 +43,11 @@ public class CreatePromotionForm {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime endDateTime;
 
-    public Long getSourceProductId() {
+    public Integer getSourceProductId() {
         return sourceProductId;
     }
 
-    public void setSourceProductId(long sourceProductId) {
+    public void setSourceProductId(Integer sourceProductId) {
         this.sourceProductId = sourceProductId;
     }
 

@@ -140,11 +140,13 @@ public class UserController {
             return createRestaurant(form);
         }
 
+        List<RestaurantTags> tags = form.getTags().stream().map(RestaurantTags::fromOrdinal).collect(Collectors.toList());
+
         PawAuthUserDetails userDetails = ControllerUtils.getCurrentUserDetailsOrThrow();
         Restaurant restaurant = restaurantService.create(
                 form.getName(),
                 userDetails.getUsername(),
-                form.getSpecialty(),
+                RestaurantSpecialty.fromOrdinal(form.getSpecialty()),
                 userDetails.getUserId(),
                 form.getAddress(),
                 form.getDescription(),
@@ -153,7 +155,7 @@ public class UserController {
                 form.getPortrait1().getBytes(),
                 form.getPortrait2().getBytes(),
                 true,
-                form.getTags()
+                tags
         );
 
         return new ModelAndView(String.format("redirect:/restaurants/%d/edit", restaurant.getRestaurantId()));
@@ -272,10 +274,10 @@ public class UserController {
         restaurantService.update(
                 editRestaurantForm.getRestaurantId(),
                 editRestaurantForm.getName(),
-                editRestaurantForm.getSpecialty(),
+                RestaurantSpecialty.fromOrdinal(editRestaurantForm.getSpecialty()),
                 editRestaurantForm.getAddress(),
                 editRestaurantForm.getDescription(),
-                editRestaurantForm.getTags()
+                editRestaurantForm.getTags().stream().map(RestaurantTags::fromOrdinal).collect(Collectors.toList())
         );
         restaurantService.updateImages(
                 editRestaurantForm.getRestaurantId(),
@@ -569,7 +571,7 @@ public class UserController {
             );
         }
 
-        restaurantRoleService.setRole(addEmployeeForm.getEmail(), id, addEmployeeForm.getRole());
+        restaurantRoleService.setRole(addEmployeeForm.getEmail(), id, RestaurantRoleLevel.fromOrdinal(addEmployeeForm.getRole()));
 
         redirectAttributes.addFlashAttribute("addEmployeeErrors", new MyBoolean(true));
         return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));

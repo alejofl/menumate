@@ -1,7 +1,5 @@
 package ar.edu.itba.paw.webapp.form;
 
-import ar.edu.itba.paw.model.RestaurantSpecialty;
-import ar.edu.itba.paw.model.RestaurantTags;
 import ar.edu.itba.paw.webapp.form.validation.Image;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -11,7 +9,6 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class CreateRestaurantForm {
     @NotBlank
@@ -46,8 +43,8 @@ public class CreateRestaurantForm {
     @NotEmpty
     private List<Integer> tags;
 
-    public List<RestaurantTags> getTags() {
-        return tags == null ? null : tags.stream().map(RestaurantTags::fromOrdinal).collect(Collectors.toList());
+    public List<Integer> getTags() {
+        return tags;
     }
 
     public void setTags(List<Integer> tags) {
@@ -62,8 +59,8 @@ public class CreateRestaurantForm {
         this.name = name;
     }
 
-    public RestaurantSpecialty getSpecialty() {
-        return RestaurantSpecialty.fromOrdinal(specialty);
+    public Integer getSpecialty() {
+        return specialty;
     }
 
     public void setSpecialty(Integer specialty) {

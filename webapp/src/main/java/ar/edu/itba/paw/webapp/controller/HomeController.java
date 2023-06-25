@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Controller
@@ -57,14 +59,23 @@ public class HomeController {
         mav.addObject("tags", RestaurantTags.values());
         mav.addObject("order_by", RestaurantOrderBy.values());
 
+        List<RestaurantTags> tags = null;
+        if (form.getTags() != null) {
+            tags = form.getTags().stream().map(RestaurantTags::fromOrdinal).collect(Collectors.toList());
+        }
+        List<RestaurantSpecialty> specialties = null;
+        if (form.getSpecialties() != null) {
+            specialties = form.getSpecialties().stream().map(RestaurantSpecialty::fromOrdinal).collect(Collectors.toList());
+        }
+
         final PaginatedResult<RestaurantDetails> results = restaurantService.search(
                 form.getSearch(),
                 form.getPageOrDefault(),
                 form.getSizeOrDefault(ControllerUtils.DEFAULT_SEARCH_PAGE_SIZE),
-                form.getOrderByOrDefault(),
+                RestaurantOrderBy.fromOrdinal(form.getOrderByOrDefault()),
                 form.getDescendingOrDefault(),
-                form.getTags(),
-                form.getSpecialties()
+                tags,
+                specialties
         );
         mav.addObject("restaurants", results.getResult());
         mav.addObject("restaurantCount", results.getTotalCount());

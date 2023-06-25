@@ -5,7 +5,7 @@ import javax.validation.constraints.NotNull;
 
 public class EditCategoryOrderForm {
     @NotNull
-    private Long restaurantId;
+    private Integer restaurantId;
 
     @NotNull
     @Min(0)
@@ -15,11 +15,11 @@ public class EditCategoryOrderForm {
     @Min(0)
     private Integer newOrder;
 
-    public Long getRestaurantId() {
+    public Integer getRestaurantId() {
         return restaurantId;
     }
 
-    public void setRestaurantId(Long restaurantId) {
+    public void setRestaurantId(Integer restaurantId) {
         this.restaurantId = restaurantId;
     }
 

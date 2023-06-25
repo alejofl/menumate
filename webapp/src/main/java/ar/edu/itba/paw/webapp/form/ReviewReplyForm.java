@@ -7,17 +7,17 @@ import javax.validation.constraints.Size;
 
 public class ReviewReplyForm {
     @NotNull
-    private Long orderId;
+    private Integer orderId;
 
     @NotBlank
     @Size(max = 500)
     private String reply;
 
-    public Long getOrderId() {
+    public Integer getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(Long orderId) {
+    public void setOrderId(Integer orderId) {
         this.orderId = orderId;
     }
 
