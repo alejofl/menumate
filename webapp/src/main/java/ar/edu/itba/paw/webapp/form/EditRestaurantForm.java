@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.webapp.form;
 
+import ar.edu.itba.paw.model.RestaurantSpecialty;
+import ar.edu.itba.paw.model.RestaurantTags;
 import ar.edu.itba.paw.webapp.form.validation.Image;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -9,10 +11,11 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class EditRestaurantForm {
     @NotNull
-    private Integer restaurantId;
+    private Long restaurantId;
 
     @NotBlank
     @Size(max = 50)
@@ -46,11 +49,11 @@ public class EditRestaurantForm {
     @NotEmpty
     private List<Integer> tags;
 
-    public Integer getRestaurantId() {
+    public Long getRestaurantId() {
         return restaurantId;
     }
 
-    public void setRestaurantId(Integer restaurantId) {
+    public void setRestaurantId(long restaurantId) {
         this.restaurantId = restaurantId;
     }
 
@@ -72,6 +75,10 @@ public class EditRestaurantForm {
 
     public Integer getSpecialty() {
         return specialty;
+    }
+
+    public RestaurantSpecialty getSpecialtyAsEnum() {
+        return specialty == null ? null : RestaurantSpecialty.fromOrdinal(specialty);
     }
 
     public void setSpecialty(Integer specialty) {
@@ -120,6 +127,10 @@ public class EditRestaurantForm {
 
     public List<Integer> getTags() {
         return tags;
+    }
+
+    public List<RestaurantTags> getTagsAsEnum() {
+        return tags == null ? null : tags.stream().map(RestaurantTags::fromOrdinal).collect(Collectors.toList());
     }
 
     public void setTags(List<Integer> tags) {

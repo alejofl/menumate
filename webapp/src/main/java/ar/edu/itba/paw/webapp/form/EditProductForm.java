@@ -12,10 +12,10 @@ import java.math.BigDecimal;
 
 public class EditProductForm {
     @NotNull
-    private Integer productId;
+    private Long productId;
 
     @NotNull
-    private Integer categoryId;
+    private Long categoryId;
 
     @NotBlank
     @Size(max = 150)
@@ -33,19 +33,19 @@ public class EditProductForm {
     @Image(nullable = true)
     private MultipartFile image;
 
-    public Integer getProductId() {
+    public Long getProductId() {
         return productId;
     }
 
-    public void setProductId(Integer productId) {
+    public void setProductId(Long productId) {
         this.productId = productId;
     }
 
-    public Integer getCategoryId() {
+    public Long getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(Integer categoryId) {
+    public void setCategoryId(Long categoryId) {
         this.categoryId = categoryId;
     }
 

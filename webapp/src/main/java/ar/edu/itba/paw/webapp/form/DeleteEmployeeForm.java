@@ -4,13 +4,13 @@ import javax.validation.constraints.NotNull;
 
 public class DeleteEmployeeForm {
     @NotNull
-    private Integer userId;
+    private Long userId;
 
-    public Integer getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(long userId) {
         this.userId = userId;
     }
 }

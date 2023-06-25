@@ -59,23 +59,14 @@ public class HomeController {
         mav.addObject("tags", RestaurantTags.values());
         mav.addObject("order_by", RestaurantOrderBy.values());
 
-        List<RestaurantTags> tags = null;
-        if (form.getTags() != null) {
-            tags = form.getTags().stream().map(RestaurantTags::fromOrdinal).collect(Collectors.toList());
-        }
-        List<RestaurantSpecialty> specialties = null;
-        if (form.getSpecialties() != null) {
-            specialties = form.getSpecialties().stream().map(RestaurantSpecialty::fromOrdinal).collect(Collectors.toList());
-        }
-
         final PaginatedResult<RestaurantDetails> results = restaurantService.search(
                 form.getSearch(),
                 form.getPageOrDefault(),
                 form.getSizeOrDefault(ControllerUtils.DEFAULT_SEARCH_PAGE_SIZE),
-                RestaurantOrderBy.fromOrdinal(form.getOrderByOrDefault()),
+                form.getOrderByAsEnum(),
                 form.getDescendingOrDefault(),
-                tags,
-                specialties
+                form.getTagsAsEnums(),
+                form.getSpecialtiesAsEnum()
         );
         mav.addObject("restaurants", results.getResult());
         mav.addObject("restaurantCount", results.getTotalCount());

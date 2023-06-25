@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 
 public class AddProductForm {
     @NotNull
-    private Integer categoryId;
+    private Long categoryId;
 
     @NotBlank
     @Size(max = 150)
@@ -29,11 +29,11 @@ public class AddProductForm {
     @Digits(integer = 8, fraction = 2)
     private BigDecimal price;
 
-    public Integer getCategoryId() {
+    public Long getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(int categoryId) {
+    public void setCategoryId(long categoryId) {
         this.categoryId = categoryId;
     }
 
