@@ -59,7 +59,6 @@ public class UserController {
             paging.clear();
         }
 
-        // TODO: Implement paging on frontend
         PaginatedResult<RestaurantRoleDetails> restaurants = restaurantRoleService.getByUser(ControllerUtils.getCurrentUserIdOrThrow(), paging.getPageOrDefault(), paging.getSizeOrDefault(ControllerUtils.DEFAULT_MYRESTAURANTS_PAGE_SIZE));
         mav.addObject("restaurants", restaurants.getResult());
         mav.addObject("restaurantCount", restaurants.getTotalCount());
