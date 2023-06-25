@@ -60,9 +60,11 @@ public class UserController {
         }
 
         PaginatedResult<RestaurantRoleDetails> restaurants = restaurantRoleService.getByUser(ControllerUtils.getCurrentUserIdOrThrow(), paging.getPageOrDefault(), paging.getSizeOrDefault(ControllerUtils.DEFAULT_MYRESTAURANTS_PAGE_SIZE));
+
         mav.addObject("restaurants", restaurants.getResult());
         mav.addObject("restaurantCount", restaurants.getTotalCount());
         mav.addObject("pageCount", restaurants.getTotalPageCount());
+
         return mav;
     }
 
@@ -86,10 +88,13 @@ public class UserController {
 
         final boolean inProgress = status.equals("inprogress");
         PaginatedResult<Order> orders = orderService.getByUser(ControllerUtils.getCurrentUserIdOrThrow(), paging.getPageOrDefault(), paging.getSizeOrDefault(ControllerUtils.DEFAULT_ORDERS_PAGE_SIZE), inProgress, true);
+
         mav.addObject("orders", orders.getResult());
         mav.addObject("orderCount", orders.getTotalCount());
         mav.addObject("pageCount", orders.getTotalPageCount());
+
         mav.addObject("status", status);
+
         return mav;
     }
 
@@ -213,9 +218,15 @@ public class UserController {
         editRestaurantForm.setMaxTables(restaurant.getMaxTables());
         editRestaurantForm.setTags(restaurant.getTags().stream().map(Enum::ordinal).collect(Collectors.toList()));
 
-        // NOTE: This is a workaround to avoid IllegalStateException.
-        // The problem is that when this method is called from another method (i.e. when there's an error on a form)
-        // the ModelAttributes are not added to the model automatically.
+        /* NOTE:
+         * This is a workaround to avoid IllegalStateException.
+         * The problem is that when this method is called from another method (i.e. when there's an error on a form)
+         * the ModelAttributes are not added to the model automatically, thus all the forms on the page but the faulty
+         * one do not exist.
+         * The solution to this involves using FlashAttributes and adding BindingResults manually for each form. This
+         * solution also fixes the Reload Requested problem when reloading page after error on a form.
+         * However, this method is not compatible with ModelAndView.
+         */
         mav.addObject("editRestaurantForm", editRestaurantForm);
         mav.addObject("addProductForm", addProductForm);
         mav.addObject("editProductForm", editProductForm);

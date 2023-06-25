@@ -13,6 +13,8 @@ public final class ControllerUtils {
     static final int DEFAULT_SEARCH_PAGE_SIZE = 12;
     static final int DEFAULT_RESTAURANT_PAGE_SIZE = 12;
     static final int DEFAULT_MYRESTAURANTS_PAGE_SIZE = 20;
+    static final int MAX_RESTAURANTS_FOR_HOMEPAGE = 4;
+
 
     static final LocalDateTime AVERAGE_WAIT_TIME_PERIOD = LocalDateTime.now().minusDays(15);
 

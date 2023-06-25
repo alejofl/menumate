@@ -3,8 +3,10 @@ package ar.edu.itba.paw.persistance;
 import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.model.OrderItem;
 import ar.edu.itba.paw.model.OrderStatus;
+import ar.edu.itba.paw.model.OrderType;
 import ar.edu.itba.paw.util.PaginatedResult;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface OrderDao {
