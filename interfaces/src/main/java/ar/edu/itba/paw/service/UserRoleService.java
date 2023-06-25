@@ -1,9 +1,9 @@
 package ar.edu.itba.paw.service;
 
-import ar.edu.itba.paw.model.User;
+import ar.edu.itba.paw.model.UserRole;
 import ar.edu.itba.paw.model.UserRoleLevel;
-import ar.edu.itba.paw.util.PaginatedResult;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserRoleService {
@@ -31,5 +31,5 @@ public interface UserRoleService {
     /**
      * Gets the users with certain role level
      */
-    PaginatedResult<User> getByRole(UserRoleLevel roleLevel, int pageNumber, int pageSize);
+    List<UserRole> getByRole(UserRoleLevel roleLevel);
 }

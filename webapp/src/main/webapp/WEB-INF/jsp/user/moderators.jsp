@@ -26,8 +26,8 @@
                 <tbody class="table-striped">
                 <c:forEach items="${userRoles}" var="role">
                     <tr>
-                        <td class="text-start"><c:out value="${role.name}"/></td>
-                        <td class="text-center"><c:out value="${role.email}"/></td>
+                        <td class="text-start"><c:out value="${role.user.name}"/></td>
+                        <td class="text-center"><c:out value="${role.user.email}"/></td>
                         <td class="text-end">Moderator</td>
                     </tr>
                 </c:forEach>
@@ -40,54 +40,6 @@
                 <p>There are no moderators</p>
             </div>
         </c:if>
-
-        <%-- PAGINATION --%>
-        <c:choose>
-            <c:when test="${empty param.page}">
-                <c:set var="currentPage" value="1"/>
-            </c:when>
-            <c:otherwise>
-                <c:set var="currentPage" value="${param.page}"/>
-            </c:otherwise>
-        </c:choose>
-        <c:choose>
-            <c:when test="${empty param.size}">
-                <c:set var="currentSize" value="12"/>
-            </c:when>
-            <c:otherwise>
-                <c:set var="currentSize" value="${param.size}"/>
-            </c:otherwise>
-        </c:choose>
-
-        <nav class="d-flex justify-content-center">
-            <ul class="pagination">
-                <li class="page-item">
-                    <c:url value="/moderators" var="previousUrl">
-                        <c:param name="page" value="${currentPage - 1}"/>
-                        <c:param name="size" value="${currentSize}"/>
-                    </c:url>
-                    <a class="page-link ${currentPage == 1 ? "disabled" : ""}" href="${previousUrl}" aria-label="Previous">
-                        <span aria-hidden="true">&laquo;</span>
-                    </a>
-                </li>
-                <c:forEach begin="1" end="${pageCount}" var="pageNo">
-                    <c:url value="/moderators" var="pageUrl">
-                        <c:param name="page" value="${pageNo}"/>
-                        <c:param name="size" value="${currentSize}"/>
-                    </c:url>
-                    <li class="page-item ${pageNo == currentPage ? "active" : ""}"><a class="page-link" href="${pageUrl}">${pageNo}</a></li>
-                </c:forEach>
-                <li class="page-item">
-                    <c:url value="/moderators" var="nextUrl">
-                        <c:param name="page" value="${currentPage + 1}"/>
-                        <c:param name="size" value="${currentSize}"/>
-                    </c:url>
-                    <a class="page-link ${(currentPage == pageCount || pageCount == 0) ? "disabled" : ""}" href="${nextUrl}" aria-label="Next">
-                        <span aria-hidden="true">&raquo;</span>
-                    </a>
-                </li>
-            </ul>
-        </nav>
     </div>
 
 

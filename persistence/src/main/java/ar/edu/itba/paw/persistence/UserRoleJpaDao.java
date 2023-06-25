@@ -1,21 +1,15 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.model.UserRole;
 import ar.edu.itba.paw.model.UserRoleLevel;
 import ar.edu.itba.paw.persistance.UserRoleDao;
-import ar.edu.itba.paw.util.PaginatedResult;
-import ar.edu.itba.paw.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,30 +42,12 @@ public class UserRoleJpaDao implements UserRoleDao {
     }
 
     @Override
-    public PaginatedResult<User> getByRole(UserRoleLevel roleLevel, int pageNumber, int pageSize) {
-        Utils.validatePaginationParams(pageNumber, pageSize);
-
-        Query nativeQuery = em.createNativeQuery("SELECT user_id FROM user_roles WHERE role_level = ? ORDER BY user_id DESC");
-        nativeQuery.setParameter(1, roleLevel.ordinal());
-        nativeQuery.setMaxResults(pageSize);
-        nativeQuery.setFirstResult((pageNumber - 1) * pageSize);
-
-        final List<Long> idList = nativeQuery.getResultList().stream().mapToLong(n -> ((Number) n).longValue()).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
-
-        Query countQuery = em.createNativeQuery("SELECT COUNT(*) FROM user_roles WHERE role_level = ?");
-        countQuery.setParameter(1, roleLevel.ordinal());
-        int count = ((Number) countQuery.getSingleResult()).intValue();
-
-        if (idList.isEmpty())
-            return new PaginatedResult<>(Collections.emptyList(), pageNumber, pageSize, count);
-
-        final TypedQuery<User> query = em.createQuery(
-                "FROM User WHERE userId IN :idList ORDER BY userId DESC",
-                User.class
+    public List<UserRole> getByRole(UserRoleLevel roleLevel) {
+        final TypedQuery<UserRole> query = em.createQuery(
+                "FROM UserRole ORDER BY userId DESC",
+                UserRole.class
         );
-        query.setParameter("idList", idList);
 
-        List<User> users = query.getResultList();
-        return new PaginatedResult<>(users, pageNumber, pageSize, count);
+        return query.getResultList();
     }
 }

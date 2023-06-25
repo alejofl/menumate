@@ -1,15 +1,13 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import ar.edu.itba.paw.model.User;
+import ar.edu.itba.paw.model.UserRole;
 import ar.edu.itba.paw.model.UserRoleLevel;
 import ar.edu.itba.paw.service.UserRoleService;
-import ar.edu.itba.paw.util.PaginatedResult;
 import ar.edu.itba.paw.webapp.form.AddModeratorForm;
 import ar.edu.itba.paw.webapp.form.PagingForm;
 import ar.edu.itba.paw.webapp.form.RemoveModeratorForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 public class ModeratorController {
@@ -26,22 +25,14 @@ public class ModeratorController {
 
     @RequestMapping(value = "moderators", method = RequestMethod.GET)
     public ModelAndView moderators(
-            @ModelAttribute("addModeratorForm") final AddModeratorForm addModeratorForm,
-            @Valid final PagingForm paging,
-            final BindingResult errors
+            @ModelAttribute("addModeratorForm") final AddModeratorForm addModeratorForm
     ) {
         ModelAndView mav = new ModelAndView("user/moderators");
 
-        if (errors.hasErrors()) {
-            mav.addObject("error", Boolean.TRUE);
-            paging.clear();
-        }
+        List<UserRole> roles = userRoleService.getByRole(UserRoleLevel.MODERATOR);
 
-        PaginatedResult<User> roles = userRoleService.getByRole(UserRoleLevel.MODERATOR, paging.getPageOrDefault(), paging.getSizeOrDefault(ControllerUtils.DEFAULT_USERROLES_PAGE_SIZE));
-
-        mav.addObject("userRoles", roles.getResult());
-        mav.addObject("userRoleCount", roles.getTotalCount());
-        mav.addObject("pageCount", roles.getTotalPageCount());
+        mav.addObject("userRoles", roles);
+        mav.addObject("userRoleCount", roles.size());
 
         return mav;
     }
@@ -53,11 +44,7 @@ public class ModeratorController {
     ) {
         if (errors.hasErrors()) {
             PagingForm pagingForm = new PagingForm();
-            return moderators(
-                    form,
-                    pagingForm,
-                    new BeanPropertyBindingResult(pagingForm, "pagingForm")
-            );
+            return moderators(form);
         }
 
         userRoleService.setRole(form.getEmail(), UserRoleLevel.MODERATOR);

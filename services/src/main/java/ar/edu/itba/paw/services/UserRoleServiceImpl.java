@@ -7,7 +7,6 @@ import ar.edu.itba.paw.persistance.UserDao;
 import ar.edu.itba.paw.persistance.UserRoleDao;
 import ar.edu.itba.paw.service.EmailService;
 import ar.edu.itba.paw.service.UserRoleService;
-import ar.edu.itba.paw.util.PaginatedResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +14,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 @Service
 public class UserRoleServiceImpl implements UserRoleService {
@@ -85,7 +85,7 @@ public class UserRoleServiceImpl implements UserRoleService {
     }
 
     @Override
-    public PaginatedResult<User> getByRole(UserRoleLevel roleLevel, int pageNumber, int pageSize) {
-        return userRoleDao.getByRole(roleLevel, pageNumber, pageSize);
+    public List<UserRole> getByRole(UserRoleLevel roleLevel) {
+        return userRoleDao.getByRole(roleLevel);
     }
 }

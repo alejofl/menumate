@@ -1,8 +1,8 @@
 package ar.edu.itba.paw.persistance;
 
 import ar.edu.itba.paw.model.*;
-import ar.edu.itba.paw.util.PaginatedResult;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserRoleDao {
@@ -26,6 +26,5 @@ public interface UserRoleDao {
     /**
      * Gets the users a given role.
      */
-    PaginatedResult<User> getByRole(UserRoleLevel roleLevel, int pageNumber, int pageSize);
-
+    List<UserRole> getByRole(UserRoleLevel roleLevel);
 }
