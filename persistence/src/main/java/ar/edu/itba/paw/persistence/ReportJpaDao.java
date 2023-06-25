@@ -1,8 +1,10 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.Report;
+import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.persistance.ReportDao;
 import ar.edu.itba.paw.util.PaginatedResult;
+import ar.edu.itba.paw.util.Pair;
 import ar.edu.itba.paw.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class ReportJpaDao implements ReportDao {
@@ -36,6 +39,36 @@ public class ReportJpaDao implements ReportDao {
         em.persist(report);
         LOGGER.info("Created report with id {} for restaurant {}", report.getReportId(), report.getRestaurantId());
         return report;
+    }
+
+    @Override
+    public PaginatedResult<Pair<Restaurant, Integer>> getCountByRestaurant(int pageNumber, int pageSize) {
+        Query nativeQuery = em.createNativeQuery("SELECT restaurant_id, COUNT(*) AS cnt FROM restaurant_reports GROUP BY restaurant_id ORDER BY cnt DESC, restaurant_id");
+        List<Object[]> nativeResults = (List<Object[]>) nativeQuery.getResultList();
+
+        List<Long> restaurantIds = nativeResults.stream().map(arr -> ((Number)arr[0]).longValue()).collect(Collectors.toList());
+
+        Query countQuery = em.createNativeQuery("SELECT COUNT(DISTINCT restaurant_id) FROM restaurant_reports");
+        int count = ((Number) countQuery.getSingleResult()).intValue();
+
+        if (restaurantIds.isEmpty())
+            return new PaginatedResult<>(Collections.emptyList(), pageNumber, pageSize, count);
+
+        StringBuilder sqlBuilder = new StringBuilder("FROM Restaurant r WHERE r.restaurantId IN :restaurantIds ORDER BY (case");
+        for (int i = 0; i < restaurantIds.size(); i++)
+            sqlBuilder.append(" when r.restaurantId=").append(restaurantIds.get(i)).append(" then ").append(i);
+        sqlBuilder.append(" end)");
+
+        TypedQuery<Restaurant> query = em.createQuery(sqlBuilder.toString(), Restaurant.class);
+        query.setParameter("restaurantIds", restaurantIds);
+        List<Restaurant> restaurantResults = query.getResultList();
+
+        List<Pair<Restaurant, Integer>> results = new ArrayList<>();
+        for (int i = 0; i < nativeResults.size(); i++) {
+            results.add(new Pair<>(restaurantResults.get(i), ((Number)nativeResults.get(i)[1]).intValue()));
+        }
+
+        return new PaginatedResult<>(results, pageNumber, pageSize, count);
     }
 
     private void appendFilterConditions(StringBuilder sqlBuilder, Long restaurantId, Long reporterUserId, Long handlerUserId, Boolean isHandled) {

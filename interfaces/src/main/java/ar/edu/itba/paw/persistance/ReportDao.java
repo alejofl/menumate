@@ -1,7 +1,9 @@
 package ar.edu.itba.paw.persistance;
 
 import ar.edu.itba.paw.model.Report;
+import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.util.PaginatedResult;
+import ar.edu.itba.paw.util.Pair;
 
 import java.util.Optional;
 
@@ -9,6 +11,8 @@ public interface ReportDao {
     Optional<Report> getById(long reportId);
 
     Report create(long restaurantId, Long reporterUserId, String comment);
+
+    PaginatedResult<Pair<Restaurant, Integer>> getCountByRestaurant(int pageNumber, int pageSize);
 
     /**
      * Gets reports optionally sorting by restaurant, reporter id, handler id, whether the report was handled, and

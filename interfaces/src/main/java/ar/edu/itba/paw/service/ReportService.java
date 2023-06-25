@@ -1,7 +1,9 @@
 package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.Report;
+import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.util.PaginatedResult;
+import ar.edu.itba.paw.util.Pair;
 
 import java.util.Optional;
 
@@ -12,7 +14,11 @@ public interface ReportService {
 
     Report markHandled(long reportId, long handlerUserId);
 
+    PaginatedResult<Pair<Restaurant, Integer>> getCountByRestaurant(int pageNumber, int pageSize);
+
     PaginatedResult<Report> getUnhandled(int pageNumber, int pageSize);
+
+    PaginatedResult<Report> getByRestaurantUnhandled(long restaurantId, int pageNumber, int pageSize);
 
     PaginatedResult<Report> getByHandler(long handlerUserId, int pageNumber, int pageSize);
 

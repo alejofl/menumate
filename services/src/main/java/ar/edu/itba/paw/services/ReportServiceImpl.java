@@ -2,9 +2,11 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.exception.ReportNotFoundException;
 import ar.edu.itba.paw.model.Report;
+import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.persistance.ReportDao;
 import ar.edu.itba.paw.service.ReportService;
 import ar.edu.itba.paw.util.PaginatedResult;
+import ar.edu.itba.paw.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,8 +51,18 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
+    public PaginatedResult<Pair<Restaurant, Integer>> getCountByRestaurant(int pageNumber, int pageSize) {
+        return reportDao.getCountByRestaurant(pageNumber, pageSize);
+    }
+
+    @Override
     public PaginatedResult<Report> getUnhandled(int pageNumber, int pageSize) {
         return reportDao.get(null, null, null, false, false, pageNumber, pageSize);
+    }
+
+    @Override
+    public PaginatedResult<Report> getByRestaurantUnhandled(long restaurantId, int pageNumber, int pageSize) {
+        return reportDao.get(restaurantId, null, null, false, false, pageNumber, pageSize);
     }
 
     @Override
