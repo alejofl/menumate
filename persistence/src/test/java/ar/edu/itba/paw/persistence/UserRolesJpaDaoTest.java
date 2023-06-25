@@ -1,10 +1,8 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.model.UserRole;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import ar.edu.itba.paw.persistence.constants.UserConstants;
-import ar.edu.itba.paw.util.PaginatedResult;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -98,9 +96,9 @@ public class UserRolesJpaDaoTest {
 
     @Test
     public void testGetByRoleOne() {
-        PaginatedResult<User> result = rolesDao.getByRole(UserConstants.MODERATOR_ROLE, 1, 10);
-        Assert.assertEquals(1, result.getTotalCount());
-        Assert.assertEquals(UserConstants.USER_ID_MODERATOR_ROLE, result.getResult().get(0).getUserId().longValue());
+        List<UserRole> result = rolesDao.getByRole(UserConstants.MODERATOR_ROLE);
+        Assert.assertEquals(1, result.size());
+        Assert.assertEquals(UserConstants.USER_ID_MODERATOR_ROLE, result.get(0).getUserId());
 
     }
 
@@ -115,13 +113,9 @@ public class UserRolesJpaDaoTest {
         jdbcTemplate.execute("INSERT INTO user_roles (user_id, role_level) VALUES (" + UserConstants.ACTIVE_USER_ID + ", " + UserConstants.MODERATOR_ROLE.ordinal() + ")");
         jdbcTemplate.execute("INSERT INTO user_roles (user_id, role_level) VALUES (" + UserConstants.RESTAURANT_OWNER_ID + ", " + UserConstants.MODERATOR_ROLE.ordinal() + ")");
 
-        PaginatedResult<User> result = null;
-        for (int i = 0; i < ids.size() - 1; i++) {
-            result = rolesDao.getByRole(UserConstants.MODERATOR_ROLE, i + 1, 1);
-            Assert.assertEquals(ids.size(), result.getTotalCount());
-            Assert.assertEquals(1, result.getResult().size());
-            Assert.assertEquals(i + 1, result.getPageNumber());
-            Assert.assertEquals(ids.get(i).longValue(), result.getResult().get(0).getUserId().longValue());
-        }
+        List<UserRole> result = rolesDao.getByRole(UserConstants.MODERATOR_ROLE);
+        Assert.assertEquals(3, result.size());
+        Assert.assertEquals(ids.get(0).longValue(), result.get(0).getUserId());
+        Assert.assertEquals(ids.get(1).longValue(), result.get(1).getUserId());
     }
 }

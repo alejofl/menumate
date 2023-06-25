@@ -11,7 +11,6 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.time.temporal.TemporalAmount;
 
 @NotOverlappingPromotions
 @ValidDuration(typeField = "type", daysField = "days", hoursField = "hours", minutesField = "minutes")

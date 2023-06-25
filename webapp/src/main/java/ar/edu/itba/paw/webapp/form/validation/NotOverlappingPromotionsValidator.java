@@ -1,13 +1,11 @@
 package ar.edu.itba.paw.webapp.form.validation;
 
-import ar.edu.itba.paw.model.PromotionType;
 import ar.edu.itba.paw.service.ProductService;
 import ar.edu.itba.paw.webapp.form.CreatePromotionForm;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.lang.reflect.Field;
 
 public class NotOverlappingPromotionsValidator implements ConstraintValidator<NotOverlappingPromotions, Object> {
     @Autowired

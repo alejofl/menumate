@@ -4,9 +4,7 @@ import ar.edu.itba.paw.model.PromotionType;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import javax.validation.Valid;
 import java.lang.reflect.Field;
-import java.time.LocalDateTime;
 
 public class ValidDurationValidator implements ConstraintValidator<ValidDuration, Object> {
 
