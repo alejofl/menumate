@@ -7,17 +7,17 @@ import javax.validation.constraints.Size;
 
 public class AddCategoryForm {
     @NotNull
-    private Integer restaurantId;
+    private Long restaurantId;
 
     @NotBlank
     @Size(max = 50)
     private String name;
 
-    public Integer getRestaurantId() {
+    public Long getRestaurantId() {
         return restaurantId;
     }
 
-    public void setRestaurantId(int restaurantId) {
+    public void setRestaurantId(long restaurantId) {
         this.restaurantId = restaurantId;
     }
 

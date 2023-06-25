@@ -8,7 +8,7 @@ import javax.validation.constraints.Size;
 public class CartItem {
 
     @NotNull
-    private Integer productId;
+    private Long productId;
 
     @Min(1)
     @Max(100)
@@ -18,11 +18,11 @@ public class CartItem {
     @Size(max = 120)
     private String comment;
 
-    public int getProductId() {
+    public long getProductId() {
         return productId;
     }
 
-    public void setProductId(int productId) {
+    public void setProductId(long productId) {
         this.productId = productId;
     }
 

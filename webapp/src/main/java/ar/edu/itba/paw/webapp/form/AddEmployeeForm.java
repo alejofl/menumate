@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.form;
 
+import ar.edu.itba.paw.model.RestaurantRoleLevel;
 import ar.edu.itba.paw.webapp.form.validation.NotOwnerOfRestaurant;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
@@ -30,8 +31,8 @@ public class AddEmployeeForm {
         this.email = email;
     }
 
-    public Integer getRole() {
-        return role;
+    public RestaurantRoleLevel getRole() {
+        return RestaurantRoleLevel.fromOrdinal(role);
     }
 
     public void setRole(Integer role) {

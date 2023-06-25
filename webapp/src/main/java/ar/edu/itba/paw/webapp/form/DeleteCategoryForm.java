@@ -4,13 +4,13 @@ import javax.validation.constraints.NotNull;
 
 public class DeleteCategoryForm {
     @NotNull
-    private Integer categoryId;
+    private Long categoryId;
 
-    public Integer getCategoryId() {
+    public Long getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(int categoryId) {
+    public void setCategoryId(long categoryId) {
         this.categoryId = categoryId;
     }
 }

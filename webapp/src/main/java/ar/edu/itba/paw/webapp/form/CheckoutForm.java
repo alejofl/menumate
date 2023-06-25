@@ -30,7 +30,7 @@ public class CheckoutForm {
     private Integer orderType;
 
     @NotNull
-    private Integer restaurantId;
+    private Long restaurantId;
 
     @NotEmpty
     @Size(min = 1, max = 500)
@@ -69,11 +69,11 @@ public class CheckoutForm {
         this.orderType = orderType;
     }
 
-    public Integer getRestaurantId() {
+    public Long getRestaurantId() {
         return restaurantId;
     }
 
-    public void setRestaurantId(Integer restaurantId) {
+    public void setRestaurantId(long restaurantId) {
         this.restaurantId = restaurantId;
     }
 

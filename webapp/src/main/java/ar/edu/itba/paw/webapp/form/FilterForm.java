@@ -1,6 +1,11 @@
 package ar.edu.itba.paw.webapp.form;
 
+import ar.edu.itba.paw.model.RestaurantOrderBy;
+import ar.edu.itba.paw.model.RestaurantSpecialty;
+import ar.edu.itba.paw.model.RestaurantTags;
+
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class FilterForm extends SearchForm {
 
@@ -12,8 +17,8 @@ public class FilterForm extends SearchForm {
 
     private Boolean descending;
 
-    public List<Integer> getSpecialties() {
-        return specialties;
+    public List<RestaurantSpecialty> getSpecialties() {
+        return specialties == null ? null : specialties.stream().map(RestaurantSpecialty::fromOrdinal).collect(Collectors.toList());
     }
 
     public Boolean getDescending() {
@@ -28,8 +33,8 @@ public class FilterForm extends SearchForm {
         this.specialties = specialties;
     }
 
-    public List<Integer> getTags() {
-        return tags;
+    public List<RestaurantTags> getTags() {
+        return tags == null ? null : tags.stream().map(RestaurantTags::fromOrdinal).collect(Collectors.toList());
     }
 
     public void setTags(List<Integer> tags) {
@@ -44,8 +49,8 @@ public class FilterForm extends SearchForm {
         this.orderBy = orderBy;
     }
 
-    public Integer getOrderByOrDefault() {
-        return orderBy == null ? 0 : orderBy;
+    public RestaurantOrderBy getOrderByOrDefault() {
+        return RestaurantOrderBy.fromOrdinal(orderBy == null ? 0 : orderBy);
     }
 
     public Boolean getDescendingOrDefault() {
