@@ -32,12 +32,8 @@ public class OrderServiceImplTest {
     private static final String DEFAULT_ADDRESS = "address";
     private static final int DEFAULT_TABLE_NUMBER = 10;
 
-    @Before
-    public void setUp() {
-    }
-
     @Test
-    public void testMarkAsConfirmedValidOrder() throws OrderNotFoundException {
+    public void testMarkAsConfirmedValidOrder() {
         final Order order = Mockito.spy(Order.class);
         order.setDateConfirmed(null);
         Mockito.when(orderDao.getById(DEFAULT_ORDER_ID)).thenReturn(Optional.of(order));
@@ -48,13 +44,13 @@ public class OrderServiceImplTest {
     }
 
     @Test(expected = OrderNotFoundException.class)
-    public void testMarkAsConfirmedInvalidOrder() throws OrderNotFoundException {
+    public void testMarkAsConfirmedInvalidOrder() {
         Mockito.when(orderDao.getById(DEFAULT_ORDER_ID)).thenReturn(Optional.empty());
         orderServiceImpl.markAsConfirmed(DEFAULT_ORDER_ID);
     }
 
     @Test(expected = IllegalStateException.class)
-    public void testMarkAsConfirmedAlreadyConfirmedOrder() throws OrderNotFoundException {
+    public void testMarkAsConfirmedAlreadyConfirmedOrder() {
         final Order order = Mockito.mock(Order.class);
         Mockito.when(orderDao.getById(DEFAULT_ORDER_ID)).thenReturn(Optional.of(order));
         Mockito.when(order.getOrderStatus()).thenReturn(OrderStatus.CONFIRMED);
@@ -63,7 +59,7 @@ public class OrderServiceImplTest {
     }
 
     @Test
-    public void testMarkAsReadyValidOrder() throws OrderNotFoundException {
+    public void testMarkAsReadyValidOrder() {
         final Order order = Mockito.spy(Order.class);
         order.setDateReady(null);
         Mockito.when(orderDao.getById(DEFAULT_ORDER_ID)).thenReturn(Optional.of(order));
@@ -74,13 +70,13 @@ public class OrderServiceImplTest {
     }
 
     @Test(expected = OrderNotFoundException.class)
-    public void testMarkAsReadyInvalidOrder() throws OrderNotFoundException {
+    public void testMarkAsReadyInvalidOrder() {
         Mockito.when(orderDao.getById(DEFAULT_ORDER_ID)).thenReturn(Optional.empty());
         orderServiceImpl.markAsReady(DEFAULT_ORDER_ID);
     }
 
     @Test(expected = IllegalStateException.class)
-    public void testMarkAsReadyAlreadyReadyOrder() throws OrderNotFoundException {
+    public void testMarkAsReadyAlreadyReadyOrder() {
         final Order order = Mockito.mock(Order.class);
         Mockito.when(orderDao.getById(DEFAULT_ORDER_ID)).thenReturn(Optional.of(order));
         Mockito.when(order.getOrderStatus()).thenReturn(OrderStatus.READY);
@@ -89,7 +85,7 @@ public class OrderServiceImplTest {
     }
 
     @Test
-    public void testMarkAsDeliveredValidOrder() throws OrderNotFoundException {
+    public void testMarkAsDeliveredValidOrder() {
         final Order order = Mockito.spy(Order.class);
         order.setDateDelivered(null);
         Mockito.when(orderDao.getById(DEFAULT_ORDER_ID)).thenReturn(Optional.of(order));
@@ -100,13 +96,13 @@ public class OrderServiceImplTest {
     }
 
     @Test(expected = OrderNotFoundException.class)
-    public void testMarkAsDeliveredInvalidOrder() throws OrderNotFoundException {
+    public void testMarkAsDeliveredInvalidOrder() {
         Mockito.when(orderDao.getById(DEFAULT_ORDER_ID)).thenReturn(Optional.empty());
         orderServiceImpl.markAsDelivered(DEFAULT_ORDER_ID);
     }
 
     @Test(expected = IllegalStateException.class)
-    public void testMarkAsDeliveredAlreadyDeliveredOrder() throws OrderNotFoundException {
+    public void testMarkAsDeliveredAlreadyDeliveredOrder() {
         final Order order = Mockito.mock(Order.class);
         Mockito.when(orderDao.getById(DEFAULT_ORDER_ID)).thenReturn(Optional.of(order));
         Mockito.when(order.getOrderStatus()).thenReturn(OrderStatus.DELIVERED);
@@ -115,7 +111,7 @@ public class OrderServiceImplTest {
     }
 
     @Test
-    public void testMarkAsCancelledConfirmedOrder() throws OrderNotFoundException {
+    public void testMarkAsCancelledConfirmedOrder() {
         final Order order = Mockito.spy(Order.class);
         order.setDateCancelled(null);
         Mockito.when(orderDao.getById(DEFAULT_ORDER_ID)).thenReturn(Optional.of(order));
@@ -126,7 +122,7 @@ public class OrderServiceImplTest {
     }
 
     @Test
-    public void testMarkAsCancelledPendingOrder() throws OrderNotFoundException {
+    public void testMarkAsCancelledPendingOrder() {
         final Order order = Mockito.spy(Order.class);
         order.setDateCancelled(null);
         Mockito.when(orderDao.getById(DEFAULT_ORDER_ID)).thenReturn(Optional.of(order));
@@ -137,7 +133,7 @@ public class OrderServiceImplTest {
     }
 
     @Test(expected = IllegalStateException.class)
-    public void testCantCancelDeliveredOrder() throws OrderNotFoundException {
+    public void testCantCancelDeliveredOrder() {
         final Order order = Mockito.mock(Order.class);
         Mockito.when(orderDao.getById(DEFAULT_ORDER_ID)).thenReturn(Optional.of(order));
         Mockito.when(order.getOrderStatus()).thenReturn(OrderStatus.DELIVERED);
@@ -146,7 +142,7 @@ public class OrderServiceImplTest {
     }
 
     @Test(expected = IllegalStateException.class)
-    public void testCantCancelAlreadyCancelledOrder() throws OrderNotFoundException {
+    public void testCantCancelAlreadyCancelledOrder() {
         final Order order = Mockito.mock(Order.class);
         Mockito.when(orderDao.getById(DEFAULT_ORDER_ID)).thenReturn(Optional.of(order));
         Mockito.when(order.getOrderStatus()).thenReturn(OrderStatus.CANCELLED);
@@ -155,7 +151,7 @@ public class OrderServiceImplTest {
     }
 
     @Test(expected = IllegalStateException.class)
-    public void testCantCancelRejectedOrder() throws OrderNotFoundException {
+    public void testCantCancelRejectedOrder() {
         final Order order = Mockito.mock(Order.class);
         Mockito.when(orderDao.getById(DEFAULT_ORDER_ID)).thenReturn(Optional.of(order));
         Mockito.when(order.getOrderStatus()).thenReturn(OrderStatus.REJECTED);
@@ -164,7 +160,7 @@ public class OrderServiceImplTest {
     }
 
     @Test(expected = OrderNotFoundException.class)
-    public void testMarkAsCancelledInvalidOrder() throws OrderNotFoundException {
+    public void testMarkAsCancelledInvalidOrder() {
         Mockito.when(orderDao.getById(DEFAULT_ORDER_ID)).thenReturn(Optional.empty());
         orderServiceImpl.markAsCancelled(DEFAULT_ORDER_ID);
     }

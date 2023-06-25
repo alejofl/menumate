@@ -88,20 +88,21 @@ public class ProductServiceImplTest {
 
         final Product newProduct = Mockito.mock(Product.class);
         Mockito.when(newProduct.getPrice()).thenReturn(NEW_PRODUCT_PRICE);
-        Mockito.when(newProduct.getPrice()).thenReturn(NEW_PRODUCT_PRICE);
 
         Mockito.when(productDao.create(existingProduct.getCategoryId(), DEFAULT_PRODUCT_NAME, DEFAULT_PRODUCT_DESCRIPTION, existingProduct.getImageId(), NEW_PRODUCT_PRICE)).thenReturn(newProduct);
 
         final Product result = productService.update(DEFAULT_PRODUCT_ID, DEFAULT_PRODUCT_NAME, NEW_PRODUCT_PRICE, DEFAULT_PRODUCT_DESCRIPTION);
 
         Assert.assertTrue(existingProduct.getDeleted());
-        Assert.assertEquals(NEW_PRODUCT_PRICE, newProduct.getPrice());
-        Assert.assertSame(newProduct, result);
+        Assert.assertEquals(NEW_PRODUCT_PRICE, result.getPrice());
+        Assert.assertEquals(DEFAULT_PRODUCT_NAME, result.getName());
+        Assert.assertEquals(DEFAULT_PRODUCT_DESCRIPTION, result.getDescription());
     }
 
     @Test
     public void testCreatePromotion() {
         final Product sourceProduct = Mockito.mock(Product.class);
+        Mockito.when(sourceProduct.getName()).thenReturn(DEFAULT_PRODUCT_NAME);
         Mockito.when(sourceProduct.getDeleted()).thenReturn(false);
         Mockito.when(sourceProduct.getAvailable()).thenReturn(true);
 
@@ -109,10 +110,17 @@ public class ProductServiceImplTest {
 
         final Promotion expectedPromotion = Mockito.mock(Promotion.class);
         Mockito.when(productDao.createPromotion(sourceProduct, DEFAULT_PROMOTION_START_DATE, DEFAULT_PROMOTION_END_DATE, DEFAULT_PROMOTION_DISCOUNT)).thenReturn(expectedPromotion);
+        Mockito.when(expectedPromotion.getSource()).thenReturn(sourceProduct);
+        Mockito.when(expectedPromotion.getStartDate()).thenReturn(DEFAULT_PROMOTION_START_DATE);
+        Mockito.when(expectedPromotion.getEndDate()).thenReturn(DEFAULT_PROMOTION_END_DATE);
+        Mockito.when(expectedPromotion.getDiscountPercentage()).thenReturn((int) (DEFAULT_PROMOTION_DISCOUNT * 100));
 
         final Promotion result = productService.createPromotion(DEFAULT_PRODUCT_ID, DEFAULT_PROMOTION_START_DATE, DEFAULT_PROMOTION_END_DATE, DEFAULT_PROMOTION_DISCOUNT);
 
-        Assert.assertEquals(expectedPromotion, result);
+        Assert.assertEquals(DEFAULT_PRODUCT_NAME, result.getSource().getName());
+        Assert.assertEquals(DEFAULT_PROMOTION_START_DATE, result.getStartDate());
+        Assert.assertEquals(DEFAULT_PROMOTION_END_DATE, result.getEndDate());
+        Assert.assertEquals((int) (DEFAULT_PROMOTION_DISCOUNT * 100), result.getDiscountPercentage(), 0.0001);
     }
 
     @Test(expected = IllegalArgumentException.class)

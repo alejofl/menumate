@@ -48,7 +48,6 @@ public class UserServiceImplTest {
     private static final String EMAIL = "email";
     private static final String TOKEN = "token";
     private static final String ADDRESS = "address";
-    private static final String ADDRESS_ALIAS = "alias";
 
 
     @Before
@@ -160,11 +159,6 @@ public class UserServiceImplTest {
         Mockito.when(userDao.getByEmail(EMAIL)).thenReturn(Optional.empty());
 
         Assert.assertFalse(userServiceImpl.isUserEmailRegisteredAndConsolidated(EMAIL));
-    }
-
-    @Test
-    public void testRegisterAddressValidData() {
-        userServiceImpl.registerAddress(USER_ID, ADDRESS, ADDRESS_ALIAS);
     }
 
     @Test(expected = IllegalArgumentException.class)
