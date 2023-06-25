@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <html>
@@ -65,12 +66,12 @@
             <c:if test="${not empty promotions}">
                 <div class="card mb-4 bg-promotion">
                     <div class="card-body d-flex justify-content-between align-items-center">
-                        <h3 class="mb-0 text-white"><spring:message code="editmenu.promotions.title"/></h3>
+                        <h3 class="mb-0 text-white"><spring:message code="editmenu.livingpromotions.title"/></h3>
                     </div>
                 </div>
                 <div class="items-container">
                     <c:forEach var="promotion" items="${promotions}">
-                        <div class="card menu-item-card">
+                        <div class="card menu-item-card ${promotion.hasStarted() ? "" : "promotion-disabled"}">
                             <div class="menu-item-card-img-container">
                                 <c:choose>
                                     <c:when test="${promotion.destination.imageId == null}">
@@ -81,24 +82,36 @@
                                     </c:otherwise>
                                 </c:choose>
                             </div>
-                            <div class="card-body menu-item-card-body">
-                                <div>
-                                    <div class="d-flex justify-content-between">
-                                        <p class="card-text"><c:out value="${promotion.destination.name}"/></p>
-                                        <div class="d-flex gap-2 ps-2">
-                                            <a class="stop-promotion-button" type="button" data-bs-toggle="modal" data-bs-target="#stop-promotion-modal" data-product-id="${promotion.destination.productId}"><i class="bi bi-x-circle"></i></a>
+                            <div class="d-flex flex-column space-between">
+                                <div class="card-body menu-item-card-body">
+                                    <div>
+                                        <div class="d-flex justify-content-between">
+                                            <p class="card-text"><c:out value="${promotion.destination.name}"/></p>
+                                            <div class="d-flex gap-2 ps-2">
+                                                <a class="stop-promotion-button" type="button" data-bs-toggle="modal" data-bs-target="#stop-promotion-modal" data-product-id="${promotion.destination.productId}"><i class="bi bi-x-circle text-danger"></i></a>
+                                            </div>
                                         </div>
+                                        <c:choose>
+                                            <c:when test="${not empty promotion.destination.description}">
+                                                <p class="card-text pb-1"><small class="text-body-secondary"><c:out value="${promotion.destination.description}"/></small></p>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <p class="card-text pb-1"><small class="text-body-secondary"><i><spring:message code="menuitem.product.nodescription"/></i></small></p>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </div>
-                                    <c:choose>
-                                        <c:when test="${not empty promotion.destination.description}">
-                                            <p class="card-text"><small class="text-body-secondary"><c:out value="${promotion.destination.description}"/></small></p>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <p class="card-text"><small class="text-body-secondary"><i><spring:message code="menuitem.product.nodescription"/></i></small></p>
-                                        </c:otherwise>
-                                    </c:choose>
+                                    <h5 class="card-title">$${promotion.destination.price} <span class="badge bg-promotion">-${promotion.discountPercentage}%</span></h5>
                                 </div>
-                                <h5 class="card-title">$${promotion.destination.price} <span class="badge bg-promotion">-${promotion.discountPercentage}%</span></h5>
+                                <div class="card-footer">
+                                        <%-- This is a workaround to make LocalDateTime formattable --%>
+                                    <fmt:parseDate value="${promotion.startDate}" pattern="yyyy-MM-dd'T'HH:mm" var="parsedStartDate" type="both"/>
+                                    <fmt:formatDate pattern="yyyy-MM-dd HH:mm" value="${parsedStartDate}" var="startDate"/>
+                                    <fmt:parseDate value="${promotion.endDate}" pattern="yyyy-MM-dd'T'HH:mm" var="parsedEndDate" type="both"/>
+                                    <fmt:formatDate pattern="yyyy-MM-dd HH:mm" value="${parsedEndDate}" var="endDate"/>
+                                    <small><span class="text-promotion"><spring:message code="editmenu.promotions.date.from"/></span> ${startDate}</small>
+                                    <br>
+                                    <small><span class="text-promotion"><spring:message code="editmenu.promotions.date.to"/></span> ${endDate}</small>
+                                </div>
                             </div>
                         </div>
                     </c:forEach>
@@ -228,21 +241,50 @@
                             </div>
                             <form:errors path="percentage" element="div" cssClass="form-error"/>
                         </div>
-                        <div class="mb-3">
-                            <form:label path="startDateTime" cssClass="form-label"><spring:message code="editmenu.createpromotion.form.startdate"/></form:label>
-                            <form:input path="startDateTime" type="datetime-local" cssClass="form-control" id="create-promotion-modal-start-datetime"/>
-                            <form:errors path="startDateTime" element="div" cssClass="form-error"/>
+                        <div class="nav nav-pills nav-justified mb-3" role="tablist">
+                            <button class="nav-link" id="promotion-instant-tab" data-bs-toggle="tab" data-bs-target="#promotion-instant" type="button" role="tab"><spring:message code="editmenu.createpromotion.form.instant"/></button>
+                            <button class="nav-link" id="promotion-scheduled-tab" data-bs-toggle="tab" data-bs-target="#promotion-scheduled" type="button" role="tab"><spring:message code="editmenu.createpromotion.form.scheduled"/></button>
                         </div>
-                        <div class="mb-3">
-                            <form:label path="endDateTime" cssClass="form-label"><spring:message code="editmenu.createpromotion.form.enddate"/></form:label>
-                            <form:input path="endDateTime" type="datetime-local" cssClass="form-control" id="create-promotion-modal-end-datetime"/>
-                            <form:errors path="endDateTime" element="div" cssClass="form-error"/>
-                            <form:errors element="div" cssClass="form-error"/>
+                        <div class="tab-content">
+                            <div class="tab-pane fade" id="promotion-instant" role="tabpanel" tabindex="0">
+                                <div class="mb-3">
+                                    <label class="form-label"><spring:message code="editmenu.createpromotion.form.instant.title"/></label>
+                                    <div class="d-flex gap-3">
+                                        <div class="input-group">
+                                            <form:input path="days" type="number" min="0" class="form-control promotion-instant-duration" id="promotion-instant-days" value="${createPromotionForm.days == null ? 0 : createPromotionForm.days}"/>
+                                            <span class="input-group-text"><spring:message code="editmenu.createpromotion.form.instant.days"/></span>
+                                        </div>
+                                        <div class="input-group">
+                                            <form:input path="hours" type="number" min="0" class="form-control promotion-instant-duration" id="promotion-instant-hours" value="${createPromotionForm.hours == null ? 0 : createPromotionForm.hours}"/>
+                                            <span class="input-group-text"><spring:message code="editmenu.createpromotion.form.instant.hours"/></span>
+                                        </div>
+                                        <div class="input-group">
+                                            <form:input path="minutes" type="number" min="0" class="form-control promotion-instant-duration" id="promotion-instant-minutes" value="${createPromotionForm.minutes == null ? 0 : createPromotionForm.minutes}"/>
+                                            <span class="input-group-text"><spring:message code="editmenu.createpromotion.form.instant.minutes"/></span>
+                                        </div>
+                                    </div>
+                                    <form:errors element="div" cssClass="form-error"/>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="promotion-scheduled" role="tabpanel" tabindex="0">
+                                <div class="mb-3">
+                                    <form:label path="startDateTime" cssClass="form-label"><spring:message code="editmenu.createpromotion.form.startdate"/></form:label>
+                                    <form:input path="startDateTime" type="datetime-local" cssClass="form-control" id="create-promotion-modal-start-datetime"/>
+                                    <form:errors path="startDateTime" element="div" cssClass="form-error"/>
+                                </div>
+                                <div class="mb-3">
+                                    <form:label path="endDateTime" cssClass="form-label"><spring:message code="editmenu.createpromotion.form.enddate"/></form:label>
+                                    <form:input path="endDateTime" type="datetime-local" cssClass="form-control" id="create-promotion-modal-end-datetime"/>
+                                    <form:errors path="endDateTime" element="div" cssClass="form-error"/>
+                                    <form:errors element="div" cssClass="form-error"/>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                    <form:input path="type" type="hidden" id="create-promotion-modal-promotion-type"/>
                     <form:input path="sourceProductId" type="hidden" cssClass="form-control" id="create-promotion-modal-source-product-id"/>
                     <div class="modal-footer">
-                        <input type="submit" class="btn btn-primary promotion-button" value="<spring:message code="editmenu.form.create"/>">
+                        <input type="submit" id="add-promotion" class="btn btn-primary promotion-button" value="<spring:message code="editmenu.form.create"/>">
                     </div>
                 </form:form>
             </div>

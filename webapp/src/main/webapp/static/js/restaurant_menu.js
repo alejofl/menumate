@@ -210,15 +210,4 @@ document.addEventListener("DOMContentLoaded", () => {
             value.classList.add("active");
         });
     });
-
-    // Address Select in Checkout Modal
-    document.querySelector("#checkout-address-select").addEventListener("change", (event) => {
-        if (event.target.value === "---") {
-            document.querySelector("#checkout-address").value = "";
-            document.querySelector("#new-address-input").style.display = "block";
-        } else {
-            document.querySelector("#new-address-input").style.display = "none";
-            document.querySelector("#checkout-address").value = event.target.value;
-        }
-    });
 });

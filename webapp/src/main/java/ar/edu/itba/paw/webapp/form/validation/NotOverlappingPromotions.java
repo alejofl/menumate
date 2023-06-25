@@ -7,19 +7,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Constraint(validatedBy = EndDateTimeAfterStartDateTimeValidator.class)
+@Constraint(validatedBy = NotOverlappingPromotionsValidator.class)
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface EndDateTimeAfterStartDateTime {
-    String message() default "End datetime must be after Start datetime";
+public @interface NotOverlappingPromotions {
+    String message() default "Overlapping promotions";
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
-
-    String startDateTimeField();
-
-    String typeField();
-
-    String endDateTimeField();
 }
