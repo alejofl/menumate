@@ -83,6 +83,7 @@ public class RestaurantsController {
         mav.addObject("ratingCount", average.getCount());
         final List<Review> reviews = reviewService.getByRestaurant(id, 1, 30).getResult();
         mav.addObject("reviews", reviews);
+
         mav.addObject("tags", restaurant.getTags());
 
         final List<Category> menu = categoryService.getByRestaurantSortedByOrder(id);
@@ -94,8 +95,18 @@ public class RestaurantsController {
         mav.addObject("takeaway_wait_time", restaurantService.getAverageOrderCompletionTime(id, OrderType.TAKEAWAY, ControllerUtils.AVERAGE_WAIT_TIME_PERIOD).orElse(null));
         mav.addObject("delivery_wait_time", restaurantService.getAverageOrderCompletionTime(id, OrderType.DELIVERY, ControllerUtils.AVERAGE_WAIT_TIME_PERIOD).orElse(null));
 
+        /* NOTE:
+         * This is a workaround to avoid IllegalStateException.
+         * The problem is that when this method is called from another method (i.e. when there's an error on a form)
+         * the ModelAttributes are not added to the model automatically, thus all the forms on the page but the faulty
+         * one do not exist.
+         * The solution to this involves using FlashAttributes and adding BindingResults manually for each form. This
+         * solution also fixes the Reload Requested problem when reloading page after error on a form.
+         * However, this method is not compatible with ModelAndView.
+         */
         mav.addObject("checkoutForm", form);
         mav.addObject("reportForm", reportRestaurantForm);
+
         mav.addObject("formError", formError);
         mav.addObject("reportFormErrors", reportFormErrors);
         return mav;
@@ -117,17 +128,7 @@ public class RestaurantsController {
             items.add(orderService.createOrderItem(id, cartItem.getProductId(), i + 1, cartItem.getQuantity(), cartItem.getComment()));
         }
 
-        Order order;
-        int orderType = form.getOrderType();
-        if (orderType == OrderType.DINE_IN.ordinal()) {
-            order = orderService.createDineIn(form.getRestaurantId(), form.getName(), form.getEmail(), form.getTableNumber(), items);
-        } else if (orderType == OrderType.TAKEAWAY.ordinal()) {
-            order = orderService.createTakeAway(form.getRestaurantId(), form.getName(), form.getEmail(), items);
-        } else if (orderType == OrderType.DELIVERY.ordinal()) {
-            order = orderService.createDelivery(form.getRestaurantId(), form.getName(), form.getEmail(), form.getAddress(), items);
-        } else {
-            throw new InvalidOrderTypeException("Order type not supported");
-        }
+        Order order = orderService.create(OrderType.fromOrdinal(form.getOrderType()), form.getRestaurantId(), form.getName(), form.getEmail(), form.getTableNumber(), form.getAddress(), items);
 
         return thankYou(order.getOrderId(), order.getUser().getEmail());
     }
@@ -151,10 +152,12 @@ public class RestaurantsController {
             final BindingResult errors
     ) {
         final ModelAndView mav = new ModelAndView("menu/restaurant_reviews");
+
         if (errors.hasErrors()) {
             mav.addObject("error", Boolean.TRUE);
             paging.clear();
         }
+
         PaginatedResult<Review> reviews = reviewService.getByRestaurant(id, paging.getPageOrDefault(), paging.getSizeOrDefault(ControllerUtils.DEFAULT_RESTAURANT_PAGE_SIZE));
         final Restaurant restaurant = restaurantService.getById(id).orElseThrow(RestaurantNotFoundException::new);
 
@@ -163,8 +166,8 @@ public class RestaurantsController {
         mav.addObject("pageCount", reviews.getTotalPageCount());
 
         mav.addObject("restaurant", restaurant);
-        mav.addObject("reviewReplyFormErrors", reviewReplyFormErrors);
 
+        mav.addObject("reviewReplyFormErrors", reviewReplyFormErrors);
         return mav;
     }
 

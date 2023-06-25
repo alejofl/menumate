@@ -34,8 +34,7 @@ public class HomeController {
     ) {
         ModelAndView mav = new ModelAndView("home/index");
 
-        final int maxRestaurants = 4;
-        final PaginatedResult<RestaurantDetails> results = restaurantService.search(null, 1, maxRestaurants, RestaurantOrderBy.RATING, true, null, null);
+        final PaginatedResult<RestaurantDetails> results = restaurantService.search(null, 1, ControllerUtils.MAX_RESTAURANTS_FOR_HOMEPAGE, RestaurantOrderBy.RATING, true, null, null);
         mav.addObject("restaurants", results.getResult());
 
         return mav;

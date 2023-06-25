@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.services;
 
+import ar.edu.itba.paw.exception.InvalidOrderTypeException;
 import ar.edu.itba.paw.exception.OrderNotFoundException;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.persistance.OrderDao;
@@ -48,9 +49,7 @@ public class OrderServiceImpl implements OrderService {
         orderList.addAll(items);
     }
 
-    @Transactional
-    @Override
-    public Order createDelivery(long restaurantId, String name, String email, String address, List<OrderItem> items) {
+    private Order createDelivery(long restaurantId, String name, String email, String address, List<OrderItem> items) {
         final User user = userService.createIfNotExists(email, name);
         Order order = orderDao.createDelivery(restaurantId, user.getUserId(), address);
         userDao.refreshAddress(user.getUserId(), address);
@@ -59,9 +58,7 @@ public class OrderServiceImpl implements OrderService {
         return order;
     }
 
-    @Transactional
-    @Override
-    public Order createDineIn(long restaurantId, String name, String email, int tableNumber, List<OrderItem> items) {
+    private Order createDineIn(long restaurantId, String name, String email, int tableNumber, List<OrderItem> items) {
         final User user = userService.createIfNotExists(email, name);
         Order order = orderDao.createDineIn(restaurantId, user.getUserId(), tableNumber);
         assingOrderItemsToOrder(order, items);
@@ -69,9 +66,7 @@ public class OrderServiceImpl implements OrderService {
         return order;
     }
 
-    @Transactional
-    @Override
-    public Order createTakeAway(long restaurantId, String name, String email, List<OrderItem> items) {
+    private Order createTakeAway(long restaurantId, String name, String email, List<OrderItem> items) {
         final User user = userService.createIfNotExists(email, name);
         Order order = orderDao.createTakeaway(restaurantId, user.getUserId());
         assingOrderItemsToOrder(order, items);
@@ -85,6 +80,22 @@ public class OrderServiceImpl implements OrderService {
         if (comment.isEmpty())
             comment = null;
         return orderDao.createOrderItem(restaurantId, productId, lineNumber, quantity, comment);
+    }
+
+    @Transactional
+    @Override
+    public Order create(OrderType orderType, Long restaurantId, String name, String email, Integer tableNumber, String address, List<OrderItem> items) {
+        Order order;
+        if (orderType == OrderType.DINE_IN) {
+            order = createDineIn(restaurantId, name, email, tableNumber, items);
+        } else if (orderType == OrderType.TAKEAWAY) {
+            order = createTakeAway(restaurantId, name, email, items);
+        } else if (orderType == OrderType.DELIVERY) {
+            order = createDelivery(restaurantId, name, email, address, items);
+        } else {
+            throw new InvalidOrderTypeException("Order type not supported");
+        }
+        return order;
     }
 
     @Override

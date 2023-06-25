@@ -8,13 +8,13 @@ import ar.edu.itba.paw.model.UserRoleLevel;
 import ar.edu.itba.paw.service.ReportService;
 import ar.edu.itba.paw.service.RestaurantService;
 import ar.edu.itba.paw.service.UserRoleService;
+import ar.edu.itba.paw.util.MyBoolean;
 import ar.edu.itba.paw.util.PaginatedResult;
 import ar.edu.itba.paw.util.Pair;
 import ar.edu.itba.paw.webapp.form.AddModeratorForm;
 import ar.edu.itba.paw.webapp.form.HandleReportForm;
 import ar.edu.itba.paw.webapp.form.PagingForm;
 import ar.edu.itba.paw.webapp.form.DeleteModeratorForm;
-import com.azul.tooling.in.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BeanPropertyBindingResult;
@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -43,7 +44,7 @@ public class ModeratorController {
     @RequestMapping(value = "/moderators", method = RequestMethod.GET)
     public ModelAndView moderators(
             @ModelAttribute("addModeratorForm") final AddModeratorForm addModeratorForm,
-            final Boolean addModeratorFormErrors,
+            @ModelAttribute("addModeratorFormErrors") final MyBoolean addModeratorFormErrors,
             @ModelAttribute("deleteModeratorForm") final DeleteModeratorForm deleteModeratorForm,
             @Valid final PagingForm paging,
             final BindingResult errors
@@ -60,7 +61,7 @@ public class ModeratorController {
 
         PaginatedResult<Pair<Restaurant, Integer>> restaurantsWithReports = reportService.getCountByRestaurant(paging.getPageOrDefault(), paging.getSizeOrDefault(ControllerUtils.DEFAULT_MYRESTAURANTS_PAGE_SIZE));
 
-        mav.addObject("addModeratorFormErrors", addModeratorFormErrors);
+        mav.addObject("addModeratorFormErrors", addModeratorFormErrors.get());
 
         mav.addObject("restaurants", restaurantsWithReports.getResult());
         mav.addObject("restaurantCount", restaurantsWithReports.getTotalCount());
@@ -72,13 +73,14 @@ public class ModeratorController {
     @RequestMapping(value = "moderators/add", method = RequestMethod.POST)
     public ModelAndView add(
             @Valid final AddModeratorForm form,
-            final BindingResult errors
+            final BindingResult errors,
+            RedirectAttributes redirectAttributes
     ) {
         if (errors.hasErrors()) {
             PagingForm pagingForm = new PagingForm();
             return moderators(
                     form,
-                    true,
+                    new MyBoolean(true),
                     new DeleteModeratorForm(),
                     pagingForm,
                     new BeanPropertyBindingResult(pagingForm, "pagingForm")
@@ -86,19 +88,22 @@ public class ModeratorController {
         }
 
         userRoleService.setRole(form.getEmail(), UserRoleLevel.MODERATOR);
+        redirectAttributes.addFlashAttribute("addModeratorFormErrors", new MyBoolean(true));
         return new ModelAndView("redirect:/moderators");
     }
 
     @RequestMapping(value = "/moderators/delete", method = RequestMethod.POST)
     public ModelAndView delete(
             @Valid final DeleteModeratorForm form,
-            final BindingResult errors
+            final BindingResult errors,
+            RedirectAttributes redirectAttributes
     ) {
         if (errors.hasErrors()) {
-            throw new IllegalStateException("Invalid form");
+            throw new IllegalStateException();
         }
 
         userRoleService.deleteRole(form.getUserId());
+        redirectAttributes.addFlashAttribute("addModeratorFormErrors", new MyBoolean(true));
         return new ModelAndView("redirect:/moderators");
     }
 
