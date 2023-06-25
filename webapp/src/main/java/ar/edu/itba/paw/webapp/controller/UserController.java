@@ -196,7 +196,7 @@ public class UserController {
 
         final List<Category> menu = categoryService.getByRestaurantSortedByOrder(id);
         mav.addObject("menu", menu);
-        final List<Promotion> promotions = restaurantService.getActivePromotions(id);
+        final List<Promotion> promotions = restaurantService.getLivingPromotions(id);
         mav.addObject("promotions", promotions);
 
         final List<Pair<User, RestaurantRoleLevel>> employees = restaurantRoleService.getByRestaurant(id);

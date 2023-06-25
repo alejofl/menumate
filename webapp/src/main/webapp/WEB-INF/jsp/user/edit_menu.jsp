@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <html>
@@ -65,12 +66,12 @@
             <c:if test="${not empty promotions}">
                 <div class="card mb-4 bg-promotion">
                     <div class="card-body d-flex justify-content-between align-items-center">
-                        <h3 class="mb-0 text-white"><spring:message code="editmenu.promotions.title"/></h3>
+                        <h3 class="mb-0 text-white"><spring:message code="editmenu.livingpromotions.title"/></h3>
                     </div>
                 </div>
                 <div class="items-container">
                     <c:forEach var="promotion" items="${promotions}">
-                        <div class="card menu-item-card">
+                        <div class="card menu-item-card ${promotion.hasStarted() ? "" : "promotion-disabled"}">
                             <div class="menu-item-card-img-container">
                                 <c:choose>
                                     <c:when test="${promotion.destination.imageId == null}">
@@ -81,24 +82,36 @@
                                     </c:otherwise>
                                 </c:choose>
                             </div>
-                            <div class="card-body menu-item-card-body">
-                                <div>
-                                    <div class="d-flex justify-content-between">
-                                        <p class="card-text"><c:out value="${promotion.destination.name}"/></p>
-                                        <div class="d-flex gap-2 ps-2">
-                                            <a class="stop-promotion-button" type="button" data-bs-toggle="modal" data-bs-target="#stop-promotion-modal" data-product-id="${promotion.destination.productId}"><i class="bi bi-x-circle"></i></a>
+                            <div class="d-flex flex-column space-between">
+                                <div class="card-body menu-item-card-body">
+                                    <div>
+                                        <div class="d-flex justify-content-between">
+                                            <p class="card-text"><c:out value="${promotion.destination.name}"/></p>
+                                            <div class="d-flex gap-2 ps-2">
+                                                <a class="stop-promotion-button" type="button" data-bs-toggle="modal" data-bs-target="#stop-promotion-modal" data-product-id="${promotion.destination.productId}"><i class="bi bi-x-circle text-danger"></i></a>
+                                            </div>
                                         </div>
+                                        <c:choose>
+                                            <c:when test="${not empty promotion.destination.description}">
+                                                <p class="card-text pb-1"><small class="text-body-secondary"><c:out value="${promotion.destination.description}"/></small></p>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <p class="card-text pb-1"><small class="text-body-secondary"><i><spring:message code="menuitem.product.nodescription"/></i></small></p>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </div>
-                                    <c:choose>
-                                        <c:when test="${not empty promotion.destination.description}">
-                                            <p class="card-text"><small class="text-body-secondary"><c:out value="${promotion.destination.description}"/></small></p>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <p class="card-text"><small class="text-body-secondary"><i><spring:message code="menuitem.product.nodescription"/></i></small></p>
-                                        </c:otherwise>
-                                    </c:choose>
+                                    <h5 class="card-title">$${promotion.destination.price} <span class="badge bg-promotion">-${promotion.discountPercentage}%</span></h5>
                                 </div>
-                                <h5 class="card-title">$${promotion.destination.price} <span class="badge bg-promotion">-${promotion.discountPercentage}%</span></h5>
+                                <div class="card-footer">
+                                        <%-- This is a workaround to make LocalDateTime formattable --%>
+                                    <fmt:parseDate value="${promotion.startDate}" pattern="yyyy-MM-dd'T'HH:mm" var="parsedStartDate" type="both"/>
+                                    <fmt:formatDate pattern="yyyy-MM-dd HH:mm" value="${parsedStartDate}" var="startDate"/>
+                                    <fmt:parseDate value="${promotion.endDate}" pattern="yyyy-MM-dd'T'HH:mm" var="parsedEndDate" type="both"/>
+                                    <fmt:formatDate pattern="yyyy-MM-dd HH:mm" value="${parsedEndDate}" var="endDate"/>
+                                    <small><span class="text-promotion"><spring:message code="editmenu.promotions.date.from"/></span> ${startDate}</small>
+                                    <br>
+                                    <small><span class="text-promotion"><spring:message code="editmenu.promotions.date.to"/></span> ${endDate}</small>
+                                </div>
                             </div>
                         </div>
                     </c:forEach>

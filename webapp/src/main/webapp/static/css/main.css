@@ -65,6 +65,10 @@ p, span, h1, h2, h3, h4, h5, h6 {
     background-color: var(--dark) !important;
 }
 
+.text-promotion {
+    color: var(--promotion);
+}
+
 main {
     display: flex;
     margin: 8px;
@@ -893,3 +897,9 @@ input:has(+ .form-error), textarea:has(+ .form-error) {
 .bg-promotion {
     background-color: rgba(var(--promotion-rgb),1)!important;
 }
+
+.promotion-disabled img, .promotion-disabled p, .promotion-disabled h5, .promotion-disabled .card-footer {
+    opacity: 0.5;
+    filter: grayscale(100%);
+}
+
