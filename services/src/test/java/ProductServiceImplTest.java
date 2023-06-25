@@ -55,15 +55,26 @@ public class ProductServiceImplTest {
 
     @Test
     public void testUpdateProductWithSamePrice() {
-        final Product product = Mockito.mock(Product.class);
-        Mockito.when(product.getPrice()).thenReturn(DEFAULT_PRODUCT_PRICE);
-        Mockito.when(product.getDeleted()).thenReturn(false);
+        final Product product = Mockito.spy(Product.class);
+        product.setProductId(DEFAULT_PRODUCT_ID);
+        product.setPrice(DEFAULT_PRODUCT_PRICE);
+        product.setDeleted(false);
+        product.setName(DEFAULT_PRODUCT_NAME);
+        product.setDescription(DEFAULT_PRODUCT_DESCRIPTION);
 
         Mockito.when(productDao.getById(DEFAULT_PRODUCT_ID)).thenReturn(Optional.of(product));
+        Mockito.doAnswer(invocation -> {
+            product.setName(NEW_PRODUCT_NAME);
+            product.setDescription(NEW_PRODUCT_DESCRIPTION);
+            return null;
+        }).when(productDao).updateNameAndDescription(product, NEW_PRODUCT_NAME, NEW_PRODUCT_DESCRIPTION);
+
 
         Product ret = productService.update(DEFAULT_PRODUCT_ID, NEW_PRODUCT_NAME, DEFAULT_PRODUCT_PRICE, NEW_PRODUCT_DESCRIPTION);
 
-        Assert.assertEquals(product, ret);
+        Assert.assertEquals(NEW_PRODUCT_NAME, ret.getName());
+        Assert.assertEquals(NEW_PRODUCT_DESCRIPTION, ret.getDescription());
+        Assert.assertEquals(DEFAULT_PRODUCT_PRICE, ret.getPrice());
     }
 
     @Test
