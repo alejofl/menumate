@@ -433,8 +433,8 @@ public class UserController {
 
         productService.createPromotion(
                 createPromotionForm.getSourceProductId(),
-                createPromotionForm.getStartDateTime(),
-                createPromotionForm.getEndDateTime(),
+                createPromotionForm.getPromotionStartDate(),
+                createPromotionForm.getPromotionEndDate(),
                 createPromotionForm.getNormalizedPercentage()
         );
 

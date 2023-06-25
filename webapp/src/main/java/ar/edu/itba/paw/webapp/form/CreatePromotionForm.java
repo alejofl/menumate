@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.form;
 import ar.edu.itba.paw.model.PromotionType;
 import ar.edu.itba.paw.webapp.form.validation.EndDateTimeAfterStartDateTime;
 import ar.edu.itba.paw.webapp.form.validation.FutureOrPresent;
+import ar.edu.itba.paw.webapp.form.validation.NotOverlappingPromotions;
 import ar.edu.itba.paw.webapp.form.validation.ValidDuration;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -12,6 +13,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAmount;
 
+@NotOverlappingPromotions
 @ValidDuration(typeField = "type", daysField = "days", hoursField = "hours", minutesField = "minutes")
 @EndDateTimeAfterStartDateTime(typeField = "type", startDateTimeField = "startDateTime", endDateTimeField = "endDateTime")
 public class CreatePromotionForm {
@@ -58,6 +60,10 @@ public class CreatePromotionForm {
     }
 
     public LocalDateTime getStartDateTime() {
+        return startDateTime;
+    }
+
+    public LocalDateTime getPromotionStartDate() {
         return PromotionType.fromOrdinal(type) == PromotionType.INSTANT ? LocalDateTime.now() : startDateTime;
     }
 
@@ -66,6 +72,10 @@ public class CreatePromotionForm {
     }
 
     public LocalDateTime getEndDateTime() {
+        return endDateTime;
+    }
+
+    public LocalDateTime getPromotionEndDate() {
         return PromotionType.fromOrdinal(type) == PromotionType.INSTANT ?
                 LocalDateTime.now().plusDays(days).plusHours(hours).plusMinutes(minutes) :
                 endDateTime;

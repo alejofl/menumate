@@ -1,3 +1,7 @@
+function selectPromotionTypeTab(tab) {
+    document.querySelector(`#promotion-${tab}-tab`).classList.add("active");
+    document.querySelector(`#promotion-${tab}`).classList.add("active", "show");
+}
 
 document.addEventListener("DOMContentLoaded", () => {
     let addProductFormCategoryId = document.querySelector("#add-product-form-category-id");
@@ -80,6 +84,9 @@ document.addEventListener("DOMContentLoaded", () => {
         changeInputValue("create-promotion-modal-start-date-time", "");
         changeInputValue("create-promotion-modal-end-date-time", "");
         changeInputValue("create-promotion-modal-source-product-id", "");
+        changeInputValue("promotion-instant-days", "");
+        changeInputValue("promotion-instant-hours", "");
+        changeInputValue("promotion-instant-minutes", "");
     });
 
     document.querySelectorAll(".add-product-button").forEach(element => {
@@ -233,8 +240,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     })
 
-
-
     // Promotion Type: 0 -> instant ; 1 -> scheduled
     let promotionType = document.querySelector("#create-promotion-modal-promotion-type");
     document.querySelector("#promotion-instant-tab").addEventListener("click", () => {
@@ -243,4 +248,14 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelector("#promotion-scheduled-tab").addEventListener("click", () => {
         promotionType.value = 1;
     });
+
+    let promotionTypeInput = document.querySelector("#create-promotion-modal-promotion-type");
+
+    // Auto-Select promotion tabs
+    if (promotionTypeInput.value === "0" || promotionTypeInput.value === "") {
+        selectPromotionTypeTab("instant");
+        promotionTypeInput.value = 0;
+    } else if (promotionTypeInput.value === "1") {
+        selectPromotionTypeTab("scheduled");
+    }
 });

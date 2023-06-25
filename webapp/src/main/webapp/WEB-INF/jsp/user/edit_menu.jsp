@@ -229,25 +229,28 @@
                             <form:errors path="percentage" element="div" cssClass="form-error"/>
                         </div>
                         <div class="nav nav-pills nav-justified mb-3" role="tablist">
-                            <button class="nav-link active" id="promotion-instant-tab" data-bs-toggle="tab" data-bs-target="#promotion-instant" type="button" role="tab"><spring:message code="editmenu.createpromotion.form.instant"/></button>
+                            <button class="nav-link" id="promotion-instant-tab" data-bs-toggle="tab" data-bs-target="#promotion-instant" type="button" role="tab"><spring:message code="editmenu.createpromotion.form.instant"/></button>
                             <button class="nav-link" id="promotion-scheduled-tab" data-bs-toggle="tab" data-bs-target="#promotion-scheduled" type="button" role="tab"><spring:message code="editmenu.createpromotion.form.scheduled"/></button>
                         </div>
                         <div class="tab-content">
-                            <label class="form-label"><spring:message code="editmenu.createpromotion.form.instant.title"/></label>
-                            <div class="tab-pane fade show active" id="promotion-instant" role="tabpanel" tabindex="0">
-                                <div class="d-flex gap-3">
-                                    <div class="input-group mb-3">
-                                        <input type="number" min="0" class="form-control promotion-instant-duration" id="promotion-instant-days" value="0">
-                                        <span class="input-group-text"><spring:message code="editmenu.createpromotion.form.instant.days"/></span>
+                            <div class="tab-pane fade" id="promotion-instant" role="tabpanel" tabindex="0">
+                                <div class="mb-3">
+                                    <label class="form-label"><spring:message code="editmenu.createpromotion.form.instant.title"/></label>
+                                    <div class="d-flex gap-3">
+                                        <div class="input-group">
+                                            <form:input path="days" type="number" min="0" class="form-control promotion-instant-duration" id="promotion-instant-days" value="${createPromotionForm.days == null ? 0 : createPromotionForm.days}"/>
+                                            <span class="input-group-text"><spring:message code="editmenu.createpromotion.form.instant.days"/></span>
+                                        </div>
+                                        <div class="input-group">
+                                            <form:input path="hours" type="number" min="0" class="form-control promotion-instant-duration" id="promotion-instant-hours" value="${createPromotionForm.hours == null ? 0 : createPromotionForm.hours}"/>
+                                            <span class="input-group-text"><spring:message code="editmenu.createpromotion.form.instant.hours"/></span>
+                                        </div>
+                                        <div class="input-group">
+                                            <form:input path="minutes" type="number" min="0" class="form-control promotion-instant-duration" id="promotion-instant-minutes" value="${createPromotionForm.minutes == null ? 0 : createPromotionForm.minutes}"/>
+                                            <span class="input-group-text"><spring:message code="editmenu.createpromotion.form.instant.minutes"/></span>
+                                        </div>
                                     </div>
-                                    <div class="input-group mb-3">
-                                        <input type="number" min="0" class="form-control promotion-instant-duration" id="promotion-instant-hours" value="0">
-                                        <span class="input-group-text"><spring:message code="editmenu.createpromotion.form.instant.hours"/></span>
-                                    </div>
-                                    <div class="input-group mb-3">
-                                        <input type="number" min="0" class="form-control promotion-instant-duration" id="promotion-instant-minutes" value="0">
-                                        <span class="input-group-text"><spring:message code="editmenu.createpromotion.form.instant.minutes"/></span>
-                                    </div>
+                                    <form:errors element="div" cssClass="form-error"/>
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="promotion-scheduled" role="tabpanel" tabindex="0">
