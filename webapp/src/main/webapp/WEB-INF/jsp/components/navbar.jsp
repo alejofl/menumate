@@ -18,45 +18,42 @@
                 <c:url var="restaurants" value="/restaurants"/>
                 <a class="nav-link active" aria-current="page" href="${restaurants}"><spring:message code="navbar.explore"/></a>
             </li>
-            <!--
-            <li class="nav-item">
-              <a class="nav-link disabled" href="#">My Orders</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link disabled" href="#">My Profile</a>
-            </li>
-            -->
         </ul>
-        <c:choose>
-            <c:when test="${currentUser != null}">
-                <div class="text-color-white">
-                    <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-person-circle"></i> <c:out value="${currentUser.name}"/>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="<c:url value="/user"/>"><spring:message code="navbar.myprofile"/></a></li>
-                            <li><a class="dropdown-item" href="<c:url value="/user/orders"/>"><spring:message code="navbar.myorders"/></a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="<c:url value="/restaurants/create"/>"><spring:message code="navbar.createrestaurant"/></a></li>
-                            <li><a class="dropdown-item" href="<c:url value="/user/restaurants"/>"><spring:message code="navbar.myrestaurants"/></a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="<c:url value="/auth/logout"/>"><spring:message code="navbar.logout"/></a></li>
-                        </ul>
+        <div class="d-flex gap-4">
+            <c:choose>
+                <c:when test="${currentUser != null}">
+                    <c:if test="${currentUser.role.level == 'MODERATOR'}">
+                        <a href="<c:url value="/moderators"/>" type="button" class="btn btn-secondary-2"><spring:message code="navbar.moderator"/></a>
+                    </c:if>
+                    <div class="text-color-white">
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-circle"></i> <c:out value="${currentUser.name}"/>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="<c:url value="/user"/>"><spring:message code="navbar.myprofile"/></a></li>
+                                <li><a class="dropdown-item" href="<c:url value="/user/orders"/>"><spring:message code="navbar.myorders"/></a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="<c:url value="/restaurants/create"/>"><spring:message code="navbar.createrestaurant"/></a></li>
+                                <li><a class="dropdown-item" href="<c:url value="/user/restaurants"/>"><spring:message code="navbar.myrestaurants"/></a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="<c:url value="/auth/logout"/>"><spring:message code="navbar.logout"/></a></li>
+                            </ul>
+                        </div>
                     </div>
-                </div>
-            </c:when>
-            <c:otherwise>
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="<c:url value="/auth/login"/>"><spring:message code="login"/></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="<c:url value="/auth/register"/>"><spring:message code="signup"/></a>
-                    </li>
-                </ul>
-            </c:otherwise>
-        </c:choose>
+                </c:when>
+                <c:otherwise>
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="<c:url value="/auth/login"/>"><spring:message code="login"/></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="<c:url value="/auth/register"/>"><spring:message code="signup"/></a>
+                        </li>
+                    </ul>
+                </c:otherwise>
+            </c:choose>
+        </div>
     </div>
 </nav>
 </body>

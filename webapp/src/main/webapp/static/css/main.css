@@ -507,7 +507,7 @@ input:has(+ .form-error), textarea:has(+ .form-error) {
     margin-right: 12px;
 }
 
-.order-card i, .order-details-card i, #order-details i, #employees-modal i, .restaurant-information i, .address-list i {
+.order-card i, .order-details-card i, #order-details i, #employees-modal i, .restaurant-information i, .address-list i, #moderators-modal i {
     color: var(--primary);
 }
 
@@ -885,6 +885,23 @@ input:has(+ .form-error), textarea:has(+ .form-error) {
     --bs-btn-disabled-color: #fff;
     --bs-btn-disabled-bg: var(--promotion-light);
     --bs-btn-disabled-border-color: var(--promotion-light);
+}
+
+.btn-secondary-2 {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: var(--secondary);
+    --bs-btn-border-color: var(--secondary);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: var(--secondary-dark);
+    --bs-btn-hover-border-color: var(--secondary-dark);
+    --bs-btn-focus-shadow-rgb: 49,132,253;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: var(--secondary-dark);
+    --bs-btn-active-border-color: var(--secondary-dark);
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: var(--secondary-light);
+    --bs-btn-disabled-border-color: var(--secondary-light);
 }
 
 .promotion-anchor {

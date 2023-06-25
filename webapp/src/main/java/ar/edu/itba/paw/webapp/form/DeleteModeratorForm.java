@@ -2,7 +2,7 @@ package ar.edu.itba.paw.webapp.form;
 
 import javax.validation.constraints.NotNull;
 
-public class RemoveModeratorForm {
+public class DeleteModeratorForm {
     @NotNull
     private Long userId;
 

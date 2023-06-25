@@ -5,7 +5,6 @@ import org.hibernate.validator.constraints.Email;
 import javax.validation.constraints.NotNull;
 
 public class AddModeratorForm {
-
     @NotNull
     @Email
     private String email;

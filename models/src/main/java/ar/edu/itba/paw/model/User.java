@@ -41,6 +41,10 @@ public class User {
     @OrderBy("(name IS NULL) ASC, lastUsed DESC")
     private List<UserAddress> addresses;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
+    private UserRole role;
+
     User() {
 
     }
@@ -118,5 +122,9 @@ public class User {
 
     public void setAddress(List<UserAddress> addresses) {
         this.addresses = addresses;
+    }
+
+    public UserRole getRole() {
+        return role;
     }
 }
