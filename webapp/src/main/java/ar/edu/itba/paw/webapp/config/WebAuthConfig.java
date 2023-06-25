@@ -94,10 +94,10 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/restaurants/{restaurant_id:\\d+}/orders").permitAll()
 
                 // Delete restaurant
-                .antMatchers(HttpMethod.DELETE, "/restaurants/{restaurant_id:\\d+}/delete").access("hasRole('MODERATOR') or @accessValidator.checkRestaurantOwner(#restaurant_id)")
+                .antMatchers(HttpMethod.POST, "/restaurants/{restaurant_id:\\d+}/delete").access("hasRole('MODERATOR') or @accessValidator.checkRestaurantOwner(#restaurant_id)")
 
                 // Delete review
-                .antMatchers(HttpMethod.DELETE, "/restaurants/{restaurant_id:\\d+}/reviews/{review_id:\\d+}/delete").access("hasRole('MODERATOR') or @accessValidator.checkRestaurantOwner(#restaurant_id)")
+                .antMatchers(HttpMethod.POST, "/restaurants/{restaurant_id:\\d+}/reviews/{review_id:\\d+}/delete").access("hasRole('MODERATOR') or @accessValidator.checkRestaurantOwner(#restaurant_id)")
 
                 // Restaurants edit pages
                 .antMatchers("/restaurants/{restaurant_id:\\d+}/edit/**").access("@accessValidator.checkRestaurantAdmin(#restaurant_id)")
