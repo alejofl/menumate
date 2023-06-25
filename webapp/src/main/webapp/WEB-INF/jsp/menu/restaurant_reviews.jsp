@@ -6,7 +6,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <html>
 <head>
-    <spring:message code="restaurantorders.head" var="title" arguments="${restaurant.name}"/>
+    <spring:message code="restaurant.reviews.title" var="title" arguments="${restaurant.name}"/>
     <jsp:include page="/WEB-INF/jsp/components/head.jsp">
         <jsp:param name="title" value="${title}"/>
     </jsp:include>
