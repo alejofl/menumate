@@ -36,10 +36,6 @@ public class UserRoleServiceImplTest {
     private static final String DEFAULT_USER_EMAIL = "user@user.com";
     private static final UserRoleLevel MODERATOR_ROLE = UserRoleLevel.MODERATOR;
 
-    @Before
-    public void setUp() {
-    }
-
     @Test
     public void userHasRole() {
         UserRole userRole = Mockito.mock(UserRole.class);

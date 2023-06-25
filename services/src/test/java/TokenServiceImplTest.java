@@ -46,10 +46,6 @@ public class TokenServiceImplTest {
     private static final String TOKEN = "token";
     private static final String PASSWORD = "password";
 
-    @Before
-    public void setup() {
-    }
-
     @Test
     public void testVerifyUserAndDeleteVerificationToken() {
         final UserDetails userDetails = mock(UserDetails.class);

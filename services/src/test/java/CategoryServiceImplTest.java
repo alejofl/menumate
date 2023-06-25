@@ -26,11 +26,6 @@ public class CategoryServiceImplTest {
     private static final String ORIGINAL_CATEGORY_NAME = "Category Name";
     private static final String NEW_CATEGORY_NAME = "New Category Name";
 
-
-    @Before
-    public void setUp() {
-    }
-
     @Test
     public void testUpdateNameExistingCategory() {
         final Category existingCategory = Mockito.spy(Category.class);
