@@ -13,7 +13,7 @@
     </jsp:include>
     <script src="<c:url value="/static/js/restaurant_menu.js"/>"></script>
 </head>
-<body data-form-error="${formError}" data-qr="${param.qr == 1}">
+<body data-form-error="${formError}" data-qr="${param.qr == 1}" data-report-form-errors="${reportFormErrors}">
 <div class="content">
     <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
     <div class="restaurant-header">
@@ -88,6 +88,7 @@
                 <c:if test="${owner}">
                     <a class="btn btn-danger" role="button" data-bs-toggle="modal" data-bs-target="#delete-restaurant-modal"><spring:message code="restaurant.menu.deleterestaurant"/></a>
                 </c:if>
+                <a class="btn btn-secondary-2" role="button" data-bs-toggle="modal" data-bs-target="#report-restaurant-modal"><spring:message code="restaurant.menu.report"/></a>
             </div>
 
         </div>
@@ -417,6 +418,33 @@
                         <input type="submit" class="btn btn-danger" value="<spring:message code="editmenu.form.yes"/>">
                     </form>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="report-restaurant-modal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5"><spring:message code="restaurant.menu.report"/></h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <c:url value="/restaurants/${id}/report" var="reportUrl"/>
+                <form:form cssClass="mb-0" modelAttribute="reportForm" action="${reportUrl}" method="post" id="review-form">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <form:label path="comment" cssClass="form-label"><spring:message code="userorders.review.comment"/></form:label>
+                            <form:textarea class="form-control" path="comment" id="report-restaurant-comment" rows="3"/>
+                            <form:errors path="comment" element="div" cssClass="form-error"/>
+                        </div>
+                    </div>
+                    <c:if test="${currentUser != null}">
+                        <form:input path="userId" type="hidden" value="${currentUser.userId}"/>
+                    </c:if>
+                    <div class="modal-footer">
+                        <input type="submit" class="btn btn-primary" value="<spring:message code="restaurant.menu.reportbutton"/>">
+                    </div>
+                </form:form>
             </div>
         </div>
     </div>

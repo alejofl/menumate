@@ -69,6 +69,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Open Checkout Modal if errors were found
     if (document.querySelector("body").dataset.formError === "true") {
         document.querySelector("#place-order-button").dispatchEvent(new Event("click"));
+    } else if (document.querySelector("body").dataset.reportFormErrors === "true") {
+        new bootstrap.Modal('#report-restaurant-modal', null).show();
     }
 
     // Populate cart if errors were found
@@ -167,6 +169,9 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
             changeInputValue("checkout-address", "");
         }
+    });
+    document.querySelector("#report-restaurant-modal").addEventListener("hidden.bs.modal", () => {
+        changeInputValue("report-restaurant-comment", "");
     });
 
     // Add item to cart

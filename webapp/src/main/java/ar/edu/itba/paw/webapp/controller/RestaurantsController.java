@@ -16,6 +16,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.swing.*;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +43,9 @@ public class RestaurantsController {
     @Autowired
     private ReviewService reviewService;
 
+    @Autowired
+    private ReportService reportService;
+
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         binder.setValidator(new PreProcessingCheckoutFormValidator(binder.getValidator()));
@@ -51,7 +55,9 @@ public class RestaurantsController {
     public ModelAndView restaurantMenu(
             @PathVariable final int id,
             @ModelAttribute("checkoutForm") final CheckoutForm form,
-            final Boolean formError
+            final Boolean formError,
+            @ModelAttribute("reportForm") final ReportRestaurantForm reportRestaurantForm,
+            final Boolean reportFormErrors
     ) {
         final ModelAndView mav = new ModelAndView("menu/restaurant_menu");
 
@@ -88,7 +94,10 @@ public class RestaurantsController {
         mav.addObject("takeaway_wait_time", restaurantService.getAverageOrderCompletionTime(id, OrderType.TAKEAWAY, ControllerUtils.AVERAGE_WAIT_TIME_PERIOD).orElse(null));
         mav.addObject("delivery_wait_time", restaurantService.getAverageOrderCompletionTime(id, OrderType.DELIVERY, ControllerUtils.AVERAGE_WAIT_TIME_PERIOD).orElse(null));
 
+        mav.addObject("checkoutForm", form);
+        mav.addObject("reportForm", reportRestaurantForm);
         mav.addObject("formError", formError);
+        mav.addObject("reportFormErrors", reportFormErrors);
         return mav;
     }
 
@@ -99,7 +108,7 @@ public class RestaurantsController {
             final BindingResult errors
     ) {
         if (errors.hasErrors()) {
-            return restaurantMenu(id, form, true);
+            return restaurantMenu(id, form, true, new ReportRestaurantForm(), false);
         }
 
         List<OrderItem> items = new ArrayList<>();
@@ -182,8 +191,23 @@ public class RestaurantsController {
     }
 
     @RequestMapping(value = "/restaurants/{id:\\d+}/delete", method = RequestMethod.POST)
-    public ModelAndView restaurantMenu(@PathVariable final int id) {
+    public ModelAndView deleteRestaurant(@PathVariable final int id) {
         restaurantService.delete(id);
         return new ModelAndView("redirect:/restaurants");
+    }
+
+    @RequestMapping(value = "/restaurants/{id:\\d+}/report", method = RequestMethod.POST)
+    public ModelAndView reportRestaurant(
+            @PathVariable final int id,
+            @Valid @ModelAttribute("reportForm") final ReportRestaurantForm reportRestaurantForm,
+            final BindingResult errors
+    ) {
+        if (errors.hasErrors()) {
+            return restaurantMenu(id, new CheckoutForm(), false, reportRestaurantForm, true);
+        }
+
+        reportService.create(id, reportRestaurantForm.getUserId(), reportRestaurantForm.getComment());
+
+        return new ModelAndView(String.format("redirect:/restaurants/%d", id));
     }
 }
