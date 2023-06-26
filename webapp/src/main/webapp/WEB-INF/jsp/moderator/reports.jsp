@@ -29,7 +29,8 @@
                 <div class="card m-2">
                     <div class="card-header">
                         <div class="mt-2">
-                            <b><c:out value="${report.reporter == null ? 'Usuario anonimo' : report.reporter.name}"/></b>
+                            <spring:message code="moderator.reports.anonymoususer" var="anonymousUser"/>
+                            <b><c:out value="${report.reporter == null ? anonymousUser : report.reporter.name}"/></b>
                         </div>
                         <%-- This is a workaround to make LocalDateTime formattable --%>
                         <fmt:parseDate value="${report.dateReported}" pattern="yyyy-MM-dd'T'HH:mm:ss" var="parsedDateReported" type="both"/>
