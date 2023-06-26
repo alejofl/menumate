@@ -38,7 +38,7 @@ public class User {
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
-    @OrderBy("(name IS NULL) ASC, lastUsed DESC")
+    @OrderBy("isNameNull ASC, lastUsed DESC")
     private List<UserAddress> addresses;
 
     @OneToOne(fetch = FetchType.LAZY)

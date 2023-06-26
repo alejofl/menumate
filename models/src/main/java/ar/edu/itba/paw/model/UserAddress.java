@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.model;
 
+import org.hibernate.annotations.Formula;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -27,6 +29,9 @@ public class UserAddress {
 
     @Column(name = "last_used", nullable = false)
     private LocalDateTime lastUsed;
+
+    @Formula("name IS NULL")
+    private boolean isNameNull;
 
     UserAddress() {
 
