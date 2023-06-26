@@ -112,7 +112,6 @@ public class CategoryJpaDaoTest {
 
     @Test
     public void testFindByRestaurantIdWithNoCategories() {
-
         final List<Category> categories = categoryDao.getByRestaurantSortedByOrder(RestaurantConstants.RESTAURANT_IDS[2]);
 
         Assert.assertNotNull(categories);
