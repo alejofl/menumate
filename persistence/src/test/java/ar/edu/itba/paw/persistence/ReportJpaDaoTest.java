@@ -197,10 +197,11 @@ public class ReportJpaDaoTest {
     @Rollback
     @Test
     public void testGetCount() {
-        jdbcTemplate.execute("INSERT INTO restaurant_reports (report_id, restaurant_id, reporter_user_id, handler_user_id, date_reported, date_handled, comment) VALUES (2222, 506, null, null, now(), null, 'This restaurant sucks')");
-        jdbcTemplate.execute("INSERT INTO restaurant_reports (report_id, restaurant_id, reporter_user_id, handler_user_id, date_reported, date_handled, comment) VALUES (2223, 506, null, null, now(), null, 'There is a weird smell on this website')");
-        jdbcTemplate.execute("INSERT INTO restaurant_reports (report_id, restaurant_id, reporter_user_id, handler_user_id, date_reported, date_handled, comment) VALUES (2224, 1200, null, null, now(), null, 'I do not like the color red in their logo')");
-        jdbcTemplate.execute("INSERT INTO restaurant_reports (report_id, restaurant_id, reporter_user_id, handler_user_id, date_reported, date_handled, comment) VALUES (2225, 1200, null, null, now(), null, 'I also do not like the color red in their logo')");
+        jdbcTemplate.execute("INSERT INTO restaurant_reports (report_id, restaurant_id, reporter_user_id, handler_user_id, date_reported, date_handled, comment) VALUES (2222, "+ReportConstants.RESTAURANT_IDS_WITH_REPORTS[0]+", null, null, now(), null, 'This restaurant sucks')");
+        jdbcTemplate.execute("INSERT INTO restaurant_reports (report_id, restaurant_id, reporter_user_id, handler_user_id, date_reported, date_handled, comment) VALUES (2223, "+ReportConstants.RESTAURANT_IDS_WITH_REPORTS[0]+", null, null, now(), null, 'There is a weird smell on this website')");
+        jdbcTemplate.execute("INSERT INTO restaurant_reports (report_id, restaurant_id, reporter_user_id, handler_user_id, date_reported, date_handled, comment) VALUES (2224, "+ReportConstants.RESTAURANT_IDS_WITH_REPORTS[1]+", null, null, now(), null, 'I do not like the color red in their logo')");
+        jdbcTemplate.execute("INSERT INTO restaurant_reports (report_id, restaurant_id, reporter_user_id, handler_user_id, date_reported, date_handled, comment) VALUES (2225, "+ReportConstants.RESTAURANT_IDS_WITH_REPORTS[1]+", null, null, now(), null, 'I also do not like the color red in their logo')");
+        jdbcTemplate.execute("INSERT INTO restaurant_reports (report_id, restaurant_id, reporter_user_id, handler_user_id, date_reported, date_handled, comment) VALUES (2226, "+RestaurantConstants.RESTAURANT_ID_WITH_NO_REPORTS+", null, "+UserConstants.USER_ID_MODERATOR_ROLE+", now(), now(), 'I wish I could afford this')");
 
         PaginatedResult<Pair<Restaurant, Integer>> page = reportDao.getCountByRestaurant(1, RestaurantConstants.RESTAURANT_IDS.length);
         List<Pair<Restaurant, Integer>> results = page.getResult();
@@ -220,10 +221,11 @@ public class ReportJpaDaoTest {
     @Rollback
     @Test
     public void testGetCountPaging() {
-        jdbcTemplate.execute("INSERT INTO restaurant_reports (report_id, restaurant_id, reporter_user_id, handler_user_id, date_reported, date_handled, comment) VALUES (2222, 506, null, null, now(), null, 'This restaurant sucks')");
-        jdbcTemplate.execute("INSERT INTO restaurant_reports (report_id, restaurant_id, reporter_user_id, handler_user_id, date_reported, date_handled, comment) VALUES (2223, 506, null, null, now(), null, 'There is a weird smell on this website')");
-        jdbcTemplate.execute("INSERT INTO restaurant_reports (report_id, restaurant_id, reporter_user_id, handler_user_id, date_reported, date_handled, comment) VALUES (2224, 1200, null, null, now(), null, 'I do not like the color red in their logo')");
-        jdbcTemplate.execute("INSERT INTO restaurant_reports (report_id, restaurant_id, reporter_user_id, handler_user_id, date_reported, date_handled, comment) VALUES (2225, 1200, null, null, now(), null, 'I also do not like the color red in their logo')");
+        jdbcTemplate.execute("INSERT INTO restaurant_reports (report_id, restaurant_id, reporter_user_id, handler_user_id, date_reported, date_handled, comment) VALUES (2222, "+ReportConstants.RESTAURANT_IDS_WITH_REPORTS[0]+", null, null, now(), null, 'This restaurant sucks')");
+        jdbcTemplate.execute("INSERT INTO restaurant_reports (report_id, restaurant_id, reporter_user_id, handler_user_id, date_reported, date_handled, comment) VALUES (2223, "+ReportConstants.RESTAURANT_IDS_WITH_REPORTS[0]+", null, null, now(), null, 'There is a weird smell on this website')");
+        jdbcTemplate.execute("INSERT INTO restaurant_reports (report_id, restaurant_id, reporter_user_id, handler_user_id, date_reported, date_handled, comment) VALUES (2224, "+ReportConstants.RESTAURANT_IDS_WITH_REPORTS[1]+", null, null, now(), null, 'I do not like the color red in their logo')");
+        jdbcTemplate.execute("INSERT INTO restaurant_reports (report_id, restaurant_id, reporter_user_id, handler_user_id, date_reported, date_handled, comment) VALUES (2225, "+ReportConstants.RESTAURANT_IDS_WITH_REPORTS[1]+", null, null, now(), null, 'I also do not like the color red in their logo')");
+        jdbcTemplate.execute("INSERT INTO restaurant_reports (report_id, restaurant_id, reporter_user_id, handler_user_id, date_reported, date_handled, comment) VALUES (2226, "+RestaurantConstants.RESTAURANT_ID_WITH_NO_REPORTS+", null, "+UserConstants.USER_ID_MODERATOR_ROLE+", now(), now(), 'I wish I could afford this')");
 
         PaginatedResult<Pair<Restaurant, Integer>> page1 = reportDao.getCountByRestaurant(1, 3);
         PaginatedResult<Pair<Restaurant, Integer>> page2 = reportDao.getCountByRestaurant(2, 3);
