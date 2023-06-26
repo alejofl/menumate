@@ -445,7 +445,7 @@ public class UserController {
                 createPromotionForm.getSourceProductId(),
                 createPromotionForm.getPromotionStartDate(),
                 createPromotionForm.getPromotionEndDate(),
-                createPromotionForm.getNormalizedPercentage()
+                createPromotionForm.getPercentage()
         );
 
         return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));

@@ -84,10 +84,6 @@ public class CreatePromotionForm {
         this.endDateTime = endDateTime;
     }
 
-    public float getNormalizedPercentage() {
-        return percentage / 100f;
-    }
-
     public Integer getMinutes() {
         return minutes;
     }

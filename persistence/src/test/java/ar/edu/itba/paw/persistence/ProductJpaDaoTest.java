@@ -25,6 +25,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -154,7 +155,7 @@ public class ProductJpaDaoTest {
         Assert.assertEquals(ProductConstants.DEFAULT_PROMOTION_START_DATE, promotion.getStartDate());
         Assert.assertEquals(ProductConstants.DEFAULT_PROMOTION_END_DATE, promotion.getEndDate());
         Assert.assertEquals(product.getProductId(), promotion.getSource().getProductId());
-        Assert.assertEquals(product.getPrice().multiply(BigDecimal.valueOf(ProductConstants.DEFAULT_PROMOTION_DISCOUNT)), promotion.getDestination().getPrice());
+        Assert.assertEquals(product.getPrice().multiply(BigDecimal.valueOf(ProductConstants.DEFAULT_PROMOTION_DISCOUNT)).divide(BigDecimal.valueOf(100), 2, RoundingMode.FLOOR), promotion.getDestination().getPrice());
         Assert.assertTrue(promotion.getDestination().getAvailable());
         Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "promotions", "promotion_id = " + promotion.getPromotionId()));
     }

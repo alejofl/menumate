@@ -39,7 +39,7 @@ public final class ProductConstants {
     public static final long PROMOTION_PRODUCT_ID = 100L;
     public static final long PROMOTION_SOURCE_ID = 501L;
     public static final long PROMOTION_DESTINATION_ID = 500L;
-    public static final float DEFAULT_PROMOTION_DISCOUNT = 0.5f;
+    public static final int DEFAULT_PROMOTION_DISCOUNT = 50;
     public static final LocalDateTime DEFAULT_PROMOTION_START_DATE = LocalDateTime.now();
     public static final LocalDateTime DEFAULT_PROMOTION_END_DATE = LocalDateTime.now().plusDays(4);
 

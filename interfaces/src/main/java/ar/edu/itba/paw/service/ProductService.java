@@ -19,7 +19,7 @@ public interface ProductService {
 
     void delete(long productId);
 
-    Promotion createPromotion(long sourceProductId, LocalDateTime startDate, LocalDateTime endDate, float discount);
+    Promotion createPromotion(long sourceProductId, LocalDateTime startDate, LocalDateTime endDate, int discountPercentage);
 
     /**
      * Gets whether a product has any promotions whose active time range intersects with the specified time range.

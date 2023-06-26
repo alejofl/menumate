@@ -15,7 +15,7 @@ public interface ProductDao {
 
     void delete(long productId);
 
-    Promotion createPromotion(Product source, LocalDateTime startDate, LocalDateTime endDate, float discount);
+    Promotion createPromotion(Product source, LocalDateTime startDate, LocalDateTime endDate, int discountPercentage);
 
     Optional<Promotion> hasPromotionInRange(long sourceProductId, LocalDateTime startDate, LocalDateTime endDate);
 

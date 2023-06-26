@@ -15,6 +15,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -69,8 +70,8 @@ public class ProductJpaDao implements ProductDao {
     }
 
     @Override
-    public Promotion createPromotion(Product source, LocalDateTime startDate, LocalDateTime endDate, float discount) {
-        BigDecimal promotionPrice = source.getPrice().multiply(BigDecimal.valueOf(1 - discount));
+    public Promotion createPromotion(Product source, LocalDateTime startDate, LocalDateTime endDate, int discountPercentage) {
+        BigDecimal promotionPrice = source.getPrice().multiply(BigDecimal.valueOf(100 - discountPercentage)).divide(BigDecimal.valueOf(100), 2, RoundingMode.FLOOR);
         final Product destination = new Product(source.getCategoryId(), source.getName(), source.getDescription(), source.getImageId(), promotionPrice, true);
         em.persist(destination);
         em.flush();
@@ -83,7 +84,7 @@ public class ProductJpaDao implements ProductDao {
         } else {
             destination.setAvailable(false);
         }
-        LOGGER.info("Created promotion with source id {} and destination id {} with a discount of {}", source.getProductId(), destination.getProductId(), discount);
+        LOGGER.info("Created promotion with source id {} and destination id {} with a discount of {}", source.getProductId(), destination.getProductId(), discountPercentage);
         return promotion;
     }
 

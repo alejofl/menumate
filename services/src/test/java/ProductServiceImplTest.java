@@ -34,7 +34,7 @@ public class ProductServiceImplTest {
     private static final String NEW_PRODUCT_DESCRIPTION = "New Description";
     private static final LocalDateTime DEFAULT_PROMOTION_START_DATE = LocalDateTime.now();
     private static final LocalDateTime DEFAULT_PROMOTION_END_DATE = DEFAULT_PROMOTION_START_DATE.plusDays(7);
-    private static final float DEFAULT_PROMOTION_DISCOUNT = 0.1f;
+    private static final int DEFAULT_PROMOTION_DISCOUNT = 10;
 
 
     @Test(expected = ProductNotFoundException.class)
@@ -136,7 +136,7 @@ public class ProductServiceImplTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testCreatePromotionWithInvalidDiscount() {
-        productService.createPromotion(DEFAULT_PRODUCT_ID, DEFAULT_PROMOTION_START_DATE, DEFAULT_PROMOTION_END_DATE, 1.5f);
+        productService.createPromotion(DEFAULT_PRODUCT_ID, DEFAULT_PROMOTION_START_DATE, DEFAULT_PROMOTION_END_DATE, 150);
     }
 
     @Test(expected = ProductNotFoundException.class)
