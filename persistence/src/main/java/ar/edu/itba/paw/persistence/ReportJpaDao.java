@@ -43,12 +43,16 @@ public class ReportJpaDao implements ReportDao {
 
     @Override
     public PaginatedResult<Pair<Restaurant, Integer>> getCountByRestaurant(int pageNumber, int pageSize) {
-        Query nativeQuery = em.createNativeQuery("SELECT restaurant_id, COUNT(*) AS cnt FROM restaurant_reports WHERE date_handled IS NULL GROUP BY restaurant_id ORDER BY cnt DESC, restaurant_id");
+        Utils.validatePaginationParams(pageNumber, pageSize);
+
+        Query nativeQuery = em.createNativeQuery("SELECT restaurants.restaurant_id, COUNT(restaurant_reports.report_id) AS cnt FROM restaurants LEFT OUTER JOIN restaurant_reports ON restaurants.restaurant_id = restaurant_reports.restaurant_id WHERE restaurant_reports.date_handled IS NULL GROUP BY restaurants.restaurant_id ORDER BY cnt DESC, restaurants.restaurant_id");
+        nativeQuery.setFirstResult((pageNumber - 1) * pageSize);
+        nativeQuery.setMaxResults(pageSize);
         List<Object[]> nativeResults = (List<Object[]>) nativeQuery.getResultList();
 
         List<Long> restaurantIds = nativeResults.stream().map(arr -> ((Number) arr[0]).longValue()).collect(Collectors.toList());
 
-        Query countQuery = em.createNativeQuery("SELECT COUNT(DISTINCT restaurant_id) FROM restaurant_reports");
+        Query countQuery = em.createNativeQuery("SELECT COUNT(*) FROM restaurants");
         int count = ((Number) countQuery.getSingleResult()).intValue();
 
         if (restaurantIds.isEmpty())

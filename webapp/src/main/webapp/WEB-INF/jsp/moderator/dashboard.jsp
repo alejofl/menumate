@@ -39,7 +39,7 @@
                         </div>
                     </div>
                     <h4>
-                    <span class="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-secondary">
+                    <span class="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-${restaurant.value == 0 ? "secondary" : "danger"}">
                         <spring:message code="moderatordashboard.reports.count" arguments="${restaurant.value}"/>
                     </span>
                     </h4>
