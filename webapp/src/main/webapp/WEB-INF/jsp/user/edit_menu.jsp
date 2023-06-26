@@ -567,6 +567,7 @@
                                     <span class="input-group-text">$</span>
                                     <form:input path="price" step="0.01" min="0" type="number" cssClass="form-control" id="edit-item-modal-price" value="${editProductForm.price}"/>
                                 </div>
+                                <div class="form-text"><spring:message code="editmenu.editproduct.form.price.disclaimer"/></div>
                                 <form:errors path="price" element="div" cssClass="form-error"/>
                             </div>
                             <div class="mb-3">
