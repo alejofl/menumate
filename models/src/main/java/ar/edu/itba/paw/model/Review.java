@@ -36,6 +36,7 @@ public class Review {
         this.rating = rating;
         this.comment = comment;
     }
+
     public long getOrderId() {
         return orderId;
     }

@@ -123,12 +123,6 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void refreshAddress(long userId, String address) {
-        userDao.refreshAddress(userId, address);
-    }
-
-    @Transactional
-    @Override
     public void deleteAddress(long userId, String address) {
         userDao.deleteAddress(userId, address);
     }

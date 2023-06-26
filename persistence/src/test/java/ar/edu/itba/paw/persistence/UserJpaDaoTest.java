@@ -1,4 +1,5 @@
 package ar.edu.itba.paw.persistence;
+
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import ar.edu.itba.paw.persistence.constants.UserConstants;
@@ -107,7 +108,7 @@ public class UserJpaDaoTest {
         Assert.assertEquals(UserConstants.PASSWORD, user.getPassword());
         Assert.assertEquals(UserConstants.USERNAME, user.getName());
         Assert.assertEquals(UserConstants.PREFERRED_LANGUAGE, user.getPreferredLanguage());
-        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "users", "user_id=" + user.getUserId() + " AND email='" + NON_EXISTENT_USER_EMAIL + "' AND password='" + UserConstants.PASSWORD + "' AND name='" + UserConstants.USERNAME  + "' AND preferred_language='" + UserConstants.PREFERRED_LANGUAGE + "'"));
+        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "users", "user_id=" + user.getUserId() + " AND email='" + NON_EXISTENT_USER_EMAIL + "' AND password='" + UserConstants.PASSWORD + "' AND name='" + UserConstants.USERNAME + "' AND preferred_language='" + UserConstants.PREFERRED_LANGUAGE + "'"));
     }
 
     @Test(expected = PersistenceException.class)
@@ -133,7 +134,7 @@ public class UserJpaDaoTest {
 
         Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "user_addresses", "user_id=" + UserConstants.ACTIVE_USER_ID + " AND address='" + UserConstants.LAST_USED_ADDRESS + "' AND name='" + UserConstants.LAST_USED_ADDRESS_NAME + "'"));
         em.flush();
-        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "user_addresses", "user_id=" + UserConstants.ACTIVE_USER_ID+ " AND address='" + UserConstants.LAST_USED_ADDRESS + "' AND name='" + NON_EXISTENT_NAME + "'"));
+        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "user_addresses", "user_id=" + UserConstants.ACTIVE_USER_ID + " AND address='" + UserConstants.LAST_USED_ADDRESS + "' AND name='" + NON_EXISTENT_NAME + "'"));
     }
 
     @Test

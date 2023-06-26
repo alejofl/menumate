@@ -46,7 +46,7 @@ public class ReportJpaDao implements ReportDao {
         Query nativeQuery = em.createNativeQuery("SELECT restaurant_id, COUNT(*) AS cnt FROM restaurant_reports GROUP BY restaurant_id ORDER BY cnt DESC, restaurant_id");
         List<Object[]> nativeResults = (List<Object[]>) nativeQuery.getResultList();
 
-        List<Long> restaurantIds = nativeResults.stream().map(arr -> ((Number)arr[0]).longValue()).collect(Collectors.toList());
+        List<Long> restaurantIds = nativeResults.stream().map(arr -> ((Number) arr[0]).longValue()).collect(Collectors.toList());
 
         Query countQuery = em.createNativeQuery("SELECT COUNT(DISTINCT restaurant_id) FROM restaurant_reports");
         int count = ((Number) countQuery.getSingleResult()).intValue();
@@ -65,7 +65,7 @@ public class ReportJpaDao implements ReportDao {
 
         List<Pair<Restaurant, Integer>> results = new ArrayList<>();
         for (int i = 0; i < nativeResults.size(); i++) {
-            results.add(new Pair<>(restaurantResults.get(i), ((Number)nativeResults.get(i)[1]).intValue()));
+            results.add(new Pair<>(restaurantResults.get(i), ((Number) nativeResults.get(i)[1]).intValue()));
         }
 
         return new PaginatedResult<>(results, pageNumber, pageSize, count);

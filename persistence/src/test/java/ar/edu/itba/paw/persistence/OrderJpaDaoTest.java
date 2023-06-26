@@ -1,8 +1,14 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.model.*;
+import ar.edu.itba.paw.model.Order;
+import ar.edu.itba.paw.model.OrderItem;
+import ar.edu.itba.paw.model.OrderStatus;
+import ar.edu.itba.paw.model.OrderType;
 import ar.edu.itba.paw.persistence.config.TestConfig;
-import ar.edu.itba.paw.persistence.constants.*;
+import ar.edu.itba.paw.persistence.constants.OrderConstants;
+import ar.edu.itba.paw.persistence.constants.ProductConstants;
+import ar.edu.itba.paw.persistence.constants.RestaurantConstants;
+import ar.edu.itba.paw.persistence.constants.UserConstants;
 import ar.edu.itba.paw.util.PaginatedResult;
 import org.junit.Assert;
 import org.junit.Before;
@@ -100,7 +106,7 @@ public class OrderJpaDaoTest {
         List<OrderItem> orderItems = order.get().getItems();
         Assert.assertNotNull(orderItems);
         Assert.assertEquals(1, orderItems.size());
-        for (OrderItem oi: orderItems) {
+        for (OrderItem oi : orderItems) {
             Assert.assertEquals(ProductConstants.PRODUCTS_FOR_ORDER_IDS[0], oi.getProduct().getProductId().longValue());
             Assert.assertEquals(ProductConstants.DEFAULT_ORDER_ITEM_QUANTITY, oi.getQuantity());
             Assert.assertEquals(ProductConstants.DEFAULT_ORDER_ITEM_COMMENT, oi.getComment());
@@ -122,7 +128,7 @@ public class OrderJpaDaoTest {
         Assert.assertNotNull(orders);
         Assert.assertEquals(OrderConstants.TOTAL_ORDER_COUNT, orders.size());
 
-        for (Order o: orders) {
+        for (Order o : orders) {
             Assert.assertEquals(UserConstants.ACTIVE_USER_ID, o.getUserId());
         }
     }
@@ -157,7 +163,7 @@ public class OrderJpaDaoTest {
     @Rollback
     public void testFindOrdersByRestaurantIdPagedWithOrderStatusConfirmed() {
         final int totalOrders = OrderConstants.ORDER_IDS_RESTAURANT_1.length;
-        for(Long ids : OrderConstants.ORDER_IDS_RESTAURANT_1) {
+        for (Long ids : OrderConstants.ORDER_IDS_RESTAURANT_1) {
             Order order = em.find(Order.class, ids);
             order.setDateConfirmed(LocalDateTime.now());
         }

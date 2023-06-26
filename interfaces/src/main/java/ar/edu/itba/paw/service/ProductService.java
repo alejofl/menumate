@@ -23,6 +23,7 @@ public interface ProductService {
 
     /**
      * Gets whether a product has any promotions whose active time range intersects with the specified time range.
+     *
      * @return An empty optional if no promotions were found, or one (any) promotion if at least one was found.
      */
     Optional<Promotion> hasPromotionInRange(long sourceProductId, LocalDateTime startDate, LocalDateTime endDate);

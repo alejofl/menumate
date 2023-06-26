@@ -3,13 +3,13 @@ import ar.edu.itba.paw.model.Product;
 import ar.edu.itba.paw.model.Promotion;
 import ar.edu.itba.paw.persistance.ProductDao;
 import ar.edu.itba.paw.services.ProductServiceImpl;
+import org.junit.Assert;
+import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import org.junit.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

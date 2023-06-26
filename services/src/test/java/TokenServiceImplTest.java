@@ -6,7 +6,6 @@ import ar.edu.itba.paw.persistance.UserVerificationTokenDao;
 import ar.edu.itba.paw.service.EmailService;
 import ar.edu.itba.paw.services.UserServiceImpl;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -19,7 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TokenServiceImplTest {

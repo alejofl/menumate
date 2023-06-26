@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import ar.edu.itba.paw.exception.InvalidOrderTypeException;
 import ar.edu.itba.paw.exception.RestaurantNotFoundException;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.service.*;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.swing.*;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
@@ -91,9 +89,9 @@ public class RestaurantsController {
         final List<Promotion> promotions = restaurantService.getActivePromotions(id);
         mav.addObject("promotions", promotions);
 
-        mav.addObject("dinein_wait_time", restaurantService.getAverageOrderCompletionTime(id, OrderType.DINE_IN, ControllerUtils.AVERAGE_WAIT_TIME_PERIOD).orElse(null));
-        mav.addObject("takeaway_wait_time", restaurantService.getAverageOrderCompletionTime(id, OrderType.TAKEAWAY, ControllerUtils.AVERAGE_WAIT_TIME_PERIOD).orElse(null));
-        mav.addObject("delivery_wait_time", restaurantService.getAverageOrderCompletionTime(id, OrderType.DELIVERY, ControllerUtils.AVERAGE_WAIT_TIME_PERIOD).orElse(null));
+        mav.addObject("dinein_wait_time", restaurantService.getAverageOrderCompletionTime(id, OrderType.DINE_IN).orElse(null));
+        mav.addObject("takeaway_wait_time", restaurantService.getAverageOrderCompletionTime(id, OrderType.TAKEAWAY).orElse(null));
+        mav.addObject("delivery_wait_time", restaurantService.getAverageOrderCompletionTime(id, OrderType.DELIVERY).orElse(null));
 
         /* NOTE:
          * This is a workaround to avoid IllegalStateException.
