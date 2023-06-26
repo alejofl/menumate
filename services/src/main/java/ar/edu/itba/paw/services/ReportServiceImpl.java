@@ -56,21 +56,6 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public PaginatedResult<Report> getUnhandled(int pageNumber, int pageSize) {
-        return reportDao.get(null, null, null, false, false, pageNumber, pageSize);
-    }
-
-    @Override
-    public PaginatedResult<Report> getByRestaurantUnhandled(long restaurantId, int pageNumber, int pageSize) {
-        return reportDao.get(restaurantId, null, null, false, false, pageNumber, pageSize);
-    }
-
-    @Override
-    public PaginatedResult<Report> getByHandler(long handlerUserId, int pageNumber, int pageSize) {
-        return reportDao.get(null, null, handlerUserId, true, true, pageNumber, pageSize);
-    }
-
-    @Override
     public PaginatedResult<Report> getByRestaurant(long restaurantId, int pageNumber, int pageSize) {
         return reportDao.get(restaurantId, null, null, null, true, pageNumber, pageSize);
     }

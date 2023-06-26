@@ -106,7 +106,7 @@ public class ReportJpaDao implements ReportDao {
         StringBuilder sqlBuilder = new StringBuilder("SELECT report_id FROM restaurant_reports");
         appendFilterConditions(sqlBuilder, restaurantId, reporterUserId, handlerUserId, isHandled);
 
-        sqlBuilder.append(" ORDER BY ")
+        sqlBuilder.append(" ORDER BY (date_handled IS NOT NULL), ")
                 .append(isHandled != null && isHandled ? "date_handled" : "date_reported")
                 .append(descending ? " DESC" : " ASC")
                 .append(", report_id");
@@ -134,7 +134,7 @@ public class ReportJpaDao implements ReportDao {
             return new PaginatedResult<>(Collections.emptyList(), pageNumber, pageSize, count);
 
         sqlBuilder.setLength(0);
-        sqlBuilder.append("FROM Report WHERE reportId IN :idList ORDER BY ")
+        sqlBuilder.append("FROM Report WHERE reportId IN :idList ORDER BY (case when dateHandled is null then 0 else 1 end) ASC, ")
                 .append(isHandled != null && isHandled ? "dateHandled" : "dateReported")
                 .append(descending ? " DESC" : " ASC")
                 .append(", reportId");

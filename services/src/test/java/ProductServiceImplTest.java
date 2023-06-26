@@ -25,6 +25,7 @@ public class ProductServiceImplTest {
     private final ProductServiceImpl productService = new ProductServiceImpl();
 
     private static final long DEFAULT_PRODUCT_ID = 1L;
+    private static final long DEFAULT_CATEGORY_ID = 55L;
     private static final String DEFAULT_PRODUCT_DESCRIPTION = "Default Description";
     private static final String DEFAULT_PRODUCT_NAME = "Default Name";
     private static final BigDecimal DEFAULT_PRODUCT_PRICE = BigDecimal.valueOf(9.99);
@@ -81,22 +82,32 @@ public class ProductServiceImplTest {
     public void testUpdateProductWithDifferentPrice() {
         final Product existingProduct = Mockito.spy(Product.class);
         existingProduct.setProductId(DEFAULT_PRODUCT_ID);
+        existingProduct.setCategoryId(DEFAULT_CATEGORY_ID);
+        existingProduct.setName(DEFAULT_PRODUCT_NAME);
+        existingProduct.setDescription(DEFAULT_PRODUCT_DESCRIPTION);
         existingProduct.setPrice(DEFAULT_PRODUCT_PRICE);
         existingProduct.setDeleted(false);
 
         Mockito.when(productDao.getById(DEFAULT_PRODUCT_ID)).thenReturn(Optional.of(existingProduct));
 
-        final Product newProduct = Mockito.mock(Product.class);
-        Mockito.when(newProduct.getPrice()).thenReturn(NEW_PRODUCT_PRICE);
+        final Product newProduct = Mockito.spy(Product.class);
+        newProduct.setProductId(DEFAULT_PRODUCT_ID);
+        newProduct.setCategoryId(DEFAULT_CATEGORY_ID);
+        newProduct.setName(DEFAULT_PRODUCT_NAME);
+        newProduct.setDescription(DEFAULT_PRODUCT_DESCRIPTION);
+        newProduct.setPrice(NEW_PRODUCT_PRICE);
+        newProduct.setDeleted(false);
 
-        Mockito.when(productDao.create(existingProduct.getCategoryId(), DEFAULT_PRODUCT_NAME, DEFAULT_PRODUCT_DESCRIPTION, existingProduct.getImageId(), NEW_PRODUCT_PRICE)).thenReturn(newProduct);
+        Mockito.when(productDao.create(DEFAULT_CATEGORY_ID, DEFAULT_PRODUCT_NAME, DEFAULT_PRODUCT_DESCRIPTION, null, NEW_PRODUCT_PRICE)).thenReturn(newProduct);
 
         final Product result = productService.update(DEFAULT_PRODUCT_ID, DEFAULT_PRODUCT_NAME, NEW_PRODUCT_PRICE, DEFAULT_PRODUCT_DESCRIPTION);
 
         Assert.assertTrue(existingProduct.getDeleted());
-        Assert.assertEquals(NEW_PRODUCT_PRICE, result.getPrice());
+        Assert.assertEquals(DEFAULT_CATEGORY_ID, result.getCategoryId());
         Assert.assertEquals(DEFAULT_PRODUCT_NAME, result.getName());
         Assert.assertEquals(DEFAULT_PRODUCT_DESCRIPTION, result.getDescription());
+        Assert.assertEquals(NEW_PRODUCT_PRICE, result.getPrice());
+        Assert.assertFalse(result.getDeleted());
     }
 
     @Test

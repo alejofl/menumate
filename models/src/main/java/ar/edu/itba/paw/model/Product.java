@@ -58,6 +58,10 @@ public class Product {
         return categoryId;
     }
 
+    public void setCategoryId(long categoryId) {
+        this.categoryId = categoryId;
+    }
+
     public String getName() {
         return name;
     }
