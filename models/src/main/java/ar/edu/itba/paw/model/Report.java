@@ -27,7 +27,7 @@ public class Report {
     @JoinColumn(name = "reporter_user_id", insertable = false, updatable = false)
     private User reporter;
 
-    @Column(name = "handler_user_id", updatable = false)
+    @Column(name = "handler_user_id")
     private Long handlerUserId;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

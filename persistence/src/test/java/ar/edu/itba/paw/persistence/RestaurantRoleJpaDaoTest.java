@@ -18,7 +18,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.*;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
+import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.sql.DataSource;
 import java.util.List;
 import java.util.Optional;
@@ -95,7 +98,7 @@ public class RestaurantRoleJpaDaoTest {
     @Test
     public void testGetNoRoleOnNonExistingUser() {
         Assert.assertFalse(rolesDao.getRole(USER_ID_NONE, RestaurantConstants.RESTAURANT_IDS[0]).isPresent());
-        Assert.assertFalse(rolesDao.getRole(USER_ID_NONE,  RestaurantConstants.RESTAURANT_IDS[1]).isPresent());
+        Assert.assertFalse(rolesDao.getRole(USER_ID_NONE, RestaurantConstants.RESTAURANT_IDS[1]).isPresent());
     }
 
     @Test

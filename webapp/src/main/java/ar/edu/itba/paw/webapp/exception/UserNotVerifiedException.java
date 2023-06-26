@@ -11,11 +11,6 @@ public class UserNotVerifiedException extends DisabledException {
         this.user = user;
     }
 
-    public UserNotVerifiedException(final String msg, final Throwable t, final User user) {
-        super(msg, t);
-        this.user = user;
-    }
-
     public User getUser() {
         return user;
     }

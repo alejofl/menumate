@@ -88,9 +88,10 @@ public class ReportJpaDaoTest {
                 id -> results.stream().noneMatch(r -> r.getReportId() == id)
         ));
 
-        // Assert sorting is correct
-        for (int i = 1; i < ReportConstants.REPORT_IDS.length; i++)
-            Assert.assertFalse(results.get(i - 1).getDateReported().isAfter(results.get(i).getDateReported()));
+        // Assert sorting is correct. Reports are sorted by unhandled first, and secondly by date.
+        for (int i = 1; i < ReportConstants.REPORT_IDS.length; i++) {
+            Assert.assertTrue((results.get(i - 1).getDateHandled() == null && results.get(i).getDateHandled() != null) || !results.get(i - 1).getDateReported().isAfter(results.get(i).getDateReported()));
+        }
     }
 
     @Test

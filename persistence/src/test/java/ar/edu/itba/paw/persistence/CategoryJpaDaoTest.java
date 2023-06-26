@@ -88,7 +88,7 @@ public class CategoryJpaDaoTest {
 
         Assert.assertNotNull(categories);
         Assert.assertEquals(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_1.length, categories.size());
-        for (int i=0; i<CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_1.length; i++) {
+        for (int i = 0; i < CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_1.length; i++) {
             Assert.assertEquals(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_1[i], categories.get(i).getCategoryId().longValue());
             Assert.assertEquals(CategoryConstants.CATEGORY_ORDER_FOR_RESTAURANT_1[i], categories.get(i).getOrderNum());
             Assert.assertEquals(CategoryConstants.CATEGORY_NAME, categories.get(i).getName());
@@ -102,7 +102,7 @@ public class CategoryJpaDaoTest {
 
         Assert.assertNotNull(categories);
         Assert.assertEquals(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0.length - 1, categories.size());
-        for (int i=0; i<CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0.length - 1; i++) {
+        for (int i = 0; i < CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0.length - 1; i++) {
             Assert.assertEquals(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[i], categories.get(i).getCategoryId().longValue());
             Assert.assertEquals(CategoryConstants.CATEGORY_ORDER_FOR_RESTAURANT_0[i], categories.get(i).getOrderNum());
             Assert.assertEquals(CategoryConstants.CATEGORY_NAME, categories.get(i).getName());

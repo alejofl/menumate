@@ -88,7 +88,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 // User pages
                 .antMatchers(HttpMethod.GET, "/user/**").authenticated()
                 .antMatchers(HttpMethod.POST, "/user/addresses/**").authenticated()
-                
+
                 // Restaurant public pages
                 .antMatchers(HttpMethod.GET, "/restaurants/{restaurant_id:\\d+}").permitAll()
                 .antMatchers(HttpMethod.POST, "/restaurants/{restaurant_id:\\d+}/orders").permitAll()

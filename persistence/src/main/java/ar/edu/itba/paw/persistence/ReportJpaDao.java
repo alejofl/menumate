@@ -43,10 +43,10 @@ public class ReportJpaDao implements ReportDao {
 
     @Override
     public PaginatedResult<Pair<Restaurant, Integer>> getCountByRestaurant(int pageNumber, int pageSize) {
-        Query nativeQuery = em.createNativeQuery("SELECT restaurant_id, COUNT(*) AS cnt FROM restaurant_reports GROUP BY restaurant_id ORDER BY cnt DESC, restaurant_id");
+        Query nativeQuery = em.createNativeQuery("SELECT restaurant_id, COUNT(*) AS cnt FROM restaurant_reports WHERE date_handled IS NULL GROUP BY restaurant_id ORDER BY cnt DESC, restaurant_id");
         List<Object[]> nativeResults = (List<Object[]>) nativeQuery.getResultList();
 
-        List<Long> restaurantIds = nativeResults.stream().map(arr -> ((Number)arr[0]).longValue()).collect(Collectors.toList());
+        List<Long> restaurantIds = nativeResults.stream().map(arr -> ((Number) arr[0]).longValue()).collect(Collectors.toList());
 
         Query countQuery = em.createNativeQuery("SELECT COUNT(DISTINCT restaurant_id) FROM restaurant_reports");
         int count = ((Number) countQuery.getSingleResult()).intValue();
@@ -65,7 +65,7 @@ public class ReportJpaDao implements ReportDao {
 
         List<Pair<Restaurant, Integer>> results = new ArrayList<>();
         for (int i = 0; i < nativeResults.size(); i++) {
-            results.add(new Pair<>(restaurantResults.get(i), ((Number)nativeResults.get(i)[1]).intValue()));
+            results.add(new Pair<>(restaurantResults.get(i), ((Number) nativeResults.get(i)[1]).intValue()));
         }
 
         return new PaginatedResult<>(results, pageNumber, pageSize, count);
@@ -106,7 +106,7 @@ public class ReportJpaDao implements ReportDao {
         StringBuilder sqlBuilder = new StringBuilder("SELECT report_id FROM restaurant_reports");
         appendFilterConditions(sqlBuilder, restaurantId, reporterUserId, handlerUserId, isHandled);
 
-        sqlBuilder.append(" ORDER BY ")
+        sqlBuilder.append(" ORDER BY (date_handled IS NOT NULL), ")
                 .append(isHandled != null && isHandled ? "date_handled" : "date_reported")
                 .append(descending ? " DESC" : " ASC")
                 .append(", report_id");
@@ -134,7 +134,7 @@ public class ReportJpaDao implements ReportDao {
             return new PaginatedResult<>(Collections.emptyList(), pageNumber, pageSize, count);
 
         sqlBuilder.setLength(0);
-        sqlBuilder.append("FROM Report WHERE reportId IN :idList ORDER BY ")
+        sqlBuilder.append("FROM Report WHERE reportId IN :idList ORDER BY (case when dateHandled is null then 0 else 1 end) ASC, ")
                 .append(isHandled != null && isHandled ? "dateHandled" : "dateReported")
                 .append(descending ? " DESC" : " ASC")
                 .append(", reportId");

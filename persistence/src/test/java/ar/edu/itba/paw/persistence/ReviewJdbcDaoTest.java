@@ -102,12 +102,12 @@ public class ReviewJdbcDaoTest {
     @Test
     public void testReviewsByRestaurant() {
         final int totalOrders = OrderConstants.ORDER_IDS_RESTAURANT_0.length;
-    	PaginatedResult<Review> result = reviewDao.getByRestaurant(RestaurantConstants.RESTAURANT_IDS[0], 1, totalOrders);
-        for(int i=0; i < totalOrders; i++) {
+        PaginatedResult<Review> result = reviewDao.getByRestaurant(RestaurantConstants.RESTAURANT_IDS[0], 1, totalOrders);
+        for (int i = 0; i < totalOrders; i++) {
             Review review = result.getResult().get(i);
-            Assert.assertEquals(OrderConstants.ORDER_IDS_RESTAURANT_0[totalOrders-i-1], review.getOrder().getOrderId().longValue());
+            Assert.assertEquals(OrderConstants.ORDER_IDS_RESTAURANT_0[totalOrders - i - 1], review.getOrder().getOrderId().longValue());
             Assert.assertNotNull(review.getComment());
-            Assert.assertEquals(ReviewConstants.VALUES.get(0).get(totalOrders-i-1).intValue(), review.getRating());
+            Assert.assertEquals(ReviewConstants.VALUES.get(0).get(totalOrders - i - 1).intValue(), review.getRating());
         }
     }
 
@@ -128,13 +128,13 @@ public class ReviewJdbcDaoTest {
     public void testReviewsByUser() {
         PaginatedResult<Review> result = reviewDao.getByUser(UserConstants.ACTIVE_USER_ID, 1, OrderConstants.TOTAL_ORDER_COUNT);
         Assert.assertEquals(OrderConstants.TOTAL_ORDER_COUNT, result.getResult().size());
-        for(int i=0; i < OrderConstants.TOTAL_ORDER_COUNT; i++) {
+        for (int i = 0; i < OrderConstants.TOTAL_ORDER_COUNT; i++) {
             Review review = result.getResult().get(i);
 
             Assert.assertTrue(
-            Arrays.stream(OrderConstants.ORDER_IDS_RESTAURANT_0).anyMatch(id -> id == review.getOrder().getOrderId()) ||
-                    Arrays.stream(OrderConstants.ORDER_IDS_RESTAURANT_1).anyMatch(id -> id == review.getOrder().getOrderId().longValue()) ||
-                    Arrays.stream(OrderConstants.ORDER_IDS_RESTAURANT_2).anyMatch(id -> id == review.getOrder().getOrderId().longValue())
+                    Arrays.stream(OrderConstants.ORDER_IDS_RESTAURANT_0).anyMatch(id -> id == review.getOrder().getOrderId()) ||
+                            Arrays.stream(OrderConstants.ORDER_IDS_RESTAURANT_1).anyMatch(id -> id == review.getOrder().getOrderId().longValue()) ||
+                            Arrays.stream(OrderConstants.ORDER_IDS_RESTAURANT_2).anyMatch(id -> id == review.getOrder().getOrderId().longValue())
             );
 
             Assert.assertNotNull(review.getComment());

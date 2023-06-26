@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistance;
 
-import ar.edu.itba.paw.model.*;
+import ar.edu.itba.paw.model.UserRole;
+import ar.edu.itba.paw.model.UserRoleLevel;
 
 import java.util.List;
 import java.util.Optional;

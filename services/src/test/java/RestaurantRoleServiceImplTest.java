@@ -9,13 +9,13 @@ import ar.edu.itba.paw.persistance.RestaurantRoleDao;
 import ar.edu.itba.paw.persistance.UserDao;
 import ar.edu.itba.paw.service.EmailService;
 import ar.edu.itba.paw.services.RestaurantRoleServiceImpl;
+import org.junit.Assert;
+import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
-
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.junit.*;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Optional;
 

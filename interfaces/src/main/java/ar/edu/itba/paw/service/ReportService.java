@@ -16,11 +16,5 @@ public interface ReportService {
 
     PaginatedResult<Pair<Restaurant, Integer>> getCountByRestaurant(int pageNumber, int pageSize);
 
-    PaginatedResult<Report> getUnhandled(int pageNumber, int pageSize);
-
-    PaginatedResult<Report> getByRestaurantUnhandled(long restaurantId, int pageNumber, int pageSize);
-
-    PaginatedResult<Report> getByHandler(long handlerUserId, int pageNumber, int pageSize);
-
     PaginatedResult<Report> getByRestaurant(long restaurantId, int pageNumber, int pageSize);
 }

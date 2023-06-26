@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.util;
+
 import java.io.Serializable;
+
 public class AverageCountPair implements Serializable {
     private final float average;
     private final int count;

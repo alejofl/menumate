@@ -15,7 +15,10 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class RestaurantJpaDao implements RestaurantDao {

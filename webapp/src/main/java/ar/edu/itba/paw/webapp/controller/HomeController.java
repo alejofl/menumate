@@ -5,7 +5,6 @@ import ar.edu.itba.paw.model.RestaurantOrderBy;
 import ar.edu.itba.paw.model.RestaurantSpecialty;
 import ar.edu.itba.paw.model.RestaurantTags;
 import ar.edu.itba.paw.service.RestaurantService;
-import ar.edu.itba.paw.service.ReviewService;
 import ar.edu.itba.paw.util.PaginatedResult;
 import ar.edu.itba.paw.webapp.form.FilterForm;
 import ar.edu.itba.paw.webapp.form.SearchForm;
@@ -24,9 +23,6 @@ import javax.validation.Valid;
 public class HomeController {
     @Autowired
     private RestaurantService restaurantService;
-
-    @Autowired
-    private ReviewService reviewService;
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView index(

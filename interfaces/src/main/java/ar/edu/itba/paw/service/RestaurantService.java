@@ -33,7 +33,7 @@ public interface RestaurantService {
 
     List<Promotion> getLivingPromotions(long restaurantId);
 
-    Optional<Duration> getAverageOrderCompletionTime(long restaurantId, OrderType orderType, LocalDateTime since);
+    Optional<Duration> getAverageOrderCompletionTime(long restaurantId, OrderType orderType);
 
     Restaurant update(long restaurantId, String name, RestaurantSpecialty specialty, String address, String description, List<RestaurantTags> tags);
 
