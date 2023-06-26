@@ -40,7 +40,7 @@ Within our app, these users have the following permissions:
 | menumateapp.user+harry@gmail.com    | Owner at Solonia Parrilla                                              |
 | menumateapp.user+hermione@gmail.com | Admin at Solomia Parrilla                                              |
 | menumateapp.user+ron@gmail.com      | Owner at Honest Food - Admin at Solomia Parrilla                       |
-| menumateapp.user+snape@gmail.com    | -                                                                      |
+| menumateapp.user+snape@gmail.com    | MenuMate moderator                                                     |
 
 Since all of these go to the same Gmail account, we have set up filters to work as multiple inboxes. Emails sent to these addresses will automatically be directed to the respective labels within the Gmail account. To access that account, simply use the following credentials:
 
