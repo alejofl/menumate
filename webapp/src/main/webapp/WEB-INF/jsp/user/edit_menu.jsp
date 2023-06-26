@@ -82,7 +82,7 @@
                                     </c:otherwise>
                                 </c:choose>
                             </div>
-                            <div class="d-flex flex-column space-between">
+                            <div class="d-flex flex-column space-between w-100">
                                 <div class="card-body menu-item-card-body">
                                     <div>
                                         <div class="d-flex justify-content-between">
