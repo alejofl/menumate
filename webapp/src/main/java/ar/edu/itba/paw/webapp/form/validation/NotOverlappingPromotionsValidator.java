@@ -22,6 +22,9 @@ public class NotOverlappingPromotionsValidator implements ConstraintValidator<No
             return false;
         }
         CreatePromotionForm form = (CreatePromotionForm) o;
-        return !productService.hasPromotionInRange(form.getSourceProductId(), form.getPromotionStartDate(), form.getPromotionEndDate()).isPresent();
+
+        return form.getPromotionStartDate() != null && form.getPromotionEndDate() != null
+               && form.getPromotionStartDate().isBefore(form.getPromotionEndDate())
+               && !productService.hasPromotionInRange(form.getSourceProductId(), form.getPromotionStartDate(), form.getPromotionEndDate()).isPresent();
     }
 }
