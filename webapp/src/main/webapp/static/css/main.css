@@ -819,8 +819,7 @@ input:has(+ .form-error), textarea:has(+ .form-error) {
 }
 
 .restaurant-reviews .card {
-    min-width: 400px;
-    max-width: 500px;
+    width: 400px;
 }
 
 .restaurant-reviews .card-footer {
