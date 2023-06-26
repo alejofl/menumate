@@ -1,11 +1,13 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.Report;
+import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import ar.edu.itba.paw.persistence.constants.ReportConstants;
 import ar.edu.itba.paw.persistence.constants.RestaurantConstants;
 import ar.edu.itba.paw.persistence.constants.UserConstants;
 import ar.edu.itba.paw.util.PaginatedResult;
+import ar.edu.itba.paw.util.Pair;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -189,6 +191,58 @@ public class ReportJpaDaoTest {
     @Test
     public void testGetByRestaurantWithNoReports() {
         List<Report> results = reportDao.get(RestaurantConstants.RESTAURANT_ID_WITH_NO_REPORTS, null, null, null, true, 1, ReportConstants.REPORT_IDS.length).getResult();
-        Assert.assertEquals(results.size(), 0);
+        Assert.assertEquals(0, results.size());
+    }
+
+    @Rollback
+    @Test
+    public void testGetCount() {
+        jdbcTemplate.execute("INSERT INTO restaurant_reports (report_id, restaurant_id, reporter_user_id, handler_user_id, date_reported, date_handled, comment) VALUES (2222, 506, null, null, now(), null, 'This restaurant sucks')");
+        jdbcTemplate.execute("INSERT INTO restaurant_reports (report_id, restaurant_id, reporter_user_id, handler_user_id, date_reported, date_handled, comment) VALUES (2223, 506, null, null, now(), null, 'There is a weird smell on this website')");
+        jdbcTemplate.execute("INSERT INTO restaurant_reports (report_id, restaurant_id, reporter_user_id, handler_user_id, date_reported, date_handled, comment) VALUES (2224, 1200, null, null, now(), null, 'I do not like the color red in their logo')");
+        jdbcTemplate.execute("INSERT INTO restaurant_reports (report_id, restaurant_id, reporter_user_id, handler_user_id, date_reported, date_handled, comment) VALUES (2225, 1200, null, null, now(), null, 'I also do not like the color red in their logo')");
+
+        PaginatedResult<Pair<Restaurant, Integer>> page = reportDao.getCountByRestaurant(1, RestaurantConstants.RESTAURANT_IDS.length);
+        List<Pair<Restaurant, Integer>> results = page.getResult();
+
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS.length, page.getTotalCount());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS.length, results.size());
+        Assert.assertEquals(ReportConstants.RESTAURANT_IDS_WITH_REPORTS[0], results.get(0).getKey().getRestaurantId().longValue());
+        Assert.assertEquals(3, results.get(0).getValue().intValue());
+        Assert.assertEquals(ReportConstants.RESTAURANT_IDS_WITH_REPORTS[1], results.get(1).getKey().getRestaurantId().longValue());
+        Assert.assertEquals(2, results.get(1).getValue().intValue());
+        Assert.assertEquals(ReportConstants.RESTAURANT_IDS_WITH_REPORTS[2], results.get(2).getKey().getRestaurantId().longValue());
+        Assert.assertEquals(1, results.get(2).getValue().intValue());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_ID_WITH_NO_REPORTS, results.get(3).getKey().getRestaurantId().longValue());
+        Assert.assertEquals(0, results.get(3).getValue().intValue());
+    }
+
+    @Rollback
+    @Test
+    public void testGetCountPaging() {
+        jdbcTemplate.execute("INSERT INTO restaurant_reports (report_id, restaurant_id, reporter_user_id, handler_user_id, date_reported, date_handled, comment) VALUES (2222, 506, null, null, now(), null, 'This restaurant sucks')");
+        jdbcTemplate.execute("INSERT INTO restaurant_reports (report_id, restaurant_id, reporter_user_id, handler_user_id, date_reported, date_handled, comment) VALUES (2223, 506, null, null, now(), null, 'There is a weird smell on this website')");
+        jdbcTemplate.execute("INSERT INTO restaurant_reports (report_id, restaurant_id, reporter_user_id, handler_user_id, date_reported, date_handled, comment) VALUES (2224, 1200, null, null, now(), null, 'I do not like the color red in their logo')");
+        jdbcTemplate.execute("INSERT INTO restaurant_reports (report_id, restaurant_id, reporter_user_id, handler_user_id, date_reported, date_handled, comment) VALUES (2225, 1200, null, null, now(), null, 'I also do not like the color red in their logo')");
+
+        PaginatedResult<Pair<Restaurant, Integer>> page1 = reportDao.getCountByRestaurant(1, 3);
+        PaginatedResult<Pair<Restaurant, Integer>> page2 = reportDao.getCountByRestaurant(2, 3);
+
+        List<Pair<Restaurant, Integer>> results1 = page1.getResult();
+        List<Pair<Restaurant, Integer>> results2 = page2.getResult();
+
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS.length, page1.getTotalCount());
+        Assert.assertEquals(3, results1.size());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS.length, page2.getTotalCount());
+        Assert.assertEquals(1, results2.size());
+
+        Assert.assertEquals(ReportConstants.RESTAURANT_IDS_WITH_REPORTS[0], results1.get(0).getKey().getRestaurantId().longValue());
+        Assert.assertEquals(3, results1.get(0).getValue().intValue());
+        Assert.assertEquals(ReportConstants.RESTAURANT_IDS_WITH_REPORTS[1], results1.get(1).getKey().getRestaurantId().longValue());
+        Assert.assertEquals(2, results1.get(1).getValue().intValue());
+        Assert.assertEquals(ReportConstants.RESTAURANT_IDS_WITH_REPORTS[2], results1.get(2).getKey().getRestaurantId().longValue());
+        Assert.assertEquals(1, results1.get(2).getValue().intValue());
+        Assert.assertEquals(RestaurantConstants.RESTAURANT_ID_WITH_NO_REPORTS, results2.get(0).getKey().getRestaurantId().longValue());
+        Assert.assertEquals(0, results2.get(0).getValue().intValue());
     }
 }

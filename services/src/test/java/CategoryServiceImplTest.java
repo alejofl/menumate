@@ -41,5 +41,4 @@ public class CategoryServiceImplTest {
         Mockito.when(categoryDao.getById(CATEGORY_ID)).thenReturn(Optional.empty());
         categoryServiceImpl.updateName(CATEGORY_ID, NEW_CATEGORY_NAME);
     }
-
 }
