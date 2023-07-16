@@ -1,5 +1,9 @@
 package ar.edu.itba.paw.model;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 public enum RestaurantTags {
     ELEGANT("elegant"),
     CASUAL("casual"),
@@ -36,10 +40,16 @@ public enum RestaurantTags {
 
     private static final RestaurantTags[] VALUES = RestaurantTags.values();
 
+    private static final Map<String, RestaurantTags> VALUES_BY_CODE = Arrays.stream(VALUES).collect(Collectors.toMap(r -> r.messageCode, r -> r));
+
     /**
      * Gets the RestaurantTags value by ordinal if it exists, or null otherwise.
      */
     public static RestaurantTags fromOrdinal(int ordinal) {
         return ordinal >= 0 && ordinal < VALUES.length ? VALUES[ordinal] : null;
+    }
+
+    public static RestaurantTags fromCode(String code) {
+        return VALUES_BY_CODE.get(code);
     }
 }

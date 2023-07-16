@@ -3,10 +3,12 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.exception.UserNotFoundException;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.service.UserService;
+import ar.edu.itba.paw.util.PaginatedResult;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.time.LocalDateTime;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 public final class ControllerUtils {
     static final int DEFAULT_ORDERS_PAGE_SIZE = 20;
@@ -83,5 +85,16 @@ public final class ControllerUtils {
     public static User getCurrentUserOrThrow(UserService userService) {
         PawAuthUserDetails details = getCurrentUserDetailsOrThrow();
         return userService.getById(details.getUserId()).orElseThrow(UserNotFoundException::new);
+    }
+
+    public static <T> void addPagingLinks(Response.ResponseBuilder response, PaginatedResult<T> paginatedResult, UriInfo uriInfo) {
+        if (paginatedResult.getPageNumber() < paginatedResult.getTotalPageCount()) {
+            response.link(uriInfo.getRequestUriBuilder().replaceQueryParam("page", String.valueOf(paginatedResult.getPageNumber() + 1)).build().toString(), "next");
+        }
+        if (paginatedResult.getPageNumber() > 1) {
+            response.link(uriInfo.getRequestUriBuilder().replaceQueryParam("page", String.valueOf(paginatedResult.getPageNumber() - 1)).build().toString(), "prev");
+        }
+        response.link(uriInfo.getRequestUriBuilder().replaceQueryParam("page", String.valueOf(1)).build().toString(), "first");
+        response.link(uriInfo.getRequestUriBuilder().replaceQueryParam("page", String.valueOf(paginatedResult.getTotalPageCount())).build().toString(), "last");
     }
 }

@@ -38,8 +38,8 @@ public class RestaurantDetails {
         return restaurant;
     }
 
-    public int getAverageRating() {
-        return Math.round(averageRating);
+    public float getAverageRating() {
+        return averageRating;
     }
 
     public int getReviewCount() {

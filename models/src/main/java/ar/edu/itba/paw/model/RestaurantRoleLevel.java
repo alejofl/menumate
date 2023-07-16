@@ -2,6 +2,8 @@ package ar.edu.itba.paw.model;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Represents the possible roles a user can have for a restaurant.
@@ -43,6 +45,8 @@ public enum RestaurantRoleLevel {
 
     private static final RestaurantRoleLevel[] VALUES = RestaurantRoleLevel.values();
 
+    private static final Map<String, RestaurantRoleLevel> VALUES_BY_CODE = Arrays.stream(VALUES).collect(Collectors.toMap(r -> r.messageCode, r -> r));
+
     public static final List<RestaurantRoleLevel> VALUES_EXCEPT_OWNER = Arrays.asList(VALUES).subList(1, VALUES.length);
 
     /**
@@ -50,5 +54,9 @@ public enum RestaurantRoleLevel {
      */
     public static RestaurantRoleLevel fromOrdinal(int ordinal) {
         return ordinal >= 0 && ordinal < VALUES.length ? VALUES[ordinal] : null;
+    }
+
+    public static RestaurantRoleLevel fromCode(String code) {
+        return VALUES_BY_CODE.get(code);
     }
 }

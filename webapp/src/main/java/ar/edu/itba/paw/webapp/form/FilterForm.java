@@ -4,25 +4,26 @@ import ar.edu.itba.paw.model.RestaurantOrderBy;
 import ar.edu.itba.paw.model.RestaurantSpecialty;
 import ar.edu.itba.paw.model.RestaurantTags;
 
+import javax.ws.rs.QueryParam;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class FilterForm extends SearchForm {
 
-    private List<Integer> specialties;
+    @QueryParam("specialties")
+    private List<String> specialties;
 
-    private List<Integer> tags;
+    @QueryParam("tags")
+    private List<String> tags;
 
-    private Integer orderBy;
+    @QueryParam("orderBy")
+    private String orderBy;
 
+    @QueryParam("descending")
     private Boolean descending;
 
-    public List<Integer> getSpecialties() {
-        return specialties;
-    }
-
-    public List<RestaurantSpecialty> getSpecialtiesAsEnum() {
-        return specialties == null ? null : specialties.stream().map(RestaurantSpecialty::fromOrdinal).collect(Collectors.toList());
+    public List<RestaurantSpecialty> getSpecialties() {
+        return specialties == null || specialties.isEmpty() ? null : specialties.stream().map(RestaurantSpecialty::fromCode).collect(Collectors.toList());
     }
 
     public Boolean getDescending() {
@@ -33,32 +34,24 @@ public class FilterForm extends SearchForm {
         this.descending = descending;
     }
 
-    public void setSpecialties(List<Integer> specialties) {
+    public void setSpecialties(List<String> specialties) {
         this.specialties = specialties;
     }
 
-    public List<Integer> getTags() {
-        return tags;
+    public List<RestaurantTags> getTags() {
+        return tags == null || tags.isEmpty() ? null : tags.stream().map(RestaurantTags::fromCode).collect(Collectors.toList());
     }
 
-    public List<RestaurantTags> getTagsAsEnums() {
-        return tags == null ? null : tags.stream().map(RestaurantTags::fromOrdinal).collect(Collectors.toList());
-    }
-
-    public void setTags(List<Integer> tags) {
+    public void setTags(List<String> tags) {
         this.tags = tags;
     }
 
-    public Integer getOrderBy() {
-        return orderBy;
+    public RestaurantOrderBy getOrderBy() {
+        return orderBy == null ? null : RestaurantOrderBy.fromCode(orderBy);
     }
 
-    public void setOrderBy(Integer orderBy) {
+    public void setOrderBy(String orderBy) {
         this.orderBy = orderBy;
-    }
-
-    public RestaurantOrderBy getOrderByAsEnum() {
-        return RestaurantOrderBy.fromOrdinal(orderBy == null ? 0 : orderBy);
     }
 
     public boolean getDescendingOrDefault() {

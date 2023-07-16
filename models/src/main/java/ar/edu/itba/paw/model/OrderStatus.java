@@ -1,5 +1,9 @@
 package ar.edu.itba.paw.model;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 public enum OrderStatus {
     PENDING("pending"),
     REJECTED("rejected"),
@@ -36,10 +40,16 @@ public enum OrderStatus {
 
     private static final OrderStatus[] VALUES = OrderStatus.values();
 
+    private static final Map<String, OrderStatus> VALUES_BY_CODE = Arrays.stream(VALUES).collect(Collectors.toMap(r -> r.messageCode, r -> r));
+
     /**
      * Gets the OrderStatus value by ordinal if it exists, or null otherwise.
      */
     public static OrderStatus fromOrdinal(int ordinal) {
         return ordinal >= 0 && ordinal < VALUES.length ? VALUES[ordinal] : null;
+    }
+
+    public static OrderStatus fromCode(String code) {
+        return VALUES_BY_CODE.get(code);
     }
 }

@@ -10,7 +10,10 @@ import org.springframework.stereotype.Component;
 
 import javax.validation.Valid;
 import javax.ws.rs.*;
-import javax.ws.rs.core.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 @Path("users")
 @Component
