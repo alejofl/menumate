@@ -27,6 +27,7 @@
 
     <!-- Security dependencies -->
     <spring-security.version>4.2.0.RELEASE</spring-security.version>
+    <io.jsonwebtoken.version>0.11.2</io.jsonwebtoken.version>
 
     <!-- Persistence dependencies -->
     <postgresql.version>42.2.5</postgresql.version>
@@ -210,6 +211,23 @@
         <groupId>org.springframework.security</groupId>
         <artifactId>spring-security-config</artifactId>
         <version>${spring-security.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt-api</artifactId>
+        <version>${io.jsonwebtoken.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt-impl</artifactId>
+        <version>${io.jsonwebtoken.version}</version>
+        <scope>runtime</scope>
+      </dependency>
+      <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt-jackson</artifactId>
+        <version>${io.jsonwebtoken.version}</version>
+        <scope>runtime</scope>
       </dependency>
 
       <!-- Persistence dependencies -->
