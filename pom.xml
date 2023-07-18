@@ -23,6 +23,7 @@
     <commons.fileupload.version>1.4</commons.fileupload.version>
 
     <!-- Jersey dependencies -->
+    <javax.ws.rs.version>2.1</javax.ws.rs.version>
     <jersey.version>3.0-SNAPSHOT</jersey.version>
 
     <!-- Security dependencies -->
@@ -125,6 +126,11 @@
       </dependency>
 
       <!-- Jersey dependencies -->
+      <dependency>
+        <groupId>javax.ws.rs</groupId>
+        <artifactId>javax.ws.rs-api</artifactId>
+        <version>${javax.ws.rs.version}</version>
+      </dependency>
       <dependency>
         <groupId>org.glassfish.jersey.containers</groupId>
         <artifactId>jersey-container-servlet-core</artifactId>

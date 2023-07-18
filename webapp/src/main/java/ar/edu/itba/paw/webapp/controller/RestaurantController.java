@@ -31,7 +31,7 @@ public class RestaurantController {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getRestaurants(@BeanParam FilterForm filterForm) {
-        PaginatedResult<RestaurantDetails> restaurantDetails = restaurantService.search(
+        PaginatedResult<RestaurantDetails> pagedResult = restaurantService.search(
                 filterForm.getSearch(),
                 filterForm.getPageOrDefault(),
                 filterForm.getSizeOrDefault(ControllerUtils.DEFAULT_SEARCH_PAGE_SIZE),
@@ -40,11 +40,10 @@ public class RestaurantController {
                 filterForm.getTags(),
                 filterForm.getSpecialties()
         );
-        List<RestaurantDetailsDto> restaurantDetailsDtos = RestaurantDetailsDto.fromRestaurantDetailsList(restaurantDetails.getResult());
 
-        Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<RestaurantDetailsDto>>(restaurantDetailsDtos){});
-        ControllerUtils.addPagingLinks(responseBuilder, restaurantDetails, uriInfo);
-        return responseBuilder.build();
+        List<RestaurantDetailsDto> dtoList = RestaurantDetailsDto.fromRestaurantDetailsCollection(pagedResult.getResult());
+        Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<RestaurantDetailsDto>>(dtoList){});
+        return ControllerUtils.addPagingLinks(responseBuilder, pagedResult, uriInfo).build();
     }
 
     @GET

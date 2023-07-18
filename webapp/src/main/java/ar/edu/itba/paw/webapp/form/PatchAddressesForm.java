@@ -2,26 +2,27 @@ package ar.edu.itba.paw.webapp.form;
 
 import org.hibernate.validator.constraints.NotBlank;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-public class AddAddressForm {
-    @NotNull
-    private Long userId;
+public class PatchAddressesForm {
+
+    @NotBlank
+    @Pattern(regexp = "add|remove")
+    private String action;
 
     @NotBlank
     private String address;
 
-    @NotBlank
     @Size(max = 20)
     private String name;
 
-    public Long getUserId() {
-        return userId;
+    public String getAction() {
+        return action;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setAction(String action) {
+        this.action = action;
     }
 
     public String getAddress() {

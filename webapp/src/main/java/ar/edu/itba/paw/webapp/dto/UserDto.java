@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.dto;
 import ar.edu.itba.paw.model.User;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,7 +27,7 @@ public class UserDto {
         return dto;
     }
 
-    public static List<UserDto> fromUserList(final List<User> users) {
+    public static List<UserDto> fromUserCollection(final Collection<User> users) {
         return users.stream().map(UserDto::fromUser).collect(Collectors.toList());
     }
 

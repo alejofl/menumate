@@ -115,10 +115,10 @@ public class UserServiceImpl implements UserService {
     public void registerAddress(long userId, String address, String name) {
         name = name == null ? null : name.trim();
         if (name == null || name.isEmpty()) {
-            LOGGER.error("Attempted to register an address without a name for user id {}", userId);
-            throw new IllegalArgumentException("Cannot register an address with null or blank name");
+            userDao.refreshAddress(userId, address);
+        } else {
+            userDao.registerAddress(userId, address, name);
         }
-        userDao.registerAddress(userId, address, name);
     }
 
     @Transactional

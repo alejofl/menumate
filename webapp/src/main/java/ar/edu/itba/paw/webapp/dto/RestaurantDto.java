@@ -5,6 +5,7 @@ import ar.edu.itba.paw.model.RestaurantSpecialty;
 import ar.edu.itba.paw.model.RestaurantTags;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,7 +46,7 @@ public class RestaurantDto {
         return dto;
     }
 
-    public static List<RestaurantDto> fromRestaurantList(final List<Restaurant> restaurants) {
+    public static List<RestaurantDto> fromRestaurantCollection(final Collection<Restaurant> restaurants) {
         return restaurants.stream().map(RestaurantDto::fromRestaurant).collect(Collectors.toList());
     }
 

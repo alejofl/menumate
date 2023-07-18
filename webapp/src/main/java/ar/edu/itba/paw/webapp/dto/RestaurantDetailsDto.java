@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.dto;
 
 import ar.edu.itba.paw.model.RestaurantDetails;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,7 +12,7 @@ public class RestaurantDetailsDto {
     private int reviewCount;
     private float averageProductPrice;
 
-    public static RestaurantDetailsDto fromRestaurantDetails(RestaurantDetails restaurantDetails) {
+    public static RestaurantDetailsDto fromRestaurantDetails(final RestaurantDetails restaurantDetails) {
         final RestaurantDetailsDto dto = new RestaurantDetailsDto();
         dto.restaurant = RestaurantDto.fromRestaurant(restaurantDetails.getRestaurant());
         dto.averageRating = restaurantDetails.getAverageRating();
@@ -20,8 +21,7 @@ public class RestaurantDetailsDto {
 
         return dto;
     }
-
-    public static List<RestaurantDetailsDto> fromRestaurantDetailsList(List<RestaurantDetails> restaurantDetails) {
+    public static List<RestaurantDetailsDto> fromRestaurantDetailsCollection(Collection<RestaurantDetails> restaurantDetails) {
         return restaurantDetails.stream().map(RestaurantDetailsDto::fromRestaurantDetails).collect(Collectors.toList());
     }
 
