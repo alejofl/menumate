@@ -61,6 +61,6 @@ public enum RestaurantSpecialty {
     }
 
     public static RestaurantSpecialty fromCode(String code) {
-        return VALUES_BY_CODE.get(code);
+        return VALUES_BY_CODE.get(code.trim().toLowerCase());
     }
 }

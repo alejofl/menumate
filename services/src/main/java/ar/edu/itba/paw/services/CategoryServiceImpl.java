@@ -51,6 +51,10 @@ public class CategoryServiceImpl implements CategoryService {
         }
 
         final Category category = maybeCategory.get();
+        if (category.getDeleted()) {
+            LOGGER.error("Attempted to update name of deleted category id {}", categoryId);
+            throw new CategoryDeletedException();
+        }
         category.setName(name);
         LOGGER.error("Updated name of category id {}", categoryId);
         return category;

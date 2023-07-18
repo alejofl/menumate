@@ -79,7 +79,7 @@ public class CategoryJpaDao implements CategoryDao {
 
         if (category.getDeleted()) {
             LOGGER.error("Attempted to delete already-deleted category id {}", category.getCategoryId());
-            throw new CategoryDeletedException("Category is already deleted");
+            throw new CategoryDeletedException();
         }
 
         category.setDeleted(true);

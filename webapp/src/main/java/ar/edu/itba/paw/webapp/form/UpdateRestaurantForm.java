@@ -2,10 +2,10 @@ package ar.edu.itba.paw.webapp.form;
 
 import ar.edu.itba.paw.model.RestaurantSpecialty;
 import ar.edu.itba.paw.model.RestaurantTags;
-import ar.edu.itba.paw.webapp.form.validation.Image;
+import ar.edu.itba.paw.webapp.form.validation.EnumMessageCode;
+import ar.edu.itba.paw.webapp.form.validation.EnumMessageCodeList;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -13,10 +13,7 @@ import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class EditRestaurantForm {
-    @NotNull
-    private Long restaurantId;
-
+public class UpdateRestaurantForm {
     @NotBlank
     @Size(max = 50)
     private String name;
@@ -26,8 +23,8 @@ public class EditRestaurantForm {
     private String address;
 
     @NotNull
-    @Min(0)
-    private Integer specialty;
+    @EnumMessageCode(enumClass = RestaurantSpecialty.class)
+    private String specialty;
 
     @NotBlank
     @Size(max = 300)
@@ -37,25 +34,9 @@ public class EditRestaurantForm {
     @Min(1)
     private Integer maxTables;
 
-    @Image(nullable = true)
-    private MultipartFile logo;
-
-    @Image(nullable = true)
-    private MultipartFile portrait1;
-
-    @Image(nullable = true)
-    private MultipartFile portrait2;
-
     @NotEmpty
-    private List<Integer> tags;
-
-    public Long getRestaurantId() {
-        return restaurantId;
-    }
-
-    public void setRestaurantId(long restaurantId) {
-        this.restaurantId = restaurantId;
-    }
+    @EnumMessageCodeList(enumClass = RestaurantTags.class)
+    private List<String> tags;
 
     public String getName() {
         return name;
@@ -73,15 +54,15 @@ public class EditRestaurantForm {
         this.address = address;
     }
 
-    public Integer getSpecialty() {
+    public String getSpecialty() {
         return specialty;
     }
 
     public RestaurantSpecialty getSpecialtyAsEnum() {
-        return specialty == null ? null : RestaurantSpecialty.fromOrdinal(specialty);
+        return specialty == null ? null : RestaurantSpecialty.fromCode(specialty);
     }
 
-    public void setSpecialty(Integer specialty) {
+    public void setSpecialty(String specialty) {
         this.specialty = specialty;
     }
 
@@ -101,39 +82,15 @@ public class EditRestaurantForm {
         this.maxTables = maxTables;
     }
 
-    public MultipartFile getLogo() {
-        return logo;
-    }
-
-    public void setLogo(MultipartFile logo) {
-        this.logo = logo;
-    }
-
-    public MultipartFile getPortrait1() {
-        return portrait1;
-    }
-
-    public void setPortrait1(MultipartFile portrait1) {
-        this.portrait1 = portrait1;
-    }
-
-    public MultipartFile getPortrait2() {
-        return portrait2;
-    }
-
-    public void setPortrait2(MultipartFile portrait2) {
-        this.portrait2 = portrait2;
-    }
-
-    public List<Integer> getTags() {
+    public List<String> getTags() {
         return tags;
     }
 
     public List<RestaurantTags> getTagsAsEnum() {
-        return tags == null ? null : tags.stream().map(RestaurantTags::fromOrdinal).collect(Collectors.toList());
+        return tags == null ? null : tags.stream().map(RestaurantTags::fromCode).collect(Collectors.toList());
     }
 
-    public void setTags(List<Integer> tags) {
+    public void setTags(List<String> tags) {
         this.tags = tags;
     }
 }

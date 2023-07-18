@@ -51,8 +51,6 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public PaginatedResult<RestaurantDetails> search(String query, int pageNumber, int pageSize, RestaurantOrderBy orderBy, boolean descending, List<RestaurantTags> tags, List<RestaurantSpecialty> specialties) {
-        // NOTE: If we want for queries to "pizza" to include the tag for PIZZA, we can process the query and add the
-        // tag in here.
         return restaurantDao.search(query, pageNumber, pageSize, orderBy, descending, tags, specialties);
     }
 
@@ -81,7 +79,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
         if (restaurant.getDeleted()) {
             LOGGER.error("Attempted to update deleted restaurant id {}", restaurant.getRestaurantId());
-            throw new IllegalStateException("Cannot update deleted restaurant");
+            throw new RestaurantDeletedException();
         }
 
         return restaurant;

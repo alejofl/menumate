@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.webapp.dto;
 
 import ar.edu.itba.paw.model.Restaurant;
-import ar.edu.itba.paw.model.RestaurantSpecialty;
 import ar.edu.itba.paw.model.RestaurantTags;
 
 import java.time.LocalDateTime;
@@ -13,7 +12,7 @@ public class RestaurantDto {
     private long restaurantId;
     private String name;
     private String email;
-    private RestaurantSpecialty specialty;
+    private String specialty;
     private long ownerUserId;
     private LocalDateTime dateCreated;
     private String address;
@@ -30,7 +29,7 @@ public class RestaurantDto {
         final RestaurantDto dto = new RestaurantDto();
         dto.restaurantId = restaurant.getRestaurantId();
         dto.name = restaurant.getName();
-        dto.specialty = restaurant.getSpecialty();
+        dto.specialty = restaurant.getSpecialty().getMessageCode();
         dto.ownerUserId = restaurant.getOwnerUserId();
         dto.dateCreated = restaurant.getDateCreated();
         dto.address = restaurant.getAddress();
@@ -74,11 +73,11 @@ public class RestaurantDto {
         this.email = email;
     }
 
-    public RestaurantSpecialty getSpecialty() {
+    public String getSpecialty() {
         return specialty;
     }
 
-    public void setSpecialty(RestaurantSpecialty specialty) {
+    public void setSpecialty(String specialty) {
         this.specialty = specialty;
     }
 

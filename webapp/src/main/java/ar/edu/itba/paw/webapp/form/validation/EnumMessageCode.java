@@ -11,11 +11,10 @@ import java.lang.annotation.Target;
  * Validates that a string represents a value in a specified enum.
  * <br>Can be applied to: String.
  */
-@Constraint(validatedBy = EnumStringValidator.class)
-@Target({ElementType.FIELD, ElementType.METHOD})
+@Constraint(validatedBy = EnumMessageCodeValidator.class)
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.TYPE_USE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface EnumString {
-
+public @interface EnumMessageCode {
     Class<? extends java.lang.Enum<?>> enumClass();
 
     String message() default "Not a valid option";
@@ -23,5 +22,4 @@ public @interface EnumString {
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
-
 }

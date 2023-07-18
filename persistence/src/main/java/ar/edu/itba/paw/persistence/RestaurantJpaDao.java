@@ -234,7 +234,7 @@ public class RestaurantJpaDao implements RestaurantDao {
 
         if (restaurant.getDeleted()) {
             LOGGER.error("Attempted to delete already-deleted restaurant id {}", restaurant.getRestaurantId());
-            throw new RestaurantDeletedException("Restaurant is already deleted");
+            throw new RestaurantDeletedException();
         }
 
         restaurant.setDeleted(true);

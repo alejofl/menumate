@@ -68,6 +68,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/restaurants").permitAll()
                 .antMatchers(HttpMethod.POST, "/restaurants").permitAll()
                 .antMatchers(HttpMethod.GET, "/restaurants/{restaurantId:\\d+}").permitAll()
+                .antMatchers(HttpMethod.PUT, "/restaurants/{restaurantId:\\d+}").access("@accessValidator.checkRestaurantAdmin(#restaurantId)")
                 .antMatchers(HttpMethod.DELETE, "/restaurants/{restaurantId:\\d+}").access("hasRole('MODERATOR') or @accessValidator.checkRestaurantOwner(#restaurantId)")
                 .antMatchers("/**").denyAll()
 

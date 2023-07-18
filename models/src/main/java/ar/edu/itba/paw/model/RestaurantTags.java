@@ -50,6 +50,6 @@ public enum RestaurantTags {
     }
 
     public static RestaurantTags fromCode(String code) {
-        return VALUES_BY_CODE.get(code);
+        return VALUES_BY_CODE.get(code.trim().toLowerCase());
     }
 }

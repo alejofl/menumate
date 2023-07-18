@@ -32,6 +32,6 @@ public enum RestaurantOrderBy {
     }
 
     public static RestaurantOrderBy fromCode(String code) {
-        return VALUES_BY_CODE.get(code);
+        return VALUES_BY_CODE.get(code.trim().toLowerCase());
     }
 }
