@@ -62,7 +62,7 @@ public class AuthAnywhereFilter extends OncePerRequestFilter {
             }
         } catch (Exception e) {
             SecurityContextHolder.clearContext();
-            response.addHeader("WWW-Authenticate", "Basic realm=realmEmail must be specified");
+            response.addHeader("WWW-Authenticate", "Basic realm=\"MenuMate\"");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }

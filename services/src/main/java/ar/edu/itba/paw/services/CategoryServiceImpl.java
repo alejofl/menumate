@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.services;
 
+import ar.edu.itba.paw.exception.CategoryDeletedException;
 import ar.edu.itba.paw.exception.CategoryNotFoundException;
 import ar.edu.itba.paw.model.Category;
 import ar.edu.itba.paw.persistance.CategoryDao;
@@ -23,7 +24,10 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Optional<Category> getById(long categoryId) {
-        return categoryDao.getById(categoryId);
+        Optional<Category> category = categoryDao.getById(categoryId);
+        if (category.isPresent() && category.get().getDeleted())
+            throw new CategoryDeletedException();
+        return category;
     }
 
     @Transactional

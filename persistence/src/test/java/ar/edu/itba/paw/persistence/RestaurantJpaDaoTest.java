@@ -32,6 +32,7 @@ public class RestaurantJpaDaoTest {
     private static final long NON_EXISTENT_RESTAURANT_ID = 5000;
     private static final String NON_EXISTENT_RESTAURANT_NAME = "Nonexistent Restaurant";
     private static final String NON_EXISTENT_RESTAURANT_EMAIL = "nonexistent@restaurant.com";
+    private static final double PRICE_ACCEPTABLE_DELTA = 0.005;
 
     @Autowired
     private DataSource ds;
@@ -169,7 +170,7 @@ public class RestaurantJpaDaoTest {
         Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[3], res.getResult().get(0).getRestaurantId());
         Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0], res.getResult().get(maxRestaurants - 1).getRestaurantId());
         for (int i = 0; i < size; i++) {
-            Assert.assertEquals(ratingAvg.get(i).intValue(), res.getResult().get(i).getAverageRating());
+            Assert.assertEquals(ratingAvg.get(i), res.getResult().get(i).getAverageRating(), PRICE_ACCEPTABLE_DELTA);
         }
     }
 
@@ -191,7 +192,7 @@ public class RestaurantJpaDaoTest {
         Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[0], res.getResult().get(0).getRestaurantId());
         Assert.assertEquals(RestaurantConstants.RESTAURANT_IDS[3], res.getResult().get(maxRestaurants - 1).getRestaurantId());
         for (int i = 0; i < size; i++) {
-            Assert.assertEquals(ratingAvg.get(i).intValue(), res.getResult().get(i).getAverageRating());
+            Assert.assertEquals(ratingAvg.get(i), res.getResult().get(i).getAverageRating(), PRICE_ACCEPTABLE_DELTA);
         }
     }
 

@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.services;
 
+import ar.edu.itba.paw.exception.ProductDeletedException;
 import ar.edu.itba.paw.exception.ProductNotFoundException;
 import ar.edu.itba.paw.model.Product;
 import ar.edu.itba.paw.model.Promotion;
@@ -30,7 +31,10 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Optional<Product> getById(long productId) {
-        return productDao.getById(productId);
+        Optional<Product> product = productDao.getById(productId);
+        if (product.isPresent() && product.get().getDeleted())
+            throw new ProductDeletedException();
+        return product;
     }
 
     @Transactional
@@ -101,7 +105,7 @@ public class ProductServiceImpl implements ProductService {
             throw new IllegalArgumentException("Discount must be in the range (0, 100]");
         }
 
-        final Product source = getById(sourceProductId).orElseThrow(ProductNotFoundException::new);
+        final Product source = productDao.getById(sourceProductId).orElseThrow(ProductNotFoundException::new);
         if (source.getDeleted() || !source.getAvailable()) {
             LOGGER.error("Attempted to create a promotion from a{} product", source.getDeleted() ? " deleted" : "n unavailable");
             throw new IllegalStateException("Product cannot be deleted nor unavailable");

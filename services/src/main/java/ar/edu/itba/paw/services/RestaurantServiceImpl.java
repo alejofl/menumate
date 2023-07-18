@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.services;
 
+import ar.edu.itba.paw.exception.RestaurantDeletedException;
 import ar.edu.itba.paw.exception.RestaurantNotFoundException;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.persistance.ImageDao;
@@ -42,7 +43,10 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public Optional<Restaurant> getById(long restaurantId) {
-        return restaurantDao.getById(restaurantId);
+        Optional<Restaurant> restaurant = restaurantDao.getById(restaurantId);
+        if (restaurant.isPresent() && restaurant.get().getDeleted())
+            throw new RestaurantDeletedException();
+        return restaurant;
     }
 
     @Override

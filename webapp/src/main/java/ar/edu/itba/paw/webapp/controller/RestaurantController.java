@@ -47,10 +47,17 @@ public class RestaurantController {
     }
 
     @GET
-    @Path("/{restaurantId}")
+    @Path("/{restaurantId:\\d+}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getRestaurantById(@PathParam("restaurantId") final long restaurantId) {
         final Restaurant restaurant = restaurantService.getById(restaurantId).orElseThrow(RestaurantNotFoundException::new);
         return Response.ok(RestaurantDto.fromRestaurant(restaurant)).build();
+    }
+
+    @DELETE
+    @Path("/{restaurantId:\\d+}")
+    public Response deleteRestaurantById(@PathParam("restaurantId") final long restaurantId) {
+        restaurantService.delete(restaurantId);
+        return Response.noContent().build();
     }
 }

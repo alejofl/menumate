@@ -79,7 +79,7 @@ http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
         </init-param>-->
         <init-param>
             <param-name>jersey.config.servlet.filter.forwardOn404</param-name>
-            <param-value>true</param-value>
+            <param-value>false</param-value>
         </init-param>
     </filter>
     <filter-mapping>

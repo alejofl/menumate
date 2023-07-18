@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.exception.ProductDeletedException;
 import ar.edu.itba.paw.exception.ProductNotFoundException;
 import ar.edu.itba.paw.exception.PromotionNotFoundException;
 import ar.edu.itba.paw.model.Product;
@@ -51,7 +52,7 @@ public class ProductJpaDao implements ProductDao {
 
         if (product.getDeleted()) {
             LOGGER.error("Attempted to delete already-deleted product id {}", product.getProductId());
-            throw new IllegalStateException("Product is already deleted");
+            throw new ProductDeletedException("Product is already deleted");
         }
 
         product.setDeleted(true);

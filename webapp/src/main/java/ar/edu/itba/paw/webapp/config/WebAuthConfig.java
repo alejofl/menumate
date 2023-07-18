@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -63,7 +64,12 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
                 .and().authorizeRequests()
-                .antMatchers("/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/images/{imageId:\\d+}").permitAll()
+                .antMatchers(HttpMethod.GET, "/restaurants").permitAll()
+                .antMatchers(HttpMethod.POST, "/restaurants").permitAll()
+                .antMatchers(HttpMethod.GET, "/restaurants/{restaurantId:\\d+}").permitAll()
+                .antMatchers(HttpMethod.DELETE, "/restaurants/{restaurantId:\\d+}").access("hasRole('MODERATOR') or @accessValidator.checkRestaurantOwner(#restaurantId)")
+                .antMatchers("/**").denyAll()
 
                 .and().exceptionHandling().
                 authenticationEntryPoint((request, response, ex) -> {

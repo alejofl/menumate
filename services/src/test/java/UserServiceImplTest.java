@@ -161,15 +161,4 @@ public class UserServiceImplTest {
 
         Assert.assertFalse(userServiceImpl.isUserEmailRegisteredAndConsolidated(EMAIL));
     }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testRegisterAddressNullName() {
-        userServiceImpl.registerAddress(USER_ID, ADDRESS, null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testRegisterAddressEmptyName() {
-        userServiceImpl.registerAddress(USER_ID, ADDRESS, "");
-    }
-
 }

@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.exception.CategoryDeletedException;
 import ar.edu.itba.paw.exception.CategoryNotFoundException;
 import ar.edu.itba.paw.model.Category;
 import ar.edu.itba.paw.model.Restaurant;
@@ -78,7 +79,7 @@ public class CategoryJpaDao implements CategoryDao {
 
         if (category.getDeleted()) {
             LOGGER.error("Attempted to delete already-deleted category id {}", category.getCategoryId());
-            throw new IllegalStateException("Category is already deleted");
+            throw new CategoryDeletedException("Category is already deleted");
         }
 
         category.setDeleted(true);

@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.exception.RestaurantDeletedException;
 import ar.edu.itba.paw.exception.RestaurantNotFoundException;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.persistance.RestaurantDao;
@@ -233,7 +234,7 @@ public class RestaurantJpaDao implements RestaurantDao {
 
         if (restaurant.getDeleted()) {
             LOGGER.error("Attempted to delete already-deleted restaurant id {}", restaurant.getRestaurantId());
-            throw new IllegalStateException("Restaurant is already deleted");
+            throw new RestaurantDeletedException("Restaurant is already deleted");
         }
 
         restaurant.setDeleted(true);
