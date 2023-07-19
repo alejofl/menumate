@@ -75,6 +75,8 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/users").permitAll()
                 .antMatchers(HttpMethod.GET, "/users/{userId:\\d+}").permitAll()
                 .antMatchers("/users/{userId:\\d+}/**").access("@accessValidator.checkIsUser(#userId)")
+                .antMatchers("/users/verification-tokens/**").permitAll()
+                .antMatchers("/users/resetpassword-tokens/**").permitAll()
 
                 .antMatchers("/**").denyAll()
 

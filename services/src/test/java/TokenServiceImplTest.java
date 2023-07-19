@@ -59,13 +59,13 @@ public class TokenServiceImplTest {
         Mockito.when(userToken.getUser()).thenReturn(user);
         Mockito.when(userDetailsService.loadUserByUsername(user.getEmail())).thenReturn(userDetails);
 
-        Assert.assertTrue(userServiceImpl.verifyUserAndDeleteVerificationToken(TOKEN));
+        Assert.assertTrue(userServiceImpl.verifyUserAndDeleteVerificationToken(TOKEN).isPresent());
     }
 
     @Test
     public void testVerifyUserAndDeleteVerificationTokenTokenNotFound() {
         Mockito.when(verificationTokenDao.getByToken(TOKEN)).thenReturn(Optional.empty());
-        Assert.assertFalse(userServiceImpl.verifyUserAndDeleteVerificationToken(TOKEN));
+        Assert.assertFalse(userServiceImpl.verifyUserAndDeleteVerificationToken(TOKEN).isPresent());
     }
 
     @Test
@@ -78,7 +78,7 @@ public class TokenServiceImplTest {
         Mockito.when(userToken.getUser()).thenReturn(user);
         Mockito.when(user.getIsActive()).thenReturn(true);
 
-        Assert.assertFalse(userServiceImpl.verifyUserAndDeleteVerificationToken(TOKEN));
+        Assert.assertFalse(userServiceImpl.verifyUserAndDeleteVerificationToken(TOKEN).isPresent());
     }
 
     @Test

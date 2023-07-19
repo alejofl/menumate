@@ -33,11 +33,11 @@ public interface UserService {
 
     void deleteAddress(long userId, String address);
 
-    void sendUserVerificationToken(User user);
+    void resendUserVerificationToken(String email);
 
-    void sendPasswordResetToken(User user);
+    void sendPasswordResetToken(String email);
 
-    boolean verifyUserAndDeleteVerificationToken(String token);
+    Optional<User> verifyUserAndDeleteVerificationToken(String token);
 
     boolean updatePasswordAndDeleteResetPasswordToken(String token, String newPassword);
 

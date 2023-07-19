@@ -14,11 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,9 +43,6 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private EmailService emailService;
 
-    @Autowired
-    private UserDetailsService userDetailsService;
-
     private static String generateRandomToken() {
         return UUID.randomUUID().toString().substring(0, 32);
     }
@@ -75,23 +67,26 @@ public class UserServiceImpl implements UserService {
         password = password == null ? null : passwordEncoder.encode(password);
 
         final Optional<User> maybeUser = userDao.getByEmail(email);
-        if (!maybeUser.isPresent())
-            return userDao.create(email, password, name, LocaleContextHolder.getLocale().getLanguage());
+        User user;
 
-        final User user = maybeUser.get();
-        if (password == null) {
-            LOGGER.error("Attempted to createOrConsolidate existing user id {} with a null password", user.getUserId());
-            throw new IllegalArgumentException("Cannot createOrConsolidate an existing user with a null password");
+        if (!maybeUser.isPresent()) {
+            user = userDao.create(email, password, name, LocaleContextHolder.getLocale().getLanguage());
+        } else {
+            user = maybeUser.get();
+            if (password == null) {
+                LOGGER.error("Attempted to createOrConsolidate existing user id {} with a null password", user.getUserId());
+                throw new IllegalArgumentException("Cannot createOrConsolidate an existing user with a null password");
+            }
+
+            if (user.getPassword() != null) {
+                LOGGER.error("Attempted to createOrConsolidate an existing and consolidated user id {}", user.getUserId());
+                throw new IllegalStateException("Cannot createOrConsolidate an already consolidated user");
+            }
+
+            user.setPassword(password);
+            user.setName(name);
+            LOGGER.info("Consolidated user with id {}", user.getUserId());
         }
-
-        if (user.getPassword() != null) {
-            LOGGER.error("Attempted to createOrConsolidate an existing and consolidated user id {}", user.getUserId());
-            throw new IllegalStateException("Cannot createOrConsolidate an already consolidated user");
-        }
-
-        user.setPassword(password);
-        user.setName(name);
-        LOGGER.info("Consolidated user with id {}", user.getUserId());
 
         UserVerificationToken token = verificationTokenDao.create(user, generateRandomToken(), generateTokenExpirationDate());
         emailService.sendUserVerificationEmail(user, token.getToken());
@@ -139,7 +134,13 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void sendUserVerificationToken(final User user) {
+    public void resendUserVerificationToken(final String email) {
+        final User user = userDao.getByEmail(email).orElse(null);
+        if (user == null) {
+            LOGGER.info("Ignored resend verification token request for unknown email");
+            return;
+        }
+
         if (user.getIsActive()) {
             LOGGER.info("Ignored creating verification token for already active user id {}", user.getUserId());
             return;
@@ -163,7 +164,13 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void sendPasswordResetToken(User user) {
+    public void sendPasswordResetToken(final String email) {
+        final User user = userDao.getByEmail(email).orElse(null);
+        if (user == null) {
+            LOGGER.info("Ignored creating password reset token unknown email");
+            return;
+        }
+
         if (!user.getIsActive()) {
             LOGGER.info("Ignored creating password reset token for inactive user id {}", user.getUserId());
             return;
@@ -187,17 +194,17 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public boolean verifyUserAndDeleteVerificationToken(final String token) {
+    public Optional<User> verifyUserAndDeleteVerificationToken(final String token) {
         Optional<UserVerificationToken> maybeToken = verificationTokenDao.getByToken(token);
         if (!maybeToken.isPresent()) {
             LOGGER.info("Ignored verifyAndDeleteVerificationToken call due to token not found");
-            return false;
+            return Optional.empty();
         }
 
         UserVerificationToken uvt = maybeToken.get();
         if (uvt.isExpired()) {
             LOGGER.info("Ignored verifyAndDeleteVerificationToken call for user id {} due to expired token", uvt.getUserId());
-            return false;
+            return Optional.empty();
         }
 
         verificationTokenDao.delete(uvt);
@@ -205,15 +212,12 @@ public class UserServiceImpl implements UserService {
         User user = uvt.getUser();
         if (user.getIsActive()) {
             LOGGER.error("Failed to activate user id {} after successful verification because user is already active", uvt.getUserId());
-            return false;
+            return Optional.empty();
         }
 
         user.setIsActive(true);
         LOGGER.info("Activating user id {} after successful verification", uvt.getUserId());
-
-        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetailsService.loadUserByUsername(user.getEmail()), null, AuthorityUtils.NO_AUTHORITIES);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        return true;
+        return Optional.of(user);
     }
 
     @Transactional

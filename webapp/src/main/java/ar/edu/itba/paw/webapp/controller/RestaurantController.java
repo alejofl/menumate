@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.List;
@@ -60,7 +61,7 @@ public class RestaurantController {
     @Path("/{restaurantId:\\d+}")
     public Response updateRestaurantById(
             @PathParam("restaurantId") final long restaurantId,
-            @Valid final UpdateRestaurantForm updateRestaurantForm
+            @Valid @NotNull final UpdateRestaurantForm updateRestaurantForm
     ) {
         restaurantService.update(
                 restaurantId,
