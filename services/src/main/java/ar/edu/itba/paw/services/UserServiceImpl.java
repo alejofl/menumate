@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.services;
 
+import ar.edu.itba.paw.exception.UserNotFoundException;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.model.UserResetpasswordToken;
 import ar.edu.itba.paw.model.UserVerificationToken;
@@ -108,6 +109,15 @@ public class UserServiceImpl implements UserService {
     public boolean isUserEmailRegisteredAndConsolidated(String email) {
         Optional<User> maybeUser = userDao.getByEmail(email);
         return maybeUser.isPresent() && maybeUser.get().getPassword() != null;
+    }
+
+    @Transactional
+    @Override
+    public User updateUser(long userId, String name, String preferredLanguage) {
+        User user = userDao.getById(userId).orElseThrow(UserNotFoundException::new);
+        user.setName(name);
+        user.setPreferredLanguage(preferredLanguage);
+        return user;
     }
 
     @Transactional

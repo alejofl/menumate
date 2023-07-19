@@ -27,6 +27,8 @@ public interface UserService {
 
     boolean isUserEmailRegisteredAndConsolidated(String email);
 
+    User updateUser(long userId, String name, String preferredLanguage);
+
     void registerAddress(long userId, String address, String name);
 
     void deleteAddress(long userId, String address);

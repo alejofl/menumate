@@ -7,6 +7,7 @@ import ar.edu.itba.paw.webapp.dto.UserAddressDto;
 import ar.edu.itba.paw.webapp.dto.UserDto;
 import ar.edu.itba.paw.webapp.form.PatchAddressesForm;
 import ar.edu.itba.paw.webapp.form.RegisterForm;
+import ar.edu.itba.paw.webapp.form.UpdateUserForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -30,7 +31,7 @@ public class UserController {
     }
 
     @GET
-    @Path("/{userId}")
+    @Path("/{userId:\\d+}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUser(@PathParam("userId") final long userId) {
         User user = userService.getById(userId).orElseThrow(UserNotFoundException::new);
@@ -44,8 +45,19 @@ public class UserController {
         return Response.created(uriInfo.getBaseUriBuilder().path("/users").path(String.valueOf(user.getUserId())).build()).build();
     }
 
+    @PUT
+    @Path("/{userId:\\d+}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response updateUser(
+            @PathParam("userId") final long userId,
+            @Valid final UpdateUserForm updateUserForm
+    ) {
+        userService.updateUser(userId, updateUserForm.getName(), updateUserForm.getPreferredLanguage());
+        return Response.noContent().build();
+    }
+
     @GET
-    @Path("/{userId}/addresses")
+    @Path("/{userId:\\d+}/addresses")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUserAddresses(@PathParam("userId") final long userId) {
         User user = userService.getById(userId).orElseThrow(UserNotFoundException::new);
@@ -54,7 +66,7 @@ public class UserController {
     }
 
     @PATCH
-    @Path("/{userId}/addresses")
+    @Path("/{userId:\\d+}/addresses")
     @Produces(MediaType.APPLICATION_JSON)
     public Response registerUserAddress(
             @PathParam("userId") final long userId,

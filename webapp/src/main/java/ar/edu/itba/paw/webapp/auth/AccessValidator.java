@@ -17,6 +17,11 @@ public class AccessValidator {
     @Autowired
     private RestaurantRoleService restaurantRoleService;
 
+    public boolean checkIsUser(long userId) {
+        Long currentUserId = ControllerUtils.getCurrentUserIdOrNull();
+        return currentUserId != null && currentUserId == userId;
+    }
+
     public boolean checkRestaurantRole(long restaurantId, RestaurantRoleLevel minimumRoleLevel) {
         Long currentUserId = ControllerUtils.getCurrentUserIdOrNull();
         if (currentUserId == null)
