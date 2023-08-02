@@ -78,7 +78,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/users/verification-tokens/**").permitAll()
                 .antMatchers("/users/resetpassword-tokens/**").permitAll()
 
-                .antMatchers("/**").denyAll()
+                .antMatchers("/**").permitAll()
 
                 .and().exceptionHandling().
                 authenticationEntryPoint((request, response, ex) -> {

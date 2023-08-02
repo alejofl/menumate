@@ -58,13 +58,13 @@ public class AuthAnywhereFilter extends OncePerRequestFilter {
 
             Optional<User> maybeUser = userService.getByEmail(email);
             if (maybeUser.isPresent()) {
-                response.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + jwtTokenUtil.generateAccessToken(maybeUser.get()));
+                User user = maybeUser.get();
+                response.setHeader("Token", jwtTokenUtil.generateAccessToken(user));
+                response.setHeader("MenuMate-UserId", Long.toString(user.getUserId()));
             }
         } catch (Exception e) {
-            SecurityContextHolder.clearContext();
+            //SecurityContextHolder.clearContext();
             response.addHeader("WWW-Authenticate", "Basic realm=\"MenuMate\"");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
         }
 
         filterChain.doFilter(request, response);

@@ -100,7 +100,8 @@ public class UserController {
             return Response.status(Response.Status.NOT_FOUND).build();
 
         return Response.noContent()
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtTokenUtil.generateAccessToken(user.get()))
+                .header("Token", jwtTokenUtil.generateAccessToken(user.get()))
+                .header("MenuMate-UserId", Long.toString(user.get().getUserId()))
                 .build();
     }
 
