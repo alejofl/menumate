@@ -104,13 +104,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public PaginatedResult<Order> getByUser(long userId, int pageNumber, int pageSize, boolean onlyInProgress, boolean descending) {
-        return orderDao.getByUser(userId, pageNumber, pageSize, onlyInProgress, descending);
-    }
-
-    @Override
-    public PaginatedResult<Order> getByRestaurant(long restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus, boolean descending) {
-        return orderDao.getByRestaurant(restaurantId, pageNumber, pageSize, orderStatus, descending);
+    public PaginatedResult<Order> get(Long userId, Long restaurantId, OrderStatus orderStatus, boolean onlyInProgress, boolean descending, int pageNumber, int pageSize) {
+        return orderDao.get(userId, restaurantId, orderStatus, onlyInProgress, descending, pageNumber, pageSize);
     }
 
     @Transactional

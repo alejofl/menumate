@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.exception.CategoryDeletedException;
 import ar.edu.itba.paw.exception.CategoryNotFoundException;
 import ar.edu.itba.paw.model.Category;
 import ar.edu.itba.paw.persistence.config.TestConfig;
@@ -147,7 +148,7 @@ public class CategoryJpaDaoTest {
         categoryDao.delete(NON_EXISTING_CATEGORY_ID);
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = CategoryDeletedException.class)
     public void testDeleteDeletedCategory() {
         categoryDao.delete(CategoryConstants.DELETED_CATEGORY_ID);
     }

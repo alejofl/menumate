@@ -1,3 +1,4 @@
+import ar.edu.itba.paw.exception.RestaurantDeletedException;
 import ar.edu.itba.paw.exception.RestaurantNotFoundException;
 import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.model.RestaurantSpecialty;
@@ -67,7 +68,7 @@ public class RestaurantServiceImplTest {
         restaurantService.update(DEFAULT_RESTAURANT_ID, NEW_RESTAURANT_NAME, NEW_RESTAURANT_SPECIALTY, NEW_RESTAURANT_ADDRESS, NEW_RESTAURANT_DESCRIPTION, NEW_RESTAURANT_TAGS);
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = RestaurantDeletedException.class)
     public void testUpdateDeletedRestaurant() {
         final Restaurant deletedRestaurant = Mockito.spy(Restaurant.class);
         deletedRestaurant.setDeleted(true);

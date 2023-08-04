@@ -57,7 +57,6 @@ public class TokenServiceImplTest {
         Mockito.when(user.getIsActive()).thenReturn(false);
 
         Mockito.when(userToken.getUser()).thenReturn(user);
-        Mockito.when(userDetailsService.loadUserByUsername(user.getEmail())).thenReturn(userDetails);
 
         Assert.assertTrue(userServiceImpl.verifyUserAndDeleteVerificationToken(TOKEN).isPresent());
     }

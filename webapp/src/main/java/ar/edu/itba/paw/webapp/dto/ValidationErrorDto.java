@@ -6,7 +6,7 @@ public class ValidationErrorDto {
     private String message;
     private String path;
 
-    public static ValidationErrorDto fromConstraintViolation(ConstraintViolation<?> violation) {
+    public static ValidationErrorDto fromConstraintViolation(final ConstraintViolation<?> violation) {
         ValidationErrorDto dto = new ValidationErrorDto();
         dto.message = violation.getMessage();
         dto.path = violation.getPropertyPath().toString();

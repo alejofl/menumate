@@ -21,7 +21,7 @@ public class RestaurantDetailsDto {
 
         return dto;
     }
-    public static List<RestaurantDetailsDto> fromRestaurantDetailsCollection(Collection<RestaurantDetails> restaurantDetails) {
+    public static List<RestaurantDetailsDto> fromRestaurantDetailsCollection(final Collection<RestaurantDetails> restaurantDetails) {
         return restaurantDetails.stream().map(RestaurantDetailsDto::fromRestaurantDetails).collect(Collectors.toList());
     }
 

@@ -89,6 +89,7 @@ public class UserServiceImpl implements UserService {
         }
 
         UserVerificationToken token = verificationTokenDao.create(user, generateRandomToken(), generateTokenExpirationDate());
+
         emailService.sendUserVerificationEmail(user, token.getToken());
         return user;
     }

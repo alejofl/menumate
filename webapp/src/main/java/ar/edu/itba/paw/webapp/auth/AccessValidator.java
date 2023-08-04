@@ -58,4 +58,14 @@ public class AccessValidator {
         PawAuthUserDetails currentUserDetails = ControllerUtils.getCurrentUserDetailsOrNull();
         return order != null && currentUserDetails != null && (order.getUserId() == currentUserDetails.getUserId() || checkRestaurantOrderHandler(order.getRestaurantId()));
     }
+
+    public boolean checkCanListOrders(Long userId, Long restaurantId) {
+        Long currentUserId = ControllerUtils.getCurrentUserIdOrNull();
+        if (currentUserId == null)
+            return false;
+
+        // Either the userId is yours, or you have order_handler role at the restaurant.
+        // Note: if both userId and restaurantId are null, this will return false.
+        return (currentUserId.equals(userId)) || (restaurantId != null && restaurantRoleService.doesUserHaveRole(currentUserId, restaurantId, RestaurantRoleLevel.ORDER_HANDLER));
+    }
 }

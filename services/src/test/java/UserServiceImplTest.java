@@ -19,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -63,8 +64,11 @@ public class UserServiceImplTest {
         Mockito.when(user.getPassword()).thenReturn(PASSWORD);
         Mockito.when(user.getName()).thenReturn(USERNAME);
 
+        final UserVerificationToken userVerificationToken = mock(UserVerificationToken.class);
+
         Mockito.when(userDao.getByEmail(EMAIL)).thenReturn(Optional.empty());
         Mockito.when(userDao.create(EMAIL, PASSWORD, USERNAME, LocaleContextHolder.getLocale().getLanguage())).thenReturn(user);
+        Mockito.when(verificationTokenDao.create(eq(user), anyString(), any())).thenReturn(userVerificationToken);
 
         final User result = userServiceImpl.createOrConsolidate(EMAIL, PASSWORD, USERNAME);
 

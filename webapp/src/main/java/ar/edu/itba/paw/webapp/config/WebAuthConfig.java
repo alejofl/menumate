@@ -13,6 +13,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -31,6 +32,7 @@ import java.io.IOException;
 import java.util.Collections;
 
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 @ComponentScan("ar.edu.itba.paw.webapp.auth")
 @Configuration
 public class WebAuthConfig extends WebSecurityConfigurerAdapter {
@@ -77,6 +79,8 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/users/{userId:\\d+}/**").access("@accessValidator.checkIsUser(#userId)")
                 .antMatchers("/users/verification-tokens/**").permitAll()
                 .antMatchers("/users/resetpassword-tokens/**").permitAll()
+
+                .antMatchers(HttpMethod.GET, "/orders").authenticated()
 
                 .antMatchers("/**").permitAll()
 
