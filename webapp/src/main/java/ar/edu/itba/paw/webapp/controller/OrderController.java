@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import ar.edu.itba.paw.exception.OrderNotFoundException;
 import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.service.OrderService;
 import ar.edu.itba.paw.util.PaginatedResult;
@@ -48,5 +49,13 @@ public class OrderController {
         List<OrderDto> dtoList = OrderDto.fromOrderCollection(orderPage.getResult());
         Response.ResponseBuilder builder = Response.ok(new GenericEntity<List<OrderDto>>(dtoList){});
         return ControllerUtils.addPagingLinks(builder, orderPage, uriInfo).build();
+    }
+
+    @GET
+    @Path("/{orderId:\\d+}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getOrderById(@PathParam("orderId") final long orderId) {
+        Order order = orderService.getById(orderId).orElseThrow(OrderNotFoundException::new);
+        return Response.ok(OrderDto.fromOrder(order)).build();
     }
 }

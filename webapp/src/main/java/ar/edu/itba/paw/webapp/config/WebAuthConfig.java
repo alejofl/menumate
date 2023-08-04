@@ -81,6 +81,9 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/users/resetpassword-tokens/**").permitAll()
 
                 .antMatchers(HttpMethod.GET, "/orders").authenticated()
+                .antMatchers(HttpMethod.GET, "/orders/{orderId:\\d+}").access("@accessValidator.checkOrderOwnerOrHandler(#orderId)")
+
+                .antMatchers(HttpMethod.GET, "/reviews/{orderId:\\d+}").permitAll()
 
                 .antMatchers("/**").permitAll()
 
