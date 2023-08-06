@@ -92,7 +92,7 @@ public class UserController {
         return Response.noContent().build();
     }
 
-    @POST
+    @PUT
     @Path("verification-tokens/{token}")
     public Response verificationToken(@PathParam("token") final String token) {
         Optional<User> user = userService.verifyUserAndDeleteVerificationToken(token);
@@ -113,7 +113,7 @@ public class UserController {
         return Response.noContent().build();
     }
 
-    @POST
+    @PUT
     @Path("resetpassword-tokens/{token}")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response resetpasswordToken(

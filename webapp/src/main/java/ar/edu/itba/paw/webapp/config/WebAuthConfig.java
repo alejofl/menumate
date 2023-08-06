@@ -62,7 +62,6 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(final HttpSecurity http) throws Exception {
         http.sessionManagement()
-                // Login logic
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
                 .and().authorizeRequests()
@@ -83,7 +82,11 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/orders").authenticated()
                 .antMatchers(HttpMethod.GET, "/orders/{orderId:\\d+}").access("@accessValidator.checkOrderOwnerOrHandler(#orderId)")
 
-                .antMatchers(HttpMethod.GET, "/reviews/{orderId:\\d+}").permitAll()
+                .antMatchers(HttpMethod.GET, "/reviews/{orderId:\\d+}/**").permitAll()
+                .antMatchers(HttpMethod.PUT, "/reviews/{orderId:\\d+}").access("@accessValidator.checkOrderOwner(#orderId)")
+                .antMatchers(HttpMethod.DELETE, "/reviews/{orderId:\\d+}").access("@accessValidator.checkOrderOwner(#orderId)")
+                .antMatchers(HttpMethod.PUT, "/reviews/{orderId:\\d+}/reply").access("@accessValidator.checkOrderHandler(#orderId)")
+                .antMatchers(HttpMethod.DELETE, "/reviews/{orderId:\\d+}/reply").access("@accessValidator.checkOrderHandler(#orderId)")
 
                 .antMatchers("/**").permitAll()
 

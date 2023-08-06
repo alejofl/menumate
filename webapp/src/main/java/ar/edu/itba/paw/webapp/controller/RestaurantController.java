@@ -33,7 +33,7 @@ public class RestaurantController {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getRestaurants(@Valid @BeanParam FilterForm filterForm) {
+    public Response getRestaurants(@Valid @BeanParam final FilterForm filterForm) {
         PaginatedResult<RestaurantDetails> pagedResult = restaurantService.search(
                 filterForm.getSearch(),
                 filterForm.getPageOrDefault(),

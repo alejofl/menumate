@@ -35,7 +35,7 @@ public class ReviewJpaDao implements ReviewDao {
     @Override
     public void create(long orderId, int rating, String comment) {
         final Review review = new Review(orderId, rating, comment);
-        em.persist(review);
+        em.merge(review);
         LOGGER.info("Created review for order with ID {}", orderId);
     }
 

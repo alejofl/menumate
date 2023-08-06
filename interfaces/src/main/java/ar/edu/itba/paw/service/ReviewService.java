@@ -44,7 +44,12 @@ public interface ReviewService {
     PaginatedResult<Review> getByUser(long userId, int pageNumber, int pageSize);
 
     /**
-     * Reply to a review made by an user
+     * Reply to a review made by a user.
      */
     void replyToReview(long orderId, String reply);
+
+    /**
+     * Deletes a review's reply.
+     */
+    void deleteReviewReply(long orderId);
 }

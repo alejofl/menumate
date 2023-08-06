@@ -35,7 +35,7 @@ public class OrderController {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @PreAuthorize("@accessValidator.checkCanListOrders(#getOrdersForm.userId, #getOrdersForm.restaurantId)")
-    public Response getOrders(@Valid @BeanParam GetOrdersForm getOrdersForm) {
+    public Response getOrders(@Valid @BeanParam final GetOrdersForm getOrdersForm) {
         PaginatedResult<Order> orderPage = orderService.get(
                 getOrdersForm.getUserId(),
                 getOrdersForm.getRestaurantId(),
