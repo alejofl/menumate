@@ -44,7 +44,7 @@ public class RestaurantController {
                 filterForm.getSpecialtiesAsEnum()
         );
 
-        List<RestaurantDetailsDto> dtoList = RestaurantDetailsDto.fromRestaurantDetailsCollection(pagedResult.getResult());
+        List<RestaurantDetailsDto> dtoList = RestaurantDetailsDto.fromRestaurantDetailsCollection(uriInfo, pagedResult.getResult());
         Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<RestaurantDetailsDto>>(dtoList){});
         return ControllerUtils.addPagingLinks(responseBuilder, pagedResult, uriInfo).build();
     }
@@ -54,7 +54,7 @@ public class RestaurantController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getRestaurantById(@PathParam("restaurantId") final long restaurantId) {
         final Restaurant restaurant = restaurantService.getById(restaurantId).orElseThrow(RestaurantNotFoundException::new);
-        return Response.ok(RestaurantDto.fromRestaurant(restaurant)).build();
+        return Response.ok(RestaurantDto.fromRestaurant(uriInfo, restaurant)).build();
     }
 
     @PUT

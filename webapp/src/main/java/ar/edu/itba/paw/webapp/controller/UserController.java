@@ -38,7 +38,7 @@ public class UserController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUser(@PathParam("userId") final long userId) {
         User user = userService.getById(userId).orElseThrow(UserNotFoundException::new);
-        return Response.ok(UserDto.fromUser(user)).build();
+        return Response.ok(UserDto.fromUser(uriInfo, user)).build();
     }
 
     @POST

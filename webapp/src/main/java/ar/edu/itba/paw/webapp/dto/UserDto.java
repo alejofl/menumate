@@ -2,6 +2,8 @@ package ar.edu.itba.paw.webapp.dto;
 
 import ar.edu.itba.paw.model.User;
 
+import javax.ws.rs.core.UriInfo;
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -15,7 +17,13 @@ public class UserDto {
     private boolean isActive;
     private String preferredLanguage;
 
-    public static UserDto fromUser(final User user) {
+    private URI selfUrl;
+    private URI addressesUrl;
+    private URI ordersUrl;
+    private URI reviewsUrl;
+    private URI restaurantRolesUrl;
+
+    public static UserDto fromUser(final UriInfo uriInfo, final User user) {
         final UserDto dto = new UserDto();
         dto.userId = user.getUserId();
         dto.email = user.getEmail();
@@ -24,11 +32,17 @@ public class UserDto {
         dto.isActive = user.getIsActive();
         dto.preferredLanguage = user.getPreferredLanguage();
 
+        dto.selfUrl = uriInfo.getBaseUriBuilder().path("/users").path(String.valueOf(user.getUserId())).build();
+        dto.addressesUrl = uriInfo.getBaseUriBuilder().path("/users").path(String.valueOf(user.getUserId())).path("addresses").build();
+        dto.ordersUrl = uriInfo.getBaseUriBuilder().path("/orders").queryParam("userId", String.valueOf(user.getUserId())).build();
+        dto.reviewsUrl = uriInfo.getBaseUriBuilder().path("/reviews").queryParam("userId", String.valueOf(user.getUserId())).build();
+        dto.restaurantRolesUrl = uriInfo.getBaseUriBuilder().path("TODO").build(); // TODO: Implement roles & my restaurants endpoints
+
         return dto;
     }
 
-    public static List<UserDto> fromUserCollection(final Collection<User> users) {
-        return users.stream().map(UserDto::fromUser).collect(Collectors.toList());
+    public static List<UserDto> fromUserCollection(final UriInfo uriInfo, final Collection<User> users) {
+        return users.stream().map(u -> fromUser(uriInfo, u)).collect(Collectors.toList());
     }
 
     public long getUserId() {
@@ -77,5 +91,45 @@ public class UserDto {
 
     public void setPreferredLanguage(String preferredLanguage) {
         this.preferredLanguage = preferredLanguage;
+    }
+
+    public URI getSelfUrl() {
+        return selfUrl;
+    }
+
+    public void setSelfUrl(URI selfUrl) {
+        this.selfUrl = selfUrl;
+    }
+
+    public URI getAddressesUrl() {
+        return addressesUrl;
+    }
+
+    public void setAddressesUrl(URI addressesUrl) {
+        this.addressesUrl = addressesUrl;
+    }
+
+    public URI getOrdersUrl() {
+        return ordersUrl;
+    }
+
+    public void setOrdersUrl(URI ordersUrl) {
+        this.ordersUrl = ordersUrl;
+    }
+
+    public URI getReviewsUrl() {
+        return reviewsUrl;
+    }
+
+    public void setReviewsUrl(URI reviewsUrl) {
+        this.reviewsUrl = reviewsUrl;
+    }
+
+    public URI getRestaurantRolesUrl() {
+        return restaurantRolesUrl;
+    }
+
+    public void setRestaurantRolesUrl(URI restaurantRolesUrl) {
+        this.restaurantRolesUrl = restaurantRolesUrl;
     }
 }

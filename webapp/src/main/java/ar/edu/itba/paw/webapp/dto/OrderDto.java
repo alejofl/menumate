@@ -1,6 +1,9 @@
 package ar.edu.itba.paw.webapp.dto;
 
 import ar.edu.itba.paw.model.Order;
+
+import javax.ws.rs.core.UriInfo;
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -21,7 +24,11 @@ public class OrderDto {
     private Integer tableNumber;
     private List<OrderItemDto> items;
 
-    public static OrderDto fromOrder(final Order order) {
+    private URI selfUrl;
+    private URI userUrl;
+    private URI restaurantUrl;
+
+    public static OrderDto fromOrder(final UriInfo uriInfo, final Order order) {
         final OrderDto dto = new OrderDto();
         dto.orderId = order.getOrderId();
         dto.orderType = order.getOrderType().getMessageCode();
@@ -37,11 +44,15 @@ public class OrderDto {
         dto.tableNumber = order.getTableNumber();
         dto.items = OrderItemDto.fromOrderItemCollection(order.getItems());
 
+        dto.selfUrl = uriInfo.getBaseUriBuilder().path("/orders").path(String.valueOf(order.getOrderId())).build();
+        dto.userUrl = uriInfo.getBaseUriBuilder().path("/users").path(String.valueOf(order.getUserId())).build();
+        dto.restaurantUrl = uriInfo.getBaseUriBuilder().path("/restaurants").path(String.valueOf(order.getRestaurantId())).build();
+
         return dto;
     }
 
-    public static List<OrderDto> fromOrderCollection(final Collection<Order> orders) {
-        return orders.stream().map(OrderDto::fromOrder).collect(Collectors.toList());
+    public static List<OrderDto> fromOrderCollection(final UriInfo uriInfo, final Collection<Order> orders) {
+        return orders.stream().map(o -> fromOrder(uriInfo, o)).collect(Collectors.toList());
     }
 
     public long getOrderId() {
@@ -146,5 +157,29 @@ public class OrderDto {
 
     public void setItems(List<OrderItemDto> items) {
         this.items = items;
+    }
+
+    public URI getSelfUrl() {
+        return selfUrl;
+    }
+
+    public void setSelfUrl(URI selfUrl) {
+        this.selfUrl = selfUrl;
+    }
+
+    public URI getUserUrl() {
+        return userUrl;
+    }
+
+    public void setUserUrl(URI userUrl) {
+        this.userUrl = userUrl;
+    }
+
+    public URI getRestaurantUrl() {
+        return restaurantUrl;
+    }
+
+    public void setRestaurantUrl(URI restaurantUrl) {
+        this.restaurantUrl = restaurantUrl;
     }
 }

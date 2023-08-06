@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.dto;
 
 import ar.edu.itba.paw.model.RestaurantDetails;
 
+import javax.ws.rs.core.UriInfo;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,17 +13,17 @@ public class RestaurantDetailsDto {
     private int reviewCount;
     private float averageProductPrice;
 
-    public static RestaurantDetailsDto fromRestaurantDetails(final RestaurantDetails restaurantDetails) {
+    public static RestaurantDetailsDto fromRestaurantDetails(final UriInfo uriInfo, final RestaurantDetails restaurantDetails) {
         final RestaurantDetailsDto dto = new RestaurantDetailsDto();
-        dto.restaurant = RestaurantDto.fromRestaurant(restaurantDetails.getRestaurant());
+        dto.restaurant = RestaurantDto.fromRestaurant(uriInfo, restaurantDetails.getRestaurant());
         dto.averageRating = restaurantDetails.getAverageRating();
         dto.reviewCount = restaurantDetails.getReviewCount();
         dto.averageProductPrice = restaurantDetails.getAverageProductPrice();
 
         return dto;
     }
-    public static List<RestaurantDetailsDto> fromRestaurantDetailsCollection(final Collection<RestaurantDetails> restaurantDetails) {
-        return restaurantDetails.stream().map(RestaurantDetailsDto::fromRestaurantDetails).collect(Collectors.toList());
+    public static List<RestaurantDetailsDto> fromRestaurantDetailsCollection(final UriInfo uriInfo, final Collection<RestaurantDetails> restaurantDetails) {
+        return restaurantDetails.stream().map(r -> fromRestaurantDetails(uriInfo, r)).collect(Collectors.toList());
     }
 
     public RestaurantDto getRestaurant() {

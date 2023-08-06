@@ -46,7 +46,7 @@ public class OrderController {
                 getOrdersForm.getSizeOrDefault(ControllerUtils.DEFAULT_ORDERS_PAGE_SIZE)
         );
 
-        List<OrderDto> dtoList = OrderDto.fromOrderCollection(orderPage.getResult());
+        List<OrderDto> dtoList = OrderDto.fromOrderCollection(uriInfo, orderPage.getResult());
         Response.ResponseBuilder builder = Response.ok(new GenericEntity<List<OrderDto>>(dtoList){});
         return ControllerUtils.addPagingLinks(builder, orderPage, uriInfo).build();
     }
@@ -56,6 +56,6 @@ public class OrderController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getOrderById(@PathParam("orderId") final long orderId) {
         Order order = orderService.getById(orderId).orElseThrow(OrderNotFoundException::new);
-        return Response.ok(OrderDto.fromOrder(order)).build();
+        return Response.ok(OrderDto.fromOrder(uriInfo, order)).build();
     }
 }

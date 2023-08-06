@@ -39,7 +39,7 @@ public class ReviewController {
                 getReviewsForm.getSizeOrDefault(ControllerUtils.DEFAULT_REVIEWS_PAGE_SIZE)
         );
 
-        List<ReviewDto> dtoList = ReviewDto.fromReviewCollection(page.getResult());
+        List<ReviewDto> dtoList = ReviewDto.fromReviewCollection(uriInfo, page.getResult());
         Response.ResponseBuilder builder = Response.ok(new GenericEntity<List<ReviewDto>>(dtoList){});
         return ControllerUtils.addPagingLinks(builder, page, uriInfo).build();
     }
@@ -49,7 +49,7 @@ public class ReviewController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getReviewById(@PathParam("orderId") final long orderId) {
         Review review = reviewService.getByOrder(orderId).orElseThrow(ReviewNotFoundException::new);
-        return Response.ok(ReviewDto.fromReview(review)).build();
+        return Response.ok(ReviewDto.fromReview(uriInfo, review)).build();
     }
 
     @GET

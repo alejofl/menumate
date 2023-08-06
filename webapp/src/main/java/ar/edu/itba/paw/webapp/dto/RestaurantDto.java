@@ -3,6 +3,8 @@ package ar.edu.itba.paw.webapp.dto;
 import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.model.RestaurantTags;
 
+import javax.ws.rs.core.UriInfo;
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -25,7 +27,13 @@ public class RestaurantDto {
     private boolean deleted;
     private List<String> tags;
 
-    public static RestaurantDto fromRestaurant(final Restaurant restaurant) {
+    private URI selfUrl;
+    private URI ownerUrl;
+    private URI logoUrl;
+    private URI portrait1Url;
+    private URI portrait2Url;
+
+    public static RestaurantDto fromRestaurant(final UriInfo uriInfo, final Restaurant restaurant) {
         final RestaurantDto dto = new RestaurantDto();
         dto.restaurantId = restaurant.getRestaurantId();
         dto.name = restaurant.getName();
@@ -42,11 +50,17 @@ public class RestaurantDto {
         dto.deleted = restaurant.getDeleted();
         dto.tags = restaurant.getTags().stream().map(RestaurantTags::getMessageCode).collect(Collectors.toList());
 
+        dto.selfUrl = uriInfo.getBaseUriBuilder().path("/restaurants").path(String.valueOf(restaurant.getRestaurantId())).build();
+        dto.ownerUrl = uriInfo.getBaseUriBuilder().path("/users").path(String.valueOf(restaurant.getOwnerUserId())).build();
+        dto.logoUrl = DtoUtils.getImageUri(uriInfo, restaurant.getLogoId());
+        dto.portrait1Url = DtoUtils.getImageUri(uriInfo, restaurant.getPortrait1Id());
+        dto.portrait2Url = DtoUtils.getImageUri(uriInfo, restaurant.getPortrait2Id());
+
         return dto;
     }
 
-    public static List<RestaurantDto> fromRestaurantCollection(final Collection<Restaurant> restaurants) {
-        return restaurants.stream().map(RestaurantDto::fromRestaurant).collect(Collectors.toList());
+    public static List<RestaurantDto> fromRestaurantCollection(final UriInfo uriInfo, final Collection<Restaurant> restaurants) {
+        return restaurants.stream().map(r -> fromRestaurant(uriInfo, r)).collect(Collectors.toList());
     }
 
     public long getRestaurantId() {
@@ -167,5 +181,45 @@ public class RestaurantDto {
 
     public void setTags(List<String> tags) {
         this.tags = tags;
+    }
+
+    public URI getSelfUrl() {
+        return selfUrl;
+    }
+
+    public void setSelfUrl(URI selfUrl) {
+        this.selfUrl = selfUrl;
+    }
+
+    public URI getOwnerUrl() {
+        return ownerUrl;
+    }
+
+    public void setOwnerUrl(URI ownerUrl) {
+        this.ownerUrl = ownerUrl;
+    }
+
+    public URI getLogoUrl() {
+        return logoUrl;
+    }
+
+    public void setLogoUrl(URI logoUrl) {
+        this.logoUrl = logoUrl;
+    }
+
+    public URI getPortrait1Url() {
+        return portrait1Url;
+    }
+
+    public void setPortrait1Url(URI portrait1Url) {
+        this.portrait1Url = portrait1Url;
+    }
+
+    public URI getPortrait2Url() {
+        return portrait2Url;
+    }
+
+    public void setPortrait2Url(URI portrait2Url) {
+        this.portrait2Url = portrait2Url;
     }
 }

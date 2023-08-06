@@ -2,6 +2,8 @@ package ar.edu.itba.paw.webapp.dto;
 
 import ar.edu.itba.paw.model.Review;
 
+import javax.ws.rs.core.UriInfo;
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -14,7 +16,10 @@ public class ReviewDto {
     private String comment;
     private String reply;
 
-    public static ReviewDto fromReview(final Review review) {
+    private URI selfUrl;
+    private URI orderUrl;
+
+    public static ReviewDto fromReview(final UriInfo uriInfo, final Review review) {
         final ReviewDto dto = new ReviewDto();
         dto.orderId = review.getOrderId();
         dto.rating = review.getRating();
@@ -22,11 +27,14 @@ public class ReviewDto {
         dto.comment = review.getComment();
         dto.reply = review.getReply();
 
+        dto.selfUrl = uriInfo.getAbsolutePathBuilder().path("/reviews").path(String.valueOf(review.getOrderId())).build();
+        dto.orderUrl = uriInfo.getAbsolutePathBuilder().path("/orders").path(String.valueOf(review.getOrderId())).build();
+
         return dto;
     }
 
-    public static List<ReviewDto> fromReviewCollection(final Collection<Review> reviews) {
-        return reviews.stream().map(ReviewDto::fromReview).collect(Collectors.toList());
+    public static List<ReviewDto> fromReviewCollection(final UriInfo uriInfo, final Collection<Review> reviews) {
+        return reviews.stream().map(r -> fromReview(uriInfo, r)).collect(Collectors.toList());
     }
 
     public long getOrderId() {
@@ -67,5 +75,21 @@ public class ReviewDto {
 
     public void setReply(String reply) {
         this.reply = reply;
+    }
+
+    public URI getSelfUrl() {
+        return selfUrl;
+    }
+
+    public void setSelfUrl(URI selfUrl) {
+        this.selfUrl = selfUrl;
+    }
+
+    public URI getOrderUrl() {
+        return orderUrl;
+    }
+
+    public void setOrderUrl(URI orderUrl) {
+        this.orderUrl = orderUrl;
     }
 }
