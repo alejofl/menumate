@@ -63,10 +63,16 @@ public class ReviewJdbcDaoTest {
         Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "order_reviews", "order_id = " + OrderConstants.ORDER_ID_WITH_NO_REVIEW));
     }
 
-    @Test(expected = PersistenceException.class)
+    @Test
+    @Rollback
     public void testCreateWhenExisting() {
-        reviewDao.create(OrderConstants.ORDER_IDS_RESTAURANT_0[0], ReviewConstants.DEFAULT_REVIEW_RATING, null);
+        reviewDao.create(
+                OrderConstants.ORDER_IDS_RESTAURANT_0[0],
+                ReviewConstants.DEFAULT_REVIEW_RATING,
+                null
+        );
         em.flush();
+        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "order_reviews", "order_id = " + OrderConstants.ORDER_IDS_RESTAURANT_0[0]));
     }
 
     @Test
@@ -87,14 +93,14 @@ public class ReviewJdbcDaoTest {
 
     @Test
     public void testGetByRestaurantEmpty() {
-        PaginatedResult<Review> result = reviewDao.getByRestaurant(RestaurantConstants.RESTAURANT_ID_WITH_NO_ORDERS, 1, 1);
+        PaginatedResult<Review> result = reviewDao.get(null, RestaurantConstants.RESTAURANT_ID_WITH_NO_ORDERS, 1, 1);
         Assert.assertEquals(0, result.getResult().size());
         Assert.assertEquals(0, result.getTotalCount());
     }
 
     @Test
     public void testGetByRestaurantExisting() {
-        PaginatedResult<Review> result = reviewDao.getByRestaurant(RestaurantConstants.RESTAURANT_IDS[0], 1, OrderConstants.ORDER_IDS_RESTAURANT_0.length);
+        PaginatedResult<Review> result = reviewDao.get(null, RestaurantConstants.RESTAURANT_IDS[0], 1, OrderConstants.ORDER_IDS_RESTAURANT_0.length);
         Assert.assertEquals(OrderConstants.ORDER_IDS_RESTAURANT_0.length, result.getResult().size());
         Assert.assertEquals(OrderConstants.ORDER_IDS_RESTAURANT_0.length, result.getTotalCount());
     }
@@ -102,7 +108,7 @@ public class ReviewJdbcDaoTest {
     @Test
     public void testReviewsByRestaurant() {
         final int totalOrders = OrderConstants.ORDER_IDS_RESTAURANT_0.length;
-        PaginatedResult<Review> result = reviewDao.getByRestaurant(RestaurantConstants.RESTAURANT_IDS[0], 1, totalOrders);
+        PaginatedResult<Review> result = reviewDao.get(null, RestaurantConstants.RESTAURANT_IDS[0], 1, totalOrders);
         for (int i = 0; i < totalOrders; i++) {
             Review review = result.getResult().get(i);
             Assert.assertEquals(OrderConstants.ORDER_IDS_RESTAURANT_0[totalOrders - i - 1], review.getOrder().getOrderId().longValue());
@@ -113,20 +119,20 @@ public class ReviewJdbcDaoTest {
 
     @Test
     public void testGetByUserEmpty() {
-        PaginatedResult<Review> result = reviewDao.getByUser(UserConstants.INACTIVE_USER_ID, 1, 20);
+        PaginatedResult<Review> result = reviewDao.get(UserConstants.INACTIVE_USER_ID, null, 1, 20);
         Assert.assertEquals(0, result.getResult().size());
         Assert.assertEquals(0, result.getTotalCount());
     }
 
     @Test
     public void testGetByUserNotEmpty() {
-        PaginatedResult<Review> result = reviewDao.getByUser(UserConstants.ACTIVE_USER_ID, 1, OrderConstants.TOTAL_ORDER_COUNT);
+        PaginatedResult<Review> result = reviewDao.get(UserConstants.ACTIVE_USER_ID, null, 1, OrderConstants.TOTAL_ORDER_COUNT);
         Assert.assertEquals(OrderConstants.TOTAL_ORDER_COUNT, result.getResult().size());
     }
 
     @Test
     public void testReviewsByUser() {
-        PaginatedResult<Review> result = reviewDao.getByUser(UserConstants.ACTIVE_USER_ID, 1, OrderConstants.TOTAL_ORDER_COUNT);
+        PaginatedResult<Review> result = reviewDao.get(UserConstants.ACTIVE_USER_ID, null, 1, OrderConstants.TOTAL_ORDER_COUNT);
         Assert.assertEquals(OrderConstants.TOTAL_ORDER_COUNT, result.getResult().size());
         for (int i = 0; i < OrderConstants.TOTAL_ORDER_COUNT; i++) {
             Review review = result.getResult().get(i);

@@ -10,11 +10,6 @@ import java.util.Optional;
 public interface ReviewDao {
 
     /**
-     * Gets an order's review, if it has one.
-     */
-    Optional<Review> getByOrder(long orderId);
-
-    /**
      * Creates a review for a given orderId, or updates it if it already exists.
      */
     void create(long orderId, int rating, String comment);
@@ -25,6 +20,16 @@ public interface ReviewDao {
     void delete(long orderId);
 
     /**
+     * Gets an order's review, if it has one.
+     */
+    Optional<Review> getByOrder(long orderId);
+
+    /**
+     * Gets reviews by userId and/or restaurantId, ordered by date descending.
+     */
+    PaginatedResult<Review> get(Long userId, Long restaurantId, int pageNumber, int pageSize);
+
+    /**
      * Gets a restaurant's average rating from reviews, alongside the amount of reviews.
      */
     AverageCountPair getRestaurantAverage(long restaurantId);
@@ -33,14 +38,4 @@ public interface ReviewDao {
      * Gets a restaurant's average rating from reviews after a given datetime, alongside the amount of reviews.
      */
     AverageCountPair getRestaurantAverageSince(long restaurantId, LocalDateTime datetime);
-
-    /**
-     * Gets a restaurant's reviews ordered by date descending.
-     */
-    PaginatedResult<Review> getByRestaurant(long restaurantId, int pageNumber, int pageSize);
-
-    /**
-     * Gets a user's reviews ordered by date descending.
-     */
-    PaginatedResult<Review> getByUser(long userId, int pageNumber, int pageSize);
 }

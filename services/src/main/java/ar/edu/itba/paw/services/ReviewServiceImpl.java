@@ -41,6 +41,11 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    public PaginatedResult<Review> get(Long userId, Long restaurantId, int pageNumber, int pageSize) {
+        return reviewDao.get(userId, restaurantId, pageNumber, pageSize);
+    }
+
+    @Override
     public AverageCountPair getRestaurantAverage(long restaurantId) {
         return reviewDao.getRestaurantAverage(restaurantId);
     }
@@ -48,16 +53,6 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public AverageCountPair getRestaurantAverageSince(long restaurantId, LocalDateTime datetime) {
         return reviewDao.getRestaurantAverageSince(restaurantId, datetime);
-    }
-
-    @Override
-    public PaginatedResult<Review> getByRestaurant(long restaurantId, int pageNumber, int pageSize) {
-        return reviewDao.getByRestaurant(restaurantId, pageNumber, pageSize);
-    }
-
-    @Override
-    public PaginatedResult<Review> getByUser(long userId, int pageNumber, int pageSize) {
-        return reviewDao.getByUser(userId, pageNumber, pageSize);
     }
 
     @Override

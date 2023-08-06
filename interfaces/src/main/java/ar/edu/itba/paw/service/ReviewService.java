@@ -24,6 +24,11 @@ public interface ReviewService {
     Optional<Review> getByOrder(long orderId);
 
     /**
+     * Gets reviews by userId and/or restaurantId, ordered by date descending.
+     */
+    PaginatedResult<Review> get(Long userId, Long restaurantId, int pageNumber, int pageSize);
+
+    /**
      * Gets a restaurant's average rating from reviews, alongside the amount of reviews.
      */
     AverageCountPair getRestaurantAverage(long restaurantId);
@@ -32,16 +37,6 @@ public interface ReviewService {
      * Gets a restaurant's average rating from reviews after a given datetime, alongside the amount of reviews.
      */
     AverageCountPair getRestaurantAverageSince(long restaurantId, LocalDateTime datetime);
-
-    /**
-     * Gets a restaurant's reviews ordered by date descending.
-     */
-    PaginatedResult<Review> getByRestaurant(long restaurantId, int pageNumber, int pageSize);
-
-    /**
-     * Gets a user's reviews ordered by date descending.
-     */
-    PaginatedResult<Review> getByUser(long userId, int pageNumber, int pageSize);
 
     /**
      * Reply to a review made by a user.

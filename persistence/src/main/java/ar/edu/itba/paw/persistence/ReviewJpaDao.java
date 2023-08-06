@@ -33,6 +33,57 @@ public class ReviewJpaDao implements ReviewDao {
     }
 
     @Override
+    public PaginatedResult<Review> get(Long userId, Long restaurantId, int pageNumber, int pageSize) {
+        Utils.validatePaginationParams(pageNumber, pageSize);
+
+        StringBuilder queryBuilder = new StringBuilder("SELECT r.order_id FROM order_reviews AS r JOIN orders AS o ON r.order_id = o.order_id");
+        StringBuilder countBuilder = new StringBuilder("SELECT COUNT(*) FROM order_reviews AS r JOIN orders AS o ON r.order_id = o.order_id");
+        String andToken = " WHERE ";
+
+        if (userId != null) {
+            queryBuilder.append(andToken).append("o.user_id = :userId");
+            countBuilder.append(andToken).append("o.user_id = :userId");
+            andToken = " AND ";
+        }
+
+        if (restaurantId != null) {
+            queryBuilder.append(andToken).append("o.restaurant_id = :restaurantId");
+            countBuilder.append(andToken).append("o.restaurant_id = :restaurantId");
+            andToken = " AND ";
+        }
+
+        queryBuilder.append(" ORDER BY r.date DESC, r.order_id");
+
+        Query nativeQuery = em.createNativeQuery(queryBuilder.toString());
+        Query countQuery = em.createNativeQuery(countBuilder.toString());
+
+        if (userId != null) {
+            nativeQuery.setParameter("userId", userId);
+            countQuery.setParameter("userId", userId);
+        }
+
+        if (restaurantId != null) {
+            nativeQuery.setParameter("restaurantId", restaurantId);
+            countQuery.setParameter("restaurantId", restaurantId);
+        }
+
+        nativeQuery.setMaxResults(pageSize);
+        nativeQuery.setFirstResult((pageNumber - 1) * pageSize);
+
+        final List<Long> idList = nativeQuery.getResultList().stream().mapToLong(n -> ((Number) n).longValue()).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
+        int count = ((Number) countQuery.getSingleResult()).intValue();
+
+        if (idList.isEmpty())
+            return new PaginatedResult<>(Collections.emptyList(), pageNumber, pageSize, count);
+
+        final TypedQuery<Review> query = em.createQuery("FROM Review WHERE orderId IN :idList ORDER BY date DESC, orderId", Review.class);
+        query.setParameter("idList", idList);
+
+        List<Review> reviews = query.getResultList();
+        return new PaginatedResult<>(reviews, pageNumber, pageSize, count);
+    }
+
+    @Override
     public void create(long orderId, int rating, String comment) {
         final Review review = new Review(orderId, rating, comment);
         em.merge(review);
@@ -61,57 +112,5 @@ public class ReviewJpaDao implements ReviewDao {
         query.setParameter("datetime", datetime);
         Object[] result = (Object[]) query.getSingleResult();
         return new AverageCountPair(((Number) result[0]).floatValue(), ((Number) result[1]).intValue());
-    }
-
-    @Override
-    public PaginatedResult<Review> getByRestaurant(long restaurantId, int pageNumber, int pageSize) {
-        Utils.validatePaginationParams(pageNumber, pageSize);
-
-        Query nativeQuery = em.createNativeQuery("SELECT o.order_id FROM order_reviews AS r JOIN orders AS o ON r.order_id = o.order_id WHERE o.restaurant_id = ? ORDER BY r.date DESC");
-        nativeQuery.setParameter(1, restaurantId);
-        nativeQuery.setMaxResults(pageSize);
-        nativeQuery.setFirstResult((pageNumber - 1) * pageSize);
-
-        final List<Long> idList = nativeQuery.getResultList().stream().mapToLong(n -> ((Number) n).longValue()).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
-
-        Query countQuery = em.createNativeQuery("SELECT COUNT(*) FROM order_reviews JOIN orders ON order_reviews.order_id = orders.order_id WHERE orders.restaurant_id = ?");
-        countQuery.setParameter(1, restaurantId);
-        int count = ((Number) countQuery.getSingleResult()).intValue();
-
-        if (idList.isEmpty())
-            return new PaginatedResult<>(Collections.emptyList(), pageNumber, pageSize, count);
-
-        final TypedQuery<Review> query = em.createQuery("FROM Review WHERE orderId IN :idList ORDER BY date DESC", Review.class);
-        query.setParameter("idList", idList);
-
-        List<Review> reviews = query.getResultList();
-
-        return new PaginatedResult<>(reviews, pageNumber, pageSize, count);
-    }
-
-    @Override
-    public PaginatedResult<Review> getByUser(long userId, int pageNumber, int pageSize) {
-        Utils.validatePaginationParams(pageNumber, pageSize);
-
-        Query nativeQuery = em.createNativeQuery("SELECT o.order_id FROM order_reviews AS r JOIN orders AS o ON r.order_id = o.order_id WHERE o.user_id = ? ORDER BY r.date DESC");
-        nativeQuery.setParameter(1, userId);
-        nativeQuery.setMaxResults(pageSize);
-        nativeQuery.setFirstResult((pageNumber - 1) * pageSize);
-
-        final List<Long> idList = nativeQuery.getResultList().stream().mapToLong(n -> ((Number) n).longValue()).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
-
-        Query countQuery = em.createNativeQuery("SELECT COUNT(*) FROM order_reviews JOIN orders ON order_reviews.order_id = orders.order_id WHERE orders.user_id = ?");
-        countQuery.setParameter(1, userId);
-        int count = ((Number) countQuery.getSingleResult()).intValue();
-
-        if (idList.isEmpty())
-            return new PaginatedResult<>(Collections.emptyList(), pageNumber, pageSize, count);
-
-        final TypedQuery<Review> query = em.createQuery("FROM Review WHERE orderId IN :idList ORDER BY date DESC", Review.class);
-        query.setParameter("idList", idList);
-
-        List<Review> reviews = query.getResultList();
-
-        return new PaginatedResult<>(reviews, pageNumber, pageSize, count);
     }
 }
