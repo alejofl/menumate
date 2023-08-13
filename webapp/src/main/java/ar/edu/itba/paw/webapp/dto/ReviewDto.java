@@ -27,8 +27,8 @@ public class ReviewDto {
         dto.comment = review.getComment();
         dto.reply = review.getReply();
 
-        dto.selfUrl = uriInfo.getAbsolutePathBuilder().path("/reviews").path(String.valueOf(review.getOrderId())).build();
-        dto.orderUrl = uriInfo.getAbsolutePathBuilder().path("/orders").path(String.valueOf(review.getOrderId())).build();
+        dto.selfUrl = DtoUtils.getReviewUri(uriInfo, review.getOrderId());
+        dto.orderUrl = DtoUtils.getOrderUri(uriInfo, review.getOrderId());
 
         return dto;
     }

@@ -50,8 +50,8 @@ public class RestaurantDto {
         dto.deleted = restaurant.getDeleted();
         dto.tags = restaurant.getTags().stream().map(RestaurantTags::getMessageCode).collect(Collectors.toList());
 
-        dto.selfUrl = uriInfo.getBaseUriBuilder().path("/restaurants").path(String.valueOf(restaurant.getRestaurantId())).build();
-        dto.ownerUrl = uriInfo.getBaseUriBuilder().path("/users").path(String.valueOf(restaurant.getOwnerUserId())).build();
+        dto.selfUrl = DtoUtils.getRestaurantUri(uriInfo, restaurant.getRestaurantId());
+        dto.ownerUrl = DtoUtils.getUserUri(uriInfo, restaurant.getOwnerUserId());
         dto.logoUrl = DtoUtils.getImageUri(uriInfo, restaurant.getLogoId());
         dto.portrait1Url = DtoUtils.getImageUri(uriInfo, restaurant.getPortrait1Id());
         dto.portrait2Url = DtoUtils.getImageUri(uriInfo, restaurant.getPortrait2Id());

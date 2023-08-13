@@ -32,7 +32,7 @@ public class UserDto {
         dto.isActive = user.getIsActive();
         dto.preferredLanguage = user.getPreferredLanguage();
 
-        dto.selfUrl = uriInfo.getBaseUriBuilder().path("/users").path(String.valueOf(user.getUserId())).build();
+        dto.selfUrl = DtoUtils.getUserUri(uriInfo, user.getUserId());
         dto.addressesUrl = uriInfo.getBaseUriBuilder().path("/users").path(String.valueOf(user.getUserId())).path("addresses").build();
         dto.ordersUrl = uriInfo.getBaseUriBuilder().path("/orders").queryParam("userId", String.valueOf(user.getUserId())).build();
         dto.reviewsUrl = uriInfo.getBaseUriBuilder().path("/reviews").queryParam("userId", String.valueOf(user.getUserId())).build();

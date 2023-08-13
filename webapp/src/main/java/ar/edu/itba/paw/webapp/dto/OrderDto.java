@@ -44,9 +44,9 @@ public class OrderDto {
         dto.tableNumber = order.getTableNumber();
         dto.items = OrderItemDto.fromOrderItemCollection(order.getItems());
 
-        dto.selfUrl = uriInfo.getBaseUriBuilder().path("/orders").path(String.valueOf(order.getOrderId())).build();
-        dto.userUrl = uriInfo.getBaseUriBuilder().path("/users").path(String.valueOf(order.getUserId())).build();
-        dto.restaurantUrl = uriInfo.getBaseUriBuilder().path("/restaurants").path(String.valueOf(order.getRestaurantId())).build();
+        dto.selfUrl = DtoUtils.getOrderUri(uriInfo, order.getOrderId());
+        dto.userUrl = DtoUtils.getUserUri(uriInfo, order.getUserId());
+        dto.restaurantUrl = DtoUtils.getRestaurantUri(uriInfo, order.getRestaurantId());
 
         return dto;
     }
