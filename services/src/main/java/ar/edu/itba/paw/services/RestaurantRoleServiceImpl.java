@@ -44,8 +44,8 @@ public class RestaurantRoleServiceImpl implements RestaurantRoleService {
         if (roleLevel.isPresent())
             return Optional.of(roleLevel.get().getLevel());
 
-        final Restaurant restaurant = restaurantDao.getById(restaurantId).orElseThrow(RestaurantNotFoundException::new);
-        if (userId == restaurant.getOwnerUserId())
+        final Restaurant restaurant = restaurantDao.getById(restaurantId).orElse(null);
+        if (restaurant != null && userId == restaurant.getOwnerUserId())
             return Optional.of(RestaurantRoleLevel.OWNER);
 
         return Optional.empty();

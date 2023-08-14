@@ -69,12 +69,13 @@ public class RestaurantRoleServiceImplTest {
         Assert.assertEquals(RestaurantRoleLevel.OWNER, actualRoleLevel.get());
     }
 
-    @Test(expected = RestaurantNotFoundException.class)
+    @Test
     public void testGetRoleNoRoleDueToInvalidRestaurant() {
         Mockito.when(restaurantRoleDao.getRole(DEFAULT_USER_ID, DEFAULT_RESTAURANT_ID)).thenReturn(Optional.empty());
         Mockito.when(restaurantDao.getById(DEFAULT_RESTAURANT_ID)).thenReturn(Optional.empty());
 
-        restaurantRoleServiceImpl.getRole(DEFAULT_USER_ID, DEFAULT_RESTAURANT_ID);
+        final Optional<RestaurantRoleLevel> actualRoleLevel = restaurantRoleServiceImpl.getRole(DEFAULT_USER_ID, DEFAULT_RESTAURANT_ID);
+        Assert.assertFalse(actualRoleLevel.isPresent());
     }
 
     @Test
