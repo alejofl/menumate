@@ -33,6 +33,7 @@ public class RestaurantDto {
     private URI logoUrl;
     private URI portrait1Url;
     private URI portrait2Url;
+    private URI categoriesUrl;
 
     public static RestaurantDto fromRestaurant(final UriInfo uriInfo, final Restaurant restaurant) {
         final RestaurantDto dto = new RestaurantDto();
@@ -56,6 +57,7 @@ public class RestaurantDto {
         dto.logoUrl = UriUtils.getImageUri(uriInfo, restaurant.getLogoId());
         dto.portrait1Url = UriUtils.getImageUri(uriInfo, restaurant.getPortrait1Id());
         dto.portrait2Url = UriUtils.getImageUri(uriInfo, restaurant.getPortrait2Id());
+        dto.categoriesUrl = UriUtils.getRestaurantCategoriesUri(uriInfo, restaurant.getRestaurantId());
 
         return dto;
     }
@@ -222,5 +224,13 @@ public class RestaurantDto {
 
     public void setPortrait2Url(URI portrait2Url) {
         this.portrait2Url = portrait2Url;
+    }
+
+    public URI getCategoriesUrl() {
+        return categoriesUrl;
+    }
+
+    public void setCategoriesUrl(URI categoriesUrl) {
+        this.categoriesUrl = categoriesUrl;
     }
 }

@@ -34,16 +34,16 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Transactional
     @Override
     public Restaurant create(String name, String email, RestaurantSpecialty specialty, long ownerUserId, String address, String description, int maxTables, byte[] logo, byte[] portrait1, byte[] portrait2, boolean isActive, List<RestaurantTags> tags) {
-        long logoId = imageDao.create(logo);
-        long portrait1Id = imageDao.create(portrait1);
-        long portrait2Id = imageDao.create(portrait2);
+        final long logoId = imageDao.create(logo);
+        final long portrait1Id = imageDao.create(portrait1);
+        final long portrait2Id = imageDao.create(portrait2);
 
         return restaurantDao.create(name, email, specialty, ownerUserId, address, description, maxTables, logoId, portrait1Id, portrait2Id, isActive, tags);
     }
 
     @Override
     public Optional<Restaurant> getById(long restaurantId) {
-        Optional<Restaurant> restaurant = restaurantDao.getById(restaurantId);
+        final Optional<Restaurant> restaurant = restaurantDao.getById(restaurantId);
         if (restaurant.isPresent() && restaurant.get().getDeleted())
             throw new RestaurantDeletedException();
         return restaurant;

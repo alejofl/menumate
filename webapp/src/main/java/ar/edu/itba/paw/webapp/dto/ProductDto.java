@@ -1,8 +1,11 @@
 package ar.edu.itba.paw.webapp.dto;
 
 import ar.edu.itba.paw.model.Product;
+import ar.edu.itba.paw.webapp.utils.UriUtils;
 
+import javax.ws.rs.core.UriInfo;
 import java.math.BigDecimal;
+import java.net.URI;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,7 +20,11 @@ public class ProductDto {
     private boolean available;
     private boolean deleted;
 
-    public static ProductDto fromProduct(final Product product) {
+    private URI selfUrl;
+    private URI imageUrl;
+    private URI categoryUrl;
+
+    public static ProductDto fromProduct(final UriInfo uriInfo, final Product product) {
         final ProductDto dto = new ProductDto();
         dto.productId = product.getProductId();
         dto.categoryId = product.getCategoryId();
@@ -28,11 +35,15 @@ public class ProductDto {
         dto.available = product.getAvailable();
         dto.deleted = product.getDeleted();
 
+        dto.selfUrl = UriUtils.getProductUri(uriInfo, product);
+        dto.imageUrl = UriUtils.getImageUri(uriInfo, product.getImageId());
+        dto.categoryUrl = UriUtils.getCategoryUri(uriInfo, product.getCategory());
+
         return dto;
     }
 
-    public static List<ProductDto> fromProductCollection(final Collection<Product> products) {
-        return products.stream().map(ProductDto::fromProduct).collect(Collectors.toList());
+    public static List<ProductDto> fromProductCollection(final UriInfo uriInfo, final Collection<Product> products) {
+        return products.stream().map(p -> fromProduct(uriInfo, p)).collect(Collectors.toList());
     }
 
     public long getProductId() {
@@ -97,5 +108,29 @@ public class ProductDto {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public URI getSelfUrl() {
+        return selfUrl;
+    }
+
+    public void setSelfUrl(URI selfUrl) {
+        this.selfUrl = selfUrl;
+    }
+
+    public URI getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(URI imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public URI getCategoryUrl() {
+        return categoryUrl;
+    }
+
+    public void setCategoryUrl(URI categoryUrl) {
+        this.categoryUrl = categoryUrl;
     }
 }

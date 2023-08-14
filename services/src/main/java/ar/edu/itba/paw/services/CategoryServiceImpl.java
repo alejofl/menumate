@@ -2,8 +2,12 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.exception.CategoryDeletedException;
 import ar.edu.itba.paw.exception.CategoryNotFoundException;
+import ar.edu.itba.paw.exception.RestaurantDeletedException;
+import ar.edu.itba.paw.exception.RestaurantNotFoundException;
 import ar.edu.itba.paw.model.Category;
+import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.persistance.CategoryDao;
+import ar.edu.itba.paw.persistance.RestaurantDao;
 import ar.edu.itba.paw.service.CategoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,13 +26,35 @@ public class CategoryServiceImpl implements CategoryService {
     @Autowired
     private CategoryDao categoryDao;
 
+    @Autowired
+    private RestaurantDao restaurantDao;
+
     @Override
     public Optional<Category> getById(long categoryId) {
-        Optional<Category> category = categoryDao.getById(categoryId);
+        final Optional<Category> category = categoryDao.getById(categoryId);
         if (category.isPresent() && category.get().getDeleted())
             throw new CategoryDeletedException();
         return category;
     }
+
+    @Override
+    public Category getByIdChecked(long restaurantId, long categoryId) {
+        final Optional<Category> maybeCategory = categoryDao.getById(categoryId);
+        if (!maybeCategory.isPresent()) {
+            if (!restaurantDao.getById(restaurantId).isPresent())
+                throw new RestaurantNotFoundException();
+            throw new CategoryNotFoundException();
+        }
+
+        final Category category = maybeCategory.get();
+        if (category.getRestaurantId() != restaurantId)
+            throw new CategoryNotFoundException();
+        if (category.getDeleted())
+            throw new CategoryDeletedException();
+
+        return category;
+    }
+
 
     @Transactional
     @Override
@@ -38,7 +64,17 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<Category> getByRestaurantSortedByOrder(long restaurantId) {
-        return categoryDao.getByRestaurantSortedByOrder(restaurantId);
+        final List<Category> categories = categoryDao.getByRestaurantSortedByOrder(restaurantId);
+
+        if (categories.isEmpty()) {
+            final Optional<Restaurant> restaurant = restaurantDao.getById(restaurantId);
+            if (!restaurant.isPresent())
+                throw new RestaurantNotFoundException();
+            else if (restaurant.get().getDeleted())
+                throw new RestaurantDeletedException();
+        }
+
+        return categories;
     }
 
     @Transactional

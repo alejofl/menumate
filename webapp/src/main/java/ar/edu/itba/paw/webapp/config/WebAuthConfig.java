@@ -68,18 +68,26 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/images/{imageId:\\d+}").permitAll()
 
                 .antMatchers(HttpMethod.GET, "/restaurants").permitAll()
-                .antMatchers(HttpMethod.POST, "/restaurants").permitAll()
                 .antMatchers(HttpMethod.GET, "/restaurants/{restaurantId:\\d+}").permitAll()
                 .antMatchers(HttpMethod.PUT, "/restaurants/{restaurantId:\\d+}").access("@accessValidator.checkRestaurantAdmin(#restaurantId)")
                 .antMatchers(HttpMethod.DELETE, "/restaurants/{restaurantId:\\d+}").access("hasRole('MODERATOR') or @accessValidator.checkRestaurantOwner(#restaurantId)")
+
+                .antMatchers(HttpMethod.GET, "/restaurants/{restaurantId:\\d+}").permitAll()
+                .antMatchers(HttpMethod.GET, "/restaurants/{restaurantId:\\d+}/categories").permitAll()
+                .antMatchers(HttpMethod.GET, "/restaurants/{restaurantId:\\d+}/categories/{categoryId:\\d+}").permitAll()
+                .antMatchers(HttpMethod.GET, "/restaurants/{restaurantId:\\d+}/categories/{categoryId:\\d+}/products").permitAll()
+                .antMatchers(HttpMethod.GET, "/restaurants/{restaurantId:\\d+}/categories/{categoryId:\\d+}/products/{productId:\\d+}").permitAll()
 
                 .antMatchers(HttpMethod.POST, "/users").permitAll()
                 .antMatchers(HttpMethod.GET, "/users/{userId:\\d+}").permitAll()
                 .antMatchers("/users/{userId:\\d+}/**").access("@accessValidator.checkIsUser(#userId)")
                 .antMatchers("/users/verification-tokens/**").permitAll()
                 .antMatchers("/users/resetpassword-tokens/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/users/{userId:\\d+}/addresses").access("@accessValidator.checkIsUser(#userId)")
+                .antMatchers(HttpMethod.PATCH, "/users/{userId:\\d+}/addresses").access("@accessValidator.checkIsUser(#userId)")
 
-                .antMatchers(HttpMethod.GET, "/orders").authenticated()
+                .antMatchers(HttpMethod.GET, "/orders").authenticated() // Checked with @PreAuthorize
+                .antMatchers(HttpMethod.POST, "/orders").permitAll()
                 .antMatchers(HttpMethod.GET, "/orders/{orderId:\\d+}").access("@accessValidator.checkOrderOwnerOrHandler(#orderId)")
 
                 .antMatchers(HttpMethod.GET, "/reviews").permitAll()

@@ -16,6 +16,10 @@ public class Product {
     @Column(name = "category_id", nullable = false, updatable = false)
     private long categoryId;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "category_id", referencedColumnName = "category_id", insertable = false, updatable = false)
+    private Category category;
+
     @Column(nullable = false)
     private String name;
 
@@ -61,6 +65,10 @@ public class Product {
 
     public void setCategoryId(long categoryId) {
         this.categoryId = categoryId;
+    }
+
+    public Category getCategory() {
+        return category;
     }
 
     public String getName() {

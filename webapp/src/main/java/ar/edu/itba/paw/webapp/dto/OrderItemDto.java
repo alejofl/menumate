@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.dto;
 
 import ar.edu.itba.paw.model.OrderItem;
 
+import javax.ws.rs.core.UriInfo;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,18 +13,18 @@ public class OrderItemDto {
     private int quantity;
     private String comment;
 
-    public static OrderItemDto fromOrderItem(final OrderItem orderItem) {
+    public static OrderItemDto fromOrderItem(final UriInfo uriInfo, final OrderItem orderItem) {
         final OrderItemDto dto = new OrderItemDto();
         dto.lineNumber = orderItem.getLineNumber();
-        dto.product = ProductDto.fromProduct(orderItem.getProduct());
+        dto.product = ProductDto.fromProduct(uriInfo, orderItem.getProduct());
         dto.quantity = orderItem.getQuantity();
         dto.comment = orderItem.getComment();
 
         return dto;
     }
 
-    public static List<OrderItemDto> fromOrderItemCollection(final Collection<OrderItem> orderItems) {
-        return orderItems.stream().map(OrderItemDto::fromOrderItem).collect(Collectors.toList());
+    public static List<OrderItemDto> fromOrderItemCollection(final UriInfo uriInfo, final Collection<OrderItem> orderItems) {
+        return orderItems.stream().map(o -> fromOrderItem(uriInfo, o)).collect(Collectors.toList());
     }
 
     public int getLineNumber() {

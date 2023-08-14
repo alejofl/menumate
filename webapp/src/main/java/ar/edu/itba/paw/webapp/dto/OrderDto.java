@@ -43,7 +43,7 @@ public class OrderDto {
         dto.orderStatus = order.getOrderStatus().getMessageCode();
         dto.address = order.getAddress();
         dto.tableNumber = order.getTableNumber();
-        dto.items = OrderItemDto.fromOrderItemCollection(order.getItems());
+        dto.items = OrderItemDto.fromOrderItemCollection(uriInfo, order.getItems());
 
         dto.selfUrl = UriUtils.getOrderUri(uriInfo, order.getOrderId());
         dto.userUrl = UriUtils.getUserUri(uriInfo, order.getUserId());

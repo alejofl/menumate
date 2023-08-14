@@ -1,5 +1,8 @@
 package ar.edu.itba.paw.webapp.utils;
 
+import ar.edu.itba.paw.model.Category;
+import ar.edu.itba.paw.model.Product;
+
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 
@@ -19,6 +22,48 @@ public final class UriUtils {
 
     public static URI getRestaurantUri(final UriInfo uriInfo, final long restaurantId) {
         return uriInfo.getBaseUriBuilder().path("/restaurants").path(String.valueOf(restaurantId)).build();
+    }
+
+    public static URI getRestaurantCategoriesUri(final UriInfo uriInfo, final long restaurantId) {
+        return uriInfo.getBaseUriBuilder()
+                .path("/restaurants").path(String.valueOf(restaurantId))
+                .path("/categories")
+                .build();
+    }
+
+    public static URI getCategoryUri(final UriInfo uriInfo, final long restaurantId, final long categoryId) {
+        return uriInfo.getBaseUriBuilder()
+                .path("/restaurants").path(String.valueOf(restaurantId))
+                .path("/categories").path(String.valueOf(categoryId))
+                .build();
+    }
+
+    public static URI getCategoryUri(final UriInfo uriInfo, final Category category) {
+        return getCategoryUri(uriInfo, category.getRestaurantId(), category.getCategoryId());
+    }
+
+    public static URI getCategoryProductsUri(final UriInfo uriInfo, final long restaurantId, final long categoryId) {
+        return uriInfo.getBaseUriBuilder()
+                .path("/restaurants").path(String.valueOf(restaurantId))
+                .path("/categories").path(String.valueOf(categoryId))
+                .path("/products")
+                .build();
+    }
+
+    public static URI getCategoryProductsUri(final UriInfo uriInfo, final Category category) {
+        return getCategoryProductsUri(uriInfo, category.getRestaurantId(), category.getCategoryId());
+    }
+
+    public static URI getProductUri(final UriInfo uriInfo, final long restaurantId, final long categoryId, final long productId) {
+        return uriInfo.getBaseUriBuilder()
+                .path("/restaurants").path(String.valueOf(restaurantId))
+                .path("/categories").path(String.valueOf(categoryId))
+                .path("/products").path(String.valueOf(productId))
+                .build();
+    }
+
+    public static URI getProductUri(final UriInfo uriInfo, final Product product) {
+        return getProductUri(uriInfo, product.getCategory().getRestaurantId(), product.getCategoryId(), product.getProductId());
     }
 
     public static URI getUserUri(final UriInfo uriInfo, final long userId) {

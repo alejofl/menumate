@@ -12,6 +12,8 @@ public interface ProductService {
 
     Optional<Product> getById(long productId);
 
+    Product getByIdChecked(long restaurantId, long categoryId, long productId);
+
     Product create(long categoryId, String name, String description, byte[] image, BigDecimal price);
 
     Product update(long productId, String name, BigDecimal price, String description);

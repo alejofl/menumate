@@ -1,11 +1,11 @@
 package ar.edu.itba.paw.services;
 
-import ar.edu.itba.paw.exception.ProductDeletedException;
-import ar.edu.itba.paw.exception.ProductNotFoundException;
+import ar.edu.itba.paw.exception.*;
 import ar.edu.itba.paw.model.Product;
 import ar.edu.itba.paw.model.Promotion;
 import ar.edu.itba.paw.persistance.ImageDao;
 import ar.edu.itba.paw.persistance.ProductDao;
+import ar.edu.itba.paw.persistance.RestaurantDao;
 import ar.edu.itba.paw.service.ProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +28,9 @@ public class ProductServiceImpl implements ProductService {
     private ProductDao productDao;
 
     @Autowired
+    private RestaurantDao restaurantDao;
+
+    @Autowired
     private ImageDao imageDao;
 
     @Override
@@ -35,6 +38,24 @@ public class ProductServiceImpl implements ProductService {
         Optional<Product> product = productDao.getById(productId);
         if (product.isPresent() && product.get().getDeleted())
             throw new ProductDeletedException();
+        return product;
+    }
+
+    @Override
+    public Product getByIdChecked(long restaurantId, long categoryId, long productId) {
+        final Optional<Product> maybeProduct = productDao.getById(productId);
+        if (!maybeProduct.isPresent()) {
+            if (!restaurantDao.getById(restaurantId).isPresent())
+                throw new RestaurantNotFoundException();
+            throw new ProductNotFoundException();
+        }
+
+        final Product product = maybeProduct.get();
+        if (product.getCategoryId() != categoryId || product.getCategory().getRestaurantId() != restaurantId)
+            throw new ProductNotFoundException();
+        if (product.getDeleted())
+            throw new CategoryDeletedException();
+
         return product;
     }
 

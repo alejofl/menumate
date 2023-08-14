@@ -9,6 +9,8 @@ public interface CategoryService {
 
     Optional<Category> getById(long categoryId);
 
+    Category getByIdChecked(long restaurantId, long categoryId);
+
     Category create(long restaurantId, String name);
 
     List<Category> getByRestaurantSortedByOrder(long restaurantId);
