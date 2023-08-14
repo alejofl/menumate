@@ -34,9 +34,9 @@ public class UserDto {
         dto.preferredLanguage = user.getPreferredLanguage();
 
         dto.selfUrl = UriUtils.getUserUri(uriInfo, user.getUserId());
-        dto.addressesUrl = uriInfo.getBaseUriBuilder().path("/users").path(String.valueOf(user.getUserId())).path("addresses").build();
-        dto.ordersUrl = uriInfo.getBaseUriBuilder().path("/orders").queryParam("userId", String.valueOf(user.getUserId())).build();
-        dto.reviewsUrl = uriInfo.getBaseUriBuilder().path("/reviews").queryParam("userId", String.valueOf(user.getUserId())).build();
+        dto.addressesUrl = UriUtils.getUserAddressesUri(uriInfo, user.getUserId());
+        dto.ordersUrl = UriUtils.getOrdersByUserUri(uriInfo, user.getUserId());
+        dto.reviewsUrl = UriUtils.getReviewsByUserUri(uriInfo, user.getUserId());
         dto.restaurantRolesUrl = uriInfo.getBaseUriBuilder().path("TODO").build(); // TODO: Implement roles & my restaurants endpoints
 
         return dto;

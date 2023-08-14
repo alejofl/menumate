@@ -34,6 +34,8 @@ public class RestaurantDto {
     private URI portrait1Url;
     private URI portrait2Url;
     private URI categoriesUrl;
+    private URI ordersUrl;
+    private URI reviewsUrl;
 
     public static RestaurantDto fromRestaurant(final UriInfo uriInfo, final Restaurant restaurant) {
         final RestaurantDto dto = new RestaurantDto();
@@ -58,6 +60,8 @@ public class RestaurantDto {
         dto.portrait1Url = UriUtils.getImageUri(uriInfo, restaurant.getPortrait1Id());
         dto.portrait2Url = UriUtils.getImageUri(uriInfo, restaurant.getPortrait2Id());
         dto.categoriesUrl = UriUtils.getRestaurantCategoriesUri(uriInfo, restaurant.getRestaurantId());
+        dto.ordersUrl = UriUtils.getOrdersByRestaurantUri(uriInfo, restaurant.getRestaurantId());
+        dto.reviewsUrl = UriUtils.getReviewsByRestaurantUri(uriInfo, restaurant.getRestaurantId());
 
         return dto;
     }
@@ -232,5 +236,21 @@ public class RestaurantDto {
 
     public void setCategoriesUrl(URI categoriesUrl) {
         this.categoriesUrl = categoriesUrl;
+    }
+
+    public URI getOrdersUrl() {
+        return ordersUrl;
+    }
+
+    public void setOrdersUrl(URI ordersUrl) {
+        this.ordersUrl = ordersUrl;
+    }
+
+    public URI getReviewsUrl() {
+        return reviewsUrl;
+    }
+
+    public void setReviewsUrl(URI reviewsUrl) {
+        this.reviewsUrl = reviewsUrl;
     }
 }

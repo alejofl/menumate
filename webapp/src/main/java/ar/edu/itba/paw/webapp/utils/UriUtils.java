@@ -70,8 +70,31 @@ public final class UriUtils {
         return uriInfo.getBaseUriBuilder().path("/users").path(String.valueOf(userId)).build();
     }
 
+    public static URI getUserAddressesUri(final UriInfo uriInfo, final long userId) {
+        return uriInfo.getBaseUriBuilder()
+                .path("/users").path(String.valueOf(userId))
+                .path("/addresses")
+                .build();
+    }
+
     public static URI getOrderUri(final UriInfo uriInfo, final long orderId) {
         return uriInfo.getBaseUriBuilder().path("/orders").path(String.valueOf(orderId)).build();
+    }
+
+    public static URI getOrdersByUserUri(final UriInfo uriInfo, final long userId) {
+        return uriInfo.getBaseUriBuilder().path("/orders").queryParam("userId", String.valueOf(userId)).build();
+    }
+
+    public static URI getOrdersByRestaurantUri(final UriInfo uriInfo, final long restaurantId) {
+        return uriInfo.getBaseUriBuilder().path("/orders").queryParam("restaurantId", String.valueOf(restaurantId)).build();
+    }
+
+    public static URI getReviewsByUserUri(final UriInfo uriInfo, final long userId) {
+        return uriInfo.getBaseUriBuilder().path("/reviews").queryParam("userId", String.valueOf(userId)).build();
+    }
+
+    public static URI getReviewsByRestaurantUri(final UriInfo uriInfo, final long restaurantId) {
+        return uriInfo.getBaseUriBuilder().path("/reviews").queryParam("restaurantId", String.valueOf(restaurantId)).build();
     }
 
     public static URI getReviewUri(final UriInfo uriInfo, final long reviewId) {
