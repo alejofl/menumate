@@ -7,6 +7,7 @@ import ar.edu.itba.paw.util.PaginatedResult;
 import ar.edu.itba.paw.webapp.dto.ReviewDto;
 import ar.edu.itba.paw.webapp.form.CreateReviewForm;
 import ar.edu.itba.paw.webapp.form.GetReviewsForm;
+import ar.edu.itba.paw.webapp.utils.ControllerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

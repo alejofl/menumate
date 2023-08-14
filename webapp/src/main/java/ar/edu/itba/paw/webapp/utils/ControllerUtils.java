@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.webapp.controller;
+package ar.edu.itba.paw.webapp.utils;
 
 import ar.edu.itba.paw.exception.UserNotFoundException;
 import ar.edu.itba.paw.model.User;
@@ -11,12 +11,12 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 public final class ControllerUtils {
-    static final int DEFAULT_ORDERS_PAGE_SIZE = 20;
-    static final int DEFAULT_REVIEWS_PAGE_SIZE = 20;
-    static final int DEFAULT_SEARCH_PAGE_SIZE = 12;
-    static final int DEFAULT_RESTAURANT_PAGE_SIZE = 12;
-    static final int DEFAULT_MYRESTAURANTS_PAGE_SIZE = 20;
-    static final int MAX_RESTAURANTS_FOR_HOMEPAGE = 4;
+    public static final int DEFAULT_ORDERS_PAGE_SIZE = 20;
+    public static final int DEFAULT_REVIEWS_PAGE_SIZE = 20;
+    public static final int DEFAULT_SEARCH_PAGE_SIZE = 12;
+    public static final int DEFAULT_RESTAURANT_PAGE_SIZE = 12;
+    public static final int DEFAULT_MYRESTAURANTS_PAGE_SIZE = 20;
+    public static final int MAX_RESTAURANTS_FOR_HOMEPAGE = 4;
 
     private ControllerUtils() {
 

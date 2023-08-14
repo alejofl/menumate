@@ -6,12 +6,16 @@ import ar.edu.itba.paw.service.OrderService;
 import ar.edu.itba.paw.util.PaginatedResult;
 import ar.edu.itba.paw.webapp.auth.AccessValidator;
 import ar.edu.itba.paw.webapp.dto.OrderDto;
+import ar.edu.itba.paw.webapp.form.CheckoutForm;
 import ar.edu.itba.paw.webapp.form.GetOrdersForm;
+import ar.edu.itba.paw.webapp.utils.ControllerUtils;
+import ar.edu.itba.paw.webapp.utils.UriUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.List;
@@ -57,5 +61,21 @@ public class OrderController {
     public Response getOrderById(@PathParam("orderId") final long orderId) {
         Order order = orderService.getById(orderId).orElseThrow(OrderNotFoundException::new);
         return Response.ok(OrderDto.fromOrder(uriInfo, order)).build();
+    }
+
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response createOrder(@Valid @NotNull final CheckoutForm checkoutForm) {
+        final Order order = orderService.create(
+                checkoutForm.getOrderTypeAsEnum(),
+                checkoutForm.getRestaurantId(),
+                checkoutForm.getName(),
+                checkoutForm.getEmail(),
+                checkoutForm.getTableNumber(),
+                checkoutForm.getAddress(),
+                checkoutForm.getCartAsOrderItems(orderService)
+        );
+
+        return Response.created(UriUtils.getOrderUri(uriInfo, order.getOrderId())).build();
     }
 }

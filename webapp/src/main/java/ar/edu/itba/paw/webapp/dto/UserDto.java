@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.dto;
 
 import ar.edu.itba.paw.model.User;
+import ar.edu.itba.paw.webapp.utils.UriUtils;
 
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
@@ -32,7 +33,7 @@ public class UserDto {
         dto.isActive = user.getIsActive();
         dto.preferredLanguage = user.getPreferredLanguage();
 
-        dto.selfUrl = DtoUtils.getUserUri(uriInfo, user.getUserId());
+        dto.selfUrl = UriUtils.getUserUri(uriInfo, user.getUserId());
         dto.addressesUrl = uriInfo.getBaseUriBuilder().path("/users").path(String.valueOf(user.getUserId())).path("addresses").build();
         dto.ordersUrl = uriInfo.getBaseUriBuilder().path("/orders").queryParam("userId", String.valueOf(user.getUserId())).build();
         dto.reviewsUrl = uriInfo.getBaseUriBuilder().path("/reviews").queryParam("userId", String.valueOf(user.getUserId())).build();

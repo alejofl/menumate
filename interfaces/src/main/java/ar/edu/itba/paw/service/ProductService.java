@@ -5,6 +5,7 @@ import ar.edu.itba.paw.model.Promotion;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface ProductService {
@@ -29,4 +30,6 @@ public interface ProductService {
     Optional<Promotion> hasPromotionInRange(long sourceProductId, LocalDateTime startDate, LocalDateTime endDate);
 
     void stopPromotionByDestination(long destinationProductId);
+
+    boolean areAllProductsFromRestaurant(long restaurantId, List<Long> productIds);
 }

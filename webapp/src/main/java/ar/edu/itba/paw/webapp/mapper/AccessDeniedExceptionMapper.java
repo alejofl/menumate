@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.webapp.mapper;
 
-import ar.edu.itba.paw.webapp.controller.ControllerUtils;
+import ar.edu.itba.paw.webapp.utils.ControllerUtils;
 import org.springframework.security.access.AccessDeniedException;
 
 import javax.ws.rs.core.Response;

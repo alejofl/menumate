@@ -1,5 +1,11 @@
 package ar.edu.itba.paw.webapp.form;
 
+import ar.edu.itba.paw.model.OrderItem;
+import ar.edu.itba.paw.model.OrderType;
+import ar.edu.itba.paw.service.OrderService;
+import ar.edu.itba.paw.webapp.form.validation.AllProductsFromSameRestaurant;
+import ar.edu.itba.paw.webapp.form.validation.EnumMessageCode;
+import ar.edu.itba.paw.webapp.form.validation.ValidFieldsByOrderType;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -8,8 +14,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.List;
 
+@ValidFieldsByOrderType(orderTypeField = "orderType", tableNumberField = "tableNumber", addressField = "address")
+@AllProductsFromSameRestaurant(restaurantIdField = "restaurantId", cartItemsField = "cart")
 public class CheckoutForm {
 
     @NotBlank
@@ -26,8 +35,9 @@ public class CheckoutForm {
     @Size(min = 3, max = 120)
     private String address;
 
-    @NotNull
-    private Integer orderType;
+    @NotBlank
+    @EnumMessageCode(enumClass = OrderType.class)
+    private String orderType;
 
     @NotNull
     private Long restaurantId;
@@ -61,11 +71,15 @@ public class CheckoutForm {
         this.address = address;
     }
 
-    public Integer getOrderType() {
+    public String getOrderType() {
         return orderType;
     }
 
-    public void setOrderType(Integer orderType) {
+    public OrderType getOrderTypeAsEnum() {
+        return OrderType.fromCode(orderType);
+    }
+
+    public void setOrderType(String orderType) {
         this.orderType = orderType;
     }
 
@@ -79,6 +93,16 @@ public class CheckoutForm {
 
     public List<CartItem> getCart() {
         return cart;
+    }
+
+    public List<OrderItem> getCartAsOrderItems(final OrderService orderService) {
+        List<OrderItem> items = new ArrayList<>();
+        for (int i = 0; i < cart.size(); i++) {
+            CartItem cartItem = cart.get(i);
+            items.add(orderService.createOrderItem(restaurantId, cartItem.getProductId(), i + 1, cartItem.getQuantity(), cartItem.getCommentTrimmedOrNull()));
+        }
+
+        return items;
     }
 
     public void setCart(List<CartItem> cart) {

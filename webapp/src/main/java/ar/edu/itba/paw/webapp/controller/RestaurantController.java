@@ -9,6 +9,7 @@ import ar.edu.itba.paw.webapp.dto.RestaurantDetailsDto;
 import ar.edu.itba.paw.webapp.dto.RestaurantDto;
 import ar.edu.itba.paw.webapp.form.FilterForm;
 import ar.edu.itba.paw.webapp.form.UpdateRestaurantForm;
+import ar.edu.itba.paw.webapp.utils.ControllerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

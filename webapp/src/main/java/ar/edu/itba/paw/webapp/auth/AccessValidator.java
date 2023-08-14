@@ -4,7 +4,7 @@ import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.model.RestaurantRoleLevel;
 import ar.edu.itba.paw.service.OrderService;
 import ar.edu.itba.paw.service.RestaurantRoleService;
-import ar.edu.itba.paw.webapp.controller.ControllerUtils;
+import ar.edu.itba.paw.webapp.utils.ControllerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

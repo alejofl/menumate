@@ -1,10 +1,10 @@
-package ar.edu.itba.paw.webapp.dto;
+package ar.edu.itba.paw.webapp.utils;
 
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 
-final class DtoUtils {
-    private DtoUtils() {
+public final class UriUtils {
+    private UriUtils() {
 
     }
 

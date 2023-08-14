@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.dto;
 
 import ar.edu.itba.paw.model.Review;
+import ar.edu.itba.paw.webapp.utils.UriUtils;
 
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
@@ -27,8 +28,8 @@ public class ReviewDto {
         dto.comment = review.getComment();
         dto.reply = review.getReply();
 
-        dto.selfUrl = DtoUtils.getReviewUri(uriInfo, review.getOrderId());
-        dto.orderUrl = DtoUtils.getOrderUri(uriInfo, review.getOrderId());
+        dto.selfUrl = UriUtils.getReviewUri(uriInfo, review.getOrderId());
+        dto.orderUrl = UriUtils.getOrderUri(uriInfo, review.getOrderId());
 
         return dto;
     }

@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.dto;
 
 import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.model.RestaurantTags;
+import ar.edu.itba.paw.webapp.utils.UriUtils;
 
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
@@ -50,11 +51,11 @@ public class RestaurantDto {
         dto.deleted = restaurant.getDeleted();
         dto.tags = restaurant.getTags().stream().map(RestaurantTags::getMessageCode).collect(Collectors.toList());
 
-        dto.selfUrl = DtoUtils.getRestaurantUri(uriInfo, restaurant.getRestaurantId());
-        dto.ownerUrl = DtoUtils.getUserUri(uriInfo, restaurant.getOwnerUserId());
-        dto.logoUrl = DtoUtils.getImageUri(uriInfo, restaurant.getLogoId());
-        dto.portrait1Url = DtoUtils.getImageUri(uriInfo, restaurant.getPortrait1Id());
-        dto.portrait2Url = DtoUtils.getImageUri(uriInfo, restaurant.getPortrait2Id());
+        dto.selfUrl = UriUtils.getRestaurantUri(uriInfo, restaurant.getRestaurantId());
+        dto.ownerUrl = UriUtils.getUserUri(uriInfo, restaurant.getOwnerUserId());
+        dto.logoUrl = UriUtils.getImageUri(uriInfo, restaurant.getLogoId());
+        dto.portrait1Url = UriUtils.getImageUri(uriInfo, restaurant.getPortrait1Id());
+        dto.portrait2Url = UriUtils.getImageUri(uriInfo, restaurant.getPortrait2Id());
 
         return dto;
     }

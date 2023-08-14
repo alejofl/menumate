@@ -97,13 +97,13 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public User createIfNotExists(String email, String name) {
-        Optional<User> maybeUser = userDao.getByEmail(email);
+        final Optional<User> maybeUser = userDao.getByEmail(email);
         return maybeUser.orElseGet(() -> userDao.create(email, null, name, LocaleContextHolder.getLocale().getLanguage()));
     }
 
     @Override
     public boolean isUserEmailRegisteredAndConsolidated(String email) {
-        Optional<User> maybeUser = userDao.getByEmail(email);
+        final Optional<User> maybeUser = userDao.getByEmail(email);
         return maybeUser.isPresent() && maybeUser.get().getPassword() != null;
     }
 

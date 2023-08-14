@@ -18,24 +18,31 @@ public class CartItem {
     @Size(max = 120)
     private String comment;
 
-    public long getProductId() {
+    public Long getProductId() {
         return productId;
     }
 
-    public void setProductId(long productId) {
+    public void setProductId(Long productId) {
         this.productId = productId;
     }
 
-    public int getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
 
     public String getComment() {
         return comment;
+    }
+
+    public String getCommentTrimmedOrNull() {
+        if (comment == null)
+            return null;
+        String trimmed = comment.trim();
+        return trimmed.isEmpty() ? null : trimmed;
     }
 
     public void setComment(String comment) {

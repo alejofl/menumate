@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -139,6 +140,11 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void stopPromotionByDestination(long destinationProductId) {
         productDao.stopPromotionByDestination(destinationProductId);
+    }
+
+    @Override
+    public boolean areAllProductsFromRestaurant(long restaurantId, List<Long> productIds) {
+        return productDao.areAllProductsFromRestaurant(restaurantId, productIds);
     }
 
     @Scheduled(cron = "0 * * * * ?")

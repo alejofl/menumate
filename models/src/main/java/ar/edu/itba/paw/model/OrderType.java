@@ -31,6 +31,6 @@ public enum OrderType {
     }
 
     public static OrderType fromCode(String code) {
-        return VALUES_BY_CODE.get(code.trim().toLowerCase());
+        return code == null ? null : VALUES_BY_CODE.get(code.trim().toLowerCase());
     }
 }

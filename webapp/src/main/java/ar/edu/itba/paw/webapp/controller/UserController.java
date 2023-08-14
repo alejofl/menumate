@@ -7,6 +7,7 @@ import ar.edu.itba.paw.webapp.auth.JwtTokenUtil;
 import ar.edu.itba.paw.webapp.dto.UserAddressDto;
 import ar.edu.itba.paw.webapp.dto.UserDto;
 import ar.edu.itba.paw.webapp.form.*;
+import ar.edu.itba.paw.webapp.utils.UriUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -37,7 +38,7 @@ public class UserController {
     @Path("/{userId:\\d+}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUser(@PathParam("userId") final long userId) {
-        User user = userService.getById(userId).orElseThrow(UserNotFoundException::new);
+        final User user = userService.getById(userId).orElseThrow(UserNotFoundException::new);
         return Response.ok(UserDto.fromUser(uriInfo, user)).build();
     }
 
@@ -45,7 +46,7 @@ public class UserController {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response registerUser(@Valid @NotNull final RegisterForm registerForm) {
         final User user = userService.createOrConsolidate(registerForm.getEmail(), registerForm.getPassword(), registerForm.getName());
-        return Response.created(uriInfo.getBaseUriBuilder().path("/users").path(String.valueOf(user.getUserId())).build()).build();
+        return Response.created(UriUtils.getUserUri(uriInfo, user.getUserId())).build();
     }
 
     @PUT
@@ -63,8 +64,8 @@ public class UserController {
     @Path("/{userId:\\d+}/addresses")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUserAddresses(@PathParam("userId") final long userId) {
-        User user = userService.getById(userId).orElseThrow(UserNotFoundException::new);
-        List<UserAddressDto> dtoList = UserAddressDto.fromUserAddressCollection(user.getAddresses());
+        final User user = userService.getById(userId).orElseThrow(UserNotFoundException::new);
+        final List<UserAddressDto> dtoList = UserAddressDto.fromUserAddressCollection(user.getAddresses());
         return Response.ok(new GenericEntity<List<UserAddressDto>>(dtoList){}).build();
     }
 
@@ -95,7 +96,7 @@ public class UserController {
     @PUT
     @Path("verification-tokens/{token}")
     public Response verificationToken(@PathParam("token") final String token) {
-        Optional<User> user = userService.verifyUserAndDeleteVerificationToken(token);
+        final Optional<User> user = userService.verifyUserAndDeleteVerificationToken(token);
         if (!user.isPresent())
             return Response.status(Response.Status.NOT_FOUND).build();
 
@@ -120,7 +121,7 @@ public class UserController {
             @PathParam("token") final String token,
             @Valid @NotNull final ResetPasswordForm resetPasswordForm
     ) {
-        boolean success = userService.updatePasswordAndDeleteResetPasswordToken(token, resetPasswordForm.getPassword());
+        final boolean success = userService.updatePasswordAndDeleteResetPasswordToken(token, resetPasswordForm.getPassword());
         if (!success)
             return Response.status(Response.Status.NOT_FOUND).build();
 

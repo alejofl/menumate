@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.dto;
 
 import ar.edu.itba.paw.model.Order;
+import ar.edu.itba.paw.webapp.utils.UriUtils;
 
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
@@ -44,9 +45,9 @@ public class OrderDto {
         dto.tableNumber = order.getTableNumber();
         dto.items = OrderItemDto.fromOrderItemCollection(order.getItems());
 
-        dto.selfUrl = DtoUtils.getOrderUri(uriInfo, order.getOrderId());
-        dto.userUrl = DtoUtils.getUserUri(uriInfo, order.getUserId());
-        dto.restaurantUrl = DtoUtils.getRestaurantUri(uriInfo, order.getRestaurantId());
+        dto.selfUrl = UriUtils.getOrderUri(uriInfo, order.getOrderId());
+        dto.userUrl = UriUtils.getUserUri(uriInfo, order.getUserId());
+        dto.restaurantUrl = UriUtils.getRestaurantUri(uriInfo, order.getRestaurantId());
 
         return dto;
     }

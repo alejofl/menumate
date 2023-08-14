@@ -198,4 +198,14 @@ public class ProductJpaDao implements ProductDao {
 
         LOGGER.info("Closed inactive promotions: {} products made available and {} deleted", avRows, delRows);
     }
+
+    @Override
+    public boolean areAllProductsFromRestaurant(long restaurantId, List<Long> productIds) {
+        Query query = em.createQuery("SELECT COUNT(p.productId) FROM Product p JOIN Category c ON p.categoryId = c.categoryId WHERE p.productId IN :productIds AND c.restaurantId = :restaurantId AND p.available = true AND p.deleted = false");
+        query.setParameter("restaurantId", restaurantId);
+        query.setParameter("productIds", productIds);
+        int count = ((Number) query.getSingleResult()).intValue();
+
+        return count == productIds.stream().distinct().count();
+    }
 }

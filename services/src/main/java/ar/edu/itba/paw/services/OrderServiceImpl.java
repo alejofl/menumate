@@ -45,13 +45,13 @@ public class OrderServiceImpl implements OrderService {
     private void assingOrderItemsToOrder(Order order, List<OrderItem> items) {
         for (OrderItem item : items)
             item.setOrderId(order.getOrderId());
-        List<OrderItem> orderList = order.getItems();
+        final List<OrderItem> orderList = order.getItems();
         orderList.addAll(items);
     }
 
     private Order createDelivery(long restaurantId, String name, String email, String address, List<OrderItem> items) {
         final User user = userService.createIfNotExists(email, name);
-        Order order = orderDao.createDelivery(restaurantId, user.getUserId(), address);
+        final Order order = orderDao.createDelivery(restaurantId, user.getUserId(), address);
         userDao.refreshAddress(user.getUserId(), address);
         assingOrderItemsToOrder(order, items);
         sendOrderReceivedEmails(order);
@@ -60,7 +60,7 @@ public class OrderServiceImpl implements OrderService {
 
     private Order createDineIn(long restaurantId, String name, String email, int tableNumber, List<OrderItem> items) {
         final User user = userService.createIfNotExists(email, name);
-        Order order = orderDao.createDineIn(restaurantId, user.getUserId(), tableNumber);
+        final Order order = orderDao.createDineIn(restaurantId, user.getUserId(), tableNumber);
         assingOrderItemsToOrder(order, items);
         sendOrderReceivedEmails(order);
         return order;
@@ -68,7 +68,7 @@ public class OrderServiceImpl implements OrderService {
 
     private Order createTakeAway(long restaurantId, String name, String email, List<OrderItem> items) {
         final User user = userService.createIfNotExists(email, name);
-        Order order = orderDao.createTakeaway(restaurantId, user.getUserId());
+        final Order order = orderDao.createTakeaway(restaurantId, user.getUserId());
         assingOrderItemsToOrder(order, items);
         sendOrderReceivedEmails(order);
         return order;
@@ -76,9 +76,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderItem createOrderItem(long restaurantId, long productId, int lineNumber, int quantity, String comment) {
-        comment = comment.trim();
-        if (comment.isEmpty())
-            comment = null;
         return orderDao.createOrderItem(restaurantId, productId, lineNumber, quantity, comment);
     }
 
@@ -111,8 +108,8 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     @Override
     public Order markAsConfirmed(long orderId) {
-        Order order = orderDao.getById(orderId).orElseThrow(OrderNotFoundException::new);
-        OrderStatus orderStatus = order.getOrderStatus();
+        final Order order = orderDao.getById(orderId).orElseThrow(OrderNotFoundException::new);
+        final OrderStatus orderStatus = order.getOrderStatus();
         if (orderStatus != OrderStatus.PENDING) {
             LOGGER.error("Attempted to mark order with id {} as confirmed when the order is {}", orderId, orderStatus);
             throw new IllegalStateException("Invalid order status");
@@ -128,8 +125,8 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     @Override
     public Order markAsReady(long orderId) {
-        Order order = orderDao.getById(orderId).orElseThrow(OrderNotFoundException::new);
-        OrderStatus orderStatus = order.getOrderStatus();
+        final Order order = orderDao.getById(orderId).orElseThrow(OrderNotFoundException::new);
+        final OrderStatus orderStatus = order.getOrderStatus();
         if (orderStatus != OrderStatus.CONFIRMED) {
             LOGGER.error("Attempted to mark order with id {} as ready when the order is {}", orderId, orderStatus);
             throw new IllegalStateException("Invalid order status");
@@ -145,8 +142,8 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     @Override
     public Order markAsDelivered(long orderId) {
-        Order order = orderDao.getById(orderId).orElseThrow(OrderNotFoundException::new);
-        OrderStatus orderStatus = order.getOrderStatus();
+        final Order order = orderDao.getById(orderId).orElseThrow(OrderNotFoundException::new);
+        final OrderStatus orderStatus = order.getOrderStatus();
         if (orderStatus != OrderStatus.READY) {
             LOGGER.error("Attempted to mark order with id {} as delivered when the order is {}", orderId, orderStatus);
             throw new IllegalStateException("Invalid order status");
@@ -162,8 +159,8 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     @Override
     public Order markAsCancelled(long orderId) {
-        Order order = orderDao.getById(orderId).orElseThrow(OrderNotFoundException::new);
-        OrderStatus orderStatus = order.getOrderStatus();
+        final Order order = orderDao.getById(orderId).orElseThrow(OrderNotFoundException::new);
+        final OrderStatus orderStatus = order.getOrderStatus();
         if (!orderStatus.isInProgress()) {
             LOGGER.error("Attempted to cancel order with id {} when the order is already {}", orderId, orderStatus);
             throw new IllegalStateException("Invalid order status");
@@ -179,8 +176,8 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     @Override
     public void setOrderStatus(long orderId, OrderStatus orderStatus) {
-        Order order = orderDao.getById(orderId).orElseThrow(OrderNotFoundException::new);
-        LocalDateTime now = LocalDateTime.now();
+        final Order order = orderDao.getById(orderId).orElseThrow(OrderNotFoundException::new);
+        final LocalDateTime now = LocalDateTime.now();
         switch (orderStatus) {
             case PENDING:
                 order.setDateConfirmed(null);
@@ -227,7 +224,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     @Override
     public void updateAddress(long orderId, String address) {
-        Order order = orderDao.getById(orderId).orElseThrow(OrderNotFoundException::new);
+        final Order order = orderDao.getById(orderId).orElseThrow(OrderNotFoundException::new);
         if (order.getOrderType() != OrderType.DELIVERY) {
             LOGGER.error("Attempted to update address of non-delivery order {}", orderId);
             throw new IllegalStateException("Invalid order type");
@@ -249,7 +246,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     @Override
     public void updateTableNumber(long orderId, int tableNumber) {
-        Order order = orderDao.getById(orderId).orElseThrow(OrderNotFoundException::new);
+        final Order order = orderDao.getById(orderId).orElseThrow(OrderNotFoundException::new);
         if (order.getOrderType() != OrderType.DINE_IN) {
             LOGGER.error("Attempted to update tablenum of non-dinein order {}", orderId);
             throw new IllegalStateException("Invalid order type");

@@ -33,16 +33,17 @@ public class NotOwnerOfRestaurantValidator implements ConstraintValidator<NotOwn
     @Override
     public boolean isValid(Object o, ConstraintValidatorContext constraintValidatorContext) {
         try {
-            Field emailField = o.getClass().getDeclaredField(emailFieldName);
-            Field restaurantIdField = o.getClass().getDeclaredField(restaurantIdFieldName);
+            final Field emailField = o.getClass().getDeclaredField(emailFieldName);
             emailField.setAccessible(true);
-            restaurantIdField.setAccessible(true);
-            Optional<User> user = userService.getByEmail((String) emailField.get(o));
+            final Optional<User> user = userService.getByEmail((String) emailField.get(o));
             if (!user.isPresent())
                 return true;
+
+            final Field restaurantIdField = o.getClass().getDeclaredField(restaurantIdFieldName);
+            restaurantIdField.setAccessible(true);
             return !restaurantRoleService.doesUserHaveRole(user.get().getUserId(), (Long) restaurantIdField.get(o), RestaurantRoleLevel.OWNER);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            return true;
+            throw new RuntimeException("NotOwnerOfRestaurantValidator exception during validation", e);
         }
     }
 }
