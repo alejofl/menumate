@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -116,7 +117,9 @@ public class RestaurantRoleServiceImpl implements RestaurantRoleService {
     public List<Pair<User, RestaurantRoleLevel>> getByRestaurant(long restaurantId) {
         List<Pair<User, RestaurantRoleLevel>> roles = new ArrayList<>();
 
-        final Restaurant restaurant = restaurantDao.getById(restaurantId).orElseThrow(RestaurantNotFoundException::new);
+        final Restaurant restaurant = restaurantDao.getById(restaurantId).orElse(null);
+        if (restaurant == null)
+            return Collections.emptyList();
         roles.add(new Pair<>(restaurant.getOwner(), RestaurantRoleLevel.OWNER));
 
         final List<RestaurantRole> otherRoles = restaurantRoleDao.getByRestaurant(restaurantId);
