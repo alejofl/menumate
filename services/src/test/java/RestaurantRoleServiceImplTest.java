@@ -1,4 +1,3 @@
-import ar.edu.itba.paw.exception.RestaurantNotFoundException;
 import ar.edu.itba.paw.exception.UserNotFoundException;
 import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.model.RestaurantRole;

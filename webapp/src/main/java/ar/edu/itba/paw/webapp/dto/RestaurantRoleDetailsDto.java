@@ -15,6 +15,7 @@ public class RestaurantRoleDetailsDto {
     private String role;
     private int pendingOrderCount;
 
+    private URI selfUrl;
     private URI userUrl;
     private URI restaurantUrl;
 
@@ -25,6 +26,7 @@ public class RestaurantRoleDetailsDto {
         dto.role = details.getLevel().getMessageCode();
         dto.pendingOrderCount = details.getPendingOrderCount();
 
+        dto.selfUrl = UriUtils.getRestaurantEmployeeUri(uriInfo, dto.restaurantId, dto.userId);
         dto.userUrl = UriUtils.getUserUri(uriInfo, dto.userId);
         dto.restaurantUrl = UriUtils.getRestaurantUri(uriInfo, dto.restaurantId);
 
@@ -65,6 +67,14 @@ public class RestaurantRoleDetailsDto {
 
     public void setPendingOrderCount(int pendingOrderCount) {
         this.pendingOrderCount = pendingOrderCount;
+    }
+
+    public URI getSelfUrl() {
+        return selfUrl;
+    }
+
+    public void setSelfUrl(URI selfUrl) {
+        this.selfUrl = selfUrl;
     }
 
     public URI getUserUrl() {

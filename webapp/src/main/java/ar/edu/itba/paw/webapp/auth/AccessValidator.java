@@ -68,12 +68,4 @@ public class AccessValidator {
         // Note: if both userId and restaurantId are null, this will return false.
         return (currentUserId.equals(userId)) || (restaurantId != null && restaurantRoleService.doesUserHaveRole(currentUserId, restaurantId, RestaurantRoleLevel.ORDER_HANDLER));
     }
-
-    public boolean checkCanListRestaurantRoles(Long userId, Long restaurantId) {
-        Long currentUserId = ControllerUtils.getCurrentUserIdOrNull();
-        if (currentUserId == null)
-            return false;
-
-        return (currentUserId.equals(userId)) || (restaurantId != null && restaurantRoleService.doesUserHaveRole(currentUserId, restaurantId, RestaurantRoleLevel.OWNER));
-    }
 }

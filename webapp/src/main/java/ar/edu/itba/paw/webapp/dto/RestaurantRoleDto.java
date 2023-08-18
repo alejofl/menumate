@@ -12,43 +12,29 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class RestaurantRoleDto {
-    private long userId;
-    private long restaurantId;
     private String role;
 
+    private URI selfUrl;
     private URI userUrl;
     private URI restaurantUrl;
 
-    public static RestaurantRoleDto from(final UriInfo uriInfo, final long restaurantId, final Pair<User, RestaurantRoleLevel> pair) {
+    public static RestaurantRoleDto from(final UriInfo uriInfo, final long restaurantId, final long userId, RestaurantRoleLevel level) {
         final RestaurantRoleDto dto = new RestaurantRoleDto();
-        dto.userId = pair.getKey().getUserId();
-        dto.restaurantId = restaurantId;
-        dto.role = pair.getValue().getMessageCode();
+        dto.role = level.getMessageCode();
 
-        dto.userUrl = UriUtils.getUserUri(uriInfo, dto.userId);
-        dto.restaurantUrl = UriUtils.getRestaurantUri(uriInfo, dto.restaurantId);
+        dto.selfUrl = UriUtils.getRestaurantEmployeeUri(uriInfo, restaurantId, userId);
+        dto.userUrl = UriUtils.getUserUri(uriInfo, userId);
+        dto.restaurantUrl = UriUtils.getRestaurantUri(uriInfo, restaurantId);
 
         return dto;
     }
 
+    public static RestaurantRoleDto from(final UriInfo uriInfo, final long restaurantId, final Pair<User, RestaurantRoleLevel> pair) {
+        return from(uriInfo, restaurantId, pair.getKey().getUserId(), pair.getValue());
+    }
+
     public static List<RestaurantRoleDto> fromCollection(final UriInfo uriInfo, final long restaurantId, final Collection<Pair<User, RestaurantRoleLevel>> pairs) {
         return pairs.stream().map(p -> from(uriInfo, restaurantId, p)).collect(Collectors.toList());
-    }
-
-    public long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(long userId) {
-        this.userId = userId;
-    }
-
-    public long getRestaurantId() {
-        return restaurantId;
-    }
-
-    public void setRestaurantId(long restaurantId) {
-        this.restaurantId = restaurantId;
     }
 
     public String getRole() {
@@ -57,6 +43,14 @@ public class RestaurantRoleDto {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public URI getSelfUrl() {
+        return selfUrl;
+    }
+
+    public void setSelfUrl(URI selfUrl) {
+        this.selfUrl = selfUrl;
     }
 
     public URI getUserUrl() {

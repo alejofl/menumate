@@ -17,24 +17,24 @@ public final class UriUtils {
     public static URI getImageUri(final UriInfo uriInfo, final Long imageId) {
         if (imageId == null)
             return null;
-        return uriInfo.getBaseUriBuilder().path("/images").path(String.valueOf(imageId)).build();
+        return uriInfo.getBaseUriBuilder().path("images").path(String.valueOf(imageId)).build();
     }
 
     public static URI getRestaurantUri(final UriInfo uriInfo, final long restaurantId) {
-        return uriInfo.getBaseUriBuilder().path("/restaurants").path(String.valueOf(restaurantId)).build();
+        return uriInfo.getBaseUriBuilder().path("restaurants").path(String.valueOf(restaurantId)).build();
     }
 
     public static URI getRestaurantCategoriesUri(final UriInfo uriInfo, final long restaurantId) {
         return uriInfo.getBaseUriBuilder()
-                .path("/restaurants").path(String.valueOf(restaurantId))
-                .path("/categories")
+                .path("restaurants").path(String.valueOf(restaurantId))
+                .path("categories")
                 .build();
     }
 
     public static URI getCategoryUri(final UriInfo uriInfo, final long restaurantId, final long categoryId) {
         return uriInfo.getBaseUriBuilder()
-                .path("/restaurants").path(String.valueOf(restaurantId))
-                .path("/categories").path(String.valueOf(categoryId))
+                .path("restaurants").path(String.valueOf(restaurantId))
+                .path("categories").path(String.valueOf(categoryId))
                 .build();
     }
 
@@ -44,9 +44,9 @@ public final class UriUtils {
 
     public static URI getCategoryProductsUri(final UriInfo uriInfo, final long restaurantId, final long categoryId) {
         return uriInfo.getBaseUriBuilder()
-                .path("/restaurants").path(String.valueOf(restaurantId))
-                .path("/categories").path(String.valueOf(categoryId))
-                .path("/products")
+                .path("restaurants").path(String.valueOf(restaurantId))
+                .path("categories").path(String.valueOf(categoryId))
+                .path("products")
                 .build();
     }
 
@@ -56,9 +56,9 @@ public final class UriUtils {
 
     public static URI getProductUri(final UriInfo uriInfo, final long restaurantId, final long categoryId, final long productId) {
         return uriInfo.getBaseUriBuilder()
-                .path("/restaurants").path(String.valueOf(restaurantId))
-                .path("/categories").path(String.valueOf(categoryId))
-                .path("/products").path(String.valueOf(productId))
+                .path("restaurants").path(String.valueOf(restaurantId))
+                .path("categories").path(String.valueOf(categoryId))
+                .path("products").path(String.valueOf(productId))
                 .build();
     }
 
@@ -67,37 +67,51 @@ public final class UriUtils {
     }
 
     public static URI getUserUri(final UriInfo uriInfo, final long userId) {
-        return uriInfo.getBaseUriBuilder().path("/users").path(String.valueOf(userId)).build();
+        return uriInfo.getBaseUriBuilder().path("users").path(String.valueOf(userId)).build();
     }
 
     public static URI getUserAddressesUri(final UriInfo uriInfo, final long userId) {
         return uriInfo.getBaseUriBuilder()
-                .path("/users").path(String.valueOf(userId))
-                .path("/addresses")
+                .path("users").path(String.valueOf(userId))
+                .path("addresses")
                 .build();
     }
 
     public static URI getOrderUri(final UriInfo uriInfo, final long orderId) {
-        return uriInfo.getBaseUriBuilder().path("/orders").path(String.valueOf(orderId)).build();
+        return uriInfo.getBaseUriBuilder().path("orders").path(String.valueOf(orderId)).build();
     }
 
     public static URI getOrdersByUserUri(final UriInfo uriInfo, final long userId) {
-        return uriInfo.getBaseUriBuilder().path("/orders").queryParam("userId", String.valueOf(userId)).build();
+        return uriInfo.getBaseUriBuilder().path("orders").queryParam("userId", String.valueOf(userId)).build();
     }
 
     public static URI getOrdersByRestaurantUri(final UriInfo uriInfo, final long restaurantId) {
-        return uriInfo.getBaseUriBuilder().path("/orders").queryParam("restaurantId", String.valueOf(restaurantId)).build();
+        return uriInfo.getBaseUriBuilder().path("orders").queryParam("restaurantId", String.valueOf(restaurantId)).build();
     }
 
     public static URI getReviewsByUserUri(final UriInfo uriInfo, final long userId) {
-        return uriInfo.getBaseUriBuilder().path("/reviews").queryParam("userId", String.valueOf(userId)).build();
+        return uriInfo.getBaseUriBuilder().path("reviews").queryParam("userId", String.valueOf(userId)).build();
     }
 
     public static URI getReviewsByRestaurantUri(final UriInfo uriInfo, final long restaurantId) {
-        return uriInfo.getBaseUriBuilder().path("/reviews").queryParam("restaurantId", String.valueOf(restaurantId)).build();
+        return uriInfo.getBaseUriBuilder().path("reviews").queryParam("restaurantId", String.valueOf(restaurantId)).build();
     }
 
     public static URI getReviewUri(final UriInfo uriInfo, final long reviewId) {
-        return uriInfo.getAbsolutePathBuilder().path("/reviews").path(String.valueOf(reviewId)).build();
+        return uriInfo.getBaseUriBuilder().path("reviews").path(String.valueOf(reviewId)).build();
+    }
+
+    public static URI getRestaurantEmployeesUri(final UriInfo uriInfo, final long restaurantId) {
+        return uriInfo.getBaseUriBuilder()
+                .path("restaurants").path(String.valueOf(restaurantId))
+                .path("employees")
+                .build();
+    }
+
+    public static URI getRestaurantEmployeeUri(final UriInfo uriInfo, final long restaurantId, final long userId) {
+        return uriInfo.getBaseUriBuilder()
+                .path("restaurants").path(String.valueOf(restaurantId))
+                .path("employees").path(String.valueOf(userId))
+                .build();
     }
 }

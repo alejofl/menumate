@@ -36,9 +36,9 @@ public class RestaurantDto {
     private URI categoriesUrl;
     private URI ordersUrl;
     private URI reviewsUrl;
+    private URI employeesUrl;
 
-    public static RestaurantDto fromRestaurant(final UriInfo uriInfo, final Restaurant restaurant) {
-        final RestaurantDto dto = new RestaurantDto();
+    protected static void fill(final RestaurantDto dto, final UriInfo uriInfo, final Restaurant restaurant) {
         dto.restaurantId = restaurant.getRestaurantId();
         dto.name = restaurant.getName();
         dto.specialty = restaurant.getSpecialty().getMessageCode();
@@ -62,7 +62,12 @@ public class RestaurantDto {
         dto.categoriesUrl = UriUtils.getRestaurantCategoriesUri(uriInfo, restaurant.getRestaurantId());
         dto.ordersUrl = UriUtils.getOrdersByRestaurantUri(uriInfo, restaurant.getRestaurantId());
         dto.reviewsUrl = UriUtils.getReviewsByRestaurantUri(uriInfo, restaurant.getRestaurantId());
+        dto.employeesUrl = UriUtils.getRestaurantEmployeesUri(uriInfo, restaurant.getRestaurantId());
+    }
 
+    public static RestaurantDto fromRestaurant(final UriInfo uriInfo, final Restaurant restaurant) {
+        final RestaurantDto dto = new RestaurantDto();
+        fill(dto, uriInfo, restaurant);
         return dto;
     }
 
@@ -252,5 +257,13 @@ public class RestaurantDto {
 
     public void setReviewsUrl(URI reviewsUrl) {
         this.reviewsUrl = reviewsUrl;
+    }
+
+    public URI getEmployeesUrl() {
+        return employeesUrl;
+    }
+
+    public void setEmployeesUrl(URI employeesUrl) {
+        this.employeesUrl = employeesUrl;
     }
 }

@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.exception.RoleNotFoundException;
 import ar.edu.itba.paw.model.RestaurantRole;
 import ar.edu.itba.paw.model.RestaurantRoleDetails;
 import ar.edu.itba.paw.model.RestaurantRoleLevel;
@@ -10,10 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -43,9 +41,15 @@ public class RestaurantRoleJpaDao implements RestaurantRoleDao {
 
     @Override
     public void delete(long userId, long restaurantId) {
-        final RestaurantRole restaurantRole = em.getReference(RestaurantRole.class, new RestaurantRole.RestaurantRoleId(userId, restaurantId));
-        em.remove(restaurantRole);
-        LOGGER.info("Deleted restaurant role for user {} restaurant {}", userId, restaurantId);
+        try {
+            final RestaurantRole restaurantRole = em.getReference(RestaurantRole.class, new RestaurantRole.RestaurantRoleId(userId, restaurantId));
+            em.remove(restaurantRole);
+            em.flush();
+            LOGGER.info("Deleted restaurant role for user {} restaurant {}", userId, restaurantId);
+        } catch (EntityNotFoundException e) {
+            LOGGER.warn("Failed to delete restaurant role for user {} restaurant {}", userId, restaurantId, e);
+            throw new RoleNotFoundException();
+        }
     }
 
     @Override

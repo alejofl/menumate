@@ -7,15 +7,14 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class RestaurantDetailsDto {
-    private RestaurantDto restaurant;
+public class RestaurantDetailsDto extends RestaurantDto {
     private float averageRating;
     private int reviewCount;
     private float averageProductPrice;
 
     public static RestaurantDetailsDto fromRestaurantDetails(final UriInfo uriInfo, final RestaurantDetails restaurantDetails) {
         final RestaurantDetailsDto dto = new RestaurantDetailsDto();
-        dto.restaurant = RestaurantDto.fromRestaurant(uriInfo, restaurantDetails.getRestaurant());
+        fill(dto, uriInfo, restaurantDetails.getRestaurant());
         dto.averageRating = restaurantDetails.getAverageRating();
         dto.reviewCount = restaurantDetails.getReviewCount();
         dto.averageProductPrice = restaurantDetails.getAverageProductPrice();
@@ -24,14 +23,6 @@ public class RestaurantDetailsDto {
     }
     public static List<RestaurantDetailsDto> fromRestaurantDetailsCollection(final UriInfo uriInfo, final Collection<RestaurantDetails> restaurantDetails) {
         return restaurantDetails.stream().map(r -> fromRestaurantDetails(uriInfo, r)).collect(Collectors.toList());
-    }
-
-    public RestaurantDto getRestaurant() {
-        return restaurant;
-    }
-
-    public void setRestaurant(RestaurantDto restaurant) {
-        this.restaurant = restaurant;
     }
 
     public float getAverageRating() {

@@ -78,6 +78,12 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/restaurants/{restaurantId:\\d+}/categories/{categoryId:\\d+}/products").permitAll()
                 .antMatchers(HttpMethod.GET, "/restaurants/{restaurantId:\\d+}/categories/{categoryId:\\d+}/products/{productId:\\d+}").permitAll()
 
+                .antMatchers(HttpMethod.GET, "/restaurants/{restaurantId:\\d+}/employees").access("hasRole('MODERATOR') or @accessValidator.checkRestaurantOwner(#restaurantId)")
+                .antMatchers(HttpMethod.POST, "/restaurants/{restaurantId:\\d+}/employees").access("@accessValidator.checkRestaurantOwner(#restaurantId)")
+                .antMatchers(HttpMethod.GET, "/restaurants/{restaurantId:\\d+}/employees/{userId:\\d+}").access("hasRole('MODERATOR') or @accessValidator.checkRestaurantOwner(#restaurantId)")
+                .antMatchers(HttpMethod.PUT, "/restaurants/{restaurantId:\\d+}/employees/{userId:\\d+}").access("@accessValidator.checkRestaurantOwner(#restaurantId)")
+                .antMatchers(HttpMethod.DELETE, "/restaurants/{restaurantId:\\d+}/employees/{userId:\\d+}").access("hasRole('MODERATOR') or @accessValidator.checkRestaurantOwner(#restaurantId)")
+
                 .antMatchers(HttpMethod.POST, "/users").permitAll()
                 .antMatchers(HttpMethod.GET, "/users/{userId:\\d+}").permitAll()
                 .antMatchers("/users/{userId:\\d+}/**").access("@accessValidator.checkIsUser(#userId)")

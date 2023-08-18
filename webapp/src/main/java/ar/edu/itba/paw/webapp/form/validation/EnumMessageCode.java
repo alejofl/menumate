@@ -15,11 +15,13 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.TYPE_USE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface EnumMessageCode {
-    Class<? extends java.lang.Enum<?>> enumClass();
-
     String message() default "Not a valid option";
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
+
+    Class<? extends java.lang.Enum<?>> enumClass();
+
+    String excludeValues() default "";
 }
