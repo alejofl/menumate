@@ -27,6 +27,9 @@ public class FilterForm extends SearchForm {
     @QueryParam("descending")
     private Boolean descending;
 
+    @QueryParam("forEmployeeId")
+    private Long forEmployeeId;
+
     public List<String> getSpecialties() {
         return specialties;
     }
@@ -75,6 +78,14 @@ public class FilterForm extends SearchForm {
         this.orderBy = orderBy;
     }
 
+    public Long getForEmployeeId() {
+        return forEmployeeId;
+    }
+
+    public void setForEmployeeId(Long forEmployeeId) {
+        this.forEmployeeId = forEmployeeId;
+    }
+
     @Override
     public void clear() {
         super.clear();
@@ -82,5 +93,6 @@ public class FilterForm extends SearchForm {
         tags = null;
         orderBy = null;
         descending = null;
+        forEmployeeId = null;
     }
 }

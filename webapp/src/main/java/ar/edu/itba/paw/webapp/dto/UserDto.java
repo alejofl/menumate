@@ -22,7 +22,7 @@ public class UserDto {
     private URI addressesUrl;
     private URI ordersUrl;
     private URI reviewsUrl;
-    private URI restaurantRolesUrl;
+    private URI restaurantEmployedAtUrl;
 
     public static UserDto fromUser(final UriInfo uriInfo, final User user) {
         final UserDto dto = new UserDto();
@@ -37,7 +37,7 @@ public class UserDto {
         dto.addressesUrl = UriUtils.getUserAddressesUri(uriInfo, user.getUserId());
         dto.ordersUrl = UriUtils.getOrdersByUserUri(uriInfo, user.getUserId());
         dto.reviewsUrl = UriUtils.getReviewsByUserUri(uriInfo, user.getUserId());
-        dto.restaurantRolesUrl = uriInfo.getBaseUriBuilder().path("TODO").build(); // TODO: Implement roles & my restaurants endpoints
+        dto.restaurantEmployedAtUrl = UriUtils.getUserEmployedAtUri(uriInfo, user.getUserId());
 
         return dto;
     }
@@ -126,11 +126,11 @@ public class UserDto {
         this.reviewsUrl = reviewsUrl;
     }
 
-    public URI getRestaurantRolesUrl() {
-        return restaurantRolesUrl;
+    public URI getRestaurantEmployedAtUrl() {
+        return restaurantEmployedAtUrl;
     }
 
-    public void setRestaurantRolesUrl(URI restaurantRolesUrl) {
-        this.restaurantRolesUrl = restaurantRolesUrl;
+    public void setRestaurantEmployedAtUrl(URI restaurantEmployedAtUrl) {
+        this.restaurantEmployedAtUrl = restaurantEmployedAtUrl;
     }
 }

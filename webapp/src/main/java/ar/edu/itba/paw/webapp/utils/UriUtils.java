@@ -70,6 +70,13 @@ public final class UriUtils {
         return uriInfo.getBaseUriBuilder().path("users").path(String.valueOf(userId)).build();
     }
 
+    public static URI getUserEmployedAtUri(final UriInfo uriInfo, final long userId) {
+        return uriInfo.getBaseUriBuilder()
+                .path("restaurants")
+                .queryParam("forEmployeeId", String.valueOf(userId))
+                .build();
+    }
+
     public static URI getUserAddressesUri(final UriInfo uriInfo, final long userId) {
         return uriInfo.getBaseUriBuilder()
                 .path("users").path(String.valueOf(userId))
