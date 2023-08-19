@@ -10,6 +10,7 @@ import ar.edu.itba.paw.webapp.form.*;
 import ar.edu.itba.paw.webapp.utils.UriUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -100,9 +101,10 @@ public class UserController {
         if (!user.isPresent())
             return Response.status(Response.Status.NOT_FOUND).build();
 
+        final String userUrl = UriUtils.getUserUri(uriInfo, user.get().getUserId()).toString();
         return Response.noContent()
                 .header("Token", jwtTokenUtil.generateAccessToken(user.get()))
-                .header("MenuMate-UserId", Long.toString(user.get().getUserId()))
+                .header("MenuMate-UserUrl", userUrl)
                 .build();
     }
 

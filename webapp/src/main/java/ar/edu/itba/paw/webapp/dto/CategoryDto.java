@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class CategoryDto {
-    private long categoryId;
-    private long restaurantId;
     private String name;
     private int orderNum;
     private boolean deleted;
@@ -22,8 +20,6 @@ public class CategoryDto {
 
     public static CategoryDto fromCategory(final UriInfo uriInfo, final Category category) {
         final CategoryDto dto = new CategoryDto();
-        dto.categoryId = category.getCategoryId();
-        dto.restaurantId = category.getRestaurantId();
         dto.name = category.getName();
         dto.orderNum = category.getOrderNum();
         dto.deleted = category.getDeleted();
@@ -37,22 +33,6 @@ public class CategoryDto {
 
     public static List<CategoryDto> fromCategoryCollection(final UriInfo uriInfo, final Collection<Category> categories) {
         return categories.stream().map(c -> fromCategory(uriInfo, c)).collect(Collectors.toList());
-    }
-
-    public long getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(long categoryId) {
-        this.categoryId = categoryId;
-    }
-
-    public long getRestaurantId() {
-        return restaurantId;
-    }
-
-    public void setRestaurantId(long restaurantId) {
-        this.restaurantId = restaurantId;
     }
 
     public String getName() {

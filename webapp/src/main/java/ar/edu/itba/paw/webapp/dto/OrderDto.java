@@ -13,8 +13,6 @@ import java.util.stream.Collectors;
 public class OrderDto {
     private long orderId;
     private String orderType;
-    private long restaurantId;
-    private long userId;
     private LocalDateTime dateOrdered;
     private LocalDateTime dateConfirmed;
     private LocalDateTime dateReady;
@@ -33,8 +31,6 @@ public class OrderDto {
         final OrderDto dto = new OrderDto();
         dto.orderId = order.getOrderId();
         dto.orderType = order.getOrderType().getMessageCode();
-        dto.restaurantId = order.getRestaurantId();
-        dto.userId = order.getUserId();
         dto.dateOrdered = order.getDateOrdered();
         dto.dateCancelled = order.getDateConfirmed();
         dto.dateReady = order.getDateReady();
@@ -70,22 +66,6 @@ public class OrderDto {
 
     public void setOrderType(String orderType) {
         this.orderType = orderType;
-    }
-
-    public long getRestaurantId() {
-        return restaurantId;
-    }
-
-    public void setRestaurantId(long restaurantId) {
-        this.restaurantId = restaurantId;
-    }
-
-    public long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(long userId) {
-        this.userId = userId;
     }
 
     public LocalDateTime getDateOrdered() {

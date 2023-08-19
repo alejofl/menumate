@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.webapp.mapper;
 
 import ar.edu.itba.paw.exception.CannotSetRoleOfRestaurantOwnerException;
-import ar.edu.itba.paw.exception.ResourceNotFoundException;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;

@@ -11,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.codec.Base64;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -60,10 +61,15 @@ public class AuthAnywhereFilter extends OncePerRequestFilter {
             if (maybeUser.isPresent()) {
                 User user = maybeUser.get();
                 response.setHeader("Token", jwtTokenUtil.generateAccessToken(user));
-                response.setHeader("MenuMate-UserId", Long.toString(user.getUserId()));
+
+                String userUrl = ServletUriComponentsBuilder.fromContextPath(request)
+                        .replacePath("users/")
+                        .path(String.valueOf(user.getUserId()))
+                        .build().toString();
+
+                response.setHeader("MenuMate-UserUrl", userUrl);
             }
         } catch (Exception e) {
-            //SecurityContextHolder.clearContext();
             response.addHeader("WWW-Authenticate", "Basic realm=\"MenuMate\"");
         }
 

@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class UserDto {
-    private long userId;
     private String email;
     private String name;
     private LocalDateTime dateJoined;
@@ -26,7 +25,6 @@ public class UserDto {
 
     public static UserDto fromUser(final UriInfo uriInfo, final User user) {
         final UserDto dto = new UserDto();
-        dto.userId = user.getUserId();
         dto.email = user.getEmail();
         dto.name = user.getName();
         dto.dateJoined = user.getDateJoined();
@@ -44,14 +42,6 @@ public class UserDto {
 
     public static List<UserDto> fromUserCollection(final UriInfo uriInfo, final Collection<User> users) {
         return users.stream().map(u -> fromUser(uriInfo, u)).collect(Collectors.toList());
-    }
-
-    public long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(long userId) {
-        this.userId = userId;
     }
 
     public String getEmail() {

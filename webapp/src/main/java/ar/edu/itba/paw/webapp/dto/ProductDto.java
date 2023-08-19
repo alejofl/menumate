@@ -11,55 +11,33 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ProductDto {
-    private long productId;
-    private long categoryId;
     private String name;
     private String description;
-    private Long imageId;
     private BigDecimal price;
     private boolean available;
     private boolean deleted;
 
     private URI selfUrl;
-    private URI imageUrl;
     private URI categoryUrl;
+    private URI imageUrl;
 
     public static ProductDto fromProduct(final UriInfo uriInfo, final Product product) {
         final ProductDto dto = new ProductDto();
-        dto.productId = product.getProductId();
-        dto.categoryId = product.getCategoryId();
         dto.name = product.getName();
         dto.description = product.getDescription();
-        dto.imageId = product.getImageId();
         dto.price = product.getPrice();
         dto.available = product.getAvailable();
         dto.deleted = product.getDeleted();
 
         dto.selfUrl = UriUtils.getProductUri(uriInfo, product);
-        dto.imageUrl = UriUtils.getImageUri(uriInfo, product.getImageId());
         dto.categoryUrl = UriUtils.getCategoryUri(uriInfo, product.getCategory());
+        dto.imageUrl = UriUtils.getImageUri(uriInfo, product.getImageId());
 
         return dto;
     }
 
     public static List<ProductDto> fromProductCollection(final UriInfo uriInfo, final Collection<Product> products) {
         return products.stream().map(p -> fromProduct(uriInfo, p)).collect(Collectors.toList());
-    }
-
-    public long getProductId() {
-        return productId;
-    }
-
-    public void setProductId(long productId) {
-        this.productId = productId;
-    }
-
-    public long getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(long categoryId) {
-        this.categoryId = categoryId;
     }
 
     public String getName() {
@@ -76,14 +54,6 @@ public class ProductDto {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public Long getImageId() {
-        return imageId;
-    }
-
-    public void setImageId(Long imageId) {
-        this.imageId = imageId;
     }
 
     public BigDecimal getPrice() {
