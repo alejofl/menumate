@@ -15,6 +15,8 @@ public interface OrderService {
 
     Optional<Order> getById(long orderId);
 
+    Optional<List<OrderItem>> getOrderItemsById(long orderId);
+
     PaginatedResult<Order> get(Long userId, Long restaurantId, OrderStatus orderStatus, boolean onlyInProgress, boolean descending, int pageNumber, int pageSize);
 
     Order markAsConfirmed(long orderId);

@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.utils;
 
 import ar.edu.itba.paw.model.Category;
 import ar.edu.itba.paw.model.Product;
+import ar.edu.itba.paw.model.UserAddress;
 
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
@@ -84,8 +85,26 @@ public final class UriUtils {
                 .build();
     }
 
+    public static URI getUserAddressUri(final UriInfo uriInfo, final long userId, final long addressId) {
+        return uriInfo.getBaseUriBuilder()
+                .path("users").path(String.valueOf(userId))
+                .path("addresses").path(String.valueOf(addressId))
+                .build();
+    }
+
+    public static URI getUserAddressUri(final UriInfo uriInfo, final UserAddress address) {
+        return getUserAddressUri(uriInfo, address.getUserId(), address.getAddressId());
+    }
+
     public static URI getOrderUri(final UriInfo uriInfo, final long orderId) {
         return uriInfo.getBaseUriBuilder().path("orders").path(String.valueOf(orderId)).build();
+    }
+
+    public static URI getOrderItemsUri(final UriInfo uriInfo, final long orderId) {
+        return uriInfo.getBaseUriBuilder()
+                .path("orders").path(String.valueOf(orderId))
+                .path("items")
+                .build();
     }
 
     public static URI getOrdersByUserUri(final UriInfo uriInfo, final long userId) {

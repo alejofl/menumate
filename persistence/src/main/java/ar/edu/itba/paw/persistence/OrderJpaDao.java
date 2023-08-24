@@ -69,6 +69,19 @@ public class OrderJpaDao implements OrderDao {
         return Optional.ofNullable(em.find(Order.class, orderId));
     }
 
+    @Override
+    public Optional<List<OrderItem>> getOrderItemsById(long orderId) {
+        final TypedQuery<OrderItem> query = em.createQuery(
+                "FROM OrderItem WHERE orderId = :orderId ORDER BY lineNumber",
+                OrderItem.class
+        );
+        query.setParameter("orderId", orderId);
+
+        // Note: orders must always have at least one item, so if we don't get any items, the order doesn't exist.
+        List<OrderItem> items = query.getResultList();
+        return items.isEmpty() ? Optional.empty() : Optional.of(items);
+    }
+
     private static String getInProgressConditionString(boolean onlyInProgress) {
         return onlyInProgress ? "date_delivered IS NULL AND date_cancelled IS NULL" : null;
     }

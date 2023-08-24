@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.exception.UserAddressNotFoundException;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.model.UserAddress;
 import ar.edu.itba.paw.persistance.UserDao;
@@ -38,6 +39,17 @@ public class UserJpaDao implements UserDao {
     }
 
     @Override
+    public Optional<UserAddress> getAddressById(long userId, long addressId) {
+        TypedQuery<UserAddress> query = em.createQuery(
+                "FROM UserAddress WHERE userId = :userId AND addressId = :addressId",
+                UserAddress.class
+        );
+        query.setParameter("userId", userId);
+        query.setParameter("addressId", addressId);
+        return query.getResultList().stream().findFirst();
+    }
+
+    @Override
     public User create(String email, String password, String name, String language) {
         final User user = new User(email, password, name, null, null, false, language);
         em.persist(user);
@@ -48,7 +60,7 @@ public class UserJpaDao implements UserDao {
     private static final String GET_LASTUSED_TO_DELETE_SQL = "SELECT last_used FROM user_addresses WHERE name IS NULL ORDER BY last_used DESC LIMIT 1 OFFSET " + MAX_USER_ADDRESSES_REMEMBERED;
 
     @Override
-    public void registerAddress(long userId, String address, String name) {
+    public UserAddress registerAddress(long userId, String address, String name) {
         // We need to get addresses for the user that might have the same address or name, as to handle a specific
         // side case where an UserAddress with the same userId and name but different address exists, as well as
         // another UserAddress with the same userId and address, but different name.
@@ -67,7 +79,7 @@ public class UserJpaDao implements UserDao {
             // If there are no such addresses for this user, we can register it without issues.
             final UserAddress ua = new UserAddress(userId, address, name, LocalDateTime.now());
             em.persist(ua);
-            return;
+            return ua;
         }
 
         // If there is already an UserAddress with this (userId, address) (the primary key), we'll update that one
@@ -88,20 +100,25 @@ public class UserJpaDao implements UserDao {
         }
 
         LOGGER.info("Registered named address for user id {}", userId);
+        return mainAddress;
     }
 
     @Override
-    public void refreshAddress(long userId, String address) {
+    public UserAddress refreshAddress(long userId, String address) {
         // Update the UserAddress if it exists
-        Query updateQuery = em.createQuery("UPDATE UserAddress SET lastUsed = now() WHERE userId = :userId AND address = :address");
-        updateQuery.setParameter("userId", userId);
-        updateQuery.setParameter("address", address);
-        int rows = updateQuery.executeUpdate();
+        TypedQuery<UserAddress> query = em.createQuery(
+                "FROM UserAddress WHERE userId = :userId AND address = :address",
+                UserAddress.class
+        );
+        query.setParameter("userId", userId);
+        query.setParameter("address", address);
+        Optional<UserAddress> maybeAddress = query.getResultList().stream().findFirst();
 
         // If the UserAddress exists and was updated, that's it; it's been refreshed.
-        if (rows != 0) {
+        if (maybeAddress.isPresent()) {
+            maybeAddress.get().setLastUsed(LocalDateTime.now());
             LOGGER.info("Refreshed address for user id {}", userId);
-            return;
+            return maybeAddress.get();
         }
 
         // Otherwise, it doesn't exist, so we need to create it
@@ -114,6 +131,7 @@ public class UserJpaDao implements UserDao {
         Query timestampQuery = em.createNativeQuery(GET_LASTUSED_TO_DELETE_SQL);
         List<?> resultList = timestampQuery.getResultList();
 
+        int rows = 0;
         if (!resultList.isEmpty()) {
             LocalDateTime minLastUsed = ((Timestamp) resultList.get(0)).toLocalDateTime();
             Query deleteQuery = em.createQuery("DELETE FROM UserAddress WHERE name IS NULL AND lastUsed <= :timestamp");
@@ -122,19 +140,21 @@ public class UserJpaDao implements UserDao {
         }
 
         LOGGER.info("Registered unnamed address for user id {}, {} old deleted", userId, rows);
+        return ua;
     }
 
     @Override
-    public void deleteAddress(long userId, String address) {
-        Query addressQuery = em.createQuery("DELETE FROM UserAddress WHERE userId = :userId AND address = :address");
+    public void deleteAddress(long userId, long addressId) {
+        Query addressQuery = em.createQuery("DELETE FROM UserAddress WHERE userId = :userId AND addressId = :addressId");
         addressQuery.setParameter("userId", userId);
-        addressQuery.setParameter("address", address);
+        addressQuery.setParameter("addressId", addressId);
         int rows = addressQuery.executeUpdate();
 
         if (rows == 0) {
-            LOGGER.warn("Attempted to delete user address for user id {}, but no such address found", userId);
+            LOGGER.warn("Attempted to delete user address {} for user id {}, but no such address found", addressId, userId);
+            throw new UserAddressNotFoundException();
         } else {
-            LOGGER.info("Deleted an user address for user id {}", userId);
+            LOGGER.info("Deleted an user address {} for user id {}", addressId, userId);
         }
     }
 }

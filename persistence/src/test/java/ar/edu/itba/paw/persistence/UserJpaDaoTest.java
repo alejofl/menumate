@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.exception.UserAddressNotFoundException;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import ar.edu.itba.paw.persistence.constants.UserConstants;
@@ -30,6 +31,7 @@ public class UserJpaDaoTest {
     private static final long NON_EXISTENT_USER_ID = 5000;
     private static final String NON_EXISTENT_USER_EMAIL = "nonexistent@localhost";
     private static final String NON_EXISTENT_ADDRESS = "NON_EXISTENT_ADDRESS";
+    private static final long NON_EXISTENT_ADDRESS_ID = 1421414;
     private static final String NON_EXISTENT_NAME = "NON_EXISTENT_NAME";
 
     @Autowired
@@ -147,15 +149,15 @@ public class UserJpaDaoTest {
     @Test
     @Rollback
     public void testDeleteExistingUserAddress() {
-        userDao.deleteAddress(UserConstants.ACTIVE_USER_ID, UserConstants.LAST_USED_ADDRESS);
+        userDao.deleteAddress(UserConstants.ACTIVE_USER_ID, UserConstants.LAST_USED_ADDRESS_ID);
         em.flush();
 
         Assert.assertEquals(UserConstants.ADDRESSES_COUNT - 1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "user_addresses", "user_id=" + UserConstants.ACTIVE_USER_ID));
     }
 
-    @Test
-    public void testDeleteUnExistingUserAddress() {
-        userDao.deleteAddress(UserConstants.ACTIVE_USER_ID, NON_EXISTENT_ADDRESS);
+    @Test(expected = UserAddressNotFoundException.class)
+    public void testDeleteNonExistingUserAddress() {
+        userDao.deleteAddress(UserConstants.ACTIVE_USER_ID, NON_EXISTENT_ADDRESS_ID);
         em.flush();
 
         Assert.assertEquals(UserConstants.ADDRESSES_COUNT, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "user_addresses", "user_id=" + UserConstants.ACTIVE_USER_ID));

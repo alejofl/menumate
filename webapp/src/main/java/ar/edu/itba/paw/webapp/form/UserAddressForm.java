@@ -5,25 +5,13 @@ import org.hibernate.validator.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-public class PatchAddressesForm {
-
-    @NotBlank
-    @Pattern(regexp = "add|remove")
-    private String action;
+public class UserAddressForm {
 
     @NotBlank
     private String address;
 
     @Size(max = 20)
     private String name;
-
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
-    }
 
     public String getAddress() {
         return address;

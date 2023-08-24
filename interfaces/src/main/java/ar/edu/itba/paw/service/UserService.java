@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.User;
+import ar.edu.itba.paw.model.UserAddress;
 
 import java.util.Optional;
 
@@ -9,6 +10,8 @@ public interface UserService {
     Optional<User> getById(long userId);
 
     Optional<User> getByEmail(String email);
+
+    Optional<UserAddress> getAddressById(long userId, long addressId);
 
     /**
      * Creates a user, or consolidates it if the user already exists but doesn't have a password, and then sends an
@@ -29,9 +32,11 @@ public interface UserService {
 
     User updateUser(long userId, String name, String preferredLanguage);
 
-    void registerAddress(long userId, String address, String name);
+    UserAddress registerAddress(long userId, String address, String name);
 
-    void deleteAddress(long userId, String address);
+    void updateAddress(long userId, long addressId, String address, String name);
+
+    void deleteAddress(long userId, long addressId);
 
     void resendUserVerificationToken(String email);
 

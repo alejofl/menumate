@@ -1,7 +1,9 @@
 package ar.edu.itba.paw.services;
 
+import ar.edu.itba.paw.exception.UserAddressNotFoundException;
 import ar.edu.itba.paw.exception.UserNotFoundException;
 import ar.edu.itba.paw.model.User;
+import ar.edu.itba.paw.model.UserAddress;
 import ar.edu.itba.paw.model.UserResetpasswordToken;
 import ar.edu.itba.paw.model.UserVerificationToken;
 import ar.edu.itba.paw.persistance.UserDao;
@@ -61,6 +63,11 @@ public class UserServiceImpl implements UserService {
         return userDao.getByEmail(email);
     }
 
+    @Override
+    public Optional<UserAddress> getAddressById(long userId, long addressId) {
+        return userDao.getAddressById(userId, addressId);
+    }
+
     @Transactional
     @Override
     public User createOrConsolidate(String email, String password, String name) {
@@ -118,19 +125,29 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void registerAddress(long userId, String address, String name) {
+    public UserAddress registerAddress(long userId, String address, String name) {
         name = name == null ? null : name.trim();
         if (name == null || name.isEmpty()) {
-            userDao.refreshAddress(userId, address);
+            return userDao.refreshAddress(userId, address);
         } else {
-            userDao.registerAddress(userId, address, name);
+            return userDao.registerAddress(userId, address, name);
         }
     }
 
     @Transactional
     @Override
-    public void deleteAddress(long userId, String address) {
-        userDao.deleteAddress(userId, address);
+    public void updateAddress(long userId, long addressId, String address, String name) {
+        final UserAddress ua = getAddressById(userId, addressId).orElseThrow(UserAddressNotFoundException::new);
+        ua.setAddress(address);
+        if (name != null)
+            ua.setName(name);
+        LOGGER.info("Updated user id {} address id {}, setted address{}", userId, addressId, name == null ? "" : " and name");
+    }
+
+    @Transactional
+    @Override
+    public void deleteAddress(long userId, long addressId) {
+        userDao.deleteAddress(userId, addressId);
     }
 
     @Transactional

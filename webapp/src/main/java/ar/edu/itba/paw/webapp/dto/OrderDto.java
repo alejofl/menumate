@@ -21,9 +21,9 @@ public class OrderDto {
     private String orderStatus;
     private String address;
     private Integer tableNumber;
-    private List<OrderItemDto> items;
 
     private URI selfUrl;
+    private URI itemsUrl;
     private URI userUrl;
     private URI restaurantUrl;
 
@@ -39,9 +39,9 @@ public class OrderDto {
         dto.orderStatus = order.getOrderStatus().getMessageCode();
         dto.address = order.getAddress();
         dto.tableNumber = order.getTableNumber();
-        dto.items = OrderItemDto.fromOrderItemCollection(uriInfo, order.getItems());
 
         dto.selfUrl = UriUtils.getOrderUri(uriInfo, order.getOrderId());
+        dto.itemsUrl = UriUtils.getOrderItemsUri(uriInfo, order.getOrderId());
         dto.userUrl = UriUtils.getUserUri(uriInfo, order.getUserId());
         dto.restaurantUrl = UriUtils.getRestaurantUri(uriInfo, order.getRestaurantId());
 
@@ -132,20 +132,20 @@ public class OrderDto {
         this.tableNumber = tableNumber;
     }
 
-    public List<OrderItemDto> getItems() {
-        return items;
-    }
-
-    public void setItems(List<OrderItemDto> items) {
-        this.items = items;
-    }
-
     public URI getSelfUrl() {
         return selfUrl;
     }
 
     public void setSelfUrl(URI selfUrl) {
         this.selfUrl = selfUrl;
+    }
+
+    public URI getItemsUrl() {
+        return itemsUrl;
+    }
+
+    public void setItemsUrl(URI itemsUrl) {
+        this.itemsUrl = itemsUrl;
     }
 
     public URI getUserUrl() {

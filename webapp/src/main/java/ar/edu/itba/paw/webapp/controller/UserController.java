@@ -1,7 +1,9 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import ar.edu.itba.paw.exception.UserAddressNotFoundException;
 import ar.edu.itba.paw.exception.UserNotFoundException;
 import ar.edu.itba.paw.model.User;
+import ar.edu.itba.paw.model.UserAddress;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.auth.JwtTokenUtil;
 import ar.edu.itba.paw.webapp.dto.UserAddressDto;
@@ -10,7 +12,7 @@ import ar.edu.itba.paw.webapp.form.*;
 import ar.edu.itba.paw.webapp.utils.UriUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -66,23 +68,54 @@ public class UserController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUserAddresses(@PathParam("userId") final long userId) {
         final User user = userService.getById(userId).orElseThrow(UserNotFoundException::new);
-        final List<UserAddressDto> dtoList = UserAddressDto.fromUserAddressCollection(user.getAddresses());
+        final List<UserAddressDto> dtoList = UserAddressDto.fromUserAddressCollection(uriInfo, user.getAddresses());
         return Response.ok(new GenericEntity<List<UserAddressDto>>(dtoList){}).build();
     }
 
-    @PATCH
+    @GET
+    @Path("/{userId:\\d+}/addresses/{addressId:\\d+}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getUserAddress(
+            @PathParam("userId") final long userId,
+            @PathParam("addressId") final long addressId
+    ) {
+        final UserAddress address = userService.getAddressById(userId, addressId).orElseThrow(UserAddressNotFoundException::new);
+        final UserAddressDto dto = UserAddressDto.fromUserAddress(uriInfo, address);
+        return Response.ok(dto).build();
+    }
+
+    @POST
     @Path("/{userId:\\d+}/addresses")
     @Produces(MediaType.APPLICATION_JSON)
     public Response registerUserAddress(
             @PathParam("userId") final long userId,
-            @Valid @NotNull final PatchAddressesForm patchAddressesForm
+            @Valid @NotNull final UserAddressForm userAddressForm
     ) {
-        if (patchAddressesForm.getAction().equals("remove")) {
-            userService.deleteAddress(userId, patchAddressesForm.getAddress());
-        } else {
-            userService.registerAddress(userId, patchAddressesForm.getAddress(), patchAddressesForm.getName());
-        }
+        final UserAddress address = userService.registerAddress(userId, userAddressForm.getAddress(), userAddressForm.getName());
+        return Response.created(UriUtils.getUserAddressUri(uriInfo, address)).build();
+    }
 
+    @PATCH
+    @Path("/{userId:\\d+}/addresses/{addressId:\\d+}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateUserAddress(
+            @PathParam("userId") final long userId,
+            @PathParam("addressId") final long addressId,
+            @Valid @NotNull final UserAddressForm userAddressForm
+
+    ) {
+        userService.updateAddress(userId, addressId, userAddressForm.getAddress(), userAddressForm.getName());
+        return Response.noContent().build();
+    }
+
+    @DELETE
+    @Path("/{userId:\\d+}/addresses/{addressId:\\d+}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteUserAddress(
+            @PathParam("userId") final long userId,
+            @PathParam("addressId") final long addressId
+    ) {
+        userService.deleteAddress(userId, addressId);
         return Response.noContent().build();
     }
 

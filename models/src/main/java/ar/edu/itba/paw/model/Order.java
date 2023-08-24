@@ -57,6 +57,7 @@ public class Order {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "order_id")
+    @OrderBy("lineNumber asc")
     private List<OrderItem> items;
 
     Order() {

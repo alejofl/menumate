@@ -5,6 +5,7 @@ import ar.edu.itba.paw.model.OrderItem;
 import ar.edu.itba.paw.model.OrderStatus;
 import ar.edu.itba.paw.util.PaginatedResult;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface OrderDao {
@@ -17,6 +18,8 @@ public interface OrderDao {
     OrderItem createOrderItem(long restaurantId, long productId, int lineNumber, int quantity, String comment);
 
     Optional<Order> getById(long orderId);
+
+    Optional<List<OrderItem>> getOrderItemsById(long orderId);
 
     PaginatedResult<Order> get(Long userId, Long restaurantId, OrderStatus orderStatus, boolean onlyInProgress, boolean descending, int pageNumber, int pageSize);
 }

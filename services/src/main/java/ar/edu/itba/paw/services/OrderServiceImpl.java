@@ -105,6 +105,11 @@ public class OrderServiceImpl implements OrderService {
         return orderDao.get(userId, restaurantId, orderStatus, onlyInProgress, descending, pageNumber, pageSize);
     }
 
+    @Override
+    public Optional<List<OrderItem>> getOrderItemsById(long orderId) {
+        return orderDao.getOrderItemsById(orderId);
+    }
+
     @Transactional
     @Override
     public Order markAsConfirmed(long orderId) {

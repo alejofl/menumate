@@ -2,10 +2,12 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.exception.OrderNotFoundException;
 import ar.edu.itba.paw.model.Order;
+import ar.edu.itba.paw.model.OrderItem;
 import ar.edu.itba.paw.service.OrderService;
 import ar.edu.itba.paw.util.PaginatedResult;
 import ar.edu.itba.paw.webapp.auth.AccessValidator;
 import ar.edu.itba.paw.webapp.dto.OrderDto;
+import ar.edu.itba.paw.webapp.dto.OrderItemDto;
 import ar.edu.itba.paw.webapp.form.CheckoutForm;
 import ar.edu.itba.paw.webapp.form.GetOrdersForm;
 import ar.edu.itba.paw.webapp.utils.ControllerUtils;
@@ -50,7 +52,7 @@ public class OrderController {
                 getOrdersForm.getSizeOrDefault(ControllerUtils.DEFAULT_ORDERS_PAGE_SIZE)
         );
 
-        List<OrderDto> dtoList = OrderDto.fromOrderCollection(uriInfo, orderPage.getResult());
+        final List<OrderDto> dtoList = OrderDto.fromOrderCollection(uriInfo, orderPage.getResult());
         Response.ResponseBuilder builder = Response.ok(new GenericEntity<List<OrderDto>>(dtoList){});
         return ControllerUtils.addPagingLinks(builder, orderPage, uriInfo).build();
     }
@@ -59,8 +61,17 @@ public class OrderController {
     @Path("/{orderId:\\d+}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getOrderById(@PathParam("orderId") final long orderId) {
-        Order order = orderService.getById(orderId).orElseThrow(OrderNotFoundException::new);
+        final Order order = orderService.getById(orderId).orElseThrow(OrderNotFoundException::new);
         return Response.ok(OrderDto.fromOrder(uriInfo, order)).build();
+    }
+
+    @GET
+    @Path("/{orderId:\\d+}/items")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getOrderItemsById(@PathParam("orderId") final long orderId) {
+        final List<OrderItem> items = orderService.getOrderItemsById(orderId).orElseThrow(OrderNotFoundException::new);
+        final List<OrderItemDto> dtoList = OrderItemDto.fromOrderItemCollection(uriInfo, items);
+        return Response.ok(new GenericEntity<List<OrderItemDto>>(dtoList){}).build();
     }
 
     @POST
