@@ -6,6 +6,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 public class CreateReviewForm {
+
+    @NotNull
+    private Long orderId;
+
     @NotNull
     @Min(0)
     @Max(5)
@@ -13,6 +17,14 @@ public class CreateReviewForm {
 
     @Size(max = 500)
     private String comment;
+
+    public Long getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
+    }
 
     public Integer getRating() {
         return rating;

@@ -12,7 +12,7 @@ public interface ReviewDao {
     /**
      * Creates a review for a given orderId, or updates it if it already exists.
      */
-    void create(long orderId, int rating, String comment);
+    Review create(long orderId, int rating, String comment);
 
     /**
      * Deletes the review attached to an order.

@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ReviewDto {
+    private long orderId;
     private int rating;
     private LocalDateTime date;
     private String comment;
@@ -21,6 +22,7 @@ public class ReviewDto {
 
     public static ReviewDto fromReview(final UriInfo uriInfo, final Review review) {
         final ReviewDto dto = new ReviewDto();
+        dto.orderId = review.getOrderId();
         dto.rating = review.getRating();
         dto.date = review.getDate();
         dto.comment = review.getComment();
@@ -34,6 +36,14 @@ public class ReviewDto {
 
     public static List<ReviewDto> fromReviewCollection(final UriInfo uriInfo, final Collection<Review> reviews) {
         return reviews.stream().map(r -> fromReview(uriInfo, r)).collect(Collectors.toList());
+    }
+
+    public long getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(long orderId) {
+        this.orderId = orderId;
     }
 
     public int getRating() {

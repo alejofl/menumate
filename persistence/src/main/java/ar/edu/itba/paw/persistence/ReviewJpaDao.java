@@ -1,18 +1,18 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.exception.InvalidUserArgumentException;
+import ar.edu.itba.paw.exception.ReviewNotFoundException;
 import ar.edu.itba.paw.model.Review;
 import ar.edu.itba.paw.persistance.ReviewDao;
 import ar.edu.itba.paw.util.AverageCountPair;
 import ar.edu.itba.paw.util.PaginatedResult;
 import ar.edu.itba.paw.util.Utils;
+import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -84,17 +84,32 @@ public class ReviewJpaDao implements ReviewDao {
     }
 
     @Override
-    public void create(long orderId, int rating, String comment) {
-        final Review review = new Review(orderId, rating, comment);
-        em.merge(review);
-        LOGGER.info("Created review for order with ID {}", orderId);
+    public Review create(long orderId, int rating, String comment) {
+        try {
+            final Review review = new Review(orderId, rating, comment);
+            em.persist(review);
+            em.flush();
+            LOGGER.info("Created review for order with ID {}", orderId);
+            return review;
+        } catch (PersistenceException e) {
+            if (e.getCause() instanceof ConstraintViolationException) {
+                throw new InvalidUserArgumentException("A review for this order already exists");
+            }
+            LOGGER.warn("Failed to create review for orderId {} due to constraint violation", orderId, e);
+            throw e;
+        }
     }
 
     @Override
     public void delete(long orderId) {
-        Review review = em.getReference(Review.class, orderId);
-        em.remove(review);
-        LOGGER.info("Deleted review for order with ID {}", orderId);
+        try {
+            final Review review = em.getReference(Review.class, orderId);
+            LOGGER.info("Deleted review for order with ID {}", orderId);
+            em.remove(review);
+        } catch (EntityNotFoundException e) {
+            LOGGER.warn("Attempted to delete non-existing review id {}", orderId, e);
+            throw new ReviewNotFoundException(e);
+        }
     }
 
     @Override
