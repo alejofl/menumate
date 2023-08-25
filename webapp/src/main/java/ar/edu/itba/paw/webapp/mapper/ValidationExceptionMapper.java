@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 public class ValidationExceptionMapper implements ExceptionMapper<ConstraintViolationException> {
     @Override
     public Response toResponse(ConstraintViolationException exception) {
-        List<ValidationErrorDto> validationErrors = exception.getConstraintViolations().stream().map(ValidationErrorDto::fromConstraintViolation).collect(Collectors.toList());
+        List<ValidationErrorDto> validationErrors = ValidationErrorDto.fromConstraintViolationCollection(exception.getConstraintViolations());
         return Response.status(Response.Status.BAD_REQUEST).entity(new GenericEntity<List<ValidationErrorDto>>(validationErrors) {}).build();
     }
 }

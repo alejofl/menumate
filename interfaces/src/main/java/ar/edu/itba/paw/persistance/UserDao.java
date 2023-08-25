@@ -17,6 +17,8 @@ public interface UserDao {
 
     UserAddress registerAddress(long userId, String address, String name);
 
+    UserAddress updateAddress(long userId, long addressId, String address, String name);
+
     UserAddress refreshAddress(long userId, String address);
 
     void deleteAddress(long userId, long addressId);

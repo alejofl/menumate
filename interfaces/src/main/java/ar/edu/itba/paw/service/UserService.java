@@ -34,7 +34,7 @@ public interface UserService {
 
     UserAddress registerAddress(long userId, String address, String name);
 
-    void updateAddress(long userId, long addressId, String address, String name);
+    UserAddress updateAddress(long userId, long addressId, String address, String name);
 
     void deleteAddress(long userId, long addressId);
 

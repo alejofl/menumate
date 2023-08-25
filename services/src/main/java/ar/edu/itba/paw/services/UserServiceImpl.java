@@ -136,12 +136,8 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void updateAddress(long userId, long addressId, String address, String name) {
-        final UserAddress ua = getAddressById(userId, addressId).orElseThrow(UserAddressNotFoundException::new);
-        ua.setAddress(address);
-        if (name != null)
-            ua.setName(name);
-        LOGGER.info("Updated user id {} address id {}, setted address{}", userId, addressId, name == null ? "" : " and name");
+    public UserAddress updateAddress(long userId, long addressId, String address, String name) {
+        return userDao.updateAddress(userId, addressId, address, name);
     }
 
     @Transactional

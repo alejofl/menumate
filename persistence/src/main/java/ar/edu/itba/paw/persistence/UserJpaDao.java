@@ -1,17 +1,16 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.exception.InvalidUserArgumentException;
 import ar.edu.itba.paw.exception.UserAddressNotFoundException;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.model.UserAddress;
 import ar.edu.itba.paw.persistance.UserDao;
+import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -65,6 +64,7 @@ public class UserJpaDao implements UserDao {
         // side case where an UserAddress with the same userId and name but different address exists, as well as
         // another UserAddress with the same userId and address, but different name.
         // The way we handle this side case is to merge the two entities into a single one.
+
         // NOTE: Due to schema constraints this query will return at most 2 results.
         TypedQuery<UserAddress> query = em.createQuery(
                 "FROM UserAddress WHERE userId = :userId AND (address = :address OR name = :name)",
@@ -101,6 +101,25 @@ public class UserJpaDao implements UserDao {
 
         LOGGER.info("Registered named address for user id {}", userId);
         return mainAddress;
+    }
+
+    @Override
+    public UserAddress updateAddress(long userId, long addressId, String address, String name) {
+        final UserAddress ua = getAddressById(userId, addressId).orElseThrow(UserAddressNotFoundException::new);
+        try {
+            ua.setAddress(address);
+            if (name != null)
+                ua.setName(name);
+            em.flush();
+            LOGGER.info("Updated user id {} address id {}, set address{}", userId, addressId, name == null ? "" : " and name");
+            return ua;
+        } catch (PersistenceException e) {
+            if (e.getCause() instanceof ConstraintViolationException) {
+                LOGGER.warn("Failed to update user id {} address id {} due to constraint violation", userId, addressId, e);
+                throw new InvalidUserArgumentException("This address or name is already registered", e);
+            }
+            throw e;
+        }
     }
 
     @Override
