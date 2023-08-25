@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface BothFieldsNull {
-    String message() default "End datetime must be after Start datetime";
+    String message() default "Invalid fields";
 
     Class<?>[] groups() default {};
 

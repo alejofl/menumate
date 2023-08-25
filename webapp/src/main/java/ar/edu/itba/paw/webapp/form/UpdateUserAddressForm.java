@@ -1,12 +1,13 @@
 package ar.edu.itba.paw.webapp.form;
 
-import org.hibernate.validator.constraints.NotBlank;
+import ar.edu.itba.paw.webapp.form.validation.BothFieldsNull;
 
 import javax.validation.constraints.Size;
 
-public class UserAddressForm {
+@BothFieldsNull(allowBothNull = false, allowBothNotNull = true, field1Name = "address", field2Name = "name", message = "Must specify an address or a name")
+public class UpdateUserAddressForm {
 
-    @NotBlank
+    @Size(max = 200)
     private String address;
 
     @Size(max = 20)

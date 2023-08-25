@@ -125,12 +125,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public UserAddress registerAddress(long userId, String address, String name) {
-        name = name == null ? null : name.trim();
-        if (name == null || name.isEmpty()) {
-            return userDao.refreshAddress(userId, address);
-        } else {
-            return userDao.registerAddress(userId, address, name);
-        }
+        return userDao.registerAddress(userId, address, name);
     }
 
     @Transactional

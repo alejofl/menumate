@@ -88,9 +88,9 @@ public class UserController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response registerUserAddress(
             @PathParam("userId") final long userId,
-            @Valid @NotNull final UserAddressForm userAddressForm
+            @Valid @NotNull final AddUserAddressForm addUserAddressForm
     ) {
-        final UserAddress address = userService.registerAddress(userId, userAddressForm.getAddress(), userAddressForm.getName());
+        final UserAddress address = userService.registerAddress(userId, addUserAddressForm.getAddressTrimmedOrNull(), addUserAddressForm.getName());
         return Response.created(UriUtils.getUserAddressUri(uriInfo, address)).build();
     }
 
@@ -100,10 +100,10 @@ public class UserController {
     public Response updateUserAddress(
             @PathParam("userId") final long userId,
             @PathParam("addressId") final long addressId,
-            @Valid @NotNull final UserAddressForm userAddressForm
+            @Valid @NotNull final UpdateUserAddressForm updateUserAddressForm
 
     ) {
-        userService.updateAddress(userId, addressId, userAddressForm.getAddress(), userAddressForm.getName());
+        userService.updateAddress(userId, addressId, updateUserAddressForm.getAddress(), updateUserAddressForm.getName());
         return Response.noContent().build();
     }
 
