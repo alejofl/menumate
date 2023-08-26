@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.exception.InvalidOrderTypeException;
+import ar.edu.itba.paw.exception.InvalidUserArgumentException;
 import ar.edu.itba.paw.exception.OrderNotFoundException;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.persistance.OrderDao;
@@ -105,77 +106,58 @@ public class OrderServiceImpl implements OrderService {
         return orderDao.get(userId, restaurantId, orderStatus, onlyInProgress, descending, pageNumber, pageSize);
     }
 
+    @Transactional
+    @Override
+    public Order advanceOrderStatus(long orderId, OrderStatus newStatus) {
+        final Order order = orderDao.getById(orderId).orElseThrow(OrderNotFoundException::new);
+        final OrderStatus status = order.getOrderStatus();
+        if (!status.isInProgress()) {
+            LOGGER.warn("Attempted to advance the status of order id {}, but order is {}", orderId, status.getMessageCode());
+            throw new InvalidUserArgumentException("Cannot update the status of a finished order");
+        }
+
+        switch (newStatus) {
+            case CONFIRMED:
+                if (status != OrderStatus.PENDING)
+                    throw new InvalidUserArgumentException("Only orders whose status is PENDING may be marked as CONFIRMED");
+                order.setDateConfirmed(LocalDateTime.now());
+                emailService.sendOrderConfirmation(order);
+                break;
+
+            case READY:
+                if (status != OrderStatus.CONFIRMED)
+                    throw new InvalidUserArgumentException("Only orders whose status is CONFIRMED may be marked as READY");
+                order.setDateReady(LocalDateTime.now());
+                emailService.sendOrderReady(order);
+                break;
+
+            case DELIVERED:
+                if (status != OrderStatus.READY)
+                    throw new InvalidUserArgumentException("Only orders whose status is READY may be marked as DELIVERED");
+                order.setDateDelivered(LocalDateTime.now());
+                emailService.sendOrderDelivered(order);
+                break;
+
+            case REJECTED:
+                if (order.getDateConfirmed() != null)
+                    throw new InvalidUserArgumentException("Cannot reject an order that has been confirmed");
+            case CANCELLED:
+                order.setDateCancelled(LocalDateTime.now());
+                emailService.sendOrderCancelled(order);
+                break;
+
+            default:
+                LOGGER.warn("Attempted to advance order id {} status from {} to {}", orderId, status.getMessageCode(), newStatus.getMessageCode());
+                throw new InvalidUserArgumentException(String.format("Cannot set the status of an order from %s to %s", status.getMessageCode(), newStatus.getMessageCode()));
+        }
+
+        LOGGER.info("Updated status of order id {} to {}", order.getOrderId(), order.getOrderStatus());
+        return order;
+    }
+
     @Override
     public Optional<List<OrderItem>> getOrderItemsById(long orderId) {
         return orderDao.getOrderItemsById(orderId);
-    }
-
-    @Transactional
-    @Override
-    public Order markAsConfirmed(long orderId) {
-        final Order order = orderDao.getById(orderId).orElseThrow(OrderNotFoundException::new);
-        final OrderStatus orderStatus = order.getOrderStatus();
-        if (orderStatus != OrderStatus.PENDING) {
-            LOGGER.error("Attempted to mark order with id {} as confirmed when the order is {}", orderId, orderStatus);
-            throw new IllegalStateException("Invalid order status");
-        }
-
-        order.setDateConfirmed(LocalDateTime.now());
-
-        emailService.sendOrderConfirmation(order);
-
-        return order;
-    }
-
-    @Transactional
-    @Override
-    public Order markAsReady(long orderId) {
-        final Order order = orderDao.getById(orderId).orElseThrow(OrderNotFoundException::new);
-        final OrderStatus orderStatus = order.getOrderStatus();
-        if (orderStatus != OrderStatus.CONFIRMED) {
-            LOGGER.error("Attempted to mark order with id {} as ready when the order is {}", orderId, orderStatus);
-            throw new IllegalStateException("Invalid order status");
-        }
-
-        order.setDateReady(LocalDateTime.now());
-
-        emailService.sendOrderReady(order);
-
-        return order;
-    }
-
-    @Transactional
-    @Override
-    public Order markAsDelivered(long orderId) {
-        final Order order = orderDao.getById(orderId).orElseThrow(OrderNotFoundException::new);
-        final OrderStatus orderStatus = order.getOrderStatus();
-        if (orderStatus != OrderStatus.READY) {
-            LOGGER.error("Attempted to mark order with id {} as delivered when the order is {}", orderId, orderStatus);
-            throw new IllegalStateException("Invalid order status");
-        }
-
-        order.setDateDelivered(LocalDateTime.now());
-
-        emailService.sendOrderDelivered(order);
-
-        return order;
-    }
-
-    @Transactional
-    @Override
-    public Order markAsCancelled(long orderId) {
-        final Order order = orderDao.getById(orderId).orElseThrow(OrderNotFoundException::new);
-        final OrderStatus orderStatus = order.getOrderStatus();
-        if (!orderStatus.isInProgress()) {
-            LOGGER.error("Attempted to cancel order with id {} when the order is already {}", orderId, orderStatus);
-            throw new IllegalStateException("Invalid order status");
-        }
-
-        order.setDateCancelled(LocalDateTime.now());
-
-        emailService.sendOrderCancelled(order);
-
-        return order;
     }
 
     @Transactional

@@ -19,13 +19,7 @@ public interface OrderService {
 
     PaginatedResult<Order> get(Long userId, Long restaurantId, OrderStatus orderStatus, boolean onlyInProgress, boolean descending, int pageNumber, int pageSize);
 
-    Order markAsConfirmed(long orderId);
-
-    Order markAsReady(long orderId);
-
-    Order markAsDelivered(long orderId);
-
-    Order markAsCancelled(long orderId);
+    Order advanceOrderStatus(long orderId, OrderStatus newStatus);
 
     Order create(OrderType orderType, Long restaurantId, String name, String email, Integer tableNumber, String address, List<OrderItem> items);
 

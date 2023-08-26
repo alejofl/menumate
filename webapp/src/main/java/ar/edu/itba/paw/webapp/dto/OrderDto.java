@@ -18,7 +18,7 @@ public class OrderDto {
     private LocalDateTime dateReady;
     private LocalDateTime dateDelivered;
     private LocalDateTime dateCancelled;
-    private String orderStatus;
+    private String status;
     private String address;
     private Integer tableNumber;
 
@@ -36,7 +36,7 @@ public class OrderDto {
         dto.dateReady = order.getDateReady();
         dto.dateDelivered = order.getDateDelivered();
         dto.dateCancelled = order.getDateCancelled();
-        dto.orderStatus = order.getOrderStatus().getMessageCode();
+        dto.status = order.getOrderStatus().getMessageCode();
         dto.address = order.getAddress();
         dto.tableNumber = order.getTableNumber();
 
@@ -108,12 +108,12 @@ public class OrderDto {
         this.dateCancelled = dateCancelled;
     }
 
-    public String getOrderStatus() {
-        return orderStatus;
+    public String getStatus() {
+        return status;
     }
 
-    public void setOrderStatus(String orderStatus) {
-        this.orderStatus = orderStatus;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getAddress() {

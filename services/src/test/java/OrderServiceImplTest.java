@@ -1,3 +1,4 @@
+import ar.edu.itba.paw.exception.InvalidUserArgumentException;
 import ar.edu.itba.paw.exception.OrderNotFoundException;
 import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.model.OrderStatus;
@@ -40,14 +41,14 @@ public class OrderServiceImplTest {
         Mockito.when(orderDao.getById(DEFAULT_ORDER_ID)).thenReturn(Optional.of(order));
         Mockito.when(order.getOrderStatus()).thenReturn(OrderStatus.PENDING);
 
-        final Order result = orderServiceImpl.markAsConfirmed(DEFAULT_ORDER_ID);
+        final Order result = orderServiceImpl.advanceOrderStatus(DEFAULT_ORDER_ID, OrderStatus.CONFIRMED);
         Assert.assertNotNull(result.getDateConfirmed());
     }
 
     @Test(expected = OrderNotFoundException.class)
     public void testMarkAsConfirmedInvalidOrder() {
         Mockito.when(orderDao.getById(DEFAULT_ORDER_ID)).thenReturn(Optional.empty());
-        orderServiceImpl.markAsConfirmed(DEFAULT_ORDER_ID);
+        orderServiceImpl.advanceOrderStatus(DEFAULT_ORDER_ID, OrderStatus.CONFIRMED);
     }
 
     @Test(expected = IllegalStateException.class)
@@ -56,7 +57,7 @@ public class OrderServiceImplTest {
         Mockito.when(orderDao.getById(DEFAULT_ORDER_ID)).thenReturn(Optional.of(order));
         Mockito.when(order.getOrderStatus()).thenReturn(OrderStatus.CONFIRMED);
 
-        orderServiceImpl.markAsConfirmed(DEFAULT_ORDER_ID);
+        orderServiceImpl.advanceOrderStatus(DEFAULT_ORDER_ID, OrderStatus.CONFIRMED);
     }
 
     @Test
@@ -66,14 +67,14 @@ public class OrderServiceImplTest {
         Mockito.when(orderDao.getById(DEFAULT_ORDER_ID)).thenReturn(Optional.of(order));
         Mockito.when(order.getOrderStatus()).thenReturn(OrderStatus.CONFIRMED);
 
-        final Order result = orderServiceImpl.markAsReady(DEFAULT_ORDER_ID);
+        final Order result = orderServiceImpl.advanceOrderStatus(DEFAULT_ORDER_ID, OrderStatus.READY);
         Assert.assertNotNull(result.getDateReady());
     }
 
     @Test(expected = OrderNotFoundException.class)
     public void testMarkAsReadyInvalidOrder() {
         Mockito.when(orderDao.getById(DEFAULT_ORDER_ID)).thenReturn(Optional.empty());
-        orderServiceImpl.markAsReady(DEFAULT_ORDER_ID);
+        orderServiceImpl.advanceOrderStatus(DEFAULT_ORDER_ID, OrderStatus.READY);
     }
 
     @Test(expected = IllegalStateException.class)
@@ -82,7 +83,7 @@ public class OrderServiceImplTest {
         Mockito.when(orderDao.getById(DEFAULT_ORDER_ID)).thenReturn(Optional.of(order));
         Mockito.when(order.getOrderStatus()).thenReturn(OrderStatus.READY);
 
-        orderServiceImpl.markAsReady(DEFAULT_ORDER_ID);
+        orderServiceImpl.advanceOrderStatus(DEFAULT_ORDER_ID, OrderStatus.READY);
     }
 
     @Test
@@ -92,14 +93,14 @@ public class OrderServiceImplTest {
         Mockito.when(orderDao.getById(DEFAULT_ORDER_ID)).thenReturn(Optional.of(order));
         Mockito.when(order.getOrderStatus()).thenReturn(OrderStatus.READY);
 
-        final Order result = orderServiceImpl.markAsDelivered(DEFAULT_ORDER_ID);
+        final Order result = orderServiceImpl.advanceOrderStatus(DEFAULT_ORDER_ID, OrderStatus.DELIVERED);
         Assert.assertNotNull(result.getDateDelivered());
     }
 
     @Test(expected = OrderNotFoundException.class)
     public void testMarkAsDeliveredInvalidOrder() {
         Mockito.when(orderDao.getById(DEFAULT_ORDER_ID)).thenReturn(Optional.empty());
-        orderServiceImpl.markAsDelivered(DEFAULT_ORDER_ID);
+        orderServiceImpl.advanceOrderStatus(DEFAULT_ORDER_ID, OrderStatus.DELIVERED);
     }
 
     @Test(expected = IllegalStateException.class)
@@ -108,7 +109,7 @@ public class OrderServiceImplTest {
         Mockito.when(orderDao.getById(DEFAULT_ORDER_ID)).thenReturn(Optional.of(order));
         Mockito.when(order.getOrderStatus()).thenReturn(OrderStatus.DELIVERED);
 
-        orderServiceImpl.markAsDelivered(DEFAULT_ORDER_ID);
+        orderServiceImpl.advanceOrderStatus(DEFAULT_ORDER_ID, OrderStatus.DELIVERED);
     }
 
     @Test
@@ -118,7 +119,7 @@ public class OrderServiceImplTest {
         Mockito.when(orderDao.getById(DEFAULT_ORDER_ID)).thenReturn(Optional.of(order));
         Mockito.when(order.getOrderStatus()).thenReturn(OrderStatus.CONFIRMED);
 
-        final Order result = orderServiceImpl.markAsCancelled(DEFAULT_ORDER_ID);
+        final Order result = orderServiceImpl.advanceOrderStatus(DEFAULT_ORDER_ID, OrderStatus.CANCELLED);
         Assert.assertNotNull(result.getDateCancelled());
     }
 
@@ -129,41 +130,41 @@ public class OrderServiceImplTest {
         Mockito.when(orderDao.getById(DEFAULT_ORDER_ID)).thenReturn(Optional.of(order));
         Mockito.when(order.getOrderStatus()).thenReturn(OrderStatus.PENDING);
 
-        final Order result = orderServiceImpl.markAsCancelled(DEFAULT_ORDER_ID);
+        final Order result = orderServiceImpl.advanceOrderStatus(DEFAULT_ORDER_ID, OrderStatus.REJECTED);
         Assert.assertNotNull(result.getDateCancelled());
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = InvalidUserArgumentException.class)
     public void testCantCancelDeliveredOrder() {
         final Order order = Mockito.mock(Order.class);
         Mockito.when(orderDao.getById(DEFAULT_ORDER_ID)).thenReturn(Optional.of(order));
         Mockito.when(order.getOrderStatus()).thenReturn(OrderStatus.DELIVERED);
 
-        orderServiceImpl.markAsCancelled(DEFAULT_ORDER_ID);
+        orderServiceImpl.advanceOrderStatus(DEFAULT_ORDER_ID, OrderStatus.CANCELLED);
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = InvalidUserArgumentException.class)
     public void testCantCancelAlreadyCancelledOrder() {
         final Order order = Mockito.mock(Order.class);
         Mockito.when(orderDao.getById(DEFAULT_ORDER_ID)).thenReturn(Optional.of(order));
         Mockito.when(order.getOrderStatus()).thenReturn(OrderStatus.CANCELLED);
 
-        orderServiceImpl.markAsCancelled(DEFAULT_ORDER_ID);
+        orderServiceImpl.advanceOrderStatus(DEFAULT_ORDER_ID, OrderStatus.CANCELLED);
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = InvalidUserArgumentException.class)
     public void testCantCancelRejectedOrder() {
         final Order order = Mockito.mock(Order.class);
         Mockito.when(orderDao.getById(DEFAULT_ORDER_ID)).thenReturn(Optional.of(order));
         Mockito.when(order.getOrderStatus()).thenReturn(OrderStatus.REJECTED);
 
-        orderServiceImpl.markAsCancelled(DEFAULT_ORDER_ID);
+        orderServiceImpl.advanceOrderStatus(DEFAULT_ORDER_ID, OrderStatus.CANCELLED);
     }
 
     @Test(expected = OrderNotFoundException.class)
     public void testMarkAsCancelledInvalidOrder() {
         Mockito.when(orderDao.getById(DEFAULT_ORDER_ID)).thenReturn(Optional.empty());
-        orderServiceImpl.markAsCancelled(DEFAULT_ORDER_ID);
+        orderServiceImpl.advanceOrderStatus(DEFAULT_ORDER_ID, OrderStatus.CANCELLED);
     }
 
     @Test
@@ -350,7 +351,7 @@ public class OrderServiceImplTest {
 
         orderServiceImpl.updateTableNumber(DEFAULT_ORDER_ID, DEFAULT_TABLE_NUMBER);
 
-        Assert.assertEquals(DEFAULT_TABLE_NUMBER, order.getTableNumber());
+        Assert.assertEquals(DEFAULT_TABLE_NUMBER, order.getTableNumber().intValue());
     }
 
     @Test(expected = IllegalStateException.class)

@@ -95,6 +95,8 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/orders").authenticated() // Checked with @PreAuthorize
                 .antMatchers(HttpMethod.POST, "/orders").permitAll()
                 .antMatchers(HttpMethod.GET, "/orders/{orderId:\\d+}").access("@accessValidator.checkOrderOwnerOrHandler(#orderId)")
+                .antMatchers(HttpMethod.GET, "/orders/{orderId:\\d+}/items").access("@accessValidator.checkOrderOwnerOrHandler(#orderId)")
+                .antMatchers(HttpMethod.PATCH, "/orders/{orderId:\\d+}").access("@accessValidator.checkOrderHandler(#orderId)")
 
                 .antMatchers(HttpMethod.GET, "/reviews").permitAll()
                 .antMatchers(HttpMethod.GET, "/reviews/{orderId:\\d+}/**").permitAll()

@@ -10,6 +10,7 @@ import ar.edu.itba.paw.webapp.dto.OrderDto;
 import ar.edu.itba.paw.webapp.dto.OrderItemDto;
 import ar.edu.itba.paw.webapp.form.CheckoutForm;
 import ar.edu.itba.paw.webapp.form.GetOrdersForm;
+import ar.edu.itba.paw.webapp.form.UpdateOrderStatusForm;
 import ar.edu.itba.paw.webapp.utils.ControllerUtils;
 import ar.edu.itba.paw.webapp.utils.UriUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +64,17 @@ public class OrderController {
     public Response getOrderById(@PathParam("orderId") final long orderId) {
         final Order order = orderService.getById(orderId).orElseThrow(OrderNotFoundException::new);
         return Response.ok(OrderDto.fromOrder(uriInfo, order)).build();
+    }
+
+    @PATCH
+    @Path("/{orderId:\\d+}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response updateOrderStatus(
+            @PathParam("orderId") final long orderId,
+            @Valid @NotNull final UpdateOrderStatusForm updateOrderStatusForm
+    ) {
+        orderService.advanceOrderStatus(orderId, updateOrderStatusForm.getStatusAsEnum());
+        return Response.ok().build();
     }
 
     @GET

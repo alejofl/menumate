@@ -164,8 +164,8 @@ public class Order {
         return address;
     }
 
-    public int getTableNumber() {
-        return (tableNumber == null) ? 0 : tableNumber;
+    public Integer getTableNumber() {
+        return tableNumber;
     }
 
     public BigDecimal getPrice() {
