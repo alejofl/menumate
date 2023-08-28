@@ -51,7 +51,7 @@ public class OrderServiceImplTest {
         orderServiceImpl.advanceOrderStatus(DEFAULT_ORDER_ID, OrderStatus.CONFIRMED);
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = InvalidUserArgumentException.class)
     public void testMarkAsConfirmedAlreadyConfirmedOrder() {
         final Order order = Mockito.mock(Order.class);
         Mockito.when(orderDao.getById(DEFAULT_ORDER_ID)).thenReturn(Optional.of(order));
@@ -77,7 +77,7 @@ public class OrderServiceImplTest {
         orderServiceImpl.advanceOrderStatus(DEFAULT_ORDER_ID, OrderStatus.READY);
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = InvalidUserArgumentException.class)
     public void testMarkAsReadyAlreadyReadyOrder() {
         final Order order = Mockito.mock(Order.class);
         Mockito.when(orderDao.getById(DEFAULT_ORDER_ID)).thenReturn(Optional.of(order));
@@ -103,7 +103,7 @@ public class OrderServiceImplTest {
         orderServiceImpl.advanceOrderStatus(DEFAULT_ORDER_ID, OrderStatus.DELIVERED);
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = InvalidUserArgumentException.class)
     public void testMarkAsDeliveredAlreadyDeliveredOrder() {
         final Order order = Mockito.mock(Order.class);
         Mockito.when(orderDao.getById(DEFAULT_ORDER_ID)).thenReturn(Optional.of(order));

@@ -23,7 +23,7 @@ public final class UserConstants {
     public static final String PREFERRED_LANGUAGE = "en";
     public static final int ADDRESSES_COUNT = 3;
     public static final String LAST_USED_ADDRESS = "address1";
-    public static final long LAST_USED_ADDRESS_ID = 0;
+    public static final long LAST_USED_ADDRESS_ID = 99990;
     public static final String LAST_USED_ADDRESS_NAME = "home";
     public static final String PREVIOUS_USED_ADDRESS = "address2";
     public static final String TOKEN1 = "8ac27000-c568-4070-b6da-1a80478c";

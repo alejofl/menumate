@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.exception.InvalidUserArgumentException;
 import ar.edu.itba.paw.exception.UserAddressNotFoundException;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.persistence.config.TestConfig;
@@ -129,12 +130,20 @@ public class UserJpaDaoTest {
         Assert.assertEquals(UserConstants.ADDRESSES_COUNT + 1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "user_addresses", "user_id=" + UserConstants.ACTIVE_USER_ID));
     }
 
+    @Test(expected = InvalidUserArgumentException.class)
+    @Rollback
+    public void testRegisterExistingUserAddressWithOtherName() {
+        userDao.registerAddress(UserConstants.ACTIVE_USER_ID, UserConstants.LAST_USED_ADDRESS, NON_EXISTENT_NAME);
+
+        em.flush();
+        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "user_addresses", "user_id=" + UserConstants.ACTIVE_USER_ID + " AND address='" + UserConstants.LAST_USED_ADDRESS + "' AND name='" + NON_EXISTENT_NAME + "'"));
+    }
+
     @Test
     @Rollback
     public void testUpdateExistingUserAddressWithOtherName() {
-        userDao.registerAddress(UserConstants.ACTIVE_USER_ID, UserConstants.LAST_USED_ADDRESS, NON_EXISTENT_NAME);
+        userDao.updateAddress(UserConstants.ACTIVE_USER_ID, UserConstants.LAST_USED_ADDRESS_ID, UserConstants.LAST_USED_ADDRESS, NON_EXISTENT_NAME);
 
-        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "user_addresses", "user_id=" + UserConstants.ACTIVE_USER_ID + " AND address='" + UserConstants.LAST_USED_ADDRESS + "' AND name='" + UserConstants.LAST_USED_ADDRESS_NAME + "'"));
         em.flush();
         Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "user_addresses", "user_id=" + UserConstants.ACTIVE_USER_ID + " AND address='" + UserConstants.LAST_USED_ADDRESS + "' AND name='" + NON_EXISTENT_NAME + "'"));
     }

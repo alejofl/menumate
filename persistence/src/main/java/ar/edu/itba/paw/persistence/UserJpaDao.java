@@ -91,7 +91,7 @@ public class UserJpaDao implements UserDao {
                 String constraintName = c.getConstraintName();
                 String problematicParam = constraintName == null ? null :
                         constraintName.contains("user_id_address") ? "address" :
-                                constraintName.contains("user_id_name") ? "name" : null;
+                                constraintName.contains("user_id_name") ? "name" : "address or name";
 
                 LOGGER.warn("Failed to register address for user id {} due to constraint violation on {}", userId, problematicParam == null ? "unknown field" : problematicParam, e);
                 if (problematicParam != null)

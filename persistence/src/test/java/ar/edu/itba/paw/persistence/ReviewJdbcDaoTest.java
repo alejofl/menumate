@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.exception.InvalidUserArgumentException;
+import ar.edu.itba.paw.exception.ReviewNotFoundException;
 import ar.edu.itba.paw.model.Review;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import ar.edu.itba.paw.persistence.constants.OrderConstants;
@@ -21,7 +23,6 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 import java.time.LocalDateTime;
@@ -62,7 +63,7 @@ public class ReviewJdbcDaoTest {
         Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "order_reviews", "order_id = " + OrderConstants.ORDER_ID_WITH_NO_REVIEW));
     }
 
-    @Test
+    @Test(expected = InvalidUserArgumentException.class)
     @Rollback
     public void testCreateWhenExisting() {
         reviewDao.create(
@@ -71,7 +72,6 @@ public class ReviewJdbcDaoTest {
                 null
         );
         em.flush();
-        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "order_reviews", "order_id = " + OrderConstants.ORDER_IDS_RESTAURANT_0[0]));
     }
 
     @Test
@@ -187,7 +187,7 @@ public class ReviewJdbcDaoTest {
         Assert.assertEquals((averageList.get(value) + averageList.get(value + 1)) / 2f, ac.getAverage(), 0.01);
     }
 
-    @Test(expected = EntityNotFoundException.class)
+    @Test(expected = ReviewNotFoundException.class)
     public void testDeleteWhenNone() {
         reviewDao.delete(OrderConstants.ORDER_ID_WITH_NO_REVIEW);
     }

@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.exception.UserRoleNotFoundException;
 import ar.edu.itba.paw.model.UserRole;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import ar.edu.itba.paw.persistence.constants.UserConstants;
@@ -16,7 +17,6 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.sql.DataSource;
@@ -62,14 +62,14 @@ public class UserRolesJpaDaoTest {
         em.flush();
     }
 
-    @Test
+    @Test(expected = UserRoleNotFoundException.class)
     public void testDeleteThrowsWhenNonExistingRole() {
-        Assert.assertThrows(EntityNotFoundException.class, () -> rolesDao.delete(UserConstants.ACTIVE_USER_ID));
+        rolesDao.delete(UserConstants.ACTIVE_USER_ID);
     }
 
-    @Test
+    @Test(expected = UserRoleNotFoundException.class)
     public void testDeleteThrowsWhenNonExistingUser() {
-        Assert.assertThrows(EntityNotFoundException.class, () -> rolesDao.delete(USER_ID_NONE));
+        rolesDao.delete(USER_ID_NONE);
     }
 
     @Test

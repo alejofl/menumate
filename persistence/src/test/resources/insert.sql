@@ -24,9 +24,9 @@ VALUES (2000, '8ac27001-d605-4190-abcd-1a80478c', CURRENT_TIMESTAMP + INTERVAL '
 
 -- Addresses for user 420
 INSERT INTO user_addresses(address_id, user_id, address, name, last_used)
-VALUES (0, 420, 'address1', 'home', now()),
-       (1, 420, 'address2', 'work', CURRENT_TIMESTAMP - INTERVAL '1' DAY),
-       (2, 420, 'address3', 'university', CURRENT_TIMESTAMP - INTERVAL '1' DAY);
+VALUES (99990, 420, 'address1', 'home', now()),
+       (99991, 420, 'address2', 'work', CURRENT_TIMESTAMP - INTERVAL '1' DAY),
+       (99992, 420, 'address3', 'university', CURRENT_TIMESTAMP - INTERVAL '1' DAY);
 
 -- Restaurants for user 1500
 INSERT INTO restaurants (restaurant_id, name, email, max_tables, specialty, owner_user_id, address, description,
