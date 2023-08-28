@@ -22,7 +22,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.List;
 
-@Path("restaurants/{restaurantId:\\d+}/employees")
+@Path(UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/employees")
 @Component
 public class RestaurantEmployeeController {
     private final RestaurantRoleService restaurantRoleService;

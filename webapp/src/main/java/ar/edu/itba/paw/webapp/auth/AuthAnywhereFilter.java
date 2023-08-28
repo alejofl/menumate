@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.auth;
 
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.service.UserService;
+import ar.edu.itba.paw.webapp.utils.UriUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -63,7 +64,7 @@ public class AuthAnywhereFilter extends OncePerRequestFilter {
                 response.setHeader("Token", jwtTokenUtil.generateAccessToken(user));
 
                 String userUrl = ServletUriComponentsBuilder.fromContextPath(request)
-                        .replacePath("users/")
+                        .replacePath(UriUtils.USERS_URL + "/")
                         .path(String.valueOf(user.getUserId()))
                         .build().toString();
 

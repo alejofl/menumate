@@ -21,7 +21,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.List;
 
-@Path("reviews")
+@Path(UriUtils.REVIEWS_URL)
 @Component
 public class ReviewController {
 

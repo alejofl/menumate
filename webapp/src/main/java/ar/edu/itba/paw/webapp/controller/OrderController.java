@@ -23,7 +23,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.List;
 
-@Path("orders")
+@Path(UriUtils.ORDERS_URL)
 @Component
 public class OrderController {
 
