@@ -7,11 +7,15 @@ import java.net.URI;
 
 public class HomeIndexDto {
     private URI restaurantsUrl;
+    private URI usersUrl;
+    private URI ordersUrl;
     private URI reviewsUrl;
 
     public static HomeIndexDto from(final UriInfo uriInfo) {
         final HomeIndexDto dto = new HomeIndexDto();
         dto.restaurantsUrl = UriUtils.getRestaurantsUri(uriInfo);
+        dto.usersUrl = UriUtils.getUsersUri(uriInfo);
+        dto.ordersUrl = UriUtils.getOrdersUri(uriInfo);
         dto.reviewsUrl = UriUtils.getReviewsUri(uriInfo);
 
         return dto;
@@ -23,6 +27,22 @@ public class HomeIndexDto {
 
     public void setRestaurantsUrl(URI restaurantsUrl) {
         this.restaurantsUrl = restaurantsUrl;
+    }
+
+    public URI getUsersUrl() {
+        return usersUrl;
+    }
+
+    public void setUsersUrl(URI usersUrl) {
+        this.usersUrl = usersUrl;
+    }
+
+    public URI getOrdersUrl() {
+        return ordersUrl;
+    }
+
+    public void setOrdersUrl(URI ordersUrl) {
+        this.ordersUrl = ordersUrl;
     }
 
     public URI getReviewsUrl() {

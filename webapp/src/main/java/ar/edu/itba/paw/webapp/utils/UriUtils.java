@@ -23,6 +23,14 @@ public final class UriUtils {
         return uriInfo.getBaseUriBuilder().path(RESTAURANTS_URL).build();
     }
 
+    public static URI getUsersUri(final UriInfo uriInfo) {
+        return uriInfo.getBaseUriBuilder().path(USERS_URL).build();
+    }
+
+    public static URI getOrdersUri(final UriInfo uriInfo) {
+        return uriInfo.getBaseUriBuilder().path(ORDERS_URL).build();
+    }
+
     public static URI getReviewsUri(final UriInfo uriInfo) {
         return uriInfo.getBaseUriBuilder().path(REVIEWS_URL).build();
     }
