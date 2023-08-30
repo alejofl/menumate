@@ -129,13 +129,11 @@ public class UserController {
     @PUT
     @Path("verification-tokens/{token}")
     public Response verificationToken(@PathParam("token") final String token) {
-        final Optional<User> user = userService.verifyUserAndDeleteVerificationToken(token);
-        if (!user.isPresent())
-            return Response.status(Response.Status.NOT_FOUND).build();
+        final User user = userService.verifyUserAndDeleteVerificationToken(token).orElseThrow(UserNotFoundException::new);
 
-        final String userUrl = UriUtils.getUserUri(uriInfo, user.get().getUserId()).toString();
+        final String userUrl = UriUtils.getUserUri(uriInfo, user.getUserId()).toString();
         return Response.noContent()
-                .header("Token", jwtTokenUtil.generateAccessToken(user.get()))
+                .header("Token", jwtTokenUtil.generateAccessToken(user))
                 .header("MenuMate-UserUrl", userUrl)
                 .build();
     }

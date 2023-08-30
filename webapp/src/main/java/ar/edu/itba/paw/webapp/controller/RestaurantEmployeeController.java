@@ -73,7 +73,7 @@ public class RestaurantEmployeeController {
             @Valid @NotNull final UpdateRestaurantEmployeeForm updateRestaurantEmployeeForm
     ) {
         restaurantRoleService.updateRole(userId, restaurantId, updateRestaurantEmployeeForm.getRoleAsEnum());
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @DELETE
@@ -83,6 +83,6 @@ public class RestaurantEmployeeController {
             @PathParam("userId") final long userId
     ) {
         restaurantRoleService.deleteRole(userId, restaurantId);
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 }

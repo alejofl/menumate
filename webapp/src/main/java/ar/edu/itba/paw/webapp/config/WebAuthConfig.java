@@ -4,6 +4,7 @@ import ar.edu.itba.paw.webapp.auth.AccessValidator;
 import ar.edu.itba.paw.webapp.auth.AuthAnywhereFilter;
 import ar.edu.itba.paw.webapp.auth.JwtTokenFilter;
 import ar.edu.itba.paw.webapp.auth.JwtTokenUtil;
+import ar.edu.itba.paw.webapp.utils.UriUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -65,44 +66,47 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
                 .and().authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/images/{imageId:\\d+}").permitAll()
+                .antMatchers(HttpMethod.GET, UriUtils.IMAGES_URL + "/{imageId:\\d+}").permitAll()
 
-                .antMatchers(HttpMethod.GET, "/restaurants").permitAll() // Checked with @PreAuthorize
-                .antMatchers(HttpMethod.GET, "/restaurants/{restaurantId:\\d+}").permitAll()
-                .antMatchers(HttpMethod.PUT, "/restaurants/{restaurantId:\\d+}").access("@accessValidator.checkRestaurantAdmin(#restaurantId)")
-                .antMatchers(HttpMethod.DELETE, "/restaurants/{restaurantId:\\d+}").access("hasRole('MODERATOR') or @accessValidator.checkRestaurantOwner(#restaurantId)")
+                .antMatchers(HttpMethod.GET, UriUtils.RESTAURANTS_URL).permitAll() // Checked with @PreAuthorize
+                .antMatchers(HttpMethod.GET, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}").permitAll()
+                .antMatchers(HttpMethod.PUT, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}").access("@accessValidator.checkRestaurantAdmin(#restaurantId)")
+                .antMatchers(HttpMethod.DELETE, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}").access("hasRole('MODERATOR') or @accessValidator.checkRestaurantOwner(#restaurantId)")
 
-                .antMatchers(HttpMethod.GET, "/restaurants/{restaurantId:\\d+}").permitAll()
-                .antMatchers(HttpMethod.GET, "/restaurants/{restaurantId:\\d+}/categories").permitAll()
-                .antMatchers(HttpMethod.GET, "/restaurants/{restaurantId:\\d+}/categories/{categoryId:\\d+}").permitAll()
-                .antMatchers(HttpMethod.GET, "/restaurants/{restaurantId:\\d+}/categories/{categoryId:\\d+}/products").permitAll()
-                .antMatchers(HttpMethod.GET, "/restaurants/{restaurantId:\\d+}/categories/{categoryId:\\d+}/products/{productId:\\d+}").permitAll()
+                .antMatchers(HttpMethod.GET, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}").permitAll()
+                .antMatchers(HttpMethod.GET, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/categories").permitAll()
+                .antMatchers(HttpMethod.GET, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/categories/{categoryId:\\d+}").permitAll()
+                .antMatchers(HttpMethod.GET, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/categories/{categoryId:\\d+}/products").permitAll()
+                .antMatchers(HttpMethod.GET, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/categories/{categoryId:\\d+}/products/{productId:\\d+}").permitAll()
 
-                .antMatchers(HttpMethod.GET, "/restaurants/{restaurantId:\\d+}/employees").access("hasRole('MODERATOR') or @accessValidator.checkRestaurantOwner(#restaurantId)")
-                .antMatchers(HttpMethod.POST, "/restaurants/{restaurantId:\\d+}/employees").access("@accessValidator.checkRestaurantOwner(#restaurantId)")
-                .antMatchers(HttpMethod.GET, "/restaurants/{restaurantId:\\d+}/employees/{userId:\\d+}").access("hasRole('MODERATOR') or @accessValidator.checkRestaurantOwner(#restaurantId)")
-                .antMatchers(HttpMethod.PUT, "/restaurants/{restaurantId:\\d+}/employees/{userId:\\d+}").access("@accessValidator.checkRestaurantOwner(#restaurantId)")
-                .antMatchers(HttpMethod.DELETE, "/restaurants/{restaurantId:\\d+}/employees/{userId:\\d+}").access("hasRole('MODERATOR') or @accessValidator.checkRestaurantOwner(#restaurantId)")
+                .antMatchers(HttpMethod.GET, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/employees").access("hasRole('MODERATOR') or @accessValidator.checkRestaurantOwner(#restaurantId)")
+                .antMatchers(HttpMethod.POST, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/employees").access("@accessValidator.checkRestaurantOwner(#restaurantId)")
+                .antMatchers(HttpMethod.GET, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/employees/{userId:\\d+}").access("hasRole('MODERATOR') or @accessValidator.checkRestaurantOwner(#restaurantId)")
+                .antMatchers(HttpMethod.PUT, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/employees/{userId:\\d+}").access("@accessValidator.checkRestaurantOwner(#restaurantId)")
+                .antMatchers(HttpMethod.DELETE, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/employees/{userId:\\d+}").access("hasRole('MODERATOR') or @accessValidator.checkRestaurantOwner(#restaurantId)")
 
-                .antMatchers(HttpMethod.POST, "/users").permitAll()
-                .antMatchers(HttpMethod.GET, "/users/{userId:\\d+}").permitAll()
-                .antMatchers("/users/{userId:\\d+}/**").access("@accessValidator.checkIsUser(#userId)")
-                .antMatchers("/users/verification-tokens/**").permitAll()
-                .antMatchers("/users/resetpassword-tokens/**").permitAll()
-                .antMatchers(HttpMethod.GET, "/users/{userId:\\d+}/addresses").access("@accessValidator.checkIsUser(#userId)")
-                .antMatchers(HttpMethod.PATCH, "/users/{userId:\\d+}/addresses").access("@accessValidator.checkIsUser(#userId)")
+                .antMatchers(HttpMethod.POST, UriUtils.USERS_URL).permitAll()
+                .antMatchers(HttpMethod.GET, UriUtils.USERS_URL + "/{userId:\\d+}").permitAll()
+                .antMatchers(UriUtils.USERS_URL + "/{userId:\\d+}/**").access("@accessValidator.checkIsUser(#userId)")
+                .antMatchers(UriUtils.USERS_URL + "/verification-tokens/**").permitAll()
+                .antMatchers(UriUtils.USERS_URL + "/resetpassword-tokens/**").permitAll()
+                .antMatchers(HttpMethod.GET, UriUtils.USERS_URL + "/{userId:\\d+}/addresses").access("@accessValidator.checkIsUser(#userId)")
+                .antMatchers(HttpMethod.POST, UriUtils.USERS_URL + "/{userId:\\d+}/addresses").access("@accessValidator.checkIsUser(#userId)")
+                .antMatchers(HttpMethod.GET, UriUtils.USERS_URL + "/{userId:\\d+}/addresses/{addressId:\\d+}").access("@accessValidator.checkIsUser(#userId)")
+                .antMatchers(HttpMethod.PATCH, UriUtils.USERS_URL + "/{userId:\\d+}/addresses/{addressId:\\d+}").access("@accessValidator.checkIsUser(#userId)")
+                .antMatchers(HttpMethod.DELETE, UriUtils.USERS_URL + "/{userId:\\d+}/addresses/{addressId:\\d+}").access("@accessValidator.checkIsUser(#userId)")
 
-                .antMatchers(HttpMethod.GET, "/orders").authenticated() // Checked with @PreAuthorize
-                .antMatchers(HttpMethod.POST, "/orders").permitAll()
-                .antMatchers(HttpMethod.GET, "/orders/{orderId:\\d+}").access("@accessValidator.checkOrderOwnerOrHandler(#orderId)")
-                .antMatchers(HttpMethod.GET, "/orders/{orderId:\\d+}/items").access("@accessValidator.checkOrderOwnerOrHandler(#orderId)")
-                .antMatchers(HttpMethod.PATCH, "/orders/{orderId:\\d+}").access("@accessValidator.checkOrderHandler(#orderId)")
+                .antMatchers(HttpMethod.GET, UriUtils.ORDERS_URL).authenticated() // Checked with @PreAuthorize
+                .antMatchers(HttpMethod.POST, UriUtils.ORDERS_URL).permitAll()
+                .antMatchers(HttpMethod.GET, UriUtils.ORDERS_URL + "/{orderId:\\d+}").access("@accessValidator.checkOrderOwnerOrHandler(#orderId)")
+                .antMatchers(HttpMethod.GET, UriUtils.ORDERS_URL + "/{orderId:\\d+}/items").access("@accessValidator.checkOrderOwnerOrHandler(#orderId)")
+                .antMatchers(HttpMethod.PATCH, UriUtils.ORDERS_URL + "/{orderId:\\d+}").access("@accessValidator.checkOrderHandler(#orderId)")
 
-                .antMatchers(HttpMethod.GET, "/reviews").permitAll()
-                .antMatchers(HttpMethod.GET, "/reviews/{orderId:\\d+}/**").permitAll()
-                .antMatchers(HttpMethod.POST, "/reviews").authenticated() // Checked with @PreAuthorize
-                .antMatchers(HttpMethod.PATCH, "/reviews/{orderId:\\d+}").access("@accessValidator.checkOrderHandler(#orderId)")
-                .antMatchers(HttpMethod.DELETE, "/reviews/{orderId:\\d+}").access("@accessValidator.checkOrderOwner(#orderId)")
+                .antMatchers(HttpMethod.GET, UriUtils.REVIEWS_URL).permitAll()
+                .antMatchers(HttpMethod.GET, UriUtils.REVIEWS_URL + "/{orderId:\\d+}/**").permitAll()
+                .antMatchers(HttpMethod.POST, UriUtils.REVIEWS_URL).authenticated() // Checked with @PreAuthorize
+                .antMatchers(HttpMethod.PATCH, UriUtils.REVIEWS_URL + "/{orderId:\\d+}").access("@accessValidator.checkOrderHandler(#orderId)")
+                .antMatchers(HttpMethod.DELETE, UriUtils.REVIEWS_URL + "/{orderId:\\d+}").access("@accessValidator.checkOrderOwner(#orderId)")
 
                 .antMatchers("/**").permitAll()
 

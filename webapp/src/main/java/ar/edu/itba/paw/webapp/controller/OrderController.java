@@ -74,7 +74,7 @@ public class OrderController {
             @Valid @NotNull final UpdateOrderStatusForm updateOrderStatusForm
     ) {
         orderService.advanceOrderStatus(orderId, updateOrderStatusForm.getStatusAsEnum());
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @GET
