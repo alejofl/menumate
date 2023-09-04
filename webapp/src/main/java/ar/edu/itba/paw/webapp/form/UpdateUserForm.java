@@ -7,16 +7,21 @@ import javax.validation.constraints.Size;
 
 public class UpdateUserForm {
 
-    @NotBlank
     @Size(min = 2, max = 48)
     private String name;
 
-    @NotBlank
     @Pattern(regexp = "es|en")
     private String preferredLanguage;
 
     public String getName() {
         return name;
+    }
+
+    public String getNameTrimmedOrNull() {
+        if (name == null)
+            return null;
+        String trimmed = name.trim();
+        return trimmed.isEmpty() ? null : trimmed;
     }
 
     public void setName(String name) {

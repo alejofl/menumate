@@ -51,14 +51,18 @@ public class UserController {
         return Response.created(UriUtils.getUserUri(uriInfo, user.getUserId())).build();
     }
 
-    @PUT
+    @PATCH
     @Path("/{userId:\\d+}")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateUser(
             @PathParam("userId") final long userId,
             @Valid @NotNull final UpdateUserForm updateUserForm
     ) {
-        userService.updateUser(userId, updateUserForm.getName(), updateUserForm.getPreferredLanguage());
+        userService.updateUser(
+                userId,
+                updateUserForm.getNameTrimmedOrNull(),
+                updateUserForm.getPreferredLanguage()
+        );
         return Response.noContent().build();
     }
 

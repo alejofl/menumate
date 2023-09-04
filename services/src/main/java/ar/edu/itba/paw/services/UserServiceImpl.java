@@ -116,9 +116,11 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public User updateUser(long userId, String name, String preferredLanguage) {
-        User user = userDao.getById(userId).orElseThrow(UserNotFoundException::new);
-        user.setName(name);
-        user.setPreferredLanguage(preferredLanguage);
+        final User user = userDao.getById(userId).orElseThrow(UserNotFoundException::new);
+        if (name != null)
+            user.setName(name);
+        if (preferredLanguage != null)
+            user.setPreferredLanguage(preferredLanguage);
         return user;
     }
 
