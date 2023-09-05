@@ -5,10 +5,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-public class CreateReviewForm {
-
-    @NotNull
-    private Long orderId;
+public class PutReviewForm {
 
     @NotNull
     @Min(0)
@@ -17,14 +14,6 @@ public class CreateReviewForm {
 
     @Size(max = 500)
     private String comment;
-
-    public Long getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(Long orderId) {
-        this.orderId = orderId;
-    }
 
     public Integer getRating() {
         return rating;
@@ -38,8 +27,11 @@ public class CreateReviewForm {
         return comment;
     }
 
-    public String getCommentOrNull() {
-        return (comment == null || comment.trim().isEmpty()) ? null : comment;
+    public String getCommentTrimmedOrNull() {
+        if (comment == null)
+            return null;
+        final String trimmed = comment.trim();
+        return trimmed.isEmpty() ? null : trimmed;
     }
 
     public void setComment(String comment) {

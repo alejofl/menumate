@@ -103,8 +103,9 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.PATCH, UriUtils.ORDERS_URL + "/{orderId:\\d+}").access("@accessValidator.checkOrderHandler(#orderId)")
 
                 .antMatchers(HttpMethod.GET, UriUtils.REVIEWS_URL).permitAll()
-                .antMatchers(HttpMethod.GET, UriUtils.REVIEWS_URL + "/{orderId:\\d+}/**").permitAll()
+                .antMatchers(HttpMethod.GET, UriUtils.REVIEWS_URL + "/{orderId:\\d+}").permitAll()
                 .antMatchers(HttpMethod.POST, UriUtils.REVIEWS_URL).authenticated() // Checked with @PreAuthorize
+                .antMatchers(HttpMethod.PUT, UriUtils.REVIEWS_URL + "/{orderId:\\d+}").access("@accessValidator.checkOrderOwner(#orderId)")
                 .antMatchers(HttpMethod.PATCH, UriUtils.REVIEWS_URL + "/{orderId:\\d+}").access("@accessValidator.checkOrderHandler(#orderId)")
                 .antMatchers(HttpMethod.DELETE, UriUtils.REVIEWS_URL + "/{orderId:\\d+}").access("@accessValidator.checkOrderOwner(#orderId)")
 

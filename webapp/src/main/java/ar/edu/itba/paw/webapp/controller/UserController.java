@@ -18,7 +18,6 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.List;
-import java.util.Optional;
 
 @Path(UriUtils.USERS_URL)
 @Component

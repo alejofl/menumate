@@ -1,7 +1,5 @@
 package ar.edu.itba.paw.webapp.form;
 
-import org.hibernate.validator.constraints.NotBlank;
-
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -20,7 +18,7 @@ public class UpdateUserForm {
     public String getNameTrimmedOrNull() {
         if (name == null)
             return null;
-        String trimmed = name.trim();
+        final String trimmed = name.trim();
         return trimmed.isEmpty() ? null : trimmed;
     }
 

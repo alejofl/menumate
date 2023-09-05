@@ -6,8 +6,9 @@ import ar.edu.itba.paw.service.ReviewService;
 import ar.edu.itba.paw.util.PaginatedResult;
 import ar.edu.itba.paw.webapp.auth.AccessValidator;
 import ar.edu.itba.paw.webapp.dto.ReviewDto;
-import ar.edu.itba.paw.webapp.form.CreateReviewForm;
+import ar.edu.itba.paw.webapp.form.PostReviewForm;
 import ar.edu.itba.paw.webapp.form.GetReviewsForm;
+import ar.edu.itba.paw.webapp.form.PutReviewForm;
 import ar.edu.itba.paw.webapp.form.ReviewReplyForm;
 import ar.edu.itba.paw.webapp.utils.ControllerUtils;
 import ar.edu.itba.paw.webapp.utils.UriUtils;
@@ -55,15 +56,26 @@ public class ReviewController {
     @Path("/{orderId:\\d+}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getReviewById(@PathParam("orderId") final long orderId) {
-        Review review = reviewService.getByOrder(orderId).orElseThrow(ReviewNotFoundException::new);
+        final Review review = reviewService.getByOrder(orderId).orElseThrow(ReviewNotFoundException::new);
         return Response.ok(ReviewDto.fromReview(uriInfo, review)).build();
     }
 
     @POST
-    @PreAuthorize("@accessValidator.checkOrderOwner(#createReviewForm.orderId)")
+    @PreAuthorize("@accessValidator.checkOrderOwner(#reviewForm.orderId)")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createReview(@Valid @NotNull final CreateReviewForm createReviewForm) {
-        final Review review = reviewService.create(createReviewForm.getOrderId(), createReviewForm.getRating(), createReviewForm.getCommentOrNull());
+    public Response postReview(@Valid @NotNull final PostReviewForm reviewForm) {
+        final Review review = reviewService.create(reviewForm.getOrderId(), reviewForm.getRating(), reviewForm.getCommentTrimmedOrNull());
+        return Response.created(UriUtils.getReviewUri(uriInfo, review.getOrderId())).build();
+    }
+
+    @PUT
+    @Path("/{orderId:\\d+}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response putReview(
+            @PathParam("orderId") final long orderId,
+            @Valid @NotNull final PutReviewForm reviewForm
+    ) {
+        final Review review = reviewService.create(orderId, reviewForm.getRating(), reviewForm.getCommentTrimmedOrNull());
         return Response.created(UriUtils.getReviewUri(uriInfo, review.getOrderId())).build();
     }
 

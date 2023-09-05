@@ -18,8 +18,10 @@ public class AddUserAddressForm {
     }
 
     public String getAddressTrimmedOrNull() {
-        String trimmed = address == null ? null : address.trim();
-        return trimmed == null || trimmed.isEmpty() ? null : trimmed;
+        if (address == null)
+            return null;
+        final String trimmed = address.trim();
+        return trimmed.isEmpty() ? null : trimmed;
     }
 
     public void setAddress(String address) {

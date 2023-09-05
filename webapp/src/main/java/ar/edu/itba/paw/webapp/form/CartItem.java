@@ -41,7 +41,7 @@ public class CartItem {
     public String getCommentTrimmedOrNull() {
         if (comment == null)
             return null;
-        String trimmed = comment.trim();
+        final String trimmed = comment.trim();
         return trimmed.isEmpty() ? null : trimmed;
     }
 
