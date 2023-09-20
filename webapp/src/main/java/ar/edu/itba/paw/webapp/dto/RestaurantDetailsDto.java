@@ -21,6 +21,7 @@ public class RestaurantDetailsDto extends RestaurantDto {
 
         return dto;
     }
+
     public static List<RestaurantDetailsDto> fromRestaurantDetailsCollection(final UriInfo uriInfo, final Collection<RestaurantDetails> restaurantDetails) {
         return restaurantDetails.stream().map(r -> fromRestaurantDetails(uriInfo, r)).collect(Collectors.toList());
     }

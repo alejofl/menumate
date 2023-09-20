@@ -42,6 +42,16 @@ public class Product {
 
     }
 
+    public Product(Category category, String name, String description, Long imageId, BigDecimal price, boolean available) {
+        this.categoryId = category.getCategoryId();
+        this.category = category;
+        this.name = name;
+        this.description = description;
+        this.imageId = imageId;
+        this.price = price;
+        this.available = available;
+    }
+
     public Product(long categoryId, String name, String description, Long imageId, BigDecimal price, boolean available) {
         this.categoryId = categoryId;
         this.name = name;

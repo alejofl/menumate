@@ -24,7 +24,7 @@ public class NotOverlappingPromotionsValidator implements ConstraintValidator<No
         CreatePromotionForm form = (CreatePromotionForm) o;
 
         return form.getPromotionStartDate() != null && form.getPromotionEndDate() != null
-               && form.getPromotionStartDate().isBefore(form.getPromotionEndDate())
-               && !productService.hasPromotionInRange(form.getSourceProductId(), form.getPromotionStartDate(), form.getPromotionEndDate()).isPresent();
+                && form.getPromotionStartDate().isBefore(form.getPromotionEndDate())
+                && !productService.hasPromotionInRange(form.getSourceProductId(), form.getPromotionStartDate(), form.getPromotionEndDate()).isPresent();
     }
 }

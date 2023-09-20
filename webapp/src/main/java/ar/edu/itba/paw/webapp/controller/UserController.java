@@ -71,7 +71,7 @@ public class UserController {
     public Response getUserAddresses(@PathParam("userId") final long userId) {
         final User user = userService.getById(userId).orElseThrow(UserNotFoundException::new);
         final List<UserAddressDto> dtoList = UserAddressDto.fromUserAddressCollection(uriInfo, user.getAddresses());
-        return Response.ok(new GenericEntity<List<UserAddressDto>>(dtoList){}).build();
+        return Response.ok(new GenericEntity<List<UserAddressDto>>(dtoList) {}).build();
     }
 
     @GET

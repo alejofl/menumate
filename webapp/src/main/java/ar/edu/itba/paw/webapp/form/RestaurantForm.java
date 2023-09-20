@@ -13,7 +13,7 @@ import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class UpdateRestaurantForm {
+public class RestaurantForm {
     @NotBlank
     @Size(max = 50)
     private String name;

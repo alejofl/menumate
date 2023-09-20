@@ -6,8 +6,8 @@ import ar.edu.itba.paw.service.ReviewService;
 import ar.edu.itba.paw.util.PaginatedResult;
 import ar.edu.itba.paw.webapp.auth.AccessValidator;
 import ar.edu.itba.paw.webapp.dto.ReviewDto;
-import ar.edu.itba.paw.webapp.form.PostReviewForm;
 import ar.edu.itba.paw.webapp.form.GetReviewsForm;
+import ar.edu.itba.paw.webapp.form.PostReviewForm;
 import ar.edu.itba.paw.webapp.form.PutReviewForm;
 import ar.edu.itba.paw.webapp.form.ReviewReplyForm;
 import ar.edu.itba.paw.webapp.utils.ControllerUtils;
@@ -48,7 +48,7 @@ public class ReviewController {
         );
 
         List<ReviewDto> dtoList = ReviewDto.fromReviewCollection(uriInfo, page.getResult());
-        Response.ResponseBuilder builder = Response.ok(new GenericEntity<List<ReviewDto>>(dtoList){});
+        Response.ResponseBuilder builder = Response.ok(new GenericEntity<List<ReviewDto>>(dtoList) {});
         return ControllerUtils.addPagingLinks(builder, page, uriInfo).build();
     }
 

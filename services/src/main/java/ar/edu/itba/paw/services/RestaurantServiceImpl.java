@@ -34,9 +34,9 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Transactional
     @Override
     public Restaurant create(String name, String email, RestaurantSpecialty specialty, long ownerUserId, String address, String description, int maxTables, byte[] logo, byte[] portrait1, byte[] portrait2, boolean isActive, List<RestaurantTags> tags) {
-        final long logoId = imageDao.create(logo);
-        final long portrait1Id = imageDao.create(portrait1);
-        final long portrait2Id = imageDao.create(portrait2);
+        final Long logoId = logo == null ? null : imageDao.create(logo);
+        final Long portrait1Id = portrait1 == null ? null : imageDao.create(portrait1);
+        final Long portrait2Id = portrait2 == null ? null : imageDao.create(portrait2);
 
         return restaurantDao.create(name, email, specialty, ownerUserId, address, description, maxTables, logoId, portrait1Id, portrait2Id, isActive, tags);
     }

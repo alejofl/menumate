@@ -1,8 +1,6 @@
 package ar.edu.itba.paw.webapp.form;
 
-import ar.edu.itba.paw.webapp.form.validation.Image;
 import org.hibernate.validator.constraints.NotBlank;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Digits;
@@ -10,39 +8,25 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 
-public class AddProductForm {
-    @NotNull
-    private Long categoryId;
-
+public class CreateProductForm {
     @NotBlank
     @Size(max = 150)
-    private String productName;
+    private String name;
 
     @Size(max = 300)
     private String description;
-
-    @Image(nullable = true)
-    private MultipartFile image;
 
     @NotNull
     @DecimalMin(value = "0", inclusive = false)
     @Digits(integer = 8, fraction = 2)
     private BigDecimal price;
 
-    public Long getCategoryId() {
-        return categoryId;
+    public String getName() {
+        return name;
     }
 
-    public void setCategoryId(long categoryId) {
-        this.categoryId = categoryId;
-    }
-
-    public String getProductName() {
-        return productName;
-    }
-
-    public void setProductName(String name) {
-        this.productName = name;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDescription() {
@@ -51,14 +35,6 @@ public class AddProductForm {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public MultipartFile getImage() {
-        return image;
-    }
-
-    public void setImage(MultipartFile image) {
-        this.image = image;
     }
 
     public BigDecimal getPrice() {

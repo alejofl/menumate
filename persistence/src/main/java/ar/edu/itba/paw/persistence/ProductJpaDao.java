@@ -3,6 +3,7 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.exception.ProductDeletedException;
 import ar.edu.itba.paw.exception.ProductNotFoundException;
 import ar.edu.itba.paw.exception.PromotionNotFoundException;
+import ar.edu.itba.paw.model.Category;
 import ar.edu.itba.paw.model.Product;
 import ar.edu.itba.paw.model.Promotion;
 import ar.edu.itba.paw.persistance.ProductDao;
@@ -43,6 +44,14 @@ public class ProductJpaDao implements ProductDao {
     }
 
     @Override
+    public Product create(Category category, String name, String description, Long imageId, BigDecimal price) {
+        final Product product = new Product(category, name, description, imageId, price, true);
+        em.persist(product);
+        LOGGER.info("Created product with id {} for category {}", product.getProductId(), category.getCategoryId());
+        return product;
+    }
+
+    @Override
     public void delete(long productId) {
         final Product product = em.find(Product.class, productId);
         if (product == null) {
@@ -73,7 +82,7 @@ public class ProductJpaDao implements ProductDao {
     @Override
     public Promotion createPromotion(Product source, LocalDateTime startDate, LocalDateTime endDate, int discountPercentage) {
         BigDecimal promotionPrice = source.getPrice().multiply(BigDecimal.valueOf(100 - discountPercentage)).divide(BigDecimal.valueOf(100), 2, RoundingMode.FLOOR);
-        final Product destination = new Product(source.getCategoryId(), source.getName(), source.getDescription(), source.getImageId(), promotionPrice, true);
+        final Product destination = new Product(source.getCategory(), source.getName(), source.getDescription(), source.getImageId(), promotionPrice, true);
         em.persist(destination);
         em.flush();
 

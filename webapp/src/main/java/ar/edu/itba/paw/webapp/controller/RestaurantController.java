@@ -2,15 +2,14 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.exception.RestaurantNotFoundException;
 import ar.edu.itba.paw.model.*;
-import ar.edu.itba.paw.service.CategoryService;
-import ar.edu.itba.paw.service.ProductService;
-import ar.edu.itba.paw.service.RestaurantRoleService;
-import ar.edu.itba.paw.service.RestaurantService;
+import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.util.PaginatedResult;
 import ar.edu.itba.paw.webapp.auth.AccessValidator;
 import ar.edu.itba.paw.webapp.dto.*;
+import ar.edu.itba.paw.webapp.form.CreateCategoryForm;
+import ar.edu.itba.paw.webapp.form.CreateProductForm;
 import ar.edu.itba.paw.webapp.form.FilterForm;
-import ar.edu.itba.paw.webapp.form.UpdateRestaurantForm;
+import ar.edu.itba.paw.webapp.form.RestaurantForm;
 import ar.edu.itba.paw.webapp.utils.ControllerUtils;
 import ar.edu.itba.paw.webapp.utils.UriUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,18 +29,20 @@ public class RestaurantController {
     private final CategoryService categoryService;
     private final ProductService productService;
     private final RestaurantRoleService restaurantRoleService;
+    private final UserService userService;
     private final AccessValidator accessValidator;
 
     @Context
     private UriInfo uriInfo;
 
     @Autowired
-    public RestaurantController(final RestaurantService restaurantService, final CategoryService categoryService, final ProductService productService, final RestaurantRoleService restaurantRoleService, final AccessValidator accessValidator) {
+    public RestaurantController(final RestaurantService restaurantService, final CategoryService categoryService, final ProductService productService, final RestaurantRoleService restaurantRoleService, final AccessValidator accessValidator, final UserService userService) {
         this.restaurantService = restaurantService;
         this.categoryService = categoryService;
         this.productService = productService;
         this.restaurantRoleService = restaurantRoleService;
         this.accessValidator = accessValidator;
+        this.userService = userService;
     }
 
     @GET
@@ -55,7 +56,7 @@ public class RestaurantController {
                     filterForm.getSizeOrDefault(ControllerUtils.DEFAULT_MYRESTAURANTS_PAGE_SIZE)
             );
             final List<RestaurantWithOrderCountDto> dtoList = RestaurantWithOrderCountDto.fromCollection(uriInfo, pagedResult.getResult());
-            final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<RestaurantWithOrderCountDto>>(dtoList){});
+            final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<RestaurantWithOrderCountDto>>(dtoList) {});
             return ControllerUtils.addPagingLinks(responseBuilder, pagedResult, uriInfo).build();
         }
 
@@ -70,7 +71,7 @@ public class RestaurantController {
         );
 
         final List<RestaurantDetailsDto> dtoList = RestaurantDetailsDto.fromRestaurantDetailsCollection(uriInfo, pagedResult.getResult());
-        final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<RestaurantDetailsDto>>(dtoList){});
+        final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<RestaurantDetailsDto>>(dtoList) {});
         return ControllerUtils.addPagingLinks(responseBuilder, pagedResult, uriInfo).build();
     }
 
@@ -82,19 +83,41 @@ public class RestaurantController {
         return Response.ok(RestaurantDto.fromRestaurant(uriInfo, restaurant)).build();
     }
 
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response createRestaurant(@Valid @NotNull final RestaurantForm restaurantForm) {
+        final User currentUser = ControllerUtils.getCurrentUserOrThrow(userService);
+        final Restaurant restaurant = restaurantService.create(
+                restaurantForm.getName(),
+                currentUser.getEmail(),
+                restaurantForm.getSpecialtyAsEnum(),
+                currentUser.getUserId(),
+                restaurantForm.getAddress(),
+                restaurantForm.getDescription(),
+                restaurantForm.getMaxTables(),
+                null,
+                null,
+                null,
+                true,
+                restaurantForm.getTagsAsEnum()
+        );
+
+        return Response.created(UriUtils.getRestaurantUri(uriInfo, restaurant.getRestaurantId())).build();
+    }
+
     @PUT
     @Path("/{restaurantId:\\d+}")
     public Response updateRestaurantById(
             @PathParam("restaurantId") final long restaurantId,
-            @Valid @NotNull final UpdateRestaurantForm updateRestaurantForm
+            @Valid @NotNull final RestaurantForm restaurantForm
     ) {
         restaurantService.update(
                 restaurantId,
-                updateRestaurantForm.getName(),
-                updateRestaurantForm.getSpecialtyAsEnum(),
-                updateRestaurantForm.getAddress(),
-                updateRestaurantForm.getDescription(),
-                updateRestaurantForm.getTagsAsEnum()
+                restaurantForm.getName(),
+                restaurantForm.getSpecialtyAsEnum(),
+                restaurantForm.getAddress(),
+                restaurantForm.getDescription(),
+                restaurantForm.getTagsAsEnum()
         );
 
         return Response.noContent().build();
@@ -112,7 +135,7 @@ public class RestaurantController {
     public Response getRestaurantCategories(@PathParam("restaurantId") final long restaurantId) {
         final List<Category> categories = categoryService.getByRestaurantSortedByOrder(restaurantId);
         final List<CategoryDto> dtoList = CategoryDto.fromCategoryCollection(uriInfo, categories);
-        return Response.ok(new GenericEntity<List<CategoryDto>>(dtoList){}).build();
+        return Response.ok(new GenericEntity<List<CategoryDto>>(dtoList) {}).build();
     }
 
     @GET
@@ -123,7 +146,18 @@ public class RestaurantController {
     ) {
         final Category category = categoryService.getByIdChecked(restaurantId, categoryId);
         final CategoryDto dto = CategoryDto.fromCategory(uriInfo, category);
-        return Response.ok(new GenericEntity<CategoryDto>(dto){}).build();
+        return Response.ok(new GenericEntity<CategoryDto>(dto) {}).build();
+    }
+
+    @POST
+    @Path("/{restaurantId:\\d+}/categories")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response createCategory(
+            @PathParam("restaurantId") final long restaurantId,
+            @Valid @NotNull final CreateCategoryForm createCategoryForm
+    ) {
+        final Category category = categoryService.create(restaurantId, createCategoryForm.getName());
+        return Response.created(UriUtils.getCategoryUri(uriInfo, category)).build();
     }
 
     @GET
@@ -134,7 +168,7 @@ public class RestaurantController {
     ) {
         final List<Product> products = categoryService.getByIdChecked(restaurantId, categoryId).getProducts();
         final List<ProductDto> dtoList = ProductDto.fromProductCollection(uriInfo, products);
-        return Response.ok(new GenericEntity<List<ProductDto>>(dtoList){}).build();
+        return Response.ok(new GenericEntity<List<ProductDto>>(dtoList) {}).build();
     }
 
     @GET
@@ -146,6 +180,26 @@ public class RestaurantController {
     ) {
         final Product product = productService.getByIdChecked(restaurantId, categoryId, productId);
         final ProductDto dto = ProductDto.fromProduct(uriInfo, product);
-        return Response.ok(new GenericEntity<ProductDto>(dto){}).build();
+        return Response.ok(new GenericEntity<ProductDto>(dto) {}).build();
+    }
+
+    @POST
+    @Path("/{restaurantId:\\d+}/categories/{categoryId:\\d+}/products")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response createCategoryProduct(
+            @PathParam("restaurantId") final long restaurantId,
+            @PathParam("categoryId") final long categoryId,
+            @Valid @NotNull final CreateProductForm createProductForm
+    ) {
+        final Product product = productService.create(
+                restaurantId,
+                categoryId,
+                createProductForm.getName(),
+                createProductForm.getDescription(),
+                null,
+                createProductForm.getPrice()
+        );
+
+        return Response.created(UriUtils.getProductUri(uriInfo, product)).build();
     }
 }

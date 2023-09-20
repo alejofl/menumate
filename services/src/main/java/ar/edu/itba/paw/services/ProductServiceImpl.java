@@ -1,11 +1,14 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.exception.*;
+import ar.edu.itba.paw.model.Category;
 import ar.edu.itba.paw.model.Product;
 import ar.edu.itba.paw.model.Promotion;
+import ar.edu.itba.paw.persistance.CategoryDao;
 import ar.edu.itba.paw.persistance.ImageDao;
 import ar.edu.itba.paw.persistance.ProductDao;
 import ar.edu.itba.paw.persistance.RestaurantDao;
+import ar.edu.itba.paw.service.CategoryService;
 import ar.edu.itba.paw.service.ProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +29,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductDao productDao;
+
+    @Autowired
+    private CategoryService categoryService;
 
     @Autowired
     private RestaurantDao restaurantDao;
@@ -61,12 +67,12 @@ public class ProductServiceImpl implements ProductService {
 
     @Transactional
     @Override
-    public Product create(long categoryId, String name, String description, byte[] image, BigDecimal price) {
-        Long imageKey = null;
-        if (image != null) {
-            imageKey = imageDao.create(image);
-        }
-        return productDao.create(categoryId, name, description, imageKey, price);
+    public Product create(long restaurantId, long categoryId, String name, String description, byte[] image, BigDecimal price) {
+        // Ensure the category exists under that restaurant, throw an appropriate exception otherwise.
+        final Category category = categoryService.getByIdChecked(restaurantId, categoryId);
+
+        Long imageId = image == null ? null : imageDao.create(image);
+        return productDao.create(category, name, description, imageId, price);
     }
 
     private Product getAndVerifyForUpdate(long productId) {

@@ -54,7 +54,7 @@ public class OrderController {
         );
 
         final List<OrderDto> dtoList = OrderDto.fromOrderCollection(uriInfo, orderPage.getResult());
-        Response.ResponseBuilder builder = Response.ok(new GenericEntity<List<OrderDto>>(dtoList){});
+        Response.ResponseBuilder builder = Response.ok(new GenericEntity<List<OrderDto>>(dtoList) {});
         return ControllerUtils.addPagingLinks(builder, orderPage, uriInfo).build();
     }
 
@@ -83,7 +83,7 @@ public class OrderController {
     public Response getOrderItemsById(@PathParam("orderId") final long orderId) {
         final List<OrderItem> items = orderService.getOrderItemsById(orderId).orElseThrow(OrderNotFoundException::new);
         final List<OrderItemDto> dtoList = OrderItemDto.fromOrderItemCollection(uriInfo, items);
-        return Response.ok(new GenericEntity<List<OrderItemDto>>(dtoList){}).build();
+        return Response.ok(new GenericEntity<List<OrderItemDto>>(dtoList) {}).build();
     }
 
     @POST
