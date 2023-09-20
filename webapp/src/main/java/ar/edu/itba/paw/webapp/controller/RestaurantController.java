@@ -160,6 +160,16 @@ public class RestaurantController {
         return Response.created(UriUtils.getCategoryUri(uriInfo, category)).build();
     }
 
+    @DELETE
+    @Path("/{restaurantId:\\d+}/categories/{categoryId:\\d+}")
+    public Response deleteCategory(
+            @PathParam("restaurantId") final long restaurantId,
+            @PathParam("categoryId") final long categoryId
+    ) {
+        categoryService.delete(restaurantId, categoryId);
+        return Response.noContent().build();
+    }
+
     @GET
     @Path("/{restaurantId:\\d+}/categories/{categoryId:\\d+}/products")
     public Response getCategoryProducts(
@@ -201,5 +211,16 @@ public class RestaurantController {
         );
 
         return Response.created(UriUtils.getProductUri(uriInfo, product)).build();
+    }
+
+    @DELETE
+    @Path("/{restaurantId:\\d+}/categories/{categoryId:\\d+}/products/{productId:\\d+}")
+    public Response deleteProduct(
+            @PathParam("restaurantId") final long restaurantId,
+            @PathParam("categoryId") final long categoryId,
+            @PathParam("productId") final long productId
+    ) {
+        productService.delete(restaurantId, categoryId, productId);
+        return Response.noContent().build();
     }
 }

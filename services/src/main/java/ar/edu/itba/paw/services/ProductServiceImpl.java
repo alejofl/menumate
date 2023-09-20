@@ -121,7 +121,10 @@ public class ProductServiceImpl implements ProductService {
 
     @Transactional
     @Override
-    public void delete(long productId) {
+    public void delete(long restaurantId, long categoryId, long productId) {
+        // Check that the product exists under said category and said restaurant.
+        getByIdChecked(restaurantId, categoryId, productId);
+
         productDao.delete(productId);
     }
 

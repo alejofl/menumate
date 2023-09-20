@@ -98,7 +98,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Transactional
     @Override
-    public void delete(long categoryId) {
+    public void delete(long restaurantId, long categoryId) {
+        getByIdChecked(restaurantId, categoryId);
         categoryDao.delete(categoryId);
     }
 

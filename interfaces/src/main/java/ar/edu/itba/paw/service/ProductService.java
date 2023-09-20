@@ -20,7 +20,7 @@ public interface ProductService {
 
     void updateImage(long productId, byte[] image);
 
-    void delete(long productId);
+    void delete(long restaurantId, long categoryId, long productId);
 
     Promotion createPromotion(long sourceProductId, LocalDateTime startDate, LocalDateTime endDate, int discountPercentage);
 

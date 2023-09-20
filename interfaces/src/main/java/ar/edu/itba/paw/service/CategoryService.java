@@ -17,7 +17,7 @@ public interface CategoryService {
 
     Category updateName(long categoryId, String name);
 
-    void delete(long categoryId);
+    void delete(long restaurantId, long categoryId);
 
     void swapOrder(long restaurantId, int orderNum1, int orderNum2);
 
