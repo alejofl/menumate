@@ -6,8 +6,8 @@ import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.util.PaginatedResult;
 import ar.edu.itba.paw.webapp.auth.AccessValidator;
 import ar.edu.itba.paw.webapp.dto.*;
-import ar.edu.itba.paw.webapp.form.CreateCategoryForm;
-import ar.edu.itba.paw.webapp.form.CreateProductForm;
+import ar.edu.itba.paw.webapp.form.CategoryForm;
+import ar.edu.itba.paw.webapp.form.ProductForm;
 import ar.edu.itba.paw.webapp.form.FilterForm;
 import ar.edu.itba.paw.webapp.form.RestaurantForm;
 import ar.edu.itba.paw.webapp.utils.ControllerUtils;
@@ -154,10 +154,22 @@ public class RestaurantController {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createCategory(
             @PathParam("restaurantId") final long restaurantId,
-            @Valid @NotNull final CreateCategoryForm createCategoryForm
+            @Valid @NotNull final CategoryForm categoryForm
     ) {
-        final Category category = categoryService.create(restaurantId, createCategoryForm.getName());
+        final Category category = categoryService.create(restaurantId, categoryForm.getName());
         return Response.created(UriUtils.getCategoryUri(uriInfo, category)).build();
+    }
+
+    @PUT
+    @Path("/{restaurantId:\\d+}/categories/{categoryId:\\d+}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response updateCategory(
+            @PathParam("restaurantId") final long restaurantId,
+            @PathParam("categoryId") final long categoryId,
+            @Valid @NotNull final CategoryForm categoryForm
+    ) {
+        categoryService.updateName(restaurantId, categoryId, categoryForm.getName());
+        return Response.noContent().build();
     }
 
     @DELETE
@@ -199,18 +211,31 @@ public class RestaurantController {
     public Response createCategoryProduct(
             @PathParam("restaurantId") final long restaurantId,
             @PathParam("categoryId") final long categoryId,
-            @Valid @NotNull final CreateProductForm createProductForm
+            @Valid @NotNull final ProductForm productForm
     ) {
         final Product product = productService.create(
                 restaurantId,
                 categoryId,
-                createProductForm.getName(),
-                createProductForm.getDescription(),
+                productForm.getName(),
+                productForm.getDescription(),
                 null,
-                createProductForm.getPrice()
+                productForm.getPrice()
         );
 
         return Response.created(UriUtils.getProductUri(uriInfo, product)).build();
+    }
+
+    @PUT
+    @Path("/{restaurantId:\\d+}/categories/{categoryId:\\d+}/products/{productId:\\d+}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response createCategoryProduct(
+            @PathParam("restaurantId") final long restaurantId,
+            @PathParam("categoryId") final long categoryId,
+            @PathParam("productId") final long productId,
+            @Valid @NotNull final ProductForm productForm
+    ) {
+        productService.update(restaurantId, categoryId, productId, productForm.getName(), productForm.getPrice(), productForm.getDescription());
+        return Response.noContent().build();
     }
 
     @DELETE

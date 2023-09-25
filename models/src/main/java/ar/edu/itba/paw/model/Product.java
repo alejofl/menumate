@@ -81,6 +81,11 @@ public class Product {
         return category;
     }
 
+    public void setCategory(Category category) {
+        this.category = category;
+        this.categoryId = category.getCategoryId();
+    }
+
     public String getName() {
         return name;
     }

@@ -4,7 +4,7 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.Size;
 
-public class CreateCategoryForm {
+public class CategoryForm {
     @NotBlank
     @Size(max = 50)
     private String name;

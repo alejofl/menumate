@@ -16,9 +16,9 @@ public interface ProductService {
 
     Product create(long restaurantId, long categoryId, String name, String description, byte[] image, BigDecimal price);
 
-    Product update(long productId, String name, BigDecimal price, String description);
+    Product update(long restaurantId, long categoryId, long productId, String name, BigDecimal price, String description);
 
-    void updateImage(long productId, byte[] image);
+    void updateImage(long restaurantId, long categoryId, long productId, byte[] image);
 
     void delete(long restaurantId, long categoryId, long productId);
 

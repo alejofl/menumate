@@ -56,6 +56,10 @@ public class Category {
         return restaurantId;
     }
 
+    public void setRestaurantId(long restaurantId) {
+        this.restaurantId = restaurantId;
+    }
+
     public Restaurant getRestaurant() {
         return restaurant;
     }

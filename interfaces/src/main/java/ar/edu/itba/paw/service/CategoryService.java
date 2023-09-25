@@ -15,7 +15,7 @@ public interface CategoryService {
 
     List<Category> getByRestaurantSortedByOrder(long restaurantId);
 
-    Category updateName(long categoryId, String name);
+    Category updateName(long restaurantId, long categoryId, String name);
 
     void delete(long restaurantId, long categoryId);
 

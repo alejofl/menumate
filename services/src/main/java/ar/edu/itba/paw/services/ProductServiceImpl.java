@@ -57,10 +57,12 @@ public class ProductServiceImpl implements ProductService {
         }
 
         final Product product = maybeProduct.get();
-        if (product.getCategoryId() != categoryId || product.getCategory().getRestaurantId() != restaurantId)
-            throw new ProductNotFoundException();
+        if (product.getCategoryId() != categoryId)
+            throw new CategoryNotFoundException();
+        if (product.getCategory().getRestaurantId() != restaurantId)
+            throw new RestaurantNotFoundException();
         if (product.getDeleted())
-            throw new CategoryDeletedException();
+            throw new ProductDeletedException();
 
         return product;
     }
@@ -75,25 +77,10 @@ public class ProductServiceImpl implements ProductService {
         return productDao.create(category, name, description, imageId, price);
     }
 
-    private Product getAndVerifyForUpdate(long productId) {
-        final Product product = productDao.getById(productId).orElse(null);
-        if (product == null) {
-            LOGGER.error("Attempted to update non-existing product id {}", productId);
-            throw new ProductNotFoundException();
-        }
-
-        if (product.getDeleted()) {
-            LOGGER.error("Attempted to update deleted product id {}", product.getProductId());
-            throw new IllegalStateException("Cannot update deleted product");
-        }
-
-        return product;
-    }
-
     @Transactional
     @Override
-    public Product update(long productId, String name, BigDecimal price, String description) {
-        final Product product = getAndVerifyForUpdate(productId);
+    public Product update(long restaurantId, long categoryId, long productId, String name, BigDecimal price, String description) {
+        final Product product = getByIdChecked(restaurantId, categoryId, productId);
 
         if (product.getPrice().equals(price)) {
             productDao.updateNameAndDescription(product, name, description);
@@ -109,11 +96,11 @@ public class ProductServiceImpl implements ProductService {
 
     @Transactional
     @Override
-    public void updateImage(long productId, byte[] image) {
+    public void updateImage(long restaurantId, long categoryId, long productId, byte[] image) {
         if (image == null || image.length == 0)
             return;
 
-        final Product product = getAndVerifyForUpdate(productId);
+        final Product product = getByIdChecked(restaurantId, categoryId, productId);
         imageDao.update(product.getImageId(), image);
 
         LOGGER.info("Updated image of product id {}", product.getProductId());

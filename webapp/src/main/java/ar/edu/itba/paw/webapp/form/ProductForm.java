@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 
-public class CreateProductForm {
+public class ProductForm {
     @NotBlank
     @Size(max = 150)
     private String name;

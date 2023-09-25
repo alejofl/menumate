@@ -79,18 +79,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Transactional
     @Override
-    public Category updateName(long categoryId, String name) {
-        final Optional<Category> maybeCategory = categoryDao.getById(categoryId);
-        if (!maybeCategory.isPresent()) {
-            LOGGER.error("Attempted to update name of non-existing category id {}", categoryId);
-            throw new CategoryNotFoundException();
-        }
-
-        final Category category = maybeCategory.get();
-        if (category.getDeleted()) {
-            LOGGER.error("Attempted to update name of deleted category id {}", categoryId);
-            throw new CategoryDeletedException();
-        }
+    public Category updateName(long restaurantId, long categoryId, String name) {
+        final Category category = getByIdChecked(restaurantId, categoryId);
         category.setName(name);
         LOGGER.error("Updated name of category id {}", categoryId);
         return category;
