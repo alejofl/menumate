@@ -43,10 +43,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public Optional<Restaurant> getById(long restaurantId) {
-        final Optional<Restaurant> restaurant = restaurantDao.getById(restaurantId);
-        if (restaurant.isPresent() && restaurant.get().getDeleted())
-            throw new RestaurantDeletedException();
-        return restaurant;
+        return restaurantDao.getById(restaurantId);
     }
 
     @Override

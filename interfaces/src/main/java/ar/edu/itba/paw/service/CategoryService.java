@@ -9,7 +9,7 @@ public interface CategoryService {
 
     Optional<Category> getById(long categoryId);
 
-    Category getByIdChecked(long restaurantId, long categoryId);
+    Category getByIdChecked(long restaurantId, long categoryId, boolean allowDeleted);
 
     Category create(long restaurantId, String name);
 

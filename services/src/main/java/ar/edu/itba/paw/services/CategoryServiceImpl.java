@@ -31,14 +31,11 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Optional<Category> getById(long categoryId) {
-        final Optional<Category> category = categoryDao.getById(categoryId);
-        if (category.isPresent() && category.get().getDeleted())
-            throw new CategoryDeletedException();
-        return category;
+        return categoryDao.getById(categoryId);
     }
 
     @Override
-    public Category getByIdChecked(long restaurantId, long categoryId) {
+    public Category getByIdChecked(long restaurantId, long categoryId, boolean allowDeleted) {
         final Optional<Category> maybeCategory = categoryDao.getById(categoryId);
         if (!maybeCategory.isPresent()) {
             if (!restaurantDao.getById(restaurantId).isPresent())
@@ -49,7 +46,7 @@ public class CategoryServiceImpl implements CategoryService {
         final Category category = maybeCategory.get();
         if (category.getRestaurantId() != restaurantId)
             throw new CategoryNotFoundException();
-        if (category.getDeleted())
+        if (!allowDeleted && category.getDeleted())
             throw new CategoryDeletedException();
 
         return category;
@@ -80,7 +77,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     @Override
     public Category updateName(long restaurantId, long categoryId, String name) {
-        final Category category = getByIdChecked(restaurantId, categoryId);
+        final Category category = getByIdChecked(restaurantId, categoryId, false);
         category.setName(name);
         LOGGER.error("Updated name of category id {}", categoryId);
         return category;
@@ -89,7 +86,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     @Override
     public void delete(long restaurantId, long categoryId) {
-        getByIdChecked(restaurantId, categoryId);
+        getByIdChecked(restaurantId, categoryId, false);
         categoryDao.delete(categoryId);
     }
 

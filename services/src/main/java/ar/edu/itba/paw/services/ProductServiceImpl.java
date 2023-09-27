@@ -48,7 +48,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product getByIdChecked(long restaurantId, long categoryId, long productId) {
+    public Product getByIdChecked(long restaurantId, long categoryId, long productId, boolean allowDeleted) {
         final Optional<Product> maybeProduct = productDao.getById(productId);
         if (!maybeProduct.isPresent()) {
             if (!restaurantDao.getById(restaurantId).isPresent())
@@ -61,7 +61,7 @@ public class ProductServiceImpl implements ProductService {
             throw new CategoryNotFoundException();
         if (product.getCategory().getRestaurantId() != restaurantId)
             throw new RestaurantNotFoundException();
-        if (product.getDeleted())
+        if (!allowDeleted && product.getDeleted())
             throw new ProductDeletedException();
 
         return product;
@@ -71,7 +71,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product create(long restaurantId, long categoryId, String name, String description, byte[] image, BigDecimal price) {
         // Ensure the category exists under that restaurant, throw an appropriate exception otherwise.
-        final Category category = categoryService.getByIdChecked(restaurantId, categoryId);
+        final Category category = categoryService.getByIdChecked(restaurantId, categoryId, false);
 
         Long imageId = image == null ? null : imageDao.create(image);
         return productDao.create(category, name, description, imageId, price);
@@ -80,7 +80,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     @Override
     public Product update(long restaurantId, long categoryId, long productId, String name, BigDecimal price, String description) {
-        final Product product = getByIdChecked(restaurantId, categoryId, productId);
+        final Product product = getByIdChecked(restaurantId, categoryId, productId, false);
 
         if (product.getPrice().equals(price)) {
             productDao.updateNameAndDescription(product, name, description);
@@ -100,7 +100,7 @@ public class ProductServiceImpl implements ProductService {
         if (image == null || image.length == 0)
             return;
 
-        final Product product = getByIdChecked(restaurantId, categoryId, productId);
+        final Product product = getByIdChecked(restaurantId, categoryId, productId, false);
         imageDao.update(product.getImageId(), image);
 
         LOGGER.info("Updated image of product id {}", product.getProductId());
@@ -110,7 +110,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void delete(long restaurantId, long categoryId, long productId) {
         // Check that the product exists under said category and said restaurant.
-        getByIdChecked(restaurantId, categoryId, productId);
+        getByIdChecked(restaurantId, categoryId, productId, false);
 
         productDao.delete(productId);
     }

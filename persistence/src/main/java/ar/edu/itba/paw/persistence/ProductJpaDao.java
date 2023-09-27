@@ -67,7 +67,7 @@ public class ProductJpaDao implements ProductDao {
         product.setDeleted(true);
 
         // Delete products from promotions generated with this product
-        Query query = em.createQuery("UPDATE Product p SET p.deleted = true WHERE p.deleted = false AND EXISTS(FROM Promotion r WHERE r.source.productId = :sourceId AND r.destination.productId = p.productId)");
+        Query query = em.createQuery("UPDATE Product p SET p.deleted = true, p.available = false WHERE p.deleted = false AND EXISTS(FROM Promotion r WHERE r.source.productId = :sourceId AND r.destination.productId = p.productId)");
         query.setParameter("sourceId", product.getProductId());
         int rows = query.executeUpdate();
 

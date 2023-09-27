@@ -144,7 +144,7 @@ public class RestaurantController {
             @PathParam("restaurantId") final long restaurantId,
             @PathParam("categoryId") final long categoryId
     ) {
-        final Category category = categoryService.getByIdChecked(restaurantId, categoryId);
+        final Category category = categoryService.getByIdChecked(restaurantId, categoryId, true);
         final CategoryDto dto = CategoryDto.fromCategory(uriInfo, category);
         return Response.ok(new GenericEntity<CategoryDto>(dto) {}).build();
     }
@@ -188,7 +188,7 @@ public class RestaurantController {
             @PathParam("restaurantId") final long restaurantId,
             @PathParam("categoryId") final long categoryId
     ) {
-        final List<Product> products = categoryService.getByIdChecked(restaurantId, categoryId).getProducts();
+        final List<Product> products = categoryService.getByIdChecked(restaurantId, categoryId, true).getProducts();
         final List<ProductDto> dtoList = ProductDto.fromProductCollection(uriInfo, products);
         return Response.ok(new GenericEntity<List<ProductDto>>(dtoList) {}).build();
     }
@@ -200,7 +200,7 @@ public class RestaurantController {
             @PathParam("categoryId") final long categoryId,
             @PathParam("productId") final long productId
     ) {
-        final Product product = productService.getByIdChecked(restaurantId, categoryId, productId);
+        final Product product = productService.getByIdChecked(restaurantId, categoryId, productId, true);
         final ProductDto dto = ProductDto.fromProduct(uriInfo, product);
         return Response.ok(new GenericEntity<ProductDto>(dto) {}).build();
     }

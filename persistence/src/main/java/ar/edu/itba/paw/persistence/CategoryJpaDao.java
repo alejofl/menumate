@@ -85,7 +85,7 @@ public class CategoryJpaDao implements CategoryDao {
         category.setDeleted(true);
         em.persist(category);
 
-        Query productQuery = em.createQuery("UPDATE Product SET deleted = true WHERE deleted = false AND categoryId = :categoryId");
+        Query productQuery = em.createQuery("UPDATE Product SET deleted = true, available = false WHERE deleted = false AND categoryId = :categoryId");
         productQuery.setParameter("categoryId", categoryId);
         int productCount = productQuery.executeUpdate();
 

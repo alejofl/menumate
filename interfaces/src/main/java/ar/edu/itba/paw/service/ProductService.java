@@ -12,7 +12,7 @@ public interface ProductService {
 
     Optional<Product> getById(long productId);
 
-    Product getByIdChecked(long restaurantId, long categoryId, long productId);
+    Product getByIdChecked(long restaurantId, long categoryId, long productId, boolean allowDeleted);
 
     Product create(long restaurantId, long categoryId, String name, String description, byte[] image, BigDecimal price);
 
