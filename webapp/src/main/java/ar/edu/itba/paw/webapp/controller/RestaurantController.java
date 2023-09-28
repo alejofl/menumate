@@ -269,8 +269,9 @@ public class RestaurantController {
             @PathParam("restaurantId") final long restaurantId,
             @PathParam("promotionId") final long promotionId
     ) {
-        // TODO: Implement
-        throw new RuntimeException("Not implemented");
+        final Promotion promotion = productService.getPromotionById(restaurantId, promotionId);
+        PromotionDto dto = PromotionDto.fromPromotion(uriInfo, promotion, restaurantId);
+        return Response.ok(new GenericEntity<PromotionDto>(dto){}).build();
     }
 
     @POST
@@ -281,10 +282,11 @@ public class RestaurantController {
             @Valid @NotNull final PromotionForm promotionForm
     ) {
         final Promotion promotion = productService.createPromotion(
-            promotionForm.getSourceProductId(),
-            promotionForm.getPromotionStartDate(),
-            promotionForm.getPromotionEndDate(),
-            promotionForm.getPercentage()
+                restaurantId,
+                promotionForm.getSourceProductId(),
+                promotionForm.getPromotionStartDate(),
+                promotionForm.getPromotionEndDate(),
+                promotionForm.getPercentage()
         );
 
         return Response.created(UriUtils.getPromotionUri(uriInfo, restaurantId, promotion.getPromotionId())).build();
@@ -292,8 +294,11 @@ public class RestaurantController {
 
     @DELETE
     @Path("/{restaurantId:\\d+}/promotions/{promotionId:\\d+}")
-    public Response stopPromotion(@PathParam("restaurantId") final long restaurantId) {
-        // TODO
-        throw new RuntimeException("Not implemented");
+    public Response stopPromotion(
+            @PathParam("restaurantId") final long restaurantId,
+            @PathParam("promotionId") final long promotionId
+    ) {
+        productService.stopPromotion(restaurantId, promotionId);
+        return Response.noContent().build();
     }
 }

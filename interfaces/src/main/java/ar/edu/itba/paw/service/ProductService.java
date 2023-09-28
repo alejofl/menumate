@@ -14,6 +14,8 @@ public interface ProductService {
 
     Product getByIdChecked(long restaurantId, long categoryId, long productId, boolean allowDeleted);
 
+    Promotion getPromotionById(long restaurantId, long promotionId);
+
     Product create(long restaurantId, long categoryId, String name, String description, byte[] image, BigDecimal price);
 
     Product update(long restaurantId, long categoryId, long productId, String name, BigDecimal price, String description);
@@ -22,7 +24,7 @@ public interface ProductService {
 
     void delete(long restaurantId, long categoryId, long productId);
 
-    Promotion createPromotion(long sourceProductId, LocalDateTime startDate, LocalDateTime endDate, BigDecimal discountPercentage);
+    Promotion createPromotion(long restaurantId, long sourceProductId, LocalDateTime startDate, LocalDateTime endDate, BigDecimal discountPercentage);
 
     /**
      * Gets whether a product has any promotions whose active time range intersects with the specified time range.
@@ -31,7 +33,7 @@ public interface ProductService {
      */
     Optional<Promotion> hasPromotionInRange(long sourceProductId, LocalDateTime startDate, LocalDateTime endDate);
 
-    void stopPromotionByDestination(long destinationProductId);
+    void stopPromotion(long restaurantId, long promotionId);
 
     boolean areAllProductsFromRestaurant(long restaurantId, List<Long> productIds);
 }

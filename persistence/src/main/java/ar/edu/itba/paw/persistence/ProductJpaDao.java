@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.exception.InvalidUserArgumentException;
 import ar.edu.itba.paw.exception.ProductDeletedException;
 import ar.edu.itba.paw.exception.ProductNotFoundException;
 import ar.edu.itba.paw.exception.PromotionNotFoundException;
@@ -33,6 +34,11 @@ public class ProductJpaDao implements ProductDao {
     @Override
     public Optional<Product> getById(long productId) {
         return Optional.ofNullable(em.find(Product.class, productId));
+    }
+
+    @Override
+    public Optional<Promotion> getPromotionById(long promotionId) {
+        return Optional.ofNullable(em.find(Promotion.class, promotionId));
     }
 
     @Override
@@ -133,17 +139,18 @@ public class ProductJpaDao implements ProductDao {
     }
 
     @Override
-    public void stopPromotionByDestination(long destinationProductId) {
+    public void stopPromotion(long restaurantId, long promotionId) {
         TypedQuery<Promotion> promoQuery = em.createQuery(
-                "FROM Promotion WHERE destination.productId = :destinationId",
+                "FROM Promotion WHERE promotionId = :promotionId AND source.category.restaurantId = :restaurantId",
                 Promotion.class
         );
-        promoQuery.setParameter("destinationId", destinationProductId);
+        promoQuery.setParameter("restaurantId", restaurantId);
+        promoQuery.setParameter("promotionId", promotionId);
 
         Promotion promotion = promoQuery.getResultList().stream().findFirst().orElseThrow(PromotionNotFoundException::new);
         if (promotion.hasEnded()) {
             LOGGER.error("Attempted to stop an already-ended promotion id {}", promotion.getPromotionId());
-            throw new IllegalStateException("Cannot stop a promotion that has already ended");
+            throw new InvalidUserArgumentException("Cannot stop a promotion that has already ended");
         }
 
         promotion.setEndDate(LocalDateTime.now());

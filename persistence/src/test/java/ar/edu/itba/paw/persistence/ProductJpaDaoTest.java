@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 
+import ar.edu.itba.paw.exception.InvalidUserArgumentException;
 import ar.edu.itba.paw.exception.ProductNotFoundException;
 import ar.edu.itba.paw.exception.PromotionNotFoundException;
 import ar.edu.itba.paw.model.Product;
@@ -9,6 +10,7 @@ import ar.edu.itba.paw.persistance.ProductDao;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import ar.edu.itba.paw.persistence.constants.CategoryConstants;
 import ar.edu.itba.paw.persistence.constants.ProductConstants;
+import ar.edu.itba.paw.persistence.constants.RestaurantConstants;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,6 +37,7 @@ import java.util.Optional;
 public class ProductJpaDaoTest {
 
     private static final long NON_EXISTENT_PRODUCT_ID = 9999L;
+    private static final long NON_EXISTENT_PROMOTION_ID = 51247891L;
 
     @Autowired
     private DataSource ds;
@@ -128,7 +131,7 @@ public class ProductJpaDaoTest {
     @Rollback
     public void updateProductAndPromotions() {
         final Product product = em.find(Product.class, ProductConstants.PROMOTION_DESTINATION_ID);
-        final Promotion promotion = em.find(Promotion.class, ProductConstants.PROMOTION_PRODUCT_ID);
+        final Promotion promotion = em.find(Promotion.class, ProductConstants.PROMOTION_ID);
         final String oldName = product.getName();
         final String oldDescription = product.getDescription();
 
@@ -181,7 +184,7 @@ public class ProductJpaDaoTest {
         Product destination = em.find(Product.class, ProductConstants.PROMOTION_DESTINATION_ID);
         Product source = em.find(Product.class, ProductConstants.PROMOTION_SOURCE_ID);
 
-        productDao.stopPromotionByDestination(ProductConstants.PROMOTION_DESTINATION_ID);
+        productDao.stopPromotion(RestaurantConstants.RESTAURANT_IDS[3], ProductConstants.PROMOTION_ID);
         em.flush();
 
         Assert.assertFalse(destination.getAvailable());
@@ -209,17 +212,17 @@ public class ProductJpaDaoTest {
 
     @Test(expected = PromotionNotFoundException.class)
     public void testStopPromotionByDestinationInvalidId() {
-        productDao.stopPromotionByDestination(NON_EXISTENT_PRODUCT_ID);
+        productDao.stopPromotion(RestaurantConstants.RESTAURANT_IDS[3], NON_EXISTENT_PROMOTION_ID);
         em.flush();
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = InvalidUserArgumentException.class)
     @Rollback
     public void testStopPromotionByDestinationAlreadyEnded() {
-        Promotion promotion = em.find(Promotion.class, ProductConstants.PROMOTION_PRODUCT_ID);
+        Promotion promotion = em.find(Promotion.class, ProductConstants.PROMOTION_ID);
         promotion.setEndDate(LocalDateTime.now().minusDays(1));
 
-        productDao.stopPromotionByDestination(ProductConstants.PROMOTION_DESTINATION_ID);
+        productDao.stopPromotion(RestaurantConstants.RESTAURANT_IDS[3], ProductConstants.PROMOTION_ID);
         em.flush();
     }
 
@@ -241,7 +244,7 @@ public class ProductJpaDaoTest {
     @Test
     @Rollback
     public void testStopActivePromotions() {
-        Promotion promotion = em.find(Promotion.class, ProductConstants.PROMOTION_PRODUCT_ID);
+        Promotion promotion = em.find(Promotion.class, ProductConstants.PROMOTION_ID);
         promotion.setEndDate(LocalDateTime.now().minusDays(1));
 
         productDao.closeInactivePromotions();

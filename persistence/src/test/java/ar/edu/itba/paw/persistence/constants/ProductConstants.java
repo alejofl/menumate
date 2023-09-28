@@ -36,7 +36,7 @@ public final class ProductConstants {
     public static final String DEFAULT_ORDER_ITEM_COMMENT = "comment";
     public static final String DEFAULT_STRING = "new";
     public static final int DEFAULT_ORDER_ITEM_QUANTITY = 10;
-    public static final long PROMOTION_PRODUCT_ID = 100L;
+    public static final long PROMOTION_ID = 100L;
     public static final long PROMOTION_SOURCE_ID = 501L;
     public static final long PROMOTION_DESTINATION_ID = 500L;
     public static final BigDecimal DEFAULT_PROMOTION_DISCOUNT = BigDecimal.valueOf(50);

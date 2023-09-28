@@ -67,6 +67,13 @@ public class ProductServiceImpl implements ProductService {
         return product;
     }
 
+    @Override
+    public Promotion getPromotionById(long restaurantId, long promotionId) {
+        return productDao.getPromotionById(promotionId)
+                .filter(p -> p.getSource().getCategory().getRestaurantId() == restaurantId)
+                .orElseThrow(PromotionNotFoundException::new);
+    }
+
     @Transactional
     @Override
     public Product create(long restaurantId, long categoryId, String name, String description, byte[] image, BigDecimal price) {
@@ -117,13 +124,18 @@ public class ProductServiceImpl implements ProductService {
 
     @Transactional
     @Override
-    public Promotion createPromotion(long sourceProductId, LocalDateTime startDate, LocalDateTime endDate, BigDecimal discountPercentage) {
+    public Promotion createPromotion(long restaurantId, long sourceProductId, LocalDateTime startDate, LocalDateTime endDate, BigDecimal discountPercentage) {
         if (discountPercentage.compareTo(BigDecimal.ONE) < 0 || discountPercentage.compareTo(BigDecimal.valueOf(100)) > 0) {
             LOGGER.error("Attempted to create product with discount outside range {}", discountPercentage);
             throw new IllegalArgumentException("Discount must be in the range [1, 100]");
         }
 
         final Product source = productDao.getById(sourceProductId).orElseThrow(ProductNotFoundException::new);
+        if (source.getCategory().getRestaurantId() != restaurantId) {
+            LOGGER.error("Attempted to create a promotion with a product id {} that does not belong to the restaurant id {}", sourceProductId, restaurantId);
+            throw new InvalidUserArgumentException("Source product must belong to the restaurant");
+        }
+
         if (source.getDeleted() || !source.getAvailable()) {
             LOGGER.error("Attempted to create a promotion from a{} product", source.getDeleted() ? " deleted" : "n unavailable");
             throw new InvalidUserArgumentException("Product cannot be deleted nor unavailable");
@@ -155,8 +167,8 @@ public class ProductServiceImpl implements ProductService {
 
     @Transactional
     @Override
-    public void stopPromotionByDestination(long destinationProductId) {
-        productDao.stopPromotionByDestination(destinationProductId);
+    public void stopPromotion(long restaurantId, long promotionId) {
+        productDao.stopPromotion(restaurantId, promotionId);
     }
 
     @Override
