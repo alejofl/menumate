@@ -95,6 +95,7 @@ public class ProductServiceImpl implements ProductService {
         }
 
         product.setDeleted(true);
+        product.setAvailable(false);
         final Product newProduct = productDao.create(product.getCategoryId(), name, description, product.getImageId(), price);
         LOGGER.info("Logical-deleted product id {} and inserted {} to update price", product.getProductId(), newProduct.getProductId());
         productDao.stopPromotionsBySource(productId);

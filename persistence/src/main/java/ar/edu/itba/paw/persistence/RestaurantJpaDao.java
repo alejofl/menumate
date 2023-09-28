@@ -258,6 +258,7 @@ public class RestaurantJpaDao implements RestaurantDao {
         }
 
         restaurant.setDeleted(true);
+        restaurant.setIsActive(false);
         em.persist(restaurant);
 
         Query categoryQuery = em.createQuery("UPDATE Category SET deleted = true WHERE deleted = false AND restaurantId = :restaurantId");
