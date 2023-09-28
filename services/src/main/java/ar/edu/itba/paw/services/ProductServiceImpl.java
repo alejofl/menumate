@@ -117,16 +117,16 @@ public class ProductServiceImpl implements ProductService {
 
     @Transactional
     @Override
-    public Promotion createPromotion(long sourceProductId, LocalDateTime startDate, LocalDateTime endDate, int discountPercentage) {
-        if (discountPercentage <= 0 || discountPercentage > 100) {
+    public Promotion createPromotion(long sourceProductId, LocalDateTime startDate, LocalDateTime endDate, BigDecimal discountPercentage) {
+        if (discountPercentage.compareTo(BigDecimal.ONE) < 0 || discountPercentage.compareTo(BigDecimal.valueOf(100)) > 0) {
             LOGGER.error("Attempted to create product with discount outside range {}", discountPercentage);
-            throw new IllegalArgumentException("Discount must be in the range (0, 100]");
+            throw new IllegalArgumentException("Discount must be in the range [1, 100]");
         }
 
         final Product source = productDao.getById(sourceProductId).orElseThrow(ProductNotFoundException::new);
         if (source.getDeleted() || !source.getAvailable()) {
             LOGGER.error("Attempted to create a promotion from a{} product", source.getDeleted() ? " deleted" : "n unavailable");
-            throw new IllegalStateException("Product cannot be deleted nor unavailable");
+            throw new InvalidUserArgumentException("Product cannot be deleted nor unavailable");
         }
 
         if (endDate != null) {

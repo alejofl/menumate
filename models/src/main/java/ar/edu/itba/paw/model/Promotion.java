@@ -68,8 +68,9 @@ public class Promotion {
         this.endDate = endDate;
     }
 
-    public int getDiscountPercentage() {
-        return 100 - destination.getPrice().multiply(BigDecimal.valueOf(100)).divide(source.getPrice(), 0, RoundingMode.CEILING).intValue();
+    public BigDecimal getDiscountPercentage() {
+        BigDecimal hundred = BigDecimal.valueOf(100);
+        return hundred.subtract(destination.getPrice().multiply(hundred).divide(source.getPrice(), 2, RoundingMode.CEILING));
     }
 
     public boolean isActive() {

@@ -80,8 +80,9 @@ public class ProductJpaDao implements ProductDao {
     }
 
     @Override
-    public Promotion createPromotion(Product source, LocalDateTime startDate, LocalDateTime endDate, int discountPercentage) {
-        BigDecimal promotionPrice = source.getPrice().multiply(BigDecimal.valueOf(100 - discountPercentage)).divide(BigDecimal.valueOf(100), 2, RoundingMode.FLOOR);
+    public Promotion createPromotion(Product source, LocalDateTime startDate, LocalDateTime endDate, BigDecimal discountPercentage) {
+        BigDecimal hundred = BigDecimal.valueOf(100);
+        BigDecimal promotionPrice = source.getPrice().multiply(hundred.subtract(discountPercentage)).divide(hundred, 2, RoundingMode.FLOOR);
         final Product destination = new Product(source.getCategory(), source.getName(), source.getDescription(), source.getImageId(), promotionPrice, true);
         em.persist(destination);
         em.flush();

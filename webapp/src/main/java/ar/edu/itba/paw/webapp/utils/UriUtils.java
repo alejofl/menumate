@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.utils;
 
 import ar.edu.itba.paw.model.Category;
 import ar.edu.itba.paw.model.Product;
+import ar.edu.itba.paw.model.Promotion;
 import ar.edu.itba.paw.model.UserAddress;
 
 import javax.ws.rs.core.UriInfo;
@@ -88,6 +89,17 @@ public final class UriUtils {
 
     public static URI getProductUri(final UriInfo uriInfo, final Product product) {
         return getProductUri(uriInfo, product.getCategory().getRestaurantId(), product.getCategoryId(), product.getProductId());
+    }
+
+    public static URI getPromotionUri(final UriInfo uriInfo, final long restaurantId, final long promotionId) {
+        return uriInfo.getBaseUriBuilder()
+                .path(RESTAURANTS_URL).path(String.valueOf(restaurantId))
+                .path("promotions").path(String.valueOf(promotionId))
+                .build();
+    }
+
+    public static URI getPromotionUri(final UriInfo uriInfo, final Promotion promotion) {
+        return getPromotionUri(uriInfo, promotion.getSource().getCategory().getRestaurantId(), promotion.getPromotionId());
     }
 
     public static URI getUserUri(final UriInfo uriInfo, final long userId) {

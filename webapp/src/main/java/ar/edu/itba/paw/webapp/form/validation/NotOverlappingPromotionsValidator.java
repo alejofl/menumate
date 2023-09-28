@@ -1,11 +1,13 @@
 package ar.edu.itba.paw.webapp.form.validation;
 
+import ar.edu.itba.paw.model.PromotionType;
 import ar.edu.itba.paw.service.ProductService;
-import ar.edu.itba.paw.webapp.form.CreatePromotionForm;
+import ar.edu.itba.paw.webapp.form.PromotionForm;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+import java.time.LocalDateTime;
 
 public class NotOverlappingPromotionsValidator implements ConstraintValidator<NotOverlappingPromotions, Object> {
     @Autowired
@@ -18,13 +20,17 @@ public class NotOverlappingPromotionsValidator implements ConstraintValidator<No
 
     @Override
     public boolean isValid(Object o, ConstraintValidatorContext constraintValidatorContext) {
-        if (!(o instanceof CreatePromotionForm)) {
+        if (!(o instanceof PromotionForm))
             return false;
-        }
-        CreatePromotionForm form = (CreatePromotionForm) o;
+        PromotionForm form = (PromotionForm) o;
 
-        return form.getPromotionStartDate() != null && form.getPromotionEndDate() != null
-                && form.getPromotionStartDate().isBefore(form.getPromotionEndDate())
-                && !productService.hasPromotionInRange(form.getSourceProductId(), form.getPromotionStartDate(), form.getPromotionEndDate()).isPresent();
+        Long productId = form.getSourceProductId();
+        if (productId == null)
+            return true; // Let the @NotNull handle it
+
+        LocalDateTime startDate = form.getPromotionStartDate();
+        LocalDateTime endDate = form.getPromotionEndDate();
+        return startDate != null && endDate != null && startDate.isBefore(endDate)
+                && !productService.hasPromotionInRange(productId, startDate, endDate).isPresent();
     }
 }

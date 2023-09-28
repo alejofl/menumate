@@ -22,7 +22,7 @@ public interface ProductService {
 
     void delete(long restaurantId, long categoryId, long productId);
 
-    Promotion createPromotion(long sourceProductId, LocalDateTime startDate, LocalDateTime endDate, int discountPercentage);
+    Promotion createPromotion(long sourceProductId, LocalDateTime startDate, LocalDateTime endDate, BigDecimal discountPercentage);
 
     /**
      * Gets whether a product has any promotions whose active time range intersects with the specified time range.

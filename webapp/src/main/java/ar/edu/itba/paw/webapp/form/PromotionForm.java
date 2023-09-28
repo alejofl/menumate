@@ -1,38 +1,39 @@
 package ar.edu.itba.paw.webapp.form;
 
 import ar.edu.itba.paw.model.PromotionType;
-import ar.edu.itba.paw.webapp.form.validation.EndDateTimeAfterStartDateTime;
-import ar.edu.itba.paw.webapp.form.validation.FutureOrPresent;
-import ar.edu.itba.paw.webapp.form.validation.NotOverlappingPromotions;
-import ar.edu.itba.paw.webapp.form.validation.ValidDuration;
+import ar.edu.itba.paw.webapp.form.validation.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @NotOverlappingPromotions
 @ValidDuration(typeField = "type", daysField = "days", hoursField = "hours", minutesField = "minutes")
 @EndDateTimeAfterStartDateTime(typeField = "type", startDateTimeField = "startDateTime", endDateTimeField = "endDateTime")
-public class CreatePromotionForm {
+public class PromotionForm {
     @NotNull
     private Long sourceProductId;
 
     @NotNull
-    @Min(1)
-    @Max(99)
-    private Integer percentage;
+    @DecimalMin(value = "1", inclusive = true)
+    @DecimalMax(value = "100", inclusive = true)
+    @Digits(integer = 3, fraction = 2)
+    private BigDecimal percentage;
 
     @NotNull
-    private Integer type;
+    @EnumMessageCode(enumClass = PromotionType.class)
+    private String type;
 
+    @Min(0)
     @Max(59)
     private Integer minutes;
 
+    @Min(0)
     @Max(23)
     private Integer hours;
 
+    @Min(0)
     private Integer days;
 
     @FutureOrPresent
@@ -50,11 +51,11 @@ public class CreatePromotionForm {
         this.sourceProductId = sourceProductId;
     }
 
-    public Integer getPercentage() {
+    public BigDecimal getPercentage() {
         return percentage;
     }
 
-    public void setPercentage(Integer percentage) {
+    public void setPercentage(BigDecimal percentage) {
         this.percentage = percentage;
     }
 
@@ -63,7 +64,7 @@ public class CreatePromotionForm {
     }
 
     public LocalDateTime getPromotionStartDate() {
-        return PromotionType.fromOrdinal(type) == PromotionType.INSTANT ? LocalDateTime.now() : startDateTime;
+        return getTypeAsEnum() == PromotionType.INSTANT ? LocalDateTime.now() : startDateTime;
     }
 
     public void setStartDateTime(LocalDateTime startDateTime) {
@@ -75,9 +76,17 @@ public class CreatePromotionForm {
     }
 
     public LocalDateTime getPromotionEndDate() {
-        return PromotionType.fromOrdinal(type) == PromotionType.INSTANT ?
-                LocalDateTime.now().plusDays(days).plusHours(hours).plusMinutes(minutes) :
-                endDateTime;
+        if (getTypeAsEnum() == PromotionType.SCHEDULED)
+            return endDateTime;
+
+        LocalDateTime endTime = LocalDateTime.now();
+        if (days != null)
+            endTime = endTime.plusDays(days);
+        if (hours != null)
+            endTime = endTime.plusHours(hours);
+        if (minutes != null)
+            endTime = endTime.plusMinutes(minutes);
+        return endTime;
     }
 
     public void setEndDateTime(LocalDateTime endDateTime) {
@@ -108,11 +117,15 @@ public class CreatePromotionForm {
         this.days = days;
     }
 
-    public Integer getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(Integer type) {
+    public void setType(String type) {
         this.type = type;
+    }
+
+    public PromotionType getTypeAsEnum() {
+        return PromotionType.fromCode(type);
     }
 }

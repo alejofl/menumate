@@ -1,3 +1,4 @@
+import ar.edu.itba.paw.exception.InvalidUserArgumentException;
 import ar.edu.itba.paw.exception.ProductDeletedException;
 import ar.edu.itba.paw.exception.ProductNotFoundException;
 import ar.edu.itba.paw.model.Category;
@@ -37,13 +38,13 @@ public class ProductServiceImplTest {
     private static final long DEFAULT_RESTAURANT_ID = 69L;
     private static final String DEFAULT_PRODUCT_DESCRIPTION = "Default Description";
     private static final String DEFAULT_PRODUCT_NAME = "Default Name";
-    private static final BigDecimal DEFAULT_PRODUCT_PRICE = BigDecimal.valueOf(9.99);
+    private static final BigDecimal DEFAULT_PRODUCT_PRICE = new BigDecimal("9.99");
     private static final String NEW_PRODUCT_NAME = "New Name";
-    private static final BigDecimal NEW_PRODUCT_PRICE = BigDecimal.valueOf(10.99);
+    private static final BigDecimal NEW_PRODUCT_PRICE = new BigDecimal("10.99");
     private static final String NEW_PRODUCT_DESCRIPTION = "New Description";
     private static final LocalDateTime DEFAULT_PROMOTION_START_DATE = LocalDateTime.now();
     private static final LocalDateTime DEFAULT_PROMOTION_END_DATE = DEFAULT_PROMOTION_START_DATE.plusDays(7);
-    private static final int DEFAULT_PROMOTION_DISCOUNT = 10;
+    private static final BigDecimal DEFAULT_PROMOTION_DISCOUNT = BigDecimal.valueOf(10);
 
     private Category mockCategory() {
         final Category category = Mockito.mock(Category.class);
@@ -154,19 +155,20 @@ public class ProductServiceImplTest {
         Mockito.when(expectedPromotion.getSource()).thenReturn(sourceProduct);
         Mockito.when(expectedPromotion.getStartDate()).thenReturn(DEFAULT_PROMOTION_START_DATE);
         Mockito.when(expectedPromotion.getEndDate()).thenReturn(DEFAULT_PROMOTION_END_DATE);
-        Mockito.when(expectedPromotion.getDiscountPercentage()).thenReturn((int) (DEFAULT_PROMOTION_DISCOUNT * 100));
+        //Mockito.when(expectedPromotion.getDiscountPercentage()).thenReturn((int) (DEFAULT_PROMOTION_DISCOUNT * 100));
+        Mockito.when(expectedPromotion.getDiscountPercentage()).thenReturn(DEFAULT_PROMOTION_DISCOUNT);
 
         final Promotion result = productService.createPromotion(DEFAULT_PRODUCT_ID, DEFAULT_PROMOTION_START_DATE, DEFAULT_PROMOTION_END_DATE, DEFAULT_PROMOTION_DISCOUNT);
 
         Assert.assertEquals(DEFAULT_PRODUCT_NAME, result.getSource().getName());
         Assert.assertEquals(DEFAULT_PROMOTION_START_DATE, result.getStartDate());
         Assert.assertEquals(DEFAULT_PROMOTION_END_DATE, result.getEndDate());
-        Assert.assertEquals((int) (DEFAULT_PROMOTION_DISCOUNT * 100), result.getDiscountPercentage(), 0.0001);
+        Assert.assertEquals(DEFAULT_PROMOTION_DISCOUNT, result.getDiscountPercentage());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testCreatePromotionWithInvalidDiscount() {
-        productService.createPromotion(DEFAULT_PRODUCT_ID, DEFAULT_PROMOTION_START_DATE, DEFAULT_PROMOTION_END_DATE, 150);
+        productService.createPromotion(DEFAULT_PRODUCT_ID, DEFAULT_PROMOTION_START_DATE, DEFAULT_PROMOTION_END_DATE, BigDecimal.valueOf(150));
     }
 
     @Test(expected = ProductNotFoundException.class)
@@ -175,7 +177,7 @@ public class ProductServiceImplTest {
         productService.createPromotion(DEFAULT_PRODUCT_ID, DEFAULT_PROMOTION_START_DATE, DEFAULT_PROMOTION_END_DATE, DEFAULT_PROMOTION_DISCOUNT);
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = InvalidUserArgumentException.class)
     public void testCreatePromotionWithDeletedProduct() {
         final Product sourceProduct = Mockito.mock(Product.class);
         Mockito.when(sourceProduct.getDeleted()).thenReturn(true);
@@ -185,7 +187,7 @@ public class ProductServiceImplTest {
         productService.createPromotion(DEFAULT_PRODUCT_ID, DEFAULT_PROMOTION_START_DATE, DEFAULT_PROMOTION_END_DATE, DEFAULT_PROMOTION_DISCOUNT);
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = InvalidUserArgumentException.class)
     public void testCreatePromotionWithUnavailableProduct() {
         final Product sourceProduct = Mockito.mock(Product.class);
         Mockito.when(sourceProduct.getDeleted()).thenReturn(false);

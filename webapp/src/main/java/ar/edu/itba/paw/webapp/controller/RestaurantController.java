@@ -6,10 +6,7 @@ import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.util.PaginatedResult;
 import ar.edu.itba.paw.webapp.auth.AccessValidator;
 import ar.edu.itba.paw.webapp.dto.*;
-import ar.edu.itba.paw.webapp.form.CategoryForm;
-import ar.edu.itba.paw.webapp.form.ProductForm;
-import ar.edu.itba.paw.webapp.form.FilterForm;
-import ar.edu.itba.paw.webapp.form.RestaurantForm;
+import ar.edu.itba.paw.webapp.form.*;
 import ar.edu.itba.paw.webapp.utils.ControllerUtils;
 import ar.edu.itba.paw.webapp.utils.UriUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -132,6 +129,7 @@ public class RestaurantController {
 
     @GET
     @Path("/{restaurantId:\\d+}/categories")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response getRestaurantCategories(@PathParam("restaurantId") final long restaurantId) {
         final List<Category> categories = categoryService.getByRestaurantSortedByOrder(restaurantId);
         final List<CategoryDto> dtoList = CategoryDto.fromCategoryCollection(uriInfo, categories);
@@ -140,6 +138,7 @@ public class RestaurantController {
 
     @GET
     @Path("/{restaurantId:\\d+}/categories/{categoryId:\\d+}")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response getCategory(
             @PathParam("restaurantId") final long restaurantId,
             @PathParam("categoryId") final long categoryId
@@ -184,6 +183,7 @@ public class RestaurantController {
 
     @GET
     @Path("/{restaurantId:\\d+}/categories/{categoryId:\\d+}/products")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response getCategoryProducts(
             @PathParam("restaurantId") final long restaurantId,
             @PathParam("categoryId") final long categoryId
@@ -195,7 +195,8 @@ public class RestaurantController {
 
     @GET
     @Path("/{restaurantId:\\d+}/categories/{categoryId:\\d+}/products/{productId:\\d+}")
-    public Response getCategoryProducts(
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getProduct(
             @PathParam("restaurantId") final long restaurantId,
             @PathParam("categoryId") final long categoryId,
             @PathParam("productId") final long productId
@@ -208,7 +209,7 @@ public class RestaurantController {
     @POST
     @Path("/{restaurantId:\\d+}/categories/{categoryId:\\d+}/products")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createCategoryProduct(
+    public Response createProduct(
             @PathParam("restaurantId") final long restaurantId,
             @PathParam("categoryId") final long categoryId,
             @Valid @NotNull final ProductForm productForm
@@ -228,7 +229,7 @@ public class RestaurantController {
     @PUT
     @Path("/{restaurantId:\\d+}/categories/{categoryId:\\d+}/products/{productId:\\d+}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createCategoryProduct(
+    public Response updateProduct(
             @PathParam("restaurantId") final long restaurantId,
             @PathParam("categoryId") final long categoryId,
             @PathParam("productId") final long productId,
@@ -247,5 +248,52 @@ public class RestaurantController {
     ) {
         productService.delete(restaurantId, categoryId, productId);
         return Response.noContent().build();
+    }
+
+    @GET
+    @Path("/{restaurantId:\\d+}/promotions")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getRestaurantPromotions(
+            @PathParam("restaurantId") final long restaurantId,
+            @QueryParam("living") @DefaultValue("false") final boolean living
+    ) {
+        List<Promotion> promotions = living ? restaurantService.getLivingPromotions(restaurantId) : restaurantService.getActivePromotions(restaurantId);
+        final List<PromotionDto> dtoList = PromotionDto.fromPromotionCollection(uriInfo, promotions, restaurantId);
+        return Response.ok(new GenericEntity<List<PromotionDto>>(dtoList) {}).build();
+    }
+
+    @GET
+    @Path("/{restaurantId:\\d+}/promotions/{promotionId:\\d+}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getPromotion(
+            @PathParam("restaurantId") final long restaurantId,
+            @PathParam("promotionId") final long promotionId
+    ) {
+        // TODO: Implement
+        throw new RuntimeException("Not implemented");
+    }
+
+    @POST
+    @Path("/{restaurantId:\\d+}/promotions")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response createPromotion(
+            @PathParam("restaurantId") final long restaurantId,
+            @Valid @NotNull final PromotionForm promotionForm
+    ) {
+        final Promotion promotion = productService.createPromotion(
+            promotionForm.getSourceProductId(),
+            promotionForm.getPromotionStartDate(),
+            promotionForm.getPromotionEndDate(),
+            promotionForm.getPercentage()
+        );
+
+        return Response.created(UriUtils.getPromotionUri(uriInfo, restaurantId, promotion.getPromotionId())).build();
+    }
+
+    @DELETE
+    @Path("/{restaurantId:\\d+}/promotions/{promotionId:\\d+}")
+    public Response stopPromotion(@PathParam("restaurantId") final long restaurantId) {
+        // TODO
+        throw new RuntimeException("Not implemented");
     }
 }

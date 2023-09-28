@@ -155,7 +155,7 @@ public class ProductJpaDaoTest {
         Assert.assertEquals(ProductConstants.DEFAULT_PROMOTION_START_DATE, promotion.getStartDate());
         Assert.assertEquals(ProductConstants.DEFAULT_PROMOTION_END_DATE, promotion.getEndDate());
         Assert.assertEquals(product.getProductId(), promotion.getSource().getProductId());
-        Assert.assertEquals(product.getPrice().multiply(BigDecimal.valueOf(ProductConstants.DEFAULT_PROMOTION_DISCOUNT)).divide(BigDecimal.valueOf(100), 2, RoundingMode.FLOOR), promotion.getDestination().getPrice());
+        Assert.assertEquals(product.getPrice().multiply(ProductConstants.DEFAULT_PROMOTION_DISCOUNT).divide(BigDecimal.valueOf(100), 2, RoundingMode.FLOOR), promotion.getDestination().getPrice());
         Assert.assertTrue(promotion.getDestination().getAvailable());
         Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "promotions", "promotion_id = " + promotion.getPromotionId()));
     }

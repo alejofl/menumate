@@ -198,7 +198,17 @@ public class RestaurantJpaDao implements RestaurantDao {
                 Promotion.class
         );
         query.setParameter("restaurantId", restaurantId);
-        return query.getResultList();
+
+        List<Promotion> result = query.getResultList();
+        if (result.isEmpty()) {
+            Query existsQuery = em.createNativeQuery("SELECT EXISTS(SELECT * FROM restaurants WHERE restaurant_id = ?)");
+            existsQuery.setParameter(1, restaurantId);
+
+            if (!((Boolean) existsQuery.getSingleResult()))
+                throw new RestaurantNotFoundException();
+        }
+
+        return result;
     }
 
     @Override
@@ -208,7 +218,17 @@ public class RestaurantJpaDao implements RestaurantDao {
                 Promotion.class
         );
         query.setParameter("restaurantId", restaurantId);
-        return query.getResultList();
+
+        List<Promotion> result = query.getResultList();
+        if (result.isEmpty()) {
+            Query existsQuery = em.createNativeQuery("SELECT EXISTS(SELECT * FROM restaurants WHERE restaurant_id = ?)");
+            existsQuery.setParameter(1, restaurantId);
+
+            if (!((Boolean) existsQuery.getSingleResult()))
+                throw new RestaurantNotFoundException();
+        }
+
+        return result;
     }
 
     @Override
