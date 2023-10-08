@@ -81,6 +81,10 @@ http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
             <param-name>jersey.config.servlet.filter.forwardOn404</param-name>
             <param-value>false</param-value>
         </init-param>
+        <init-param>
+            <param-name>jersey.config.server.provider.classnames</param-name>
+            <param-value>org.glassfish.jersey.media.multipart.MultiPartFeature</param-value>
+        </init-param>
     </filter>
     <filter-mapping>
         <filter-name>jersey</filter-name>

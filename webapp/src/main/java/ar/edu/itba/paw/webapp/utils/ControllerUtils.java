@@ -17,6 +17,7 @@ public final class ControllerUtils {
     public static final int DEFAULT_RESTAURANT_PAGE_SIZE = 12;
     public static final int DEFAULT_MYRESTAURANTS_PAGE_SIZE = 20;
     public static final int MAX_RESTAURANTS_FOR_HOMEPAGE = 4;
+    public static final int IMAGE_MAX_SIZE = 1024 * 1024 * 5; // 1024 B = 1 KB && 1024 B * 1024 = 1 MB ==> MAX_SIZE = 5 MB
 
     private ControllerUtils() {
 

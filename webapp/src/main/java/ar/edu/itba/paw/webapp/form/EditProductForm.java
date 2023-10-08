@@ -28,7 +28,6 @@ public class EditProductForm {
     @Digits(integer = 8, fraction = 2)
     private BigDecimal price;
 
-
     @Image(nullable = true)
     private long imageId;
 

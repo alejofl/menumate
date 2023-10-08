@@ -8,9 +8,9 @@ import java.lang.annotation.Target;
 import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-@Target({TYPE, FIELD, ANNOTATION_TYPE})
+@Target({TYPE, FIELD, ANNOTATION_TYPE, PARAMETER})
 @Retention(RUNTIME)
-@Constraint(validatedBy = ImageValidatorConstraint.class)
+@Constraint(validatedBy = ValidImageValidatorConstraint.class)
 public @interface ValidImage {
 
     String message() default "Invalid Image";
@@ -18,6 +18,4 @@ public @interface ValidImage {
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
-
-    boolean nullable() default false;
 }
