@@ -2,7 +2,6 @@ package ar.edu.itba.paw.webapp.form;
 
 import ar.edu.itba.paw.webapp.form.validation.Image;
 import org.hibernate.validator.constraints.NotBlank;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Digits;
@@ -31,7 +30,7 @@ public class EditProductForm {
 
 
     @Image(nullable = true)
-    private MultipartFile image;
+    private long imageId;
 
     public Long getProductId() {
         return productId;
@@ -73,11 +72,11 @@ public class EditProductForm {
         this.price = price;
     }
 
-    public MultipartFile getImage() {
-        return image;
+    public long getImageId() {
+        return imageId;
     }
 
-    public void setImage(MultipartFile image) {
-        this.image = image;
+    public void setImage(long image) {
+        this.imageId = image;
     }
 }

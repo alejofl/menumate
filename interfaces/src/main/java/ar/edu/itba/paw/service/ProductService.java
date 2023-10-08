@@ -16,7 +16,7 @@ public interface ProductService {
 
     Promotion getPromotionById(long restaurantId, long promotionId);
 
-    Product create(long restaurantId, long categoryId, String name, String description, byte[] image, BigDecimal price);
+    Product create(long restaurantId, long categoryId, String name, String description, Long imageId, BigDecimal price);
 
     Product update(long restaurantId, long categoryId, long productId, String name, BigDecimal price, String description);
 

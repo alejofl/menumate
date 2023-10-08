@@ -47,9 +47,9 @@ public class ImageJpaDaoTest {
     @Test
     @Rollback
     public void testCreateImg() {
-        final long image = imageDao.create(NON_EXISTING_IMAGE_INFO);
+        final Image image = imageDao.create(NON_EXISTING_IMAGE_INFO);
         em.flush();
-        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "images", "image_id = " + image));
+        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "images", "image_id = " + EXISTING_IMAGE_ID));
     }
 
     @Test
@@ -72,8 +72,9 @@ public class ImageJpaDaoTest {
 
     @Test
     public void testGetImageById() {
-        Optional<byte[]> image = imageDao.getById(EXISTING_IMAGE_ID);
+        Optional<Image> image = imageDao.getById(EXISTING_IMAGE_ID);
         Assert.assertTrue(image.isPresent());
-        Assert.assertArrayEquals(EXISTING_IMAGE_INFO, image.get());
+        Assert.assertArrayEquals(EXISTING_IMAGE_INFO, image.get().getBytes());
+        Assert.assertEquals(Optional.of(EXISTING_IMAGE_ID).get(), image.get().getImageId());
     }
 }

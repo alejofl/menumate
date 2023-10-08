@@ -2,9 +2,9 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.exception.*;
 import ar.edu.itba.paw.model.Category;
+import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.model.Product;
 import ar.edu.itba.paw.model.Promotion;
-import ar.edu.itba.paw.persistance.CategoryDao;
 import ar.edu.itba.paw.persistance.ImageDao;
 import ar.edu.itba.paw.persistance.ProductDao;
 import ar.edu.itba.paw.persistance.RestaurantDao;
@@ -76,12 +76,12 @@ public class ProductServiceImpl implements ProductService {
 
     @Transactional
     @Override
-    public Product create(long restaurantId, long categoryId, String name, String description, byte[] image, BigDecimal price) {
+    public Product create(long restaurantId, long categoryId, String name, String description, Long imageId, BigDecimal price) {
         // Ensure the category exists under that restaurant, throw an appropriate exception otherwise.
         final Category category = categoryService.getByIdChecked(restaurantId, categoryId, false);
 
-        Long imageId = image == null ? null : imageDao.create(image);
-        return productDao.create(category, name, description, imageId, price);
+        Optional<Image> image = imageId == null? Optional.empty() : imageDao.getById(imageId);
+        return productDao.create(category, name, description, image.map(Image::getImageId).orElse(null), price);
     }
 
     @Transactional

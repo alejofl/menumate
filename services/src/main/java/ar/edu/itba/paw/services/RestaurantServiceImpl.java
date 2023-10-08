@@ -33,12 +33,11 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Transactional
     @Override
-    public Restaurant create(String name, String email, RestaurantSpecialty specialty, long ownerUserId, String address, String description, int maxTables, byte[] logo, byte[] portrait1, byte[] portrait2, boolean isActive, List<RestaurantTags> tags) {
-        final Long logoId = logo == null ? null : imageDao.create(logo);
-        final Long portrait1Id = portrait1 == null ? null : imageDao.create(portrait1);
-        final Long portrait2Id = portrait2 == null ? null : imageDao.create(portrait2);
-
-        return restaurantDao.create(name, email, specialty, ownerUserId, address, description, maxTables, logoId, portrait1Id, portrait2Id, isActive, tags);
+    public Restaurant create(String name, String email, RestaurantSpecialty specialty, long ownerUserId, String address, String description, int maxTables, Long logoId, Long portrait1Id, Long portrait2Id, boolean isActive, List<RestaurantTags> tags) {
+        final Optional<Image> logo = logoId == null ? Optional.empty() : imageDao.getById(logoId);
+        final Optional<Image> portrait1 = portrait1Id == null ? Optional.empty() : imageDao.getById(portrait1Id);
+        final Optional<Image> portrait2 = portrait2Id == null ? Optional.empty() : imageDao.getById(portrait2Id);
+        return restaurantDao.create(name, email, specialty, ownerUserId, address, description, maxTables, logo.map(Image::getImageId).orElse(null), portrait1.map(Image::getImageId).orElse(null), portrait2.map(Image::getImageId).orElse(null), isActive, tags);
     }
 
     @Override

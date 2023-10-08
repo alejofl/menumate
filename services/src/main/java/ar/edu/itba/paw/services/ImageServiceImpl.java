@@ -1,7 +1,11 @@
 package ar.edu.itba.paw.services;
 
+import ar.edu.itba.paw.exception.ImageNotFoundException;
+import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.persistance.ImageDao;
 import ar.edu.itba.paw.service.ImageService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,15 +18,17 @@ public class ImageServiceImpl implements ImageService {
     @Autowired
     private ImageDao imageDao;
 
+    private final static Logger LOGGER = LoggerFactory.getLogger(ImageServiceImpl.class);
+
     @Transactional
     @Override
-    public long create(byte[] bytes) {
+    public Image create(byte[] bytes) {
         return imageDao.create(bytes);
     }
 
     @Transactional
     @Override
-    public Optional<byte[]> getById(long imageId) {
+    public Optional<Image> getById(long imageId) {
         return imageDao.getById(imageId);
     }
 
@@ -35,6 +41,11 @@ public class ImageServiceImpl implements ImageService {
     @Transactional
     @Override
     public void delete(long imageId) {
+        final Optional<Image> image = getById(imageId);
+        if (!image.isPresent()) {
+            LOGGER.error("Attempted to update nonexisting image id {}", imageId);
+            throw new ImageNotFoundException();
+        }
         imageDao.delete(imageId);
     }
 }

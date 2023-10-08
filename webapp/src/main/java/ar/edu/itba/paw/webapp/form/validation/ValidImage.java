@@ -11,9 +11,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({TYPE, FIELD, ANNOTATION_TYPE})
 @Retention(RUNTIME)
 @Constraint(validatedBy = ImageValidatorConstraint.class)
-public @interface Image {
+public @interface ValidImage {
 
-    String message() default "Image does not exist";
+    String message() default "Invalid Image";
 
     Class<?>[] groups() default {};
 
