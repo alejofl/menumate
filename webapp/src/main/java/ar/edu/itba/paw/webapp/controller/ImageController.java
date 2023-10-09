@@ -4,26 +4,16 @@ import ar.edu.itba.paw.exception.ImageNotFoundException;
 import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.service.ImageService;
 import ar.edu.itba.paw.webapp.dto.ImageDto;
-import ar.edu.itba.paw.webapp.form.ImageForm;
 import ar.edu.itba.paw.webapp.form.validation.ValidImage;
-import ar.edu.itba.paw.webapp.form.validation.ValidImageValidatorConstraint;
 import ar.edu.itba.paw.webapp.utils.ControllerUtils;
 import ar.edu.itba.paw.webapp.utils.UriUtils;
-import org.apache.commons.io.IOUtils;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import javax.print.attribute.standard.Media;
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
-import java.io.IOException;
-import java.util.Arrays;
 
 @Path(UriUtils.IMAGES_URL)
 @Component
