@@ -88,7 +88,7 @@ public class RestaurantRoleServiceImpl implements RestaurantRoleService {
 
     @Transactional
     @Override
-    public User setRole(String email, long restaurantId, RestaurantRoleLevel level) {
+    public Pair<User, Boolean> setRole(String email, long restaurantId, RestaurantRoleLevel level) {
         if (level == RestaurantRoleLevel.OWNER) {
             LOGGER.error("Attempted to set role of user {} at restaurant {} to owner", email, restaurantId);
             throw new IllegalArgumentException("Cannot set a restaurant role level to owner");
@@ -96,7 +96,8 @@ public class RestaurantRoleServiceImpl implements RestaurantRoleService {
 
         final Optional<User> user = userDao.getByEmail(email);
         if (!user.isPresent()) {
-            return createUserAndSetRole(email, restaurantId, level);
+            final User u = createUserAndSetRole(email, restaurantId, level);
+            return new Pair<>(u, true);
         }
 
         if (level == null) {
@@ -114,7 +115,7 @@ public class RestaurantRoleServiceImpl implements RestaurantRoleService {
             }
         }
 
-        return user.get();
+        return new Pair<>(user.get(), false);
     }
 
     @Transactional

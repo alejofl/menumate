@@ -61,8 +61,16 @@ public class RestaurantEmployeeController {
             @PathParam("restaurantId") final long restaurantId,
             @Valid @NotNull final AddRestaurantEmployeeForm addRestaurantEmployeeForm
     ) {
-        final User user = restaurantRoleService.setRole(addRestaurantEmployeeForm.getEmail(), restaurantId, addRestaurantEmployeeForm.getRoleAsEnum());
-        return Response.created(UriUtils.getRestaurantEmployeeUri(uriInfo, restaurantId, user.getUserId())).build();
+        final Pair<User, Boolean> userPair = restaurantRoleService.setRole(addRestaurantEmployeeForm.getEmail(), restaurantId, addRestaurantEmployeeForm.getRoleAsEnum());
+
+
+        final User user = userPair.getKey();
+        Response.ResponseBuilder responseBuilder = Response.created(UriUtils.getRestaurantEmployeeUri(uriInfo, restaurantId, user.getUserId()));
+
+        if (userPair.getValue())
+            responseBuilder = responseBuilder.header("MenuMate-EmployeeUserCreated", "true");
+
+        return responseBuilder.build();
     }
 
     @PUT
