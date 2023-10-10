@@ -13,6 +13,10 @@ public class CategoryForm {
         return name;
     }
 
+    public String getNameTrimmed() {
+        return name.trim();
+    }
+
     public void setName(String name) {
         this.name = name;
     }

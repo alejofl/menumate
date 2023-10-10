@@ -155,19 +155,29 @@ public class RestaurantController {
             @PathParam("restaurantId") final long restaurantId,
             @Valid @NotNull final CategoryForm categoryForm
     ) {
-        final Category category = categoryService.create(restaurantId, categoryForm.getName());
+        final Category category = categoryService.create(restaurantId, categoryForm.getNameTrimmed());
         return Response.created(UriUtils.getCategoryUri(uriInfo, category)).build();
     }
 
-    @PUT
+    @PATCH
     @Path("/{restaurantId:\\d+}/categories/{categoryId:\\d+}")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateCategory(
             @PathParam("restaurantId") final long restaurantId,
             @PathParam("categoryId") final long categoryId,
-            @Valid @NotNull final CategoryForm categoryForm
+            @Valid @NotNull final UpdateCategoryForm categoryForm
     ) {
-        categoryService.updateName(restaurantId, categoryId, categoryForm.getName());
+        final Category category;
+        String name = categoryForm.getNameTrimmed();
+        if (name == null)
+            category = categoryService.getByIdChecked(restaurantId, categoryId, false);
+        else
+            category = categoryService.updateName(restaurantId, categoryId, name);
+
+        Integer orderNum = categoryForm.getOrderNum();
+        if (orderNum != null)
+            categoryService.setOrder(category, orderNum);
+
         return Response.noContent().build();
     }
 

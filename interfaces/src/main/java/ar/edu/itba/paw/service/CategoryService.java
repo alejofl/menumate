@@ -19,7 +19,7 @@ public interface CategoryService {
 
     void delete(long restaurantId, long categoryId);
 
-    void swapOrder(long restaurantId, int orderNum1, int orderNum2);
+    void setOrder(Category category, int orderNum);
 
     void moveProduct(long productId, long newCategoryId);
 }

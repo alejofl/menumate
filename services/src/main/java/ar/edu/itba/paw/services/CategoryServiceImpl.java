@@ -92,13 +92,13 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Transactional
     @Override
-    public void swapOrder(long restaurantId, int orderNum1, int orderNum2) {
-        if (orderNum1 == orderNum2) {
-            LOGGER.warn("Attempted to swapOrder between categories of restaurant id {} with the same order {}", restaurantId, orderNum1);
+    public void setOrder(Category category, int orderNum) {
+        if (category.getOrderNum() == orderNum) {
+            LOGGER.warn("Attempted to setOrder to category {} with the same orderNum {}", category.getCategoryId(), orderNum);
             return;
         }
 
-        categoryDao.swapOrder(restaurantId, orderNum1, orderNum2);
+        categoryDao.setOrder(category, orderNum);
     }
 
     @Transactional

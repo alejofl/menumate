@@ -98,32 +98,27 @@ public class CategoryJpaDao implements CategoryDao {
         LOGGER.info("Logical-deleted category id {} with {} products and closed {} promotions", category.getCategoryId(), productCount, promoRows);
     }
 
-    private static final String SWAP_ORDER_SQL = "SET CONSTRAINTS ALL DEFERRED;" +
-            "UPDATE categories SET order_num = ? WHERE deleted = false AND category_id = ?;" +
-            "UPDATE categories SET order_num = ? WHERE deleted = false AND category_id = ?;";
+    private static final String SET_ORDER_SQL_DOWN = "SET CONSTRAINTS ALL DEFERRED;" +
+            "UPDATE categories SET order_num = order_num+1 WHERE restaurant_id = ? AND order_num >= ? AND order_num < ?;" +
+            "UPDATE categories SET order_num = ? WHERE category_id = ?;";
+
+    private static final String SET_ORDER_SQL_UP = "SET CONSTRAINTS ALL DEFERRED;" +
+            "UPDATE categories SET order_num = order_num-1 WHERE restaurant_id = ? AND order_num <= ? AND order_num > ?;" +
+            "UPDATE categories SET order_num = ? WHERE category_id = ?;";
 
     @Override
-    public void swapOrder(long restaurantId, int orderNum1, int orderNum2) {
-        final Category category1 = getByRestaurantAndOrderNum(restaurantId, orderNum1).orElse(null);
-        final Category category2 = getByRestaurantAndOrderNum(restaurantId, orderNum2).orElse(null);
-        if (category1 == null || category2 == null) {
-            LOGGER.error("Attempted to swapOrder of categories at restaurant id {} with ordernums {} ({}found) and {} ({}found)", restaurantId, orderNum1, orderNum2, category1 == null ? "not " : "", category2 == null ? "not " : "");
-            throw new CategoryNotFoundException();
-        }
+    public void setOrder(Category category, int orderNum) {
+        String sql = orderNum < category.getOrderNum() ? SET_ORDER_SQL_DOWN : SET_ORDER_SQL_UP;
+        Query updateQuery = em.createNativeQuery(sql);
+        updateQuery.setParameter(1, category.getRestaurantId());
+        updateQuery.setParameter(2, orderNum);
+        updateQuery.setParameter(3, category.getOrderNum());
+        updateQuery.setParameter(4, orderNum);
+        updateQuery.setParameter(5, category.getCategoryId());
 
-        if (category1.getDeleted() || category2.getDeleted()) {
-            LOGGER.error("Attempted to swapOrder of {}deleted category id {} and {}deleted category id {}}", category1.getDeleted() ? "" : "un", category1.getCategoryId(), category2.getDeleted() ? "" : "un", category2.getCategoryId());
-            throw new IllegalStateException();
-        }
+        int rows = updateQuery.executeUpdate();
 
-        Query query = em.createNativeQuery(SWAP_ORDER_SQL);
-        query.setParameter(1, category2.getOrderNum());
-        query.setParameter(2, category1.getCategoryId());
-        query.setParameter(3, category1.getOrderNum());
-        query.setParameter(4, category2.getCategoryId());
-        query.executeUpdate();
-
-        LOGGER.info("Updated order of categories ids {} and {} to {} and {} respectively", category1.getCategoryId(), category2.getCategoryId(), category1.getOrderNum(), category2.getOrderNum());
+        LOGGER.info("Updated order of category id {} (restaurant {}) to {}. {} rows affected.", category.getCategoryId(), category.getRestaurantId(), orderNum, rows);
     }
 
     @Override
