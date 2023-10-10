@@ -253,6 +253,7 @@ public class RestaurantController {
     @GET
     @Path("/{restaurantId:\\d+}/promotions")
     @Produces(MediaType.APPLICATION_JSON)
+    @PreAuthorize("#living == false || @accessValidator.checkRestaurantAdmin(#restaurantId)")
     public Response getRestaurantPromotions(
             @PathParam("restaurantId") final long restaurantId,
             @QueryParam("living") @DefaultValue("false") final boolean living
