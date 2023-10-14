@@ -31,7 +31,7 @@ public class ImageController {
 
     @GET
     @Path("/{imageId:\\d+}")
-    @Produces("image/jpg")
+    @Produces("image/jpeg")
     public Response getImage(@PathParam("imageId") int imageId) {
         Image image = imageService.getById(imageId).orElseThrow(ImageNotFoundException::new);
         return Response.ok(image.getBytes())

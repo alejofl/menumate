@@ -13,4 +13,6 @@ public interface ImageDao {
     void update(long imageId, byte[] bytes);
 
     void delete(long imageId);
+
+    boolean exists(long imageId);
 }

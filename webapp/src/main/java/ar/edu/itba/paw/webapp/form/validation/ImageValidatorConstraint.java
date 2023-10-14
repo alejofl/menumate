@@ -19,7 +19,7 @@ public class ImageValidatorConstraint implements ConstraintValidator<Image, Long
 
     @Override
     public boolean isValid(Long imageId, ConstraintValidatorContext constraintValidatorContext) {
-        return nullable || imageService.getById(imageId).isPresent();
+        return nullable || imageService.exists(imageId);
     }
 
 }

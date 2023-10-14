@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.exception.ImageNotFoundException;
 import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.persistance.ImageDao;
 import org.slf4j.Logger;
@@ -7,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceContext;
 import java.util.Optional;
 
@@ -41,7 +43,20 @@ public class ImageJpaDao implements ImageDao {
 
     @Override
     public void delete(long imageId) {
-        em.remove(em.getReference(Image.class, imageId));
-        LOGGER.info("Deleted image with ID {}", imageId);
+        try {
+            final Image image = em.getReference(Image.class, imageId);
+            em.remove(image);
+            em.flush();
+            LOGGER.info("Deleted image with ID {}", imageId);
+        } catch (EntityNotFoundException e) {
+            LOGGER.error("Attempted to update non-existing image id {}", imageId);
+            throw new ImageNotFoundException();
+        }
     }
+
+    @Override
+    public boolean exists(long imageId) {
+        return em.find(Image.class, imageId) != null;
+    }
+
 }

@@ -41,11 +41,12 @@ public class ImageServiceImpl implements ImageService {
     @Transactional
     @Override
     public void delete(long imageId) {
-        final Optional<Image> image = getById(imageId);
-        if (!image.isPresent()) {
-            LOGGER.error("Attempted to update nonexisting image id {}", imageId);
-            throw new ImageNotFoundException();
-        }
         imageDao.delete(imageId);
+    }
+
+    @Transactional
+    @Override
+    public boolean exists(long imageId) {
+        return imageDao.exists(imageId);
     }
 }
