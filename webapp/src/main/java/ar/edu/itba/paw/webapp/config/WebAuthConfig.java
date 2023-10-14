@@ -99,6 +99,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
                 .antMatchers(HttpMethod.POST, UriUtils.USERS_URL).permitAll()
                 .antMatchers(HttpMethod.GET, UriUtils.USERS_URL + "/{userId:\\d+}").permitAll()
+                .antMatchers(HttpMethod.DELETE, UriUtils.USERS_URL + "/{userId:\\d+}").access("hasRole('MODERATOR')")
                 .antMatchers(UriUtils.USERS_URL + "/{userId:\\d+}/**").access("@accessValidator.checkIsUser(#userId)")
                 .antMatchers(UriUtils.USERS_URL + "/verification-tokens/**").permitAll()
                 .antMatchers(UriUtils.USERS_URL + "/resetpassword-tokens/**").permitAll()

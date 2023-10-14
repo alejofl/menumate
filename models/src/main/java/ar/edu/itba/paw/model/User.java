@@ -127,4 +127,8 @@ public class User {
     public UserRole getRole() {
         return role;
     }
+
+    public boolean hasRole() {
+        return role != null;
+    }
 }

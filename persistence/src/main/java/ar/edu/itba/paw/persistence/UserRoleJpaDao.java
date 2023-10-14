@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.exception.UserRoleNotFoundException;
+import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.model.UserRole;
 import ar.edu.itba.paw.model.UserRoleLevel;
 import ar.edu.itba.paw.persistance.UserRoleDao;
@@ -50,12 +51,12 @@ public class UserRoleJpaDao implements UserRoleDao {
     }
 
     @Override
-    public List<UserRole> getByRole(UserRoleLevel roleLevel) {
-        final TypedQuery<UserRole> query = em.createQuery(
-                "FROM UserRole ORDER BY userId DESC",
-                UserRole.class
+    public List<User> getByRole(UserRoleLevel roleLevel) {
+        final TypedQuery<User> query = em.createQuery(
+                "SELECT ur.user FROM UserRole ur WHERE ur.level = :roleLevel ORDER BY ur.userId DESC",
+                User.class
         );
-
+        query.setParameter("roleLevel", roleLevel);
         return query.getResultList();
     }
 }

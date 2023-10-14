@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.exception.UserRoleNotFoundException;
+import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.model.UserRole;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import ar.edu.itba.paw.persistence.constants.UserConstants;
@@ -99,10 +100,9 @@ public class UserRolesJpaDaoTest {
 
     @Test
     public void testGetByRoleOne() {
-        List<UserRole> result = rolesDao.getByRole(UserConstants.MODERATOR_ROLE);
+        List<User> result = rolesDao.getByRole(UserConstants.MODERATOR_ROLE);
         Assert.assertEquals(1, result.size());
-        Assert.assertEquals(UserConstants.USER_ID_MODERATOR_ROLE, result.get(0).getUserId());
-
+        Assert.assertEquals(UserConstants.USER_ID_MODERATOR_ROLE, (long) result.get(0).getUserId());
     }
 
     @Test
@@ -116,9 +116,9 @@ public class UserRolesJpaDaoTest {
         jdbcTemplate.execute("INSERT INTO user_roles (user_id, role_level) VALUES (" + UserConstants.ACTIVE_USER_ID + ", " + UserConstants.MODERATOR_ROLE.ordinal() + ")");
         jdbcTemplate.execute("INSERT INTO user_roles (user_id, role_level) VALUES (" + UserConstants.RESTAURANT_OWNER_ID + ", " + UserConstants.MODERATOR_ROLE.ordinal() + ")");
 
-        List<UserRole> result = rolesDao.getByRole(UserConstants.MODERATOR_ROLE);
+        List<User> result = rolesDao.getByRole(UserConstants.MODERATOR_ROLE);
         Assert.assertEquals(3, result.size());
-        Assert.assertEquals(ids.get(0).longValue(), result.get(0).getUserId());
-        Assert.assertEquals(ids.get(1).longValue(), result.get(1).getUserId());
+        Assert.assertEquals(ids.get(0).longValue(), (long) result.get(0).getUserId());
+        Assert.assertEquals(ids.get(1).longValue(), (long) result.get(1).getUserId());
     }
 }

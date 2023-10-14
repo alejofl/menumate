@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistance;
 
+import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.model.UserRole;
 import ar.edu.itba.paw.model.UserRoleLevel;
 
@@ -27,5 +28,5 @@ public interface UserRoleDao {
     /**
      * Gets the users a given role.
      */
-    List<UserRole> getByRole(UserRoleLevel roleLevel);
+    List<User> getByRole(UserRoleLevel roleLevel);
 }

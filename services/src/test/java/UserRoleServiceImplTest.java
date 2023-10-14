@@ -1,3 +1,4 @@
+import ar.edu.itba.paw.exception.UserRoleNotFoundException;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.model.UserRole;
 import ar.edu.itba.paw.model.UserRoleLevel;
@@ -84,7 +85,7 @@ public class UserRoleServiceImplTest {
         Assert.assertTrue(userRoleService.setRole(DEFAULT_USER_EMAIL, MODERATOR_ROLE));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = UserRoleNotFoundException.class)
     public void setExistingUserNotExistingRole() {
         Assert.assertFalse(userRoleService.setRole(DEFAULT_USER_EMAIL, null));
     }

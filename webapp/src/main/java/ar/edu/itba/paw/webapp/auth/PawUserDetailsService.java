@@ -39,7 +39,7 @@ public class PawUserDetailsService implements UserDetailsService {
         final Optional<UserRoleLevel> userRole = userRoleService.getRole(user.getUserId());
 
         if (userRole.isPresent()) {
-            authorities.add(new SimpleGrantedAuthority(userRole.get().getLevelName()));
+            authorities.add(new SimpleGrantedAuthority(userRole.get().getMessageCode()));
         }
         return new PawAuthUserDetails(user.getUserId(), user.getEmail(), user.getPassword(), authorities);
     }

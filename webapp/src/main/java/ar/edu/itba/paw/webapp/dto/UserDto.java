@@ -16,6 +16,7 @@ public class UserDto {
     private LocalDateTime dateJoined;
     private boolean isActive;
     private String preferredLanguage;
+    private String role;
 
     private URI selfUrl;
     private URI addressesUrl;
@@ -36,6 +37,10 @@ public class UserDto {
         dto.ordersUrl = UriUtils.getOrdersByUserUri(uriInfo, user.getUserId());
         dto.reviewsUrl = UriUtils.getReviewsByUserUri(uriInfo, user.getUserId());
         dto.restaurantsEmployedAtUrl = UriUtils.getUserEmployedAtUri(uriInfo, user.getUserId());
+
+        if(user.hasRole()) {
+            dto.role = user.getRole().getLevel().getMessageCode().replaceAll("^ROLE_", "").toLowerCase();
+        }
 
         return dto;
     }
@@ -122,5 +127,13 @@ public class UserDto {
 
     public void setRestaurantsEmployedAtUrl(URI restaurantsEmployedAtUrl) {
         this.restaurantsEmployedAtUrl = restaurantsEmployedAtUrl;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

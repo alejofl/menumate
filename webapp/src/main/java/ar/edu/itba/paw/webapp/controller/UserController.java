@@ -4,7 +4,9 @@ import ar.edu.itba.paw.exception.UserAddressNotFoundException;
 import ar.edu.itba.paw.exception.UserNotFoundException;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.model.UserAddress;
+import ar.edu.itba.paw.service.UserRoleService;
 import ar.edu.itba.paw.service.UserService;
+import ar.edu.itba.paw.webapp.api.CustomMediaType;
 import ar.edu.itba.paw.webapp.auth.JwtTokenUtil;
 import ar.edu.itba.paw.webapp.dto.UserAddressDto;
 import ar.edu.itba.paw.webapp.dto.UserDto;
@@ -25,14 +27,16 @@ public class UserController {
 
     private final UserService userService;
     private final JwtTokenUtil jwtTokenUtil;
+    private final UserRoleService userRoleService;
 
     @Context
     private UriInfo uriInfo;
 
     @Autowired
-    public UserController(final UserService userService, final JwtTokenUtil jwtTokenUtil) {
+    public UserController(final UserService userService, final JwtTokenUtil jwtTokenUtil, final UserRoleService userRoleService) {
         this.userService = userService;
         this.jwtTokenUtil = jwtTokenUtil;
+        this.userRoleService = userRoleService;
     }
 
     @GET
@@ -161,5 +165,39 @@ public class UserController {
             return Response.status(Response.Status.NOT_FOUND).build();
 
         return Response.noContent().build();
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getUsersWithRoleLevel(@Valid @BeanParam final GetUserRoleLevelForm getUserRoleLevelForm) {
+        final List<User> users = userRoleService.getByRole(getUserRoleLevelForm.getRoleAsEnum());
+        final List<UserDto> userDtos = UserDto.fromUserCollection(uriInfo, users);
+        return Response.ok((new GenericEntity<List<UserDto>>(userDtos) {})).build();
+    }
+
+    @PATCH
+    @Path("/{userId:\\d+}")
+    @Consumes(value = {CustomMediaType.USER_ROLE_V1})
+    public Response updateUserRoleLevel(
+            @PathParam("userId") final long userId,
+            @Valid @NotNull final PatchUserRoleLevelForm patchUserRoleLevelForm
+    ) {
+        final User user = userService.getById(userId).orElseThrow(UserNotFoundException::new);
+        userRoleService.setRole(user.getEmail(), patchUserRoleLevelForm.getRoleAsEnum());
+        return Response.ok().build();
+    }
+
+    @POST
+    @Consumes(value = {CustomMediaType.USER_ROLE_V1})
+    public Response createUserRole(@Valid @NotNull final PostUserRoleLevelForm addUserRoleForm) {
+        userRoleService.setRole(addUserRoleForm.getEmail(), addUserRoleForm.getRoleAsEnum());
+        return Response.ok().build();
+    }
+
+    @DELETE
+    @Path("/{userId:\\d+}")
+    public Response deleteUserRole(@PathParam("userId") final long userId) {
+        userRoleService.deleteRole(userId);
+        return Response.ok().build();
     }
 }

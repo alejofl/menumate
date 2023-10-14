@@ -4,7 +4,7 @@ import org.hibernate.validator.constraints.Email;
 
 import javax.validation.constraints.NotNull;
 
-public class AddModeratorForm {
+public class PostUserRoleLevelForm extends PatchUserRoleLevelForm {
     @NotNull
     @Email
     private String email;

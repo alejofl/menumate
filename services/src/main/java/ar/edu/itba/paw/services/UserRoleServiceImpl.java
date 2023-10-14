@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.services;
 
+import ar.edu.itba.paw.exception.UserRoleNotFoundException;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.model.UserRole;
 import ar.edu.itba.paw.model.UserRoleLevel;
@@ -51,15 +52,15 @@ public class UserRoleServiceImpl implements UserRoleService {
         String name = email.split("@")[0];
         User user = userDao.create(email, null, name, LocaleContextHolder.getLocale().getLanguage());
         userRoleDao.create(user.getUserId(), level);
-        emailService.sendInvitationToUser(user, level.getLevelName().replaceAll("^ROLE_", "").toLowerCase());
+        emailService.sendInvitationToUser(user, level.getMessageCode().replaceAll("^ROLE_", "").toLowerCase());
     }
 
     @Transactional
     @Override
     public boolean setRole(String email, UserRoleLevel roleLevel) {
         if (roleLevel == null) {
-            LOGGER.error("Attempted to set null user role");
-            throw new IllegalArgumentException("Cannot set null user role");
+            LOGGER.error("Attempted to set not-existing user role");
+            throw new UserRoleNotFoundException("Cannot set invalid user role");
         }
 
         Optional<User> user = userDao.getByEmail(email);
@@ -86,7 +87,7 @@ public class UserRoleServiceImpl implements UserRoleService {
     }
 
     @Override
-    public List<UserRole> getByRole(UserRoleLevel roleLevel) {
+    public List<User> getByRole(UserRoleLevel roleLevel) {
         return userRoleDao.getByRole(roleLevel);
     }
 }
