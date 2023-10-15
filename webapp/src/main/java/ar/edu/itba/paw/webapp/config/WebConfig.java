@@ -52,21 +52,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     private Resource schemaSql;
 
     @Bean
-    public ViewResolver viewResolver() {
-        final InternalResourceViewResolver vr = new InternalResourceViewResolver();
-        vr.setViewClass(JstlView.class);
-        vr.setPrefix("/WEB-INF/jsp/");
-        vr.setSuffix(".jsp");
-        return vr;
-    }
-
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        super.addResourceHandlers(registry);
-        registry.addResourceHandler("/static/**").addResourceLocations("/static/");
-    }
-
-    @Bean
     public DataSource dataSource() {
         final SimpleDriverDataSource ds = new SimpleDriverDataSource();
         ds.setDriverClass(org.postgresql.Driver.class);
@@ -114,6 +99,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         return populator;
     }
 
+    // TODO: This may be deleted later
     @Bean
     public MessageSource messageSource() {
         final ReloadableResourceBundleMessageSource ms = new ReloadableResourceBundleMessageSource();
@@ -123,6 +109,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         return ms;
     }
 
+    // TODO: This may be deleted later, I think
     @Bean
     public CommonsMultipartResolver multipartResolver() {
         return new CommonsMultipartResolver();
