@@ -1,18 +1,15 @@
 package ar.edu.itba.paw.webapp.utils;
 
 import ar.edu.itba.paw.exception.UserNotFoundException;
-import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.util.PaginatedResult;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import javax.ws.rs.core.EntityTag;
-import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import java.io.ByteArrayInputStream;
+import javax.ws.rs.core.CacheControl;
 
 public final class ControllerUtils {
     public static final int DEFAULT_ORDERS_PAGE_SIZE = 20;
@@ -22,7 +19,7 @@ public final class ControllerUtils {
     public static final int DEFAULT_MYRESTAURANTS_PAGE_SIZE = 20;
     public static final int MAX_RESTAURANTS_FOR_HOMEPAGE = 4;
     public static final int IMAGE_MAX_SIZE = 1024 * 1024 * 5; // 1024 B = 1 KB && 1024 B * 1024 = 1 MB ==> MAX_SIZE = 5 MB
-    public static final int MAX_AGE_CACHE_CONTROL = 31536000;
+    public static final int MAX_AGE = 31536000;
 
     private ControllerUtils() {
 
@@ -106,17 +103,9 @@ public final class ControllerUtils {
         return response;
     }
 
-    // https://howtodoinjava.com/resteasy/jax-rs-resteasy-cache-control-with-etag-example/
-    public static Response conditionalCacheImageResponse(Request request, Image image) {
-        EntityTag eTag = new EntityTag(String.valueOf(image.getImageId()));
-        Response.ResponseBuilder response = request.evaluatePreconditions(eTag);
-        if (response == null) {
-            return Response
-                    .ok(new ByteArrayInputStream(image.getBytes()))
-                    .header("Content-Disposition", String.format("inline; filename=\"menumate_%d.jpg\"", image.getImageId()))
-                    .tag(eTag)
-                    .build();
-        }
-        return response.build();
+    public static void setUnconditionalCache(Response.ResponseBuilder responseBuilder) {
+        final CacheControl cacheControl = new CacheControl();
+        cacheControl.setMaxAge(MAX_AGE);
+        responseBuilder.cacheControl(cacheControl);
     }
 }

@@ -34,12 +34,10 @@ public class ImageController {
     @Produces("image/jpeg")
     public Response getImage(@PathParam("imageId") int imageId) {
         Image image = imageService.getById(imageId).orElseThrow(ImageNotFoundException::new);
-        CacheControl cacheControl = new CacheControl();
-        cacheControl.setMaxAge(ControllerUtils.MAX_AGE_CACHE_CONTROL);
-        return Response.ok(image.getBytes())
-                .header("Content-Disposition", String.format("inline; filename=\"menumate_%d.jpg\"", imageId))
-                .cacheControl(cacheControl)
-                .build();
+        final Response.ResponseBuilder responseBuilder = Response.ok(image.getBytes())
+                .header("Content-Disposition", String.format("inline; filename=\"menumate_%d.jpg\"", imageId));
+        ControllerUtils.setUnconditionalCache(responseBuilder);
+        return responseBuilder.build();
     }
 
     @POST
