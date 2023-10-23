@@ -32,9 +32,14 @@ public class ImageController {
     @GET
     @Path("/{imageId:\\d+}")
     @Produces("image/jpeg")
-    public Response getImage(@Context Request request, @PathParam("imageId") int imageId) {
+    public Response getImage(@PathParam("imageId") int imageId) {
         Image image = imageService.getById(imageId).orElseThrow(ImageNotFoundException::new);
-        return ControllerUtils.conditionalCacheImageResponse(request, image);
+        CacheControl cacheControl = new CacheControl();
+        cacheControl.setMaxAge(ControllerUtils.MAX_AGE_CACHE_CONTROL);
+        return Response.ok(image.getBytes())
+                .header("Content-Disposition", String.format("inline; filename=\"menumate_%d.jpg\"", imageId))
+                .cacheControl(cacheControl)
+                .build();
     }
 
     @POST
