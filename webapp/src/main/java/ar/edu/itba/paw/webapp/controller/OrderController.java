@@ -61,9 +61,15 @@ public class OrderController {
     @GET
     @Path("/{orderId:\\d+}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getOrderById(@PathParam("orderId") final long orderId) {
+    public Response getOrderById(@PathParam("orderId") final long orderId, @Context javax.ws.rs.core.Request request) {
         final Order order = orderService.getById(orderId).orElseThrow(OrderNotFoundException::new);
-        return Response.ok(OrderDto.fromOrder(uriInfo, order)).build();
+        final OrderDto dto = OrderDto.fromOrder(uriInfo, order);
+        EntityTag eTag = new EntityTag(String.valueOf(dto.hashCode()));
+        Response.ResponseBuilder responseBuilder = ControllerUtils.evaluateEtag(request, eTag);
+        if(responseBuilder == null) {
+            return Response.ok(dto).tag(eTag).build();
+        }
+        return responseBuilder.build();
     }
 
     @PATCH

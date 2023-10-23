@@ -7,9 +7,7 @@ import ar.edu.itba.paw.util.PaginatedResult;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.core.CacheControl;
+import javax.ws.rs.core.*;
 
 public final class ControllerUtils {
     public static final int DEFAULT_ORDERS_PAGE_SIZE = 20;
@@ -107,5 +105,15 @@ public final class ControllerUtils {
         final CacheControl cacheControl = new CacheControl();
         cacheControl.setMaxAge(MAX_AGE);
         responseBuilder.cacheControl(cacheControl);
+    }
+
+    // https://howtodoinjava.com/resteasy/jax-rs-resteasy-cache-control-with-etag-example/
+    public static Response.ResponseBuilder evaluateEtag(Request request, EntityTag eTag) {
+        Response.ResponseBuilder response = request.evaluatePreconditions(eTag);
+        if (response != null) {
+            final CacheControl cacheControl = new CacheControl();
+            cacheControl.setNoCache(true);
+        }
+        return response;
     }
 }
