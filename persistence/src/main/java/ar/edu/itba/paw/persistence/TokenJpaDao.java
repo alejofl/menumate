@@ -24,9 +24,17 @@ public class TokenJpaDao implements TokenDao {
     private EntityManager em;
 
     @Override
-    public Optional<Token> get(String token) {
+    public Optional<Token> getByToken(String token) {
         final TypedQuery<Token> query = em.createQuery("FROM Token WHERE token = :token", Token.class);
         query.setParameter("token", token);
+        return query.getResultList().stream().findFirst();
+    }
+
+    @Override
+    public Optional<Token> getByUserId(long userId, TokenType type) {
+        final TypedQuery<Token> query = em.createQuery("FROM Token WHERE user.userId = :userId AND type = :type", Token.class);
+        query.setParameter("userId", userId);
+        query.setParameter("type", type);
         return query.getResultList().stream().findFirst();
     }
 

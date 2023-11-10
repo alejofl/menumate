@@ -10,11 +10,15 @@ public interface TokenService {
 
     Token create(User user, TokenType type);
 
-    Optional<Token> get(String token);
+    Optional<Token> getByToken(String token);
+
+    Optional<Token> getResetPasswordTokenByUserId(long userId);
+
+    Optional<Token> getVerificationTokenByUserId(long userId);
 
     void delete(Token token);
 
     boolean isValid(String token, TokenType type);
 
-    void renew(Token token);
+    void refresh(Token token);
 }

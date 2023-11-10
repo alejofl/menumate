@@ -9,7 +9,9 @@ import java.util.Optional;
 
 public interface TokenDao {
 
-    Optional<Token> get(String token);
+    Optional<Token> getByToken(String token);
+
+    Optional<Token> getByUserId(long userId, TokenType type);
 
     Token create(User user, TokenType type, String token, LocalDateTime expiryDate);
 

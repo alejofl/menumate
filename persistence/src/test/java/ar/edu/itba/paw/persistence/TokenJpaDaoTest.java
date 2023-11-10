@@ -116,9 +116,9 @@ public class TokenJpaDaoTest {
     }
 
     @Test
-    public void testGetResetPasswordToken() {
+    public void testGetResetPasswordByToken() {
         User userWithToken = em.find(User.class, UserConstants.USER_ID_WITH_TOKENS);
-        Optional<Token> maybeToken = tokenDao.get(UserConstants.TOKEN2);
+        Optional<Token> maybeToken = tokenDao.getByToken(UserConstants.TOKEN2);
 
         assertTrue(maybeToken.isPresent());
         Token token = maybeToken.get();
@@ -129,9 +129,9 @@ public class TokenJpaDaoTest {
     }
 
     @Test
-    public void testGetVerifyToken() {
+    public void testGetVerifyByToken() {
         User userWithToken = em.find(User.class, UserConstants.USER_ID_WITH_TOKENS);
-        Optional<Token> maybeToken = tokenDao.get(UserConstants.TOKEN1);
+        Optional<Token> maybeToken = tokenDao.getByToken(UserConstants.TOKEN1);
 
         assertTrue(maybeToken.isPresent());
         Token token = maybeToken.get();
@@ -142,9 +142,49 @@ public class TokenJpaDaoTest {
     }
 
     @Test
-    public void testGetNoToken() {
-        final Optional<Token> tkn = tokenDao.get(UserConstants.UNUSED_TOKEN);
+    public void testGetNoTokenByToken() {
+        final Optional<Token> tkn = tokenDao.getByToken(UserConstants.UNUSED_TOKEN);
         assertFalse(tkn.isPresent());
+    }
+
+    @Test
+    public void testGetVerifyTokenByUserId() {
+        User userWithToken = em.find(User.class, UserConstants.USER_ID_WITH_TOKENS);
+        Optional<Token> maybeToken = tokenDao.getByUserId(userWithToken.getUserId(), TokenType.VERIFICATION_TOKEN);
+
+        assertTrue(maybeToken.isPresent());
+        Token token = maybeToken.get();
+
+        assertEquals(token.getToken(), UserConstants.TOKEN1);
+        assertEquals(token.getUser().getUserId(), userWithToken.getUserId());
+        assertEquals(token.getType(), TokenType.VERIFICATION_TOKEN);
+    }
+
+    @Test
+    public void testGetResetPasswordTokenByUserId() {
+        User userWithToken = em.find(User.class, UserConstants.USER_ID_WITH_TOKENS);
+        Optional<Token> maybeToken = tokenDao.getByUserId(userWithToken.getUserId(), TokenType.RESET_PASSWORD_TOKEN);
+
+        assertTrue(maybeToken.isPresent());
+        Token token = maybeToken.get();
+
+        assertEquals(token.getToken(), UserConstants.TOKEN2);
+        assertEquals(token.getUser().getUserId(), userWithToken.getUserId());
+        assertEquals(token.getType(), TokenType.RESET_PASSWORD_TOKEN);
+    }
+
+    @Test
+    public void testGetNoResetPasswordTokenByUserId() {
+        User userWithToken = em.find(User.class, UserConstants.INACTIVE_USER_ID);
+        Optional<Token> maybeToken = tokenDao.getByUserId(userWithToken.getUserId(), TokenType.RESET_PASSWORD_TOKEN);
+        assertFalse(maybeToken.isPresent());
+    }
+
+    @Test
+    public void testGetNoVerificationTokenByUserId() {
+        User userWithToken = em.find(User.class, UserConstants.INACTIVE_USER_ID);
+        Optional<Token> maybeToken = tokenDao.getByUserId(userWithToken.getUserId(), TokenType.VERIFICATION_TOKEN);
+        assertFalse(maybeToken.isPresent());
     }
 
     @Test

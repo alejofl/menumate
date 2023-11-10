@@ -37,8 +37,18 @@ public class TokenServiceImpl implements TokenService {
 
     @Transactional
     @Override
-    public Optional<Token> get(String token) {
-        return tokenDao.get(token);
+    public Optional<Token> getByToken(String token) {
+        return tokenDao.getByToken(token);
+    }
+
+    @Override
+    public Optional<Token> getResetPasswordTokenByUserId(long userId) {
+        return tokenDao.getByUserId(userId, TokenType.RESET_PASSWORD_TOKEN);
+    }
+
+    @Override
+    public Optional<Token> getVerificationTokenByUserId(long userId) {
+        return tokenDao.getByUserId(userId, TokenType.VERIFICATION_TOKEN);
     }
 
     @Transactional
@@ -50,12 +60,12 @@ public class TokenServiceImpl implements TokenService {
     @Transactional
     @Override
     public boolean isValid(String token, TokenType type) {
-        Optional<Token> maybeToken = tokenDao.get(token);
+        Optional<Token> maybeToken = tokenDao.getByToken(token);
         return maybeToken.isPresent() && maybeToken.get().isFresh() && maybeToken.get().hasSameType(type);
     }
 
     @Override
-    public void renew(Token token) {
+    public void refresh(Token token) {
         token.setExpiryDate(generateTokenExpirationDate());
     }
 
