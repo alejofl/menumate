@@ -28,20 +28,6 @@ CREATE TABLE IF NOT EXISTS user_addresses
     UNIQUE (user_id, name)
 );
 
-CREATE TABLE IF NOT EXISTS user_verification_tokens
-(
-    user_id INT PRIMARY KEY REFERENCES users (user_id) ON DELETE CASCADE,
-    token   VARCHAR(32) UNIQUE NOT NULL,
-    expires TIMESTAMP NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS user_resetpassword_tokens
-(
-    user_id INT PRIMARY KEY REFERENCES users (user_id) ON DELETE CASCADE,
-    token   VARCHAR(32) UNIQUE NOT NULL,
-    expires TIMESTAMP NOT NULL
-);
-
 CREATE TABLE IF NOT EXISTS tokens
 (
     user_id INT NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,

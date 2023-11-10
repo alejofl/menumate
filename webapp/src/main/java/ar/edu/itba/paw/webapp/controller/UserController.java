@@ -129,14 +129,14 @@ public class UserController {
     @Path("verification-tokens")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response resendVerificationToken(@Valid @NotNull final EmailForm emailForm) {
-        userService.resendUserVerificationToken(emailForm.getEmail());
+        userService.sendVerificationToken(emailForm.getEmail());
         return Response.noContent().build();
     }
 
     @PUT
     @Path("verification-tokens/{token}")
     public Response verificationToken(@PathParam("token") final String token) {
-        final User user = userService.verifyUserAndDeleteVerificationToken(token).orElseThrow(UserNotFoundException::new);
+        final User user = userService.verifyUser(token).orElseThrow(UserNotFoundException::new);
 
         final String userUrl = UriUtils.getUserUri(uriInfo, user.getUserId()).toString();
         return Response.noContent()
@@ -160,7 +160,7 @@ public class UserController {
             @PathParam("token") final String token,
             @Valid @NotNull final ResetPasswordForm resetPasswordForm
     ) {
-        final boolean success = userService.updatePasswordAndDeleteResetPasswordToken(token, resetPasswordForm.getPassword());
+        final boolean success = userService.updatePassword(token, resetPasswordForm.getPassword());
         if (!success)
             return Response.status(Response.Status.NOT_FOUND).build();
 
