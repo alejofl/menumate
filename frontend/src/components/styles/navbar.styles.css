@@ -1,0 +1,9 @@
+.bg-body-tertiary {
+    padding: 16px 48px;
+    background-color: var(--dark) !important;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+}

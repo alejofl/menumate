@@ -1,69 +1,101 @@
 :root {
-    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-    line-height: 1.5;
-    font-weight: 400;
-    
-    color-scheme: light dark;
-    color: rgba(255, 255, 255, 0.87);
-    background-color: #242424;
-    
-    font-synthesis: none;
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    -webkit-text-size-adjust: 100%;
+    --primary: #ed7a57;
+    --primary-rgb: 237,122,87;
+    --primary-dark: #bd5439;
+    --primary-dark-rgb: 189,84,57;
+    --primary-light: #f39d84;
+    --secondary: #edb026;
+    --secondary-dark: #c49220;
+    --secondary-light: #f3c37d;
+    --dark: #282d2f;
+    --light: #f4f4f4;
+    --form-invalid-color: #dc3545;
+    --gray: #c9c9c9;
+    --promotion: #3596a6;
+    --promotion-rgb: 53,150,166;
+    --promotion-dark: #1f606b;
+    --promotion-dark-rgb: 31,96,107;
+    --promotion-light: #89acaf;
+
+    --bs-primary: var(--primary);
+    --bs-danger: var(--form-invalid-color);
+    --bs-primary-rgb: var(--primary-rgb);
+    --bs-link-color: var(--primary);
+    --bs-link-hover-color: var(--primary-dark);
+    --bs-link-color-rgb: var(--primary-rgb);
+    --bs-link-hover-color-rgb: var(--primary-dark-rgb);
 }
 
-a {
-    font-weight: 500;
-    color: #646cff;
-    text-decoration: inherit;
-}
-a:hover {
-    color: #535bf2;
+.dropdown-item:active {
+    --bs-dropdown-link-active-bg: var(--primary);
 }
 
-body {
-    margin: 0;
+body, #root {
+    background-color: var(--light) !important;
     display: flex;
-    place-items: center;
-    min-width: 320px;
+    flex-direction: column;
     min-height: 100vh;
 }
 
-h1 {
-    font-size: 3.2em;
-    line-height: 1.1;
+p, span, h1, h2, h3, h4, h5, h6 {
+    overflow-wrap: anywhere;
 }
 
-button {
-    border-radius: 8px;
-    border: 1px solid transparent;
-    padding: 0.6em 1.2em;
-    font-size: 1em;
-    font-weight: 500;
-    font-family: inherit;
-    background-color: #1a1a1a;
-    cursor: pointer;
-    transition: border-color 0.25s;
-}
-button:hover {
-    border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-    outline: 4px auto -webkit-focus-ring-color;
+.no-wrap {
+    overflow-wrap: normal;
 }
 
-@media (prefers-color-scheme: light) {
-    :root {
-        color: #213547;
-        background-color: #ffffff;
-    }
-    a:hover {
-        color: #747bff;
-    }
-    button {
-        background-color: #f9f9f9;
-    }
+.progress {
+    --bs-progress-bar-bg: var(--primary);
+}
+
+.form-control:focus, .form-check-input:focus, .form-select:focus {
+    border-color: var(--primary);
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem #ed7a5740;
+}
+
+.form-check-input:checked, .active>.page-link, .page-link.active {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+main {
+    display: flex;
+    flex-grow: 1;
+    margin: 8px;
+}
+
+.btn-primary {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: var(--primary);
+    --bs-btn-border-color: var(--primary);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: var(--primary-dark);
+    --bs-btn-hover-border-color: var(--primary-dark);
+    --bs-btn-focus-shadow-rgb: 49,132,253;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: var(--primary-dark);
+    --bs-btn-active-border-color: var(--primary-dark);
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: var(--primary-light);
+    --bs-btn-disabled-border-color: var(--primary-light);
+}
+
+.btn-accent {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: var(--secondary);
+    --bs-btn-border-color: var(--secondary);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: var(--secondary-dark);
+    --bs-btn-hover-border-color: var(--secondary-dark);
+    --bs-btn-focus-shadow-rgb: 49,132,253;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: var(--secondary-dark);
+    --bs-btn-active-border-color: var(--secondary-dark);
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: var(--secondary-light);
+    --bs-btn-disabled-border-color: var(--secondary-light);
 }

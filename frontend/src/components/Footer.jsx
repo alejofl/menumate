@@ -1,15 +1,13 @@
-
+import "./styles/footer.styles.css";
 
 function Footer() {
-    /*
-     * return (
-     *     <>
-     *         <div class="landing-footer">
-     *             <small class="landing-footer-text"><spring:message code="copyright"/></small>
-     *         </div>
-     *     </>
-     * )
-     */
+    return (
+        <>
+            <footer>
+                <small>© 2023 MenuMate FLAN Inc. All rights reserved.</small>
+            </footer>
+        </>
+    );
 }
 
 export default Footer;
