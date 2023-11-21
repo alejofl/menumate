@@ -13,6 +13,22 @@
         "signup": "Signup"
     },
     "titles": {
-        "home": "Home"
+        "home": "Home",
+        "error": "Error {{number}}"
+    },
+    "error": {
+        "back_to_home": "Back to Home",
+        "403": {
+            "title": "Oops! Access denied!",
+            "description": "It looks like you do not have access to the requested page. Try logging in with another account."
+        },
+        "404": {
+            "title": "Oops! Page not found!",
+            "description": "It looks like the page you're looking for doesn't exist or it is not available."
+        },
+        "500": {
+            "title": "Oops! Something went wrong!",
+            "description": "We are sorry for the inconvenience. There was an unexpected error. Please try again later."
+        }
     }
 }

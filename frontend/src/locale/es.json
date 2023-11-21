@@ -13,6 +13,22 @@
         "signup": "Crear una cuenta"
     },
     "titles": {
-        "home": "Inicio"
+        "home": "Inicio",
+        "error": "Error {{number}}"
+    },
+    "error": {
+        "back_to_home": "Volver al inicio",
+        "403": {
+            "title": "¡Ups! ¡Acceso denegado!",
+            "description": "Parece que no tienes acceso a la página pedida. Intenta iniciando sesión con otra cuenta."
+        },
+        "404": {
+            "title": "¡Ups! ¡Página no encontrada!",
+            "description": "Parece que la página que estás buscando no existe o no está disponible."
+        },
+        "500": {
+            "title": "¡Ups! ¡Algo salió mal!",
+            "description": "Lamentamos los inconvenientes ocasionados. Hubo un error inesperado. Por favor, intente nuevamente más tarde."
+        }
     }
 }
