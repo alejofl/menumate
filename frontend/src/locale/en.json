@@ -30,5 +30,34 @@
             "title": "Oops! Something went wrong!",
             "description": "We are sorry for the inconvenience. There was an unexpected error. Please try again later."
         }
+    },
+    "restaurant_tags": {
+        "elegant": "Elegant",
+        "casual": "Casual",
+        "cheap": "Cheap",
+        "cosy": "Cosy",
+        "family_friendly": "Family Friendly",
+        "kid_friendly": "Kid Friendly",
+        "lgbt_friendly": "LGBT Friendly",
+        "pet_friendly": "Pet Friendly",
+        "healthy": "Healthy",
+        "sustainable": "Sustainable",
+        "locally_sourced": "Locally Sourced",
+        "historic": "Historic",
+        "trendy": "Trendy",
+        "romantic": "Romantic",
+        "outdoor_dining": "Outdoor Dining",
+        "fine_dining": "Fine Dining",
+        "international": "International",
+        "wheelchair_accessible": "Wheelchair Accesible",
+        "live_music": "Live Music",
+        "karaoke": "Karaoke",
+        "happy_hour": "Happy Hour",
+        "old_fashioned": "Old Fashioned"
+    },
+    "restaurant_card": {
+        "rating_text_zero": "No reviews",
+        "rating_text_one": "{{count}} review",
+        "rating_text_other": "{{count}} reviews"
     }
 }

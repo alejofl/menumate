@@ -99,3 +99,7 @@ main {
     --bs-btn-disabled-bg: var(--secondary-light);
     --bs-btn-disabled-border-color: var(--secondary-light);
 }
+
+.clickable-object {
+    text-decoration: none !important;
+}

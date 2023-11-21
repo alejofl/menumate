@@ -30,5 +30,34 @@
             "title": "¡Ups! ¡Algo salió mal!",
             "description": "Lamentamos los inconvenientes ocasionados. Hubo un error inesperado. Por favor, intente nuevamente más tarde."
         }
+    },
+    "restaurant_tags": {
+        "elegant": "Elegante",
+        "casual": "Informal",
+        "cheap": "Barato",
+        "cosy": "Acogedor",
+        "family_friendly": "Familiar",
+        "kid_friendly": "Amigable con los niños",
+        "lgbt_friendly": "Amigable con la Comunidad LGBT",
+        "pet_friendly": "Apto para mascotas",
+        "healthy": "Saludable",
+        "sustainable": "Sostenible",
+        "locally_sourced": "De producción local",
+        "historic": "Histórico",
+        "trendy": "De moda",
+        "romantic": "Romántico",
+        "outdoor_dining": "Comedor al aire libre",
+        "fine_dining": "Alta cocina",
+        "international": "Internacional",
+        "wheelchair_accessible": "Accesible para sillas de ruedas",
+        "live_music": "Música en vivo",
+        "karaoke": "Karaoke",
+        "happy_hour": "Happy Hour",
+        "old_fashioned": "Tradicional"
+    },
+    "restaurant_card": {
+        "rating_text_zero": "Sin reseñas",
+        "rating_text_one": "{{count}} reseña",
+        "rating_text_other": "{{count}} reseñas"
     }
 }
