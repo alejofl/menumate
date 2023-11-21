@@ -1,5 +1,9 @@
 {
-    "home": "HELLO",
+    "home": {
+        "call_to_action": "Order whatever you want, whenever you want and however you want!",
+        "restaurants_title": "Top Rated Restaurants",
+        "restaurants_button": "More restaurants"
+    },
     "copyright": "© 2023 MenuMate FLAN Inc. All rights reserved.",
     "navbar": {
         "explore": "Explore",
@@ -59,5 +63,9 @@
         "rating_text_zero": "No reviews",
         "rating_text_one": "{{count}} review",
         "rating_text_other": "{{count}} reviews"
+    },
+    "restaurants": {
+        "search_placeholder": "Search your favorite restaurant",
+        "search_button": "Search"
     }
 }

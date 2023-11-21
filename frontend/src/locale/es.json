@@ -1,5 +1,9 @@
 {
-    "home": "HOLA",
+    "home": {
+        "call_to_action": "¡Ordená lo que quieras, cuando quieras y como quieras!",
+        "restaurants_title": "Restaurantes con mejor calificación",
+        "restaurants_button": "Más restaurantes"
+    },
     "copyright": "© 2023 MenuMate FLAN Inc. Todos los derechos reservados.",
     "navbar": {
         "explore": "Explorar",
@@ -59,5 +63,9 @@
         "rating_text_zero": "Sin reseñas",
         "rating_text_one": "{{count}} reseña",
         "rating_text_other": "{{count}} reseñas"
+    },
+    "restaurants": {
+        "search_placeholder": "Buscá tu restaurante favorito",
+        "search_button": "Buscar"
     }
 }
