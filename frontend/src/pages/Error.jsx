@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { useTitle } from "../utils/useTitle.js";
 import Logo from "../assets/logo.png";
 import "./styles/error.styles.css";
+import { Link } from "react-router-dom";
 
 function Error({errorNumber}) {
     const { t } = useTranslation();
@@ -21,9 +22,9 @@ function Error({errorNumber}) {
                     <p>{t(`error.${errorNumber}.description`)}</p>
                 </div>
                 <div className="error-image">
-                    <a href="TODO">
+                    <Link to="/">
                         <button type="button" className="btn btn-primary btn-lg">{t("error.back_to_home")}</button>
-                    </a>
+                    </Link>
                 </div>
             </div>
         </>
