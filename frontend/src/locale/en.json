@@ -1,3 +1,18 @@
 {
-    "home": "HELLO"
+    "home": "HELLO",
+    "copyright": "© 2023 MenuMate FLAN Inc. All rights reserved.",
+    "navbar": {
+        "explore": "Explore",
+        "moderator_pane": "Moderator Pane",
+        "my_profile": "My Profile",
+        "my_orders": "My Orders",
+        "create_restaurant": "Create Restaurant",
+        "my_restaurants": "My Restaurants",
+        "logout": "Logout",
+        "login": "Login",
+        "signup": "Signup"
+    },
+    "titles": {
+        "home": "Home"
+    }
 }
