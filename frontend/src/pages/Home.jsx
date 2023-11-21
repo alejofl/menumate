@@ -39,7 +39,7 @@ function Home() {
                         />
                         <RestaurantCard
                             restaurantId={1}
-                            name="Prueba"
+                            name="La Parolaccio Casa Tua Palermo"
                             mainImage="http://pawserver.it.itba.edu.ar/paw-2023a-01/images/1"
                             hoverImage="http://pawserver.it.itba.edu.ar/paw-2023a-01/images/2"
                             address="Edison 439, Martinez"

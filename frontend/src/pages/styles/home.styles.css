@@ -34,7 +34,7 @@ main {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    align-items: start;
+    align-items: stretch;
     align-content: start;
     gap: 20px;
     flex-wrap: wrap;

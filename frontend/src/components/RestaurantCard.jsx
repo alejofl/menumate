@@ -13,10 +13,14 @@ function RestaurantCard({ restaurantId, mainImage, hoverImage, name, address, ra
                         style={{"--main_image": `url(${mainImage})`, "--hover_image": `url(${hoverImage})`}}
                     />
                     <div className="card-body">
-                        <h5 className="card-title">{name}</h5>
-                        <p className="card-text">{address}</p>
-                        <Rating rating={rating} count={ratingCount}/>
-                        <TagsContainer tags={tags}/>
+                        <div>
+                            <h5 className="card-title">{name}</h5>
+                            <p className="card-text">{address}</p>
+                        </div>
+                        <div>
+                            <Rating rating={rating} count={ratingCount}/>
+                            <TagsContainer tags={tags}/>
+                        </div>
                     </div>
                 </div>
             </Link>

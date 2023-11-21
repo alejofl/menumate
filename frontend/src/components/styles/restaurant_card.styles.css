@@ -1,6 +1,7 @@
 .card {
     transition: all .2s ease-in-out;
     width: 18rem;
+    height: 100%;
 }
 
 .card-img {
@@ -15,4 +16,14 @@
 
 .card:hover .card-img {
     background: var(--hover_image);
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.card-body p {
+    margin-bottom: 8px !important;
 }
