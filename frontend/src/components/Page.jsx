@@ -1,17 +1,17 @@
 import Footer from "./Footer.jsx";
 import Navbar from "./Navbar.jsx";
-import { useTitle } from "../utils/useTitle.js";
+import { useTitle } from "../hooks/useTitle.js";
 
-function Page({title, children}) {
+function Page({title, showNavbar = true, showFooter = true, children}) {
     useTitle(title);
 
     return (
         <>
-            <Navbar/>
+            {showNavbar && <Navbar/>}
             <main>
                 {children}
             </main>
-            <Footer/>
+            {showFooter && <Footer/>}
         </>
     );
 }

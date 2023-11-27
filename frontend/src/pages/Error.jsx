@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { useTitle } from "../utils/useTitle.js";
+import { useTitle } from "../hooks/useTitle.js";
 import Logo from "../assets/logo.png";
 import "./styles/error.styles.css";
 import { Link } from "react-router-dom";
