@@ -1,4 +1,4 @@
-export class Restaurant {
+export default class Restaurant {
     constructor(
         active,
         address,

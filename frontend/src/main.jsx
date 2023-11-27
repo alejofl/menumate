@@ -4,12 +4,18 @@ import "./index.css";
 import router from "./router.jsx";
 import { RouterProvider } from "react-router-dom";
 import "./i18n";
-import { ApiContextProvider } from "./contexts/ApiContext.jsx";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {AppWrapper} from "./contexts/AppWrapper.jsx";
+import {ApiContextProvider} from "./contexts/ApiContext.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
     <React.StrictMode>
-        <ApiContextProvider>
-            <RouterProvider router={router}/>
-        </ApiContextProvider>
+        <QueryClientProvider client={new QueryClient()}>
+            <ApiContextProvider>
+                <AppWrapper>
+                    <RouterProvider router={router}/>
+                </AppWrapper>
+            </ApiContextProvider>
+        </QueryClientProvider>
     </React.StrictMode>
 );

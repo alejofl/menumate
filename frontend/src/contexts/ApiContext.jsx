@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import Api from "../data/api/Api.js";
+import Api from "../data/Api.js";
 
 const ApiContext = React.createContext({
+    didDiscovery: false,
     ordersUrl: "",
     restaurantsUrl: "",
     reviewsUrl: "",
@@ -9,6 +10,7 @@ const ApiContext = React.createContext({
 });
 
 export function ApiContextProvider({children}) {
+    const [didDiscovery, setDidDiscovery] = useState(false);
     const [ordersUrl, setOrdersUrl] = useState("");
     const [restaurantsUrl, setRestaurantsUrl] = useState("");
     const [reviewsUrl, setReviewsUrl] = useState("");
@@ -21,12 +23,15 @@ export function ApiContextProvider({children}) {
                 setRestaurantsUrl(results.data.restaurantsUrl);
                 setReviewsUrl(results.data.reviewsUrl);
                 setUsersUrl(results.data.usersUrl);
-            });
+            })
+            .finally(() => setDidDiscovery(true));
     });
 
+    // TODO Handle api error
     return (
         <>
             <ApiContext.Provider value={{
+                didDiscovery: didDiscovery,
                 ordersUrl: ordersUrl,
                 restaurantsUrl: restaurantsUrl,
                 reviewsUrl: reviewsUrl,

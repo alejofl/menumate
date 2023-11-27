@@ -3,9 +3,31 @@ import Page from "../components/Page.jsx";
 import RestaurantCard from "../components/RestaurantCard.jsx";
 import { Link } from "react-router-dom";
 import "./styles/home.styles.css";
+import { useApi } from "../hooks/useApi.js";
+import {useContext} from "react";
+import ApiContext from "../contexts/ApiContext.jsx";
+import { useRestaurantService } from "../hooks/services/useRestaurantService.js";
+import { useQuery } from "@tanstack/react-query";
 
 function Home() {
     const { t } = useTranslation();
+    const api = useApi();
+    const apiContext = useContext(ApiContext);
+    const restaurantService = useRestaurantService(api);
+
+    const { isLoading, isError, data } = useQuery({
+        queryKey: ["restaurants", "home"],
+        queryFn: async () => (
+            await restaurantService.getRestaurants(
+                apiContext.restaurantsUrl,
+                {
+                    orderBy: "rating",
+                    descending: true,
+                    size: 4
+                }
+            )
+        )
+    });
 
     return (
         <>
@@ -27,46 +49,23 @@ function Home() {
                 <div className="landing-restaurants">
                     <p className="landing-restaurants-title">{t("home.restaurants_title")}</p>
                     <div className="landing-restaurants-feed">
-                        <RestaurantCard
-                            restaurantId={1}
-                            name="Prueba"
-                            mainImage="http://pawserver.it.itba.edu.ar/paw-2023a-01/images/1"
-                            hoverImage="http://pawserver.it.itba.edu.ar/paw-2023a-01/images/2"
-                            address="Edison 439, Martinez"
-                            rating={2}
-                            ratingCount={5}
-                            tags={["elegant", "old_fashioned", "lgbt_friendly"]}
-                        />
-                        <RestaurantCard
-                            restaurantId={1}
-                            name="La Parolaccio Casa Tua Palermo"
-                            mainImage="http://pawserver.it.itba.edu.ar/paw-2023a-01/images/1"
-                            hoverImage="http://pawserver.it.itba.edu.ar/paw-2023a-01/images/2"
-                            address="Edison 439, Martinez"
-                            rating={2}
-                            ratingCount={5}
-                            tags={["elegant", "old_fashioned", "lgbt_friendly"]}
-                        />
-                        <RestaurantCard
-                            restaurantId={1}
-                            name="Prueba"
-                            mainImage="http://pawserver.it.itba.edu.ar/paw-2023a-01/images/1"
-                            hoverImage="http://pawserver.it.itba.edu.ar/paw-2023a-01/images/2"
-                            address="Edison 439, Martinez"
-                            rating={2}
-                            ratingCount={5}
-                            tags={["elegant", "old_fashioned", "lgbt_friendly"]}
-                        />
-                        <RestaurantCard
-                            restaurantId={1}
-                            name="Prueba"
-                            mainImage="http://pawserver.it.itba.edu.ar/paw-2023a-01/images/1"
-                            hoverImage="http://pawserver.it.itba.edu.ar/paw-2023a-01/images/2"
-                            address="Edison 439, Martinez"
-                            rating={2}
-                            ratingCount={5}
-                            tags={["elegant", "old_fashioned", "lgbt_friendly"]}
-                        />
+                        {
+                            isLoading || isError ? "Loading..." : data.content.map(restaurant => {
+                                return (
+                                    <RestaurantCard
+                                        key={restaurant.selfUrl}
+                                        restaurantId={1}
+                                        name={restaurant.name}
+                                        mainImage={restaurant.portrait1Url}
+                                        hoverImage={restaurant.portrait2Url}
+                                        address={restaurant.address}
+                                        rating={restaurant.averageRating}
+                                        ratingCount={restaurant.reviewCount}
+                                        tags={restaurant.tags}
+                                    />
+                                );
+                            })
+                        }
                     </div>
                     <Link to="/restaurants" className="btn btn-primary">{t("home.restaurants_button")}</Link>
                 </div>
