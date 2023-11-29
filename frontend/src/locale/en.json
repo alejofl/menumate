@@ -33,6 +33,10 @@
         "500": {
             "title": "Oops! Something went wrong!",
             "description": "We are sorry for the inconvenience. There was an unexpected error. Please try again later."
+        },
+        "api": {
+            "title": "Oops! Something went wrong!",
+            "description": "The API is not responding. Check your internet connection or try again later."
         }
     },
     "restaurant_tags": {

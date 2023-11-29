@@ -33,6 +33,10 @@
         "500": {
             "title": "¡Ups! ¡Algo salió mal!",
             "description": "Lamentamos los inconvenientes ocasionados. Hubo un error inesperado. Por favor, intente nuevamente más tarde."
+        },
+        "api": {
+            "title": "¡Ups! ¡Algo salió mal!",
+            "description": "La API no responde. Revise su conexión a internet o intente más tarde."
         }
     },
     "restaurant_tags": {

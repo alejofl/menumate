@@ -11,6 +11,7 @@ const ApiContext = React.createContext({
 
 export function ApiContextProvider({children}) {
     const [didDiscovery, setDidDiscovery] = useState(false);
+    const [failedDiscovery, setFailedDiscovery] = useState(false);
     const [ordersUrl, setOrdersUrl] = useState("");
     const [restaurantsUrl, setRestaurantsUrl] = useState("");
     const [reviewsUrl, setReviewsUrl] = useState("");
@@ -24,14 +25,15 @@ export function ApiContextProvider({children}) {
                 setReviewsUrl(results.data.reviewsUrl);
                 setUsersUrl(results.data.usersUrl);
             })
+            .catch(() => setFailedDiscovery(true))
             .finally(() => setDidDiscovery(true));
     });
 
-    // TODO Handle api error
     return (
         <>
             <ApiContext.Provider value={{
                 didDiscovery: didDiscovery,
+                failedDiscovery: failedDiscovery,
                 ordersUrl: ordersUrl,
                 restaurantsUrl: restaurantsUrl,
                 reviewsUrl: reviewsUrl,
