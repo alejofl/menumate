@@ -11,6 +11,19 @@
     <title>MenuMate</title>
 </head>
 <body>
+    <noscript>
+        <div style="width: 100%; height: 100vh; background-color: #f4f4f4">
+            <img src="/static/noscript/face-frown.png" alt="Error" style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 30%">
+            <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; align-content: center; height: 100%; flex-grow: 1; z-index: 1; position: relative;">
+                <div style="margin: 1em;">
+                    <img src="/static/noscript/logo.png" alt="MenuMate" height="40"/>
+                </div>
+                <div style="display: flex; justify-content: center; margin: 0.5em; color: #282d2f;">
+                    <h1>JavaScript is required to view this website.</h1>
+                </div>
+            </div>
+        </div>
+    </noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
 </body>
