@@ -8,8 +8,10 @@ import {useContext} from "react";
 import ApiContext from "../contexts/ApiContext.jsx";
 import { useRestaurantService } from "../hooks/services/useRestaurantService.js";
 import { useQuery } from "@tanstack/react-query";
+import ContentLoader from "react-content-loader";
 
 function Home() {
+    const MOST_RATED_RESTAURANTS_COUNT = 4;
     const { t } = useTranslation();
     const api = useApi();
     const apiContext = useContext(ApiContext);
@@ -23,7 +25,7 @@ function Home() {
                 {
                     orderBy: "rating",
                     descending: true,
-                    size: 4
+                    size: MOST_RATED_RESTAURANTS_COUNT
                 }
             )
         )
@@ -50,21 +52,31 @@ function Home() {
                     <p className="landing-restaurants-title">{t("home.restaurants_title")}</p>
                     <div className="landing-restaurants-feed">
                         {
-                            isLoading || isError ? "Loading..." : data.content.map(restaurant => {
-                                return (
-                                    <RestaurantCard
-                                        key={restaurant.selfUrl}
-                                        restaurantId={1}
-                                        name={restaurant.name}
-                                        mainImage={restaurant.portrait1Url}
-                                        hoverImage={restaurant.portrait2Url}
-                                        address={restaurant.address}
-                                        rating={restaurant.averageRating}
-                                        ratingCount={restaurant.reviewCount}
-                                        tags={restaurant.tags}
-                                    />
-                                );
-                            })
+                            isLoading || isError
+                                ?
+                                new Array(MOST_RATED_RESTAURANTS_COUNT).fill("").map((_, i) => {
+                                    return (
+                                        <ContentLoader backgroundColor="#eaeaea" foregroundColor="#e0e0e0" width="18rem" height="18rem" key={i}>
+                                            <rect x="0" y="0" rx="5" ry="5" width="100%" height="100%"/>
+                                        </ContentLoader>
+                                    );
+                                })
+                                :
+                                data.content.map(restaurant => {
+                                    return (
+                                        <RestaurantCard
+                                            key={restaurant.selfUrl}
+                                            restaurantId={1}
+                                            name={restaurant.name}
+                                            mainImage={restaurant.portrait1Url}
+                                            hoverImage={restaurant.portrait2Url}
+                                            address={restaurant.address}
+                                            rating={restaurant.averageRating}
+                                            ratingCount={restaurant.reviewCount}
+                                            tags={restaurant.tags}
+                                        />
+                                    );
+                                })
                         }
                     </div>
                     <Link to="/restaurants" className="btn btn-primary">{t("home.restaurants_button")}</Link>
