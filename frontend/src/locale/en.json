@@ -4,6 +4,9 @@
         "restaurants_title": "Top Rated Restaurants",
         "restaurants_button": "More restaurants"
     },
+    "paging": {
+        "load_more": "Load More Content"
+    },
     "copyright": "© 2023 MenuMate FLAN Inc. All rights reserved.",
     "navbar": {
         "explore": "Explore",
@@ -18,9 +21,15 @@
     },
     "titles": {
         "home": "Home",
-        "error": "Error {{number}}"
+        "error": "Error {{number}}",
+        "restaurants": "Restaurants"
     },
     "error": {
+        "modal": {
+            "title": "Oops! Something went wrong!",
+            "description": "An error occurred while connecting to the server. Please try again later.",
+            "button": "Reload Page"
+        },
         "back_to_home": "Back to Home",
         "403": {
             "title": "Oops! Access denied!",
@@ -63,6 +72,40 @@
         "happy_hour": "Happy Hour",
         "old_fashioned": "Old Fashioned"
     },
+    "restaurant_specialties": {
+        "american": "American Style",
+        "argentine": "Argentine Style",
+        "asian": "Asian Style",
+        "barbecue": "Barbecue",
+        "breakfast": "Breakfast",
+        "cafe": "Café",
+        "chinese": "Chinese Style",
+        "desserts": "Desserts",
+        "european": "European Style",
+        "fast_food": "Fast Food",
+        "french": "French Style",
+        "gluten_free": "Gluten-Free",
+        "grill": "Grill",
+        "greek": "Greek Style",
+        "hamburgers": "Hamburgers",
+        "ice_cream": "Ice Cream",
+        "indian": "Indian Style",
+        "italian": "Italian Style",
+        "japanese": "Japanese Style",
+        "korean": "Korean Style",
+        "latin": "Latin Style",
+        "mediterranean": "Mediterranean Style",
+        "mexican": "Mexican Style",
+        "middle_eastern": "Middle Eastern Style",
+        "pizza": "Pizza",
+        "seafood": "Seafood",
+        "sushi": "Sushi",
+        "steakhouse": "Steakhouse",
+        "thai": "Thai Style",
+        "turkish": "Turkish Style",
+        "vegan": "Vegan",
+        "vegetarian": "Vegetarian"
+    },
     "restaurant_card": {
         "rating_text_zero": "No reviews",
         "rating_text_one": "{{count}} review",
@@ -70,6 +113,18 @@
     },
     "restaurants": {
         "search_placeholder": "Search your favorite restaurant",
-        "search_button": "Search"
+        "search_button": "Search",
+        "clear_filters": "Clear Filters",
+        "no_results": "No results for the given query",
+        "specialties_placeholder": "Specialties",
+        "tags_placeholder": "Tags",
+        "orderby_placeholder": "Order By",
+        "no_options": "No options",
+        "options_order_by": {
+            "alphabetic": "Alphabebetic",
+            "rating": "Rating",
+            "price": "Price",
+            "date": "Date"
+        }
     }
 }

@@ -11,10 +11,10 @@ export function useRestaurantService(api) {
         const restaurants = Array.isArray(response.data) ? response.data.map(data => Restaurant.fromJSON(data)) : [];
         return new PagedContent(
             restaurants,
-            links?.first?.url,
-            links?.prev?.url,
-            links?.next?.url,
-            links?.last?.url
+            links?.first,
+            links?.prev,
+            links?.next,
+            links?.last
         );
     };
 
