@@ -4,6 +4,9 @@
         "restaurants_title": "Restaurantes con mejor calificación",
         "restaurants_button": "Más restaurantes"
     },
+    "paging": {
+        "load_more": "Cargar más contenido"
+    },
     "copyright": "© 2023 MenuMate FLAN Inc. Todos los derechos reservados.",
     "navbar": {
         "explore": "Explorar",
@@ -18,9 +21,15 @@
     },
     "titles": {
         "home": "Inicio",
-        "error": "Error {{number}}"
+        "error": "Error {{number}}",
+        "restaurants": "Restaurantes"
     },
     "error": {
+        "modal": {
+            "title": "¡Ups! Algo salió mal",
+            "description": "Ocurrió un error al conectarse al servidor. Por favor, intente nuevamente más tarde.",
+            "button": "Recargar página"
+        },
         "back_to_home": "Volver al inicio",
         "403": {
             "title": "¡Ups! ¡Acceso denegado!",
@@ -63,6 +72,40 @@
         "happy_hour": "Happy Hour",
         "old_fashioned": "Tradicional"
     },
+    "restaurant_specialties": {
+        "american": "Estilo americano",
+        "argentine": "Estilo argentino",
+        "asian": "Estilo asiático",
+        "barbecue": "Barbacoa",
+        "breakfast": "Desayuno",
+        "cafe": "Café",
+        "chinese": "Estilo chino",
+        "desserts": "Postres",
+        "european": "Estilo europeo",
+        "fast_food": "Comida rápida",
+        "french": "Estilo francés",
+        "gluten_free": "Sin gluten",
+        "grill": "Grill",
+        "greek": "Estilo griego",
+        "hamburgers": "Hamburguesas",
+        "ice_cream": "Helado",
+        "indian": "Estilo indio",
+        "italian": "Estilo italiano",
+        "japanese": "Estilo japonés",
+        "korean": "Estilo coreano",
+        "latin": "Estilo latino",
+        "mediterranean": "Estilo mediterráneo",
+        "mexican": "Estilo mexicano",
+        "middle_eastern": "Estilo del medio oriente",
+        "pizza": "Pizza",
+        "seafood": "Mariscos",
+        "sushi": "Sushi",
+        "steakhouse": "Parrilla",
+        "thai": "Estilo tailandés",
+        "turkish": "Estilo turco",
+        "vegan": "Vegano",
+        "vegetarian": "Vegetariano"
+    },
     "restaurant_card": {
         "rating_text_zero": "Sin reseñas",
         "rating_text_one": "{{count}} reseña",
@@ -70,6 +113,18 @@
     },
     "restaurants": {
         "search_placeholder": "Buscá tu restaurante favorito",
-        "search_button": "Buscar"
+        "search_button": "Buscar",
+        "clear_filters": "Borrar filtros",
+        "no_results": "No se encontraron resultados",
+        "specialties_placeholder": "Especialidades",
+        "tags_placeholder": "Tags",
+        "orderby_placeholder": "Ordenar por",
+        "no_options": "No hay opciones",
+        "options_order_by": {
+            "alphabetic": "Alfabético",
+            "rating": "Puntuación",
+            "price": "Precio",
+            "date": "Fecha"
+        }
     }
 }
