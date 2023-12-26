@@ -22,7 +22,8 @@
     "titles": {
         "home": "Home",
         "error": "Error {{number}}",
-        "restaurants": "Restaurants"
+        "restaurants": "Restaurants",
+        "login": "Login"
     },
     "error": {
         "modal": {
@@ -126,5 +127,15 @@
             "price": "Price",
             "date": "Date"
         }
+    },
+    "login": {
+        "email_address": "Email Address",
+        "password": "Password",
+        "remember_me": "Remember Me",
+        "login_button": "Login",
+        "forgot_password": "I forgot my password",
+        "no_account": "Don't have an account?",
+        "signup_here": "Signup here!",
+        "resend_verification": "Resend verification code"
     }
 }

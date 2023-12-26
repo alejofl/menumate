@@ -4,12 +4,17 @@ import {
 import Home from "./pages/Home.jsx";
 import Error from "./pages/Error.jsx";
 import Restaurants from "./pages/Restaurants.jsx";
+import Login from "./pages/Login.jsx";
 
 const router = createBrowserRouter(
     [
         {
             path: "/",
             Component: Home
+        },
+        {
+            path: "/auth/login",
+            Component: Login
         },
         {
             path: "/restaurants",
