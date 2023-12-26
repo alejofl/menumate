@@ -10,7 +10,7 @@ function Navbar() {
     const [isModerator] = useState(true);
 
     return (
-        <>
+        <div className="navbar_component">
             <nav className="navbar navbar-expand-md bg-body-tertiary sticky-top" data-bs-theme="dark">
                 <Link className="navbar-brand" to="/">
                     <img src={Logo} alt="MenuMate" height="24"/>
@@ -59,7 +59,7 @@ function Navbar() {
                     </div>
                 </div>
             </nav>
-        </>
+        </div>
     );
 }
 

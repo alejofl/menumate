@@ -5,11 +5,11 @@ function Footer() {
     const { t } = useTranslation();
 
     return (
-        <>
+        <div className="footer">
             <footer>
                 <small>{t("copyright")}</small>
             </footer>
-        </>
+        </div>
     );
 }
 

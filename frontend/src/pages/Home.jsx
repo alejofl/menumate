@@ -33,7 +33,7 @@ function Home() {
 
     return (
         <>
-            <Page title={t("titles.home")}>
+            <Page title={t("titles.home")} className="home">
                 <div className="landing-container">
                     <p className="landing-title">{t("home.call_to_action")}</p>
                     <form method="get" action="/restaurants">

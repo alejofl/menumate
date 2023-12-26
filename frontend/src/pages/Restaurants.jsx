@@ -206,7 +206,7 @@ function Restaurants() {
 
     return (
         <>
-            <Page title={t("titles.restaurants")}>
+            <Page title={t("titles.restaurants")} className="restaurants">
                 <form onSubmit={handleSearch}>
                     <div className="search-form-container">
                         <div className="pb-2">

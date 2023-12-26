@@ -5,7 +5,7 @@ import TagsContainer from "./TagsContainer.jsx";
 
 function RestaurantCard({ restaurantId, mainImage, hoverImage, name, address, rating, ratingCount, tags }) {
     return (
-        <>
+        <div className="restaurant_card">
             <Link className="clickable-object" to={`/restaurants/${restaurantId}`}>
                 <div className="card">
                     <div
@@ -24,7 +24,7 @@ function RestaurantCard({ restaurantId, mainImage, hoverImage, name, address, ra
                     </div>
                 </div>
             </Link>
-        </>
+        </div>
     );
 }
 

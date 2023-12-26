@@ -7,7 +7,7 @@ function Rating({ rating, count }) {
     const ratingNumber = parseInt(rating);
 
     return (
-        <>
+        <div className="rating">
             <div className="small-ratings">
                 {[...Array(ratingNumber)].map((_, index) => <i className="bi bi-star-fill rating-color" key={index}></i>)}
                 {[...Array(STAR_COUNT - ratingNumber)].map((_, index) => <i className="bi bi-star-fill" key={index}></i>)}
@@ -15,7 +15,7 @@ function Rating({ rating, count }) {
                     {t("restaurant_card.rating_text", {count: count})}
                 </small>
             </div>
-        </>
+        </div>
     );
 }
 

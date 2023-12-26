@@ -15,7 +15,7 @@ function ErrorModal({ title = undefined, message = undefined}) {
     };
 
     return (
-        <>
+        <div className="error_modal">
             <div className="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-hidden="true">
                 <div className="modal-dialog modal-dialog-centered">
                     <div className="modal-content">
@@ -31,7 +31,7 @@ function ErrorModal({ title = undefined, message = undefined}) {
                     </div>
                 </div>
             </div>
-        </>
+        </div>
     );
 }
 

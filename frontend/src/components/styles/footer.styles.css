@@ -1,4 +1,4 @@
-footer {
+.footer footer {
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -9,6 +9,6 @@ footer {
     background-color: var(--dark);
 }
 
-small {
+.footer small {
     color: var(--light);
 }

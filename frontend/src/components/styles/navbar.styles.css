@@ -1,9 +1,9 @@
-.bg-body-tertiary {
+.navbar_component .bg-body-tertiary {
     padding: 16px 48px;
     background-color: var(--dark) !important;
 }
 
-.navbar-brand {
+.navbar_component .navbar-brand {
     display: flex;
     align-items: center;
 }

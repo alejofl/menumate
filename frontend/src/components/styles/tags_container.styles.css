@@ -1,4 +1,4 @@
-.tags-container {
+.tags_container .tags-container {
     padding: 6px var(--bs-card-spacer-x) 0 var(--bs-card-spacer-x);
     margin: 0 calc(-1 * var(--bs-card-spacer-x));
     display: flex;
@@ -8,7 +8,7 @@
     scrollbar-width: none;  /* Firefox */
 }
 
-.tags-container::-webkit-scrollbar {
+.tags_container .tags-container::-webkit-scrollbar {
     width: 0;
     height: 0;
     padding: 0;

@@ -1,29 +1,29 @@
-.card {
+.restaurant_card .card {
     transition: all .2s ease-in-out;
     width: 18rem;
     height: 100%;
 }
 
-.card-img {
+.restaurant_card .card-img {
     background-size: cover !important;
     height: 200px;
     background: var(--main_image);
 }
 
-.card:hover{
+.restaurant_card .card:hover{
     transform: scale(1.02);
 }
 
-.card:hover .card-img {
+.restaurant_card .card:hover .card-img {
     background: var(--hover_image);
 }
 
-.card-body {
+.restaurant_card .card-body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 }
 
-.card-body p {
+.restaurant_card .card-body p {
     margin-bottom: 8px !important;
 }

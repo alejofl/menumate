@@ -1,7 +1,7 @@
-.small-ratings i {
+.rating .small-ratings i {
     color: #cecece;
 }
 
-.rating-color {
+.rating .rating-color {
     color: #fbc634 !important;
 }

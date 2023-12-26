@@ -6,7 +6,7 @@ function TagsContainer({ tags, clickable = false }) {
     const { t } = useTranslation();
 
     return (
-        <>
+        <div className="tags_container">
             <div className="tags-container">
                 {tags.map(tag => (
                     clickable
@@ -22,7 +22,7 @@ function TagsContainer({ tags, clickable = false }) {
                         </span>
                 ))}
             </div>
-        </>
+        </div>
     );
 }
 
