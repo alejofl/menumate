@@ -136,6 +136,20 @@
         "forgot_password": "Olvidé mi contraseña",
         "no_account": "¿No tienes una cuenta?",
         "signup_here": "¡Regístrate aquí!",
-        "resend_verification": "Reenviar código de verificación"
+        "resend_verification": "Reenviar código de verificación",
+        "send_email": "Enviar correo",
+        "go_back": "Volver a Iniciar sesión",
+        "verification_email_sent": "Te hemos enviado un correo electrónico con un enlace para verificar tu cuenta.",
+        "reset_password_email_sent": "Te hemos enviado un correo electrónico con un enlace para que recuperes tu contraseña.",
+        "mailer_error": "Ocurrió un error al enviar el correo electrónico. Por favor, intente de nuevo más tarde."
+    },
+    "validation": {
+        "email": {
+            "required": "El correo electrónico es obligatorio",
+            "invalid": "El correo electrónico no es válido"
+        },
+        "password": {
+            "required": "La contraseña es obligatoria"
+        }
     }
 }
