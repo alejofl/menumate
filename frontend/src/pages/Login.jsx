@@ -1,8 +1,8 @@
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import {Link, useSearchParams} from "react-router-dom";
 import Page from "../components/Page.jsx";
 import "./styles/login.styles.css";
-import {useContext, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import {EmailSchema, LoginSchema} from "../data/validation.js";
 import {useApi} from "../hooks/useApi.js";
@@ -35,14 +35,33 @@ function Login() {
         }
     });
 
+    const [queryParams, setQueryParams] = useSearchParams();
+    const [alertType, setAlertType] = useState("");
+    const [alertMessage, setAlertMessage] = useState("");
+
     const handleSendEmail = (values, {setSubmitting}) => {
         let mutation;
+        let message;
         if (forgotPassword) {
             mutation = forgotPasswordMutation;
+            message = "login.reset_password_email_sent";
         } else {
             mutation = resendVerificationMutation;
+            message = "login.verification_email_sent";
         }
-        mutation.mutate(values.email);
+        mutation.mutate(
+            values.email,
+            {
+                onSuccess: () => {
+                    setAlertType("success");
+                    setAlertMessage(message);
+                },
+                onError: () => {
+                    setAlertType("danger");
+                    setAlertMessage("login.mailer_error");
+                }
+            }
+        );
         setSubmitting(false);
         setForgotPassword(false);
         setResendVerification(false);
@@ -53,25 +72,27 @@ function Login() {
         setSubmitting(false);
     };
 
+    useEffect(() => {
+        if (queryParams.has("alertType")) {
+            setAlertType(queryParams.get("alertType"));
+            queryParams.delete("alertType");
+        }
+        if (queryParams.has("alertMessage")) {
+            setAlertMessage(queryParams.get("alertMessage"));
+            queryParams.delete("alertMessage");
+        }
+        setQueryParams(queryParams, {replace: true});
+    }, [queryParams, setQueryParams]);
+
     return (
         <>
             <Page title={t("titles.login")} className="login">
                 {!forgotPassword && !resendVerification &&
                     <div className="card">
                         <div className="card-body">
-                            {(forgotPasswordMutation.isError || resendVerificationMutation.isError) &&
-                                <div className="alert alert-danger" role="alert">
-                                    {t("login.mailer_error")}
-                                </div>
-                            }
-                            {forgotPasswordMutation.isSuccess &&
-                                <div className="alert alert-success" role="alert">
-                                    {t("login.reset_password_email_sent")}
-                                </div>
-                            }
-                            {resendVerificationMutation.isSuccess &&
-                                <div className="alert alert-success" role="alert">
-                                    {t("login.verification_email_sent")}
+                            {alertType !== "" && alertMessage !== "" &&
+                                <div className={`alert alert-${alertType}`} role="alert">
+                                    {t(alertMessage)}
                                 </div>
                             }
                             <h2 className="card-title mb-3">{t("titles.login")}</h2>

@@ -5,6 +5,7 @@ import Home from "./pages/Home.jsx";
 import Error from "./pages/Error.jsx";
 import Restaurants from "./pages/Restaurants.jsx";
 import Login from "./pages/Login.jsx";
+import ResetPassword from "./pages/ResetPassword.jsx";
 
 const router = createBrowserRouter(
     [
@@ -15,6 +16,10 @@ const router = createBrowserRouter(
         {
             path: "/auth/login",
             Component: Login
+        },
+        {
+            path: "/auth/reset-password",
+            Component: ResetPassword
         },
         {
             path: "/restaurants",

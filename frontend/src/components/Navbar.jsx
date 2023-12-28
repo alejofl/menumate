@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 
 function Navbar() {
     const { t } = useTranslation();
-    const [loggedIn] = useState(true);
+    const [loggedIn] = useState(false);
     const [isModerator] = useState(true);
 
     return (

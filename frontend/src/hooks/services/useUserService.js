@@ -11,8 +11,15 @@ export function useUserService(api) {
         });
     };
 
+    const resetPassword = async (url, newPassword) => {
+        return await api.put(url, {
+            password: newPassword
+        });
+    };
+
     return {
         sendResetPasswordToken,
-        resendVerificationToken
+        resendVerificationToken,
+        resetPassword
     };
 }

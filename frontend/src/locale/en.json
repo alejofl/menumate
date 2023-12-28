@@ -23,7 +23,8 @@
         "home": "Home",
         "error": "Error {{number}}",
         "restaurants": "Restaurants",
-        "login": "Login"
+        "login": "Login",
+        "reset_password": "Reset Password"
     },
     "error": {
         "modal": {
@@ -141,7 +142,10 @@
         "go_back": "Back to Login",
         "verification_email_sent": "We have sent you an email with a link to verify your account.",
         "reset_password_email_sent": "We have sent you an email with a link to reset your password.",
-        "mailer_error": "There was an error while sending the email. Please try again later."
+        "mailer_error": "There was an error while sending the email. Please try again later.",
+        "request_error": "There was an error processing your request. Please try again later.",
+        "reset_password_success": "Your password has been successfully reset. You can now login with your new password.",
+        "reset_password_error": "There was an error while resetting your password. Please try again later."
     },
     "validation": {
         "email": {
@@ -149,7 +153,18 @@
             "invalid": "Email is invalid"
         },
         "password": {
-            "required": "Password is required"
+            "required": "Password is required",
+            "min": "Password must be at least {{min}} characters long",
+            "max": "Password must be at most {{max}} characters long"
+        },
+        "repeat_password": {
+            "required": "You must confirm the password",
+            "match": "Passwords do not match"
         }
+    },
+    "reset_password": {
+        "new_password": "New Password",
+        "repeat_password": "Repeat New Password",
+        "button": "Reset Password"
     }
 }

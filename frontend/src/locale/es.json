@@ -17,13 +17,14 @@
         "my_restaurants": "Mis restaurantes",
         "logout": "Cerrar sesión",
         "login": "Iniciar sesión",
-        "signup": "Crear una cuenta"
+        "signup": "Regístrate"
     },
     "titles": {
         "home": "Inicio",
         "error": "Error {{number}}",
         "restaurants": "Restaurantes",
-        "login": "Iniciar sesión"
+        "login": "Iniciar sesión",
+        "reset_password": "Restablecer contraseña"
     },
     "error": {
         "modal": {
@@ -141,7 +142,10 @@
         "go_back": "Volver a Iniciar sesión",
         "verification_email_sent": "Te hemos enviado un correo electrónico con un enlace para verificar tu cuenta.",
         "reset_password_email_sent": "Te hemos enviado un correo electrónico con un enlace para que recuperes tu contraseña.",
-        "mailer_error": "Ocurrió un error al enviar el correo electrónico. Por favor, intente de nuevo más tarde."
+        "mailer_error": "Ocurrió un error al enviar el correo electrónico. Por favor, intente de nuevo más tarde.",
+        "request_error": "Ocurrió un error al procesar tu solicitud. Por favor, intente de nuevo más tarde.",
+        "reset_password_success": "Tu contraseña ha sido restablecida con éxito. Ahora puedes iniciar sesión con tu nueva contraseña.",
+        "reset_password_error": "Ocurrió un error al restablecer tu contraseña. Por favor, intente de nuevo más tarde."
     },
     "validation": {
         "email": {
@@ -149,7 +153,18 @@
             "invalid": "El correo electrónico no es válido"
         },
         "password": {
-            "required": "La contraseña es obligatoria"
+            "required": "La contraseña es obligatoria",
+            "min": "La contraseña debe tener al menos {{min}} caracteres",
+            "max": "La contraseña debe tener como máximo {{max}} caracteres"
+        },
+        "repeat_password": {
+            "required": "Debes confirmar la contraseña",
+            "match": "Las contraseñas no coinciden"
         }
+    },
+    "reset_password": {
+        "new_password": "Nueva contraseña",
+        "repeat_password": "Repita la nueva contraseña",
+        "button": "Restablecer contraseña"
     }
 }
