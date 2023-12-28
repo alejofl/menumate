@@ -30,6 +30,7 @@ import org.springframework.web.filter.CorsFilter;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 
 @EnableWebSecurity
@@ -146,11 +147,10 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        // TODO: Fill allowed origins, headers and methods for CORS.
         config.setAllowedOrigins(Collections.singletonList(CorsConfiguration.ALL));
         config.setAllowedHeaders(Collections.singletonList(CorsConfiguration.ALL));
-        config.setAllowedMethods(Collections.singletonList(CorsConfiguration.ALL));
-        // TODO: config.setExposedHeaders(...);
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "OPTIONS", "DELETE", "PUT", "PATCH"));
+        config.setExposedHeaders(Arrays.asList("Content-Disposition", "Location", "ETag", "Last-Modified", "Cache-Control", "Content-Type", "Link", "WWW-Authenticate", "X-MenuMate-AuthToken", "X-MenuMate-UserUrl", "X-MenuMate-EmployeeUserCreated"));
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }

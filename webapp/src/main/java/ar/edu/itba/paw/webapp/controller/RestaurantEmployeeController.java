@@ -68,7 +68,7 @@ public class RestaurantEmployeeController {
         Response.ResponseBuilder responseBuilder = Response.created(UriUtils.getRestaurantEmployeeUri(uriInfo, restaurantId, user.getUserId()));
 
         if (userPair.getValue())
-            responseBuilder = responseBuilder.header("MenuMate-EmployeeUserCreated", "true");
+            responseBuilder = responseBuilder.header("X-MenuMate-EmployeeUserCreated", "true");
 
         return responseBuilder.build();
     }

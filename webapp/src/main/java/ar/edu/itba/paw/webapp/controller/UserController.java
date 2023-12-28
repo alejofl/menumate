@@ -140,8 +140,8 @@ public class UserController {
 
         final String userUrl = UriUtils.getUserUri(uriInfo, user.getUserId()).toString();
         return Response.noContent()
-                .header("MenuMate-AuthToken", jwtTokenUtil.generateAccessToken(user))
-                .header("MenuMate-UserUrl", userUrl)
+                .header("X-MenuMate-AuthToken", jwtTokenUtil.generateAccessToken(user))
+                .header("X-MenuMate-UserUrl", userUrl)
                 .build();
     }
 
