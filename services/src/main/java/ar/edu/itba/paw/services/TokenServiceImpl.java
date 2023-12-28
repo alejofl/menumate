@@ -59,14 +59,8 @@ public class TokenServiceImpl implements TokenService {
 
     @Transactional
     @Override
-    public boolean isValid(String token, TokenType type) {
-        Optional<Token> maybeToken = tokenDao.getByToken(token);
-        return maybeToken.isPresent() && maybeToken.get().isFresh() && maybeToken.get().hasSameType(type);
-    }
-
-    @Override
-    public void refresh(Token token) {
-        token.setExpiryDate(generateTokenExpirationDate());
+    public Token refresh(Token token) {
+        return create(token.getUser(), token.getType());
     }
 
     @Scheduled(cron = "0 0 0 * * ?")

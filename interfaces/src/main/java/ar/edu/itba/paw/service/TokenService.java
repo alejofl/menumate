@@ -18,7 +18,5 @@ public interface TokenService {
 
     void delete(Token token);
 
-    boolean isValid(String token, TokenType type);
-
-    void refresh(Token token);
+    Token refresh(Token token);
 }

@@ -25,14 +25,14 @@ public class TokenJpaDao implements TokenDao {
 
     @Override
     public Optional<Token> getByToken(String token) {
-        final TypedQuery<Token> query = em.createQuery("FROM Token WHERE token = :token", Token.class);
+        final TypedQuery<Token> query = em.createQuery("FROM Token WHERE token = :token AND expiryDate > CURRENT_TIMESTAMP", Token.class);
         query.setParameter("token", token);
         return query.getResultList().stream().findFirst();
     }
 
     @Override
     public Optional<Token> getByUserId(long userId, TokenType type) {
-        final TypedQuery<Token> query = em.createQuery("FROM Token WHERE user.userId = :userId AND type = :type", Token.class);
+        final TypedQuery<Token> query = em.createQuery("FROM Token WHERE user.userId = :userId AND type = :type AND expiryDate > CURRENT_TIMESTAMP", Token.class);
         query.setParameter("userId", userId);
         query.setParameter("type", type);
         return query.getResultList().stream().findFirst();
@@ -41,7 +41,7 @@ public class TokenJpaDao implements TokenDao {
     @Override
     public Token create(User user, TokenType type, String token, LocalDateTime expiryDate) {
         final Token tkn = new Token(user, type, token, expiryDate);
-        em.persist(tkn);
+        em.merge(tkn);
         LOGGER.info("Created token {} for user id {}", type.getMessageCode(), user.getUserId());
         return tkn;
     }

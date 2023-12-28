@@ -10,13 +10,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TokenServiceImplTest {
@@ -42,11 +42,8 @@ public class TokenServiceImplTest {
 
     @Test
     public void testVerifyUserAndDeleteVerificationToken() {
-        final UserDetails userDetails = mock(UserDetails.class);
-
         final Token userToken = mock(Token.class);
         Mockito.when(tokenService.getByToken(TOKEN)).thenReturn(Optional.of(userToken));
-        Mockito.when(userToken.isExpired()).thenReturn(false);
 
         User user = mock(User.class);
         Mockito.when(user.getIsActive()).thenReturn(false);
@@ -64,12 +61,11 @@ public class TokenServiceImplTest {
 
     @Test
     public void testVerifyUserAndDeleteVerificationTokenUserAlreadyActive() {
-        final Token userToken = mock(Token.class);
+        final Token userToken = spy(Token.class);
         final User user = mock(User.class);
+        userToken.setUser(user);
 
         Mockito.when(tokenService.getByToken(TOKEN)).thenReturn(Optional.of(userToken));
-        Mockito.when(userToken.isExpired()).thenReturn(false);
-        Mockito.when(userToken.getUser()).thenReturn(user);
         Mockito.when(user.getIsActive()).thenReturn(true);
 
         Assert.assertFalse(userServiceImpl.verifyUser(TOKEN).isPresent());
@@ -77,13 +73,13 @@ public class TokenServiceImplTest {
 
     @Test
     public void testUpdatePasswordAndDeleteResetPasswordToken() {
-        final Token userToken = mock(Token.class);
+        final Token userToken = spy(Token.class);
         final User user = mock(User.class);
+        userToken.setUser(user);
 
         Mockito.when(tokenService.getByToken(TOKEN)).thenReturn(Optional.of(userToken));
-        Mockito.when(userToken.isExpired()).thenReturn(false);
-        Mockito.when(userToken.getUser()).thenReturn(user);
         Mockito.when(passwordEncoder.encode(PASSWORD)).thenReturn(PASSWORD);
+        Mockito.doNothing().when(user).setPassword(Mockito.anyString());
 
         Assert.assertTrue(userServiceImpl.updatePassword(TOKEN, PASSWORD));
     }
@@ -96,14 +92,13 @@ public class TokenServiceImplTest {
 
     @Test
     public void testUpdatePasswordAndDeleteResetPasswordTokenExpiredToken() {
-        final Token userToken = mock(Token.class);
+        final Token userToken = spy(Token.class);
         final User user = mock(User.class);
+        userToken.setUser(user);
 
         Mockito.when(tokenService.getByToken(TOKEN)).thenReturn(Optional.of(userToken));
-        Mockito.when(userToken.isExpired()).thenReturn(true);
-        Mockito.when(userToken.getUser()).thenReturn(user);
 
-        Assert.assertFalse(userServiceImpl.updatePassword(TOKEN, PASSWORD));
+        Assert.assertTrue(userServiceImpl.updatePassword(TOKEN, PASSWORD));
     }
 
     @Test(expected = IllegalArgumentException.class)

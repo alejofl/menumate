@@ -140,17 +140,7 @@ public class UserServiceImpl implements UserService {
             return;
         }
 
-        final Optional<Token> maybeToken = tokenService.getVerificationTokenByUserId(user.getUserId());
-        Token token;
-        if (maybeToken.isPresent()) {
-            token = maybeToken.get();
-            if (token.isExpired()) {
-                tokenService.refresh(token);
-                LOGGER.info("Refreshed user verification token for user id {}", user.getUserId());
-            }
-        } else {
-            token = tokenService.create(user, TokenType.VERIFICATION_TOKEN);
-        }
+        Token token = tokenService.create(user, TokenType.VERIFICATION_TOKEN);
 
         emailService.sendUserVerificationEmail(user, token.getToken());
     }
@@ -169,17 +159,7 @@ public class UserServiceImpl implements UserService {
             return;
         }
 
-        final Optional<Token> maybeToken = tokenService.getResetPasswordTokenByUserId(user.getUserId());
-        Token token;
-        if (maybeToken.isPresent()) {
-            token = maybeToken.get();
-            if (token.isExpired()) {
-                tokenService.refresh(token);
-                LOGGER.info("Refreshed password reset token for user id {}", user.getUserId());
-            }
-        } else {
-            token = tokenService.create(user, TokenType.RESET_PASSWORD_TOKEN);
-        }
+        Token token = tokenService.create(user, TokenType.RESET_PASSWORD_TOKEN);
 
         emailService.sendResetPasswordEmail(user, token.getToken());
     }
@@ -195,10 +175,6 @@ public class UserServiceImpl implements UserService {
 
         final Token tkn = maybeToken.get();
         final User user = tkn.getUser();
-        if (tkn.isExpired()) {
-            LOGGER.info("Ignored verifyUser call for user id {} due to expired token", user.getUserId());
-            return Optional.empty();
-        }
 
         tokenService.delete(tkn);
 
@@ -228,10 +204,6 @@ public class UserServiceImpl implements UserService {
 
         final Token tkn = maybeToken.get();
         final User user = tkn.getUser();
-        if (tkn.isExpired()) {
-            LOGGER.info("Ignored updatePassword call for user id {} due to expired token", user.getUserId());
-            return false;
-        }
 
         tokenService.delete(tkn);
 

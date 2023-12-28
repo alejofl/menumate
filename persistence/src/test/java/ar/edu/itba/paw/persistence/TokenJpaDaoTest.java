@@ -89,9 +89,9 @@ public class TokenJpaDaoTest {
         assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "tokens", "user_id = " + inactiveUser.getUserId() + " AND token = '" + UserConstants.UNUSED_TOKEN + "'"));
     }
 
-    @Test(expected = PersistenceException.class)
+    @Test
     @Rollback
-    public void testFailureWithActiveResetPasswordToken() {
+    public void testMergeActiveResetPasswordToken() {
         User userWithToken = em.find(User.class, UserConstants.USER_ID_WITH_TOKENS);
         Token tkn = tokenDao.create(
                 userWithToken,
@@ -99,12 +99,13 @@ public class TokenJpaDaoTest {
                 UserConstants.TOKEN1,
                 UserConstants.TOKEN_EXPIRATION
         );
+        assertEquals(UserConstants.TOKEN1, tkn.getToken());
         em.flush();
     }
 
-    @Test(expected = PersistenceException.class)
+    @Test
     @Rollback
-    public void testFailureWithActiveVerifyToken() {
+    public void testMergeActiveVerificationToken() {
         User userWithToken = em.find(User.class, UserConstants.USER_ID_WITH_TOKENS);
         Token tkn = tokenDao.create(
                 userWithToken,
@@ -112,6 +113,8 @@ public class TokenJpaDaoTest {
                 UserConstants.TOKEN2,
                 UserConstants.TOKEN_EXPIRATION
         );
+
+        assertEquals(UserConstants.TOKEN2, tkn.getToken());
         em.flush();
     }
 
