@@ -61,9 +61,15 @@ public class AuthAnywhereFilter extends OncePerRequestFilter {
             Optional<User> maybeUser = userService.getByEmail(email);
             if (maybeUser.isPresent()) {
                 User user = maybeUser.get();
-                response.setHeader("X-MenuMate-AuthToken", jwtTokenUtil.generateAccessToken(user));
 
-                String userUrl = ServletUriComponentsBuilder.fromContextPath(request)
+
+                // TODO: We are building twice the same userUrl
+                ServletUriComponentsBuilder uriBuilder = ServletUriComponentsBuilder.fromContextPath(request);
+                String uriInfo = uriBuilder.toUriString();
+
+                response.setHeader("X-MenuMate-AuthToken", jwtTokenUtil.generateAccessToken(uriInfo, user));
+
+                String userUrl = uriBuilder
                         .path(UriUtils.USERS_URL + "/")
                         .path(String.valueOf(user.getUserId()))
                         .build().toString();
