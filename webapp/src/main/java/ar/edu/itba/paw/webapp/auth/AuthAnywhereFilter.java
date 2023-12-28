@@ -64,7 +64,7 @@ public class AuthAnywhereFilter extends OncePerRequestFilter {
                 response.setHeader("X-MenuMate-AuthToken", jwtTokenUtil.generateAccessToken(user));
 
                 String userUrl = ServletUriComponentsBuilder.fromContextPath(request)
-                        .replacePath(UriUtils.USERS_URL + "/")
+                        .path(UriUtils.USERS_URL + "/")
                         .path(String.valueOf(user.getUserId()))
                         .build().toString();
 
