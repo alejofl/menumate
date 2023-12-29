@@ -7,8 +7,7 @@ import ar.edu.itba.paw.util.PaginatedResult;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.*;
 
 public final class ControllerUtils {
     public static final int DEFAULT_ORDERS_PAGE_SIZE = 20;
@@ -18,6 +17,7 @@ public final class ControllerUtils {
     public static final int DEFAULT_MYRESTAURANTS_PAGE_SIZE = 20;
     public static final int MAX_RESTAURANTS_FOR_HOMEPAGE = 4;
     public static final int IMAGE_MAX_SIZE = 1024 * 1024 * 5; // 1024 B = 1 KB && 1024 B * 1024 = 1 MB ==> MAX_SIZE = 5 MB
+    public static final int MAX_AGE = 31536000;
 
     private ControllerUtils() {
 
@@ -98,6 +98,22 @@ public final class ControllerUtils {
         }
         response.link(uriInfo.getRequestUriBuilder().replaceQueryParam("page", String.valueOf(1)).build().toString(), "first");
         response.link(uriInfo.getRequestUriBuilder().replaceQueryParam("page", String.valueOf(paginatedResult.getTotalPageCount())).build().toString(), "last");
+        return response;
+    }
+
+    public static void setUnconditionalCache(Response.ResponseBuilder responseBuilder) {
+        final CacheControl cacheControl = new CacheControl();
+        cacheControl.setMaxAge(MAX_AGE);
+        responseBuilder.cacheControl(cacheControl);
+    }
+
+    // https://howtodoinjava.com/resteasy/jax-rs-resteasy-cache-control-with-etag-example/
+    public static Response.ResponseBuilder evaluateEtag(Request request, EntityTag eTag) {
+        Response.ResponseBuilder response = request.evaluatePreconditions(eTag);
+        if (response != null) {
+            final CacheControl cacheControl = new CacheControl();
+            cacheControl.setNoCache(true);
+        }
         return response;
     }
 }

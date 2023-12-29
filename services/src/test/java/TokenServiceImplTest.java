@@ -1,9 +1,7 @@
+import ar.edu.itba.paw.model.Token;
 import ar.edu.itba.paw.model.User;
-import ar.edu.itba.paw.model.UserResetpasswordToken;
-import ar.edu.itba.paw.model.UserVerificationToken;
-import ar.edu.itba.paw.persistance.UserResetpasswordTokenDao;
-import ar.edu.itba.paw.persistance.UserVerificationTokenDao;
 import ar.edu.itba.paw.service.EmailService;
+import ar.edu.itba.paw.service.TokenService;
 import ar.edu.itba.paw.services.UserServiceImpl;
 import org.junit.Assert;
 import org.junit.Test;
@@ -12,22 +10,19 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TokenServiceImplTest {
 
     @Mock
-    private UserVerificationTokenDao verificationTokenDao;
-
-    @Mock
-    private UserResetpasswordTokenDao resetPasswordTokenDao;
+    private TokenService tokenService;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -47,117 +42,67 @@ public class TokenServiceImplTest {
 
     @Test
     public void testVerifyUserAndDeleteVerificationToken() {
-        final UserDetails userDetails = mock(UserDetails.class);
-
-        final UserVerificationToken userToken = mock(UserVerificationToken.class);
-        Mockito.when(verificationTokenDao.getByToken(TOKEN)).thenReturn(Optional.of(userToken));
-        Mockito.when(userToken.isExpired()).thenReturn(false);
+        final Token userToken = mock(Token.class);
+        Mockito.when(tokenService.getByToken(TOKEN)).thenReturn(Optional.of(userToken));
 
         User user = mock(User.class);
         Mockito.when(user.getIsActive()).thenReturn(false);
 
         Mockito.when(userToken.getUser()).thenReturn(user);
 
-        Assert.assertTrue(userServiceImpl.verifyUserAndDeleteVerificationToken(TOKEN).isPresent());
+        Assert.assertTrue(userServiceImpl.verifyUser(TOKEN).isPresent());
     }
 
     @Test
     public void testVerifyUserAndDeleteVerificationTokenTokenNotFound() {
-        Mockito.when(verificationTokenDao.getByToken(TOKEN)).thenReturn(Optional.empty());
-        Assert.assertFalse(userServiceImpl.verifyUserAndDeleteVerificationToken(TOKEN).isPresent());
+        Mockito.when(tokenService.getByToken(TOKEN)).thenReturn(Optional.empty());
+        Assert.assertFalse(userServiceImpl.verifyUser(TOKEN).isPresent());
     }
 
     @Test
     public void testVerifyUserAndDeleteVerificationTokenUserAlreadyActive() {
-        final UserVerificationToken userToken = mock(UserVerificationToken.class);
+        final Token userToken = spy(Token.class);
         final User user = mock(User.class);
+        userToken.setUser(user);
 
-        Mockito.when(verificationTokenDao.getByToken(TOKEN)).thenReturn(Optional.of(userToken));
-        Mockito.when(userToken.isExpired()).thenReturn(false);
-        Mockito.when(userToken.getUser()).thenReturn(user);
+        Mockito.when(tokenService.getByToken(TOKEN)).thenReturn(Optional.of(userToken));
         Mockito.when(user.getIsActive()).thenReturn(true);
 
-        Assert.assertFalse(userServiceImpl.verifyUserAndDeleteVerificationToken(TOKEN).isPresent());
+        Assert.assertFalse(userServiceImpl.verifyUser(TOKEN).isPresent());
     }
 
     @Test
     public void testUpdatePasswordAndDeleteResetPasswordToken() {
-        final UserResetpasswordToken userToken = mock(UserResetpasswordToken.class);
+        final Token userToken = spy(Token.class);
         final User user = mock(User.class);
+        userToken.setUser(user);
 
-        Mockito.when(resetPasswordTokenDao.getByToken(TOKEN)).thenReturn(Optional.of(userToken));
-        Mockito.when(userToken.isExpired()).thenReturn(false);
-        Mockito.when(userToken.getUser()).thenReturn(user);
+        Mockito.when(tokenService.getByToken(TOKEN)).thenReturn(Optional.of(userToken));
         Mockito.when(passwordEncoder.encode(PASSWORD)).thenReturn(PASSWORD);
+        Mockito.doNothing().when(user).setPassword(Mockito.anyString());
 
-        Assert.assertTrue(userServiceImpl.updatePasswordAndDeleteResetPasswordToken(TOKEN, PASSWORD));
+        Assert.assertTrue(userServiceImpl.updatePassword(TOKEN, PASSWORD));
     }
 
     @Test
     public void testUpdatePasswordAndDeleteResetPasswordTokenTokenNotFound() {
-        Mockito.when(resetPasswordTokenDao.getByToken(TOKEN)).thenReturn(Optional.empty());
-        Assert.assertFalse(userServiceImpl.updatePasswordAndDeleteResetPasswordToken(TOKEN, PASSWORD));
+        Mockito.when(tokenService.getByToken(TOKEN)).thenReturn(Optional.empty());
+        Assert.assertFalse(userServiceImpl.updatePassword(TOKEN, PASSWORD));
     }
 
     @Test
     public void testUpdatePasswordAndDeleteResetPasswordTokenExpiredToken() {
-        final UserResetpasswordToken userToken = mock(UserResetpasswordToken.class);
-        Mockito.when(resetPasswordTokenDao.getByToken(TOKEN)).thenReturn(Optional.of(userToken));
-        Mockito.when(userToken.isExpired()).thenReturn(true);
+        final Token userToken = spy(Token.class);
+        final User user = mock(User.class);
+        userToken.setUser(user);
 
-        Assert.assertFalse(userServiceImpl.updatePasswordAndDeleteResetPasswordToken(TOKEN, PASSWORD));
+        Mockito.when(tokenService.getByToken(TOKEN)).thenReturn(Optional.of(userToken));
+
+        Assert.assertTrue(userServiceImpl.updatePassword(TOKEN, PASSWORD));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testUpdatePasswordAndDeleteResetPasswordTokenNullNewPassword() {
-        userServiceImpl.updatePasswordAndDeleteResetPasswordToken(TOKEN, null);
-    }
-
-    @Test
-    public void testHasActiveVerificationTokenWithActiveToken() {
-        final UserVerificationToken userToken = mock(UserVerificationToken.class);
-        Mockito.when(verificationTokenDao.getByUserId(USER_ID)).thenReturn(Optional.of(userToken));
-        Mockito.when(userToken.isFresh()).thenReturn(true);
-
-        Assert.assertTrue(userServiceImpl.hasActiveVerificationToken(USER_ID));
-    }
-
-    @Test
-    public void testHasActiveVerificationTokenWithNoToken() {
-        Mockito.when(verificationTokenDao.getByUserId(USER_ID)).thenReturn(Optional.empty());
-        Assert.assertFalse(userServiceImpl.hasActiveVerificationToken(USER_ID));
-    }
-
-    @Test
-    public void testHasActiveVerificationTokenWithExpiredToken() {
-        final UserVerificationToken userToken = mock(UserVerificationToken.class);
-        Mockito.when(verificationTokenDao.getByUserId(USER_ID)).thenReturn(Optional.of(userToken));
-        Mockito.when(userToken.isFresh()).thenReturn(false);
-
-        Assert.assertFalse(userServiceImpl.hasActiveVerificationToken(USER_ID));
-    }
-
-    @Test
-    public void testIsValidResetPasswordTokenWithValidToken() {
-        final UserResetpasswordToken userToken = mock(UserResetpasswordToken.class);
-        Mockito.when(resetPasswordTokenDao.getByToken(TOKEN)).thenReturn(Optional.of(userToken));
-        Mockito.when(userToken.isFresh()).thenReturn(true);
-
-        Assert.assertTrue(userServiceImpl.isValidResetPasswordToken(TOKEN));
-    }
-
-    @Test
-    public void testIsValidResetPasswordTokenWithInvalidToken() {
-        Mockito.when(resetPasswordTokenDao.getByToken(TOKEN)).thenReturn(Optional.empty());
-        Assert.assertFalse(userServiceImpl.isValidResetPasswordToken(TOKEN));
-    }
-
-    @Test
-    public void testIsValidResetPasswordTokenWithExpiredToken() {
-        final UserResetpasswordToken userToken = mock(UserResetpasswordToken.class);
-        Mockito.when(resetPasswordTokenDao.getByToken(TOKEN)).thenReturn(Optional.of(userToken));
-        Mockito.when(userToken.isFresh()).thenReturn(false);
-
-        Assert.assertFalse(userServiceImpl.isValidResetPasswordToken(TOKEN));
+        userServiceImpl.updatePassword(TOKEN, null);
     }
 }
