@@ -8,6 +8,7 @@ import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class OrderDto {
@@ -21,7 +22,6 @@ public class OrderDto {
     private String status;
     private String address;
     private Integer tableNumber;
-
     private URI selfUrl;
     private URI itemsUrl;
     private URI userUrl;
@@ -162,5 +162,10 @@ public class OrderDto {
 
     public void setRestaurantUrl(URI restaurantUrl) {
         this.restaurantUrl = restaurantUrl;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(orderId, orderType, dateOrdered, dateConfirmed, dateReady, dateDelivered, dateCancelled, status, address, tableNumber);
     }
 }

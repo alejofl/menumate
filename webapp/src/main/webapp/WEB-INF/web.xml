@@ -90,7 +90,6 @@ http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
         <filter-name>jersey</filter-name>
         <url-pattern>/api/*</url-pattern>
     </filter-mapping>
-
     <!-- https://stackoverflow.com/questions/5750484/tomcat-is-setting-no-cache-for-js-and-css-file -->
     <!-- TODO: Filter declared, define mapping -->
     <!-- Unconditional Cache Filter -->
