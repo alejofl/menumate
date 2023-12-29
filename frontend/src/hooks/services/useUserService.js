@@ -17,9 +17,23 @@ export function useUserService(api) {
         });
     };
 
+    const login = async (url, email, password) => {
+        const response = await api.get(url, {
+            headers: {
+                "Authorization": `Basic ${btoa(`${email}:${password}`)}`
+            }
+        });
+        if (response.headers["x-menumate-authtoken"]) {
+            return {success: true, jwt: response.headers["x-menumate-authtoken"]};
+        } else {
+            return {success: false, jwt: null};
+        }
+    };
+
     return {
         sendResetPasswordToken,
         resendVerificationToken,
-        resetPassword
+        resetPassword,
+        login
     };
 }

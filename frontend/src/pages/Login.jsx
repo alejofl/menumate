@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import {Link, useSearchParams} from "react-router-dom";
+import {Link, useNavigate, useSearchParams} from "react-router-dom";
 import Page from "../components/Page.jsx";
 import "./styles/login.styles.css";
 import {useContext, useEffect, useState} from "react";
@@ -9,12 +9,15 @@ import {useApi} from "../hooks/useApi.js";
 import ApiContext from "../contexts/ApiContext.jsx";
 import {useMutation} from "@tanstack/react-query";
 import {useUserService} from "../hooks/services/useUserService.js";
+import AuthContext from "../contexts/AuthContext.jsx";
 
 function Login() {
     const { t } = useTranslation();
     const api = useApi();
     const apiContext = useContext(ApiContext);
+    const authContext = useContext(AuthContext);
     const userService = useUserService(api);
+    const navigate = useNavigate();
 
     const [forgotPassword, setForgotPassword] = useState(false);
     const [resendVerification, setResendVerification] = useState(false);
@@ -67,12 +70,22 @@ function Login() {
         setResendVerification(false);
     };
 
-    const handleLogin = (values, {setSubmitting}) => {
-        // TODO
+    const handleLogin = async (values, {setSubmitting}) => {
+        const success = await authContext.login(values.email, values.password, values.rememberme);
         setSubmitting(false);
+        if (success) {
+            navigate(queryParams.get("next") || "/");
+        } else {
+            setAlertType("danger");
+            setAlertMessage("login.login_error");
+        }
     };
 
     useEffect(() => {
+        if (authContext.isAuthenticated) {
+            navigate(queryParams.get("next") || "/");
+        }
+
         if (queryParams.has("alertType")) {
             setAlertType(queryParams.get("alertType"));
             queryParams.delete("alertType");
@@ -82,7 +95,7 @@ function Login() {
             queryParams.delete("alertMessage");
         }
         setQueryParams(queryParams, {replace: true});
-    }, [queryParams, setQueryParams]);
+    }, [authContext.isAuthenticated, navigate, queryParams, setQueryParams]);
 
     return (
         <>

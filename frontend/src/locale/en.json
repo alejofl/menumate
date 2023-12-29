@@ -145,7 +145,8 @@
         "mailer_error": "There was an error while sending the email. Please try again later.",
         "request_error": "There was an error processing your request. Please try again later.",
         "reset_password_success": "Your password has been successfully reset. You can now login with your new password.",
-        "reset_password_error": "There was an error while resetting your password. Please try again later."
+        "reset_password_error": "There was an error while resetting your password. Please try again later.",
+        "login_error": "There was an error while logging in. Please check your credentials."
     },
     "validation": {
         "email": {
