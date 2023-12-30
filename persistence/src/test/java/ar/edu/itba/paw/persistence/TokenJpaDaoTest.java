@@ -90,35 +90,6 @@ public class TokenJpaDaoTest {
     }
 
     @Test
-    @Rollback
-    public void testMergeActiveResetPasswordToken() {
-        User userWithToken = em.find(User.class, UserConstants.USER_ID_WITH_TOKENS);
-        Token tkn = tokenDao.create(
-                userWithToken,
-                TokenType.RESET_PASSWORD_TOKEN,
-                UserConstants.TOKEN1,
-                UserConstants.TOKEN_EXPIRATION
-        );
-        assertEquals(UserConstants.TOKEN1, tkn.getToken());
-        em.flush();
-    }
-
-    @Test
-    @Rollback
-    public void testMergeActiveVerificationToken() {
-        User userWithToken = em.find(User.class, UserConstants.USER_ID_WITH_TOKENS);
-        Token tkn = tokenDao.create(
-                userWithToken,
-                TokenType.VERIFICATION_TOKEN,
-                UserConstants.TOKEN2,
-                UserConstants.TOKEN_EXPIRATION
-        );
-
-        assertEquals(UserConstants.TOKEN2, tkn.getToken());
-        em.flush();
-    }
-
-    @Test
     public void testGetResetPasswordByToken() {
         User userWithToken = em.find(User.class, UserConstants.USER_ID_WITH_TOKENS);
         Optional<Token> maybeToken = tokenDao.getByToken(UserConstants.TOKEN2);

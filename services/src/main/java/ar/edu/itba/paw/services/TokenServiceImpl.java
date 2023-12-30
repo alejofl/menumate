@@ -28,11 +28,14 @@ public class TokenServiceImpl implements TokenService {
         return LocalDateTime.now().plusDays(TOKEN_DURATION_DAYS);
     }
 
+    private static String generateToken() {
+        return UUID.randomUUID().toString().substring(0, 32);
+    }
+
     @Transactional
     @Override
     public Token create(User user, TokenType type) {
-       String token = UUID.randomUUID().toString().substring(0, 32);
-       return tokenDao.create(user, type, token, generateTokenExpirationDate());
+       return tokenDao.create(user, type, generateToken(), generateTokenExpirationDate());
     }
 
     @Transactional
@@ -60,6 +63,7 @@ public class TokenServiceImpl implements TokenService {
     @Transactional
     @Override
     public Token refresh(Token token) {
+        tokenDao.delete(token);
         return create(token.getUser(), token.getType());
     }
 

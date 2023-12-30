@@ -33,7 +33,9 @@ CREATE TABLE IF NOT EXISTS tokens
     user_id INT NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
     type    INT NOT NULL,
     token   VARCHAR(32) PRIMARY KEY,
-    expiryDate TIMESTAMP NOT NULL
+    expiryDate TIMESTAMP NOT NULL,
+
+    UNIQUE(user_id, type)
 );
 
 CREATE TABLE IF NOT EXISTS restaurants

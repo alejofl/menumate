@@ -41,7 +41,7 @@ public class TokenJpaDao implements TokenDao {
     @Override
     public Token create(User user, TokenType type, String token, LocalDateTime expiryDate) {
         final Token tkn = new Token(user, type, token, expiryDate);
-        em.merge(tkn);
+        em.persist(tkn);
         LOGGER.info("Created token {} for user id {}", type.getMessageCode(), user.getUserId());
         return tkn;
     }
