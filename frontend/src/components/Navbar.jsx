@@ -1,13 +1,13 @@
-import { useState } from "react";
+import {useContext} from "react";
 import { useTranslation } from "react-i18next";
 import "./styles/navbar.styles.css";
 import Logo from "../assets/logo.png";
 import { Link } from "react-router-dom";
+import AuthContext from "../contexts/AuthContext.jsx";
 
 function Navbar() {
     const { t } = useTranslation();
-    const [loggedIn] = useState(true);
-    const [isModerator] = useState(true);
+    const authContext = useContext(AuthContext);
 
     return (
         <div className="navbar_component">
@@ -25,14 +25,14 @@ function Navbar() {
                         </li>
                     </ul>
                     <div className="d-flex gap-4">
-                        {loggedIn
+                        {authContext.isAuthenticated
                             ?
                             <>
-                                {isModerator && <Link to="/moderators" type="button" className="btn btn-accent">{t("navbar.moderator_pane")}</Link>}
+                                {authContext.role === "MODERATOR" && <Link to="/moderators" type="button" className="btn btn-accent">{t("navbar.moderator_pane")}</Link>}
                                 <div className="text-color-white">
                                     <div className="dropdown">
                                         <button className="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i className="bi bi-person-circle"></i> Pepe
+                                            <i className="bi bi-person-circle"></i> {authContext.name}
                                         </button>
                                         <ul className="dropdown-menu dropdown-menu-end">
                                             <li><Link className="dropdown-item" to="/user">{t("navbar.my_profile")}</Link></li>
@@ -41,7 +41,7 @@ function Navbar() {
                                             <li><Link className="dropdown-item" to="/restaurants/create">{t("navbar.create_restaurant")}</Link></li>
                                             <li><Link className="dropdown-item" to="/user/restaurants">{t("navbar.my_restaurants")}</Link></li>
                                             <li><hr className="dropdown-divider"/></li>
-                                            <li><Link className="dropdown-item" to="/auth/logout">{t("navbar.logout")}</Link></li>
+                                            <li><button className="dropdown-item" onClick={authContext.logout}>{t("navbar.logout")}</button></li>
                                         </ul>
                                     </div>
                                 </div>

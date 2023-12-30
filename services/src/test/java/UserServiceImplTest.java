@@ -1,8 +1,8 @@
+import ar.edu.itba.paw.model.Token;
 import ar.edu.itba.paw.model.User;
-import ar.edu.itba.paw.model.UserVerificationToken;
 import ar.edu.itba.paw.persistance.UserDao;
-import ar.edu.itba.paw.persistance.UserVerificationTokenDao;
 import ar.edu.itba.paw.service.EmailService;
+import ar.edu.itba.paw.service.TokenService;
 import ar.edu.itba.paw.services.UserServiceImpl;
 import org.junit.Assert;
 import org.junit.Before;
@@ -16,7 +16,6 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.*;
@@ -33,7 +32,7 @@ public class UserServiceImplTest {
     private EmailService emailService;
 
     @Mock
-    private UserVerificationTokenDao verificationTokenDao;
+    private TokenService tokenService;
 
     @Mock
     private UserDetailsService userDetailsService;
@@ -64,11 +63,11 @@ public class UserServiceImplTest {
         Mockito.when(user.getPassword()).thenReturn(PASSWORD);
         Mockito.when(user.getName()).thenReturn(USERNAME);
 
-        final UserVerificationToken userVerificationToken = mock(UserVerificationToken.class);
+        final Token userVerificationToken = mock(Token.class);
 
         Mockito.when(userDao.getByEmail(EMAIL)).thenReturn(Optional.empty());
         Mockito.when(userDao.create(EMAIL, PASSWORD, USERNAME, LocaleContextHolder.getLocale().getLanguage())).thenReturn(user);
-        Mockito.when(verificationTokenDao.create(eq(user), anyString(), any())).thenReturn(userVerificationToken);
+        Mockito.when(tokenService.create(eq(user), any())).thenReturn(userVerificationToken);
 
         final User result = userServiceImpl.createOrConsolidate(EMAIL, PASSWORD, USERNAME);
 
@@ -85,8 +84,8 @@ public class UserServiceImplTest {
         user.setEmail(EMAIL);
         when(userDao.getByEmail(EMAIL)).thenReturn(Optional.of(user));
 
-        UserVerificationToken token = mock(UserVerificationToken.class);
-        Mockito.when(verificationTokenDao.create(Mockito.eq(user), Mockito.anyString(), Mockito.any(LocalDateTime.class))).thenReturn(token);
+        final Token token = mock(Token.class);
+        Mockito.when(tokenService.create(eq(user), any())).thenReturn(token);
         Mockito.when(token.getToken()).thenReturn(TOKEN);
 
         final User result = userServiceImpl.createOrConsolidate(EMAIL, PASSWORD, USERNAME);

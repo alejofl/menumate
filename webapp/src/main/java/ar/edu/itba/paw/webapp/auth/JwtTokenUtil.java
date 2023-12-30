@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.auth;
 
 import ar.edu.itba.paw.model.User;
+import ar.edu.itba.paw.webapp.utils.UriUtils;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
@@ -29,8 +30,19 @@ public class JwtTokenUtil {
         jwtSecretKey = Keys.hmacShaKeyFor(FileCopyUtils.copyToString(new InputStreamReader(jwtKeyRes.getInputStream())).getBytes(StandardCharsets.UTF_8));
     }
 
-    public String generateAccessToken(User user) {
+    public String generateAccessToken(String uriInfo, User user) {
+        Claims claims = Jwts.claims();
+        claims.put("name", user.getName());
+
+        if (user.hasRole()) {
+            claims.put("role", user.getRole().getLevel());
+        }
+
+        String selfUrl = new StringBuilder().append(uriInfo).append(UriUtils.USERS_URL).append(user.getUserId()).toString();
+        claims.put("selfUrl", selfUrl);
+
         return Jwts.builder()
+                .setClaims(claims)
                 .setSubject(user.getEmail())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME_MILLIS))
