@@ -20,27 +20,27 @@ export function AuthContextProvider({children}) {
     const apiContext = useContext(ApiContext);
     const userService = useUserService(api);
 
-    const jwtParamSetter = (param, defaultValue) => {
-        if (jwt) {
-            return jwtDecode(jwt)[param] || defaultValue;
+    const jwtParamSetter = (param, defaultValue, token = jwt) => {
+        if (token) {
+            return jwtDecode(token)[param] || defaultValue;
         }
         return null;
     };
 
     const [isAuthenticated, setIsAuthenticated] = useState(localStorage.getItem("jwt") !== null || sessionStorage.getItem("jwt") !== null);
     const [jwt, setJwt] = useState(localStorage.getItem("jwt") || sessionStorage.getItem("jwt") || null);
-    const [name, setName] = useState(() => jwtParamSetter("name", null));
-    const [role, setRole] = useState(() => jwtParamSetter("role", "USER"));
-    const [selfUrl, setSelfUrl] = useState(() => jwtParamSetter("selfUrl", null));
+    const [name, setName] = useState(jwtParamSetter("name", null));
+    const [role, setRole] = useState(jwtParamSetter("role", "USER"));
+    const [selfUrl, setSelfUrl] = useState(jwtParamSetter("selfUrl", null));
 
     const loginHandler = async (email, password, rememberMe) => {
         const response = await userService.login(apiContext.usersUrl, email, password);
         if (response.success) {
             setIsAuthenticated(true);
             setJwt(response.jwt);
-            setName(() => jwtParamSetter("name", null));
-            setRole(() => jwtParamSetter("role", "USER"));
-            setSelfUrl(() => jwtParamSetter("selfUrl", null));
+            setName(jwtParamSetter("name", null, response.jwt));
+            setRole(jwtParamSetter("role", "USER", response.jwt));
+            setSelfUrl(jwtParamSetter("selfUrl", null, response.jwt));
             if (rememberMe) {
                 localStorage.setItem("jwt", response.jwt);
             } else {
