@@ -42,10 +42,10 @@ public class JwtTokenUtil {
         claims.put("selfUrl", selfUrl);
 
         return Jwts.builder()
+                .setClaims(claims)
                 .setSubject(user.getEmail())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME_MILLIS))
-                .setClaims(claims)
                 .signWith(jwtSecretKey)
                 .compact();
     }
