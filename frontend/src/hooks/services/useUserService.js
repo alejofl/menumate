@@ -30,10 +30,19 @@ export function useUserService(api) {
         }
     };
 
+    const register = async (url, name, email, password) => {
+        return await api.post(url, {
+            name: name,
+            email: email,
+            password: password
+        });
+    };
+
     return {
         sendResetPasswordToken,
         resendVerificationToken,
         resetPassword,
-        login
+        login,
+        register
     };
 }

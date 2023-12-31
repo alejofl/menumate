@@ -1,10 +1,10 @@
 import {useContext, useEffect} from "react";
 import Api from "../data/Api.js";
 import AuthContext from "../contexts/AuthContext.jsx";
+import {UNAUTHORIZED_STATUS_CODE} from "../utils.js";
 
 export function useApi() {
     const authContext = useContext(AuthContext);
-    const UNAUTHORIZED_STATUS_CODE = 401;
 
     useEffect(() => {
         const requestInterceptor = Api.interceptors.request.use(

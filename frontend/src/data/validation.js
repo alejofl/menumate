@@ -28,3 +28,23 @@ export const ResetPasswordSchema = Yup.object().shape({
         .required(i18n.t("validation.repeat_password.required"))
         .oneOf([Yup.ref("newPassword")], i18n.t("validation.repeat_password.match"))
 });
+
+export const RegisterSchema = Yup.object().shape({
+    name: Yup.string()
+        .required(i18n.t("validation.name.required"))
+        .min(2, ({ min }) => i18n.t("validation.name.min", {min: min}))
+        .max(48, ({ max }) => i18n.t("validation.name.max", {max: max})),
+
+    email: Yup.string()
+        .required(i18n.t("validation.email.required"))
+        .matches(/^(([^<>()[\]\\.,;:\s@"]+(.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@(([[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}])|(([a-zA-Z-0-9]+.)+[a-zA-Z]{2,}))$/, i18n.t("validation.email.invalid")),
+
+    password: Yup.string()
+        .required(i18n.t("validation.password.required"))
+        .min(8, ({ min }) => i18n.t("validation.password.min", {min: min}))
+        .max(72, ({ max }) => i18n.t("validation.password.max", {max: max})),
+
+    repeatPassword: Yup.string()
+        .required(i18n.t("validation.repeat_password.required"))
+        .oneOf([Yup.ref("password")], i18n.t("validation.repeat_password.match"))
+});
