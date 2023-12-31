@@ -24,7 +24,8 @@
         "error": "Error {{number}}",
         "restaurants": "Restaurantes",
         "login": "Iniciar sesión",
-        "reset_password": "Restablecer contraseña"
+        "reset_password": "Restablecer contraseña",
+        "signup": "Regístrate"
     },
     "error": {
         "modal": {
@@ -146,12 +147,14 @@
         "request_error": "Ocurrió un error al procesar tu solicitud. Por favor, intente de nuevo más tarde.",
         "reset_password_success": "Tu contraseña ha sido restablecida con éxito. Ahora puedes iniciar sesión con tu nueva contraseña.",
         "reset_password_error": "Ocurrió un error al restablecer tu contraseña. Por favor, intente de nuevo más tarde.",
-        "login_error": "Ocurrió un error al iniciar sesión. Por favor, chequea tus credenciales."
+        "login_error": "Ocurrió un error al iniciar sesión. Por favor, chequea tus credenciales.",
+        "register_success": "Hemos enviado un correo electrónico con un enlace para verificar tu cuenta. ¡Revisa tu bandeja de entrada!"
     },
     "validation": {
         "email": {
             "required": "El correo electrónico es obligatorio",
-            "invalid": "El correo electrónico no es válido"
+            "invalid": "El correo electrónico no es válido",
+            "already_in_use": "El correo electrónico ya está en uso"
         },
         "password": {
             "required": "La contraseña es obligatoria",
@@ -161,11 +164,25 @@
         "repeat_password": {
             "required": "Debes confirmar la contraseña",
             "match": "Las contraseñas no coinciden"
+        },
+        "name": {
+            "required": "El nombre es obligatorio",
+            "min": "El nombre debe tener al menos {{min}} caracteres",
+            "max": "El nombre debe tener como máximo {{max}} caracteres"
         }
     },
     "reset_password": {
         "new_password": "Nueva contraseña",
         "repeat_password": "Repita la nueva contraseña",
         "button": "Restablecer contraseña"
+    },
+    "signup": {
+        "name": "Nombre",
+        "email_address": "Correo electrónico",
+        "password": "Contraseña",
+        "repeat_password": "Confirmar contraseña",
+        "button": "Regístrate",
+        "already_have_account": "¿Ya tienes una cuenta?",
+        "login_here": "¡Inicia sesión aquí!"
     }
 }

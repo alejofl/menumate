@@ -52,7 +52,7 @@ function Navbar() {
                                     <Link className="nav-link active" aria-current="page" to="/auth/login">{t("navbar.login")}</Link>
                                 </li>
                                 <li className="nav-item">
-                                    <Link className="nav-link active" aria-current="page" to="/auth/signup">{t("navbar.signup")}</Link>
+                                    <Link className="nav-link active" aria-current="page" to="/auth/register">{t("navbar.signup")}</Link>
                                 </li>
                             </ul>
                         }
