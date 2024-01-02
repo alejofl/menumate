@@ -345,4 +345,16 @@ public class RestaurantController {
         reportService.markHandled(reportId, restaurantId, ControllerUtils.getCurrentUserIdOrThrow());
         return Response.noContent().build();
     }
+
+    @GET
+    @Path("/{restaurantId:\\d+}/reports/{reportId:\\d+}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getReport(
+            @PathParam("restaurantId") final long restaurantId,
+            @PathParam("reportId") final long reportId
+    ) {
+        final Report report = reportService.getByIdChecked(reportId, restaurantId);
+        ReportDto dto = ReportDto.fromReport(uriInfo, report);
+        return Response.ok(new GenericEntity<ReportDto>(dto) {}).build();
+    }
 }
