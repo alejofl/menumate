@@ -4,6 +4,8 @@ import ar.edu.itba.paw.exception.RestaurantNotFoundException;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.util.PaginatedResult;
+import ar.edu.itba.paw.util.Pair;
+import ar.edu.itba.paw.webapp.api.CustomMediaType;
 import ar.edu.itba.paw.webapp.auth.AccessValidator;
 import ar.edu.itba.paw.webapp.dto.*;
 import ar.edu.itba.paw.webapp.form.*;
@@ -18,6 +20,7 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Path(UriUtils.RESTAURANTS_URL)
 @Component
@@ -356,5 +359,30 @@ public class RestaurantController {
         final Report report = reportService.getByIdChecked(reportId, restaurantId);
         ReportDto dto = ReportDto.fromReport(uriInfo, report);
         return Response.ok(new GenericEntity<ReportDto>(dto) {}).build();
+    }
+
+    @GET
+    @PreAuthorize("hasRole('MODERATOR')")
+    @Produces(CustomMediaType.APPLICATION_LISTS_RESTAURANTS_REPORTS_COUNT)
+    public Response getRestaurantsWithUnhandledReports(
+            @Valid @BeanParam GetRestaurantsWithReports restaurantsWithReportsForm
+    ) {
+        PaginatedResult<Pair<Restaurant, Integer>> pagedResult = reportService.getCountByRestaurant(
+            restaurantsWithReportsForm.getPageOrDefault(),
+            restaurantsWithReportsForm.getSizeOrDefault(ControllerUtils.DEFAULT_REPORTS_PAGE_SIZE)
+        );
+
+        List<RestaurantDto> dtoList = pagedResult.getResult().stream()
+                .map(pair -> {
+                    Restaurant restaurant = pair.getKey();
+                    Integer reportCount = pair.getValue();
+                    RestaurantDto restaurantDto = RestaurantDto.fromRestaurant(uriInfo, restaurant);
+                    restaurantDto.setUnhandledReportsCount(reportCount.longValue());
+                    return restaurantDto;
+                })
+                .collect(Collectors.toList());
+
+        final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<RestaurantDto>>(dtoList) {});
+        return ControllerUtils.addPagingLinks(responseBuilder, pagedResult, uriInfo).build();
     }
 }
