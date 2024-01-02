@@ -6,6 +6,9 @@ import ar.edu.itba.paw.webapp.utils.UriUtils;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ReportDto {
 
@@ -43,6 +46,10 @@ public class ReportDto {
         dto.reporterUrl = UriUtils.getUserUri(uriInfo, report.getReporterUserId());
         
         return dto;
+    }
+
+    public static List<ReportDto> fromReportCollection(final UriInfo uriInfo, Collection<Report> reports) {
+        return reports.stream().map(r -> fromReport(uriInfo, r)).collect(Collectors.toList());
     }
 
     public long getReportId() {

@@ -385,4 +385,21 @@ public class RestaurantController {
         final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<RestaurantDto>>(dtoList) {});
         return ControllerUtils.addPagingLinks(responseBuilder, pagedResult, uriInfo).build();
     }
+
+    @GET
+    @Path("/{restaurantId:\\d+}/reports")
+    @Produces(CustomMediaType.APPLICATION_LISTS_RESTAURANT_REPORTS)
+    public Response getRestaurantReports(
+            @PathParam("restaurantId") final long restaurantId,
+            @Valid @BeanParam PagingForm pagingForm
+    ) {
+        PaginatedResult<Report> pagedResult = reportService.getByRestaurant(
+                restaurantId,
+                pagingForm.getPageOrDefault(),
+                pagingForm.getSizeOrDefault(ControllerUtils.DEFAULT_REPORTS_PAGE_SIZE)
+        );
+        List<ReportDto> dtoList = ReportDto.fromReportCollection(uriInfo, pagedResult.getResult());
+        final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<ReportDto>>(dtoList) {});
+        return ControllerUtils.addPagingLinks(responseBuilder, pagedResult, uriInfo).build();
+    }
 }
