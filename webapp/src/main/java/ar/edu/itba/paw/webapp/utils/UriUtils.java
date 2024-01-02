@@ -175,4 +175,11 @@ public final class UriUtils {
                 .path("employees").path(String.valueOf(userId))
                 .build();
     }
+
+    public static URI getReportUri(final UriInfo uriInfo, final long reportId, final long restaurantId) {
+        return uriInfo.getBaseUriBuilder()
+                .path(RESTAURANTS_URL).path(String.valueOf(restaurantId))
+                .path("reports").path(String.valueOf(reportId))
+                .build();
+    }
 }

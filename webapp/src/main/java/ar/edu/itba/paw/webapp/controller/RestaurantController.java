@@ -27,19 +27,21 @@ public class RestaurantController {
     private final ProductService productService;
     private final RestaurantRoleService restaurantRoleService;
     private final UserService userService;
+    private final ReportService reportService;
     private final AccessValidator accessValidator;
 
     @Context
     private UriInfo uriInfo;
 
     @Autowired
-    public RestaurantController(final RestaurantService restaurantService, final CategoryService categoryService, final ProductService productService, final RestaurantRoleService restaurantRoleService, final AccessValidator accessValidator, final UserService userService) {
+    public RestaurantController(final RestaurantService restaurantService, final CategoryService categoryService, final ProductService productService, final RestaurantRoleService restaurantRoleService, final AccessValidator accessValidator, final UserService userService, final ReportService reportService) {
         this.restaurantService = restaurantService;
         this.categoryService = categoryService;
         this.productService = productService;
         this.restaurantRoleService = restaurantRoleService;
         this.accessValidator = accessValidator;
         this.userService = userService;
+        this.reportService =  reportService;
     }
 
     @GET
@@ -311,5 +313,16 @@ public class RestaurantController {
     ) {
         productService.stopPromotion(restaurantId, promotionId);
         return Response.noContent().build();
+    }
+
+    @POST
+    @Path("/{restaurantId:\\d+}/reports")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response createReport(
+            @PathParam("restaurantId") final long restaurantId,
+            @Valid @NotNull final ReportRestaurantForm restaurantForm
+    ) {
+        final Report report = reportService.create(restaurantId, restaurantForm.getReporterId(), restaurantForm.getComment());
+        return Response.created(UriUtils.getReportUri(uriInfo, report.getReportId(), restaurantId)).build();
     }
 }
