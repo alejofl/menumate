@@ -335,4 +335,14 @@ public class RestaurantController {
         reportService.delete(reportId, restaurantId);
         return Response.noContent().build();
     }
+
+    @PATCH
+    @Path("/{restaurantId:\\d+}/reports/{reportId:\\d+}")
+    public Response markReportAsHandled(
+            @PathParam("restaurantId") final long restaurantId,
+            @PathParam("reportId") final long reportId
+    ) {
+        reportService.markHandled(reportId, restaurantId, ControllerUtils.getCurrentUserIdOrThrow());
+        return Response.noContent().build();
+    }
 }
