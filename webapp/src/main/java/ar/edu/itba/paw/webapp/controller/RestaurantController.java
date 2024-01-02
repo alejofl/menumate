@@ -325,4 +325,14 @@ public class RestaurantController {
         final Report report = reportService.create(restaurantId, restaurantForm.getReporterId(), restaurantForm.getComment());
         return Response.created(UriUtils.getReportUri(uriInfo, report.getReportId(), restaurantId)).build();
     }
+
+    @DELETE
+    @Path("/{restaurantId:\\d+}/reports/{reportId:\\d+}")
+    public Response deleteReport(
+            @PathParam("restaurantId") final long restaurantId,
+            @PathParam("reportId") final long reportId
+    ) {
+        reportService.delete(reportId, restaurantId);
+        return Response.noContent().build();
+    }
 }

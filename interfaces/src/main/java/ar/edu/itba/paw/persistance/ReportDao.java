@@ -21,4 +21,6 @@ public interface ReportDao {
      * date reported.
      */
     PaginatedResult<Report> get(Long restaurantId, Long reporterUserId, Long handlerUserId, Boolean isHandled, boolean descending, int pageNumber, int pageSize);
+
+    void delete(long reportId);
 }

@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.exception.ReportNotFoundException;
 import ar.edu.itba.paw.model.Report;
 import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.persistence.config.TestConfig;
@@ -59,6 +60,18 @@ public class ReportJpaDaoTest {
         final Optional<Report> maybeReport = reportDao.getById(ReportConstants.REPORT_IDS[0]);
         Assert.assertTrue(maybeReport.isPresent());
         Assert.assertEquals(ReportConstants.REPORT_IDS[0], maybeReport.get().getReportId().longValue());
+    }
+
+    @Test
+    @Rollback
+    public void testDeleteExistingReport() {
+        reportDao.delete(ReportConstants.REPORT_IDS[0]);
+        Assert.assertEquals(0, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "restaurant_reports", "report_id = " + ReportConstants.REPORT_IDS[0]));
+    }
+
+    @Test(expected = ReportNotFoundException.class)
+    public void testDeleteNonExistingReport() {
+        reportDao.delete(ReportConstants.NONEXISTING_REPORT_ID);
     }
 
     @Test
