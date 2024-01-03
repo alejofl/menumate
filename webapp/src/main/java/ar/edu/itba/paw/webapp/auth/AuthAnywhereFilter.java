@@ -62,6 +62,11 @@ public class AuthAnywhereFilter extends OncePerRequestFilter {
             if (maybeUser.isPresent()) {
                 User user = maybeUser.get();
 
+                if (!user.getIsActive()) {
+                    userService.sendVerificationToken(user.getEmail());
+                    response.setHeader("X-MenuMate-VerifyMailSent", "true");
+                    filterChain.doFilter(request, response);
+                }
 
                 // TODO: We are building twice the same userUrl
                 ServletUriComponentsBuilder uriBuilder = ServletUriComponentsBuilder.fromContextPath(request);
