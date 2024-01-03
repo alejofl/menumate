@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.exception.TokenNotFoundException;
 import ar.edu.itba.paw.model.Token;
 import ar.edu.itba.paw.model.TokenType;
 import ar.edu.itba.paw.model.User;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import java.time.LocalDateTime;
@@ -32,7 +34,7 @@ public class TokenJpaDao implements TokenDao {
 
     @Override
     public Optional<Token> getByUserId(long userId, TokenType type) {
-        final TypedQuery<Token> query = em.createQuery("FROM Token WHERE user.userId = :userId AND type = :type AND expiryDate > CURRENT_TIMESTAMP", Token.class);
+        final TypedQuery<Token> query = em.createQuery("FROM Token WHERE user.userId = :userId AND type = :type", Token.class);
         query.setParameter("userId", userId);
         query.setParameter("type", type);
         return query.getResultList().stream().findFirst();
@@ -47,9 +49,25 @@ public class TokenJpaDao implements TokenDao {
     }
 
     @Override
+    public Token refresh(Token token, String newToken, LocalDateTime newExpiryDate) {
+        token.setExpiryDate(newExpiryDate);
+        token.setToken(newToken);
+        em.merge(token);
+        LOGGER.info("Refreshed token {} for user id {}", token.getType().getMessageCode(), token.getUser().getUserId());
+        return token;
+    }
+
+    @Override
     public void delete(Token token) {
-        em.remove(token);
-        LOGGER.info("Deleted token {} for user id {}", token.getType().getMessageCode(), token.getUser().getUserId());
+        try {
+            final Token tkn = em.getReference(Token.class, token.getTokenId());
+            em.remove(tkn);
+            em.flush();
+            LOGGER.info("Deleted token with ID {}", tkn.getTokenId());
+        } catch (EntityNotFoundException e) {
+            LOGGER.error("Attempted to delete non-existing token id {}", token.getTokenId());
+            throw new TokenNotFoundException();
+        }
     }
 
     @Transactional

@@ -67,7 +67,7 @@ public class UserServiceImplTest {
 
         Mockito.when(userDao.getByEmail(EMAIL)).thenReturn(Optional.empty());
         Mockito.when(userDao.create(EMAIL, PASSWORD, USERNAME, LocaleContextHolder.getLocale().getLanguage())).thenReturn(user);
-        Mockito.when(tokenService.create(eq(user), any())).thenReturn(userVerificationToken);
+        Mockito.when(tokenService.createOrRefresh(eq(user), any())).thenReturn(userVerificationToken);
 
         final User result = userServiceImpl.createOrConsolidate(EMAIL, PASSWORD, USERNAME);
 
@@ -85,7 +85,7 @@ public class UserServiceImplTest {
         when(userDao.getByEmail(EMAIL)).thenReturn(Optional.of(user));
 
         final Token token = mock(Token.class);
-        Mockito.when(tokenService.create(eq(user), any())).thenReturn(token);
+        Mockito.when(tokenService.createOrRefresh(eq(user), any())).thenReturn(token);
         Mockito.when(token.getToken()).thenReturn(TOKEN);
 
         final User result = userServiceImpl.createOrConsolidate(EMAIL, PASSWORD, USERNAME);

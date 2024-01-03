@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.exception.TokenNotFoundException;
 import ar.edu.itba.paw.model.Token;
 import ar.edu.itba.paw.model.TokenType;
 import ar.edu.itba.paw.model.User;
@@ -61,11 +62,45 @@ public class TokenJpaDaoTest {
 
         assertNotNull(tkn);
         assertEquals(inactiveUser.getUserId(), tkn.getUser().getUserId());
-        assertEquals(inactiveUser.getUserId(), tkn.getUser().getUserId());
         assertEquals(UserConstants.UNUSED_TOKEN, tkn.getToken());
         assertEquals(TokenType.RESET_PASSWORD_TOKEN, tkn.getType());
         assertEquals(UserConstants.TOKEN_EXPIRATION.getDayOfYear(), tkn.getExpiryDate().getDayOfYear());
         assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "tokens", "user_id = " + inactiveUser.getUserId() + " AND token = '" + UserConstants.UNUSED_TOKEN + "'"));
+    }
+
+    @Test
+    @Rollback
+    public void testRefreshResetPasswordToken() {
+        final Token token = em.find(Token.class, UserConstants.TOKEN2_ID);
+        final Token tkn = tokenDao.refresh(
+                token,
+                UserConstants.UNUSED_TOKEN,
+                UserConstants.TOKEN_EXPIRATION
+        );
+        em.flush();
+
+        assertNotNull(tkn);
+        assertEquals(UserConstants.USER_ID_WITH_TOKENS, tkn.getUser().getUserId().longValue());
+        assertEquals(token.getTokenId(), tkn.getTokenId());
+        assertEquals(UserConstants.UNUSED_TOKEN, tkn.getToken());
+        assertEquals(TokenType.RESET_PASSWORD_TOKEN, tkn.getType());
+        assertTrue(tkn.isFresh());
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "tokens", "token_id = " + tkn.getTokenId() + " AND user_id = " + tkn.getUser().getUserId() + " AND token = '" + UserConstants.UNUSED_TOKEN + "'"));
+        assertEquals(0, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "tokens", "token_id = " + tkn.getTokenId() + " AND user_id = " + tkn.getUser().getUserId() + " AND token = '" + UserConstants.TOKEN2 + "'"));
+    }
+
+
+    @Test
+    public void testGetResetPasswordByToken() {
+        User userWithToken = em.find(User.class, UserConstants.USER_ID_WITH_TOKENS);
+        Optional<Token> maybeToken = tokenDao.getByToken(UserConstants.TOKEN2);
+
+        assertTrue(maybeToken.isPresent());
+        Token token = maybeToken.get();
+
+        assertEquals(token.getToken(), UserConstants.TOKEN2);
+        assertEquals(token.getUser().getUserId(), userWithToken.getUserId());
+        assertEquals(token.getType(), TokenType.RESET_PASSWORD_TOKEN);
     }
 
     @Test
@@ -82,7 +117,6 @@ public class TokenJpaDaoTest {
 
         assertNotNull(tkn);
         assertEquals(inactiveUser.getUserId(), tkn.getUser().getUserId());
-        assertEquals(inactiveUser.getUserId(), tkn.getUser().getUserId());
         assertEquals(UserConstants.UNUSED_TOKEN, tkn.getToken());
         assertEquals(TokenType.VERIFICATION_TOKEN, tkn.getType());
         assertEquals(UserConstants.TOKEN_EXPIRATION.getDayOfYear(), tkn.getExpiryDate().getDayOfYear());
@@ -90,16 +124,24 @@ public class TokenJpaDaoTest {
     }
 
     @Test
-    public void testGetResetPasswordByToken() {
-        User userWithToken = em.find(User.class, UserConstants.USER_ID_WITH_TOKENS);
-        Optional<Token> maybeToken = tokenDao.getByToken(UserConstants.TOKEN2);
+    @Rollback
+    public void testRefreshVerifyToken() {
+        final Token token = em.find(Token.class, UserConstants.TOKEN1_ID);
+        final Token tkn = tokenDao.refresh(
+                token,
+                UserConstants.UNUSED_TOKEN,
+                UserConstants.TOKEN_EXPIRATION
+        );
+        em.flush();
 
-        assertTrue(maybeToken.isPresent());
-        Token token = maybeToken.get();
-
-        assertEquals(token.getToken(), UserConstants.TOKEN2);
-        assertEquals(token.getUser().getUserId(), userWithToken.getUserId());
-        assertEquals(token.getType(), TokenType.RESET_PASSWORD_TOKEN);
+        assertNotNull(tkn);
+        assertEquals(UserConstants.USER_ID_WITH_TOKENS, tkn.getUser().getUserId().longValue());
+        assertEquals(token.getTokenId(), tkn.getTokenId());
+        assertEquals(UserConstants.UNUSED_TOKEN, tkn.getToken());
+        assertEquals(TokenType.VERIFICATION_TOKEN, tkn.getType());
+        assertTrue(tkn.isFresh());
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "tokens", "token_id = " + tkn.getTokenId() + " AND user_id = " + tkn.getUser().getUserId() + " AND token = '" + UserConstants.UNUSED_TOKEN + "'"));
+        assertEquals(0, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "tokens", "token_id = " + tkn.getTokenId() + " AND user_id = " + tkn.getUser().getUserId() + " AND token = '" + UserConstants.TOKEN1 + "'"));
     }
 
     @Test
@@ -164,18 +206,18 @@ public class TokenJpaDaoTest {
     @Test
     @Rollback
     public void testDeleteVerifyToken() {
-        final Token token = em.find(Token.class, UserConstants.TOKEN1);
+        final Token token = em.find(Token.class, UserConstants.TOKEN2_ID);
 
         tokenDao.delete(token);
         em.flush();
 
-        assertEquals(0, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "tokens", "user_id = " + UserConstants.USER_ID_WITH_TOKENS + " AND token = '" + UserConstants.TOKEN1 + "'"));
+        assertEquals(0, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "tokens", "user_id = " + UserConstants.USER_ID_WITH_TOKENS + " AND token_id = '" + UserConstants.TOKEN2_ID + "'"));
     }
 
     @Test
     @Rollback
     public void testDeleteResetPasswordToken() {
-        final Token token = em.find(Token.class, UserConstants.TOKEN2);
+        final Token token = em.find(Token.class, UserConstants.TOKEN2_ID);
 
         tokenDao.delete(token);
         em.flush();
@@ -183,7 +225,7 @@ public class TokenJpaDaoTest {
         assertEquals(0, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "tokens", "user_id = " + UserConstants.USER_ID_WITH_TOKENS + " AND token = '" + UserConstants.TOKEN2 + "'"));
     }
 
-    @Test
+    @Test(expected = TokenNotFoundException.class)
     public void testDeleteNoToken() {
         final User userWithNoToken = em.find(User.class, UserConstants.INACTIVE_USER_ID);
         final Token tkn = new Token(userWithNoToken, TokenType.VERIFICATION_TOKEN, UserConstants.UNUSED_TOKEN, UserConstants.TOKEN_EXPIRATION);
@@ -210,7 +252,7 @@ public class TokenJpaDaoTest {
     @Test
     @Rollback
     public void testDeleteStaledSingleToken() {
-        final Token token = em.find(Token.class, UserConstants.TOKEN1);
+        final Token token = em.find(Token.class, UserConstants.TOKEN1_ID);
         token.setExpiryDate(LocalDateTime.now().minusDays(5));
 
         tokenDao.deleteStaledTokens();
@@ -220,7 +262,7 @@ public class TokenJpaDaoTest {
     @Test
     @Rollback
     public void testDeleteStaledOneExpiredOneValid() {
-        final Token tkn = em.find(Token.class, UserConstants.TOKEN1);
+        final Token tkn = em.find(Token.class, UserConstants.TOKEN1_ID);
         tkn.setExpiryDate(LocalDateTime.now().minusDays(5));
 
         tokenDao.deleteStaledTokens();

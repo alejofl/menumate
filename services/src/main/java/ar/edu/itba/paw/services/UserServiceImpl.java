@@ -78,7 +78,7 @@ public class UserServiceImpl implements UserService {
             LOGGER.info("Consolidated user with id {}", user.getUserId());
         }
 
-        final Token token = tokenService.create(user, TokenType.VERIFICATION_TOKEN);
+        final Token token = tokenService.createOrRefresh(user, TokenType.VERIFICATION_TOKEN);
 
         emailService.sendUserVerificationEmail(user, token.getToken());
         return user;
@@ -140,8 +140,7 @@ public class UserServiceImpl implements UserService {
             return;
         }
 
-        Token token = tokenService.create(user, TokenType.VERIFICATION_TOKEN);
-
+        Token token = tokenService.createOrRefresh(user, TokenType.VERIFICATION_TOKEN);
         emailService.sendUserVerificationEmail(user, token.getToken());
     }
 
@@ -149,18 +148,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public void sendPasswordResetToken(String email) {
         final User user = userDao.getByEmail(email).orElse(null);
+
         if (user == null) {
             LOGGER.info("Ignored sending password reset token request for unknown email");
             return;
         }
-
-        if (!user.getIsActive()) {
-            LOGGER.info("Ignored sending password reset token for inactive user id {}", user.getUserId());
-            return;
-        }
-
-        Token token = tokenService.create(user, TokenType.RESET_PASSWORD_TOKEN);
-
+        Token token = tokenService.createOrRefresh(user, TokenType.RESET_PASSWORD_TOKEN);
         emailService.sendResetPasswordEmail(user, token.getToken());
     }
 
@@ -169,7 +162,7 @@ public class UserServiceImpl implements UserService {
     public Optional<User> verifyUser(String token) {
         Optional<Token> maybeToken = tokenService.getByToken(token);
         if (!maybeToken.isPresent()) {
-            LOGGER.info("Ignored verifyUser call due to token not found");
+            LOGGER.info("Ignored verifyUser call due to token not found or stale");
             return Optional.empty();
         }
 
@@ -198,7 +191,7 @@ public class UserServiceImpl implements UserService {
 
         Optional<Token> maybeToken = tokenService.getByToken(token);
         if (!maybeToken.isPresent()) {
-            LOGGER.info("Ignored updatePassword call due to token not found");
+            LOGGER.info("Ignored updatePassword call due to token not found or stale");
             return false;
         }
 
