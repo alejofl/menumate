@@ -158,4 +158,12 @@ public class UserController {
         userRoleService.deleteRole(userId);
         return Response.ok().build();
     }
+
+    @POST
+    @Consumes(CustomMediaType.APPLICATION_USER_RESETS_PASSWORD)
+    public Response createPasswordResetToken(@Valid @NotNull final ResetPasswordForm resetPasswordForm) {
+        final User user = userService.getByEmail(resetPasswordForm.getEmail()).orElseThrow(UserNotFoundException::new);
+        userService.sendPasswordResetToken(user.getEmail());
+        return Response.noContent().build();
+    }
 }
