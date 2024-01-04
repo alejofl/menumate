@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.exception.ReportNotFoundException;
 import ar.edu.itba.paw.model.Report;
 import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.persistance.ReportDao;
@@ -10,10 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -151,5 +149,18 @@ public class ReportJpaDao implements ReportDao {
         final List<Report> results = resultsQuery.getResultList();
 
         return new PaginatedResult<>(results, pageNumber, pageSize, count);
+    }
+
+    @Override
+    public void delete(long reportId) {
+        try {
+            final Report report = em.getReference(Report.class, reportId);
+            em.remove(report);
+            em.flush();
+            LOGGER.info("Deleted report with ID {}", reportId);
+        } catch (EntityNotFoundException e) {
+            LOGGER.error("Attempted to delete non-existing report id {}", reportId);
+            throw new ReportNotFoundException();
+        }
     }
 }

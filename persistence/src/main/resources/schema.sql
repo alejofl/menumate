@@ -28,18 +28,15 @@ CREATE TABLE IF NOT EXISTS user_addresses
     UNIQUE (user_id, name)
 );
 
-CREATE TABLE IF NOT EXISTS user_verification_tokens
+CREATE TABLE IF NOT EXISTS tokens
 (
-    user_id INT PRIMARY KEY REFERENCES users (user_id) ON DELETE CASCADE,
-    token   VARCHAR(32) UNIQUE NOT NULL,
-    expires TIMESTAMP NOT NULL
-);
+    token_id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
+    type    INT NOT NULL,
+    token   VARCHAR(32) UNIQUE,
+    expiryDate TIMESTAMP NOT NULL,
 
-CREATE TABLE IF NOT EXISTS user_resetpassword_tokens
-(
-    user_id INT PRIMARY KEY REFERENCES users (user_id) ON DELETE CASCADE,
-    token   VARCHAR(32) UNIQUE NOT NULL,
-    expires TIMESTAMP NOT NULL
+    UNIQUE(user_id, type)
 );
 
 CREATE TABLE IF NOT EXISTS restaurants

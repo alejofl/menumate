@@ -17,13 +17,16 @@
         "my_restaurants": "Mis restaurantes",
         "logout": "Cerrar sesión",
         "login": "Iniciar sesión",
-        "signup": "Crear una cuenta"
+        "signup": "Regístrate"
     },
     "titles": {
         "home": "Inicio",
         "error": "Error {{number}}",
         "restaurants": "Restaurantes",
-        "myprofile": "Mi Perfil"
+        "myprofile": "Mi Perfil",
+        "login": "Iniciar sesión",
+        "reset_password": "Restablecer contraseña",
+        "signup": "Regístrate"
     },
     "error": {
         "modal": {
@@ -134,5 +137,60 @@
         "email_label": "Email",
         "addresses": "Direcciones",
         "reviews": "Reseñas"
+    },
+    "login": {
+        "email_address": "Correo electrónico",
+        "password": "Contraseña",
+        "remember_me": "Recuérdame",
+        "login_button": "Iniciar sesión",
+        "forgot_password": "Olvidé mi contraseña",
+        "no_account": "¿No tienes una cuenta?",
+        "signup_here": "¡Regístrate aquí!",
+        "resend_verification": "Reenviar código de verificación",
+        "send_email": "Enviar correo",
+        "go_back": "Volver a Iniciar sesión",
+        "verification_email_sent": "Te hemos enviado un correo electrónico con un enlace para verificar tu cuenta.",
+        "reset_password_email_sent": "Te hemos enviado un correo electrónico con un enlace para que recuperes tu contraseña.",
+        "mailer_error": "Ocurrió un error al enviar el correo electrónico. Por favor, intente de nuevo más tarde.",
+        "request_error": "Ocurrió un error al procesar tu solicitud. Por favor, intente de nuevo más tarde.",
+        "reset_password_success": "Tu contraseña ha sido restablecida con éxito. Ahora puedes iniciar sesión con tu nueva contraseña.",
+        "reset_password_error": "Ocurrió un error al restablecer tu contraseña. Por favor, intente de nuevo más tarde.",
+        "login_error": "Ocurrió un error al iniciar sesión. Por favor, chequea tus credenciales.",
+        "register_success": "Hemos enviado un correo electrónico con un enlace para verificar tu cuenta. ¡Revisa tu bandeja de entrada!"
+    },
+    "validation": {
+        "email": {
+            "required": "El correo electrónico es obligatorio",
+            "invalid": "El correo electrónico no es válido",
+            "already_in_use": "El correo electrónico ya está en uso"
+        },
+        "password": {
+            "required": "La contraseña es obligatoria",
+            "min": "La contraseña debe tener al menos {{min}} caracteres",
+            "max": "La contraseña debe tener como máximo {{max}} caracteres"
+        },
+        "repeat_password": {
+            "required": "Debes confirmar la contraseña",
+            "match": "Las contraseñas no coinciden"
+        },
+        "name": {
+            "required": "El nombre es obligatorio",
+            "min": "El nombre debe tener al menos {{min}} caracteres",
+            "max": "El nombre debe tener como máximo {{max}} caracteres"
+        }
+    },
+    "reset_password": {
+        "new_password": "Nueva contraseña",
+        "repeat_password": "Repita la nueva contraseña",
+        "button": "Restablecer contraseña"
+    },
+    "signup": {
+        "name": "Nombre",
+        "email_address": "Correo electrónico",
+        "password": "Contraseña",
+        "repeat_password": "Confirmar contraseña",
+        "button": "Regístrate",
+        "already_have_account": "¿Ya tienes una cuenta?",
+        "login_here": "¡Inicia sesión aquí!"
     }
 }

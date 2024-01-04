@@ -38,15 +38,11 @@ public interface UserService {
 
     void deleteAddress(long userId, long addressId);
 
-    void resendUserVerificationToken(String email);
+    void sendVerificationToken(String email);
 
     void sendPasswordResetToken(String email);
 
-    Optional<User> verifyUserAndDeleteVerificationToken(String token);
+    Optional<User> verifyUser(String token);
 
-    boolean updatePasswordAndDeleteResetPasswordToken(String token, String newPassword);
-
-    boolean hasActiveVerificationToken(long userId);
-
-    boolean isValidResetPasswordToken(String token);
+    boolean updatePassword(long userId, String newPassword);
 }

@@ -1,15 +1,21 @@
 package ar.edu.itba.paw.webapp.auth;
 
+import ar.edu.itba.paw.model.Token;
 import ar.edu.itba.paw.model.User;
+import ar.edu.itba.paw.service.TokenService;
 import ar.edu.itba.paw.service.UserService;
-import ar.edu.itba.paw.webapp.utils.UriUtils;
+import ar.edu.itba.paw.webapp.exception.UserNotVerifiedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.codec.Base64;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -35,6 +41,12 @@ public class AuthAnywhereFilter extends OncePerRequestFilter {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private TokenService tokenService;
+
+    @Autowired
+    private UserDetailsService userDetailsService;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
@@ -51,24 +63,36 @@ public class AuthAnywhereFilter extends OncePerRequestFilter {
 
             int indexOfColon = credsDecoded.indexOf(':');
             String email = credsDecoded.substring(0, indexOfColon);
-            String password = credsDecoded.substring(indexOfColon + 1);
-
-            final Authentication auth = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(email, password)
-            );
-            SecurityContextHolder.getContext().setAuthentication(auth);
+            String credentials = credsDecoded.substring(indexOfColon + 1);
 
             Optional<User> maybeUser = userService.getByEmail(email);
             if (maybeUser.isPresent()) {
                 User user = maybeUser.get();
-                response.setHeader("MenuMate-AuthToken", jwtTokenUtil.generateAccessToken(user));
 
-                String userUrl = ServletUriComponentsBuilder.fromContextPath(request)
-                        .replacePath(UriUtils.USERS_URL + "/")
-                        .path(String.valueOf(user.getUserId()))
-                        .build().toString();
+                Optional<Token> maybeToken = tokenService.getByToken(credentials);
 
-                response.setHeader("MenuMate-UserUrl", userUrl);
+                if (maybeToken.isPresent()) {
+                    Token tkn = maybeToken.get();
+                    if (tkn.getUser().getUserId().longValue() != user.getUserId()) {
+                        throw new BadCredentialsException("Token doesn't belong to user");
+                    }
+                    userService.verifyUser(tkn.getToken());
+
+                    UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
+                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                } else if (!user.getIsActive()) {
+                    userService.sendVerificationToken(user.getEmail());
+                    throw new UserNotVerifiedException("User not verified", user);
+                } else {
+                    final Authentication auth = authenticationManager.authenticate(
+                            new UsernamePasswordAuthenticationToken(email, credentials)
+                    );
+                    SecurityContextHolder.getContext().setAuthentication(auth);
+                }
+                ServletUriComponentsBuilder uriBuilder = ServletUriComponentsBuilder.fromContextPath(request);
+                response.setHeader("X-MenuMate-AuthToken", jwtTokenUtil.generateAccessToken(uriBuilder, user));
             }
         } catch (Exception e) {
             response.addHeader("WWW-Authenticate", "Basic realm=\"MenuMate\"");

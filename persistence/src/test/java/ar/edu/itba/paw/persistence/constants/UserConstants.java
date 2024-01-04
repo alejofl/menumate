@@ -27,9 +27,10 @@ public final class UserConstants {
     public static final String LAST_USED_ADDRESS_NAME = "home";
     public static final String PREVIOUS_USED_ADDRESS = "address2";
     public static final String TOKEN1 = "8ac27000-c568-4070-b6da-1a80478c";
+    public static final long TOKEN1_ID = 1500;
     public static final String TOKEN2 = "3ab27010-c538-4180-a6pa-1b80581c";
-    public static final String ACTIVE_RESET_PASSWORD_TOKEN = "8ac27001-c568-4190-b6da-1a80478c";
-    public static final String ACTIVE_VERIFICATION_TOKEN = "8ac27001-d605-4190-abcd-1a80478c";
+    public static final long TOKEN2_ID = 2500;
+    public static final String UNUSED_TOKEN = "5CA27010-c538-4180-a6pa-1b80581c";
     public static final LocalDateTime TOKEN_EXPIRATION = LocalDateTime.now().plusDays(1);
     public static final RestaurantRoleLevel ADMIN_ROLE = RestaurantRoleLevel.ADMIN;
     public static final UserRoleLevel MODERATOR_ROLE = UserRoleLevel.MODERATOR;

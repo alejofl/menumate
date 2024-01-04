@@ -1,11 +1,17 @@
-import { useEffect } from "react";
+import {useContext, useEffect} from "react";
 import Api from "../data/Api.js";
+import AuthContext from "../contexts/AuthContext.jsx";
+import {UNAUTHORIZED_STATUS_CODE} from "../utils.js";
 
 export function useApi() {
+    const authContext = useContext(AuthContext);
+
     useEffect(() => {
         const requestInterceptor = Api.interceptors.request.use(
             (config) => {
-                // TODO add Authorization header
+                if (authContext.isAuthenticated) {
+                    config.headers["Authorization"] = `Bearer ${authContext.jwt}`;
+                }
                 return config;
             },
             (error) => Promise.reject(error)
@@ -14,7 +20,9 @@ export function useApi() {
         const responseInterceptor = Api.interceptors.response.use(
             (response) => response,
             (error) => {
-                // TODO check if error is 401 and reauthenticate if necessary
+                if (error?.response?.status === UNAUTHORIZED_STATUS_CODE) {
+                    authContext.logout();
+                }
                 return Promise.reject(error);
             }
         );

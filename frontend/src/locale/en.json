@@ -23,7 +23,10 @@
         "home": "Home",
         "error": "Error {{number}}",
         "restaurants": "Restaurants",
-        "myprofile": "My Profile"
+        "myprofile": "My Profile",
+        "login": "Login",
+        "reset_password": "Reset Password",
+        "signup": "Sign Up"
     },
     "error": {
         "modal": {
@@ -134,5 +137,60 @@
         "email_label": "Email",
         "addresses": "Addresses",
         "reviews": "Reviews"
+    },
+    "login": {
+        "email_address": "Email Address",
+        "password": "Password",
+        "remember_me": "Remember Me",
+        "login_button": "Login",
+        "forgot_password": "I forgot my password",
+        "no_account": "Don't have an account?",
+        "signup_here": "Signup here!",
+        "resend_verification": "Resend verification code",
+        "send_email": "Send Email",
+        "go_back": "Back to Login",
+        "verification_email_sent": "We have sent you an email with a link to verify your account.",
+        "reset_password_email_sent": "We have sent you an email with a link to reset your password.",
+        "mailer_error": "There was an error while sending the email. Please try again later.",
+        "request_error": "There was an error processing your request. Please try again later.",
+        "reset_password_success": "Your password has been successfully reset. You can now login with your new password.",
+        "reset_password_error": "There was an error while resetting your password. Please try again later.",
+        "login_error": "There was an error while logging in. Please check your credentials.",
+        "register_success": "We have sent you an email with a link to verify your account. Check your inbox!"
+    },
+    "validation": {
+        "email": {
+            "required": "Email is required",
+            "invalid": "Email is invalid",
+            "already_in_use": "Email is already in use"
+        },
+        "password": {
+            "required": "Password is required",
+            "min": "Password must be at least {{min}} characters long",
+            "max": "Password must be at most {{max}} characters long"
+        },
+        "repeat_password": {
+            "required": "You must confirm the password",
+            "match": "Passwords do not match"
+        },
+        "name": {
+            "required": "Name is required",
+            "min": "Name must be at least {{min}} characters long",
+            "max": "Name must be at most {{max}} characters long"
+        }
+    },
+    "reset_password": {
+        "new_password": "New Password",
+        "repeat_password": "Repeat New Password",
+        "button": "Reset Password"
+    },
+    "signup": {
+        "name": "Name",
+        "email_address": "Email Address",
+        "password": "Password",
+        "repeat_password": "Confirm Password",
+        "button": "Sign Up",
+        "already_have_account": "Already have an account?",
+        "login_here": "Login here!"
     }
 }

@@ -187,7 +187,7 @@ public class EmailServiceImpl implements EmailService {
     public void sendUserVerificationEmail(User user, String token) {
         Locale locale = new Locale(user.getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
-        params.put("link", "/auth/verify?token=" + token);
+        params.put("link", String.format("/auth/verify?email=%s&token=%s", user.getEmail(), token));
         params.put("username", user.getName());
         this.sendMessageUsingThymeleafTemplate(
                 "user_verification",
@@ -203,7 +203,7 @@ public class EmailServiceImpl implements EmailService {
     public void sendResetPasswordEmail(User user, String token) {
         Locale locale = new Locale(user.getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
-        params.put("link", "/auth/reset-password?token=" + token);
+        params.put("link", String.format("/auth/reset-password?email=%s&token=%s", user.getEmail(), token));
         params.put("username", user.getName());
         this.sendMessageUsingThymeleafTemplate(
                 "user_reset_password",

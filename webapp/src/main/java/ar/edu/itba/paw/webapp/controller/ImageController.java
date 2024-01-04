@@ -34,9 +34,10 @@ public class ImageController {
     @Produces("image/jpeg")
     public Response getImage(@PathParam("imageId") int imageId) {
         Image image = imageService.getById(imageId).orElseThrow(ImageNotFoundException::new);
-        return Response.ok(image.getBytes())
-                .header("Content-Disposition", String.format("inline; filename=\"menumate_%d.jpg\"", imageId))
-                .build();
+        final Response.ResponseBuilder responseBuilder = Response.ok(image.getBytes())
+                .header("Content-Disposition", String.format("inline; filename=\"menumate_%d.jpg\"", imageId));
+        ControllerUtils.setUnconditionalCache(responseBuilder);
+        return responseBuilder.build();
     }
 
     @POST

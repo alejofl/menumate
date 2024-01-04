@@ -125,48 +125,6 @@ public class UserController {
         return Response.noContent().build();
     }
 
-    @POST
-    @Path("verification-tokens")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response resendVerificationToken(@Valid @NotNull final EmailForm emailForm) {
-        userService.resendUserVerificationToken(emailForm.getEmail());
-        return Response.noContent().build();
-    }
-
-    @PUT
-    @Path("verification-tokens/{token}")
-    public Response verificationToken(@PathParam("token") final String token) {
-        final User user = userService.verifyUserAndDeleteVerificationToken(token).orElseThrow(UserNotFoundException::new);
-
-        final String userUrl = UriUtils.getUserUri(uriInfo, user.getUserId()).toString();
-        return Response.noContent()
-                .header("MenuMate-AuthToken", jwtTokenUtil.generateAccessToken(user))
-                .header("MenuMate-UserUrl", userUrl)
-                .build();
-    }
-
-    @POST
-    @Path("resetpassword-tokens")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response sendResetPasswordToken(@Valid @NotNull final EmailForm emailForm) {
-        userService.sendPasswordResetToken(emailForm.getEmail());
-        return Response.noContent().build();
-    }
-
-    @PUT
-    @Path("resetpassword-tokens/{token}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response resetpasswordToken(
-            @PathParam("token") final String token,
-            @Valid @NotNull final ResetPasswordForm resetPasswordForm
-    ) {
-        final boolean success = userService.updatePasswordAndDeleteResetPasswordToken(token, resetPasswordForm.getPassword());
-        if (!success)
-            return Response.status(Response.Status.NOT_FOUND).build();
-
-        return Response.noContent().build();
-    }
-
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUsersWithRoleLevel(@Valid @BeanParam final GetUserRoleLevelForm getUserRoleLevelForm) {
@@ -199,5 +157,23 @@ public class UserController {
     public Response deleteUserRole(@PathParam("userId") final long userId) {
         userRoleService.deleteRole(userId);
         return Response.ok().build();
+    }
+
+    @POST
+    @Consumes(CustomMediaType.APPLICATION_USER_RESETS_PASSWORD)
+    public Response createPasswordResetToken(@Valid @NotNull final ResetPasswordForm resetPasswordForm) {
+        userService.sendPasswordResetToken(resetPasswordForm.getEmail());
+        return Response.noContent().build();
+    }
+
+    @PATCH
+    @Path("/{userId:\\d+}")
+    @Consumes(CustomMediaType.APPLICATION_USER_RESETS_PASSWORD)
+    public Response editUserPasswordWithToken(
+            @PathParam("userId") long userId,
+            @Valid @NotNull NewPasswordForm newPasswordForm
+    ) {
+        userService.updatePassword(userId, newPasswordForm.getPassword());
+        return Response.noContent().build();
     }
 }

@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class RestaurantDto {
+    private long restaurantId;
     private String name;
     private String email;
     private String specialty;
@@ -22,6 +23,7 @@ public class RestaurantDto {
     private boolean isActive;
     private boolean deleted;
     private List<String> tags;
+    private Long unhandledReports;
 
     private URI selfUrl;
     private URI ownerUrl;
@@ -34,6 +36,7 @@ public class RestaurantDto {
     private URI employeesUrl;
 
     protected static void fill(final RestaurantDto dto, final UriInfo uriInfo, final Restaurant restaurant) {
+        dto.restaurantId = restaurant.getRestaurantId();
         dto.name = restaurant.getName();
         dto.specialty = restaurant.getSpecialty().getMessageCode();
         dto.dateCreated = restaurant.getDateCreated();
@@ -63,6 +66,14 @@ public class RestaurantDto {
 
     public static List<RestaurantDto> fromRestaurantCollection(final UriInfo uriInfo, final Collection<Restaurant> restaurants) {
         return restaurants.stream().map(r -> fromRestaurant(uriInfo, r)).collect(Collectors.toList());
+    }
+
+    public long getRestaurantId() {
+        return restaurantId;
+    }
+
+    public void setRestaurantId(long restaurantId) {
+        this.restaurantId = restaurantId;
     }
 
     public String getName() {
@@ -215,5 +226,13 @@ public class RestaurantDto {
 
     public void setEmployeesUrl(URI employeesUrl) {
         this.employeesUrl = employeesUrl;
+    }
+
+    public Long getUnhandledReportsCount() {
+        return unhandledReports;
+    }
+
+    public void setUnhandledReportsCount(Long unhandledReports) {
+        this.unhandledReports = unhandledReports;
     }
 }
