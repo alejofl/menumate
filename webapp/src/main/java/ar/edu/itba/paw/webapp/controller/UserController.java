@@ -173,7 +173,7 @@ public class UserController {
             @PathParam("userId") long userId,
             @Valid @NotNull NewPasswordForm newPasswordForm
     ) {
-        userService.updatePassword(newPasswordForm.getToken(), newPasswordForm.getPassword());
+        userService.updatePassword(userId, newPasswordForm.getPassword());
         return Response.noContent().build();
     }
 }

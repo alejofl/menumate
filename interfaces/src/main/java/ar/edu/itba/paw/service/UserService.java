@@ -44,5 +44,5 @@ public interface UserService {
 
     Optional<User> verifyUser(String token);
 
-    boolean updatePassword(String token, String newPassword);
+    boolean updatePassword(long userId, String newPassword);
 }

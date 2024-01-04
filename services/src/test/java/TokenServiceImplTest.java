@@ -1,5 +1,6 @@
 import ar.edu.itba.paw.model.Token;
 import ar.edu.itba.paw.model.User;
+import ar.edu.itba.paw.persistance.UserDao;
 import ar.edu.itba.paw.service.EmailService;
 import ar.edu.itba.paw.service.TokenService;
 import ar.edu.itba.paw.services.UserServiceImpl;
@@ -32,6 +33,9 @@ public class TokenServiceImplTest {
 
     @Mock
     private UserDetailsService userDetailsService;
+
+    @Mock
+    private UserDao userDao;
 
     @InjectMocks
     private final UserServiceImpl userServiceImpl = new UserServiceImpl();
@@ -72,37 +76,25 @@ public class TokenServiceImplTest {
     }
 
     @Test
-    public void testUpdatePasswordAndDeleteResetPasswordToken() {
+    public void testUpdatePassword() {
         final Token userToken = spy(Token.class);
         final User user = mock(User.class);
         userToken.setUser(user);
 
-        Mockito.when(tokenService.getByToken(TOKEN)).thenReturn(Optional.of(userToken));
+        Mockito.when(userDao.getById(USER_ID)).thenReturn(Optional.of(user));
         Mockito.when(passwordEncoder.encode(PASSWORD)).thenReturn(PASSWORD);
         Mockito.doNothing().when(user).setPassword(Mockito.anyString());
 
-        Assert.assertTrue(userServiceImpl.updatePassword(TOKEN, PASSWORD));
+        Assert.assertTrue(userServiceImpl.updatePassword(USER_ID, PASSWORD));
     }
 
     @Test
-    public void testUpdatePasswordAndDeleteResetPasswordTokenTokenNotFound() {
-        Mockito.when(tokenService.getByToken(TOKEN)).thenReturn(Optional.empty());
-        Assert.assertFalse(userServiceImpl.updatePassword(TOKEN, PASSWORD));
-    }
-
-    @Test
-    public void testUpdatePasswordAndDeleteResetPasswordTokenExpiredToken() {
-        final Token userToken = spy(Token.class);
-        final User user = mock(User.class);
-        userToken.setUser(user);
-
-        Mockito.when(tokenService.getByToken(TOKEN)).thenReturn(Optional.of(userToken));
-
-        Assert.assertTrue(userServiceImpl.updatePassword(TOKEN, PASSWORD));
+    public void testUpdatePasswordUserNotFound() {
+        Assert.assertFalse(userServiceImpl.updatePassword(USER_ID, PASSWORD));
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testUpdatePasswordAndDeleteResetPasswordTokenNullNewPassword() {
-        userServiceImpl.updatePassword(TOKEN, null);
+    public void testUpdatePasswordNullNewPassword() {
+        userServiceImpl.updatePassword(USER_ID, null);
     }
 }

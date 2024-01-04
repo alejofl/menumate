@@ -183,23 +183,18 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public boolean updatePassword(String token, String newPassword) {
+    public boolean updatePassword(long userId, String newPassword) {
         if (newPassword == null) {
             LOGGER.info("Attempted to update password with null newPassword");
             throw new IllegalArgumentException("newPassword must not be null");
         }
 
-        Optional<Token> maybeToken = tokenService.getByToken(token);
-        if (!maybeToken.isPresent()) {
-            LOGGER.info("Ignored updatePassword call due to token not found or stale");
+        Optional<User> maybeUser = userDao.getById(userId);
+        if (!maybeUser.isPresent()) {
+            LOGGER.info("Ignored updating password due to unknown email");
             return false;
         }
-
-        final Token tkn = maybeToken.get();
-        final User user = tkn.getUser();
-
-        tokenService.delete(tkn);
-
+        User user = maybeUser.get();
         user.setPassword(passwordEncoder.encode(newPassword));
         LOGGER.info("Updated password for user id {}", user.getUserId());
         return true;
