@@ -66,7 +66,7 @@ function Home() {
                                     return (
                                         <RestaurantCard
                                             key={restaurant.selfUrl}
-                                            restaurantId={1}
+                                            restaurantId={restaurant.restaurantId}
                                             name={restaurant.name}
                                             mainImage={restaurant.portrait1Url}
                                             hoverImage={restaurant.portrait2Url}
