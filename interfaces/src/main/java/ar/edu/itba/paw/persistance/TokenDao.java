@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.persistance;
 
 import ar.edu.itba.paw.model.Token;
-import ar.edu.itba.paw.model.TokenType;
 import ar.edu.itba.paw.model.User;
 
 import java.time.LocalDateTime;
@@ -11,9 +10,9 @@ public interface TokenDao {
 
     Optional<Token> getByToken(String token);
 
-    Optional<Token> getByUserId(long userId, TokenType type);
+    Optional<Token> getByUserId(long userId);
 
-    Token create(User user, TokenType type, String token, LocalDateTime expiryDate);
+    Token create(User user, String token, LocalDateTime expiryDate);
 
     Token refresh(Token token, String newToken, LocalDateTime newExpiryDate);
 
