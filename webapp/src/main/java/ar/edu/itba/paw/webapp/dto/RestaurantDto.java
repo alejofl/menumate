@@ -23,6 +23,7 @@ public class RestaurantDto {
     private boolean isActive;
     private boolean deleted;
     private List<String> tags;
+    private Long unhandledReports;
 
     private URI selfUrl;
     private URI ownerUrl;
@@ -225,5 +226,13 @@ public class RestaurantDto {
 
     public void setEmployeesUrl(URI employeesUrl) {
         this.employeesUrl = employeesUrl;
+    }
+
+    public Long getUnhandledReportsCount() {
+        return unhandledReports;
+    }
+
+    public void setUnhandledReportsCount(Long unhandledReports) {
+        this.unhandledReports = unhandledReports;
     }
 }

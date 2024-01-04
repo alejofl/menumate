@@ -30,10 +30,13 @@ CREATE TABLE IF NOT EXISTS user_addresses
 
 CREATE TABLE IF NOT EXISTS tokens
 (
+    token_id SERIAL PRIMARY KEY,
     user_id INT NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
     type    INT NOT NULL,
-    token   VARCHAR(32) PRIMARY KEY,
-    expiryDate TIMESTAMP NOT NULL
+    token   VARCHAR(32) UNIQUE,
+    expiryDate TIMESTAMP NOT NULL,
+
+    UNIQUE(user_id, type)
 );
 
 CREATE TABLE IF NOT EXISTS restaurants
@@ -190,6 +193,7 @@ CREATE VIEW restaurant_role_details AS
     ) AS roles_grouped
 );
 
+CREATE SEQUENCE tokens_token_id_seq START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE categories_category_id_seq START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE images_image_id_seq START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE orders_order_id_seq START WITH 1 increment by 1;

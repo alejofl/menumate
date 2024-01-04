@@ -11,6 +11,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -30,7 +31,7 @@ public class JwtTokenUtil {
         jwtSecretKey = Keys.hmacShaKeyFor(FileCopyUtils.copyToString(new InputStreamReader(jwtKeyRes.getInputStream())).getBytes(StandardCharsets.UTF_8));
     }
 
-    public String generateAccessToken(String uriInfo, User user) {
+    public String generateAccessToken(ServletUriComponentsBuilder uriBuilder, User user) {
         Claims claims = Jwts.claims();
         claims.put("name", user.getName());
 
@@ -38,7 +39,11 @@ public class JwtTokenUtil {
             claims.put("role", user.getRole().getLevel());
         }
 
-        String selfUrl = new StringBuilder().append(uriInfo).append(UriUtils.USERS_URL).append(user.getUserId()).toString();
+        String selfUrl = uriBuilder
+                .path(UriUtils.USERS_URL + "/")
+                .path(String.valueOf(user.getUserId()))
+                .build().toString();
+
         claims.put("selfUrl", selfUrl);
 
         return Jwts.builder()

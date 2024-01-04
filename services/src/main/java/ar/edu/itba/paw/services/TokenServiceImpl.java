@@ -28,39 +28,35 @@ public class TokenServiceImpl implements TokenService {
         return LocalDateTime.now().plusDays(TOKEN_DURATION_DAYS);
     }
 
-    @Transactional
-    @Override
-    public Token create(User user, TokenType type) {
-       String token = UUID.randomUUID().toString().substring(0, 32);
-       return tokenDao.create(user, type, token, generateTokenExpirationDate());
+    private static String generateToken() {
+        return UUID.randomUUID().toString().substring(0, 32);
     }
 
-    @Transactional
     @Override
     public Optional<Token> getByToken(String token) {
         return tokenDao.getByToken(token);
     }
 
+    @Transactional
     @Override
-    public Optional<Token> getResetPasswordTokenByUserId(long userId) {
-        return tokenDao.getByUserId(userId, TokenType.RESET_PASSWORD_TOKEN);
-    }
-
-    @Override
-    public Optional<Token> getVerificationTokenByUserId(long userId) {
-        return tokenDao.getByUserId(userId, TokenType.VERIFICATION_TOKEN);
+    public Token createOrRefresh(User user, TokenType type) {
+        Optional<Token> maybeToken = tokenDao.getByUserId(user.getUserId(), type);
+        Token token;
+        if (maybeToken.isPresent()) {
+            token = maybeToken.get();
+            if (!token.isFresh()) {
+                token = tokenDao.refresh(token, generateToken(), generateTokenExpirationDate());
+            }
+        } else {
+            token = tokenDao.create(user, type, generateToken(), generateTokenExpirationDate());
+        }
+        return token;
     }
 
     @Transactional
     @Override
     public void delete(Token token) {
         tokenDao.delete(token);
-    }
-
-    @Transactional
-    @Override
-    public Token refresh(Token token) {
-        return create(token.getUser(), token.getType());
     }
 
     @Scheduled(cron = "0 0 0 * * ?")

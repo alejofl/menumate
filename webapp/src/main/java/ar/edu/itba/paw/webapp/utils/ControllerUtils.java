@@ -12,6 +12,7 @@ import javax.ws.rs.core.*;
 public final class ControllerUtils {
     public static final int DEFAULT_ORDERS_PAGE_SIZE = 20;
     public static final int DEFAULT_REVIEWS_PAGE_SIZE = 20;
+    public static final int DEFAULT_REPORTS_PAGE_SIZE = 20;
     public static final int DEFAULT_SEARCH_PAGE_SIZE = 12;
     public static final int DEFAULT_RESTAURANT_PAGE_SIZE = 12;
     public static final int DEFAULT_MYRESTAURANTS_PAGE_SIZE = 20;

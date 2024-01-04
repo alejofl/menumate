@@ -98,12 +98,16 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.PUT, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/employees/{userId:\\d+}").access("@accessValidator.checkRestaurantOwner(#restaurantId)")
                 .antMatchers(HttpMethod.DELETE, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/employees/{userId:\\d+}").access("hasRole('MODERATOR') or @accessValidator.checkRestaurantOwner(#restaurantId)")
 
+                .antMatchers(HttpMethod.GET, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/reports").authenticated()
+                .antMatchers(HttpMethod.POST, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/reports").authenticated()
+                .antMatchers(HttpMethod.GET, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/reports/{reportId:\\d+}").authenticated()
+                .antMatchers(HttpMethod.PATCH, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/reports/{reportId:\\d+}").access("hasRole('MODERATOR')")
+                .antMatchers(HttpMethod.DELETE, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/reports/{reportId:\\d+}").access("hasRole('MODERATOR')")
+
                 .antMatchers(HttpMethod.POST, UriUtils.USERS_URL).permitAll()
                 .antMatchers(HttpMethod.GET, UriUtils.USERS_URL + "/{userId:\\d+}").permitAll()
                 .antMatchers(HttpMethod.DELETE, UriUtils.USERS_URL + "/{userId:\\d+}").access("hasRole('MODERATOR')")
                 .antMatchers(UriUtils.USERS_URL + "/{userId:\\d+}/**").access("@accessValidator.checkIsUser(#userId)")
-                .antMatchers(UriUtils.USERS_URL + "/verification-tokens/**").permitAll()
-                .antMatchers(UriUtils.USERS_URL + "/resetpassword-tokens/**").permitAll()
                 .antMatchers(HttpMethod.GET, UriUtils.USERS_URL + "/{userId:\\d+}/addresses").access("@accessValidator.checkIsUser(#userId)")
                 .antMatchers(HttpMethod.POST, UriUtils.USERS_URL + "/{userId:\\d+}/addresses").access("@accessValidator.checkIsUser(#userId)")
                 .antMatchers(HttpMethod.GET, UriUtils.USERS_URL + "/{userId:\\d+}/addresses/{addressId:\\d+}").access("@accessValidator.checkIsUser(#userId)")
@@ -147,10 +151,9 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Collections.singletonList(CorsConfiguration.ALL));
-        config.setAllowedHeaders(Collections.singletonList(CorsConfiguration.ALL));
+        config.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "OPTIONS", "DELETE", "PUT", "PATCH"));
-        config.setExposedHeaders(Arrays.asList("X-MenuMate-AuthToken", "X-MenuMate-UserUrl", "X-MenuMate-EmployeeUserCreated", "Content-Disposition", "Location", "ETag", "Last-Modified", "Cache-Control", "Content-Type", "Link", "WWW-Authenticate"));
+        config.setExposedHeaders(Arrays.asList("X-MenuMate-AuthToken", "X-MenuMate-UserUrl", "X-MenuMate-EmployeeUserCreated", "X-MenuMate-VerifyMailSent", "Content-Disposition", "Location", "ETag", "Last-Modified", "Cache-Control", "Content-Type", "Link", "WWW-Authenticate"));
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }

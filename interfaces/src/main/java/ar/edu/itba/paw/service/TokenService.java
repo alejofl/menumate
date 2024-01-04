@@ -8,15 +8,12 @@ import java.util.Optional;
 
 public interface TokenService {
 
-    Token create(User user, TokenType type);
+    Token createOrRefresh(User user, TokenType type);
 
+    /**
+     * Retrieves fresh tokens by token
+     */
     Optional<Token> getByToken(String token);
 
-    Optional<Token> getResetPasswordTokenByUserId(long userId);
-
-    Optional<Token> getVerificationTokenByUserId(long userId);
-
     void delete(Token token);
-
-    Token refresh(Token token);
 }

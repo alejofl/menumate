@@ -15,6 +15,8 @@ public interface TokenDao {
 
     Token create(User user, TokenType type, String token, LocalDateTime expiryDate);
 
+    Token refresh(Token token, String newToken, LocalDateTime newExpiryDate);
+
     void delete(Token token);
 
     void deleteStaledTokens();

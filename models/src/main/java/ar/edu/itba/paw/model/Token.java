@@ -8,10 +8,15 @@ import java.time.LocalDateTime;
 public class Token {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tokens_token_id_seq")
+    @SequenceGenerator(sequenceName = "tokens_token_id_seq", name = "tokens_token_id_seq", allocationSize = 1)
+    @Column(name = "token_id", nullable = false, updatable = false)
+    private long tokenId;
+
     @Column(length = 32, nullable = false)
     private String token;
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     private User user;
 
@@ -30,6 +35,14 @@ public class Token {
         this.type = type;
         this.token = token;
         this.expiryDate = expiryDate;
+    }
+
+    public long getTokenId() {
+        return tokenId;
+    }
+
+    public void setTokenId(long tokenId) {
+        this.tokenId = tokenId;
     }
 
     public User getUser() {

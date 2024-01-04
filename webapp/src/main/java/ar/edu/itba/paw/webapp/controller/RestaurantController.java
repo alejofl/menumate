@@ -4,6 +4,8 @@ import ar.edu.itba.paw.exception.RestaurantNotFoundException;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.util.PaginatedResult;
+import ar.edu.itba.paw.util.Pair;
+import ar.edu.itba.paw.webapp.api.CustomMediaType;
 import ar.edu.itba.paw.webapp.auth.AccessValidator;
 import ar.edu.itba.paw.webapp.dto.*;
 import ar.edu.itba.paw.webapp.form.*;
@@ -18,6 +20,7 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Path(UriUtils.RESTAURANTS_URL)
 @Component
@@ -27,19 +30,21 @@ public class RestaurantController {
     private final ProductService productService;
     private final RestaurantRoleService restaurantRoleService;
     private final UserService userService;
+    private final ReportService reportService;
     private final AccessValidator accessValidator;
 
     @Context
     private UriInfo uriInfo;
 
     @Autowired
-    public RestaurantController(final RestaurantService restaurantService, final CategoryService categoryService, final ProductService productService, final RestaurantRoleService restaurantRoleService, final AccessValidator accessValidator, final UserService userService) {
+    public RestaurantController(final RestaurantService restaurantService, final CategoryService categoryService, final ProductService productService, final RestaurantRoleService restaurantRoleService, final AccessValidator accessValidator, final UserService userService, final ReportService reportService) {
         this.restaurantService = restaurantService;
         this.categoryService = categoryService;
         this.productService = productService;
         this.restaurantRoleService = restaurantRoleService;
         this.accessValidator = accessValidator;
         this.userService = userService;
+        this.reportService =  reportService;
     }
 
     @GET
@@ -311,5 +316,90 @@ public class RestaurantController {
     ) {
         productService.stopPromotion(restaurantId, promotionId);
         return Response.noContent().build();
+    }
+
+    @POST
+    @Path("/{restaurantId:\\d+}/reports")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response createReport(
+            @PathParam("restaurantId") final long restaurantId,
+            @Valid @NotNull final ReportRestaurantForm restaurantForm
+    ) {
+        final Report report = reportService.create(restaurantId, restaurantForm.getReporterId(), restaurantForm.getComment());
+        return Response.created(UriUtils.getReportUri(uriInfo, report.getReportId(), restaurantId)).build();
+    }
+
+    @DELETE
+    @Path("/{restaurantId:\\d+}/reports/{reportId:\\d+}")
+    public Response deleteReport(
+            @PathParam("restaurantId") final long restaurantId,
+            @PathParam("reportId") final long reportId
+    ) {
+        reportService.delete(reportId, restaurantId);
+        return Response.noContent().build();
+    }
+
+    @PATCH
+    @Path("/{restaurantId:\\d+}/reports/{reportId:\\d+}")
+    public Response markReportAsHandled(
+            @PathParam("restaurantId") final long restaurantId,
+            @PathParam("reportId") final long reportId
+    ) {
+        reportService.markHandled(reportId, restaurantId, ControllerUtils.getCurrentUserIdOrThrow());
+        return Response.noContent().build();
+    }
+
+    @GET
+    @Path("/{restaurantId:\\d+}/reports/{reportId:\\d+}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getReport(
+            @PathParam("restaurantId") final long restaurantId,
+            @PathParam("reportId") final long reportId
+    ) {
+        final Report report = reportService.getByIdChecked(reportId, restaurantId);
+        ReportDto dto = ReportDto.fromReport(uriInfo, report);
+        return Response.ok(new GenericEntity<ReportDto>(dto) {}).build();
+    }
+
+    @GET
+    @PreAuthorize("hasRole('MODERATOR')")
+    @Produces(CustomMediaType.APPLICATION_LISTS_RESTAURANTS_REPORTS_COUNT)
+    public Response getRestaurantsWithUnhandledReports(
+            @Valid @BeanParam GetRestaurantsWithReports restaurantsWithReportsForm
+    ) {
+        PaginatedResult<Pair<Restaurant, Integer>> pagedResult = reportService.getCountByRestaurant(
+            restaurantsWithReportsForm.getPageOrDefault(),
+            restaurantsWithReportsForm.getSizeOrDefault(ControllerUtils.DEFAULT_REPORTS_PAGE_SIZE)
+        );
+
+        List<RestaurantDto> dtoList = pagedResult.getResult().stream()
+                .map(pair -> {
+                    Restaurant restaurant = pair.getKey();
+                    Integer reportCount = pair.getValue();
+                    RestaurantDto restaurantDto = RestaurantDto.fromRestaurant(uriInfo, restaurant);
+                    restaurantDto.setUnhandledReportsCount(reportCount.longValue());
+                    return restaurantDto;
+                })
+                .collect(Collectors.toList());
+
+        final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<RestaurantDto>>(dtoList) {});
+        return ControllerUtils.addPagingLinks(responseBuilder, pagedResult, uriInfo).build();
+    }
+
+    @GET
+    @Path("/{restaurantId:\\d+}/reports")
+    @Produces(CustomMediaType.APPLICATION_LISTS_RESTAURANT_REPORTS)
+    public Response getRestaurantReports(
+            @PathParam("restaurantId") final long restaurantId,
+            @Valid @BeanParam PagingForm pagingForm
+    ) {
+        PaginatedResult<Report> pagedResult = reportService.getByRestaurant(
+                restaurantId,
+                pagingForm.getPageOrDefault(),
+                pagingForm.getSizeOrDefault(ControllerUtils.DEFAULT_REPORTS_PAGE_SIZE)
+        );
+        List<ReportDto> dtoList = ReportDto.fromReportCollection(uriInfo, pagedResult.getResult());
+        final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<ReportDto>>(dtoList) {});
+        return ControllerUtils.addPagingLinks(responseBuilder, pagedResult, uriInfo).build();
     }
 }
