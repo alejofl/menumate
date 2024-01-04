@@ -19,8 +19,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.spy;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceImplTest {
@@ -163,5 +163,59 @@ public class UserServiceImplTest {
         Mockito.when(userDao.getByEmail(EMAIL)).thenReturn(Optional.empty());
 
         Assert.assertFalse(userServiceImpl.isUserEmailRegisteredAndConsolidated(EMAIL));
+    }
+
+    @Test
+    public void testVerifyUserAndDeleteVerificationToken() {
+        final Token userToken = mock(Token.class);
+        Mockito.when(tokenService.getByToken(TOKEN)).thenReturn(Optional.of(userToken));
+
+        User user = mock(User.class);
+        Mockito.when(user.getIsActive()).thenReturn(false);
+
+        Mockito.when(userToken.getUser()).thenReturn(user);
+
+        Assert.assertTrue(userServiceImpl.verifyUser(TOKEN).isPresent());
+    }
+
+    @Test
+    public void testVerifyUserAndDeleteVerificationTokenTokenNotFound() {
+        Mockito.when(tokenService.getByToken(TOKEN)).thenReturn(Optional.empty());
+        Assert.assertFalse(userServiceImpl.verifyUser(TOKEN).isPresent());
+    }
+
+    @Test
+    public void testVerifyUserAndDeleteVerificationTokenUserAlreadyActive() {
+        final Token userToken = spy(Token.class);
+        final User user = mock(User.class);
+        userToken.setUser(user);
+
+        Mockito.when(tokenService.getByToken(TOKEN)).thenReturn(Optional.of(userToken));
+        Mockito.when(user.getIsActive()).thenReturn(true);
+
+        Assert.assertFalse(userServiceImpl.verifyUser(TOKEN).isPresent());
+    }
+
+    @Test
+    public void testUpdatePassword() {
+        final Token userToken = spy(Token.class);
+        final User user = mock(User.class);
+        userToken.setUser(user);
+
+        Mockito.when(userDao.getById(USER_ID)).thenReturn(Optional.of(user));
+        Mockito.when(passwordEncoder.encode(PASSWORD)).thenReturn(PASSWORD);
+        Mockito.doNothing().when(user).setPassword(Mockito.anyString());
+
+        Assert.assertTrue(userServiceImpl.updatePassword(USER_ID, PASSWORD));
+    }
+
+    @Test
+    public void testUpdatePasswordUserNotFound() {
+        Assert.assertFalse(userServiceImpl.updatePassword(USER_ID, PASSWORD));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testUpdatePasswordNullNewPassword() {
+        userServiceImpl.updatePassword(USER_ID, null);
     }
 }
