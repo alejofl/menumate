@@ -3,7 +3,6 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.exception.ImageNotFoundException;
 import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.persistence.config.TestConfig;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,6 +18,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 import java.util.Optional;
+
+import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
@@ -51,7 +52,7 @@ public class ImageJpaDaoTest {
     public void testCreateImage() {
         final Image image = imageDao.create(NON_EXISTING_IMAGE_INFO);
         em.flush();
-        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "images", "image_id = " + EXISTING_IMAGE_ID));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "images", "image_id = " + EXISTING_IMAGE_ID));
     }
 
     @Test
@@ -61,7 +62,7 @@ public class ImageJpaDaoTest {
         em.flush();
 
         Image image = em.find(Image.class, EXISTING_IMAGE_ID);
-        Assert.assertArrayEquals(NON_EXISTING_IMAGE_INFO, image.getBytes());
+        assertArrayEquals(NON_EXISTING_IMAGE_INFO, image.getBytes());
     }
 
     @Test
@@ -69,21 +70,21 @@ public class ImageJpaDaoTest {
     public void testDeleteExistingImage() {
         imageDao.delete(EXISTING_IMAGE_ID);
         em.flush();
-        Assert.assertEquals(0, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "images", "image_id = " + EXISTING_IMAGE_ID));
+        assertEquals(0, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "images", "image_id = " + EXISTING_IMAGE_ID));
     }
 
     @Test
     public void testGetExistingImageById() {
         Optional<Image> image = imageDao.getById(EXISTING_IMAGE_ID);
-        Assert.assertTrue(image.isPresent());
-        Assert.assertArrayEquals(EXISTING_IMAGE_INFO, image.get().getBytes());
-        Assert.assertEquals(Optional.of(EXISTING_IMAGE_ID).get(), image.get().getImageId());
+        assertTrue(image.isPresent());
+        assertArrayEquals(EXISTING_IMAGE_INFO, image.get().getBytes());
+        assertEquals(Optional.of(EXISTING_IMAGE_ID).get(), image.get().getImageId());
     }
 
     @Test
     public void testGetNonExistingImageById() {
         Optional<Image> image = imageDao.getById(NON_EXISTING_IMAGE_ID);
-        Assert.assertFalse(image.isPresent());
+        assertFalse(image.isPresent());
     }
 
     @Test(expected = ImageNotFoundException.class)
@@ -93,11 +94,11 @@ public class ImageJpaDaoTest {
 
     @Test
     public void testImageExists() {
-        Assert.assertTrue(imageDao.exists(EXISTING_IMAGE_ID));
+        assertTrue(imageDao.exists(EXISTING_IMAGE_ID));
     }
 
     @Test
     public void testImageNotExists() {
-        Assert.assertFalse(imageDao.exists(NON_EXISTING_IMAGE_ID));
+        assertFalse(imageDao.exists(NON_EXISTING_IMAGE_ID));
     }
 }
