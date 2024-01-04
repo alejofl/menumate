@@ -22,7 +22,8 @@
     "titles": {
         "home": "Inicio",
         "error": "Error {{number}}",
-        "restaurants": "Restaurantes"
+        "restaurants": "Restaurantes",
+        "myprofile": "Mi Perfil"
     },
     "error": {
         "modal": {
@@ -126,5 +127,12 @@
             "price": "Precio",
             "date": "Fecha"
         }
+    },
+    "myprofile": {
+        "profile": "Mi perfil",
+        "name_label": "Nombre",
+        "email_label": "Email",
+        "addresses": "Direcciones",
+        "reviews": "Reseñas"
     }
 }

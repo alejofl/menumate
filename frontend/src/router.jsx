@@ -4,6 +4,7 @@ import {
 import Home from "./pages/Home.jsx";
 import Error from "./pages/Error.jsx";
 import Restaurants from "./pages/Restaurants.jsx";
+import MyProfile from "./pages/MyProfile.jsx";
 
 const router = createBrowserRouter(
     [
@@ -18,6 +19,10 @@ const router = createBrowserRouter(
         {
             path: "*",
             element: <Error errorNumber="404"/>
+        },
+        {
+            path: "/user",
+            Component: MyProfile
         }
     ],
     {

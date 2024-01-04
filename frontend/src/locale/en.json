@@ -22,7 +22,8 @@
     "titles": {
         "home": "Home",
         "error": "Error {{number}}",
-        "restaurants": "Restaurants"
+        "restaurants": "Restaurants",
+        "myprofile": "My Profile"
     },
     "error": {
         "modal": {
@@ -126,5 +127,12 @@
             "price": "Price",
             "date": "Date"
         }
+    },
+    "myprofile": {
+        "profile": "My Profile",
+        "name_label": "Name",
+        "email_label": "Email",
+        "addresses": "Addresses",
+        "reviews": "Reviews"
     }
 }

@@ -1,0 +1,50 @@
+main.myprofile {
+    display: block;
+}
+
+.myprofile .profile-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.myprofile .user-info-container {
+    display: flex;
+    flex-direction: column;
+    flex: 35% 0 0;
+    justify-content: flex-start;
+    align-content: center;
+    margin: 2% 2%;
+}
+
+.myprofile .reviews-container {
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-content: center;
+}
+
+.myprofile .page-title {
+    text-align: center;
+    padding-top: 30px;
+}
+
+.myprofile .my-review-card-header {
+    display: flex;
+    flex-direction: row;
+    justify-content:space-between;
+    align-content: center;
+}
+
+.myprofile .my-review-card-header-info {
+    display:flex;
+    flex-direction:column;
+    justify-content: flex-end;
+    align-items: flex-start;
+}
+
+.myprofile .small-ratings i {
+    color: #cecece;
+}
