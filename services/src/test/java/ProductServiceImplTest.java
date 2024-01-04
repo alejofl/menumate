@@ -8,18 +8,18 @@ import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.persistance.ProductDao;
 import ar.edu.itba.paw.persistance.RestaurantDao;
 import ar.edu.itba.paw.services.ProductServiceImpl;
-import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Optional;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ProductServiceImplTest {
@@ -47,32 +47,32 @@ public class ProductServiceImplTest {
     private static final BigDecimal DEFAULT_PROMOTION_DISCOUNT = BigDecimal.valueOf(10);
 
     private Category mockCategory() {
-        final Category category = Mockito.mock(Category.class);
-        Mockito.when(category.getCategoryId()).thenReturn(DEFAULT_CATEGORY_ID);
-        Mockito.when(category.getRestaurantId()).thenReturn(DEFAULT_RESTAURANT_ID);
+        final Category category = mock(Category.class);
+        when(category.getCategoryId()).thenReturn(DEFAULT_CATEGORY_ID);
+        when(category.getRestaurantId()).thenReturn(DEFAULT_RESTAURANT_ID);
         return category;
     }
 
     @Test(expected = ProductNotFoundException.class)
     public void testUpdateNonExistingProduct() {
-        final Restaurant restaurant = Mockito.mock(Restaurant.class);
-        Mockito.when(restaurantDao.getById(DEFAULT_RESTAURANT_ID)).thenReturn(Optional.of(restaurant));
+        final Restaurant restaurant = mock(Restaurant.class);
+        when(restaurantDao.getById(DEFAULT_RESTAURANT_ID)).thenReturn(Optional.of(restaurant));
 
-        Mockito.when(productDao.getById(DEFAULT_PRODUCT_ID)).thenReturn(Optional.empty());
+        when(productDao.getById(DEFAULT_PRODUCT_ID)).thenReturn(Optional.empty());
         productService.update(DEFAULT_RESTAURANT_ID, DEFAULT_CATEGORY_ID, DEFAULT_PRODUCT_ID, NEW_PRODUCT_NAME, NEW_PRODUCT_PRICE, NEW_PRODUCT_DESCRIPTION);
     }
 
     @Test(expected = ProductDeletedException.class)
     public void testUpdateDeletedProduct() {
-        final Category category = Mockito.mock(Category.class);
-        Mockito.when(category.getRestaurantId()).thenReturn(DEFAULT_RESTAURANT_ID);
+        final Category category = mock(Category.class);
+        when(category.getRestaurantId()).thenReturn(DEFAULT_RESTAURANT_ID);
 
-        final Product product = Mockito.mock(Product.class);
-        Mockito.when(product.getDeleted()).thenReturn(true);
-        Mockito.when(product.getCategoryId()).thenReturn(DEFAULT_CATEGORY_ID);
-        Mockito.when(product.getCategory()).thenReturn(category);
+        final Product product = mock(Product.class);
+        when(product.getDeleted()).thenReturn(true);
+        when(product.getCategoryId()).thenReturn(DEFAULT_CATEGORY_ID);
+        when(product.getCategory()).thenReturn(category);
 
-        Mockito.when(productDao.getById(DEFAULT_PRODUCT_ID)).thenReturn(Optional.of(product));
+        when(productDao.getById(DEFAULT_PRODUCT_ID)).thenReturn(Optional.of(product));
 
         productService.update(DEFAULT_RESTAURANT_ID, DEFAULT_CATEGORY_ID, DEFAULT_PRODUCT_ID, NEW_PRODUCT_NAME, NEW_PRODUCT_PRICE, DEFAULT_PRODUCT_DESCRIPTION);
     }
@@ -81,7 +81,7 @@ public class ProductServiceImplTest {
     public void testUpdateProductWithSamePrice() {
         final Category category = mockCategory();
 
-        final Product product = Mockito.spy(Product.class);
+        final Product product = spy(Product.class);
         product.setProductId(DEFAULT_PRODUCT_ID);
         product.setPrice(DEFAULT_PRODUCT_PRICE);
         product.setDeleted(false);
@@ -89,8 +89,8 @@ public class ProductServiceImplTest {
         product.setDescription(DEFAULT_PRODUCT_DESCRIPTION);
         product.setCategory(category);
 
-        Mockito.when(productDao.getById(DEFAULT_PRODUCT_ID)).thenReturn(Optional.of(product));
-        Mockito.doAnswer(invocation -> {
+        when(productDao.getById(DEFAULT_PRODUCT_ID)).thenReturn(Optional.of(product));
+        doAnswer(invocation -> {
             product.setName(NEW_PRODUCT_NAME);
             product.setDescription(NEW_PRODUCT_DESCRIPTION);
             return null;
@@ -99,18 +99,18 @@ public class ProductServiceImplTest {
 
         Product ret = productService.update(DEFAULT_RESTAURANT_ID, DEFAULT_CATEGORY_ID, DEFAULT_PRODUCT_ID, NEW_PRODUCT_NAME, DEFAULT_PRODUCT_PRICE, NEW_PRODUCT_DESCRIPTION);
 
-        Assert.assertEquals(NEW_PRODUCT_NAME, ret.getName());
-        Assert.assertEquals(NEW_PRODUCT_DESCRIPTION, ret.getDescription());
-        Assert.assertEquals(DEFAULT_PRODUCT_PRICE, ret.getPrice());
+        assertEquals(NEW_PRODUCT_NAME, ret.getName());
+        assertEquals(NEW_PRODUCT_DESCRIPTION, ret.getDescription());
+        assertEquals(DEFAULT_PRODUCT_PRICE, ret.getPrice());
     }
 
     @Test
     public void testUpdateProductWithDifferentPrice() {
-        final Category category = Mockito.mock(Category.class);
-        Mockito.when(category.getCategoryId()).thenReturn(DEFAULT_CATEGORY_ID);
-        Mockito.when(category.getRestaurantId()).thenReturn(DEFAULT_RESTAURANT_ID);
+        final Category category = mock(Category.class);
+        when(category.getCategoryId()).thenReturn(DEFAULT_CATEGORY_ID);
+        when(category.getRestaurantId()).thenReturn(DEFAULT_RESTAURANT_ID);
 
-        final Product existingProduct = Mockito.spy(Product.class);
+        final Product existingProduct = spy(Product.class);
         existingProduct.setProductId(DEFAULT_PRODUCT_ID);
         existingProduct.setCategoryId(DEFAULT_CATEGORY_ID);
         existingProduct.setCategory(category);
@@ -119,9 +119,9 @@ public class ProductServiceImplTest {
         existingProduct.setPrice(DEFAULT_PRODUCT_PRICE);
         existingProduct.setDeleted(false);
 
-        Mockito.when(productDao.getById(DEFAULT_PRODUCT_ID)).thenReturn(Optional.of(existingProduct));
+        when(productDao.getById(DEFAULT_PRODUCT_ID)).thenReturn(Optional.of(existingProduct));
 
-        final Product newProduct = Mockito.spy(Product.class);
+        final Product newProduct = spy(Product.class);
         newProduct.setProductId(DEFAULT_PRODUCT_ID);
         newProduct.setCategoryId(DEFAULT_CATEGORY_ID);
         newProduct.setName(DEFAULT_PRODUCT_NAME);
@@ -129,45 +129,44 @@ public class ProductServiceImplTest {
         newProduct.setPrice(NEW_PRODUCT_PRICE);
         newProduct.setDeleted(false);
 
-        Mockito.when(productDao.create(DEFAULT_CATEGORY_ID, DEFAULT_PRODUCT_NAME, DEFAULT_PRODUCT_DESCRIPTION, null, NEW_PRODUCT_PRICE)).thenReturn(newProduct);
+        when(productDao.create(DEFAULT_CATEGORY_ID, DEFAULT_PRODUCT_NAME, DEFAULT_PRODUCT_DESCRIPTION, null, NEW_PRODUCT_PRICE)).thenReturn(newProduct);
 
         final Product result = productService.update(DEFAULT_RESTAURANT_ID, DEFAULT_CATEGORY_ID, DEFAULT_PRODUCT_ID, DEFAULT_PRODUCT_NAME, NEW_PRODUCT_PRICE, DEFAULT_PRODUCT_DESCRIPTION);
 
-        Assert.assertTrue(existingProduct.getDeleted());
-        Assert.assertEquals(DEFAULT_CATEGORY_ID, result.getCategoryId());
-        Assert.assertEquals(DEFAULT_PRODUCT_NAME, result.getName());
-        Assert.assertEquals(DEFAULT_PRODUCT_DESCRIPTION, result.getDescription());
-        Assert.assertEquals(NEW_PRODUCT_PRICE, result.getPrice());
-        Assert.assertFalse(result.getDeleted());
+        assertTrue(existingProduct.getDeleted());
+        assertEquals(DEFAULT_CATEGORY_ID, result.getCategoryId());
+        assertEquals(DEFAULT_PRODUCT_NAME, result.getName());
+        assertEquals(DEFAULT_PRODUCT_DESCRIPTION, result.getDescription());
+        assertEquals(NEW_PRODUCT_PRICE, result.getPrice());
+        assertFalse(result.getDeleted());
     }
 
     @Test
     public void testCreatePromotion() {
-        final Product sourceProduct = Mockito.mock(Product.class);
-        Mockito.when(sourceProduct.getName()).thenReturn(DEFAULT_PRODUCT_NAME);
-        Mockito.when(sourceProduct.getDeleted()).thenReturn(false);
-        Mockito.when(sourceProduct.getAvailable()).thenReturn(true);
+        final Product sourceProduct = mock(Product.class);
+        when(sourceProduct.getName()).thenReturn(DEFAULT_PRODUCT_NAME);
+        when(sourceProduct.getDeleted()).thenReturn(false);
+        when(sourceProduct.getAvailable()).thenReturn(true);
 
-        final Category category = Mockito.mock(Category.class);
-        Mockito.when(category.getRestaurantId()).thenReturn(DEFAULT_RESTAURANT_ID);
-        Mockito.when(sourceProduct.getCategory()).thenReturn(category);
+        final Category category = mock(Category.class);
+        when(category.getRestaurantId()).thenReturn(DEFAULT_RESTAURANT_ID);
+        when(sourceProduct.getCategory()).thenReturn(category);
 
-        Mockito.when(productDao.getById(DEFAULT_PRODUCT_ID)).thenReturn(Optional.of(sourceProduct));
+        when(productDao.getById(DEFAULT_PRODUCT_ID)).thenReturn(Optional.of(sourceProduct));
 
-        final Promotion expectedPromotion = Mockito.mock(Promotion.class);
-        Mockito.when(productDao.createPromotion(sourceProduct, DEFAULT_PROMOTION_START_DATE, DEFAULT_PROMOTION_END_DATE, DEFAULT_PROMOTION_DISCOUNT)).thenReturn(expectedPromotion);
-        Mockito.when(expectedPromotion.getSource()).thenReturn(sourceProduct);
-        Mockito.when(expectedPromotion.getStartDate()).thenReturn(DEFAULT_PROMOTION_START_DATE);
-        Mockito.when(expectedPromotion.getEndDate()).thenReturn(DEFAULT_PROMOTION_END_DATE);
-        //Mockito.when(expectedPromotion.getDiscountPercentage()).thenReturn((int) (DEFAULT_PROMOTION_DISCOUNT * 100));
-        Mockito.when(expectedPromotion.getDiscountPercentage()).thenReturn(DEFAULT_PROMOTION_DISCOUNT);
+        final Promotion expectedPromotion = mock(Promotion.class);
+        when(productDao.createPromotion(sourceProduct, DEFAULT_PROMOTION_START_DATE, DEFAULT_PROMOTION_END_DATE, DEFAULT_PROMOTION_DISCOUNT)).thenReturn(expectedPromotion);
+        when(expectedPromotion.getSource()).thenReturn(sourceProduct);
+        when(expectedPromotion.getStartDate()).thenReturn(DEFAULT_PROMOTION_START_DATE);
+        when(expectedPromotion.getEndDate()).thenReturn(DEFAULT_PROMOTION_END_DATE);
+        when(expectedPromotion.getDiscountPercentage()).thenReturn(DEFAULT_PROMOTION_DISCOUNT);
 
         final Promotion result = productService.createPromotion(DEFAULT_RESTAURANT_ID, DEFAULT_PRODUCT_ID, DEFAULT_PROMOTION_START_DATE, DEFAULT_PROMOTION_END_DATE, DEFAULT_PROMOTION_DISCOUNT);
 
-        Assert.assertEquals(DEFAULT_PRODUCT_NAME, result.getSource().getName());
-        Assert.assertEquals(DEFAULT_PROMOTION_START_DATE, result.getStartDate());
-        Assert.assertEquals(DEFAULT_PROMOTION_END_DATE, result.getEndDate());
-        Assert.assertEquals(DEFAULT_PROMOTION_DISCOUNT, result.getDiscountPercentage());
+        assertEquals(DEFAULT_PRODUCT_NAME, result.getSource().getName());
+        assertEquals(DEFAULT_PROMOTION_START_DATE, result.getStartDate());
+        assertEquals(DEFAULT_PROMOTION_END_DATE, result.getEndDate());
+        assertEquals(DEFAULT_PROMOTION_DISCOUNT, result.getDiscountPercentage());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -177,65 +176,65 @@ public class ProductServiceImplTest {
 
     @Test(expected = ProductNotFoundException.class)
     public void testCreatePromotionWithNonExistingProduct() {
-        Mockito.when(productDao.getById(DEFAULT_PRODUCT_ID)).thenReturn(Optional.empty());
+        when(productDao.getById(DEFAULT_PRODUCT_ID)).thenReturn(Optional.empty());
         productService.createPromotion(DEFAULT_RESTAURANT_ID, DEFAULT_PRODUCT_ID, DEFAULT_PROMOTION_START_DATE, DEFAULT_PROMOTION_END_DATE, DEFAULT_PROMOTION_DISCOUNT);
     }
 
     @Test(expected = InvalidUserArgumentException.class)
     public void testCreatePromotionWithDeletedProduct() {
-        final Product sourceProduct = Mockito.mock(Product.class);
-        Mockito.when(sourceProduct.getDeleted()).thenReturn(true);
+        final Product sourceProduct = mock(Product.class);
+        when(sourceProduct.getDeleted()).thenReturn(true);
 
-        final Category category = Mockito.mock(Category.class);
-        Mockito.when(category.getRestaurantId()).thenReturn(DEFAULT_RESTAURANT_ID);
-        Mockito.when(sourceProduct.getCategory()).thenReturn(category);
+        final Category category = mock(Category.class);
+        when(category.getRestaurantId()).thenReturn(DEFAULT_RESTAURANT_ID);
+        when(sourceProduct.getCategory()).thenReturn(category);
 
-        Mockito.when(productDao.getById(DEFAULT_PRODUCT_ID)).thenReturn(Optional.of(sourceProduct));
+        when(productDao.getById(DEFAULT_PRODUCT_ID)).thenReturn(Optional.of(sourceProduct));
 
         productService.createPromotion(DEFAULT_RESTAURANT_ID, DEFAULT_PRODUCT_ID, DEFAULT_PROMOTION_START_DATE, DEFAULT_PROMOTION_END_DATE, DEFAULT_PROMOTION_DISCOUNT);
     }
 
     @Test(expected = InvalidUserArgumentException.class)
     public void testCreatePromotionWithUnavailableProduct() {
-        final Product sourceProduct = Mockito.mock(Product.class);
-        Mockito.when(sourceProduct.getDeleted()).thenReturn(false);
-        Mockito.when(sourceProduct.getAvailable()).thenReturn(false);
+        final Product sourceProduct = mock(Product.class);
+        when(sourceProduct.getDeleted()).thenReturn(false);
+        when(sourceProduct.getAvailable()).thenReturn(false);
 
-        final Category category = Mockito.mock(Category.class);
-        Mockito.when(category.getRestaurantId()).thenReturn(DEFAULT_RESTAURANT_ID);
-        Mockito.when(sourceProduct.getCategory()).thenReturn(category);
+        final Category category = mock(Category.class);
+        when(category.getRestaurantId()).thenReturn(DEFAULT_RESTAURANT_ID);
+        when(sourceProduct.getCategory()).thenReturn(category);
 
-        Mockito.when(productDao.getById(DEFAULT_PRODUCT_ID)).thenReturn(Optional.of(sourceProduct));
+        when(productDao.getById(DEFAULT_PRODUCT_ID)).thenReturn(Optional.of(sourceProduct));
 
         productService.createPromotion(DEFAULT_RESTAURANT_ID, DEFAULT_PRODUCT_ID, DEFAULT_PROMOTION_START_DATE, DEFAULT_PROMOTION_END_DATE, DEFAULT_PROMOTION_DISCOUNT);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testCreatePromotionWithEndDateInThePast() {
-        final Product sourceProduct = Mockito.mock(Product.class);
-        Mockito.when(sourceProduct.getDeleted()).thenReturn(false);
-        Mockito.when(sourceProduct.getAvailable()).thenReturn(true);
+        final Product sourceProduct = mock(Product.class);
+        when(sourceProduct.getDeleted()).thenReturn(false);
+        when(sourceProduct.getAvailable()).thenReturn(true);
 
-        final Category category = Mockito.mock(Category.class);
-        Mockito.when(category.getRestaurantId()).thenReturn(DEFAULT_RESTAURANT_ID);
-        Mockito.when(sourceProduct.getCategory()).thenReturn(category);
+        final Category category = mock(Category.class);
+        when(category.getRestaurantId()).thenReturn(DEFAULT_RESTAURANT_ID);
+        when(sourceProduct.getCategory()).thenReturn(category);
 
-        Mockito.when(productDao.getById(DEFAULT_PRODUCT_ID)).thenReturn(Optional.of(sourceProduct));
+        when(productDao.getById(DEFAULT_PRODUCT_ID)).thenReturn(Optional.of(sourceProduct));
 
         productService.createPromotion(DEFAULT_RESTAURANT_ID, DEFAULT_PRODUCT_ID, DEFAULT_PROMOTION_START_DATE, DEFAULT_PROMOTION_START_DATE.minusDays(1), DEFAULT_PROMOTION_DISCOUNT);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testCreatePromotionWithEndDateEqualToStartDate() {
-        final Product sourceProduct = Mockito.mock(Product.class);
-        Mockito.when(sourceProduct.getDeleted()).thenReturn(false);
-        Mockito.when(sourceProduct.getAvailable()).thenReturn(true);
+        final Product sourceProduct = mock(Product.class);
+        when(sourceProduct.getDeleted()).thenReturn(false);
+        when(sourceProduct.getAvailable()).thenReturn(true);
 
-        final Category category = Mockito.mock(Category.class);
-        Mockito.when(category.getRestaurantId()).thenReturn(DEFAULT_RESTAURANT_ID);
-        Mockito.when(sourceProduct.getCategory()).thenReturn(category);
+        final Category category = mock(Category.class);
+        when(category.getRestaurantId()).thenReturn(DEFAULT_RESTAURANT_ID);
+        when(sourceProduct.getCategory()).thenReturn(category);
 
-        Mockito.when(productDao.getById(DEFAULT_PRODUCT_ID)).thenReturn(Optional.of(sourceProduct));
+        when(productDao.getById(DEFAULT_PRODUCT_ID)).thenReturn(Optional.of(sourceProduct));
 
         productService.createPromotion(DEFAULT_RESTAURANT_ID, DEFAULT_PRODUCT_ID, DEFAULT_PROMOTION_START_DATE, DEFAULT_PROMOTION_START_DATE, DEFAULT_PROMOTION_DISCOUNT);
     }
