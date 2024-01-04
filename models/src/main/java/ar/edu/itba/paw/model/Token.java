@@ -16,7 +16,7 @@ public class Token {
     @Column(length = 32, nullable = false)
     private String token;
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     private User user;
 
