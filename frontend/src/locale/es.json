@@ -25,7 +25,8 @@
         "restaurants": "Restaurantes",
         "login": "Iniciar sesión",
         "reset_password": "Restablecer contraseña",
-        "signup": "Regístrate"
+        "signup": "Regístrate",
+        "loading": "Cargando..."
     },
     "error": {
         "modal": {
@@ -184,5 +185,13 @@
         "button": "Regístrate",
         "already_have_account": "¿Ya tienes una cuenta?",
         "login_here": "¡Inicia sesión aquí!"
+    },
+    "restaurant": {
+        "no_description": "Este restaurante no tiene una descripción.",
+        "no_reviews": "Este restaurante no tiene reseñas aún.",
+        "view_reviews": "Ver reseñas",
+        "edit_menu": "Editar menú",
+        "see_orders": "Ver órdenes",
+        "delete_restaurant": "Eliminar restaurante"
     }
 }

@@ -18,7 +18,13 @@ export function useRestaurantService(api) {
         );
     };
 
+    const getRestaurant = async (url) => {
+        const response = await api.get(url);
+        return Restaurant.fromJSON(response.data);
+    };
+
     return {
-        getRestaurants
+        getRestaurants,
+        getRestaurant
     };
 }

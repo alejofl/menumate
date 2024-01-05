@@ -1,0 +1,38 @@
+main.restaurant {
+    margin: 0;
+    display: block;
+}
+
+.restaurant .header {
+    height: 12rem;
+}
+
+.restaurant .header img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+
+.restaurant .btn-link {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.restaurant .information {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    width: 70%;
+    position: relative;
+    bottom: 50px;
+    background-color: white;
+    padding: 2rem;
+}
+
+.restaurant .logo {
+    border-radius: 50%;
+    max-width: 10rem;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+}

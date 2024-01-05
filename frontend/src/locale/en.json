@@ -25,7 +25,8 @@
         "restaurants": "Restaurants",
         "login": "Login",
         "reset_password": "Reset Password",
-        "signup": "Sign Up"
+        "signup": "Sign Up",
+        "loading": "Loading..."
     },
     "error": {
         "modal": {
@@ -184,5 +185,13 @@
         "button": "Sign Up",
         "already_have_account": "Already have an account?",
         "login_here": "Login here!"
+    },
+    "restaurant": {
+        "no_description": "This restaurant does not have a description.",
+        "no_reviews": "This restaurant does not have any reviews yet.",
+        "view_reviews": "View Reviews",
+        "edit_menu": "Edit Menu",
+        "see_orders": "See Orders",
+        "delete_restaurant": "Delete Restaurant"
     }
 }
