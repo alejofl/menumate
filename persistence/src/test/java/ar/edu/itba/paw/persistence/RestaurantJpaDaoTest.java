@@ -391,4 +391,19 @@ public class RestaurantJpaDaoTest {
         assertEquals(1, res.getResult().size());
         assertEquals(RestaurantConstants.RESTAURANT_IDS[0], res.getResult().get(0).getRestaurantId());
     }
+
+    @Test
+    public void getRestaurantDetails() {
+        long restaurantId = RestaurantConstants.RESTAURANT_IDS[0];
+        final Optional<RestaurantDetails> maybeRestaurantDetails = restaurantDao.getRestaurantDetails(restaurantId);
+
+        assertTrue(maybeRestaurantDetails.isPresent());
+        assertEquals(restaurantId, maybeRestaurantDetails.get().getRestaurantId());
+    }
+
+    @Test
+    public void getNoRestaurantDetails() {
+        final Optional<RestaurantDetails> maybeRestaurantDetails = restaurantDao.getRestaurantDetails(RestaurantConstants.RESTAURANT_ID_NON_EXISTENT);
+        assertFalse(maybeRestaurantDetails.isPresent());
+    }
 }
