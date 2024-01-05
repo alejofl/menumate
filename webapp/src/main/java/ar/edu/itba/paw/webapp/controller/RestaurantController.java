@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import ar.edu.itba.paw.exception.RestaurantDetailsNotFoundException;
 import ar.edu.itba.paw.exception.RestaurantNotFoundException;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.service.*;
@@ -83,6 +84,14 @@ public class RestaurantController {
     public Response getRestaurantById(@PathParam("restaurantId") final long restaurantId) {
         final Restaurant restaurant = restaurantService.getById(restaurantId).orElseThrow(RestaurantNotFoundException::new);
         return Response.ok(RestaurantDto.fromRestaurant(uriInfo, restaurant)).build();
+    }
+
+    @GET
+    @Path("/{restaurantId:\\d+}")
+    @Produces(CustomMediaType.APPLICATION_RETURNS_RESTAURANT_DETAILS)
+    public Response getRestaurantDetails(@PathParam("restaurantId") final long restaurantId) {
+        final RestaurantDetails restaurantDetails = restaurantService.getRestaurantDetails(restaurantId).orElseThrow(RestaurantDetailsNotFoundException::new);
+        return Response.ok(RestaurantDetailsDto.fromRestaurantDetails(uriInfo, restaurantDetails)).build();
     }
 
     @POST

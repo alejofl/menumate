@@ -61,6 +61,11 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
+    public Optional<RestaurantDetails> getRestaurantDetails(long restaurantId) {
+        return restaurantDao.getRestaurantDetails(restaurantId);
+    }
+
+    @Override
     public Optional<Duration> getAverageOrderCompletionTime(long restaurantId, OrderType orderType) {
         LocalDateTime since = LocalDateTime.now().minusDays(15);
         return restaurantDao.getAverageOrderCompletionTime(restaurantId, orderType, since);

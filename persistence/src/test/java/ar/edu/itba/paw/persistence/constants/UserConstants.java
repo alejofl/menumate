@@ -10,7 +10,8 @@ public final class UserConstants {
     public static final long ACTIVE_USER_ID = 420;
     public static final long INACTIVE_USER_ID = 1337;
     public static final long RESTAURANT_OWNER_ID = 1500;
-    public static final long USER_ID_WITH_TOKENS = 2000;
+    public static final long USER_ID_1_WITH_TOKENS = 2000;
+    public static final long USER_ID_2_WITH_TOKENS = 3000;
     public static final long USER_ID_RESTAURANT_ADMIN_ROLE = 3000;
     public static final long USER_ID_MODERATOR_ROLE = 3500;
     public static final String ACTIVE_USER_EMAIL = "user1@localhost";

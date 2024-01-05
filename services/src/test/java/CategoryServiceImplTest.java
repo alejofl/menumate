@@ -5,7 +5,6 @@ import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.persistance.CategoryDao;
 import ar.edu.itba.paw.persistance.RestaurantDao;
 import ar.edu.itba.paw.services.CategoryServiceImpl;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -14,6 +13,9 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Optional;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CategoryServiceImplTest {
@@ -37,24 +39,24 @@ public class CategoryServiceImplTest {
         final Category existingCategory = Mockito.spy(Category.class);
         existingCategory.setName(ORIGINAL_CATEGORY_NAME);
         existingCategory.setRestaurantId(RESTAURANT_ID);
-        Mockito.when(categoryDao.getById(CATEGORY_ID)).thenReturn(Optional.of(existingCategory));
+        when(categoryDao.getById(CATEGORY_ID)).thenReturn(Optional.of(existingCategory));
 
         final Category result = categoryServiceImpl.updateName(RESTAURANT_ID, CATEGORY_ID, NEW_CATEGORY_NAME);
 
-        Assert.assertEquals(NEW_CATEGORY_NAME, result.getName());
+        assertEquals(NEW_CATEGORY_NAME, result.getName());
     }
 
     @Test(expected = CategoryNotFoundException.class)
     public void testUpdateNameNonExistingCategory() {
-        Mockito.when(categoryDao.getById(CATEGORY_ID)).thenReturn(Optional.empty());
-        Mockito.when(restaurantDao.getById(RESTAURANT_ID)).thenReturn(Optional.of(Mockito.mock(Restaurant.class)));
+        when(categoryDao.getById(CATEGORY_ID)).thenReturn(Optional.empty());
+        when(restaurantDao.getById(RESTAURANT_ID)).thenReturn(Optional.of(Mockito.mock(Restaurant.class)));
         categoryServiceImpl.updateName(RESTAURANT_ID, CATEGORY_ID, NEW_CATEGORY_NAME);
     }
 
     @Test(expected = RestaurantNotFoundException.class)
     public void testUpdateNameNonExistingCategoryNotRestaurant() {
-        Mockito.when(categoryDao.getById(CATEGORY_ID)).thenReturn(Optional.empty());
-        Mockito.when(restaurantDao.getById(RESTAURANT_ID)).thenReturn(Optional.empty());
+        when(categoryDao.getById(CATEGORY_ID)).thenReturn(Optional.empty());
+        when(restaurantDao.getById(RESTAURANT_ID)).thenReturn(Optional.empty());
         categoryServiceImpl.updateName(RESTAURANT_ID, CATEGORY_ID, NEW_CATEGORY_NAME);
     }
 }

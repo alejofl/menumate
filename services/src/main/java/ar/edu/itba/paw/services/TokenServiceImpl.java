@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.model.Token;
-import ar.edu.itba.paw.model.TokenType;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.persistance.TokenDao;
 import ar.edu.itba.paw.service.TokenService;
@@ -39,16 +38,20 @@ public class TokenServiceImpl implements TokenService {
 
     @Transactional
     @Override
-    public Token createOrRefresh(User user, TokenType type) {
-        Optional<Token> maybeToken = tokenDao.getByUserId(user.getUserId(), type);
+    public Token manageUserToken(User user) {
+        Optional<Token> maybeToken = tokenDao.getByUserId(user.getUserId());
         Token token;
         if (maybeToken.isPresent()) {
             token = maybeToken.get();
-            if (!token.isFresh()) {
-                token = tokenDao.refresh(token, generateToken(), generateTokenExpirationDate());
+            if (token.isFresh()) {
+                LOGGER.info("Token is fresh for user {}", token.getUser().getUserId());
+                return token;
             }
+            token = tokenDao.refresh(token, generateToken(), generateTokenExpirationDate());
+            LOGGER.info("Token was refreshed for user {}", token.getUser().getUserId());
         } else {
-            token = tokenDao.create(user, type, generateToken(), generateTokenExpirationDate());
+            token = tokenDao.create(user, generateToken(), generateTokenExpirationDate());
+            LOGGER.info("Token was created for user {}", token.getUser().getUserId());
         }
         return token;
     }

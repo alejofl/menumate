@@ -2,7 +2,6 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.exception.UserNotFoundException;
 import ar.edu.itba.paw.model.Token;
-import ar.edu.itba.paw.model.TokenType;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.model.UserAddress;
 import ar.edu.itba.paw.persistance.UserDao;
@@ -78,7 +77,7 @@ public class UserServiceImpl implements UserService {
             LOGGER.info("Consolidated user with id {}", user.getUserId());
         }
 
-        final Token token = tokenService.createOrRefresh(user, TokenType.VERIFICATION_TOKEN);
+        final Token token = tokenService.manageUserToken(user);
 
         emailService.sendUserVerificationEmail(user, token.getToken());
         return user;
@@ -140,7 +139,7 @@ public class UserServiceImpl implements UserService {
             return;
         }
 
-        Token token = tokenService.createOrRefresh(user, TokenType.VERIFICATION_TOKEN);
+        Token token = tokenService.manageUserToken(user);
         emailService.sendUserVerificationEmail(user, token.getToken());
     }
 
@@ -153,7 +152,7 @@ public class UserServiceImpl implements UserService {
             LOGGER.info("Ignored sending password reset token request for unknown email");
             return;
         }
-        Token token = tokenService.createOrRefresh(user, TokenType.RESET_PASSWORD_TOKEN);
+        Token token = tokenService.manageUserToken(user);
         emailService.sendResetPasswordEmail(user, token.getToken());
     }
 

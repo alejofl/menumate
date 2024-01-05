@@ -16,11 +16,11 @@ INSERT INTO user_roles (user_id, role_level)
 VALUES (3500, 0);
 
 -- Tokens for user 2000
-INSERT INTO tokens (token_id, user_id, type, token, expiryDate)
-VALUES (1500, 2000, 0, '8ac27000-c568-4070-b6da-1a80478c', CURRENT_TIMESTAMP + INTERVAL '1' DAY);
+INSERT INTO tokens (token_id, user_id, token, expiryDate)
+VALUES (1500, 2000, '8ac27000-c568-4070-b6da-1a80478c', CURRENT_TIMESTAMP + INTERVAL '1' DAY);
 
-INSERT INTO tokens (token_id, user_id, type, token, expiryDate)
-VALUES (2500, 2000, 1, '3ab27010-c538-4180-a6pa-1b80581c', CURRENT_TIMESTAMP + INTERVAL '1' DAY);
+INSERT INTO tokens (token_id, user_id, token, expiryDate)
+VALUES (2500, 3000, '3ab27010-c538-4180-a6pa-1b80581c', CURRENT_TIMESTAMP + INTERVAL '1' DAY);
 
 -- Addresses for user 420
 INSERT INTO user_addresses(address_id, user_id, address, name, last_used)
