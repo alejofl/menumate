@@ -1,6 +1,7 @@
 import { parseLinkHeader } from "@web3-storage/parse-link-header";
 import Restaurant from "../../data/model/Restaurant.js";
 import PagedContent from "../../data/model/PagedContent.js";
+import {JSON_CONTENT_TYPE, RESTAURANT_DETAILS_CONTENT_TYPE} from "../../utils.js";
 
 export function useRestaurantService(api) {
     const getRestaurants = async (url, query) => {
@@ -18,8 +19,12 @@ export function useRestaurantService(api) {
         );
     };
 
-    const getRestaurant = async (url) => {
-        const response = await api.get(url);
+    const getRestaurant = async (url, details = false) => {
+        const response = await api.get(url, {
+            headers: {
+                "Accept": details ? RESTAURANT_DETAILS_CONTENT_TYPE : JSON_CONTENT_TYPE
+            }
+        });
         return Restaurant.fromJSON(response.data);
     };
 

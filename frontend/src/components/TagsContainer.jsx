@@ -11,7 +11,7 @@ function TagsContainer({ tags, clickable = false }) {
                 {tags.map(tag => (
                     clickable
                         ?
-                        <Link className="clickable-object" to="/restaurants" key={tag}>
+                        <Link className="clickable-object" to={`/restaurants?tags=${tag}`} key={tag}>
                             <span className="badge rounded-pill text-bg-secondary">
                                 {t(`restaurant_tags.${tag}`)}
                             </span>

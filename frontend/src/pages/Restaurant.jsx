@@ -9,7 +9,7 @@ import {useRestaurantService} from "../hooks/services/useRestaurantService.js";
 import Error from "./Error.jsx";
 import ContentLoader from "react-content-loader";
 import "./styles/restaurant.styles.css";
-// import Rating from "../components/Rating.jsx";
+import Rating from "../components/Rating.jsx";
 import TagsContainer from "../components/TagsContainer.jsx";
 
 function Restaurant() {
@@ -22,7 +22,7 @@ function Restaurant() {
     const { isLoading, isError, data, error } = useQuery({
         queryKey: ["restaurant", restaurantId],
         queryFn: async () => (
-            await restaurantService.getRestaurant(`${apiContext.restaurantsUrl}/${restaurantId}`)
+            await restaurantService.getRestaurant(`${apiContext.restaurantsUrl}/${restaurantId}`, true)
         )
     });
 
@@ -64,15 +64,18 @@ function Restaurant() {
                                 {data.description || <i>{t("restaurant.no_description")}</i>}
                             </p>
                             <p><i className="bi bi-geo-alt"></i> {data.address}</p>
-                            {/* TODO: FIX WHEN BACKEND IS READY { */}
-                            {/*     data.reviewCount === 0 */}
-                            {/*         ? */}
-                            {/*         <small className="text-muted">{t("restaurant.no_reviews")}</small> */}
-                            {/*         : */}
-                            {/*         <Rating rating={data.averageRating} count={data.reviewCount}/> */}
-                            {/* } */}
-                            <button className="btn btn-link" type="button"><small>{t("restaurant.view_reviews")}</small>
-                            </button>
+                            {
+                                data.reviewCount === 0
+                                    ?
+                                    <small className="text-muted">{t("restaurant.no_reviews")}</small>
+                                    :
+                                    <>
+                                        <Rating rating={data.averageRating} count={data.reviewCount}/>
+                                        <button className="btn btn-link" type="button">
+                                            <small>{t("restaurant.view_reviews")}</small>
+                                        </button>
+                                    </>
+                            }
                             <TagsContainer tags={data.tags} clickable={true}/>
                         </div>
                         <div className="d-flex flex-column gap-2">
