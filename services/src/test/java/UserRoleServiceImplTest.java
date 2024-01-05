@@ -6,15 +6,18 @@ import ar.edu.itba.paw.persistance.UserDao;
 import ar.edu.itba.paw.persistance.UserRoleDao;
 import ar.edu.itba.paw.service.EmailService;
 import ar.edu.itba.paw.services.UserRoleServiceImpl;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Optional;
+
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserRoleServiceImplTest {
@@ -38,17 +41,17 @@ public class UserRoleServiceImplTest {
 
     @Test
     public void userHasRole() {
-        UserRole userRole = Mockito.mock(UserRole.class);
-        Mockito.when(userRole.getLevel()).thenReturn(MODERATOR_ROLE);
-        Mockito.when(userRoleDao.getRole(DEFAULT_USER_ID)).thenReturn(Optional.of(userRole));
+        UserRole userRole = mock(UserRole.class);
+        when(userRole.getLevel()).thenReturn(MODERATOR_ROLE);
+        when(userRoleDao.getRole(DEFAULT_USER_ID)).thenReturn(Optional.of(userRole));
 
-        Assert.assertTrue(userRoleService.doesUserHaveRole(DEFAULT_USER_ID, MODERATOR_ROLE));
+        assertTrue(userRoleService.doesUserHaveRole(DEFAULT_USER_ID, MODERATOR_ROLE));
     }
 
     @Test
     public void userDoesNotHaveRole() {
-        Mockito.when(userRoleDao.getRole(DEFAULT_USER_ID)).thenReturn(Optional.empty());
-        Assert.assertFalse(userRoleService.doesUserHaveRole(DEFAULT_USER_ID, UserRoleLevel.MODERATOR));
+        when(userRoleDao.getRole(DEFAULT_USER_ID)).thenReturn(Optional.empty());
+        assertFalse(userRoleService.doesUserHaveRole(DEFAULT_USER_ID, UserRoleLevel.MODERATOR));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -58,61 +61,61 @@ public class UserRoleServiceImplTest {
 
     @Test
     public void getUserExistingRole() {
-        UserRole userRole = Mockito.mock(UserRole.class);
-        Mockito.when(userRole.getLevel()).thenReturn(MODERATOR_ROLE);
-        Mockito.when(userRoleDao.getRole(DEFAULT_USER_ID)).thenReturn(Optional.of(userRole));
+        UserRole userRole = mock(UserRole.class);
+        when(userRole.getLevel()).thenReturn(MODERATOR_ROLE);
+        when(userRoleDao.getRole(DEFAULT_USER_ID)).thenReturn(Optional.of(userRole));
 
         final Optional<UserRoleLevel> actualRoleLevel = userRoleService.getRole(DEFAULT_USER_ID);
 
-        Assert.assertTrue(actualRoleLevel.isPresent());
-        Assert.assertEquals(MODERATOR_ROLE, actualRoleLevel.get());
+        assertTrue(actualRoleLevel.isPresent());
+        assertEquals(MODERATOR_ROLE, actualRoleLevel.get());
     }
 
     @Test
     public void getUserNotExistingRole() {
-        Mockito.when(userRoleDao.getRole(DEFAULT_USER_ID)).thenReturn(Optional.empty());
+        when(userRoleDao.getRole(DEFAULT_USER_ID)).thenReturn(Optional.empty());
 
         final Optional<UserRoleLevel> actualRoleLevel = userRoleService.getRole(DEFAULT_USER_ID);
 
-        Assert.assertFalse(actualRoleLevel.isPresent());
+        assertFalse(actualRoleLevel.isPresent());
     }
 
     @Test
     public void setExistingUserExistingRole() {
-        User user = Mockito.mock(User.class);
-        Mockito.when(userDao.getByEmail(DEFAULT_USER_EMAIL)).thenReturn(Optional.of(user));
+        User user = mock(User.class);
+        when(userDao.getByEmail(DEFAULT_USER_EMAIL)).thenReturn(Optional.of(user));
 
-        Assert.assertTrue(userRoleService.setRole(DEFAULT_USER_EMAIL, MODERATOR_ROLE));
+        assertTrue(userRoleService.setRole(DEFAULT_USER_EMAIL, MODERATOR_ROLE));
     }
 
     @Test(expected = UserRoleNotFoundException.class)
     public void setExistingUserNotExistingRole() {
-        Assert.assertFalse(userRoleService.setRole(DEFAULT_USER_EMAIL, null));
+        assertFalse(userRoleService.setRole(DEFAULT_USER_EMAIL, null));
     }
 
     @Test
     public void setNotExistingUserExistingRole() {
-        User user = Mockito.mock(User.class);
-        Mockito.when(user.getUserId()).thenReturn(DEFAULT_USER_ID);
-        Mockito.when(userDao.getByEmail(DEFAULT_USER_EMAIL)).thenReturn(Optional.empty());
-        Mockito.when(userDao.create(Mockito.anyString(), Mockito.any(), Mockito.anyString(), Mockito.anyString())).thenReturn(user);
-        Assert.assertTrue(userRoleService.setRole(DEFAULT_USER_EMAIL, MODERATOR_ROLE));
+        User user = mock(User.class);
+        when(user.getUserId()).thenReturn(DEFAULT_USER_ID);
+        when(userDao.getByEmail(DEFAULT_USER_EMAIL)).thenReturn(Optional.empty());
+        when(userDao.create(anyString(), any(), anyString(), anyString())).thenReturn(user);
+        assertTrue(userRoleService.setRole(DEFAULT_USER_EMAIL, MODERATOR_ROLE));
     }
 
     @Test
     public void setExistingUserSameRole() {
-        User user = Mockito.mock(User.class);
-        Mockito.when(user.getUserId()).thenReturn(DEFAULT_USER_ID);
+        User user = mock(User.class);
+        when(user.getUserId()).thenReturn(DEFAULT_USER_ID);
 
-        UserRole userRole = Mockito.spy(UserRole.class);
+        UserRole userRole = spy(UserRole.class);
         userRole.setLevel(MODERATOR_ROLE);
         userRole.setUserId(DEFAULT_USER_ID);
 
-        Mockito.when(userRoleDao.getRole(DEFAULT_USER_ID)).thenReturn(Optional.of(userRole));
-        Mockito.when(userDao.getByEmail(DEFAULT_USER_EMAIL)).thenReturn(Optional.of(user));
+        when(userRoleDao.getRole(DEFAULT_USER_ID)).thenReturn(Optional.of(userRole));
+        when(userDao.getByEmail(DEFAULT_USER_EMAIL)).thenReturn(Optional.of(user));
 
-        Assert.assertTrue(userRoleService.setRole(DEFAULT_USER_EMAIL, MODERATOR_ROLE));
-        Assert.assertEquals(MODERATOR_ROLE, userRole.getLevel());
-        Assert.assertEquals(DEFAULT_USER_ID, userRole.getUserId());
+        assertTrue(userRoleService.setRole(DEFAULT_USER_EMAIL, MODERATOR_ROLE));
+        assertEquals(MODERATOR_ROLE, userRole.getLevel());
+        assertEquals(DEFAULT_USER_ID, userRole.getUserId());
     }
 }

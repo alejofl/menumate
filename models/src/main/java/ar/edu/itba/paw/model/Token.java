@@ -23,16 +23,12 @@ public class Token {
     @Column(nullable = false)
     private LocalDateTime expiryDate;
 
-    @Enumerated(EnumType.ORDINAL)
-    private TokenType type;
-
     Token() {
 
     }
 
-    public Token(User user, TokenType type, String token, LocalDateTime expiryDate) {
+    public Token(User user, String token, LocalDateTime expiryDate) {
         this.user = user;
-        this.type = type;
         this.token = token;
         this.expiryDate = expiryDate;
     }
@@ -69,14 +65,6 @@ public class Token {
         this.expiryDate = expiryDate;
     }
 
-    public TokenType getType() {
-        return type;
-    }
-
-    public void setType(TokenType type) {
-        this.type = type;
-    }
-
     public boolean isFresh() {
         return expiryDate.isAfter(LocalDateTime.now());
     }
@@ -85,7 +73,4 @@ public class Token {
         return !isFresh();
     }
 
-    public boolean hasSameType(TokenType tokenType) {
-        return this.type == tokenType;
-    }
 }

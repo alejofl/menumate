@@ -5,18 +5,20 @@ import ar.edu.itba.paw.model.RestaurantSpecialty;
 import ar.edu.itba.paw.model.RestaurantTags;
 import ar.edu.itba.paw.persistance.RestaurantDao;
 import ar.edu.itba.paw.services.RestaurantServiceImpl;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RestaurantServiceImplTest {
@@ -41,7 +43,7 @@ public class RestaurantServiceImplTest {
 
     @Test
     public void testUpdateRestaurant() {
-        final Restaurant existingRestaurant = Mockito.spy(Restaurant.class);
+        final Restaurant existingRestaurant = spy(Restaurant.class);
         existingRestaurant.setRestaurantId(DEFAULT_RESTAURANT_ID);
         existingRestaurant.setName(DEFAULT_RESTAURANT_NAME);
         existingRestaurant.setSpecialty(DEFAULT_RESTAURANT_SPECIALTY);
@@ -50,35 +52,35 @@ public class RestaurantServiceImplTest {
         existingRestaurant.setTags(DEFAULT_RESTAURANT_TAGS);
         existingRestaurant.setDeleted(false);
 
-        Mockito.when(restaurantDao.getById(DEFAULT_RESTAURANT_ID)).thenReturn(Optional.of(existingRestaurant));
+        when(restaurantDao.getById(DEFAULT_RESTAURANT_ID)).thenReturn(Optional.of(existingRestaurant));
 
         final Restaurant updatedRestaurant = restaurantService.update(DEFAULT_RESTAURANT_ID, NEW_RESTAURANT_NAME, NEW_RESTAURANT_SPECIALTY, NEW_RESTAURANT_ADDRESS, NEW_RESTAURANT_DESCRIPTION, NEW_RESTAURANT_TAGS);
 
-        Assert.assertEquals(DEFAULT_RESTAURANT_ID, updatedRestaurant.getRestaurantId().intValue());
-        Assert.assertEquals(NEW_RESTAURANT_NAME, updatedRestaurant.getName());
-        Assert.assertEquals(NEW_RESTAURANT_SPECIALTY, updatedRestaurant.getSpecialty());
-        Assert.assertEquals(NEW_RESTAURANT_ADDRESS, updatedRestaurant.getAddress());
-        Assert.assertEquals(NEW_RESTAURANT_DESCRIPTION, updatedRestaurant.getDescription());
-        Assert.assertEquals(NEW_RESTAURANT_TAGS, updatedRestaurant.getTags());
+        assertEquals(DEFAULT_RESTAURANT_ID, updatedRestaurant.getRestaurantId().intValue());
+        assertEquals(NEW_RESTAURANT_NAME, updatedRestaurant.getName());
+        assertEquals(NEW_RESTAURANT_SPECIALTY, updatedRestaurant.getSpecialty());
+        assertEquals(NEW_RESTAURANT_ADDRESS, updatedRestaurant.getAddress());
+        assertEquals(NEW_RESTAURANT_DESCRIPTION, updatedRestaurant.getDescription());
+        assertEquals(NEW_RESTAURANT_TAGS, updatedRestaurant.getTags());
     }
 
     @Test(expected = RestaurantNotFoundException.class)
     public void testUpdateNonExistingRestaurant() {
-        Mockito.when(restaurantDao.getById(DEFAULT_RESTAURANT_ID)).thenReturn(Optional.empty());
+        when(restaurantDao.getById(DEFAULT_RESTAURANT_ID)).thenReturn(Optional.empty());
         restaurantService.update(DEFAULT_RESTAURANT_ID, NEW_RESTAURANT_NAME, NEW_RESTAURANT_SPECIALTY, NEW_RESTAURANT_ADDRESS, NEW_RESTAURANT_DESCRIPTION, NEW_RESTAURANT_TAGS);
     }
 
     @Test(expected = RestaurantDeletedException.class)
     public void testUpdateDeletedRestaurant() {
-        final Restaurant deletedRestaurant = Mockito.spy(Restaurant.class);
+        final Restaurant deletedRestaurant = spy(Restaurant.class);
         deletedRestaurant.setDeleted(true);
-        Mockito.when(restaurantDao.getById(DEFAULT_RESTAURANT_ID)).thenReturn(Optional.of(deletedRestaurant));
+        when(restaurantDao.getById(DEFAULT_RESTAURANT_ID)).thenReturn(Optional.of(deletedRestaurant));
         restaurantService.update(DEFAULT_RESTAURANT_ID, NEW_RESTAURANT_NAME, NEW_RESTAURANT_SPECIALTY, NEW_RESTAURANT_ADDRESS, NEW_RESTAURANT_DESCRIPTION, NEW_RESTAURANT_TAGS);
     }
 
     @Test
     public void testUpdateRestaurantWithNullOrEmptyValues() {
-        final Restaurant existingRestaurant = Mockito.spy(Restaurant.class);
+        final Restaurant existingRestaurant = spy(Restaurant.class);
         existingRestaurant.setRestaurantId(DEFAULT_RESTAURANT_ID);
         existingRestaurant.setName(DEFAULT_RESTAURANT_NAME);
         existingRestaurant.setSpecialty(DEFAULT_RESTAURANT_SPECIALTY);
@@ -87,15 +89,15 @@ public class RestaurantServiceImplTest {
         existingRestaurant.setTags(DEFAULT_RESTAURANT_TAGS);
         existingRestaurant.setDeleted(false);
 
-        Mockito.when(restaurantDao.getById(DEFAULT_RESTAURANT_ID)).thenReturn(Optional.of(existingRestaurant));
+        when(restaurantDao.getById(DEFAULT_RESTAURANT_ID)).thenReturn(Optional.of(existingRestaurant));
 
         final Restaurant updatedRestaurant = restaurantService.update(DEFAULT_RESTAURANT_ID, null, null, null, null, new ArrayList<>());
 
-        Assert.assertEquals(DEFAULT_RESTAURANT_ID, updatedRestaurant.getRestaurantId().longValue());
-        Assert.assertNull(updatedRestaurant.getName());
-        Assert.assertNull(updatedRestaurant.getSpecialty());
-        Assert.assertNull(updatedRestaurant.getAddress());
-        Assert.assertNull(updatedRestaurant.getDescription());
-        Assert.assertTrue(updatedRestaurant.getTags().isEmpty());
+        assertEquals(DEFAULT_RESTAURANT_ID, updatedRestaurant.getRestaurantId().longValue());
+        assertNull(updatedRestaurant.getName());
+        assertNull(updatedRestaurant.getSpecialty());
+        assertNull(updatedRestaurant.getAddress());
+        assertNull(updatedRestaurant.getDescription());
+        assertTrue(updatedRestaurant.getTags().isEmpty());
     }
 }

@@ -245,6 +245,12 @@ public class RestaurantJpaDao implements RestaurantDao {
     }
 
     @Override
+    public Optional<RestaurantDetails> getRestaurantDetails(long restaurantId) {
+        final RestaurantDetails restaurantDetails = em.find(RestaurantDetails.class, restaurantId);
+        return restaurantDetails == null? Optional.empty() : Optional.of(restaurantDetails);
+    }
+
+    @Override
     public void delete(long restaurantId) {
         final Restaurant restaurant = em.find(Restaurant.class, restaurantId);
         if (restaurant == null) {
