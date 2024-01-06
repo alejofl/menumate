@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import {useParams} from "react-router-dom";
 import Page from "../components/Page.jsx";
 import {useQueries, useQuery} from "@tanstack/react-query";
@@ -15,6 +15,8 @@ import TagsContainer from "../components/TagsContainer.jsx";
 import ProductCard from "../components/ProductCard.jsx";
 
 function Restaurant() {
+    const DECIMAL_DIGITS = 2;
+
     const { t } = useTranslation();
     const api = useApi();
     const apiContext = useContext(ApiContext);
@@ -48,6 +50,11 @@ function Restaurant() {
             :
             []
     });
+
+    const [cart, setCart] = useState([]);
+    const addProductToCart = (productId, name, price, quantity, comments) => {
+        setCart([...cart, {productId: productId, name: name, price: price, quantity: quantity, comments: comments}]);
+    };
 
     if (restaurantIsError) {
         return (
@@ -136,7 +143,7 @@ function Restaurant() {
                             </div>
                         </div>
                     </div>
-                    <div className="menu">
+                    <div className="menu px-4">
                         {
                             categories.sort((a, b) => a.orderNum < b.orderNum).map((category, i) => (
                                 <React.Fragment key={category.id}>
@@ -149,13 +156,13 @@ function Restaurant() {
                                         {
                                             products[i].data.map(product => (
                                                 <ProductCard
-                                                    key={product.id}
-                                                    productId={product.id}
+                                                    key={product.productId}
+                                                    productId={product.productId}
                                                     name={product.name}
                                                     description={product.description}
                                                     price={product.price}
-                                                    discount="60"
                                                     imageUrl={product.imageUrl}
+                                                    addProductToCart={addProductToCart}
                                                 />
                                             ))
                                         }
@@ -168,6 +175,17 @@ function Restaurant() {
                         <div className="card">
                             <div className="card-header text-muted">{t("restaurant.my_order")}</div>
                             <ul className="list-group list-group-flush">
+                                {
+                                    cart.map((product) => (
+                                        <li className="list-group-item d-flex justify-content-between" key={product.productId}>
+                                            <div className="d-flex align-items-center gap-1">
+                                                <span className="badge text-bg-secondary">x{product.quantity}</span>
+                                                <span>{product.name}</span>
+                                            </div>
+                                            <span className="no-wrap"><strong>${(product.price * product.quantity).toFixed(DECIMAL_DIGITS)}</strong></span>
+                                        </li>
+                                    ))
+                                }
                             </ul>
                             <div className="card-body d-flex">
                                 <button className="btn btn-primary flex-grow-1" id="place-order-button" type="button">

@@ -197,7 +197,9 @@
         "my_order": "Mi orden",
         "place_order": "Realizar pedido",
         "product": {
-            "no_description": "Este producto no tiene una descripción."
+            "no_description": "Este producto no tiene una descripción.",
+            "add_to_cart": "Agregar al carrito",
+            "comments": "Comentarios"
         }
     }
 }
