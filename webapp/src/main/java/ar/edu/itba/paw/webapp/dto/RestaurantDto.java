@@ -31,6 +31,7 @@ public class RestaurantDto {
     private URI portrait1Url;
     private URI portrait2Url;
     private URI categoriesUrl;
+    private URI promotionsUrl;
     private URI ordersUrl;
     private URI reviewsUrl;
     private URI employeesUrl;
@@ -53,6 +54,7 @@ public class RestaurantDto {
         dto.portrait1Url = UriUtils.getImageUri(uriInfo, restaurant.getPortrait1Id());
         dto.portrait2Url = UriUtils.getImageUri(uriInfo, restaurant.getPortrait2Id());
         dto.categoriesUrl = UriUtils.getRestaurantCategoriesUri(uriInfo, restaurant.getRestaurantId());
+        dto.promotionsUrl = UriUtils.getRestaurantPromotionsUri(uriInfo, restaurant.getRestaurantId());
         dto.ordersUrl = UriUtils.getOrdersByRestaurantUri(uriInfo, restaurant.getRestaurantId());
         dto.reviewsUrl = UriUtils.getReviewsByRestaurantUri(uriInfo, restaurant.getRestaurantId());
         dto.employeesUrl = UriUtils.getRestaurantEmployeesUri(uriInfo, restaurant.getRestaurantId());
@@ -234,5 +236,13 @@ public class RestaurantDto {
 
     public void setUnhandledReportsCount(Long unhandledReports) {
         this.unhandledReports = unhandledReports;
+    }
+
+    public URI getPromotionsUrl() {
+        return promotionsUrl;
+    }
+
+    public void setPromotionsUrl(URI promotionsUrl) {
+        this.promotionsUrl = promotionsUrl;
     }
 }
