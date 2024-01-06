@@ -134,7 +134,15 @@ function Restaurant() {
                                 <div className="nav nav-pills small">
                                     {
                                         categories.sort((a, b) => a.orderNum < b.orderNum).map(category => (
-                                            <button className="category-item nav-link" key={category.id}>
+                                            <button
+                                                className="category-item nav-link"
+                                                key={category.orderNum}
+                                                onClick={(event) => {
+                                                    document.querySelector(`#category-${category.orderNum}`).scrollIntoView({block: "start"});
+                                                    document.querySelector(".category-item.active")?.classList.remove("active");
+                                                    event.currentTarget.classList.add("active");
+                                                }}
+                                            >
                                                 {category.name}
                                             </button>
                                         ))
@@ -146,8 +154,8 @@ function Restaurant() {
                     <div className="menu px-4">
                         {
                             categories.sort((a, b) => a.orderNum < b.orderNum).map((category, i) => (
-                                <React.Fragment key={category.id}>
-                                    <div className="card mb-4">
+                                <React.Fragment key={category.orderNum}>
+                                    <div className="card mb-4" id={`category-${category.orderNum}`}>
                                         <div className="card-body d-flex justify-content-between align-items-center">
                                             <h3 className="mb-0">{category.name}</h3>
                                         </div>
