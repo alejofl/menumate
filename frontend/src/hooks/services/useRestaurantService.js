@@ -2,6 +2,8 @@ import { parseLinkHeader } from "@web3-storage/parse-link-header";
 import Restaurant from "../../data/model/Restaurant.js";
 import PagedContent from "../../data/model/PagedContent.js";
 import {JSON_CONTENT_TYPE, RESTAURANT_DETAILS_CONTENT_TYPE} from "../../utils.js";
+import Category from "../../data/model/Category.js";
+import Product from "../../data/model/Product.js";
 
 export function useRestaurantService(api) {
     const getRestaurants = async (url, query) => {
@@ -28,8 +30,20 @@ export function useRestaurantService(api) {
         return Restaurant.fromJSON(response.data);
     };
 
+    const getCategories = async (url) => {
+        const response = await api.get(url);
+        return Array.isArray(response.data) ? response.data.map(data => Category.fromJSON(data)) : [];
+    };
+
+    const getProducts = async (url) => {
+        const response = await api.get(url);
+        return Array.isArray(response.data) ? response.data.map(data => Product.fromJSON(data)) : [];
+    };
+
     return {
         getRestaurants,
-        getRestaurant
+        getRestaurant,
+        getCategories,
+        getProducts
     };
 }

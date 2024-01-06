@@ -1,6 +1,7 @@
+import React from "react";
 import {useParams} from "react-router-dom";
 import Page from "../components/Page.jsx";
-import {useQuery} from "@tanstack/react-query";
+import {useQueries, useQuery} from "@tanstack/react-query";
 import {useTranslation} from "react-i18next";
 import {useApi} from "../hooks/useApi.js";
 import {useContext} from "react";
@@ -11,6 +12,7 @@ import ContentLoader from "react-content-loader";
 import "./styles/restaurant.styles.css";
 import Rating from "../components/Rating.jsx";
 import TagsContainer from "../components/TagsContainer.jsx";
+import ProductCard from "../components/ProductCard.jsx";
 
 function Restaurant() {
     const { t } = useTranslation();
@@ -19,21 +21,53 @@ function Restaurant() {
     const restaurantService = useRestaurantService(api);
 
     const { restaurantId } = useParams();
-    const { isLoading, isError, data, error } = useQuery({
+    const { isError: restaurantIsError, data: restaurant, error: restaurantError } = useQuery({
         queryKey: ["restaurant", restaurantId],
         queryFn: async () => (
             await restaurantService.getRestaurant(`${apiContext.restaurantsUrl}/${restaurantId}`, true)
         )
     });
+    const { isPending, isError: categoriesIsError, data: categories, error: categoriesError} = useQuery({
+        queryKey: ["restaurant", restaurantId, "categories"],
+        queryFn: async () => (
+            await restaurantService.getCategories(restaurant.categoriesUrl)
+        ),
+        enabled: !!restaurant
+    });
+    const products = useQueries({
+        queries: categories
+            ?
+            categories.sort((a, b) => a.orderNum < b.orderNum).map(category => {
+                return {
+                    queryKey: ["restaurant", restaurantId, "category", category.orderNum, "products"],
+                    queryFn: async () => (
+                        await restaurantService.getProducts(category.productsUrl)
+                    )
+                };
+            })
+            :
+            []
+    });
 
-
-    if (isError) {
+    if (restaurantIsError) {
         return (
             <>
-                <Error errorNumber={error.response.status}/>
+                <Error errorNumber={restaurantError.response.status}/>
             </>
         );
-    } else if (isLoading) {
+    } else if (categoriesIsError) {
+        return (
+            <>
+                <Error errorNumber={categoriesError.response.status}/>
+            </>
+        );
+    } else if (products.some(product => product.isError)) {
+        return (
+            <>
+                <Error errorNumber="500"/>
+            </>
+        );
+    } else if (isPending || products.some(product => product.isPending)) {
         return (
             <>
                 <Page title={t("titles.loading")} className="restaurant">
@@ -51,37 +85,95 @@ function Restaurant() {
     }
     return (
         <>
-            <Page title={data.name} className="restaurant">
+            <Page title={restaurant.name} className="restaurant">
                 <div className="header">
-                    <img src={data.portrait1Url} alt={data.name}/>
+                    <img src={restaurant.portrait1Url} alt={restaurant.name}/>
                 </div>
                 <div className="d-flex justify-content-center">
                     <div className="information">
-                        <img src={data.logoUrl} alt={data.name} className="logo"/>
+                        <img src={restaurant.logoUrl} alt={restaurant.name} className="logo"/>
                         <div className="flex-grow-1">
-                            <h1>{data.name}</h1>
+                            <h1>{restaurant.name}</h1>
                             <p className="mb-1">
-                                {data.description || <i>{t("restaurant.no_description")}</i>}
+                                {restaurant.description || <i>{t("restaurant.no_description")}</i>}
                             </p>
-                            <p><i className="bi bi-geo-alt"></i> {data.address}</p>
+                            <p><i className="bi bi-geo-alt"></i> {restaurant.address}</p>
                             {
-                                data.reviewCount === 0
+                                restaurant.reviewCount === 0
                                     ?
                                     <small className="text-muted">{t("restaurant.no_reviews")}</small>
                                     :
                                     <>
-                                        <Rating rating={data.averageRating} count={data.reviewCount}/>
+                                        <Rating rating={restaurant.averageRating} count={restaurant.reviewCount}/>
                                         <button className="btn btn-link" type="button">
                                             <small>{t("restaurant.view_reviews")}</small>
                                         </button>
                                     </>
                             }
-                            <TagsContainer tags={data.tags} clickable={true}/>
+                            <TagsContainer tags={restaurant.tags} clickable={true}/>
                         </div>
                         <div className="d-flex flex-column gap-2">
                             <button className="btn btn-secondary" type="button">{t("restaurant.edit_menu")}</button>
                             <button className="btn btn-secondary" type="button">{t("restaurant.see_orders")}</button>
                             <button className="btn btn-danger" type="button">{t("restaurant.delete_restaurant")}</button>
+                        </div>
+                    </div>
+                </div>
+                <div className="content">
+                    <div className="categories sticky">
+                        <div className="card">
+                            <div className="card-header text-muted">{t("restaurant.categories")}</div>
+                            <div className="card-body">
+                                <div className="nav nav-pills small">
+                                    {
+                                        categories.sort((a, b) => a.orderNum < b.orderNum).map(category => (
+                                            <button className="category-item nav-link" key={category.id}>
+                                                {category.name}
+                                            </button>
+                                        ))
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="menu">
+                        {
+                            categories.sort((a, b) => a.orderNum < b.orderNum).map((category, i) => (
+                                <React.Fragment key={category.id}>
+                                    <div className="card mb-4">
+                                        <div className="card-body d-flex justify-content-between align-items-center">
+                                            <h3 className="mb-0">{category.name}</h3>
+                                        </div>
+                                    </div>
+                                    <div className="product-container">
+                                        {
+                                            products[i].data.map(product => (
+                                                <ProductCard
+                                                    key={product.id}
+                                                    productId={product.id}
+                                                    name={product.name}
+                                                    description={product.description}
+                                                    price={product.price}
+                                                    discount="60"
+                                                    imageUrl={product.imageUrl}
+                                                />
+                                            ))
+                                        }
+                                    </div>
+                                </React.Fragment>
+                            ))
+                        }
+                    </div>
+                    <div className="cart sticky">
+                        <div className="card">
+                            <div className="card-header text-muted">{t("restaurant.my_order")}</div>
+                            <ul className="list-group list-group-flush">
+                            </ul>
+                            <div className="card-body d-flex">
+                                <button className="btn btn-primary flex-grow-1" id="place-order-button" type="button">
+                                    {t("restaurant.place_order")}
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

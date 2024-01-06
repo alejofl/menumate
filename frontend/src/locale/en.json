@@ -192,6 +192,12 @@
         "view_reviews": "View Reviews",
         "edit_menu": "Edit Menu",
         "see_orders": "See Orders",
-        "delete_restaurant": "Delete Restaurant"
+        "delete_restaurant": "Delete Restaurant",
+        "categories": "Categories",
+        "my_order": "My Order",
+        "place_order": "Place Order",
+        "product": {
+            "no_description": "This product does not have a description."
+        }
     }
 }

@@ -120,3 +120,7 @@ input:has(+ .form-error), textarea:has(+ .form-error) {
 i.bi {
     color: var(--primary);
 }
+
+.bg-promotion {
+    background-color: rgba(var(--promotion-rgb),1)!important;
+}
