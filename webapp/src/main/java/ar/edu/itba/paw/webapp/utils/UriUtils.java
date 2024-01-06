@@ -91,6 +91,10 @@ public final class UriUtils {
         return getProductUri(uriInfo, product.getCategory().getRestaurantId(), product.getCategoryId(), product.getProductId());
     }
 
+    public static URI getRestaurantPromotionsUri(final UriInfo uriInfo, final long restaurantId) {
+        return uriInfo.getBaseUriBuilder().path(RESTAURANTS_URL).path(String.valueOf(restaurantId)).path("promotions").build();
+    }
+
     public static URI getPromotionUri(final UriInfo uriInfo, final long restaurantId, final long promotionId) {
         return uriInfo.getBaseUriBuilder()
                 .path(RESTAURANTS_URL).path(String.valueOf(restaurantId))
