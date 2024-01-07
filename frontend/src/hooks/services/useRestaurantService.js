@@ -4,6 +4,7 @@ import PagedContent from "../../data/model/PagedContent.js";
 import {JSON_CONTENT_TYPE, RESTAURANT_DETAILS_CONTENT_TYPE} from "../../utils.js";
 import Category from "../../data/model/Category.js";
 import Product from "../../data/model/Product.js";
+import Promotion from "../../data/model/Promotion.js";
 
 export function useRestaurantService(api) {
     const getRestaurants = async (url, query) => {
@@ -40,10 +41,22 @@ export function useRestaurantService(api) {
         return Array.isArray(response.data) ? response.data.map(data => Product.fromJSON(data)) : [];
     };
 
+    const getPromotions = async (url) => {
+        const response = await api.get(url);
+        return Array.isArray(response.data) ? response.data.map(data => Promotion.fromJSON(data)) : [];
+    };
+
+    const getProduct = async (url) => {
+        const response = await api.get(url);
+        return Product.fromJSON(response.data);
+    };
+
     return {
         getRestaurants,
         getRestaurant,
         getCategories,
-        getProducts
+        getProducts,
+        getPromotions,
+        getProduct
     };
 }

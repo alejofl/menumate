@@ -13,10 +13,9 @@ import "./styles/restaurant.styles.css";
 import Rating from "../components/Rating.jsx";
 import TagsContainer from "../components/TagsContainer.jsx";
 import ProductCard from "../components/ProductCard.jsx";
+import {PRICE_DECIMAL_DIGITS} from "../utils.js";
 
 function Restaurant() {
-    const DECIMAL_DIGITS = 2;
-
     const { t } = useTranslation();
     const api = useApi();
     const apiContext = useContext(ApiContext);
@@ -29,7 +28,7 @@ function Restaurant() {
             await restaurantService.getRestaurant(`${apiContext.restaurantsUrl}/${restaurantId}`, true)
         )
     });
-    const { isPending, isError: categoriesIsError, data: categories, error: categoriesError} = useQuery({
+    const { isPending: categoriesIsPending, isError: categoriesIsError, data: categories, error: categoriesError} = useQuery({
         queryKey: ["restaurant", restaurantId, "categories"],
         queryFn: async () => (
             await restaurantService.getCategories(restaurant.categoriesUrl)
@@ -44,6 +43,27 @@ function Restaurant() {
                     queryKey: ["restaurant", restaurantId, "category", category.orderNum, "products"],
                     queryFn: async () => (
                         await restaurantService.getProducts(category.productsUrl)
+                    )
+                };
+            })
+            :
+            []
+    });
+    const { isPending: promotionsIsPending, isError: promotionsIsError, data: promotions, error: promotionsError} = useQuery({
+        queryKey: ["restaurant", restaurantId, "promotions"],
+        queryFn: async () => (
+            await restaurantService.getPromotions(restaurant.promotionsUrl)
+        ),
+        enabled: !!restaurant
+    });
+    const promotionProducts = useQueries({
+        queries: promotions
+            ?
+            promotions.map(promotion => {
+                return {
+                    queryKey: ["restaurant", restaurantId, "promotion", promotion.destinationUrl],
+                    queryFn: async () => (
+                        await restaurantService.getProduct(promotion.destinationUrl)
                     )
                 };
             })
@@ -68,13 +88,19 @@ function Restaurant() {
                 <Error errorNumber={categoriesError.response.status}/>
             </>
         );
-    } else if (products.some(product => product.isError)) {
+    } else if (products.some(product => product.isError) || promotionProducts.some(product => product.isError)) {
         return (
             <>
                 <Error errorNumber="500"/>
             </>
         );
-    } else if (isPending || products.some(product => product.isPending)) {
+    } else if (promotionsIsError) {
+        return (
+            <>
+                <Error errorNumber={promotionsError.response.status}/>
+            </>
+        );
+    } else if (categoriesIsPending || promotionsIsPending || products.some(product => product.isPending) || promotionProducts.some(product => product.isPending)) {
         return (
             <>
                 <Page title={t("titles.loading")} className="restaurant">
@@ -152,6 +178,31 @@ function Restaurant() {
                         </div>
                     </div>
                     <div className="menu px-4">
+                        {promotions.length > 0 &&
+                            <React.Fragment>
+                                <div className="card mb-4 bg-promotion">
+                                    <div className="card-body d-flex justify-content-between align-items-center">
+                                        <h3 className="mb-0 text-white">{t("restaurant.promotions")}</h3>
+                                    </div>
+                                </div>
+                                <div className="product-container">
+                                    {
+                                        promotions.map((promotion, i) => (
+                                            <ProductCard
+                                                key={i}
+                                                productId={promotionProducts[i].data.productId}
+                                                name={promotionProducts[i].data.name}
+                                                description={promotionProducts[i].data.description}
+                                                price={promotionProducts[i].data.price}
+                                                imageUrl={promotionProducts[i].data.imageUrl}
+                                                discount={promotion.discountPercentage}
+                                                addProductToCart={addProductToCart}
+                                            />
+                                        ))
+                                    }
+                                </div>
+                            </React.Fragment>
+                        }
                         {
                             categories.sort((a, b) => a.orderNum < b.orderNum).map((category, i) => (
                                 <React.Fragment key={category.orderNum}>
@@ -190,7 +241,7 @@ function Restaurant() {
                                                 <span className="badge text-bg-secondary">x{product.quantity}</span>
                                                 <span>{product.name}</span>
                                             </div>
-                                            <span className="no-wrap"><strong>${(product.price * product.quantity).toFixed(DECIMAL_DIGITS)}</strong></span>
+                                            <span className="no-wrap"><strong>${(product.price * product.quantity).toFixed(PRICE_DECIMAL_DIGITS)}</strong></span>
                                         </li>
                                     ))
                                 }

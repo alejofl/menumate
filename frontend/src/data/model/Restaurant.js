@@ -14,6 +14,7 @@ export default class Restaurant {
         ownerUrl,
         portrait1Url,
         portrait2Url,
+        promotionsUrl,
         restaurantId,
         reviewsUrl,
         selfUrl,
@@ -37,6 +38,7 @@ export default class Restaurant {
         this.ownerUrl = ownerUrl;
         this.portrait1Url = portrait1Url;
         this.portrait2Url = portrait2Url;
+        this.promotionsUrl = promotionsUrl;
         this.restaurantId = restaurantId;
         this.reviewsUrl = reviewsUrl;
         this.selfUrl = selfUrl;
@@ -63,6 +65,7 @@ export default class Restaurant {
             object.ownerUrl,
             object.portrait1Url,
             object.portrait2Url,
+            object.promotionsUrl,
             object.restaurantId,
             object.reviewsUrl,
             object.selfUrl,

@@ -2,6 +2,7 @@ import "./styles/product_card.styles.css";
 import ImagePlaceholder from "../assets/image-placeholder.png";
 import {useTranslation} from "react-i18next";
 import {useEffect, useState} from "react";
+import {PRICE_DECIMAL_DIGITS} from "../utils.js";
 
 function ProductCard({productId, name, description, price, discount, imageUrl, addProductToCart}) {
     const DECREMENT_QUANTITY = -1;
@@ -90,7 +91,7 @@ function ProductCard({productId, name, description, price, discount, imageUrl, a
                         </div>
                         <div className="modal-footer">
                             <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={() => addProductToCart(productId, name, price, quantity, comments)}>
-                                {t("restaurant.product.add_to_cart")}
+                                {t("restaurant.product.add_to_cart", {price: (price * quantity).toFixed(PRICE_DECIMAL_DIGITS)})}
                             </button>
                         </div>
                     </div>

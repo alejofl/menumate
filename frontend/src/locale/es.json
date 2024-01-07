@@ -198,8 +198,9 @@
         "place_order": "Realizar pedido",
         "product": {
             "no_description": "Este producto no tiene una descripción.",
-            "add_to_cart": "Agregar al carrito",
+            "add_to_cart": "Agregar al carrito (${{price}})",
             "comments": "Comentarios"
-        }
+        },
+        "promotions": "Promociones activas"
     }
 }

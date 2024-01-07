@@ -198,8 +198,9 @@
         "place_order": "Place Order",
         "product": {
             "no_description": "This product does not have a description.",
-            "add_to_cart": "Add to Cart",
+            "add_to_cart": "Add to Cart (${{price}})",
             "comments": "Comments"
-        }
+        },
+        "promotions": "Active Promotions"
     }
 }
