@@ -23,6 +23,10 @@
 
 .product_card .card-body p {
     margin-bottom: 2px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    -webkit-line-clamp: 4;
 }
 
 .product_card .card-body h5 {
