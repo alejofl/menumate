@@ -201,6 +201,10 @@
             "add_to_cart": "Add to Cart (${{price}})",
             "comments": "Comments"
         },
-        "promotions": "Active Promotions"
+        "promotions": "Active Promotions",
+        "reviews": {
+            "title": "Reviews",
+            "reply": "The restaurant replied"
+        }
     }
 }

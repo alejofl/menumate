@@ -201,6 +201,10 @@
             "add_to_cart": "Agregar al carrito (${{price}})",
             "comments": "Comentarios"
         },
-        "promotions": "Promociones activas"
+        "promotions": "Promociones activas",
+        "reviews": {
+            "title": "Reseñas",
+            "reply": "El restaurante respondió"
+        }
     }
 }

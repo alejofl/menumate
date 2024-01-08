@@ -14,6 +14,7 @@ import Rating from "../components/Rating.jsx";
 import TagsContainer from "../components/TagsContainer.jsx";
 import ProductCard from "../components/ProductCard.jsx";
 import {PRICE_DECIMAL_DIGITS} from "../utils.js";
+import ReviewsModal from "../components/ReviewsModal.jsx";
 
 function Restaurant() {
     const { t } = useTranslation();
@@ -75,6 +76,8 @@ function Restaurant() {
     const addProductToCart = (productId, name, price, quantity, comments) => {
         setCart([...cart, {productId: productId, name: name, price: price, quantity: quantity, comments: comments}]);
     };
+
+    const [showReviewModal, setShowReviewModal] = useState(false);
 
     if (restaurantIsError) {
         return (
@@ -138,7 +141,7 @@ function Restaurant() {
                                     :
                                     <>
                                         <Rating rating={restaurant.averageRating} count={restaurant.reviewCount}/>
-                                        <button className="btn btn-link" type="button">
+                                        <button className="btn btn-link" type="button" onClick={() => setShowReviewModal(true)}>
                                             <small>{t("restaurant.view_reviews")}</small>
                                         </button>
                                     </>
@@ -255,6 +258,8 @@ function Restaurant() {
                     </div>
                 </div>
             </Page>
+
+            {showReviewModal && <ReviewsModal reviewsUrl={restaurant.reviewsUrl} onClose={() => setShowReviewModal(false)}/>}
         </>
     );
 }
