@@ -1,20 +1,31 @@
+import {RESET_PASSWORD_CONTENT_TYPE} from "../../utils.js";
+
 export function useUserService(api) {
     const sendResetPasswordToken = async (url, email) => {
-        return await api.post(url, {
-            email: email
-        });
-    };
-
-    const resendVerificationToken = async (url, email) => {
-        return await api.post(url, {
-            email: email
-        });
+        return await api.post(
+            url,
+            {
+                email: email
+            },
+            {
+                headers: {
+                    "Content-Type": RESET_PASSWORD_CONTENT_TYPE
+                }
+            }
+        );
     };
 
     const resetPassword = async (url, newPassword) => {
-        return await api.put(url, {
-            password: newPassword
-        });
+        return await api.patch(
+            url,
+            {
+                password: newPassword
+            },
+            {
+                headers: {
+                    "Content-Type": RESET_PASSWORD_CONTENT_TYPE
+                }
+            });
     };
 
     const login = async (url, email, password) => {
@@ -40,7 +51,6 @@ export function useUserService(api) {
 
     return {
         sendResetPasswordToken,
-        resendVerificationToken,
         resetPassword,
         login,
         register

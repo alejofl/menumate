@@ -141,11 +141,9 @@
         "resend_verification": "Reenviar código de verificación",
         "send_email": "Enviar correo",
         "go_back": "Volver a Iniciar sesión",
-        "verification_email_sent": "Te hemos enviado un correo electrónico con un enlace para verificar tu cuenta.",
         "reset_password_email_sent": "Te hemos enviado un correo electrónico con un enlace para que recuperes tu contraseña.",
         "mailer_error": "Ocurrió un error al enviar el correo electrónico. Por favor, intente de nuevo más tarde.",
         "request_error": "Ocurrió un error al procesar tu solicitud. Por favor, intente de nuevo más tarde.",
-        "reset_password_success": "Tu contraseña ha sido restablecida con éxito. Ahora puedes iniciar sesión con tu nueva contraseña.",
         "reset_password_error": "Ocurrió un error al restablecer tu contraseña. Por favor, intente de nuevo más tarde.",
         "login_error": "Ocurrió un error al iniciar sesión. Por favor, chequea tus credenciales.",
         "register_success": "Hemos enviado un correo electrónico con un enlace para verificar tu cuenta. ¡Revisa tu bandeja de entrada!"
