@@ -10,7 +10,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -47,6 +46,7 @@ public class UserServiceImplTest {
     private static final String EMAIL = "email";
     private static final String TOKEN = "token";
     private static final String ADDRESS = "address";
+    private static final String LANGUAGE = "en";
 
 
     @Before
@@ -64,10 +64,10 @@ public class UserServiceImplTest {
         final Token userVerificationToken = mock(Token.class);
 
         when(userDao.getByEmail(EMAIL)).thenReturn(Optional.empty());
-        when(userDao.create(EMAIL, PASSWORD, USERNAME, LocaleContextHolder.getLocale().getLanguage())).thenReturn(user);
+        when(userDao.create(EMAIL, PASSWORD, USERNAME, LANGUAGE)).thenReturn(user);
         when(tokenService.manageUserToken(eq(user))).thenReturn(userVerificationToken);
 
-        final User result = userServiceImpl.createOrConsolidate(EMAIL, PASSWORD, USERNAME);
+        final User result = userServiceImpl.createOrConsolidate(EMAIL, PASSWORD, USERNAME, LANGUAGE);
 
         assertEquals(EMAIL, result.getEmail());
         assertEquals(PASSWORD, result.getPassword());
@@ -86,7 +86,7 @@ public class UserServiceImplTest {
         when(tokenService.manageUserToken(eq(user))).thenReturn(token);
         when(token.getToken()).thenReturn(TOKEN);
 
-        final User result = userServiceImpl.createOrConsolidate(EMAIL, PASSWORD, USERNAME);
+        final User result = userServiceImpl.createOrConsolidate(EMAIL, PASSWORD, USERNAME, LANGUAGE);
 
         assertEquals(PASSWORD, result.getPassword());
         assertEquals(USERNAME, result.getName());
@@ -99,7 +99,7 @@ public class UserServiceImplTest {
         when(existingUser.getPassword()).thenReturn(PASSWORD);
         when(userDao.getByEmail(EMAIL)).thenReturn(Optional.of(existingUser));
 
-        userServiceImpl.createOrConsolidate(EMAIL, PASSWORD, USERNAME);
+        userServiceImpl.createOrConsolidate(EMAIL, PASSWORD, USERNAME, LANGUAGE);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -107,7 +107,7 @@ public class UserServiceImplTest {
         final User consolidated = spy(User.class);
         when(userDao.getByEmail(EMAIL)).thenReturn(Optional.of(consolidated));
 
-        userServiceImpl.createOrConsolidate(EMAIL, null, USERNAME);
+        userServiceImpl.createOrConsolidate(EMAIL, null, USERNAME, LANGUAGE);
     }
 
     @Test
@@ -116,20 +116,20 @@ public class UserServiceImplTest {
         existingUser.setEmail(EMAIL);
         when(userDao.getByEmail(EMAIL)).thenReturn(Optional.of(existingUser));
 
-        final User result = userServiceImpl.createIfNotExists(EMAIL, USERNAME);
+        final User result = userServiceImpl.createIfNotExists(EMAIL, USERNAME, LANGUAGE);
         assertEquals(existingUser, result);
     }
 
     @Test
     public void testCreateIfNotExistsUserDoesNotExist() {
         final User createdUser = mock(User.class);
-        when(userDao.create(EMAIL, null, USERNAME, LocaleContextHolder.getLocale().getLanguage())).thenReturn(createdUser);
+        when(userDao.create(EMAIL, null, USERNAME, LANGUAGE)).thenReturn(createdUser);
         when(createdUser.getEmail()).thenReturn(EMAIL);
         when(createdUser.getName()).thenReturn(USERNAME);
         when(createdUser.getPassword()).thenReturn(PASSWORD);
         when(userDao.getByEmail(EMAIL)).thenReturn(Optional.empty());
 
-        final User result = userServiceImpl.createIfNotExists(EMAIL, USERNAME);
+        final User result = userServiceImpl.createIfNotExists(EMAIL, USERNAME, LANGUAGE);
 
         assertEquals(EMAIL, result.getEmail());
         assertEquals(USERNAME, result.getName());

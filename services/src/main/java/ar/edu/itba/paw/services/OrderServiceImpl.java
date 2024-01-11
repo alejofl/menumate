@@ -50,8 +50,8 @@ public class OrderServiceImpl implements OrderService {
         orderList.addAll(items);
     }
 
-    private Order createDelivery(long restaurantId, String name, String email, String address, List<OrderItem> items) {
-        final User user = userService.createIfNotExists(email, name);
+    private Order createDelivery(long restaurantId, String name, String email, String address, List<OrderItem> items, String language) {
+        final User user = userService.createIfNotExists(email, name, language);
         final Order order = orderDao.createDelivery(restaurantId, user.getUserId(), address);
         userDao.refreshAddress(user.getUserId(), address);
         assingOrderItemsToOrder(order, items);
@@ -59,16 +59,16 @@ public class OrderServiceImpl implements OrderService {
         return order;
     }
 
-    private Order createDineIn(long restaurantId, String name, String email, int tableNumber, List<OrderItem> items) {
-        final User user = userService.createIfNotExists(email, name);
+    private Order createDineIn(long restaurantId, String name, String email, int tableNumber, List<OrderItem> items, String language) {
+        final User user = userService.createIfNotExists(email, name, language);
         final Order order = orderDao.createDineIn(restaurantId, user.getUserId(), tableNumber);
         assingOrderItemsToOrder(order, items);
         sendOrderReceivedEmails(order);
         return order;
     }
 
-    private Order createTakeAway(long restaurantId, String name, String email, List<OrderItem> items) {
-        final User user = userService.createIfNotExists(email, name);
+    private Order createTakeAway(long restaurantId, String name, String email, List<OrderItem> items, String language) {
+        final User user = userService.createIfNotExists(email, name, language);
         final Order order = orderDao.createTakeaway(restaurantId, user.getUserId());
         assingOrderItemsToOrder(order, items);
         sendOrderReceivedEmails(order);
@@ -82,14 +82,14 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional
     @Override
-    public Order create(OrderType orderType, Long restaurantId, String name, String email, Integer tableNumber, String address, List<OrderItem> items) {
+    public Order create(OrderType orderType, Long restaurantId, String name, String email, Integer tableNumber, String address, List<OrderItem> items, String language) {
         Order order;
         if (orderType == OrderType.DINE_IN) {
-            order = createDineIn(restaurantId, name, email, tableNumber, items);
+            order = createDineIn(restaurantId, name, email, tableNumber, items, language);
         } else if (orderType == OrderType.TAKEAWAY) {
-            order = createTakeAway(restaurantId, name, email, items);
+            order = createTakeAway(restaurantId, name, email, items, language);
         } else if (orderType == OrderType.DELIVERY) {
-            order = createDelivery(restaurantId, name, email, address, items);
+            order = createDelivery(restaurantId, name, email, address, items, language);
         } else {
             throw new InvalidOrderTypeException("Order type not supported");
         }

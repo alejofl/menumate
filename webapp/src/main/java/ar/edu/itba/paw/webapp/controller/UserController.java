@@ -50,7 +50,7 @@ public class UserController {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response registerUser(@Valid @NotNull final RegisterForm registerForm) {
-        final User user = userService.createOrConsolidate(registerForm.getEmail(), registerForm.getPassword(), registerForm.getName());
+        final User user = userService.createOrConsolidate(registerForm.getEmail(), registerForm.getPassword(), registerForm.getName(), registerForm.getLanguage());
         return Response.created(UriUtils.getUserUri(uriInfo, user.getUserId())).build();
     }
 
@@ -141,14 +141,14 @@ public class UserController {
             @Valid @NotNull final PatchUserRoleLevelForm patchUserRoleLevelForm
     ) {
         final User user = userService.getById(userId).orElseThrow(UserNotFoundException::new);
-        userRoleService.setRole(user.getEmail(), patchUserRoleLevelForm.getRoleAsEnum());
+        userRoleService.setRole(user.getEmail(), patchUserRoleLevelForm.getRoleAsEnum(), user.getPreferredLanguage());
         return Response.ok().build();
     }
 
     @POST
     @Consumes(value = {CustomMediaType.USER_ROLE_V1})
     public Response createUserRole(@Valid @NotNull final PostUserRoleLevelForm addUserRoleForm) {
-        userRoleService.setRole(addUserRoleForm.getEmail(), addUserRoleForm.getRoleAsEnum());
+        userRoleService.setRole(addUserRoleForm.getEmail(), addUserRoleForm.getRoleAsEnum(), addUserRoleForm.getLanguage());
         return Response.ok().build();
     }
 

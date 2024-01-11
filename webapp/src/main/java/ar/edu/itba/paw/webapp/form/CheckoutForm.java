@@ -14,6 +14,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.QueryParam;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +48,11 @@ public class CheckoutForm {
     @Size(min = 1, max = 500)
     @Valid
     private List<CartItem> cart;
+
+    @QueryParam("language")
+    @Size(min = 2, max = 2)
+    @DefaultValue("en")
+    private String language;
 
     public String getEmail() {
         return email;
@@ -115,5 +122,13 @@ public class CheckoutForm {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
     }
 }

@@ -61,7 +61,7 @@ public class RestaurantEmployeeController {
             @PathParam("restaurantId") final long restaurantId,
             @Valid @NotNull final AddRestaurantEmployeeForm addRestaurantEmployeeForm
     ) {
-        final Pair<User, Boolean> userPair = restaurantRoleService.setRole(addRestaurantEmployeeForm.getEmail(), restaurantId, addRestaurantEmployeeForm.getRoleAsEnum());
+        final Pair<User, Boolean> userPair = restaurantRoleService.setRole(addRestaurantEmployeeForm.getEmail(), restaurantId, addRestaurantEmployeeForm.getRoleAsEnum(), addRestaurantEmployeeForm.getLanguage());
 
 
         final User user = userPair.getKey();
