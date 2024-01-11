@@ -43,6 +43,7 @@ public class RestaurantRoleServiceImplTest {
     private static final RestaurantRoleLevel ORDER_HANDLER_ROLE = RestaurantRoleLevel.ORDER_HANDLER;
     private static final RestaurantRoleLevel ADMIN_ROLE = RestaurantRoleLevel.ADMIN;
     private static final long OTHER_USER_ID = 789L;
+    private static final String LANGUAGE = "en";
 
     @Test
     public void testGetRoleExistingRole() {
@@ -99,7 +100,7 @@ public class RestaurantRoleServiceImplTest {
         when(userDao.getByEmail(DEFAULT_USER_EMAIL)).thenReturn(Optional.of(existingUser));
         when(restaurantRoleDao.getRole(existingUser.getUserId(), DEFAULT_RESTAURANT_ID)).thenReturn(Optional.of(existingRole));
 
-        restaurantRoleServiceImpl.setRole(DEFAULT_USER_EMAIL, DEFAULT_RESTAURANT_ID, ADMIN_ROLE);
+        restaurantRoleServiceImpl.setRole(DEFAULT_USER_EMAIL, DEFAULT_RESTAURANT_ID, ADMIN_ROLE, LANGUAGE);
 
         assertEquals(ADMIN_ROLE, existingRole.getLevel());
     }
@@ -107,12 +108,12 @@ public class RestaurantRoleServiceImplTest {
     @Test(expected = UserNotFoundException.class)
     public void attemptToCreateUserAndSetNullRole() {
         when(userDao.getByEmail(DEFAULT_USER_EMAIL)).thenReturn(Optional.empty());
-        restaurantRoleServiceImpl.setRole(DEFAULT_USER_EMAIL, DEFAULT_RESTAURANT_ID, null);
+        restaurantRoleServiceImpl.setRole(DEFAULT_USER_EMAIL, DEFAULT_RESTAURANT_ID, null, LANGUAGE);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void attemptToSetOwnerRole() {
-        restaurantRoleServiceImpl.setRole(DEFAULT_USER_EMAIL, DEFAULT_RESTAURANT_ID, RestaurantRoleLevel.OWNER);
+        restaurantRoleServiceImpl.setRole(DEFAULT_USER_EMAIL, DEFAULT_RESTAURANT_ID, RestaurantRoleLevel.OWNER, LANGUAGE);
     }
 
     @Test(expected = IllegalArgumentException.class)

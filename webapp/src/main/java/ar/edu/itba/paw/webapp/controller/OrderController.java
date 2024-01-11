@@ -102,7 +102,8 @@ public class OrderController {
                 checkoutForm.getEmail(),
                 checkoutForm.getTableNumber(),
                 checkoutForm.getAddress(),
-                checkoutForm.getCartAsOrderItems(orderService)
+                checkoutForm.getCartAsOrderItems(orderService),
+                checkoutForm.getLanguage()
         );
 
         return Response.created(UriUtils.getOrderUri(uriInfo, order.getOrderId())).build();
