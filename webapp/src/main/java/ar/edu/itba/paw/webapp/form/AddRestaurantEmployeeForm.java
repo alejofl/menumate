@@ -19,11 +19,6 @@ public class AddRestaurantEmployeeForm {
     @EnumMessageCode(enumClass = RestaurantRoleLevel.class, excludeValues = "owner")
     private String role;
 
-    @QueryParam("language")
-    @Size(min = 2, max = 2)
-    @DefaultValue("en")
-    private String language;
-
     public String getEmail() {
         return email;
     }
@@ -42,13 +37,5 @@ public class AddRestaurantEmployeeForm {
 
     public void setRole(String role) {
         this.role = role;
-    }
-
-    public String getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(String language) {
-        this.language = language;
     }
 }
