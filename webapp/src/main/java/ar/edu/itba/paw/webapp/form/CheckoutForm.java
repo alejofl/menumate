@@ -49,11 +49,6 @@ public class CheckoutForm {
     @Valid
     private List<CartItem> cart;
 
-    @QueryParam("language")
-    @Size(min = 2, max = 2)
-    @DefaultValue("en")
-    private String language;
-
     public String getEmail() {
         return email;
     }
@@ -122,13 +117,5 @@ public class CheckoutForm {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(String language) {
-        this.language = language;
     }
 }

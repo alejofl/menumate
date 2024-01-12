@@ -23,11 +23,6 @@ public class RegisterForm {
     @Size(min = 2, max = 48)
     private String name;
 
-    @QueryParam("language")
-    @Size(min = 2, max = 2)
-    @DefaultValue("en")
-    private String language;
-
     public String getEmail() {
         return email;
     }
@@ -50,13 +45,5 @@ public class RegisterForm {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(String language) {
-        this.language = language;
     }
 }
