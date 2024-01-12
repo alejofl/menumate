@@ -2,51 +2,59 @@ import { useTranslation } from "react-i18next";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import Page from "../components/Page.jsx";
 import "./styles/login.styles.css";
-import {useContext, useEffect, useState} from "react";
+import {useContext, useEffect} from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import {ResetPasswordSchema} from "../data/validation.js";
 import {useApi} from "../hooks/useApi.js";
-import ApiContext from "../contexts/ApiContext.jsx";
 import {useMutation} from "@tanstack/react-query";
 import {useUserService} from "../hooks/services/useUserService.js";
+import AuthContext from "../contexts/AuthContext.jsx";
+import {WAIT_TIME} from "../utils.js";
 
 function ResetPassword() {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const api = useApi();
-    const apiContext = useContext(ApiContext);
+    const authContext = useContext(AuthContext);
     const userService = useUserService(api);
 
     const resetPasswordMutation = useMutation({
         mutationFn: async (password) => {
             await userService.resetPassword(
-                `${apiContext.usersUrl}/resetpassword-tokens/${token}`,
+                authContext.selfUrl,
                 password
             );
         }
     });
 
     const [queryParams] = useSearchParams();
-    const [token, setToken] = useState("");
 
     const handleResetPassword = (values, {setSubmitting}) => {
-        resetPasswordMutation.mutate(
-            values.newPassword,
-            {
-                onSuccess: () => navigate("/auth/login?alertType=success&alertMessage=login.reset_password_success"),
-                onError: () => navigate("/auth/login?alertType=danger&alertMessage=login.reset_password_error")
-            }
-        );
+        const errorUrl = "/auth/login?alertType=danger&alertMessage=login.reset_password_error";
+        authContext.login(queryParams.get("email"), queryParams.get("token"), false)
+            .then(success => {
+                if (!success) {
+                    return navigate(errorUrl);
+                }
+                setTimeout(() => {
+                    resetPasswordMutation.mutate(
+                        values.newPassword,
+                        {
+                            onSuccess: () => navigate("/"),
+                            onError: () => navigate(errorUrl)
+                        }
+                    );
+                }, WAIT_TIME);
+            })
+            .catch(() => navigate(errorUrl));
         setSubmitting(false);
     };
 
     useEffect(() => {
-        if (queryParams.has("token")) {
-            setToken(queryParams.get("token"));
-        } else {
+        if (!queryParams.has("token") || !queryParams.has("email")) {
             return navigate("/auth/login?alertType=danger&alertMessage=login.request_error");
         }
-    }, [navigate, queryParams]);
+    }, []);
 
     return (
         <>
@@ -74,7 +82,17 @@ function ResetPassword() {
                                         <Field type="password" className="form-control" name="repeatPassword" autoComplete="new-password" id="repeatPassword"/>
                                         <ErrorMessage name="repeatPassword" className="form-error" component="div"/>
                                     </div>
-                                    <button className="btn btn-primary" type="submit" disabled={isSubmitting}>{t("reset_password.button")}</button>
+                                    <button className="btn btn-primary" type="submit" disabled={isSubmitting}>
+                                        {
+                                            isSubmitting
+                                                ?
+                                                <>
+                                                    <span className="spinner-border spinner-border-sm mx-4" role="status"></span>
+                                                    <span className="visually-hidden">Loading...</span>
+                                                </>
+                                                :
+                                                t("reset_password.button")}
+                                    </button>
                                 </Form>
                             )}
                         </Formik>

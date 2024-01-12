@@ -15,7 +15,6 @@ import ar.edu.itba.paw.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,14 +53,14 @@ public class RestaurantRoleServiceImpl implements RestaurantRoleService {
         return Optional.empty();
     }
 
-    private User createUserAndSetRole(String email, long restaurantId, RestaurantRoleLevel level) {
+    private User createUserAndSetRole(String email, long restaurantId, RestaurantRoleLevel level, String language) {
         if (level == null) {
             LOGGER.error("Attempted to delete role of non existing user {}", email);
             throw new UserNotFoundException("Cannot delete role of non existing user");
         }
 
         final String name = email.split("@")[0];
-        final User user = userDao.create(email, null, name, LocaleContextHolder.getLocale().getLanguage());
+        final User user = userDao.create(email, null, name, language);
         restaurantRoleDao.create(user.getUserId(), restaurantId, level);
         emailService.sendInvitationToRestaurantStaff(user, restaurantDao.getById(restaurantId).orElseThrow(RestaurantNotFoundException::new));
         return user;
@@ -88,7 +87,7 @@ public class RestaurantRoleServiceImpl implements RestaurantRoleService {
 
     @Transactional
     @Override
-    public Pair<User, Boolean> setRole(String email, long restaurantId, RestaurantRoleLevel level) {
+    public Pair<User, Boolean> setRole(String email, long restaurantId, RestaurantRoleLevel level, String language) {
         if (level == RestaurantRoleLevel.OWNER) {
             LOGGER.error("Attempted to set role of user {} at restaurant {} to owner", email, restaurantId);
             throw new IllegalArgumentException("Cannot set a restaurant role level to owner");
@@ -96,7 +95,7 @@ public class RestaurantRoleServiceImpl implements RestaurantRoleService {
 
         final Optional<User> user = userDao.getByEmail(email);
         if (!user.isPresent()) {
-            final User u = createUserAndSetRole(email, restaurantId, level);
+            final User u = createUserAndSetRole(email, restaurantId, level, language);
             return new Pair<>(u, true);
         }
 

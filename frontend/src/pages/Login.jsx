@@ -20,19 +20,10 @@ function Login() {
     const navigate = useNavigate();
 
     const [forgotPassword, setForgotPassword] = useState(false);
-    const [resendVerification, setResendVerification] = useState(false);
     const forgotPasswordMutation = useMutation({
         mutationFn: async (email) => {
             await userService.sendResetPasswordToken(
-                `${apiContext.usersUrl}/resetpassword-tokens`,
-                email
-            );
-        }
-    });
-    const resendVerificationMutation = useMutation({
-        mutationFn: async (email) => {
-            await userService.resendVerificationToken(
-                `${apiContext.usersUrl}/verification-tokens`,
+                `${apiContext.usersUrl}`,
                 email
             );
         }
@@ -43,21 +34,12 @@ function Login() {
     const [alertMessage, setAlertMessage] = useState("");
 
     const handleSendEmail = (values, {setSubmitting}) => {
-        let mutation;
-        let message;
-        if (forgotPassword) {
-            mutation = forgotPasswordMutation;
-            message = "login.reset_password_email_sent";
-        } else {
-            mutation = resendVerificationMutation;
-            message = "login.verification_email_sent";
-        }
-        mutation.mutate(
+        forgotPasswordMutation.mutate(
             values.email,
             {
                 onSuccess: () => {
                     setAlertType("success");
-                    setAlertMessage(message);
+                    setAlertMessage("login.reset_password_email_sent");
                 },
                 onError: () => {
                     setAlertType("danger");
@@ -67,7 +49,6 @@ function Login() {
         );
         setSubmitting(false);
         setForgotPassword(false);
-        setResendVerification(false);
     };
 
     const handleLogin = async (values, {setSubmitting}) => {
@@ -100,7 +81,7 @@ function Login() {
     return (
         <>
             <Page title={t("titles.login")} className="login">
-                {!forgotPassword && !resendVerification &&
+                {!forgotPassword &&
                     <div className="card">
                         <div className="card-body">
                             {alertType !== "" && alertMessage !== "" &&
@@ -139,18 +120,16 @@ function Login() {
                                 )}
                             </Formik>
                             <p className="mt-3">{t("login.no_account")} <Link to="/auth/register">{t("login.signup_here")}</Link></p>
-                            <span className="mt-3 more-actions">
+                            <span className="mt-3 d-flex align-items-center justify-content-center more-actions">
                                 <button type="button" className="btn btn-link" onClick={() => setForgotPassword(true)}>{t("login.forgot_password")}</button>
-                                <span>|</span>
-                                <button type="button" className="btn btn-link" onClick={() => setResendVerification(true)}>{t("login.resend_verification")}</button>
                             </span>
                         </div>
                     </div>
                 }
-                {(forgotPassword || resendVerification) &&
+                {forgotPassword &&
                     <div className="card">
                         <div className="card-body">
-                            <h2 className="card-title mb-3">{forgotPassword ? t("login.forgot_password") : t("login.resend_verification")}</h2>
+                            <h2 className="card-title mb-3">{t("login.forgot_password")}</h2>
                             <Formik
                                 initialValues={{
                                     email: ""
@@ -171,7 +150,6 @@ function Login() {
                             </Formik>
                             <button className="btn btn-secondary" onClick={() => {
                                 setForgotPassword(false);
-                                setResendVerification(false);
                             }}>{t("login.go_back")}</button>
                         </div>
                     </div>

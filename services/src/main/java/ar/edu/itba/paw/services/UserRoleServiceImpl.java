@@ -11,7 +11,6 @@ import ar.edu.itba.paw.service.UserRoleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,16 +47,16 @@ public class UserRoleServiceImpl implements UserRoleService {
         return userRole.map(UserRole::getLevel);
     }
 
-    private void createUserAndSetRole(String email, UserRoleLevel level) {
+    private void createUserAndSetRole(String email, UserRoleLevel level, String language) {
         String name = email.split("@")[0];
-        User user = userDao.create(email, null, name, LocaleContextHolder.getLocale().getLanguage());
+        User user = userDao.create(email, null, name, language);
         userRoleDao.create(user.getUserId(), level);
         emailService.sendInvitationToUser(user, level.getMessageCode().replaceAll("^ROLE_", "").toLowerCase());
     }
 
     @Transactional
     @Override
-    public boolean setRole(String email, UserRoleLevel roleLevel) {
+    public boolean setRole(String email, UserRoleLevel roleLevel, String language) {
         if (roleLevel == null) {
             LOGGER.error("Attempted to set not-existing user role");
             throw new UserRoleNotFoundException("Cannot set invalid user role");
@@ -66,7 +65,7 @@ public class UserRoleServiceImpl implements UserRoleService {
         Optional<User> user = userDao.getByEmail(email);
         if (!user.isPresent()) {
             LOGGER.info("User {} does not exist. Creating user and setting role {}", email, roleLevel);
-            createUserAndSetRole(email, roleLevel);
+            createUserAndSetRole(email, roleLevel, language);
             return true;
         }
         Optional<UserRole> currentRole = userRoleDao.getRole(user.get().getUserId());

@@ -94,7 +94,10 @@ public class OrderController {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createOrder(@Valid @NotNull final CheckoutForm checkoutForm) {
+    public Response createOrder(
+            @Valid @NotNull final CheckoutForm checkoutForm,
+            @HeaderParam("Accept-Language") final String language
+    ) {
         final Order order = orderService.create(
                 checkoutForm.getOrderTypeAsEnum(),
                 checkoutForm.getRestaurantId(),
@@ -102,7 +105,8 @@ public class OrderController {
                 checkoutForm.getEmail(),
                 checkoutForm.getTableNumber(),
                 checkoutForm.getAddress(),
-                checkoutForm.getCartAsOrderItems(orderService)
+                checkoutForm.getCartAsOrderItems(orderService),
+                language
         );
 
         return Response.created(UriUtils.getOrderUri(uriInfo, order.getOrderId())).build();

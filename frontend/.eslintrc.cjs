@@ -14,6 +14,7 @@ module.exports = {
   rules: {
     "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
     "react/prop-types": "off",
+    "react-hooks/exhaustive-deps": "off",
     "array-bracket-newline": ["error", { "multiline": true }],
     "arrow-spacing": "error",
     "block-scoped-var": "error",

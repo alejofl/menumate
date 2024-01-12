@@ -59,9 +59,10 @@ public class RestaurantEmployeeController {
     @POST
     public Response addRestaurantEmployee(
             @PathParam("restaurantId") final long restaurantId,
-            @Valid @NotNull final AddRestaurantEmployeeForm addRestaurantEmployeeForm
+            @Valid @NotNull final AddRestaurantEmployeeForm addRestaurantEmployeeForm,
+            @HeaderParam("Accept-Language") final String language
     ) {
-        final Pair<User, Boolean> userPair = restaurantRoleService.setRole(addRestaurantEmployeeForm.getEmail(), restaurantId, addRestaurantEmployeeForm.getRoleAsEnum());
+        final Pair<User, Boolean> userPair = restaurantRoleService.setRole(addRestaurantEmployeeForm.getEmail(), restaurantId, addRestaurantEmployeeForm.getRoleAsEnum(), language);
 
 
         final User user = userPair.getKey();
