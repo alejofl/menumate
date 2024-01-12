@@ -10,10 +10,10 @@ import ApiContext from "../contexts/ApiContext.jsx";
 import {useMutation} from "@tanstack/react-query";
 import {useUserService} from "../hooks/services/useUserService.js";
 import AuthContext from "../contexts/AuthContext.jsx";
-import {BAD_REQUEST_STATUS_CODE, EMAIL_ALREADY_IN_USE_ERROR} from "../utils.js";
+import {BAD_REQUEST_STATUS_CODE, EMAIL_ALREADY_IN_USE_ERROR, GET_LANGUAGE_CODE} from "../utils.js";
 
 function Register() {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const api = useApi();
     const apiContext = useContext(ApiContext);
     const authContext = useContext(AuthContext);
@@ -28,7 +28,8 @@ function Register() {
                 apiContext.usersUrl,
                 name,
                 email,
-                password
+                password,
+                GET_LANGUAGE_CODE(i18n.language)
             );
         }
     });
@@ -44,8 +45,6 @@ function Register() {
                 onSuccess: () => navigate("/auth/login?alertType=success&alertMessage=login.register_success"),
                 onError: (error) => {
                     if (error.response.status === BAD_REQUEST_STATUS_CODE) {
-                        console.log("ACA ESTA ENTRANDO");
-                        console.log(error.response.data);
                         setEmailAlreadyInUse(error.response.data.some((error) => (
                             error.message === EMAIL_ALREADY_IN_USE_ERROR.message && error.path === EMAIL_ALREADY_IN_USE_ERROR.path
                         )));
