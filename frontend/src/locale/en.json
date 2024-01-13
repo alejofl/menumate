@@ -146,8 +146,9 @@
         "mailer_error": "There was an error while sending the email. Please try again later.",
         "request_error": "There was an error processing your request. Please try again later.",
         "reset_password_error": "There was an error while resetting your password. Please try again later.",
-        "login_error": "There was an error while logging in. Please check your credentials.",
-        "register_success": "We have sent you an email with a link to verify your account. Check your inbox!"
+        "login_error": "There was an error while logging in. Please check your credentials. If you haven't activated your account, check your inbox.",
+        "register_success": "We have sent you an email with a link to verify your account. Check your inbox!",
+        "verify_error": "There was a problem activating your account. Check your inbox for a new verification URL and try again later."
     },
     "validation": {
         "email": {

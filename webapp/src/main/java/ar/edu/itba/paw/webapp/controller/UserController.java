@@ -51,7 +51,7 @@ public class UserController {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response registerUser(
             @Valid @NotNull final RegisterForm registerForm,
-            @HeaderParam("Accept-Language") final String language
+            @HeaderParam(HttpHeaders.ACCEPT_LANGUAGE) final String language
     ) {
         final User user = userService.createOrConsolidate(registerForm.getEmail(), registerForm.getPassword(), registerForm.getName(), language);
         return Response.created(UriUtils.getUserUri(uriInfo, user.getUserId())).build();
@@ -152,7 +152,7 @@ public class UserController {
     @Consumes(value = {CustomMediaType.USER_ROLE_V1})
     public Response createUserRole(
             @Valid @NotNull final PostUserRoleLevelForm addUserRoleForm,
-            @HeaderParam("Accept-Language") final String language
+            @HeaderParam(HttpHeaders.ACCEPT_LANGUAGE) final String language
     ) {
         userRoleService.setRole(addUserRoleForm.getEmail(), addUserRoleForm.getRoleAsEnum(), language);
         return Response.ok().build();

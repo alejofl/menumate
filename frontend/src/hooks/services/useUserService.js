@@ -41,12 +41,20 @@ export function useUserService(api) {
         }
     };
 
-    const register = async (url, name, email, password) => {
-        return await api.post(url, {
-            name: name,
-            email: email,
-            password: password
-        });
+    const register = async (url, name, email, password, language) => {
+        return await api.post(
+            url,
+            {
+                name: name,
+                email: email,
+                password: password
+            },
+            {
+                headers: {
+                    "Accept-Language": language
+                }
+            }
+        );
     };
 
     return {

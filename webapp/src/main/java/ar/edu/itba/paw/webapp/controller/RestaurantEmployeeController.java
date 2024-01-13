@@ -16,10 +16,7 @@ import org.springframework.stereotype.Component;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.GenericEntity;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.*;
 import java.util.List;
 
 @Path(UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/employees")
@@ -60,7 +57,7 @@ public class RestaurantEmployeeController {
     public Response addRestaurantEmployee(
             @PathParam("restaurantId") final long restaurantId,
             @Valid @NotNull final AddRestaurantEmployeeForm addRestaurantEmployeeForm,
-            @HeaderParam("Accept-Language") final String language
+            @HeaderParam(HttpHeaders.ACCEPT_LANGUAGE) final String language
     ) {
         final Pair<User, Boolean> userPair = restaurantRoleService.setRole(addRestaurantEmployeeForm.getEmail(), restaurantId, addRestaurantEmployeeForm.getRoleAsEnum(), language);
 

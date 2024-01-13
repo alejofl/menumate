@@ -1,3 +1,5 @@
+/* eslint-disable no-magic-numbers */
+
 export const BAD_REQUEST_STATUS_CODE = 400;
 export const UNAUTHORIZED_STATUS_CODE = 401;
 
@@ -10,3 +12,5 @@ export const RESTAURANT_DETAILS_CONTENT_TYPE = "application/vnd.menumate.restaur
 export const PRICE_DECIMAL_DIGITS = 2;
 
 export const WAIT_TIME = 500;
+
+export const GET_LANGUAGE_CODE = (language) => language.substring(0, 3);
