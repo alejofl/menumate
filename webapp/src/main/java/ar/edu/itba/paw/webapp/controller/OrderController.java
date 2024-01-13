@@ -96,7 +96,7 @@ public class OrderController {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createOrder(
             @Valid @NotNull final CheckoutForm checkoutForm,
-            @HeaderParam("Accept-Language") final String language
+            @HeaderParam(HttpHeaders.ACCEPT_LANGUAGE) final String language
     ) {
         final Order order = orderService.create(
                 checkoutForm.getOrderTypeAsEnum(),

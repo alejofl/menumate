@@ -19,6 +19,9 @@ import org.thymeleaf.context.Context;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -187,7 +190,11 @@ public class EmailServiceImpl implements EmailService {
     public void sendUserVerificationEmail(User user, String token) {
         Locale locale = new Locale(user.getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
-        params.put("link", String.format("/auth/verify?email=%s&token=%s", user.getEmail(), token));
+        try {
+            params.put("link", String.format("/auth/verify?email=%s&token=%s", URLEncoder.encode(user.getEmail(), StandardCharsets.UTF_8.name()), URLEncoder.encode(token, StandardCharsets.UTF_8.name())));
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalStateException(e);
+        }
         params.put("username", user.getName());
         this.sendMessageUsingThymeleafTemplate(
                 "user_verification",
@@ -203,7 +210,11 @@ public class EmailServiceImpl implements EmailService {
     public void sendResetPasswordEmail(User user, String token) {
         Locale locale = new Locale(user.getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
-        params.put("link", String.format("/auth/reset-password?email=%s&token=%s", user.getEmail(), token));
+        try {
+            params.put("link", String.format("/auth/reset-password?email=%s&token=%s", URLEncoder.encode(user.getEmail(), StandardCharsets.UTF_8.name()), URLEncoder.encode(token, StandardCharsets.UTF_8.name())));
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalStateException(e);
+        }
         params.put("username", user.getName());
         this.sendMessageUsingThymeleafTemplate(
                 "user_reset_password",
@@ -219,7 +230,11 @@ public class EmailServiceImpl implements EmailService {
     public void sendInvitationToRestaurantStaff(User user, Restaurant restaurant) {
         Locale locale = new Locale(user.getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
-        params.put("link", "/auth/register?email=" + user.getEmail());
+        try {
+            params.put("link", "/auth/register?email=" + URLEncoder.encode(user.getEmail(), StandardCharsets.UTF_8.name()));
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalStateException(e);
+        }
         params.put("restaurant", restaurant.getName());
         this.sendMessageUsingThymeleafTemplate(
                 "user_restaurant_invitation",
@@ -235,7 +250,11 @@ public class EmailServiceImpl implements EmailService {
     public void sendInvitationToUser(User user, String role) {
         Locale locale = new Locale(user.getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
-        params.put("link", "/auth/register?email=" + user.getEmail());
+        try {
+            params.put("link", "/auth/register?email=" + URLEncoder.encode(user.getEmail(), StandardCharsets.UTF_8.name()));
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalStateException(e);
+        }
         final String roleLocale = messageSource.getMessage("email.userrole." + role, new Object[]{}, locale);
         this.sendMessageUsingThymeleafTemplate(
                 "user_invitation",
