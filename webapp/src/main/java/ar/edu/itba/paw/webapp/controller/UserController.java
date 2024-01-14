@@ -13,6 +13,7 @@ import ar.edu.itba.paw.webapp.dto.UserDto;
 import ar.edu.itba.paw.webapp.form.*;
 import ar.edu.itba.paw.webapp.utils.UriUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
 import javax.validation.Valid;
@@ -130,6 +131,7 @@ public class UserController {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    @PreAuthorize("#getUserRoleLevelForm.role != null and hasRole('MODERATOR')")
     public Response getUsersWithRoleLevel(@Valid @BeanParam final GetUserRoleLevelForm getUserRoleLevelForm) {
         final List<User> users = userRoleService.getByRole(getUserRoleLevelForm.getRoleAsEnum());
         final List<UserDto> userDtos = UserDto.fromUserCollection(uriInfo, users);
