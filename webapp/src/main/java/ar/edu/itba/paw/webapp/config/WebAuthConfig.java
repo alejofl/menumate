@@ -1,8 +1,8 @@
 package ar.edu.itba.paw.webapp.config;
 
 import ar.edu.itba.paw.webapp.auth.AccessValidator;
-import ar.edu.itba.paw.webapp.auth.AuthAnywhereFilter;
-import ar.edu.itba.paw.webapp.auth.JwtTokenFilter;
+import ar.edu.itba.paw.webapp.auth.filters.AuthAnywhereFilter;
+import ar.edu.itba.paw.webapp.auth.filters.JwtTokenFilter;
 import ar.edu.itba.paw.webapp.auth.JwtTokenUtil;
 import ar.edu.itba.paw.webapp.utils.UriUtils;
 import org.springframework.beans.factory.annotation.Autowired;
