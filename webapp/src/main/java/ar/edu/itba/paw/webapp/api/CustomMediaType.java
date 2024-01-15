@@ -28,6 +28,12 @@ public class CustomMediaType {
      * Restaurant employee controller
      */
     public static final String APPLICATION_RESTAURANT_EMPLOYEE = "application/vnd.menumate.restaurant.employee.v1+json";
+
+    /**
+     * Review controller
+     */
+    public static final String APPLICATION_REVIEW = "application/vnd.menumate.reviews.v1+json";
+    public static final String APPLICATION_REPLY_REVIEW = "application/vnd.menumate.reply.review.v1+json";
     public static final String USER_ROLE_V1 = "application/vnd.menumate.userRole.v1+json";
     public static final String APPLICATION_USER_RESETS_PASSWORD = "application/vnd.menumate.userResetsPassword.v1+json";;
 
