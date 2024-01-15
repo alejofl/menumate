@@ -1,4 +1,4 @@
-import {RESET_PASSWORD_CONTENT_TYPE} from "../../utils.js";
+import {USER_CONTENT_TYPE, USER_PASSWORD_CONTENT_TYPE} from "../../utils.js";
 
 export function useUserService(api) {
     const sendResetPasswordToken = async (url, email) => {
@@ -9,7 +9,7 @@ export function useUserService(api) {
             },
             {
                 headers: {
-                    "Content-Type": RESET_PASSWORD_CONTENT_TYPE
+                    "Content-Type": USER_PASSWORD_CONTENT_TYPE
                 }
             }
         );
@@ -23,7 +23,7 @@ export function useUserService(api) {
             },
             {
                 headers: {
-                    "Content-Type": RESET_PASSWORD_CONTENT_TYPE
+                    "Content-Type": USER_PASSWORD_CONTENT_TYPE
                 }
             });
     };
@@ -31,6 +31,7 @@ export function useUserService(api) {
     const login = async (url, email, password) => {
         const response = await api.get(url, {
             headers: {
+                "Accept": USER_CONTENT_TYPE,
                 "Authorization": `Basic ${btoa(`${email}:${password}`)}`
             }
         });
@@ -51,6 +52,7 @@ export function useUserService(api) {
             },
             {
                 headers: {
+                    "Accept": USER_CONTENT_TYPE,
                     "Accept-Language": language
                 }
             }
