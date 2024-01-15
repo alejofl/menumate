@@ -34,8 +34,14 @@ public class CustomMediaType {
      */
     public static final String APPLICATION_REVIEW = "application/vnd.menumate.reviews.v1+json";
     public static final String APPLICATION_REPLY_REVIEW = "application/vnd.menumate.reply.review.v1+json";
-    public static final String USER_ROLE_V1 = "application/vnd.menumate.userRole.v1+json";
-    public static final String APPLICATION_USER_RESETS_PASSWORD = "application/vnd.menumate.userResetsPassword.v1+json";;
+
+    /**
+     * User controller
+     */
+    public static final String APPLICATION_USER = "application/vnd.menumate.user.v1+json";
+    public static final String APPLICATION_USER_ADDRESS = "application/vnd.menumate.user.address.v1+json";
+    public static final String APPLICATION_USER_ROLE = "application/vnd.menumate.userRole.v1+json";
+    public static final String APPLICATION_USER_PASSWORD = "application/vnd.menumate.userPassword.v1+json";;
 
     private CustomMediaType() {
         throw new AssertionError();
