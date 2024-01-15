@@ -50,7 +50,7 @@ public class RestaurantController {
 
     @GET
     @PreAuthorize("#filterForm.forEmployeeId == null or hasRole('MODERATOR') or @accessValidator.checkIsUser(#filterForm.forEmployeeId)")
-    @Produces(CustomMediaType.APPLICATION_RESTAURANT)
+    @Produces(CustomMediaType.APPLICATION_RESTAURANT_DETAILS)
     public Response getRestaurants(@Valid @BeanParam final FilterForm filterForm) {
         if (filterForm.getForEmployeeId() != null) {
             final PaginatedResult<RestaurantRoleDetails> pagedResult = restaurantRoleService.getByUser(
