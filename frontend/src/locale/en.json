@@ -204,6 +204,18 @@
         "reviews": {
             "title": "Reviews",
             "reply": "The restaurant replied"
+        },
+        "toasts": {
+            "dine_in": {
+                "text": "You are ordering dine-in.",
+                "click": "to change to delivery or take-away."
+            },
+            "delivery": {
+                "text": "You are ordering delivery or take-away.",
+                "click": "to change to dine-in."
+            },
+            "click": "Click",
+            "here": "here"
         }
     }
 }

@@ -10,7 +10,7 @@ function Navbar() {
     const authContext = useContext(AuthContext);
 
     return (
-        <div className="navbar_component">
+        <div className="navbar_component sticky-top">
             <nav className="navbar navbar-expand-md bg-body-tertiary sticky-top" data-bs-theme="dark">
                 <Link className="navbar-brand" to="/">
                     <img src={Logo} alt="MenuMate" height="24"/>

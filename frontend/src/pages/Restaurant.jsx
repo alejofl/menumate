@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {useParams} from "react-router-dom";
+import {useParams, useSearchParams} from "react-router-dom";
 import Page from "../components/Page.jsx";
 import {useQueries, useQuery} from "@tanstack/react-query";
 import {useTranslation} from "react-i18next";
@@ -15,6 +15,7 @@ import TagsContainer from "../components/TagsContainer.jsx";
 import ProductCard from "../components/ProductCard.jsx";
 import {PRICE_DECIMAL_DIGITS} from "../utils.js";
 import ReviewsModal from "../components/ReviewsModal.jsx";
+import RestaurantLocationToast from "../components/RestaurantLocationToast.jsx";
 
 function Restaurant() {
     const { t } = useTranslation();
@@ -78,6 +79,8 @@ function Restaurant() {
     };
 
     const [showReviewModal, setShowReviewModal] = useState(false);
+
+    const [queryParams] = useSearchParams();
 
     if (restaurantIsError) {
         return (
@@ -257,8 +260,9 @@ function Restaurant() {
                         </div>
                     </div>
                 </div>
-            </Page>
 
+                <RestaurantLocationToast restaurantId={restaurantId} dineIn={queryParams.has("qr")}/>
+            </Page>
             {showReviewModal && <ReviewsModal reviewsUrl={restaurant.reviewsUrl} onClose={() => setShowReviewModal(false)}/>}
         </>
     );
