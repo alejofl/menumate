@@ -2,7 +2,6 @@ package ar.edu.itba.paw.webapp.form;
 
 import ar.edu.itba.paw.webapp.form.validation.BothFieldsNull;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 
 @BothFieldsNull(allowBothNull = false, allowBothNotNull = true, field1Name = "name", field2Name = "orderNum", message = "Must specify a name or an orderNum")
