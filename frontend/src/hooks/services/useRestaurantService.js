@@ -8,9 +8,15 @@ import Promotion from "../../data/model/Promotion.js";
 
 export function useRestaurantService(api) {
     const getRestaurants = async (url, query) => {
-        const response = await api.get(url, {
-            params: query
-        });
+        const response = await api.get(
+            url,
+            {
+                params: query,
+                headers: {
+                    "Accept": RESTAURANT_DETAILS_CONTENT_TYPE
+                }
+            }
+        );
         const links = parseLinkHeader(response.headers?.link, {});
         const restaurants = Array.isArray(response.data) ? response.data.map(data => Restaurant.fromJSON(data)) : [];
         return new PagedContent(

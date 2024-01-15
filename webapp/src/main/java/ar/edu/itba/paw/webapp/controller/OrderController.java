@@ -5,6 +5,7 @@ import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.model.OrderItem;
 import ar.edu.itba.paw.service.OrderService;
 import ar.edu.itba.paw.util.PaginatedResult;
+import ar.edu.itba.paw.webapp.api.CustomMediaType;
 import ar.edu.itba.paw.webapp.auth.AccessValidator;
 import ar.edu.itba.paw.webapp.dto.OrderDto;
 import ar.edu.itba.paw.webapp.dto.OrderItemDto;
@@ -40,7 +41,7 @@ public class OrderController {
     }
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(CustomMediaType.APPLICATION_ORDERS)
     @PreAuthorize("@accessValidator.checkCanListOrders(#getOrdersForm.userId, #getOrdersForm.restaurantId)")
     public Response getOrders(@Valid @BeanParam final GetOrdersForm getOrdersForm) {
         PaginatedResult<Order> orderPage = orderService.get(
@@ -60,7 +61,7 @@ public class OrderController {
 
     @GET
     @Path("/{orderId:\\d+}")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(CustomMediaType.APPLICATION_ORDERS)
     public Response getOrderById(@PathParam("orderId") final long orderId, @Context javax.ws.rs.core.Request request) {
         final Order order = orderService.getById(orderId).orElseThrow(OrderNotFoundException::new);
         final OrderDto dto = OrderDto.fromOrder(uriInfo, order);
@@ -74,7 +75,7 @@ public class OrderController {
 
     @PATCH
     @Path("/{orderId:\\d+}")
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes(CustomMediaType.APPLICATION_ORDERS)
     public Response updateOrderStatus(
             @PathParam("orderId") final long orderId,
             @Valid @NotNull final UpdateOrderStatusForm updateOrderStatusForm
@@ -85,7 +86,7 @@ public class OrderController {
 
     @GET
     @Path("/{orderId:\\d+}/items")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(CustomMediaType.APPLICATION_ORDER_ITEMS)
     public Response getOrderItemsById(@PathParam("orderId") final long orderId) {
         final List<OrderItem> items = orderService.getOrderItemsById(orderId).orElseThrow(OrderNotFoundException::new);
         final List<OrderItemDto> dtoList = OrderItemDto.fromOrderItemCollection(uriInfo, items);
@@ -93,7 +94,7 @@ public class OrderController {
     }
 
     @POST
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes(CustomMediaType.APPLICATION_ORDERS)
     public Response createOrder(
             @Valid @NotNull final CheckoutForm checkoutForm,
             @HeaderParam(HttpHeaders.ACCEPT_LANGUAGE) final String language

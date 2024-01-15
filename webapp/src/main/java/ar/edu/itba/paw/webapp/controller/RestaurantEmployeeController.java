@@ -5,6 +5,7 @@ import ar.edu.itba.paw.model.RestaurantRoleLevel;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.service.RestaurantRoleService;
 import ar.edu.itba.paw.util.Pair;
+import ar.edu.itba.paw.webapp.api.CustomMediaType;
 import ar.edu.itba.paw.webapp.auth.AccessValidator;
 import ar.edu.itba.paw.webapp.dto.RestaurantRoleDto;
 import ar.edu.itba.paw.webapp.form.AddRestaurantEmployeeForm;
@@ -36,6 +37,7 @@ public class RestaurantEmployeeController {
     }
 
     @GET
+    @Produces(CustomMediaType.APPLICATION_RESTAURANT_EMPLOYEE)
     public Response getRestaurantEmployees(@PathParam("restaurantId") final long restaurantId) {
         final List<Pair<User, RestaurantRoleLevel>> roles = restaurantRoleService.getByRestaurant(restaurantId);
         final List<RestaurantRoleDto> dtoList = RestaurantRoleDto.fromCollection(uriInfo, restaurantId, roles);
@@ -44,6 +46,7 @@ public class RestaurantEmployeeController {
 
     @GET
     @Path("/{userId:\\d+}")
+    @Produces(CustomMediaType.APPLICATION_RESTAURANT_EMPLOYEE)
     public Response getRestaurantEmployeeByUserId(
             @PathParam("restaurantId") final long restaurantId,
             @PathParam("userId") final long userId
@@ -54,6 +57,7 @@ public class RestaurantEmployeeController {
     }
 
     @POST
+    @Consumes(CustomMediaType.APPLICATION_RESTAURANT_EMPLOYEE)
     public Response addRestaurantEmployee(
             @PathParam("restaurantId") final long restaurantId,
             @Valid @NotNull final AddRestaurantEmployeeForm addRestaurantEmployeeForm,
@@ -73,6 +77,7 @@ public class RestaurantEmployeeController {
 
     @PUT
     @Path("/{userId:\\d+}")
+    @Consumes(CustomMediaType.APPLICATION_RESTAURANT_EMPLOYEE)
     public Response updateRestaurantEmployeeByUserId(
             @PathParam("restaurantId") final long restaurantId,
             @PathParam("userId") final long userId,

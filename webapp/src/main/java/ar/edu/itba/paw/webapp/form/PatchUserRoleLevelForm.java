@@ -4,10 +4,6 @@ import ar.edu.itba.paw.model.UserRoleLevel;
 import ar.edu.itba.paw.webapp.form.validation.EnumMessageCode;
 import org.hibernate.validator.constraints.NotBlank;
 
-import javax.validation.constraints.Size;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.QueryParam;
-
 public class PatchUserRoleLevelForm {
 
     @NotBlank

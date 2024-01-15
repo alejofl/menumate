@@ -4,6 +4,7 @@ import ar.edu.itba.paw.exception.ReviewNotFoundException;
 import ar.edu.itba.paw.model.Review;
 import ar.edu.itba.paw.service.ReviewService;
 import ar.edu.itba.paw.util.PaginatedResult;
+import ar.edu.itba.paw.webapp.api.CustomMediaType;
 import ar.edu.itba.paw.webapp.auth.AccessValidator;
 import ar.edu.itba.paw.webapp.dto.ReviewDto;
 import ar.edu.itba.paw.webapp.form.GetReviewsForm;
@@ -39,6 +40,7 @@ public class ReviewController {
     }
 
     @GET
+    @Consumes(CustomMediaType.APPLICATION_REVIEW)
     public Response getReviews(@Valid @BeanParam final GetReviewsForm getReviewsForm) {
         PaginatedResult<Review> page = reviewService.get(
                 getReviewsForm.getUserId(),
@@ -54,7 +56,7 @@ public class ReviewController {
 
     @GET
     @Path("/{orderId:\\d+}")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(CustomMediaType.APPLICATION_REVIEW)
     public Response getReviewById(@PathParam("orderId") final long orderId) {
         final Review review = reviewService.getByOrder(orderId).orElseThrow(ReviewNotFoundException::new);
         return Response.ok(ReviewDto.fromReview(uriInfo, review)).build();
@@ -62,7 +64,7 @@ public class ReviewController {
 
     @POST
     @PreAuthorize("@accessValidator.checkOrderOwner(#reviewForm.orderId)")
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes(CustomMediaType.APPLICATION_REVIEW)
     public Response postReview(@Valid @NotNull final PostReviewForm reviewForm) {
         final Review review = reviewService.create(reviewForm.getOrderId(), reviewForm.getRating(), reviewForm.getCommentTrimmedOrNull());
         return Response.created(UriUtils.getReviewUri(uriInfo, review.getOrderId())).build();
@@ -70,7 +72,7 @@ public class ReviewController {
 
     @PUT
     @Path("/{orderId:\\d+}")
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes(CustomMediaType.APPLICATION_REVIEW)
     public Response putReview(
             @PathParam("orderId") final long orderId,
             @Valid @NotNull final PutReviewForm reviewForm
@@ -81,7 +83,7 @@ public class ReviewController {
 
     @PATCH
     @Path("/{orderId:\\d+}")
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes(CustomMediaType.APPLICATION_REPLY_REVIEW)
     public Response replyToReviewById(
             @PathParam("orderId") final long orderId,
             @Valid @NotNull final ReviewReplyForm reviewReplyForm

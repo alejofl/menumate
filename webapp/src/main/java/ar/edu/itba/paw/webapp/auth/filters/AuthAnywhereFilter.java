@@ -1,9 +1,10 @@
-package ar.edu.itba.paw.webapp.auth;
+package ar.edu.itba.paw.webapp.auth.filters;
 
 import ar.edu.itba.paw.model.Token;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.service.TokenService;
 import ar.edu.itba.paw.service.UserService;
+import ar.edu.itba.paw.webapp.auth.JwtTokenUtil;
 import ar.edu.itba.paw.webapp.exception.UserNotVerifiedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;

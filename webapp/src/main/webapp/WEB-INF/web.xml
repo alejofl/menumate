@@ -90,24 +90,20 @@ http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
         <filter-name>jersey</filter-name>
         <url-pattern>/api/*</url-pattern>
     </filter-mapping>
+
     <!-- https://stackoverflow.com/questions/5750484/tomcat-is-setting-no-cache-for-js-and-css-file -->
-    <!-- TODO: Filter declared, define mapping -->
     <!-- Unconditional Cache Filter -->
     <filter>
         <filter-name>UnconditionalCacheFilter</filter-name>
-        <filter-class>ar.edu.itba.paw.webapp.api.UnconditionalCacheFilter</filter-class>
+        <filter-class>ar.edu.itba.paw.webapp.auth.filters.UnconditionalCacheFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>UnconditionalCacheFilter</filter-name>
-        <url-pattern>/pictures/*</url-pattern>
+        <url-pattern>/static/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>UnconditionalCacheFilter</filter-name>
-        <url-pattern>/js/*</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>UnconditionalCacheFilter</filter-name>
-        <url-pattern>/css/*</url-pattern>
+        <url-pattern>/assets/*</url-pattern>
     </filter-mapping>
 
     <!-- Redirect all requests to index.html so that React Router handles routes -->
