@@ -22,7 +22,10 @@ export default class Restaurant {
         tags,
         averageProductPrice,
         averageRating,
-        reviewCount
+        reviewCount,
+        dineInCompletionTime,
+        takeAwayCompletionTime,
+        deliveryCompletionTime
     ) {
         this.active = active;
         this.address = address;
@@ -47,6 +50,9 @@ export default class Restaurant {
         this.averageProductPrice = averageProductPrice;
         this.averageRating = averageRating;
         this.reviewCount = reviewCount;
+        this.dineInCompletionTime = dineInCompletionTime;
+        this.takeAwayCompletionTime = takeAwayCompletionTime;
+        this.deliveryCompletionTime = deliveryCompletionTime;
     }
 
     static fromJSON(object) {
@@ -73,7 +79,10 @@ export default class Restaurant {
             object.tags,
             object.averageProductPrice,
             object.averageRating,
-            object.reviewCount
+            object.reviewCount,
+            object.dineInCompletionTime,
+            object.takeAwayCompletionTime,
+            object.deliveryCompletionTime
         );
     }
 }
