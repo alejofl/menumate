@@ -90,8 +90,15 @@ public class RestaurantController {
     @Path("/{restaurantId:\\d+}")
     @Produces(CustomMediaType.APPLICATION_RESTAURANT_DETAILS)
     public Response getRestaurantDetails(@PathParam("restaurantId") final long restaurantId) {
+        // TODO: Check if this is ok.
+
         final RestaurantDetails restaurantDetails = restaurantService.getRestaurantDetails(restaurantId).orElseThrow(RestaurantDetailsNotFoundException::new);
-        return Response.ok(RestaurantDetailsDto.fromRestaurantDetails(uriInfo, restaurantDetails)).build();
+        final RestaurantDetailsDto restaurantDetailsDto = RestaurantDetailsDto.fromRestaurantDetails(uriInfo, restaurantDetails);
+        restaurantService.getAverageOrderCompletionTime(restaurantId, OrderType.DINE_IN).ifPresent(time -> restaurantDetailsDto.setDineInCompletionTime(time.toMinutes()));
+        restaurantService.getAverageOrderCompletionTime(restaurantId, OrderType.DELIVERY).ifPresent(time -> restaurantDetailsDto.setDeliveryCompletionTime(time.toMinutes()));
+        restaurantService.getAverageOrderCompletionTime(restaurantId, OrderType.TAKEAWAY).ifPresent(time -> restaurantDetailsDto.setTakeAwayCompletionTime(time.toMinutes()));
+
+        return Response.ok(restaurantDetailsDto).build();
     }
 
     @POST
