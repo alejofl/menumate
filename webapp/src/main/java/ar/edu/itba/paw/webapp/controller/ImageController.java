@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.exception.ImageNotFoundException;
 import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.service.ImageService;
+import ar.edu.itba.paw.webapp.api.CustomMediaType;
 import ar.edu.itba.paw.webapp.dto.ImageDto;
 import ar.edu.itba.paw.webapp.form.validation.ValidImage;
 import ar.edu.itba.paw.webapp.utils.ControllerUtils;
@@ -42,7 +43,7 @@ public class ImageController {
 
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(CustomMediaType.APPLICATION_IMAGE)
     public Response uploadImage(@ValidImage @FormDataParam("image") FormDataBodyPart formDataBodyPart,
                                 @Size(max = ControllerUtils.IMAGE_MAX_SIZE) @FormDataParam("image") byte[] bytes) {
         Image image = imageService.create(bytes);
