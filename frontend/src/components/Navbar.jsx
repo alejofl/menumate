@@ -32,7 +32,7 @@ function Navbar() {
                                 <div className="text-color-white">
                                     <div className="dropdown">
                                         <button className="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i className="bi bi-person-circle"></i> {authContext.name}
+                                            <i className="bi bi-person-circle default"></i> {authContext.name}
                                         </button>
                                         <ul className="dropdown-menu dropdown-menu-end">
                                             <li><Link className="dropdown-item" to="/user">{t("navbar.my_profile")}</Link></li>

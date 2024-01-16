@@ -32,6 +32,7 @@ module.exports = {
     "indent": ["error", 4, { "VariableDeclarator": "first" }],
     "jsx-quotes": ["error", "prefer-double"],
     "keyword-spacing": "error",
+    "max-len": "off",
     "multiline-comment-style": ["error", "starred-block"],
     "no-empty": "error",
     "no-empty-function": "error",

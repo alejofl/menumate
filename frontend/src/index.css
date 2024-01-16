@@ -125,3 +125,9 @@ i.bi:not(.default) {
 .bg-promotion {
     background-color: rgba(var(--promotion-rgb),1)!important;
 }
+
+.secondary-nav {
+    --bs-nav-link-color: var(--secondary);
+    --bs-nav-link-hover-color: var(--secondary-dark);
+    --bs-nav-pills-link-active-bg: var(--secondary);
+}

@@ -1,4 +1,6 @@
-import {USER_CONTENT_TYPE, USER_PASSWORD_CONTENT_TYPE} from "../../utils.js";
+import {USER_ADDRESS_CONTENT_TYPE, USER_CONTENT_TYPE, USER_PASSWORD_CONTENT_TYPE} from "../../utils.js";
+import User from "../../data/model/User.js";
+import Address from "../../data/model/Address.js";
 
 export function useUserService(api) {
     const sendResetPasswordToken = async (url, email) => {
@@ -59,10 +61,36 @@ export function useUserService(api) {
         );
     };
 
+    const getUser = async (url) => {
+        const response = await api.get(
+            url,
+            {
+                headers: {
+                    "Accept": USER_CONTENT_TYPE
+                }
+            }
+        );
+        return User.fromJSON(response.data);
+    };
+
+    const getAddresses = async (url) => {
+        const response = await api.get(
+            url,
+            {
+                headers: {
+                    "Accept": USER_ADDRESS_CONTENT_TYPE
+                }
+            }
+        );
+        return Array.isArray(response.data) ? response.data.map(data => Address.fromJSON(data)) : [];
+    };
+
     return {
         sendResetPasswordToken,
         resetPassword,
         login,
-        register
+        register,
+        getUser,
+        getAddresses
     };
 }

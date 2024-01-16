@@ -16,6 +16,7 @@ import ProductCard from "../components/ProductCard.jsx";
 import {PRICE_DECIMAL_DIGITS} from "../utils.js";
 import ReviewsModal from "../components/ReviewsModal.jsx";
 import RestaurantLocationToast from "../components/RestaurantLocationToast.jsx";
+import PlaceOrderModal from "../components/PlaceOrderModal.jsx";
 
 function Restaurant() {
     const { t } = useTranslation();
@@ -79,6 +80,7 @@ function Restaurant() {
     };
 
     const [showReviewModal, setShowReviewModal] = useState(false);
+    const [showPlaceOrderModal, setShowPlaceOrderModal] = useState(false);
 
     const [queryParams] = useSearchParams();
 
@@ -253,7 +255,7 @@ function Restaurant() {
                                 }
                             </ul>
                             <div className="card-body d-flex">
-                                <button className="btn btn-primary flex-grow-1" id="place-order-button" type="button">
+                                <button className="btn btn-primary flex-grow-1" id="place-order-button" type="button" disabled={cart.length === 0} onClick={() => setShowPlaceOrderModal(true)}>
                                     {t("restaurant.place_order")}
                                 </button>
                             </div>
@@ -264,6 +266,16 @@ function Restaurant() {
                 <RestaurantLocationToast restaurantId={restaurantId} dineIn={queryParams.has("qr")}/>
             </Page>
             {showReviewModal && <ReviewsModal reviewsUrl={restaurant.reviewsUrl} onClose={() => setShowReviewModal(false)}/>}
+            {showPlaceOrderModal &&
+                <PlaceOrderModal
+                    dineIn={queryParams.has("qr")}
+                    dineInCompletionTime={restaurant.dineInCompletionTime}
+                    takeAwayCompletionTime={restaurant.takeAwayCompletionTime}
+                    deliveryCompletionTime={restaurant.deliveryCompletionTime}
+                    cart={cart}
+                    onClose={() => setShowPlaceOrderModal(false)}
+                />
+            }
         </>
     );
 }

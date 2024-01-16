@@ -216,6 +216,21 @@
             },
             "click": "Haz click",
             "here": "aquí"
+        },
+        "checkout": {
+            "title": "Finalizar compra",
+            "delivery": "Delivery",
+            "take_away": "Take-Away",
+            "dine_in": "Comer en el restaurante",
+            "welcome_back": "¡Bienvenido de vuelta, {{name}}!",
+            "name": "Nombre",
+            "email": "Correo electrónico",
+            "table_number": "Número de mesa",
+            "delivery_address": "Dirección de entrega",
+            "eta": "Tu comida estará lista en aproximadamente <strong>{{eta}} minutos</strong>.",
+            "address_disclaimer": "Solo se guardan las cinco direcciones sin nombre más recientemente utilizadas. Para agregar un nombre a una dirección, dirígete a la página Mi perfil.",
+            "payment_method": "Por ahora, solo aceptamos efectivo como forma de pago.",
+            "place_order": "Realizar pedido (${{price}})"
         }
     }
 }
