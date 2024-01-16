@@ -36,6 +36,7 @@ public class OrderDto {
         dto.dateReady = order.getDateReady();
         dto.dateDelivered = order.getDateDelivered();
         dto.dateCancelled = order.getDateCancelled();
+        dto.dateConfirmed = order.getDateConfirmed();
         dto.status = order.getOrderStatus().getMessageCode();
         dto.address = order.getAddress();
         dto.tableNumber = order.getTableNumber();
@@ -162,10 +163,5 @@ public class OrderDto {
 
     public void setRestaurantUrl(URI restaurantUrl) {
         this.restaurantUrl = restaurantUrl;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(orderId, orderType, dateOrdered, dateConfirmed, dateReady, dateDelivered, dateCancelled, status, address, tableNumber);
     }
 }
