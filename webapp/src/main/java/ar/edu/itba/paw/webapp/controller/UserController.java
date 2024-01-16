@@ -146,7 +146,7 @@ public class UserController {
     ) {
         final User user = userService.getById(userId).orElseThrow(UserNotFoundException::new);
         userRoleService.setRole(user.getEmail(), patchUserRoleLevelForm.getRoleAsEnum(), user.getPreferredLanguage());
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @POST
@@ -156,14 +156,14 @@ public class UserController {
             @HeaderParam(HttpHeaders.ACCEPT_LANGUAGE) final String language
     ) {
         userRoleService.setRole(addUserRoleForm.getEmail(), addUserRoleForm.getRoleAsEnum(), language);
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @DELETE
     @Path("/{userId:\\d+}")
     public Response deleteUserRole(@PathParam("userId") final long userId) {
         userRoleService.deleteRole(userId);
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @POST
