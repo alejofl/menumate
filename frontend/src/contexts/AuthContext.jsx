@@ -1,8 +1,7 @@
 /* eslint-disable no-empty-function */
-import React, {useContext, useState} from "react";
+import React, {useState} from "react";
 import {jwtDecode} from "jwt-decode";
 import {useApi} from "../hooks/useApi.js";
-import ApiContext from "./ApiContext.jsx";
 import {useUserService} from "../hooks/services/useUserService.js";
 
 const AuthContext = React.createContext({
@@ -17,7 +16,6 @@ const AuthContext = React.createContext({
 
 export function AuthContextProvider({children}) {
     const api = useApi();
-    const apiContext = useContext(ApiContext);
     const userService = useUserService(api);
 
     const jwtParamSetter = (param, defaultValue, token = jwt) => {
@@ -34,7 +32,7 @@ export function AuthContextProvider({children}) {
     const [selfUrl, setSelfUrl] = useState(jwtParamSetter("selfUrl", null));
 
     const loginHandler = async (email, password, rememberMe) => {
-        const response = await userService.login(apiContext.usersUrl, email, password);
+        const response = await userService.login("/", email, password);
         if (response.success) {
             setIsAuthenticated(true);
             setJwt(response.jwt);
