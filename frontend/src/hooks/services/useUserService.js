@@ -52,7 +52,7 @@ export function useUserService(api) {
             },
             {
                 headers: {
-                    "Accept": USER_CONTENT_TYPE,
+                    "Content-Type": USER_CONTENT_TYPE,
                     "Accept-Language": language
                 }
             }
