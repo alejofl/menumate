@@ -81,9 +81,10 @@ public class RestaurantController {
     @GET
     @Path("/{restaurantId:\\d+}")
     @Produces(CustomMediaType.APPLICATION_RESTAURANT)
-    public Response getRestaurantById(@PathParam("restaurantId") final long restaurantId) {
+    public Response getRestaurantById(@PathParam("restaurantId") final long restaurantId, @Context Request request) {
         final Restaurant restaurant = restaurantService.getById(restaurantId).orElseThrow(RestaurantNotFoundException::new);
-        return Response.ok(RestaurantDto.fromRestaurant(uriInfo, restaurant)).build();
+        final RestaurantDto dto = RestaurantDto.fromRestaurant(uriInfo, restaurant);
+        return ControllerUtils.getResponseUsingEtag(request, dto);
     }
 
     @GET

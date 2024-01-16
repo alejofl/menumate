@@ -119,6 +119,15 @@ public final class ControllerUtils {
         return response;
     }
 
+    public static Response getResponseUsingEtag(Request request, Object dto) {
+        EntityTag eTag = new EntityTag(String.valueOf(dto.hashCode()));
+        Response.ResponseBuilder responseBuilder = evaluateEtag(request, eTag);
+        if(responseBuilder == null) {
+            return Response.ok(dto).tag(eTag).build();
+        }
+        return responseBuilder.build();
+    }
+
     public static Response.ResponseBuilder evaluateLastModified(Request request, Date lastModified) {
         Response.ResponseBuilder response = request.evaluatePreconditions(lastModified);
         if (response != null) {
