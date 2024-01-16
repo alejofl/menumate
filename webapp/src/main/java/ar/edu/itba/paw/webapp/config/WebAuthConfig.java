@@ -1,8 +1,8 @@
 package ar.edu.itba.paw.webapp.config;
 
 import ar.edu.itba.paw.webapp.auth.AccessValidator;
-import ar.edu.itba.paw.webapp.auth.AuthAnywhereFilter;
-import ar.edu.itba.paw.webapp.auth.JwtTokenFilter;
+import ar.edu.itba.paw.webapp.auth.filters.AuthAnywhereFilter;
+import ar.edu.itba.paw.webapp.auth.filters.JwtTokenFilter;
 import ar.edu.itba.paw.webapp.auth.JwtTokenUtil;
 import ar.edu.itba.paw.webapp.utils.UriUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -151,9 +151,10 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+        config.setAllowedOrigins(Collections.singletonList("*")); // TODO: Remove before going to production
+        config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "OPTIONS", "DELETE", "PUT", "PATCH"));
-        config.setExposedHeaders(Arrays.asList("X-MenuMate-AuthToken", "X-MenuMate-UserUrl", "X-MenuMate-EmployeeUserCreated", "X-MenuMate-VerifyMailSent", "Content-Disposition", "Location", "ETag", "Last-Modified", "Cache-Control", "Content-Type", "Link", "WWW-Authenticate"));
+        config.setExposedHeaders(Arrays.asList("X-MenuMate-AuthToken", "X-MenuMate-EmployeeUserCreated", "Content-Disposition", "Location", "ETag", "Last-Modified", "Link", "WWW-Authenticate"));
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }

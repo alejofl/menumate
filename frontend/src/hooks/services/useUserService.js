@@ -1,25 +1,37 @@
+import {USER_CONTENT_TYPE, USER_PASSWORD_CONTENT_TYPE} from "../../utils.js";
+
 export function useUserService(api) {
     const sendResetPasswordToken = async (url, email) => {
-        return await api.post(url, {
-            email: email
-        });
-    };
-
-    const resendVerificationToken = async (url, email) => {
-        return await api.post(url, {
-            email: email
-        });
+        return await api.post(
+            url,
+            {
+                email: email
+            },
+            {
+                headers: {
+                    "Content-Type": USER_PASSWORD_CONTENT_TYPE
+                }
+            }
+        );
     };
 
     const resetPassword = async (url, newPassword) => {
-        return await api.put(url, {
-            password: newPassword
-        });
+        return await api.patch(
+            url,
+            {
+                password: newPassword
+            },
+            {
+                headers: {
+                    "Content-Type": USER_PASSWORD_CONTENT_TYPE
+                }
+            });
     };
 
     const login = async (url, email, password) => {
         const response = await api.get(url, {
             headers: {
+                "Accept": USER_CONTENT_TYPE,
                 "Authorization": `Basic ${btoa(`${email}:${password}`)}`
             }
         });
@@ -30,17 +42,25 @@ export function useUserService(api) {
         }
     };
 
-    const register = async (url, name, email, password) => {
-        return await api.post(url, {
-            name: name,
-            email: email,
-            password: password
-        });
+    const register = async (url, name, email, password, language) => {
+        return await api.post(
+            url,
+            {
+                name: name,
+                email: email,
+                password: password
+            },
+            {
+                headers: {
+                    "Accept": USER_CONTENT_TYPE,
+                    "Accept-Language": language
+                }
+            }
+        );
     };
 
     return {
         sendResetPasswordToken,
-        resendVerificationToken,
         resetPassword,
         login,
         register

@@ -5,6 +5,7 @@ import ar.edu.itba.paw.model.RestaurantRoleLevel;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.service.RestaurantRoleService;
 import ar.edu.itba.paw.util.Pair;
+import ar.edu.itba.paw.webapp.api.CustomMediaType;
 import ar.edu.itba.paw.webapp.auth.AccessValidator;
 import ar.edu.itba.paw.webapp.dto.RestaurantRoleDto;
 import ar.edu.itba.paw.webapp.form.AddRestaurantEmployeeForm;
@@ -16,10 +17,7 @@ import org.springframework.stereotype.Component;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.GenericEntity;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.*;
 import java.util.List;
 
 @Path(UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/employees")
@@ -39,6 +37,7 @@ public class RestaurantEmployeeController {
     }
 
     @GET
+    @Produces(CustomMediaType.APPLICATION_RESTAURANT_EMPLOYEE)
     public Response getRestaurantEmployees(@PathParam("restaurantId") final long restaurantId) {
         final List<Pair<User, RestaurantRoleLevel>> roles = restaurantRoleService.getByRestaurant(restaurantId);
         final List<RestaurantRoleDto> dtoList = RestaurantRoleDto.fromCollection(uriInfo, restaurantId, roles);
@@ -47,6 +46,7 @@ public class RestaurantEmployeeController {
 
     @GET
     @Path("/{userId:\\d+}")
+    @Produces(CustomMediaType.APPLICATION_RESTAURANT_EMPLOYEE)
     public Response getRestaurantEmployeeByUserId(
             @PathParam("restaurantId") final long restaurantId,
             @PathParam("userId") final long userId
@@ -57,11 +57,13 @@ public class RestaurantEmployeeController {
     }
 
     @POST
+    @Consumes(CustomMediaType.APPLICATION_RESTAURANT_EMPLOYEE)
     public Response addRestaurantEmployee(
             @PathParam("restaurantId") final long restaurantId,
-            @Valid @NotNull final AddRestaurantEmployeeForm addRestaurantEmployeeForm
+            @Valid @NotNull final AddRestaurantEmployeeForm addRestaurantEmployeeForm,
+            @HeaderParam(HttpHeaders.ACCEPT_LANGUAGE) final String language
     ) {
-        final Pair<User, Boolean> userPair = restaurantRoleService.setRole(addRestaurantEmployeeForm.getEmail(), restaurantId, addRestaurantEmployeeForm.getRoleAsEnum());
+        final Pair<User, Boolean> userPair = restaurantRoleService.setRole(addRestaurantEmployeeForm.getEmail(), restaurantId, addRestaurantEmployeeForm.getRoleAsEnum(), language);
 
 
         final User user = userPair.getKey();
@@ -75,6 +77,7 @@ public class RestaurantEmployeeController {
 
     @PUT
     @Path("/{userId:\\d+}")
+    @Consumes(CustomMediaType.APPLICATION_RESTAURANT_EMPLOYEE)
     public Response updateRestaurantEmployeeByUserId(
             @PathParam("restaurantId") final long restaurantId,
             @PathParam("userId") final long userId,

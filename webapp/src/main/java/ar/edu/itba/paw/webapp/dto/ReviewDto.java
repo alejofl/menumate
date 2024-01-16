@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 public class ReviewDto {
     private long orderId;
+    private String reviewerName;
     private int rating;
     private LocalDateTime date;
     private String comment;
@@ -23,6 +24,7 @@ public class ReviewDto {
     public static ReviewDto fromReview(final UriInfo uriInfo, final Review review) {
         final ReviewDto dto = new ReviewDto();
         dto.orderId = review.getOrderId();
+        dto.reviewerName = review.getOrder().getUser().getName();
         dto.rating = review.getRating();
         dto.date = review.getDate();
         dto.comment = review.getComment();
@@ -44,6 +46,14 @@ public class ReviewDto {
 
     public void setOrderId(long orderId) {
         this.orderId = orderId;
+    }
+
+    public String getReviewerName() {
+        return reviewerName;
+    }
+
+    public void setReviewerName(String reviewerName) {
+        this.reviewerName = reviewerName;
     }
 
     public int getRating() {

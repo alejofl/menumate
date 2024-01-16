@@ -2,7 +2,6 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.exception.UserNotFoundException;
 import ar.edu.itba.paw.model.Token;
-import ar.edu.itba.paw.model.TokenType;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.model.UserAddress;
 import ar.edu.itba.paw.persistance.UserDao;
@@ -12,7 +11,6 @@ import ar.edu.itba.paw.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,14 +51,14 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public User createOrConsolidate(String email, String password, String name) {
+    public User createOrConsolidate(String email, String password, String name, String language) {
         password = password == null ? null : passwordEncoder.encode(password);
 
         final Optional<User> maybeUser = userDao.getByEmail(email);
         User user;
 
         if (!maybeUser.isPresent()) {
-            user = userDao.create(email, password, name, LocaleContextHolder.getLocale().getLanguage());
+            user = userDao.create(email, password, name, language);
         } else {
             user = maybeUser.get();
             if (password == null) {
@@ -78,7 +76,7 @@ public class UserServiceImpl implements UserService {
             LOGGER.info("Consolidated user with id {}", user.getUserId());
         }
 
-        final Token token = tokenService.createOrRefresh(user, TokenType.VERIFICATION_TOKEN);
+        final Token token = tokenService.manageUserToken(user);
 
         emailService.sendUserVerificationEmail(user, token.getToken());
         return user;
@@ -86,9 +84,9 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public User createIfNotExists(String email, String name) {
+    public User createIfNotExists(String email, String name, String language) {
         final Optional<User> maybeUser = userDao.getByEmail(email);
-        return maybeUser.orElseGet(() -> userDao.create(email, null, name, LocaleContextHolder.getLocale().getLanguage()));
+        return maybeUser.orElseGet(() -> userDao.create(email, null, name, language));
     }
 
     @Override
@@ -140,7 +138,7 @@ public class UserServiceImpl implements UserService {
             return;
         }
 
-        Token token = tokenService.createOrRefresh(user, TokenType.VERIFICATION_TOKEN);
+        Token token = tokenService.manageUserToken(user);
         emailService.sendUserVerificationEmail(user, token.getToken());
     }
 
@@ -153,7 +151,7 @@ public class UserServiceImpl implements UserService {
             LOGGER.info("Ignored sending password reset token request for unknown email");
             return;
         }
-        Token token = tokenService.createOrRefresh(user, TokenType.RESET_PASSWORD_TOKEN);
+        Token token = tokenService.manageUserToken(user);
         emailService.sendResetPasswordEmail(user, token.getToken());
     }
 

@@ -2,7 +2,6 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.exception.TokenNotFoundException;
 import ar.edu.itba.paw.model.Token;
-import ar.edu.itba.paw.model.TokenType;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.persistance.TokenDao;
 import org.slf4j.Logger;
@@ -33,18 +32,17 @@ public class TokenJpaDao implements TokenDao {
     }
 
     @Override
-    public Optional<Token> getByUserId(long userId, TokenType type) {
-        final TypedQuery<Token> query = em.createQuery("FROM Token WHERE user.userId = :userId AND type = :type", Token.class);
+    public Optional<Token> getByUserId(long userId) {
+        final TypedQuery<Token> query = em.createQuery("FROM Token WHERE user.userId = :userId", Token.class);
         query.setParameter("userId", userId);
-        query.setParameter("type", type);
         return query.getResultList().stream().findFirst();
     }
 
     @Override
-    public Token create(User user, TokenType type, String token, LocalDateTime expiryDate) {
-        final Token tkn = new Token(user, type, token, expiryDate);
+    public Token create(User user, String token, LocalDateTime expiryDate) {
+        final Token tkn = new Token(user, token, expiryDate);
         em.persist(tkn);
-        LOGGER.info("Created token {} for user id {}", type.getMessageCode(), user.getUserId());
+        LOGGER.info("Created token for user id {}", user.getUserId());
         return tkn;
     }
 
@@ -53,7 +51,7 @@ public class TokenJpaDao implements TokenDao {
         token.setExpiryDate(newExpiryDate);
         token.setToken(newToken);
         em.merge(token);
-        LOGGER.info("Refreshed token {} for user id {}", token.getType().getMessageCode(), token.getUser().getUserId());
+        LOGGER.info("Refreshed token for user id {}", token.getUser().getUserId());
         return token;
     }
 

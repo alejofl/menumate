@@ -13,6 +13,7 @@ import ar.edu.itba.paw.webapp.dto.UserDto;
 import ar.edu.itba.paw.webapp.form.*;
 import ar.edu.itba.paw.webapp.utils.UriUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
 import javax.validation.Valid;
@@ -41,22 +42,25 @@ public class UserController {
 
     @GET
     @Path("/{userId:\\d+}")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(CustomMediaType.APPLICATION_USER)
     public Response getUser(@PathParam("userId") final long userId) {
         final User user = userService.getById(userId).orElseThrow(UserNotFoundException::new);
         return Response.ok(UserDto.fromUser(uriInfo, user)).build();
     }
 
     @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response registerUser(@Valid @NotNull final RegisterForm registerForm) {
-        final User user = userService.createOrConsolidate(registerForm.getEmail(), registerForm.getPassword(), registerForm.getName());
+    @Consumes({CustomMediaType.APPLICATION_USER})
+    public Response registerUser(
+            @Valid @NotNull final RegisterForm registerForm,
+            @HeaderParam(HttpHeaders.ACCEPT_LANGUAGE) final String language
+    ) {
+        final User user = userService.createOrConsolidate(registerForm.getEmail(), registerForm.getPassword(), registerForm.getName(), language);
         return Response.created(UriUtils.getUserUri(uriInfo, user.getUserId())).build();
     }
 
     @PATCH
     @Path("/{userId:\\d+}")
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes(CustomMediaType.APPLICATION_USER)
     public Response updateUser(
             @PathParam("userId") final long userId,
             @Valid @NotNull final UpdateUserForm updateUserForm
@@ -71,7 +75,7 @@ public class UserController {
 
     @GET
     @Path("/{userId:\\d+}/addresses")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(CustomMediaType.APPLICATION_USER_ADDRESS)
     public Response getUserAddresses(@PathParam("userId") final long userId) {
         final User user = userService.getById(userId).orElseThrow(UserNotFoundException::new);
         final List<UserAddressDto> dtoList = UserAddressDto.fromUserAddressCollection(uriInfo, user.getAddresses());
@@ -80,7 +84,7 @@ public class UserController {
 
     @GET
     @Path("/{userId:\\d+}/addresses/{addressId:\\d+}")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(CustomMediaType.APPLICATION_USER_ADDRESS)
     public Response getUserAddress(
             @PathParam("userId") final long userId,
             @PathParam("addressId") final long addressId
@@ -92,7 +96,7 @@ public class UserController {
 
     @POST
     @Path("/{userId:\\d+}/addresses")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(CustomMediaType.APPLICATION_USER_ADDRESS)
     public Response registerUserAddress(
             @PathParam("userId") final long userId,
             @Valid @NotNull final AddUserAddressForm addUserAddressForm
@@ -103,7 +107,7 @@ public class UserController {
 
     @PATCH
     @Path("/{userId:\\d+}/addresses/{addressId:\\d+}")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(CustomMediaType.APPLICATION_USER_ADDRESS)
     public Response updateUserAddress(
             @PathParam("userId") final long userId,
             @PathParam("addressId") final long addressId,
@@ -116,7 +120,6 @@ public class UserController {
 
     @DELETE
     @Path("/{userId:\\d+}/addresses/{addressId:\\d+}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response deleteUserAddress(
             @PathParam("userId") final long userId,
             @PathParam("addressId") final long addressId
@@ -126,7 +129,8 @@ public class UserController {
     }
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(CustomMediaType.APPLICATION_USER_ROLE)
+    @PreAuthorize("#getUserRoleLevelForm.role != null and hasRole('MODERATOR')")
     public Response getUsersWithRoleLevel(@Valid @BeanParam final GetUserRoleLevelForm getUserRoleLevelForm) {
         final List<User> users = userRoleService.getByRole(getUserRoleLevelForm.getRoleAsEnum());
         final List<UserDto> userDtos = UserDto.fromUserCollection(uriInfo, users);
@@ -135,20 +139,23 @@ public class UserController {
 
     @PATCH
     @Path("/{userId:\\d+}")
-    @Consumes(value = {CustomMediaType.USER_ROLE_V1})
+    @Consumes(CustomMediaType.APPLICATION_USER_ROLE)
     public Response updateUserRoleLevel(
             @PathParam("userId") final long userId,
             @Valid @NotNull final PatchUserRoleLevelForm patchUserRoleLevelForm
     ) {
         final User user = userService.getById(userId).orElseThrow(UserNotFoundException::new);
-        userRoleService.setRole(user.getEmail(), patchUserRoleLevelForm.getRoleAsEnum());
+        userRoleService.setRole(user.getEmail(), patchUserRoleLevelForm.getRoleAsEnum(), user.getPreferredLanguage());
         return Response.ok().build();
     }
 
     @POST
-    @Consumes(value = {CustomMediaType.USER_ROLE_V1})
-    public Response createUserRole(@Valid @NotNull final PostUserRoleLevelForm addUserRoleForm) {
-        userRoleService.setRole(addUserRoleForm.getEmail(), addUserRoleForm.getRoleAsEnum());
+    @Consumes(CustomMediaType.APPLICATION_USER_ROLE)
+    public Response createUserRole(
+            @Valid @NotNull final PostUserRoleLevelForm addUserRoleForm,
+            @HeaderParam(HttpHeaders.ACCEPT_LANGUAGE) final String language
+    ) {
+        userRoleService.setRole(addUserRoleForm.getEmail(), addUserRoleForm.getRoleAsEnum(), language);
         return Response.ok().build();
     }
 
@@ -160,7 +167,7 @@ public class UserController {
     }
 
     @POST
-    @Consumes(CustomMediaType.APPLICATION_USER_RESETS_PASSWORD)
+    @Consumes(CustomMediaType.APPLICATION_USER_PASSWORD)
     public Response createPasswordResetToken(@Valid @NotNull final ResetPasswordForm resetPasswordForm) {
         userService.sendPasswordResetToken(resetPasswordForm.getEmail());
         return Response.noContent().build();
@@ -168,7 +175,7 @@ public class UserController {
 
     @PATCH
     @Path("/{userId:\\d+}")
-    @Consumes(CustomMediaType.APPLICATION_USER_RESETS_PASSWORD)
+    @Consumes(CustomMediaType.APPLICATION_USER_PASSWORD)
     public Response editUserPasswordWithToken(
             @PathParam("userId") long userId,
             @Valid @NotNull NewPasswordForm newPasswordForm

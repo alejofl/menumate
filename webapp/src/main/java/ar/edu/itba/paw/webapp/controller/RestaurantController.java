@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import ar.edu.itba.paw.exception.RestaurantDetailsNotFoundException;
 import ar.edu.itba.paw.exception.RestaurantNotFoundException;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.service.*;
@@ -49,7 +50,7 @@ public class RestaurantController {
 
     @GET
     @PreAuthorize("#filterForm.forEmployeeId == null or hasRole('MODERATOR') or @accessValidator.checkIsUser(#filterForm.forEmployeeId)")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(CustomMediaType.APPLICATION_RESTAURANT_DETAILS)
     public Response getRestaurants(@Valid @BeanParam final FilterForm filterForm) {
         if (filterForm.getForEmployeeId() != null) {
             final PaginatedResult<RestaurantRoleDetails> pagedResult = restaurantRoleService.getByUser(
@@ -79,14 +80,29 @@ public class RestaurantController {
 
     @GET
     @Path("/{restaurantId:\\d+}")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(CustomMediaType.APPLICATION_RESTAURANT)
     public Response getRestaurantById(@PathParam("restaurantId") final long restaurantId) {
         final Restaurant restaurant = restaurantService.getById(restaurantId).orElseThrow(RestaurantNotFoundException::new);
         return Response.ok(RestaurantDto.fromRestaurant(uriInfo, restaurant)).build();
     }
 
+    @GET
+    @Path("/{restaurantId:\\d+}")
+    @Produces(CustomMediaType.APPLICATION_RESTAURANT_DETAILS)
+    public Response getRestaurantDetails(@PathParam("restaurantId") final long restaurantId) {
+        // TODO: Check if this is ok.
+
+        final RestaurantDetails restaurantDetails = restaurantService.getRestaurantDetails(restaurantId).orElseThrow(RestaurantDetailsNotFoundException::new);
+        final RestaurantDetailsDto restaurantDetailsDto = RestaurantDetailsDto.fromRestaurantDetails(uriInfo, restaurantDetails);
+        restaurantService.getAverageOrderCompletionTime(restaurantId, OrderType.DINE_IN).ifPresent(time -> restaurantDetailsDto.setDineInCompletionTime(time.toMinutes()));
+        restaurantService.getAverageOrderCompletionTime(restaurantId, OrderType.DELIVERY).ifPresent(time -> restaurantDetailsDto.setDeliveryCompletionTime(time.toMinutes()));
+        restaurantService.getAverageOrderCompletionTime(restaurantId, OrderType.TAKEAWAY).ifPresent(time -> restaurantDetailsDto.setTakeAwayCompletionTime(time.toMinutes()));
+
+        return Response.ok(restaurantDetailsDto).build();
+    }
+
     @POST
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes(CustomMediaType.APPLICATION_RESTAURANT)
     public Response createRestaurant(@Valid @NotNull final RestaurantForm restaurantForm) {
         final User currentUser = ControllerUtils.getCurrentUserOrThrow(userService);
         final Restaurant restaurant = restaurantService.create(
@@ -134,7 +150,7 @@ public class RestaurantController {
 
     @GET
     @Path("/{restaurantId:\\d+}/categories")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(CustomMediaType.APPLICATION_RESTAURANT_CATEGORIES)
     public Response getRestaurantCategories(@PathParam("restaurantId") final long restaurantId) {
         final List<Category> categories = categoryService.getByRestaurantSortedByOrder(restaurantId);
         final List<CategoryDto> dtoList = CategoryDto.fromCategoryCollection(uriInfo, categories);
@@ -143,7 +159,7 @@ public class RestaurantController {
 
     @GET
     @Path("/{restaurantId:\\d+}/categories/{categoryId:\\d+}")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(CustomMediaType.APPLICATION_RESTAURANT_CATEGORIES)
     public Response getCategory(
             @PathParam("restaurantId") final long restaurantId,
             @PathParam("categoryId") final long categoryId
@@ -155,7 +171,7 @@ public class RestaurantController {
 
     @POST
     @Path("/{restaurantId:\\d+}/categories")
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes(CustomMediaType.APPLICATION_RESTAURANT_CATEGORIES)
     public Response createCategory(
             @PathParam("restaurantId") final long restaurantId,
             @Valid @NotNull final CategoryForm categoryForm
@@ -166,7 +182,7 @@ public class RestaurantController {
 
     @PATCH
     @Path("/{restaurantId:\\d+}/categories/{categoryId:\\d+}")
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes(CustomMediaType.APPLICATION_RESTAURANT_CATEGORIES)
     public Response updateCategory(
             @PathParam("restaurantId") final long restaurantId,
             @PathParam("categoryId") final long categoryId,
@@ -198,7 +214,7 @@ public class RestaurantController {
 
     @GET
     @Path("/{restaurantId:\\d+}/categories/{categoryId:\\d+}/products")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(CustomMediaType.APPLICATION_RESTAURANT_PRODUCTS)
     public Response getCategoryProducts(
             @PathParam("restaurantId") final long restaurantId,
             @PathParam("categoryId") final long categoryId
@@ -210,7 +226,7 @@ public class RestaurantController {
 
     @GET
     @Path("/{restaurantId:\\d+}/categories/{categoryId:\\d+}/products/{productId:\\d+}")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(CustomMediaType.APPLICATION_RESTAURANT_PRODUCTS)
     public Response getProduct(
             @PathParam("restaurantId") final long restaurantId,
             @PathParam("categoryId") final long categoryId,
@@ -223,7 +239,7 @@ public class RestaurantController {
 
     @POST
     @Path("/{restaurantId:\\d+}/categories/{categoryId:\\d+}/products")
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes(CustomMediaType.APPLICATION_RESTAURANT_PRODUCTS)
     public Response createProduct(
             @PathParam("restaurantId") final long restaurantId,
             @PathParam("categoryId") final long categoryId,
@@ -243,7 +259,7 @@ public class RestaurantController {
 
     @PUT
     @Path("/{restaurantId:\\d+}/categories/{categoryId:\\d+}/products/{productId:\\d+}")
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes(CustomMediaType.APPLICATION_RESTAURANT_PRODUCTS)
     public Response updateProduct(
             @PathParam("restaurantId") final long restaurantId,
             @PathParam("categoryId") final long categoryId,
@@ -267,7 +283,7 @@ public class RestaurantController {
 
     @GET
     @Path("/{restaurantId:\\d+}/promotions")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(CustomMediaType.APPLICATION_RESTAURANT_PROMOTIONS)
     @PreAuthorize("#living == false || @accessValidator.checkRestaurantAdmin(#restaurantId)")
     public Response getRestaurantPromotions(
             @PathParam("restaurantId") final long restaurantId,
@@ -280,7 +296,7 @@ public class RestaurantController {
 
     @GET
     @Path("/{restaurantId:\\d+}/promotions/{promotionId:\\d+}")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(CustomMediaType.APPLICATION_RESTAURANT_PROMOTIONS)
     public Response getPromotion(
             @PathParam("restaurantId") final long restaurantId,
             @PathParam("promotionId") final long promotionId
@@ -292,7 +308,7 @@ public class RestaurantController {
 
     @POST
     @Path("/{restaurantId:\\d+}/promotions")
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes(CustomMediaType.APPLICATION_RESTAURANT_PROMOTIONS)
     public Response createPromotion(
             @PathParam("restaurantId") final long restaurantId,
             @Valid @NotNull final PromotionForm promotionForm
@@ -320,7 +336,7 @@ public class RestaurantController {
 
     @POST
     @Path("/{restaurantId:\\d+}/reports")
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes(CustomMediaType.APPLICATION_RESTAURANT_REPORTS)
     public Response createReport(
             @PathParam("restaurantId") final long restaurantId,
             @Valid @NotNull final ReportRestaurantForm restaurantForm
@@ -351,7 +367,7 @@ public class RestaurantController {
 
     @GET
     @Path("/{restaurantId:\\d+}/reports/{reportId:\\d+}")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(CustomMediaType.APPLICATION_RESTAURANT_REPORTS)
     public Response getReport(
             @PathParam("restaurantId") final long restaurantId,
             @PathParam("reportId") final long reportId
@@ -363,7 +379,7 @@ public class RestaurantController {
 
     @GET
     @PreAuthorize("hasRole('MODERATOR')")
-    @Produces(CustomMediaType.APPLICATION_LISTS_RESTAURANTS_REPORTS_COUNT)
+    @Produces(CustomMediaType.APPLICATION_RESTAURANTS_UNHANDLED_REPORTS)
     public Response getRestaurantsWithUnhandledReports(
             @Valid @BeanParam GetRestaurantsWithReports restaurantsWithReportsForm
     ) {
@@ -388,7 +404,7 @@ public class RestaurantController {
 
     @GET
     @Path("/{restaurantId:\\d+}/reports")
-    @Produces(CustomMediaType.APPLICATION_LISTS_RESTAURANT_REPORTS)
+    @Produces(CustomMediaType.APPLICATION_RESTAURANT_REPORTS)
     public Response getRestaurantReports(
             @PathParam("restaurantId") final long restaurantId,
             @Valid @BeanParam PagingForm pagingForm

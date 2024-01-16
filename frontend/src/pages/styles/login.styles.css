@@ -15,12 +15,6 @@ main.login {
     width: 100%;
 }
 
-.login .more-actions {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
 .login .more-actions button, .login .more-actions span {
     min-width: 0;
     text-align: center;

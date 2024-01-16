@@ -11,6 +11,9 @@ public class RestaurantDetailsDto extends RestaurantDto {
     private float averageRating;
     private int reviewCount;
     private float averageProductPrice;
+    private Long dineInCompletionTime;
+    private Long deliveryCompletionTime;
+    private Long takeAwayCompletionTime;
 
     public static RestaurantDetailsDto fromRestaurantDetails(final UriInfo uriInfo, final RestaurantDetails restaurantDetails) {
         final RestaurantDetailsDto dto = new RestaurantDetailsDto();
@@ -48,5 +51,29 @@ public class RestaurantDetailsDto extends RestaurantDto {
 
     public void setAverageProductPrice(float averageProductPrice) {
         this.averageProductPrice = averageProductPrice;
+    }
+
+    public Long getDineInCompletionTime() {
+        return dineInCompletionTime;
+    }
+
+    public void setDineInCompletionTime(Long dineInCompletionTime) {
+        this.dineInCompletionTime = dineInCompletionTime;
+    }
+
+    public Long getDeliveryCompletionTime() {
+        return deliveryCompletionTime;
+    }
+
+    public void setDeliveryCompletionTime(Long deliveryCompletionTime) {
+        this.deliveryCompletionTime = deliveryCompletionTime;
+    }
+
+    public Long getTakeAwayCompletionTime() {
+        return takeAwayCompletionTime;
+    }
+
+    public void setTakeAwayCompletionTime(Long takeAwayCompletionTime) {
+        this.takeAwayCompletionTime = takeAwayCompletionTime;
     }
 }

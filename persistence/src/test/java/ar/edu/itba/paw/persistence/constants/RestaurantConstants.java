@@ -13,6 +13,7 @@ public final class RestaurantConstants {
     public static final long[] RESTAURANT_IDS = {506L, 600L, 1200L, 1300L};
     public static final long RESTAURANT_ID_WITH_NO_ORDERS = 1300L;
     public static final long RESTAURANT_ID_WITH_NO_REPORTS = 600L;
+    public static final long RESTAURANT_ID_NON_EXISTENT = 10000L;
     public static final String[] RESTAURANT_NAMES = {"C", "A", "B", "D"};
     public static final LocalDateTime[] RESTAURANT_CREATION_DATES = {LocalDateTime.now(), LocalDateTime.now().minusDays(1), LocalDateTime.now().minusDays(2), LocalDateTime.now().minusDays(3)};
     public static final String RESTAURANT_EMAIL = "restaurant@localhost";
