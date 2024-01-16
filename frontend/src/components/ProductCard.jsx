@@ -4,7 +4,7 @@ import {useTranslation} from "react-i18next";
 import {useEffect, useState} from "react";
 import {PRICE_DECIMAL_DIGITS} from "../utils.js";
 
-function ProductCard({productId, name, description, price, discount, imageUrl, addProductToCart}) {
+function ProductCard({productId, name, description, price, discount, imageUrl, addProductToCart, disabled}) {
     const DECREMENT_QUANTITY = -1;
     const INCREMENT_QUANTITY = 1;
     const MAX_QUANTITY = 100;
@@ -90,7 +90,7 @@ function ProductCard({productId, name, description, price, discount, imageUrl, a
                             </div>
                         </div>
                         <div className="modal-footer">
-                            <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={() => addProductToCart(productId, name, price, quantity, comments)}>
+                            <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={() => addProductToCart(productId, name, price, quantity, comments)} disabled={disabled}>
                                 {t("restaurant.product.add_to_cart", {price: (price * quantity).toFixed(PRICE_DECIMAL_DIGITS)})}
                             </button>
                         </div>

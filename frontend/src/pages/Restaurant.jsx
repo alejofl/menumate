@@ -13,7 +13,7 @@ import "./styles/restaurant.styles.css";
 import Rating from "../components/Rating.jsx";
 import TagsContainer from "../components/TagsContainer.jsx";
 import ProductCard from "../components/ProductCard.jsx";
-import {PRICE_DECIMAL_DIGITS} from "../utils.js";
+import {MAXIMUM_CART_ITEMS, PRICE_DECIMAL_DIGITS} from "../utils.js";
 import ReviewsModal from "../components/ReviewsModal.jsx";
 import RestaurantLocationToast from "../components/RestaurantLocationToast.jsx";
 import PlaceOrderModal from "../components/PlaceOrderModal.jsx";
@@ -205,6 +205,7 @@ function Restaurant() {
                                                 imageUrl={promotionProducts[i].data.imageUrl}
                                                 discount={promotion.discountPercentage}
                                                 addProductToCart={addProductToCart}
+                                                disabled={cart.length > MAXIMUM_CART_ITEMS}
                                             />
                                         ))
                                     }
@@ -230,6 +231,7 @@ function Restaurant() {
                                                     price={product.price}
                                                     imageUrl={product.imageUrl}
                                                     addProductToCart={addProductToCart}
+                                                    disabled={cart.length > MAXIMUM_CART_ITEMS}
                                                 />
                                             ))
                                         }

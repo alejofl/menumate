@@ -25,6 +25,7 @@ export const JSON_CONTENT_TYPE = "application/json";
 export const EMAIL_ALREADY_IN_USE_ERROR = {"message":"Email already in use!", "path":"registerUser.arg0.email"};
 
 export const PRICE_DECIMAL_DIGITS = 2;
+export const MAXIMUM_CART_ITEMS = 500;
 
 export const WAIT_TIME = 500;
 
