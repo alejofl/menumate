@@ -10,6 +10,7 @@ import ar.edu.itba.paw.webapp.auth.AccessValidator;
 import ar.edu.itba.paw.webapp.dto.RestaurantRoleDto;
 import ar.edu.itba.paw.webapp.form.AddRestaurantEmployeeForm;
 import ar.edu.itba.paw.webapp.form.UpdateRestaurantEmployeeForm;
+import ar.edu.itba.paw.webapp.utils.ControllerUtils;
 import ar.edu.itba.paw.webapp.utils.UriUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -49,11 +50,12 @@ public class RestaurantEmployeeController {
     @Produces(CustomMediaType.APPLICATION_RESTAURANT_EMPLOYEE)
     public Response getRestaurantEmployeeByUserId(
             @PathParam("restaurantId") final long restaurantId,
-            @PathParam("userId") final long userId
+            @PathParam("userId") final long userId,
+            @Context Request request
     ) {
         final RestaurantRoleLevel role = restaurantRoleService.getRole(userId, restaurantId).orElseThrow(RoleNotFoundException::new);
         final RestaurantRoleDto dto = RestaurantRoleDto.from(uriInfo, restaurantId, userId, role);
-        return Response.ok(new GenericEntity<RestaurantRoleDto>(dto) {}).build();
+        return ControllerUtils.getResponseUsingEtag(request, dto);
     }
 
     @POST
