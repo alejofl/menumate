@@ -14,13 +14,18 @@ export default class Restaurant {
         ownerUrl,
         portrait1Url,
         portrait2Url,
+        promotionsUrl,
+        restaurantId,
         reviewsUrl,
         selfUrl,
         specialty,
         tags,
         averageProductPrice,
         averageRating,
-        reviewCount
+        reviewCount,
+        dineInCompletionTime,
+        takeAwayCompletionTime,
+        deliveryCompletionTime
     ) {
         this.active = active;
         this.address = address;
@@ -36,6 +41,8 @@ export default class Restaurant {
         this.ownerUrl = ownerUrl;
         this.portrait1Url = portrait1Url;
         this.portrait2Url = portrait2Url;
+        this.promotionsUrl = promotionsUrl;
+        this.restaurantId = restaurantId;
         this.reviewsUrl = reviewsUrl;
         this.selfUrl = selfUrl;
         this.specialty = specialty;
@@ -43,6 +50,9 @@ export default class Restaurant {
         this.averageProductPrice = averageProductPrice;
         this.averageRating = averageRating;
         this.reviewCount = reviewCount;
+        this.dineInCompletionTime = dineInCompletionTime;
+        this.takeAwayCompletionTime = takeAwayCompletionTime;
+        this.deliveryCompletionTime = deliveryCompletionTime;
     }
 
     static fromJSON(object) {
@@ -61,13 +71,18 @@ export default class Restaurant {
             object.ownerUrl,
             object.portrait1Url,
             object.portrait2Url,
+            object.promotionsUrl,
+            object.restaurantId,
             object.reviewsUrl,
             object.selfUrl,
             object.specialty,
             object.tags,
             object.averageProductPrice,
             object.averageRating,
-            object.reviewCount
+            object.reviewCount,
+            object.dineInCompletionTime,
+            object.takeAwayCompletionTime,
+            object.deliveryCompletionTime
         );
     }
 }

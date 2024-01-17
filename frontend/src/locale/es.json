@@ -25,7 +25,9 @@
         "restaurants": "Restaurantes",
         "login": "Iniciar sesión",
         "reset_password": "Restablecer contraseña",
-        "signup": "Regístrate"
+        "signup": "Regístrate",
+        "loading": "Cargando...",
+        "order_placed": "¡Gracias por tu pedido!"
     },
     "error": {
         "modal": {
@@ -168,6 +170,16 @@
             "required": "El nombre es obligatorio",
             "min": "El nombre debe tener al menos {{min}} caracteres",
             "max": "El nombre debe tener como máximo {{max}} caracteres"
+        },
+        "table_number": {
+            "required": "El número de mesa es obligatorio",
+            "min": "El número de mesa debe ser mayor o igual a {{min}}",
+            "max": "No existe una mesa cuyo número sea {{value}}"
+        },
+        "address": {
+            "required": "La dirección es obligatoria",
+            "min": "La dirección debe tener al menos {{min}} caracteres",
+            "max": "La dirección debe tener como máximo {{max}} caracteres"
         }
     },
     "reset_password": {
@@ -183,5 +195,59 @@
         "button": "Regístrate",
         "already_have_account": "¿Ya tienes una cuenta?",
         "login_here": "¡Inicia sesión aquí!"
+    },
+    "restaurant": {
+        "no_description": "Este restaurante no tiene una descripción.",
+        "no_reviews": "Este restaurante no tiene reseñas aún.",
+        "view_reviews": "Ver reseñas",
+        "edit_menu": "Editar menú",
+        "see_orders": "Ver órdenes",
+        "delete_restaurant": "Eliminar restaurante",
+        "categories": "Categorías",
+        "my_order": "Mi orden",
+        "place_order": "Realizar pedido",
+        "product": {
+            "no_description": "Este producto no tiene una descripción.",
+            "add_to_cart": "Agregar al carrito (${{price}})",
+            "comments": "Comentarios"
+        },
+        "promotions": "Promociones activas",
+        "reviews": {
+            "title": "Reseñas",
+            "reply": "El restaurante respondió"
+        },
+        "toasts": {
+            "dine_in": {
+                "text": "Estás ordenando para comer en el restaurante.",
+                "click": "para cambiar a delivery o take-away."
+            },
+            "delivery": {
+                "text": "Estás ordenando para delivery o take-away.",
+                "click": "para cambiar a comer en el restaurante."
+            },
+            "click": "Haz click",
+            "here": "aquí"
+        },
+        "checkout": {
+            "title": "Finalizar compra",
+            "delivery": "Delivery",
+            "take_away": "Take-Away",
+            "dine_in": "Comer en el restaurante",
+            "welcome_back": "¡Bienvenido de vuelta, {{name}}!",
+            "name": "Nombre",
+            "email": "Correo electrónico",
+            "table_number": "Número de mesa",
+            "delivery_address": "Dirección de entrega",
+            "eta": "Tu comida estará lista en aproximadamente <strong>{{eta}} minutos</strong>.",
+            "address_disclaimer": "Solo se guardan las cinco direcciones sin nombre más recientemente utilizadas. Para agregar un nombre a una dirección, dirígete a la página Mi perfil.",
+            "payment_method": "Por ahora, solo aceptamos efectivo como forma de pago.",
+            "place_order": "Realizar pedido (${{price}})",
+            "error": "Ocurrió un error al procesar tu pedido. Por favor, intente de nuevo más tarde."
+        }
+    },
+    "order_placed": {
+        "title": "¡Tu pedido fue recibido!",
+        "description": "Estate atento a tu correo electrónico para más información.",
+        "button": "Ver detalles del pedido"
     }
 }

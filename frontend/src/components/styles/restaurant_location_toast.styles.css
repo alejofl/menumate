@@ -1,0 +1,10 @@
+.restaurant_location_toast .toast {
+    --bs-toast-spacing: 0.5rem;
+}
+
+.restaurant_location_toast #icon-toast {
+    cursor: pointer;
+    width: auto;
+    color: white !important;
+    background-color: var(--primary) !important;
+}

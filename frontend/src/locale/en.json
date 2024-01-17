@@ -25,7 +25,9 @@
         "restaurants": "Restaurants",
         "login": "Login",
         "reset_password": "Reset Password",
-        "signup": "Sign Up"
+        "signup": "Sign Up",
+        "loading": "Loading...",
+        "order_placed": "Thank you for your order!"
     },
     "error": {
         "modal": {
@@ -168,6 +170,16 @@
             "required": "Name is required",
             "min": "Name must be at least {{min}} characters long",
             "max": "Name must be at most {{max}} characters long"
+        },
+        "table_number": {
+            "required": "The table number is required",
+            "min": "The table number must be greater or equal than {{min}}",
+            "max": "A table whose number is {{value}} does not exist"
+        },
+        "address": {
+            "required": "The address is required",
+            "min": "The address must be at least {{min}} characters long",
+            "max": "The address must be at most {{max}} characters long"
         }
     },
     "reset_password": {
@@ -183,5 +195,59 @@
         "button": "Sign Up",
         "already_have_account": "Already have an account?",
         "login_here": "Login here!"
+    },
+    "restaurant": {
+        "no_description": "This restaurant does not have a description.",
+        "no_reviews": "This restaurant does not have any reviews yet.",
+        "view_reviews": "View Reviews",
+        "edit_menu": "Edit Menu",
+        "see_orders": "See Orders",
+        "delete_restaurant": "Delete Restaurant",
+        "categories": "Categories",
+        "my_order": "My Order",
+        "place_order": "Place Order",
+        "product": {
+            "no_description": "This product does not have a description.",
+            "add_to_cart": "Add to Cart (${{price}})",
+            "comments": "Comments"
+        },
+        "promotions": "Active Promotions",
+        "reviews": {
+            "title": "Reviews",
+            "reply": "The restaurant replied"
+        },
+        "toasts": {
+            "dine_in": {
+                "text": "You are ordering dine-in.",
+                "click": "to change to delivery or take-away."
+            },
+            "delivery": {
+                "text": "You are ordering delivery or take-away.",
+                "click": "to change to dine-in."
+            },
+            "click": "Click",
+            "here": "here"
+        },
+        "checkout": {
+            "title": "Checkout",
+            "delivery": "Delivery",
+            "take_away": "Take-Away",
+            "dine_in": "Dine In",
+            "welcome_back": "Welcome back, {{name}}!",
+            "name": "Name",
+            "email": "Email Address",
+            "table_number": "Table Number",
+            "delivery_address": "Delivery Address",
+            "eta": "Your food will be ready in approximately <strong>{{eta}} minutes</strong>.",
+            "address_disclaimer": "Only the five most recently used unnamed addresses are saved. To add a name to an address, head to My Profile page.",
+            "payment_method": "For now, we are only accepting cash as form of payment.",
+            "place_order": "Place Order (${{price}})",
+            "error": "There was an error while placing your order. Please try again later."
+        }
+    },
+    "order_placed": {
+        "title": "Your order was received!",
+        "description": "Check your email for more information",
+        "button": "See Order Details"
     }
 }
