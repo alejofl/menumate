@@ -117,7 +117,7 @@ function Restaurant() {
     } else if (categoriesIsPending || promotionsIsPending || products.some(product => product.isPending) || promotionProducts.some(product => product.isPending)) {
         return (
             <>
-                <Page title={t("titles.loading")} className="restaurant">
+                <Page title={t("titles.loading")}>
                     <ContentLoader backgroundColor="#eaeaea" foregroundColor="#e0e0e0" width="1920">
                         <rect x="288" y="50" rx="0" ry="0" width="1344" height="200"/>
                         <rect x="12" y="300" rx="0" ry="0" width="200" height="380"/>

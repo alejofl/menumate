@@ -40,7 +40,7 @@ function Home() {
                         <div className="search-form-container">
                             <div>
                                 <div className="input-group flex-nowrap">
-                                    <span className="input-group-text search-input"><i className="bi bi-search"></i></span>
+                                    <span className="input-group-text search-input"><i className="bi bi-search default"></i></span>
                                     <input type="text" name="search" className="form-control search-input" placeholder={t("restaurants.search_placeholder")}/>
                                 </div>
                             </div>

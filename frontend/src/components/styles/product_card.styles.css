@@ -1,6 +1,6 @@
 .product_card .card {
     width: 400px;
-    min-height: 200px;
+    height: 200px;
     display: flex;
     flex-direction: row;
 }
