@@ -85,15 +85,13 @@ public class RestaurantController {
     public Response getRestaurantById(@PathParam("restaurantId") final long restaurantId, @Context Request request) {
         final Restaurant restaurant = restaurantService.getById(restaurantId).orElseThrow(RestaurantNotFoundException::new);
         final RestaurantDto dto = RestaurantDto.fromRestaurant(uriInfo, restaurant);
-        return ControllerUtils.getResponseUsingEtag(request, dto);
+        return ControllerUtils.buildResponseUsingEtag(request, dto);
     }
 
     @GET
     @Path("/{restaurantId:\\d+}")
     @Produces(CustomMediaType.APPLICATION_RESTAURANT_DETAILS)
     public Response getRestaurantDetails(@PathParam("restaurantId") final long restaurantId) {
-        // TODO: Check if this is ok.
-
         final RestaurantDetails restaurantDetails = restaurantService.getRestaurantDetails(restaurantId).orElseThrow(RestaurantDetailsNotFoundException::new);
         final RestaurantDetailsDto restaurantDetailsDto = RestaurantDetailsDto.fromRestaurantDetails(uriInfo, restaurantDetails);
         restaurantService.getAverageOrderCompletionTime(restaurantId, OrderType.DINE_IN).ifPresent(time -> restaurantDetailsDto.setDineInCompletionTime(time.toMinutes()));
@@ -169,7 +167,7 @@ public class RestaurantController {
     ) {
         final Category category = categoryService.getByIdChecked(restaurantId, categoryId, true);
         final CategoryDto dto = CategoryDto.fromCategory(uriInfo, category);
-        return ControllerUtils.getResponseUsingEtag(request, dto);
+        return ControllerUtils.buildResponseUsingEtag(request, dto);
     }
 
     @POST
@@ -238,7 +236,7 @@ public class RestaurantController {
     ) {
         final Product product = productService.getByIdChecked(restaurantId, categoryId, productId, true);
         final ProductDto dto = ProductDto.fromProduct(uriInfo, product);
-        return ControllerUtils.getResponseUsingEtag(request, dto);
+        return ControllerUtils.buildResponseUsingEtag(request, dto);
     }
 
     @POST
@@ -308,7 +306,7 @@ public class RestaurantController {
     ) {
         final Promotion promotion = productService.getPromotionById(restaurantId, promotionId);
         final PromotionDto dto = PromotionDto.fromPromotion(uriInfo, promotion, restaurantId);
-        return ControllerUtils.getResponseUsingEtag(request, dto);
+        return ControllerUtils.buildResponseUsingEtag(request, dto);
     }
 
     @POST

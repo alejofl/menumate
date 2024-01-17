@@ -60,7 +60,7 @@ public class ReviewController {
     public Response getReviewById(@PathParam("orderId") final long orderId, @Context Request request) {
         final Review review = reviewService.getByOrder(orderId).orElseThrow(ReviewNotFoundException::new);
         final ReviewDto dto = ReviewDto.fromReview(uriInfo, review);
-        return ControllerUtils.getResponseUsingEtag(request, dto);
+        return ControllerUtils.buildResponseUsingEtag(request, dto);
     }
 
     @POST

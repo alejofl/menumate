@@ -47,7 +47,7 @@ public class UserController {
     public Response getUser(@PathParam("userId") final long userId, @Context Request request) {
         final User user = userService.getById(userId).orElseThrow(UserNotFoundException::new);
         final UserDto dto = UserDto.fromUser(uriInfo, user);
-        return ControllerUtils.getResponseUsingEtag(request, dto);
+        return ControllerUtils.buildResponseUsingEtag(request, dto);
     }
 
     @POST
@@ -94,7 +94,7 @@ public class UserController {
     ) {
         final UserAddress address = userService.getAddressById(userId, addressId).orElseThrow(UserAddressNotFoundException::new);
         final UserAddressDto dto = UserAddressDto.fromUserAddress(uriInfo, address);
-        return ControllerUtils.getResponseUsingEtag(request, dto);
+        return ControllerUtils.buildResponseUsingEtag(request, dto);
     }
 
     @POST

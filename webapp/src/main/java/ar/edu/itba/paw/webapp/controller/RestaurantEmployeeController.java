@@ -55,7 +55,7 @@ public class RestaurantEmployeeController {
     ) {
         final RestaurantRoleLevel role = restaurantRoleService.getRole(userId, restaurantId).orElseThrow(RoleNotFoundException::new);
         final RestaurantRoleDto dto = RestaurantRoleDto.from(uriInfo, restaurantId, userId, role);
-        return ControllerUtils.getResponseUsingEtag(request, dto);
+        return ControllerUtils.buildResponseUsingEtag(request, dto);
     }
 
     @POST

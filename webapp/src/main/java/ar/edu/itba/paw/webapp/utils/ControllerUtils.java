@@ -119,7 +119,7 @@ public final class ControllerUtils {
         return response;
     }
 
-    public static Response getResponseUsingEtag(Request request, Object dto) {
+    public static Response buildResponseUsingEtag(Request request, Object dto) {
         EntityTag eTag = new EntityTag(String.valueOf(dto.hashCode()));
         Response.ResponseBuilder responseBuilder = evaluateEtag(request, eTag);
         if(responseBuilder == null) {
