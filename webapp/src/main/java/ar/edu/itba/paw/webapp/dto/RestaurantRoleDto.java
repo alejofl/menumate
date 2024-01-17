@@ -9,9 +9,12 @@ import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class RestaurantRoleDto {
+
+    private long userId;
     private String role;
 
     private URI selfUrl;
@@ -20,6 +23,7 @@ public class RestaurantRoleDto {
 
     public static RestaurantRoleDto from(final UriInfo uriInfo, final long restaurantId, final long userId, RestaurantRoleLevel level) {
         final RestaurantRoleDto dto = new RestaurantRoleDto();
+        dto.userId = userId;
         dto.role = level.getMessageCode();
 
         dto.selfUrl = UriUtils.getRestaurantEmployeeUri(uriInfo, restaurantId, userId);
@@ -35,6 +39,14 @@ public class RestaurantRoleDto {
 
     public static List<RestaurantRoleDto> fromCollection(final UriInfo uriInfo, final long restaurantId, final Collection<Pair<User, RestaurantRoleLevel>> pairs) {
         return pairs.stream().map(p -> from(uriInfo, restaurantId, p)).collect(Collectors.toList());
+    }
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 
     public String getRole() {
@@ -67,5 +79,10 @@ public class RestaurantRoleDto {
 
     public void setRestaurantUrl(URI restaurantUrl) {
         this.restaurantUrl = restaurantUrl;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(userId, role);
     }
 }
