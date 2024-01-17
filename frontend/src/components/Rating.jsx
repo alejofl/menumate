@@ -11,11 +11,9 @@ function Rating({ rating, count }) {
             <div className="small-ratings">
                 {[...Array(ratingNumber)].map((_, index) => <i className="bi bi-star-fill rating-color" key={index}></i>)}
                 {[...Array(STAR_COUNT - ratingNumber)].map((_, index) => <i className="bi bi-star-fill" key={index}></i>)}
-                {count &&
-                    <small className="text-muted ps-1">
-                        {t("restaurant_card.rating_text", {count: count})}
-                    </small>
-                }
+                <small className="text-muted ps-1">
+                    {t("restaurant_card.rating_text", {count: count || 0})}
+                </small>
             </div>
         </div>
     );

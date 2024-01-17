@@ -17,6 +17,7 @@ import {MAXIMUM_CART_ITEMS, PRICE_DECIMAL_DIGITS} from "../utils.js";
 import ReviewsModal from "../components/ReviewsModal.jsx";
 import RestaurantLocationToast from "../components/RestaurantLocationToast.jsx";
 import PlaceOrderModal from "../components/PlaceOrderModal.jsx";
+import OrderPlacedAnimation from "../components/OrderPlacedAnimation.jsx";
 
 function Restaurant() {
     const { t } = useTranslation();
@@ -81,10 +82,15 @@ function Restaurant() {
 
     const [showReviewModal, setShowReviewModal] = useState(false);
     const [showPlaceOrderModal, setShowPlaceOrderModal] = useState(false);
+    const [showOrderPlacedAnimation, setShowOrderPlacedAnimation] = useState(false);
 
     const [queryParams] = useSearchParams();
 
-    if (restaurantIsError) {
+    if (showOrderPlacedAnimation) {
+        return (
+            <OrderPlacedAnimation/>
+        );
+    } else if (restaurantIsError) {
         return (
             <>
                 <Error errorNumber={restaurantError.response.status}/>
@@ -270,11 +276,14 @@ function Restaurant() {
             {showReviewModal && <ReviewsModal reviewsUrl={restaurant.reviewsUrl} onClose={() => setShowReviewModal(false)}/>}
             {showPlaceOrderModal &&
                 <PlaceOrderModal
+                    restaurantId={restaurantId}
+                    maxTables={restaurant.maxTables}
                     dineIn={queryParams.has("qr")}
                     dineInCompletionTime={restaurant.dineInCompletionTime}
                     takeAwayCompletionTime={restaurant.takeAwayCompletionTime}
                     deliveryCompletionTime={restaurant.deliveryCompletionTime}
                     cart={cart}
+                    onOrderCompleted={() => setShowOrderPlacedAnimation(true)}
                     onClose={() => setShowPlaceOrderModal(false)}
                 />
             }

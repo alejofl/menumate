@@ -11,7 +11,15 @@ import {AuthContextProvider} from "./contexts/AuthContext.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
     <React.StrictMode>
-        <QueryClientProvider client={new QueryClient()}>
+        <QueryClientProvider
+            client={new QueryClient({
+                defaultOptions: {
+                    queries: {
+                        retry: false
+                    }
+                }
+            })}
+        >
             <ApiContextProvider>
                 <AppWrapper>
                     <AuthContextProvider>

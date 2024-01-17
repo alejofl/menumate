@@ -26,7 +26,8 @@
         "login": "Login",
         "reset_password": "Reset Password",
         "signup": "Sign Up",
-        "loading": "Loading..."
+        "loading": "Loading...",
+        "order_placed": "Thank you for your order!"
     },
     "error": {
         "modal": {
@@ -169,6 +170,16 @@
             "required": "Name is required",
             "min": "Name must be at least {{min}} characters long",
             "max": "Name must be at most {{max}} characters long"
+        },
+        "table_number": {
+            "required": "The table number is required",
+            "min": "The table number must be greater or equal than {{min}}",
+            "max": "A table whose number is {{value}} does not exist"
+        },
+        "address": {
+            "required": "The address is required",
+            "min": "The address must be at least {{min}} characters long",
+            "max": "The address must be at most {{max}} characters long"
         }
     },
     "reset_password": {
@@ -230,7 +241,13 @@
             "eta": "Your food will be ready in approximately <strong>{{eta}} minutes</strong>.",
             "address_disclaimer": "Only the five most recently used unnamed addresses are saved. To add a name to an address, head to My Profile page.",
             "payment_method": "For now, we are only accepting cash as form of payment.",
-            "place_order": "Place Order (${{price}})"
+            "place_order": "Place Order (${{price}})",
+            "error": "There was an error while placing your order. Please try again later."
         }
+    },
+    "order_placed": {
+        "title": "Your order was received!",
+        "description": "Check your email for more information",
+        "button": "See Order Details"
     }
 }

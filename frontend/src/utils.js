@@ -26,6 +26,11 @@ export const EMAIL_ALREADY_IN_USE_ERROR = {"message":"Email already in use!", "p
 
 export const PRICE_DECIMAL_DIGITS = 2;
 export const MAXIMUM_CART_ITEMS = 500;
+export const ORDER_TYPE = {
+    DELIVERY: "delivery",
+    TAKE_AWAY: "takeaway",
+    DINE_IN: "dinein"
+};
 
 export const WAIT_TIME = 500;
 

@@ -26,7 +26,8 @@
         "login": "Iniciar sesión",
         "reset_password": "Restablecer contraseña",
         "signup": "Regístrate",
-        "loading": "Cargando..."
+        "loading": "Cargando...",
+        "order_placed": "¡Gracias por tu pedido!"
     },
     "error": {
         "modal": {
@@ -169,6 +170,16 @@
             "required": "El nombre es obligatorio",
             "min": "El nombre debe tener al menos {{min}} caracteres",
             "max": "El nombre debe tener como máximo {{max}} caracteres"
+        },
+        "table_number": {
+            "required": "El número de mesa es obligatorio",
+            "min": "El número de mesa debe ser mayor o igual a {{min}}",
+            "max": "No existe una mesa cuyo número sea {{value}}"
+        },
+        "address": {
+            "required": "La dirección es obligatoria",
+            "min": "La dirección debe tener al menos {{min}} caracteres",
+            "max": "La dirección debe tener como máximo {{max}} caracteres"
         }
     },
     "reset_password": {
@@ -230,7 +241,13 @@
             "eta": "Tu comida estará lista en aproximadamente <strong>{{eta}} minutos</strong>.",
             "address_disclaimer": "Solo se guardan las cinco direcciones sin nombre más recientemente utilizadas. Para agregar un nombre a una dirección, dirígete a la página Mi perfil.",
             "payment_method": "Por ahora, solo aceptamos efectivo como forma de pago.",
-            "place_order": "Realizar pedido (${{price}})"
+            "place_order": "Realizar pedido (${{price}})",
+            "error": "Ocurrió un error al procesar tu pedido. Por favor, intente de nuevo más tarde."
         }
+    },
+    "order_placed": {
+        "title": "¡Tu pedido fue recibido!",
+        "description": "Estate atento a tu correo electrónico para más información.",
+        "button": "Ver detalles del pedido"
     }
 }
