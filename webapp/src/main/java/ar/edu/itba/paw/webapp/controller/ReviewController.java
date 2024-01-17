@@ -57,9 +57,10 @@ public class ReviewController {
     @GET
     @Path("/{orderId:\\d+}")
     @Produces(CustomMediaType.APPLICATION_REVIEW)
-    public Response getReviewById(@PathParam("orderId") final long orderId) {
+    public Response getReviewById(@PathParam("orderId") final long orderId, @Context Request request) {
         final Review review = reviewService.getByOrder(orderId).orElseThrow(ReviewNotFoundException::new);
-        return Response.ok(ReviewDto.fromReview(uriInfo, review)).build();
+        final ReviewDto dto = ReviewDto.fromReview(uriInfo, review);
+        return ControllerUtils.getResponseUsingEtag(request, dto);
     }
 
     @POST

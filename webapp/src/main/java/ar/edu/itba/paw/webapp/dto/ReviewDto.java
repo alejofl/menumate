@@ -8,6 +8,7 @@ import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class ReviewDto {
@@ -102,5 +103,10 @@ public class ReviewDto {
 
     public void setOrderUrl(URI orderUrl) {
         this.orderUrl = orderUrl;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(orderId, reviewerName, rating, date, comment, reply);
     }
 }
