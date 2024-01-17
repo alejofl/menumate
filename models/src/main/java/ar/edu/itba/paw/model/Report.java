@@ -2,6 +2,8 @@ package ar.edu.itba.paw.model;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.*;
 
 @Entity
 @Table(name = "restaurant_reports")
@@ -109,5 +111,10 @@ public class Report {
 
     public boolean getIsHandled() {
         return this.dateHandled != null;
+    }
+
+    public Date getReportLastUpdate() {
+        LocalDateTime date = (dateHandled != null)? dateHandled : dateReported;
+        return Date.from(date.atZone(ZoneId.systemDefault()).toInstant());
     }
 }

@@ -9,9 +9,11 @@ import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class PromotionDto {
+    private long promotionId;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private BigDecimal discountPercentage;
@@ -22,6 +24,7 @@ public class PromotionDto {
 
     public static PromotionDto fromPromotion(final UriInfo uriInfo, final Promotion promotion, final long restaurantId) {
         final PromotionDto dto = new PromotionDto();
+        dto.promotionId = promotion.getPromotionId();
         dto.startDate = promotion.getStartDate();
         dto.endDate = promotion.getEndDate();
         dto.discountPercentage = promotion.getDiscountPercentage();
@@ -35,6 +38,14 @@ public class PromotionDto {
 
     public static List<PromotionDto> fromPromotionCollection(final UriInfo uriInfo, final Collection<Promotion> promotions, long restaurantId) {
         return promotions.stream().map(c -> fromPromotion(uriInfo, c, restaurantId)).collect(Collectors.toList());
+    }
+
+    public long getPromotionId() {
+        return promotionId;
+    }
+
+    public void setPromotionId(long promotionId) {
+        this.promotionId = promotionId;
     }
 
     public LocalDateTime getStartDate() {
@@ -83,5 +94,10 @@ public class PromotionDto {
 
     public void setDestinationUrl(URI destinationUrl) {
         this.destinationUrl = destinationUrl;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(promotionId, startDate, endDate, discountPercentage);
     }
 }

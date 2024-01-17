@@ -20,6 +20,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -163,11 +164,12 @@ public class RestaurantController {
     @Produces(CustomMediaType.APPLICATION_RESTAURANT_CATEGORIES)
     public Response getCategory(
             @PathParam("restaurantId") final long restaurantId,
-            @PathParam("categoryId") final long categoryId
+            @PathParam("categoryId") final long categoryId,
+            @Context Request request
     ) {
         final Category category = categoryService.getByIdChecked(restaurantId, categoryId, true);
         final CategoryDto dto = CategoryDto.fromCategory(uriInfo, category);
-        return Response.ok(new GenericEntity<CategoryDto>(dto) {}).build();
+        return ControllerUtils.getResponseUsingEtag(request, dto);
     }
 
     @POST
@@ -231,11 +233,12 @@ public class RestaurantController {
     public Response getProduct(
             @PathParam("restaurantId") final long restaurantId,
             @PathParam("categoryId") final long categoryId,
-            @PathParam("productId") final long productId
+            @PathParam("productId") final long productId,
+            @Context Request request
     ) {
         final Product product = productService.getByIdChecked(restaurantId, categoryId, productId, true);
         final ProductDto dto = ProductDto.fromProduct(uriInfo, product);
-        return Response.ok(new GenericEntity<ProductDto>(dto) {}).build();
+        return ControllerUtils.getResponseUsingEtag(request, dto);
     }
 
     @POST
@@ -300,11 +303,12 @@ public class RestaurantController {
     @Produces(CustomMediaType.APPLICATION_RESTAURANT_PROMOTIONS)
     public Response getPromotion(
             @PathParam("restaurantId") final long restaurantId,
-            @PathParam("promotionId") final long promotionId
+            @PathParam("promotionId") final long promotionId,
+            @Context Request request
     ) {
         final Promotion promotion = productService.getPromotionById(restaurantId, promotionId);
-        PromotionDto dto = PromotionDto.fromPromotion(uriInfo, promotion, restaurantId);
-        return Response.ok(new GenericEntity<PromotionDto>(dto){}).build();
+        final PromotionDto dto = PromotionDto.fromPromotion(uriInfo, promotion, restaurantId);
+        return ControllerUtils.getResponseUsingEtag(request, dto);
     }
 
     @POST
@@ -371,11 +375,17 @@ public class RestaurantController {
     @Produces(CustomMediaType.APPLICATION_RESTAURANT_REPORTS)
     public Response getReport(
             @PathParam("restaurantId") final long restaurantId,
-            @PathParam("reportId") final long reportId
+            @PathParam("reportId") final long reportId,
+            @Context Request request
     ) {
         final Report report = reportService.getByIdChecked(reportId, restaurantId);
-        ReportDto dto = ReportDto.fromReport(uriInfo, report);
-        return Response.ok(new GenericEntity<ReportDto>(dto) {}).build();
+        final Date lastModified = report.getReportLastUpdate();
+        Response.ResponseBuilder responseBuilder = ControllerUtils.evaluateLastModified(request, lastModified);
+        if (responseBuilder == null) {
+            final ReportDto dto = ReportDto.fromReport(uriInfo, report);
+            return Response.ok(dto).lastModified(lastModified).build();
+        }
+        return responseBuilder.build();
     }
 
     @GET
