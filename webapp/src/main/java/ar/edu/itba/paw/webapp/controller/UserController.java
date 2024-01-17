@@ -11,6 +11,7 @@ import ar.edu.itba.paw.webapp.auth.JwtTokenUtil;
 import ar.edu.itba.paw.webapp.dto.UserAddressDto;
 import ar.edu.itba.paw.webapp.dto.UserDto;
 import ar.edu.itba.paw.webapp.form.*;
+import ar.edu.itba.paw.webapp.utils.ControllerUtils;
 import ar.edu.itba.paw.webapp.utils.UriUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -43,9 +44,10 @@ public class UserController {
     @GET
     @Path("/{userId:\\d+}")
     @Produces(CustomMediaType.APPLICATION_USER)
-    public Response getUser(@PathParam("userId") final long userId) {
+    public Response getUser(@PathParam("userId") final long userId, @Context Request request) {
         final User user = userService.getById(userId).orElseThrow(UserNotFoundException::new);
-        return Response.ok(UserDto.fromUser(uriInfo, user)).build();
+        final UserDto dto = UserDto.fromUser(uriInfo, user);
+        return ControllerUtils.getResponseUsingEtag(request, dto);
     }
 
     @POST
@@ -87,11 +89,12 @@ public class UserController {
     @Produces(CustomMediaType.APPLICATION_USER_ADDRESS)
     public Response getUserAddress(
             @PathParam("userId") final long userId,
-            @PathParam("addressId") final long addressId
+            @PathParam("addressId") final long addressId,
+            @Context Request request
     ) {
         final UserAddress address = userService.getAddressById(userId, addressId).orElseThrow(UserAddressNotFoundException::new);
         final UserAddressDto dto = UserAddressDto.fromUserAddress(uriInfo, address);
-        return Response.ok(dto).build();
+        return ControllerUtils.getResponseUsingEtag(request, dto);
     }
 
     @POST
