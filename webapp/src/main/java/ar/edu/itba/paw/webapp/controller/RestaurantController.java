@@ -344,7 +344,7 @@ public class RestaurantController {
             @PathParam("restaurantId") final long restaurantId,
             @Valid @NotNull final ReportRestaurantForm restaurantForm
     ) {
-        final Report report = reportService.create(restaurantId, restaurantForm.getReporterId(), restaurantForm.getComment());
+        final Report report = reportService.create(restaurantId, ControllerUtils.getCurrentUserIdOrNull(), restaurantForm.getComment());
         return Response.created(UriUtils.getReportUri(uriInfo, report.getReportId(), restaurantId)).build();
     }
 
