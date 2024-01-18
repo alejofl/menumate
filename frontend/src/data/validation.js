@@ -78,3 +78,10 @@ export const PlaceOrderSchema = (orderType, maxTables) => Yup.object().shape({
         :
         Yup.string().nullable()
 });
+
+export const ReportSchema = Yup.object().shape({
+    comment: Yup.string()
+        .required(i18n.t("validation.comment.required"))
+        .min(1, i18n.t("validation.comment.required"))
+        .max(500, ({ max }) => i18n.t("validation.comment.max", {max: max}))
+});

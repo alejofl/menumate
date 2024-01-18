@@ -2,6 +2,7 @@ import { parseLinkHeader } from "@web3-storage/parse-link-header";
 import Restaurant from "../../data/model/Restaurant.js";
 import PagedContent from "../../data/model/PagedContent.js";
 import {
+    REPORTS_CONTENT_TYPE,
     RESTAURANT_CATEGORIES_CONTENT_TYPE,
     RESTAURANT_DETAILS_CONTENT_TYPE, RESTAURANT_PRODUCTS_CONTENT_TYPE, RESTAURANT_PROMOTIONS_CONTENT_TYPE,
     RESTAURANTS_CONTENT_TYPE
@@ -77,12 +78,27 @@ export function useRestaurantService(api) {
         return Product.fromJSON(response.data);
     };
 
+    const reportRestaurant = async (url, comment) => {
+        return await api.post(
+            url,
+            {
+                comment: comment
+            },
+            {
+                headers: {
+                    "Content-Type": REPORTS_CONTENT_TYPE
+                }
+            }
+        );
+    };
+
     return {
         getRestaurants,
         getRestaurant,
         getCategories,
         getProducts,
         getPromotions,
-        getProduct
+        getProduct,
+        reportRestaurant
     };
 }

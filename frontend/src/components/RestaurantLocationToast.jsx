@@ -1,7 +1,7 @@
 import {useEffect} from "react";
 import {useTranslation} from "react-i18next";
 import {Link} from "react-router-dom";
-import "./styles/restaurant_location_toast.styles.css";
+import "./styles/restaurant_toast.styles.css";
 
 function RestaurantLocationToast({ restaurantId, dineIn }) {
     const { t } = useTranslation();
@@ -15,8 +15,8 @@ function RestaurantLocationToast({ restaurantId, dineIn }) {
     };
 
     useEffect(() => {
-        showToast("#icon-toast");
-        showToast("#text-toast");
+        showToast(".restaurant_location_toast #icon-toast");
+        showToast(".restaurant_location_toast #text-toast");
 
         // eslint-disable-next-line no-undef
         [...document.querySelectorAll('[data-bs-toggle="tooltip"]')].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl, {"trigger": "hover"}));
@@ -47,7 +47,7 @@ function RestaurantLocationToast({ restaurantId, dineIn }) {
                         <button type="button" className="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
                     </div>
                 </div>
-                <div className="toast text-bg-primary" id="icon-toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false" onClick={() => showToast("#text-toast")}>
+                <div className="toast text-bg-primary" id="icon-toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false" onClick={() => showToast(".restaurant_location_toast #text-toast")}>
                     <div className="d-flex" data-bs-toggle="tooltip" data-bs-title={dineIn ? t("restaurant.toasts.dine_in.text") : t("restaurant.toasts.delivery.text")}>
                         <div className="toast-body">
                             <h5 className="m-0">

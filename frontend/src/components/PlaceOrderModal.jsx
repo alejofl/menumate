@@ -229,10 +229,6 @@ function PlaceOrderModal({restaurantId, maxTables, dineIn, dineInCompletionTime,
                                         }
                                         <div className="d-flex align-items-center justify-content-center">
                                             <small>{t("restaurant.checkout.payment_method")}</small>
-                                            <ErrorMessage name="name" className="form-error" component="div"/>
-                                            <ErrorMessage name="email" className="form-error" component="div"/>
-                                            <ErrorMessage name="address" className="form-error" component="div"/>
-                                            <ErrorMessage name="tableNumber" className="form-error" component="div"/>
                                         </div>
                                     </div>
                                     <div className="modal-footer">

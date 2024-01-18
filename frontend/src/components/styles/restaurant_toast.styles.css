@@ -1,4 +1,4 @@
-.restaurant_location_toast .toast {
+.restaurant_location_toast .toast, .restaurant_report_toast .toast {
     --bs-toast-spacing: 0.5rem;
 }
 
@@ -7,4 +7,9 @@
     width: auto;
     color: white !important;
     background-color: var(--primary) !important;
+}
+
+.restaurant_report_toast #icon-toast {
+    cursor: pointer;
+    width: auto;
 }

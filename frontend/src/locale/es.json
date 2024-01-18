@@ -180,6 +180,10 @@
             "required": "La dirección es obligatoria",
             "min": "La dirección debe tener al menos {{min}} caracteres",
             "max": "La dirección debe tener como máximo {{max}} caracteres"
+        },
+        "comment": {
+            "required": "Debe describir el problema",
+            "max": "El comentario debe tener como máximo {{max}} caracteres"
         }
     },
     "reset_password": {
@@ -225,6 +229,10 @@
                 "text": "Estás ordenando para delivery o take-away.",
                 "click": "para cambiar a comer en el restaurante."
             },
+            "report": {
+                "text": "¿Hay algo mal con el restaurante?",
+                "click": "para reportarlo."
+            },
             "click": "Haz click",
             "here": "aquí"
         },
@@ -243,6 +251,14 @@
             "payment_method": "Por ahora, solo aceptamos efectivo como forma de pago.",
             "place_order": "Realizar pedido (${{price}})",
             "error": "Ocurrió un error al procesar tu pedido. Por favor, intente de nuevo más tarde."
+        },
+        "report": {
+            "title": "Reportar restaurante",
+            "comment": "Describe el problema",
+            "button": "Enviar reporte",
+            "success": "¡Tu reporte fue enviado con éxito!",
+            "success_button": "Volver a la página del restaurante",
+            "error": "Ocurrió un error al enviar tu reporte. Por favor, intente de nuevo más tarde."
         }
     },
     "order_placed": {

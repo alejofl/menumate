@@ -18,6 +18,7 @@ import ReviewsModal from "../components/ReviewsModal.jsx";
 import RestaurantLocationToast from "../components/RestaurantLocationToast.jsx";
 import PlaceOrderModal from "../components/PlaceOrderModal.jsx";
 import OrderPlacedAnimation from "../components/OrderPlacedAnimation.jsx";
+import RestaurantReportToast from "../components/RestaurantReportToast.jsx";
 
 function Restaurant() {
     const { t } = useTranslation();
@@ -272,6 +273,7 @@ function Restaurant() {
                 </div>
 
                 <RestaurantLocationToast restaurantId={restaurantId} dineIn={queryParams.has("qr")}/>
+                <RestaurantReportToast restaurantUrl={restaurant.selfUrl}/>
             </Page>
             {showReviewModal && <ReviewsModal reviewsUrl={restaurant.reviewsUrl} onClose={() => setShowReviewModal(false)}/>}
             {showPlaceOrderModal &&

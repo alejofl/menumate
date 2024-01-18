@@ -180,6 +180,10 @@
             "required": "The address is required",
             "min": "The address must be at least {{min}} characters long",
             "max": "The address must be at most {{max}} characters long"
+        },
+        "comment": {
+            "required": "You must describe the problem",
+            "max": "The comment must be at most {{max}} characters long"
         }
     },
     "reset_password": {
@@ -225,6 +229,10 @@
                 "text": "You are ordering delivery or take-away.",
                 "click": "to change to dine-in."
             },
+            "report": {
+                "text": "Is there something wrong with the restaurant?",
+                "click": "to report it."
+            },
             "click": "Click",
             "here": "here"
         },
@@ -243,6 +251,14 @@
             "payment_method": "For now, we are only accepting cash as form of payment.",
             "place_order": "Place Order (${{price}})",
             "error": "There was an error while placing your order. Please try again later."
+        },
+        "report": {
+            "title": "Report Restaurant",
+            "comment": "Describe the problem",
+            "button": "Send Report",
+            "success": "Your report was sent successfully!",
+            "success_button": "Go back to the restaurant page",
+            "error": "There was an error while sending your report. Please try again later."
         }
     },
     "order_placed": {
