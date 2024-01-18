@@ -1,4 +1,12 @@
-import {USER_CONTENT_TYPE, USER_PASSWORD_CONTENT_TYPE} from "../../utils.js";
+import {
+    REVIEW_CONTENT_TYPE,
+    USER_ADDRESS_CONTENT_TYPE,
+    USER_CONTENT_TYPE,
+    USER_PASSWORD_CONTENT_TYPE
+} from "../../utils.js";
+import User from "../../data/model/User.js";
+import Address from "../../data/model/Address.js";
+import Review from "../../data/model/Review.js";
 
 export function useUserService(api) {
     const sendResetPasswordToken = async (url, email) => {
@@ -59,10 +67,52 @@ export function useUserService(api) {
         );
     };
 
+    const getUser = async (url) => {
+        const response = await api.get(
+            url,
+            {
+                headers: {
+                    "Accept": USER_CONTENT_TYPE
+                }
+            }
+        );
+        return User.fromJSON(response.data);
+    };
+
+    const getAddresses = async (url) => {
+        const response = await api.get(
+            url,
+            {
+                headers: {
+                    "Accept": USER_ADDRESS_CONTENT_TYPE
+                }
+            }
+        );
+        const ans = Array.isArray(response.data) ? response.data.map(data => Address.fromJSON(data)) : [];
+        return ans;
+    };
+
+    const getReviews = async (url) => {
+        const response = await api.get(
+            url,
+            {
+                headers: {
+                    "Accept": REVIEW_CONTENT_TYPE
+                }
+            }
+        );
+        const ans = Array.isArray(response.data) ? response.data.map(data => Review.fromJSON(data)) : [];
+        console.log(ans);
+        return ans;
+    };
+
     return {
         sendResetPasswordToken,
         resetPassword,
         login,
-        register
+        register,
+        getUser,
+        getAddresses,
+        getReviews
     };
 }
