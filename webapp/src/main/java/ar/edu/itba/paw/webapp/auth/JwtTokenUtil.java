@@ -20,7 +20,7 @@ import java.util.Date;
 public class JwtTokenUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtTokenUtil.class);
     private final static long ACCESS_EXPIRATION_TIME_MILLIS = 10 * 60 * 1000; // 10 minutes
-    private final static long REFRESH_EXPIRATION_TIME_MILLIS = 1 * 60 * 60 * 1000; // 1 hour
+    private final static long REFRESH_EXPIRATION_TIME_MILLIS = 7 * 24 * 60 * 60 * 1000; // 1 week
     private final String NAME_CLAIM = "name";
     private final String ROLE_CLAIM = "role";
     private final String SELF_URL_CLAIM = "selfUrl";
