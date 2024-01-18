@@ -94,6 +94,7 @@ public class AuthAnywhereFilter extends OncePerRequestFilter {
                 }
                 ServletUriComponentsBuilder uriBuilder = ServletUriComponentsBuilder.fromContextPath(request);
                 response.setHeader("X-MenuMate-AuthToken", jwtTokenUtil.generateAccessToken(uriBuilder, user));
+                response.setHeader("X-MenuMate-RefreshToken", jwtTokenUtil.generateRefreshToken(uriBuilder, user));
             }
         } catch (Exception e) {
             response.addHeader("WWW-Authenticate", "Basic realm=\"MenuMate\"");

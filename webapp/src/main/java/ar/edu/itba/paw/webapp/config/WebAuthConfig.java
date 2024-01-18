@@ -154,7 +154,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         config.setAllowedOrigins(Collections.singletonList("*")); // TODO: Remove before going to production
         config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "OPTIONS", "DELETE", "PUT", "PATCH"));
-        config.setExposedHeaders(Arrays.asList("X-MenuMate-AuthToken", "X-MenuMate-EmployeeUserCreated", "Content-Disposition", "Location", "ETag", "Last-Modified", "Link", "WWW-Authenticate"));
+        config.setExposedHeaders(Arrays.asList("X-MenuMate-AuthToken", "X-MenuMate-RefreshToken", "X-MenuMate-EmployeeUserCreated", "Content-Disposition", "Location", "ETag", "Last-Modified", "Link", "WWW-Authenticate"));
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }
@@ -167,6 +167,6 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public JwtTokenUtil jwtTokenUtil(@Value("classpath:jwtSecret.key") Resource jwtKeyRes) throws IOException {
-        return new JwtTokenUtil(userDetailsService, jwtKeyRes);
+        return new JwtTokenUtil(jwtKeyRes);
     }
 }
