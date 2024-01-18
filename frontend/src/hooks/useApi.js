@@ -21,7 +21,21 @@ export function useApi() {
             (response) => response,
             (error) => {
                 if (error?.response?.status === UNAUTHORIZED_STATUS_CODE) {
-                    authContext.logout();
+                    const previousRequest = error?.config;
+                    previousRequest.headers["Authorization"] = `Bearer ${authContext.refreshToken}`;
+                    return Api.request(previousRequest)
+                        .then((response) => {
+                            if (response.headers["x-menumate-authtoken"] && response.headers["x-menumate-refreshtoken"]) {
+                                authContext.updateTokens(response.headers["x-menumate-authtoken"], response.headers["x-menumate-refreshtoken"]);
+                            }
+                            return response;
+                        })
+                        .catch((error) => {
+                            if (error?.response?.status === UNAUTHORIZED_STATUS_CODE) {
+                                authContext.logout();
+                            }
+                            throw error;
+                        });
                 }
                 return Promise.reject(error);
             }

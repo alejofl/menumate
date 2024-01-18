@@ -37,10 +37,14 @@ export function useUserService(api) {
                 "Authorization": `Basic ${btoa(`${email}:${password}`)}`
             }
         });
-        if (response.headers["x-menumate-authtoken"]) {
-            return {success: true, jwt: response.headers["x-menumate-authtoken"]};
+        if (response.headers["x-menumate-authtoken"] && response.headers["x-menumate-refreshtoken"]) {
+            return {
+                success: true,
+                jwt: response.headers["x-menumate-authtoken"],
+                refreshToken: response.headers["x-menumate-refreshtoken"]
+            };
         } else {
-            return {success: false, jwt: null};
+            return {success: false, jwt: null, refreshToken: null};
         }
     };
 
