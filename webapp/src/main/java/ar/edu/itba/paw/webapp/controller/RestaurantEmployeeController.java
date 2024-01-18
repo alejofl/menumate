@@ -66,15 +66,8 @@ public class RestaurantEmployeeController {
             @HeaderParam(HttpHeaders.ACCEPT_LANGUAGE) final String language
     ) {
         final Pair<User, Boolean> userPair = restaurantRoleService.setRole(addRestaurantEmployeeForm.getEmail(), restaurantId, addRestaurantEmployeeForm.getRoleAsEnum(), language);
-
-
         final User user = userPair.getKey();
-        Response.ResponseBuilder responseBuilder = Response.created(UriUtils.getRestaurantEmployeeUri(uriInfo, restaurantId, user.getUserId()));
-
-        if (userPair.getValue())
-            responseBuilder = responseBuilder.header("X-MenuMate-EmployeeUserCreated", "true");
-
-        return responseBuilder.build();
+        return Response.created(UriUtils.getRestaurantEmployeeUri(uriInfo, restaurantId, user.getUserId())).build();
     }
 
     @PUT
