@@ -35,7 +35,7 @@ public class RestaurantDto {
     private URI promotionsUrl;
     private URI ordersUrl;
     private URI reviewsUrl;
-    private URI employeesUrl;
+    private String employeesUriTemplate;
 
     protected static void fill(final RestaurantDto dto, final UriInfo uriInfo, final Restaurant restaurant) {
         dto.restaurantId = restaurant.getRestaurantId();
@@ -58,7 +58,7 @@ public class RestaurantDto {
         dto.promotionsUrl = UriUtils.getRestaurantPromotionsUri(uriInfo, restaurant.getRestaurantId());
         dto.ordersUrl = UriUtils.getOrdersByRestaurantUri(uriInfo, restaurant.getRestaurantId());
         dto.reviewsUrl = UriUtils.getReviewsByRestaurantUri(uriInfo, restaurant.getRestaurantId());
-        dto.employeesUrl = UriUtils.getRestaurantEmployeesUri(uriInfo, restaurant.getRestaurantId());
+        dto.employeesUriTemplate = UriUtils.getRestaurantEmployeesUriTemplate(uriInfo, restaurant.getRestaurantId());
     }
 
     public static RestaurantDto fromRestaurant(final UriInfo uriInfo, final Restaurant restaurant) {
@@ -223,12 +223,12 @@ public class RestaurantDto {
         this.reviewsUrl = reviewsUrl;
     }
 
-    public URI getEmployeesUrl() {
-        return employeesUrl;
+    public String getEmployeesUriTemplate() {
+        return employeesUriTemplate;
     }
 
-    public void setEmployeesUrl(URI employeesUrl) {
-        this.employeesUrl = employeesUrl;
+    public void setEmployeesUriTemplate(String employeesUriTemplate) {
+        this.employeesUriTemplate = employeesUriTemplate;
     }
 
     public Long getUnhandledReportsCount() {

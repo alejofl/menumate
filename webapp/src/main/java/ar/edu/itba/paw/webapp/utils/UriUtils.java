@@ -166,11 +166,12 @@ public final class UriUtils {
         return uriInfo.getBaseUriBuilder().path(REVIEWS_URL).path(String.valueOf(reviewId)).build();
     }
 
-    public static URI getRestaurantEmployeesUri(final UriInfo uriInfo, final long restaurantId) {
+    public static String getRestaurantEmployeesUriTemplate(final UriInfo uriInfo, final long restaurantId) {
         return uriInfo.getBaseUriBuilder()
                 .path(RESTAURANTS_URL).path(String.valueOf(restaurantId))
                 .path("employees")
-                .build();
+                .path("{userId}")
+                .toTemplate();
     }
 
     public static URI getRestaurantEmployeeUri(final UriInfo uriInfo, final long restaurantId, final long userId) {
