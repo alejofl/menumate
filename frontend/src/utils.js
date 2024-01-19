@@ -2,6 +2,7 @@
 
 export const BAD_REQUEST_STATUS_CODE = 400;
 export const UNAUTHORIZED_STATUS_CODE = 401;
+export const NOT_FOUND_STATUS_CODE = 404;
 
 export const IMAGE_CONTENT_TYPE = "application/vnd.menumate.images.v1+json";
 export const ORDERS_CONTENT_TYPE = "application/vnd.menumate.orders.v1+json";
@@ -30,6 +31,11 @@ export const ORDER_TYPE = {
     DELIVERY: "delivery",
     TAKE_AWAY: "takeaway",
     DINE_IN: "dinein"
+};
+export const ROLE_FOR_RESTAURANT = {
+    OWNER: "owner",
+    ADMIN: "admin",
+    ORDER_HANDLER: "orderhandler"
 };
 
 export const WAIT_TIME = 500;

@@ -19,12 +19,16 @@ import RestaurantLocationToast from "../components/RestaurantLocationToast.jsx";
 import PlaceOrderModal from "../components/PlaceOrderModal.jsx";
 import OrderPlacedAnimation from "../components/OrderPlacedAnimation.jsx";
 import RestaurantReportToast from "../components/RestaurantReportToast.jsx";
+import AuthContext from "../contexts/AuthContext.jsx";
+import {useUserService} from "../hooks/services/useUserService.js";
 
 function Restaurant() {
     const { t } = useTranslation();
     const api = useApi();
     const apiContext = useContext(ApiContext);
+    const authContext = useContext(AuthContext);
     const restaurantService = useRestaurantService(api);
+    const userService = useUserService(api);
 
     const { restaurantId } = useParams();
     const { isError: restaurantIsError, data: restaurant, error: restaurantError } = useQuery({
@@ -75,6 +79,22 @@ function Restaurant() {
             :
             []
     });
+    const { isError: userIsError, data: user, error: userError} = useQuery({
+        queryKey: ["user", authContext.selfUrl],
+        queryFn: async () => (
+            await userService.getUser(authContext.selfUrl)
+        ),
+        enabled: authContext.isAuthenticated
+    });
+    const { isPending: userRoleIsPending, isError: userRoleIsError, data: userRole, error: userRoleError} = useQuery({
+        queryKey: ["restaurant", restaurantId, "employees", user?.userId],
+        queryFn: async () => (
+            await userService.getRoleForRestaurant(
+                restaurant.employeesUriTemplate.fill({userId: user.userId})
+            )
+        ),
+        enabled: !!user && !!restaurant
+    });
 
     const [cart, setCart] = useState([]);
     const addProductToCart = (productId, name, price, quantity, comments) => {
@@ -115,7 +135,19 @@ function Restaurant() {
                 <Error errorNumber={promotionsError.response.status}/>
             </>
         );
-    } else if (categoriesIsPending || promotionsIsPending || products.some(product => product.isPending) || promotionProducts.some(product => product.isPending)) {
+    } else if (userIsError) {
+        return (
+            <>
+                <Error errorNumber={userError.response.status}/>
+            </>
+        );
+    } else if (userRoleIsError) {
+        return (
+            <>
+                <Error errorNumber={userRoleError.response.status}/>
+            </>
+        );
+    } else if (categoriesIsPending || promotionsIsPending || products.some(product => product.isPending) || promotionProducts.some(product => product.isPending) || (authContext.isAuthenticated && userRoleIsPending)) {
         return (
             <>
                 <Page title={t("titles.loading")}>
@@ -161,9 +193,15 @@ function Restaurant() {
                             <TagsContainer tags={restaurant.tags} clickable={true}/>
                         </div>
                         <div className="d-flex flex-column gap-2">
-                            <button className="btn btn-secondary" type="button">{t("restaurant.edit_menu")}</button>
-                            <button className="btn btn-secondary" type="button">{t("restaurant.see_orders")}</button>
-                            <button className="btn btn-danger" type="button">{t("restaurant.delete_restaurant")}</button>
+                            {authContext.isAuthenticated && userRole.isAdmin &&
+                                <button className="btn btn-secondary" type="button">{t("restaurant.edit_menu")}</button>
+                            }
+                            {authContext.isAuthenticated && userRole.isOrderHandler &&
+                                <button className="btn btn-secondary" type="button">{t("restaurant.see_orders")}</button>
+                            }
+                            {authContext.isAuthenticated && (userRole.isOwner || authContext.isModerator) &&
+                                <button className="btn btn-danger" type="button">{t("restaurant.delete_restaurant")}</button>
+                            }
                         </div>
                     </div>
                 </div>
@@ -275,7 +313,12 @@ function Restaurant() {
                 <RestaurantLocationToast restaurantId={restaurantId} dineIn={queryParams.has("qr")}/>
                 <RestaurantReportToast restaurantUrl={restaurant.selfUrl}/>
             </Page>
-            {showReviewModal && <ReviewsModal reviewsUrl={restaurant.reviewsUrl} onClose={() => setShowReviewModal(false)}/>}
+            {showReviewModal && authContext.isAuthenticated && userRole.isOrderHandler
+                ?
+                <>TODO</>
+                :
+                showReviewModal && <ReviewsModal reviewsUrl={restaurant.reviewsUrl} onClose={() => setShowReviewModal(false)}/>
+            }
             {showPlaceOrderModal &&
                 <PlaceOrderModal
                     restaurantId={restaurantId}

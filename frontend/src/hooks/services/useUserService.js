@@ -1,6 +1,13 @@
-import {USER_ADDRESS_CONTENT_TYPE, USER_CONTENT_TYPE, USER_PASSWORD_CONTENT_TYPE} from "../../utils.js";
+import {
+    NOT_FOUND_STATUS_CODE,
+    RESTAURANT_EMPLOYEES_CONTENT_TYPE,
+    USER_ADDRESS_CONTENT_TYPE,
+    USER_CONTENT_TYPE,
+    USER_PASSWORD_CONTENT_TYPE
+} from "../../utils.js";
 import User from "../../data/model/User.js";
 import Address from "../../data/model/Address.js";
+import UserRoleForRestaurant from "../../data/model/UserRoleForRestaurant.js";
 
 export function useUserService(api) {
     const sendResetPasswordToken = async (url, email) => {
@@ -89,12 +96,32 @@ export function useUserService(api) {
         return Array.isArray(response.data) ? response.data.map(data => Address.fromJSON(data)) : [];
     };
 
+    const getRoleForRestaurant = async (url) => {
+        try {
+            const response = await api.get(
+                url,
+                {
+                    headers: {
+                        "Accept": RESTAURANT_EMPLOYEES_CONTENT_TYPE
+                    }
+                }
+            );
+            return UserRoleForRestaurant.fromJSON(response.data);
+        } catch (e) {
+            if (e.response.status === NOT_FOUND_STATUS_CODE) {
+                return UserRoleForRestaurant.notEmployee();
+            }
+            throw e;
+        }
+    };
+
     return {
         sendResetPasswordToken,
         resetPassword,
         login,
         register,
         getUser,
-        getAddresses
+        getAddresses,
+        getRoleForRestaurant
     };
 }

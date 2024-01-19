@@ -1,3 +1,5 @@
+import UriTemplate from "uri-templates";
+
 export default class Restaurant {
     constructor(
         active,
@@ -6,7 +8,7 @@ export default class Restaurant {
         dateCreated,
         deleted,
         description,
-        employeesUrl,
+        employeesUriTemplate,
         logoUrl,
         maxTables,
         name,
@@ -33,7 +35,7 @@ export default class Restaurant {
         this.dateCreated = new Date(dateCreated);
         this.deleted = deleted;
         this.description = description;
-        this.employeesUrl = employeesUrl;
+        this.employeesUriTemplate = UriTemplate(employeesUriTemplate);
         this.logoUrl = logoUrl;
         this.maxTables = maxTables;
         this.name = name;
@@ -63,7 +65,7 @@ export default class Restaurant {
             object.dateCreated,
             object.deleted,
             object.description,
-            object.employeesUrl,
+            object.employeesUriTemplate,
             object.logoUrl,
             object.maxTables,
             object.name,
