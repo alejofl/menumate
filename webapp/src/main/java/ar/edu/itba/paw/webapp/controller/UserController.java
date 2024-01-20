@@ -46,8 +46,7 @@ public class UserController {
     @Produces(CustomMediaType.APPLICATION_USER)
     public Response getUser(@PathParam("userId") final long userId, @Context Request request) {
         final User user = userService.getById(userId).orElseThrow(UserNotFoundException::new);
-        final UserDto dto = UserDto.fromUser(uriInfo, user);
-        return ControllerUtils.buildResponseUsingEtag(request, dto);
+        return ControllerUtils.buildResponseUsingEtag(request, user.hashCode(), () -> UserDto.fromUser(uriInfo, user));
     }
 
     @POST
@@ -93,8 +92,7 @@ public class UserController {
             @Context Request request
     ) {
         final UserAddress address = userService.getAddressById(userId, addressId).orElseThrow(UserAddressNotFoundException::new);
-        final UserAddressDto dto = UserAddressDto.fromUserAddress(uriInfo, address);
-        return ControllerUtils.buildResponseUsingEtag(request, dto);
+        return ControllerUtils.buildResponseUsingEtag(request, address.hashCode(), () -> UserAddressDto.fromUserAddress(uriInfo, address));
     }
 
     @POST

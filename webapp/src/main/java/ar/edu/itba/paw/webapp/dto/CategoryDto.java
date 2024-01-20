@@ -22,7 +22,7 @@ public class CategoryDto {
 
     public static CategoryDto fromCategory(final UriInfo uriInfo, final Category category) {
         final CategoryDto dto = new CategoryDto();
-        dto.categoryId = category.getCategoryId();
+
         dto.name = category.getName();
         dto.orderNum = category.getOrderNum();
         dto.deleted = category.getDeleted();
@@ -36,14 +36,6 @@ public class CategoryDto {
 
     public static List<CategoryDto> fromCategoryCollection(final UriInfo uriInfo, final Collection<Category> categories) {
         return categories.stream().map(c -> fromCategory(uriInfo, c)).collect(Collectors.toList());
-    }
-
-    public long getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(long categoryId) {
-        this.categoryId = categoryId;
     }
 
     public boolean isDeleted() {
@@ -96,10 +88,5 @@ public class CategoryDto {
 
     public void setProductsUrl(URI productsUrl) {
         this.productsUrl = productsUrl;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(categoryId, name, orderNum, deleted);
     }
 }

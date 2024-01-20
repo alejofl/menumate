@@ -20,6 +20,7 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.List;
+import java.util.Objects;
 
 @Path(UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/employees")
 @Component
@@ -54,8 +55,7 @@ public class RestaurantEmployeeController {
             @Context Request request
     ) {
         final RestaurantRoleLevel role = restaurantRoleService.getRole(userId, restaurantId).orElseThrow(RoleNotFoundException::new);
-        final RestaurantRoleDto dto = RestaurantRoleDto.from(uriInfo, restaurantId, userId, role);
-        return ControllerUtils.buildResponseUsingEtag(request, dto);
+        return ControllerUtils.buildResponseUsingEtag(request, Objects.hash(restaurantId, userId, role), ()-> RestaurantRoleDto.from(uriInfo, restaurantId, userId, role));
     }
 
     @POST

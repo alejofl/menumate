@@ -3,6 +3,7 @@ package ar.edu.itba.paw.model;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "restaurants")
@@ -204,5 +205,10 @@ public class Restaurant {
 
     public void setTags(List<RestaurantTags> tags) {
         this.tags = tags;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(restaurantId, name, email, specialty, address, description, isActive, maxTables, deleted, portrait1Id, portrait2Id, logoId);
     }
 }

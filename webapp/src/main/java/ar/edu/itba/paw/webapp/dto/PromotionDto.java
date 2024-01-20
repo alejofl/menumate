@@ -9,7 +9,6 @@ import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class PromotionDto {
@@ -94,10 +93,5 @@ public class PromotionDto {
 
     public void setDestinationUrl(URI destinationUrl) {
         this.destinationUrl = destinationUrl;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(promotionId, startDate, endDate, discountPercentage);
     }
 }

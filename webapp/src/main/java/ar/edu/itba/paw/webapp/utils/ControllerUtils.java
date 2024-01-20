@@ -9,6 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.ws.rs.core.*;
 import java.util.Date;
+import java.util.function.Supplier;
 
 public final class ControllerUtils {
     public static final int DEFAULT_ORDERS_PAGE_SIZE = 20;
@@ -119,11 +120,11 @@ public final class ControllerUtils {
         return response;
     }
 
-    public static Response buildResponseUsingEtag(Request request, Object dto) {
-        EntityTag eTag = new EntityTag(String.valueOf(dto.hashCode()));
+    public static <T> Response buildResponseUsingEtag(Request request, int hashCode, Supplier<T> getDto) {
+        EntityTag eTag = new EntityTag(String.valueOf(hashCode));
         Response.ResponseBuilder responseBuilder = evaluateEtag(request, eTag);
         if(responseBuilder == null) {
-            return Response.ok(dto).tag(eTag).build();
+            return Response.ok(getDto.get()).tag(eTag).build();
         }
         return responseBuilder.build();
     }
@@ -135,5 +136,13 @@ public final class ControllerUtils {
             cacheControl.setNoCache(true);
         }
         return response;
+    }
+
+    public static <T> Response buildResponseUsingLastModified(Request request, Date lastModified, Supplier<T> getDto) {
+        Response.ResponseBuilder responseBuilder = evaluateLastModified(request, lastModified);
+        if (responseBuilder == null) {
+            return Response.ok(getDto.get()).lastModified(lastModified).build();
+        }
+        return responseBuilder.build();
     }
 }

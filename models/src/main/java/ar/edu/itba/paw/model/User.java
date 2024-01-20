@@ -4,6 +4,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "users")
@@ -130,5 +131,10 @@ public class User {
 
     public boolean hasRole() {
         return role != null;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(userId, email, name, imageId, isActive, preferredLanguage, role, addresses);
     }
 }
