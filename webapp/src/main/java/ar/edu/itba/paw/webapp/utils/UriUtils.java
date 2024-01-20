@@ -4,6 +4,7 @@ import ar.edu.itba.paw.model.Category;
 import ar.edu.itba.paw.model.Product;
 import ar.edu.itba.paw.model.Promotion;
 import ar.edu.itba.paw.model.UserAddress;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
@@ -167,11 +168,13 @@ public final class UriUtils {
     }
 
     public static String getRestaurantEmployeesUriTemplate(final UriInfo uriInfo, final long restaurantId) {
-        return uriInfo.getBaseUriBuilder()
+        return UriComponentsBuilder.fromUri(
+                uriInfo
+                .getBaseUriBuilder()
                 .path(RESTAURANTS_URL).path(String.valueOf(restaurantId))
                 .path("employees")
-                .path("{userId}")
-                .toTemplate();
+                .build()
+        ).path("{/userId}").build().toUriString();
     }
 
     public static URI getRestaurantEmployeeUri(final UriInfo uriInfo, final long restaurantId, final long userId) {
