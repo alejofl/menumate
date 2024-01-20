@@ -7,6 +7,8 @@ import {
 import User from "../../data/model/User.js";
 import Address from "../../data/model/Address.js";
 import Review from "../../data/model/Review.js";
+import {parseLinkHeader} from "@web3-storage/parse-link-header";
+import PagedContent from "../../data/model/PagedContent.js";
 
 export function useUserService(api) {
     const sendResetPasswordToken = async (url, email) => {
@@ -92,18 +94,25 @@ export function useUserService(api) {
         return ans;
     };
 
-    const getReviews = async (url) => {
+    const getReviews = async (url, query) => {
         const response = await api.get(
             url,
             {
+                params: query,
                 headers: {
                     "Accept": REVIEW_CONTENT_TYPE
                 }
             }
         );
-        const ans = Array.isArray(response.data) ? response.data.map(data => Review.fromJSON(data)) : [];
-        console.log(ans);
-        return ans;
+        const links = parseLinkHeader(response.headers?.link, {});
+        const reviews = Array.isArray(response.data) ? response.data.map(data => Review.fromJSON(data)) : [];
+        return new PagedContent(
+            reviews,
+            links?.first,
+            links?.prev,
+            links?.next,
+            links?.last
+        );
     };
 
     return {

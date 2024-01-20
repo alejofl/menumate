@@ -2,17 +2,24 @@ import { useTranslation } from "react-i18next";
 import Page from "../components/Page.jsx";
 import "./styles/myprofile.styles.css";
 import {useApi} from "../hooks/useApi.js";
-import {useContext} from "react";
+import {useContext, useState} from "react";
 import {useUserService} from "../hooks/services/useUserService.js";
-import {useQuery} from "@tanstack/react-query";
+import {useInfiniteQuery, useQuery} from "@tanstack/react-query";
 import AuthContext from "../contexts/AuthContext.jsx";
+import {useSearchParams} from "react-router-dom";
 
 
 function MyProfile() {
+    const STAR_RATING = 5;
     const { t } = useTranslation();
     const api = useApi();
     const authContext = useContext(AuthContext);
     const userService = useUserService(api);
+
+    const [queryParams] = useSearchParams();
+    const [query] = useState({
+        ...(queryParams.get("size") ? {size: queryParams.get("size")} : {})
+    });
 
     const { data : User } = useQuery({
         queryKey: ["user", "myProfile"],
@@ -37,17 +44,34 @@ function MyProfile() {
     });
 
     const {
+        isPending: reviewsPending,
         data: reviews
-    } = useQuery( {
+    } = useInfiniteQuery( {
         queryKey: ["reviews"],
-        queryFn: async () => (
+        queryFn: async ({ pageParam }) => (
             await userService.getReviews(
-                User.reviewsUrl
+                User.reviewsUrl,
+                {
+                    ...query,
+                    page: pageParam
+                }
             )
         ),
+        getNextPageParam: (lastPage) => lastPage.nextPage?.page || undefined,
+        keepPreviousData: true,
         enabled: !!User
     });
-    console.log(reviews);
+
+    /*
+     * const {
+     *     data: orders
+     * } = useInfiniteQuery( {
+     *     queryKey: ["orders"],
+     *     queryFn: async ({pageParam2}) => (
+     *         await
+     *     )
+     * })
+     */
 
     return (
         <>
@@ -64,8 +88,7 @@ function MyProfile() {
                                 <hr/>
                                 <h3 className="card-title">{t("myprofile.addresses")}</h3>
                                 {!isPending && addresses.map(address => (
-                                    // eslint-disable-next-line react/jsx-key
-                                    <li className="list-group-item d-flex align-items-center justify-content-between px-0 address-list">
+                                    <li key={address} className="list-group-item d-flex align-items-center justify-content-between px-0 address-list">
                                         <div className="d-flex align-items-center ">
                                             <i className="bi bi-geo-alt"></i>
                                         </div>
@@ -77,32 +100,33 @@ function MyProfile() {
                     </div>
                     <div className="reviews-container">
                         <h3 className="page-title">{t("myprofile.reviews")}</h3>
-
-                        <div className="card">
-                            <div className="card-header">
-                                <div className="my-review-card-header">
-                                    <div className="my-review-card-header-info">
-                                        {/* <b><c:out value="${review.order.restaurant.name}"/></b>*/}
-                                        {/* <fmt:parseDate value="${review.date}" pattern="yyyy-MM-dd'T'HH:mm:ss" var="parsedDateOrdered" type="both"/>*/}
-                                        {/* <fmt:formatDate pattern="dd MMMM yyyy - HH:mm" value="${parsedDateOrdered}" var="reviewDate"/>*/}
-                                        {/* <small className="text-muted">${reviewDate}</small>*/}
-                                    </div>
-                                    <div className="d-flex gap-2 align-items-baseline mb-2 ">
-                                        <div className="small-ratings">
-                                            {/* <c:forEach begin="1" end="3">*/}
-                                            {/*    <i className="bi bi-star-fill rating-color"></i>*/}
-                                            {/* </c:forEach>*/}
-                                            {/* <c:forEach begin="1" end="5 - 3">*/}
-                                            {/*    <i className="bi bi-star-fill"></i>*/}
-                                            {/* </c:forEach>*/}
+                        {!reviewsPending && reviews.pages.flatMap(page => page.content).map(review => (
+                            <div className="card" key={review.orderId}>
+                                <div className="card-header">
+                                    <div className="my-review-card-header">
+                                        <div className="my-review-card-header-info">
+                                            {/* <b><c:out value="${review.order.restaurant.name}"/></b>*/}
+                                            {/* <fmt:parseDate value="${review.date}" pattern="yyyy-MM-dd'T'HH:mm:ss" var="parsedDateOrdered" type="both"/>*/}
+                                            {/* <fmt:formatDate pattern="dd MMMM yyyy - HH:mm" value="${parsedDateOrdered}" var="reviewDate"/>*/}
+                                            {/* <small className="text-muted">${reviewDate}</small>*/}
+                                        </div>
+                                        <div className="d-flex gap-2 align-items-baseline mb-2 ">
+                                            <div className="small-ratings">
+                                                {[...Array(review.rating)].map(i => (
+                                                    <i key={i} className="bi bi-star-fill rating-color"></i>
+                                                ))}
+                                                {[...Array(STAR_RATING - review.rating)].map(i => (
+                                                    <i key={i} className="bi bi-star-fill"></i>
+                                                ))}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+                                <div className="card-body">
+                                    <p>{review.comment}</p>
+                                </div>
                             </div>
-                            <div className="card-body">
-                                <p>Testing</p>
-                            </div>
-                        </div>
+                        ))}
                     </div>
                 </div>
             </Page>

@@ -108,6 +108,10 @@ main {
     color: var(--form-invalid-color);
 }
 
+.rating-color {
+    color: #c49220 !important;
+}
+
 input:has(+ .form-error), textarea:has(+ .form-error) {
     border-color: var(--form-invalid-color);
     padding-right: calc(1.5em + 0.75rem);
