@@ -36,6 +36,10 @@
             "button": "Recargar página"
         },
         "back_to_home": "Volver al inicio",
+        "401": {
+            "title": "¡Ups! ¡Acceso no autorizado!",
+            "description": "Parece que no tienes acceso a la página pedida. Intenta iniciando sesión con otra cuenta."
+        },
         "403": {
             "title": "¡Ups! ¡Acceso denegado!",
             "description": "Parece que no tienes acceso a la página pedida. Intenta iniciando sesión con otra cuenta."

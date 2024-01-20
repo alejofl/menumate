@@ -93,7 +93,7 @@ function Restaurant() {
                 restaurant.employeesUriTemplate.fill({userId: user.userId})
             )
         ),
-        enabled: !!user && !!restaurant
+        enabled: !userIsError && !restaurantIsError && !!user && !!restaurant
     });
 
     const [cart, setCart] = useState([]);

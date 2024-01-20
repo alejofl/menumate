@@ -36,8 +36,12 @@
             "button": "Reload Page"
         },
         "back_to_home": "Back to Home",
+        "401": {
+            "title": "Oops! Unauthorized!",
+            "description": "It looks like you do not have access to the requested page. Try logging in with another account."
+        },
         "403": {
-            "title": "Oops! Access denied!",
+            "title": "Oops! Forbidden!",
             "description": "It looks like you do not have access to the requested page. Try logging in with another account."
         },
         "404": {

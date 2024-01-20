@@ -1,8 +1,8 @@
 /* eslint-disable no-empty-function */
 import React, {useState} from "react";
 import {jwtDecode} from "jwt-decode";
-import {useApi} from "../hooks/useApi.js";
 import {useUserService} from "../hooks/services/useUserService.js";
+import Api from "../data/Api.js";
 
 const AuthContext = React.createContext({
     isAuthenticated: false,
@@ -18,8 +18,7 @@ const AuthContext = React.createContext({
 });
 
 export function AuthContextProvider({children}) {
-    const api = useApi();
-    const userService = useUserService(api);
+    const userService = useUserService(Api);
 
     const jwtParamSetter = (param, defaultValue, token = jwt) => {
         if (token) {
@@ -60,14 +59,17 @@ export function AuthContextProvider({children}) {
     const logoutHandler = () => {
         setIsAuthenticated(false);
         setJwt(null);
+        setRefreshToken(null);
         setName(null);
         setRole(null);
         setSelfUrl(null);
         localStorage.removeItem("jwt");
+        localStorage.removeItem("refreshToken");
         sessionStorage.removeItem("jwt");
+        sessionStorage.removeItem("refreshToken");
     };
 
-    const updateTokensHandler = (kwt, refreshToken) => {
+    const updateTokensHandler = (jwt, refreshToken) => {
         setJwt(jwt);
         setRefreshToken(refreshToken);
         if (localStorage.getItem("jwt") !== null && localStorage.getItem("refreshToken") !== null) {
