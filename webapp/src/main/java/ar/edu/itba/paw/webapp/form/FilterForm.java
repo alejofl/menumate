@@ -13,15 +13,15 @@ import java.util.stream.Collectors;
 public class FilterForm extends SearchForm {
 
     @QueryParam("specialties")
-    @EnumMessageCodeList(enumClass = RestaurantSpecialty.class)
+    @EnumMessageCodeList(enumClass = RestaurantSpecialty.class, message = "{EnumMessageCodeList.FilterForm.specialties}")
     private List<String> specialties;
 
     @QueryParam("tags")
-    @EnumMessageCodeList(enumClass = RestaurantTags.class)
+    @EnumMessageCodeList(enumClass = RestaurantTags.class, message = "{EnumMessageCodeList.FilterForm.tags}")
     private List<String> tags;
 
     @QueryParam("orderBy")
-    @EnumMessageCode(enumClass = RestaurantOrderBy.class)
+    @EnumMessageCode(enumClass = RestaurantOrderBy.class, message = "{EnumMessageCodeList.FilterForm.orderBy}")
     private String orderBy;
 
     @QueryParam("descending")
