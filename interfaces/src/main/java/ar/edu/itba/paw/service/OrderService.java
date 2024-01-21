@@ -21,7 +21,7 @@ public interface OrderService {
 
     Order advanceOrderStatus(long orderId, OrderStatus newStatus);
 
-    Order create(OrderType orderType, Long restaurantId, String name, String email, Integer tableNumber, String address, List<OrderItem> items, String language);
+    Order create(OrderType orderType, Long restaurantId, String name, String email, Integer tableNumber, String address, List<OrderItem> items);
 
     /**
      * Warning: this method forcedly modifies an order's status. No checks are performed and no

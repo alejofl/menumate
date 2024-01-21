@@ -62,10 +62,9 @@ public class RestaurantEmployeeController {
     @Consumes(CustomMediaType.APPLICATION_RESTAURANT_EMPLOYEE)
     public Response addRestaurantEmployee(
             @PathParam("restaurantId") final long restaurantId,
-            @Valid @NotNull final AddRestaurantEmployeeForm addRestaurantEmployeeForm,
-            @HeaderParam(HttpHeaders.ACCEPT_LANGUAGE) final String language
+            @Valid @NotNull final AddRestaurantEmployeeForm addRestaurantEmployeeForm
     ) {
-        final Pair<User, Boolean> userPair = restaurantRoleService.setRole(addRestaurantEmployeeForm.getEmail(), restaurantId, addRestaurantEmployeeForm.getRoleAsEnum(), language);
+        final Pair<User, Boolean> userPair = restaurantRoleService.setRole(addRestaurantEmployeeForm.getEmail(), restaurantId, addRestaurantEmployeeForm.getRoleAsEnum());
         final User user = userPair.getKey();
         return Response.created(UriUtils.getRestaurantEmployeeUri(uriInfo, restaurantId, user.getUserId())).build();
     }

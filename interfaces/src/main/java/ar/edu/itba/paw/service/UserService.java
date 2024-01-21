@@ -19,14 +19,14 @@ public interface UserService {
      *
      * @return The created User
      */
-    User createOrConsolidate(String email, String password, String name, String language);
+    User createOrConsolidate(String email, String password, String name);
 
     /**
      * Gets a user by email, or creates it as not-consolidated (no password) if it doesn't exist.
      *
      * @return The created User
      */
-    User createIfNotExists(String email, String name, String language);
+    User createIfNotExists(String email, String name);
 
     boolean isUserEmailRegisteredAndConsolidated(String email);
 

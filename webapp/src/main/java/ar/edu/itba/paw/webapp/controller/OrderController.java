@@ -89,10 +89,7 @@ public class OrderController {
 
     @POST
     @Consumes(CustomMediaType.APPLICATION_ORDERS)
-    public Response createOrder(
-            @Valid @NotNull final CheckoutForm checkoutForm,
-            @HeaderParam(HttpHeaders.ACCEPT_LANGUAGE) final String language
-    ) {
+    public Response createOrder(@Valid @NotNull final CheckoutForm checkoutForm) {
         final Order order = orderService.create(
                 checkoutForm.getOrderTypeAsEnum(),
                 checkoutForm.getRestaurantId(),
@@ -100,8 +97,7 @@ public class OrderController {
                 checkoutForm.getEmail(),
                 checkoutForm.getTableNumber(),
                 checkoutForm.getAddress(),
-                checkoutForm.getCartAsOrderItems(orderService),
-                language
+                checkoutForm.getCartAsOrderItems(orderService)
         );
 
         return Response.created(UriUtils.getOrderUri(uriInfo, order.getOrderId())).build();

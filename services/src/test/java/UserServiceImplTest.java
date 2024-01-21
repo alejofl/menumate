@@ -67,7 +67,7 @@ public class UserServiceImplTest {
         when(userDao.create(EMAIL, PASSWORD, USERNAME, LANGUAGE)).thenReturn(user);
         when(tokenService.manageUserToken(eq(user))).thenReturn(userVerificationToken);
 
-        final User result = userServiceImpl.createOrConsolidate(EMAIL, PASSWORD, USERNAME, LANGUAGE);
+        final User result = userServiceImpl.createOrConsolidate(EMAIL, PASSWORD, USERNAME);
 
         assertEquals(EMAIL, result.getEmail());
         assertEquals(PASSWORD, result.getPassword());
@@ -86,7 +86,7 @@ public class UserServiceImplTest {
         when(tokenService.manageUserToken(eq(user))).thenReturn(token);
         when(token.getToken()).thenReturn(TOKEN);
 
-        final User result = userServiceImpl.createOrConsolidate(EMAIL, PASSWORD, USERNAME, LANGUAGE);
+        final User result = userServiceImpl.createOrConsolidate(EMAIL, PASSWORD, USERNAME);
 
         assertEquals(PASSWORD, result.getPassword());
         assertEquals(USERNAME, result.getName());
@@ -99,7 +99,7 @@ public class UserServiceImplTest {
         when(existingUser.getPassword()).thenReturn(PASSWORD);
         when(userDao.getByEmail(EMAIL)).thenReturn(Optional.of(existingUser));
 
-        userServiceImpl.createOrConsolidate(EMAIL, PASSWORD, USERNAME, LANGUAGE);
+        userServiceImpl.createOrConsolidate(EMAIL, PASSWORD, USERNAME);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -107,7 +107,7 @@ public class UserServiceImplTest {
         final User consolidated = spy(User.class);
         when(userDao.getByEmail(EMAIL)).thenReturn(Optional.of(consolidated));
 
-        userServiceImpl.createOrConsolidate(EMAIL, null, USERNAME, LANGUAGE);
+        userServiceImpl.createOrConsolidate(EMAIL, null, USERNAME);
     }
 
     @Test
@@ -116,7 +116,7 @@ public class UserServiceImplTest {
         existingUser.setEmail(EMAIL);
         when(userDao.getByEmail(EMAIL)).thenReturn(Optional.of(existingUser));
 
-        final User result = userServiceImpl.createIfNotExists(EMAIL, USERNAME, LANGUAGE);
+        final User result = userServiceImpl.createIfNotExists(EMAIL, USERNAME);
         assertEquals(existingUser, result);
     }
 
@@ -129,7 +129,7 @@ public class UserServiceImplTest {
         when(createdUser.getPassword()).thenReturn(PASSWORD);
         when(userDao.getByEmail(EMAIL)).thenReturn(Optional.empty());
 
-        final User result = userServiceImpl.createIfNotExists(EMAIL, USERNAME, LANGUAGE);
+        final User result = userServiceImpl.createIfNotExists(EMAIL, USERNAME);
 
         assertEquals(EMAIL, result.getEmail());
         assertEquals(USERNAME, result.getName());
