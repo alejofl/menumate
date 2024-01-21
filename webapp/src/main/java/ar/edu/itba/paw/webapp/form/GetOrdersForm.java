@@ -15,7 +15,7 @@ public class GetOrdersForm extends PagingForm {
     private Long restaurantId;
 
     @QueryParam("status")
-    @EnumMessageCode(enumClass = OrderStatus.class)
+    @EnumMessageCode(enumClass = OrderStatus.class, message = "{EnumMessageCode.GetOrdersForm.status}")
     private String status;
 
     @QueryParam("descending")
