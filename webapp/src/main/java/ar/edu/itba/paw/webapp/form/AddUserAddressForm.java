@@ -7,7 +7,7 @@ import javax.validation.constraints.Size;
 public class AddUserAddressForm {
 
     @NotBlank(message = "{NotBlank.addUserAddressForm.address}")
-    @Size(max = 200, message = "{Size.addUserAddressForm.address}")
+    @Size(min = 3, max = 200, message = "{Size.addUserAddressForm.address}")
     private String address;
 
     @Size(max = 20, message = "{Size.addUserAddressForm.name}")

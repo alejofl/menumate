@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AllProductsFromSameRestaurant {
-    String message() default "All products must be available and from the specified restaurant";
+    String message() default "{AllProductsFromSameRestaurant.CheckoutForm}";
 
     Class<?>[] groups() default {};
 
