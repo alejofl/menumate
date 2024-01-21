@@ -8,12 +8,12 @@ import org.hibernate.validator.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 public class AddRestaurantEmployeeForm {
-    @Email
-    @NotBlank
+    @Email(message = "{Email.addRestaurantEmployeeForm.email}")
+    @NotBlank(message = "{NotBlank.addRestaurantEmployeeForm.email}")
     private String email;
 
-    @NotNull
-    @EnumMessageCode(enumClass = RestaurantRoleLevel.class, excludeValues = "owner")
+    @NotNull(message = "{NotNull.addRestaurantEmployeeForm.role}")
+    @EnumMessageCode(enumClass = RestaurantRoleLevel.class, excludeValues = "owner", message = "{EnumMessageCode.addRestaurantEmployeeForm.role}")
     private String role;
 
     public String getEmail() {
