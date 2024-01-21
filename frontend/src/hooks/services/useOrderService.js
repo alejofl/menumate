@@ -32,7 +32,7 @@ export function useOrderService(api) {
                 }
             }
         );
-        return Order.fromJSON(response);
+        return Order.fromJSON(response.data);
     };
 
     return {

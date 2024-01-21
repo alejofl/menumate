@@ -8,7 +8,9 @@ import {useInfiniteQuery, useQueries, useQuery} from "@tanstack/react-query";
 import AuthContext from "../contexts/AuthContext.jsx";
 import {useSearchParams} from "react-router-dom";
 import {useOrderService} from "../hooks/services/useOrderService.js";
-// import {useRestaurantService} from "../hooks/services/useRestaurantService.js";
+import ContentLoader from "react-content-loader";
+import {useRestaurantService} from "../hooks/services/useRestaurantService.js";
+
 
 
 function MyProfile() {
@@ -18,7 +20,7 @@ function MyProfile() {
     const authContext = useContext(AuthContext);
     const userService = useUserService(api);
     const orderService = useOrderService(api);
-    // const restaurantService = useRestaurantService(api);
+    const restaurantService = useRestaurantService(api);
 
     const [queryParams] = useSearchParams();
     const [query] = useState({
@@ -65,6 +67,7 @@ function MyProfile() {
         keepPreviousData: true,
         enabled: !!User
     });
+    // console.log(reviews);
 
     const orders = useQueries({
         queries: reviews
@@ -78,29 +81,53 @@ function MyProfile() {
                 };
             })
             :
-            []
+            [],
+        enabled: !!User
     });
-    console.log(orders);
+    // console.log(orders);
 
-    /*
-     * const restaurants = useQueries({
-     *     queries: orders
-     *         ?
-     *         orders.map(order => {
-     *             return {
-     *                 queryKey: ["restaurant", order.restaurantId, order.restaurantsUrl],
-     *                 queryFn: async () => (
-     *                     await restaurantService.getRestaurant(order.restaurantsUrl, true)
-     *                 )
-     *             };
-     *         })
-     *         :
-     *         [],
-     *     enabled: !isPending
-     * });
-     *
-     * console.log(restaurants);
-     */
+    const restaurants = useQueries({
+        queries: orders.every(query => query.isSuccess)
+            ?
+            orders.map(order => {
+                return {
+                    queryKey: ["restaurant"],
+                    queryFn: async () => {
+                        // if (order.data) {
+                        console.log("PARECE QUE TENGO EL LINK");
+                        console.log(order.data.restaurantUrl);
+                        await restaurantService.getRestaurant(order.data.restaurantUrl);
+                        /*
+                         * } else {
+                         *     return null;
+                         * }
+                         */
+                    }};
+            })
+            : []
+    });
+    // console.log(restaurants);
+
+    if (orders.some(order => order.isPending) || restaurants.some(restaurant => restaurant.isPending)) {
+        return (
+            <>
+                <Page title={t("titles.loading")}>
+                    <ContentLoader backgroundColor="#eaeaea" foregroundColor="#e0e0e0" width="1920">
+                        <rect x="288" y="50" rx="0" ry="0" width="1344" height="200"/>
+                        <rect x="12" y="300" rx="0" ry="0" width="200" height="380"/>
+                        <rect x="236" y="300" rx="0" ry="0" width="1268" height="64"/>
+                        <rect x="236" y="388" rx="0" ry="0" width="400" height="200"/>
+                        <rect x="656" y="388" rx="0" ry="0" width="400" height="200"/>
+                        <rect x="1528" y="300" rx="0" ry="0" width="380" height="120"/>
+                    </ContentLoader>
+                </Page>
+            </>
+        );
+    }
+
+    if (orders.every(query => query.isSuccess) && restaurants.every(query => query.isSuccess)) {
+        console.log(restaurants);
+    }
 
     return (
         <>
@@ -134,6 +161,9 @@ function MyProfile() {
                                 <div className="card-header">
                                     <div className="my-review-card-header">
                                         <div className="my-review-card-header-info">
+                                            {orders.map(order => (
+                                                <h1 key={order}>{order.data.orderId} - {order.data.restaurantUrl}</h1>
+                                            ))}
                                             {/* {restaurants.map(restaurant => (<h1 key={restaurant.restaurantId}>{restaurant.name}</h1>))}*/}
                                             {/* <b><c:out value="${review.order.restaurant.name}"/></b>*/}
                                             <small className="text-muted">{review.date.toLocaleString()}</small>
