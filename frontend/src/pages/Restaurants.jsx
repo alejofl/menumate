@@ -211,7 +211,7 @@ function Restaurants() {
                     <div className="search-form-container">
                         <div className="pb-2">
                             <div className="input-group flex-nowrap">
-                                <span className="input-group-text search-input"><i className="bi bi-search"></i></span>
+                                <span className="input-group-text search-input"><i className="bi bi-search default"></i></span>
                                 <input
                                     type="text"
                                     className="form-control search-input"
@@ -223,7 +223,7 @@ function Restaurants() {
                         </div>
                         <div className="d-flex gap-2">
                             <div className="input-group flex-nowrap">
-                                <span className="input-group-text search-input"><i className="bi bi-filter"></i></span>
+                                <span className="input-group-text search-input"><i className="bi bi-filter default"></i></span>
                                 <Select
                                     placeholder={t("restaurants.specialties_placeholder")}
                                     isMulti
@@ -237,7 +237,7 @@ function Restaurants() {
                                 />
                             </div>
                             <div className="input-group flex-nowrap">
-                                <span className="input-group-text search-input"><i className="bi bi-tags"></i></span>
+                                <span className="input-group-text search-input"><i className="bi bi-tags default"></i></span>
                                 <Select
                                     placeholder={t("restaurants.tags_placeholder")}
                                     isMulti
@@ -251,7 +251,7 @@ function Restaurants() {
                                 />
                             </div>
                             <div className="input-group flex-nowrap">
-                                <span className="input-group-text search-input"><i className="bi bi-text-left"></i></span>
+                                <span className="input-group-text search-input"><i className="bi bi-text-left default"></i></span>
                                 <Select
                                     placeholder={t("restaurants.orderby_placeholder")}
                                     styles={selectStyles(true)}
@@ -268,9 +268,9 @@ function Restaurants() {
                                     {
                                         query.descending
                                             ?
-                                            <i className="bi bi-arrow-up"></i>
+                                            <i className="bi bi-arrow-up default"></i>
                                             :
-                                            <i className="bi bi-arrow-down"></i>
+                                            <i className="bi bi-arrow-down default"></i>
                                     }
                                 </button>
                             </div>
@@ -296,7 +296,7 @@ function Restaurants() {
                             (data.pages[0]?.content.length || 0) === 0
                                 ?
                                 <div className="empty-results">
-                                    <h1><i className="bi bi-slash-circle"></i></h1>
+                                    <h1><i className="bi bi-slash-circle default"></i></h1>
                                     <p>{t("restaurants.no_results")}</p>
                                     <button className="btn btn-primary btn-sm" onClick={handleClearFilters}>{t("restaurants.clear_filters")}</button>
                                 </div>
@@ -305,7 +305,7 @@ function Restaurants() {
                                     return (
                                         <RestaurantCard
                                             key={restaurant.selfUrl}
-                                            restaurantId={1}
+                                            restaurantId={restaurant.restaurantId}
                                             name={restaurant.name}
                                             mainImage={restaurant.portrait1Url}
                                             hoverImage={restaurant.portrait2Url}

@@ -9,7 +9,7 @@ export function useApi() {
     useEffect(() => {
         const requestInterceptor = Api.interceptors.request.use(
             (config) => {
-                if (authContext.isAuthenticated) {
+                if (authContext.isAuthenticated && !config.retried) {
                     config.headers["Authorization"] = `Bearer ${authContext.jwt}`;
                 }
                 return config;
@@ -20,8 +20,23 @@ export function useApi() {
         const responseInterceptor = Api.interceptors.response.use(
             (response) => response,
             (error) => {
-                if (error?.response?.status === UNAUTHORIZED_STATUS_CODE) {
-                    authContext.logout();
+                const previousRequest = error?.config;
+                if (error?.response?.status === UNAUTHORIZED_STATUS_CODE && !previousRequest.retried) {
+                    previousRequest.retried = true;
+                    previousRequest.headers["Authorization"] = `Bearer ${authContext.refreshToken}`;
+                    return Api.request(previousRequest)
+                        .then((response) => {
+                            if (response.headers["x-menumate-authtoken"] && response.headers["x-menumate-refreshtoken"]) {
+                                authContext.updateTokens(response.headers["x-menumate-authtoken"], response.headers["x-menumate-refreshtoken"]);
+                            }
+                            return response;
+                        })
+                        .catch((error) => {
+                            if (error?.response?.status === UNAUTHORIZED_STATUS_CODE) {
+                                authContext.logout();
+                            }
+                            throw error;
+                        });
                 }
                 return Promise.reject(error);
             }
@@ -31,6 +46,6 @@ export function useApi() {
             Api.interceptors.request.eject(requestInterceptor);
             Api.interceptors.response.eject(responseInterceptor);
         };
-    });
+    }, [authContext.isAuthenticated, authContext.jwt, authContext.refreshToken]);
     return Api;
 }

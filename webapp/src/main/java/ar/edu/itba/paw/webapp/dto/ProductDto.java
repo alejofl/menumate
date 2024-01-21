@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class ProductDto {
@@ -112,5 +113,10 @@ public class ProductDto {
 
     public void setCategoryUrl(URI categoryUrl) {
         this.categoryUrl = categoryUrl;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(productId, name, description, price, available, deleted);
     }
 }

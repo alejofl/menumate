@@ -2,6 +2,7 @@
 
 export const BAD_REQUEST_STATUS_CODE = 400;
 export const UNAUTHORIZED_STATUS_CODE = 401;
+export const NOT_FOUND_STATUS_CODE = 404;
 
 export const IMAGE_CONTENT_TYPE = "application/vnd.menumate.images.v1+json";
 export const ORDERS_CONTENT_TYPE = "application/vnd.menumate.orders.v1+json";
@@ -20,8 +21,22 @@ export const USER_CONTENT_TYPE = "application/vnd.menumate.user.v1+json";
 export const USER_ADDRESS_CONTENT_TYPE = "application/vnd.menumate.user.address.v1+json";
 export const USER_ROLE_CONTENT_TYPE = "application/vnd.menumate.userRole.v1+json";
 export const USER_PASSWORD_CONTENT_TYPE = "application/vnd.menumate.userPassword.v1+json";
+export const JSON_CONTENT_TYPE = "application/json";
 
 export const EMAIL_ALREADY_IN_USE_ERROR = {"message":"Email already in use!", "path":"registerUser.arg0.email"};
+
+export const PRICE_DECIMAL_DIGITS = 2;
+export const MAXIMUM_CART_ITEMS = 500;
+export const ORDER_TYPE = {
+    DELIVERY: "delivery",
+    TAKE_AWAY: "takeaway",
+    DINE_IN: "dinein"
+};
+export const ROLE_FOR_RESTAURANT = {
+    OWNER: "owner",
+    ADMIN: "admin",
+    ORDER_HANDLER: "orderhandler"
+};
 
 export const WAIT_TIME = 500;
 

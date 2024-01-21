@@ -8,8 +8,6 @@ import io.jsonwebtoken.security.SignatureException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -21,22 +19,35 @@ import java.util.Date;
 
 public class JwtTokenUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtTokenUtil.class);
-    private final static long EXPIRATION_TIME_MILLIS = 7 * 24 * 60 * 60 * 1000; // 1 week
+    private final static long ACCESS_EXPIRATION_TIME_MILLIS = 10 * 60 * 1000; // 10 minutes
+    private final static long REFRESH_EXPIRATION_TIME_MILLIS = 7 * 24 * 60 * 60 * 1000; // 1 week
+    private final String NAME_CLAIM = "name";
+    private final String ROLE_CLAIM = "role";
+    private final String SELF_URL_CLAIM = "selfUrl";
+    private final String TOKEN_TYPE_CLAIM = "tokenType";
 
-    private final UserDetailsService userDetailsService;
     private final Key jwtSecretKey;
 
-    public JwtTokenUtil(UserDetailsService userDetailsService, Resource jwtKeyRes) throws IOException {
-        this.userDetailsService = userDetailsService;
+    public JwtTokenUtil(Resource jwtKeyRes) throws IOException {
         jwtSecretKey = Keys.hmacShaKeyFor(FileCopyUtils.copyToString(new InputStreamReader(jwtKeyRes.getInputStream())).getBytes(StandardCharsets.UTF_8));
     }
 
-    public String generateAccessToken(ServletUriComponentsBuilder uriBuilder, User user) {
+    private String generateToken(ServletUriComponentsBuilder uriBuilder, User user, JwtTokenType type, long expirationTimeMilis) {
+        return Jwts.builder()
+                .setClaims(buildClaims(uriBuilder, user, type))
+                .setSubject(user.getEmail())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + expirationTimeMilis))
+                .signWith(jwtSecretKey)
+                .compact();
+    }
+
+    private Claims buildClaims(ServletUriComponentsBuilder uriBuilder, User user, JwtTokenType type) {
         Claims claims = Jwts.claims();
-        claims.put("name", user.getName());
+        claims.put(NAME_CLAIM, user.getName());
 
         if (user.hasRole()) {
-            claims.put("role", user.getRole().getLevel());
+            claims.put(ROLE_CLAIM, user.getRole().getLevel());
         }
 
         String selfUrl = uriBuilder
@@ -44,27 +55,37 @@ public class JwtTokenUtil {
                 .path(String.valueOf(user.getUserId()))
                 .build().toString();
 
-        claims.put("selfUrl", selfUrl);
-
-        return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(user.getEmail())
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME_MILLIS))
-                .signWith(jwtSecretKey)
-                .compact();
+        claims.put(SELF_URL_CLAIM, selfUrl);
+        claims.put(TOKEN_TYPE_CLAIM, type);
+        return claims;
     }
 
-    public UserDetails validateAndLoad(String token) {
+    public String generateAccessToken(ServletUriComponentsBuilder uriBuilder, User user) {
+        return generateToken(uriBuilder, user, JwtTokenType.ACCESS, ACCESS_EXPIRATION_TIME_MILLIS);
+    }
+
+    public String generateRefreshToken(ServletUriComponentsBuilder uriBuilder, User user) {
+        return generateToken(uriBuilder, user, JwtTokenType.REFRESH, REFRESH_EXPIRATION_TIME_MILLIS);
+    }
+
+    public JwtTokenDetails validate(String token) {
         try {
             Jws<Claims> parsed = Jwts.parserBuilder().setSigningKey(jwtSecretKey).build().parseClaimsJws(token);
             Claims claims = parsed.getBody();
 
-            if (claims.getExpiration().before(new Date(System.currentTimeMillis())))
-                return null;
+            if (claims.getExpiration().before(new Date(System.currentTimeMillis()))) {
+                throw new ExpiredJwtException(parsed.getHeader(), claims, "JWT token expired");
+            }
 
-            String email = claims.getSubject();
-            return userDetailsService.loadUserByUsername(email);
+            return new JwtTokenDetails.Builder()
+                    .setId(claims.getId())
+                    .setToken(token)
+                    .setEmail(claims.getSubject())
+                    .setIssuedDate(claims.getIssuedAt())
+                    .setExpirationDate(claims.getExpiration())
+                    .setTokenType(JwtTokenType.fromCode((claims.get(TOKEN_TYPE_CLAIM).toString())))
+                    .build();
+
         } catch (SignatureException ex) {
             LOGGER.warn("Invalid JWT signature - {}", ex.getMessage());
         } catch (MalformedJwtException ex) {
@@ -75,8 +96,9 @@ public class JwtTokenUtil {
             LOGGER.warn("Unsupported JWT token - {}", ex.getMessage());
         } catch (IllegalArgumentException ex) {
             LOGGER.warn("JWT claims string is empty - {}", ex.getMessage());
+        } catch (Exception ex) {
+            LOGGER.warn("JWT claims {}", ex.getMessage());
         }
-
         return null;
     }
 }

@@ -4,9 +4,11 @@ import "./styles/myprofile.styles.css";
 import {useApi} from "../hooks/useApi.js";
 import {useContext, useState} from "react";
 import {useUserService} from "../hooks/services/useUserService.js";
-import {useInfiniteQuery, useQuery} from "@tanstack/react-query";
+import {useInfiniteQuery, useQueries, useQuery} from "@tanstack/react-query";
 import AuthContext from "../contexts/AuthContext.jsx";
 import {useSearchParams} from "react-router-dom";
+import {useOrderService} from "../hooks/services/useOrderService.js";
+// import {useRestaurantService} from "../hooks/services/useRestaurantService.js";
 
 
 function MyProfile() {
@@ -15,6 +17,8 @@ function MyProfile() {
     const api = useApi();
     const authContext = useContext(AuthContext);
     const userService = useUserService(api);
+    const orderService = useOrderService(api);
+    // const restaurantService = useRestaurantService(api);
 
     const [queryParams] = useSearchParams();
     const [query] = useState({
@@ -62,15 +66,40 @@ function MyProfile() {
         enabled: !!User
     });
 
+    const orders = useQueries({
+        queries: reviews
+            ?
+            reviews.pages.flatMap(page => page.content).map(review => {
+                return {
+                    queryKey: ["order", review.orderId, review.orderUrl],
+                    queryFn: async () => (
+                        await orderService.getOrder(review.orderUrl)
+                    )
+                };
+            })
+            :
+            []
+    });
+    console.log(orders);
+
     /*
-     * const {
-     *     data: orders
-     * } = useInfiniteQuery( {
-     *     queryKey: ["orders"],
-     *     queryFn: async ({pageParam2}) => (
-     *         await
-     *     )
-     * })
+     * const restaurants = useQueries({
+     *     queries: orders
+     *         ?
+     *         orders.map(order => {
+     *             return {
+     *                 queryKey: ["restaurant", order.restaurantId, order.restaurantsUrl],
+     *                 queryFn: async () => (
+     *                     await restaurantService.getRestaurant(order.restaurantsUrl, true)
+     *                 )
+     *             };
+     *         })
+     *         :
+     *         [],
+     *     enabled: !isPending
+     * });
+     *
+     * console.log(restaurants);
      */
 
     return (
@@ -105,10 +134,9 @@ function MyProfile() {
                                 <div className="card-header">
                                     <div className="my-review-card-header">
                                         <div className="my-review-card-header-info">
+                                            {/* {restaurants.map(restaurant => (<h1 key={restaurant.restaurantId}>{restaurant.name}</h1>))}*/}
                                             {/* <b><c:out value="${review.order.restaurant.name}"/></b>*/}
-                                            {/* <fmt:parseDate value="${review.date}" pattern="yyyy-MM-dd'T'HH:mm:ss" var="parsedDateOrdered" type="both"/>*/}
-                                            {/* <fmt:formatDate pattern="dd MMMM yyyy - HH:mm" value="${parsedDateOrdered}" var="reviewDate"/>*/}
-                                            {/* <small className="text-muted">${reviewDate}</small>*/}
+                                            <small className="text-muted">{review.date.toLocaleString()}</small>
                                         </div>
                                         <div className="d-flex gap-2 align-items-baseline mb-2 ">
                                             <div className="small-ratings">

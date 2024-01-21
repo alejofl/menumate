@@ -22,6 +22,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+import java.util.Date;
 import java.util.List;
 
 @Path(UriUtils.ORDERS_URL)
@@ -62,13 +63,13 @@ public class OrderController {
     @GET
     @Path("/{orderId:\\d+}")
     @Produces(CustomMediaType.APPLICATION_ORDERS)
-    public Response getOrderById(@PathParam("orderId") final long orderId, @Context javax.ws.rs.core.Request request) {
+    public Response getOrderById(@PathParam("orderId") final long orderId, @Context Request request) {
         final Order order = orderService.getById(orderId).orElseThrow(OrderNotFoundException::new);
-        final OrderDto dto = OrderDto.fromOrder(uriInfo, order);
-        EntityTag eTag = new EntityTag(String.valueOf(dto.hashCode()));
-        Response.ResponseBuilder responseBuilder = ControllerUtils.evaluateEtag(request, eTag);
-        if(responseBuilder == null) {
-            return Response.ok(dto).tag(eTag).build();
+        Date lastModified = order.getOrderLastUpdate();
+        Response.ResponseBuilder responseBuilder = ControllerUtils.evaluateLastModified(request, lastModified);
+        if (responseBuilder == null) {
+            final OrderDto dto = OrderDto.fromOrder(uriInfo, order);
+            return Response.ok(dto).lastModified(lastModified).build();
         }
         return responseBuilder.build();
     }

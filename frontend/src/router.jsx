@@ -8,6 +8,7 @@ import MyProfile from "./pages/MyProfile.jsx";
 import Login from "./pages/Login.jsx";
 import ResetPassword from "./pages/ResetPassword.jsx";
 import Register from "./pages/Register.jsx";
+import Restaurant from "./pages/Restaurant.jsx";
 import VerifyAccount from "./pages/VerifyAccount.jsx";
 
 const router = createBrowserRouter(
@@ -35,6 +36,10 @@ const router = createBrowserRouter(
         {
             path: "/restaurants",
             Component: Restaurants
+        },
+        {
+            path: "/restaurants/:restaurantId",
+            Component: Restaurant
         },
         {
             path: "*",

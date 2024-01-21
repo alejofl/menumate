@@ -10,7 +10,8 @@ export default class User {
         restaurantsEmployedAtUrl,
         reviewsUrl,
         role,
-        selfUrl
+        selfUrl,
+        userId
     ) {
         this.addressesUrl = addressesUrl;
         this.dateJoined = new Date(dateJoined);
@@ -23,6 +24,7 @@ export default class User {
         this.reviewsUrl = reviewsUrl;
         this.role = role;
         this.selfUrl = selfUrl;
+        this.userId = userId;
     }
 
     // Static method to create an instance from a JSON object
@@ -38,7 +40,8 @@ export default class User {
             object.restaurantsEmployedAtUrl,
             object.reviewsUrl,
             object.role,
-            object.selfUrl
+            object.selfUrl,
+            object.userId
         );
     }
 }

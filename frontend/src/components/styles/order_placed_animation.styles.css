@@ -1,0 +1,126 @@
+.order_placed_animation {
+    width: 100vw;
+    height: 100vh;
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.order_placed_animation > div {
+    width: 100%;
+    height: 100%;
+}
+
+.order_placed_animation .message {
+    display: flex;
+    justify-content: center;
+    margin: 0.5em;
+    color: var(--dark);
+}
+
+.order_placed_animation .centered {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+}
+
+.order_placed_animation .checkmark-circle {
+    stroke-dasharray: 166;
+    stroke-dashoffset: 166;
+    stroke-width: 2;
+    stroke-miterlimit: 10;
+    stroke: var(--primary);
+    fill: none;
+    animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards, fill 0.1s ease-in-out 0.8s forwards;
+}
+
+.order_placed_animation .checkmark {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: block;
+    stroke-width: 5;
+    stroke: #fff;
+    stroke-miterlimit: 10;
+    box-shadow: inset 0 0 0 var(--primary);
+    animation: fill 0.4s ease-in-out 0.4s forwards, scale 0.3s ease-in-out 0.9s both;
+}
+
+.order_placed_animation .circle {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: block;
+    z-index: -1;
+    box-shadow: inset 0 0 0 30px var(--primary);
+    opacity: 0;
+    animation: show 0.1s ease-in-out 0.9s forwards, super-scale 1s ease-in-out 1.2s forwards;
+}
+
+.order_placed_animation .checkmark-check {
+    transform-origin: 50% 50%;
+    stroke-dasharray: 48;
+    stroke-dashoffset: 48;
+    animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards, hide 0.3s ease-in-out 2s forwards;
+}
+
+.thank-you-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    height: 100%;
+    opacity: 0;
+    z-index: 3;
+    visibility: hidden;
+    animation: show-flex 0.2s ease-in-out 2.3s forwards;
+}
+
+@keyframes stroke {
+    100% {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes scale {
+    0%, 100% {
+        transform: none;
+    }
+    50% {
+        transform: scale3d(1.1, 1.1, 1);
+    }
+}
+
+@keyframes fill {
+    100% {
+        box-shadow: inset 0 0 0 30px var(--primary);
+    }
+}
+
+@keyframes show {
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes show-flex {
+    100% {
+        visibility: visible;
+        opacity: 1;
+    }
+}
+
+@keyframes hide {
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes super-scale {
+    100% {
+        transform: scale(100);
+    }
+}

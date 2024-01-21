@@ -1,11 +1,13 @@
 export default class Review {
-    constructor(comment, date, orderId, orderUrl, rating, reviewerName, selfUrl) {
+
+    constructor(comment, date, orderId, orderUrl, rating, reviewerName, reply, selfUrl) {
         this.comment = comment;
         this.date = new Date(date);
         this.orderId = orderId;
         this.orderUrl = orderUrl;
         this.rating = rating;
         this.reviewerName = reviewerName;
+        this.reply = reply;
         this.selfUrl = selfUrl;
     }
 
@@ -18,6 +20,7 @@ export default class Review {
             object.orderUrl,
             object.rating,
             object.reviewerName,
+            object.reply,
             object.selfUrl
         );
     }

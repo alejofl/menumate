@@ -10,7 +10,7 @@ function Navbar() {
     const authContext = useContext(AuthContext);
 
     return (
-        <div className="navbar_component">
+        <div className="navbar_component sticky-top">
             <nav className="navbar navbar-expand-md bg-body-tertiary sticky-top" data-bs-theme="dark">
                 <Link className="navbar-brand" to="/">
                     <img src={Logo} alt="MenuMate" height="24"/>
@@ -32,7 +32,7 @@ function Navbar() {
                                 <div className="text-color-white">
                                     <div className="dropdown">
                                         <button className="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i className="bi bi-person-circle"></i> {authContext.name}
+                                            <i className="bi bi-person-circle default"></i> {authContext.name}
                                         </button>
                                         <ul className="dropdown-menu dropdown-menu-end">
                                             <li><Link className="dropdown-item" to="/user">{t("navbar.my_profile")}</Link></li>

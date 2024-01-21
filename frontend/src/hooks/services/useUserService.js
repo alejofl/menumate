@@ -1,5 +1,7 @@
 import {
     REVIEW_CONTENT_TYPE,
+    NOT_FOUND_STATUS_CODE,
+    RESTAURANT_EMPLOYEES_CONTENT_TYPE,
     USER_ADDRESS_CONTENT_TYPE,
     USER_CONTENT_TYPE,
     USER_PASSWORD_CONTENT_TYPE
@@ -9,6 +11,7 @@ import Address from "../../data/model/Address.js";
 import Review from "../../data/model/Review.js";
 import {parseLinkHeader} from "@web3-storage/parse-link-header";
 import PagedContent from "../../data/model/PagedContent.js";
+import UserRoleForRestaurant from "../../data/model/UserRoleForRestaurant.js";
 
 export function useUserService(api) {
     const sendResetPasswordToken = async (url, email) => {
@@ -45,10 +48,14 @@ export function useUserService(api) {
                 "Authorization": `Basic ${btoa(`${email}:${password}`)}`
             }
         });
-        if (response.headers["x-menumate-authtoken"]) {
-            return {success: true, jwt: response.headers["x-menumate-authtoken"]};
+        if (response.headers["x-menumate-authtoken"] && response.headers["x-menumate-refreshtoken"]) {
+            return {
+                success: true,
+                jwt: response.headers["x-menumate-authtoken"],
+                refreshToken: response.headers["x-menumate-refreshtoken"]
+            };
         } else {
-            return {success: false, jwt: null};
+            return {success: false, jwt: null, refreshToken: null};
         }
     };
 
@@ -115,6 +122,25 @@ export function useUserService(api) {
         );
     };
 
+    const getRoleForRestaurant = async (url) => {
+        try {
+            const response = await api.get(
+                url,
+                {
+                    headers: {
+                        "Accept": RESTAURANT_EMPLOYEES_CONTENT_TYPE
+                    }
+                }
+            );
+            return UserRoleForRestaurant.fromJSON(response.data);
+        } catch (e) {
+            if (e.response.status === NOT_FOUND_STATUS_CODE) {
+                return UserRoleForRestaurant.notEmployee();
+            }
+            throw e;
+        }
+    };
+
     return {
         sendResetPasswordToken,
         resetPassword,
@@ -122,6 +148,7 @@ export function useUserService(api) {
         register,
         getUser,
         getAddresses,
-        getReviews
+        getReviews,
+        getRoleForRestaurant
     };
 }

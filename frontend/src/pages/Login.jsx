@@ -23,7 +23,7 @@ function Login() {
     const forgotPasswordMutation = useMutation({
         mutationFn: async (email) => {
             await userService.sendResetPasswordToken(
-                `${apiContext.usersUrl}`,
+                apiContext.usersUrl,
                 email
             );
         }
