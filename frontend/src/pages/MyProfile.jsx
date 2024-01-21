@@ -87,21 +87,15 @@ function MyProfile() {
     // console.log(orders);
 
     const restaurants = useQueries({
-        queries: orders.every(query => query.isSuccess)
+        queries: !orders.some(query => query.isPending)
             ?
             orders.map(order => {
                 return {
-                    queryKey: ["restaurant"],
+                    queryKey: ["restaurant", order.data.orderId],
                     queryFn: async () => {
-                        // if (order.data) {
                         console.log("PARECE QUE TENGO EL LINK");
                         console.log(order.data.restaurantUrl);
-                        await restaurantService.getRestaurant(order.data.restaurantUrl);
-                        /*
-                         * } else {
-                         *     return null;
-                         * }
-                         */
+                        return await restaurantService.getRestaurant(order.data.restaurantUrl);
                     }};
             })
             : []
@@ -124,7 +118,7 @@ function MyProfile() {
             </>
         );
     }
-
+    console.log(restaurants);
     if (orders.every(query => query.isSuccess) && restaurants.every(query => query.isSuccess)) {
         console.log(restaurants);
     }
