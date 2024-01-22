@@ -6,8 +6,8 @@ import ar.edu.itba.paw.webapp.form.validation.EnumMessageCode;
 import javax.validation.constraints.NotNull;
 
 public class UpdateRestaurantEmployeeForm {
-    @NotNull
-    @EnumMessageCode(enumClass = RestaurantRoleLevel.class, excludeValues = "owner")
+    @NotNull(message = "{NotNull.UpdateRestaurantEmployeeForm.role}")
+    @EnumMessageCode(enumClass = RestaurantRoleLevel.class, excludeValues = "owner", message = "{EnumMessageCode.UpdateRestaurantEmployeeForm.role}")
     private String role;
 
     public String getRole() {
