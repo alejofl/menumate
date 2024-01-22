@@ -10,6 +10,7 @@ public class HomeIndexDto {
     private URI usersUrl;
     private URI ordersUrl;
     private URI reviewsUrl;
+    private URI imagesUrl;
 
     public static HomeIndexDto from(final UriInfo uriInfo) {
         final HomeIndexDto dto = new HomeIndexDto();
@@ -17,6 +18,7 @@ public class HomeIndexDto {
         dto.usersUrl = UriUtils.getUsersUri(uriInfo);
         dto.ordersUrl = UriUtils.getOrdersUri(uriInfo);
         dto.reviewsUrl = UriUtils.getReviewsUri(uriInfo);
+        dto.imagesUrl = UriUtils.getImagesUri(uriInfo);
 
         return dto;
     }
@@ -51,5 +53,13 @@ public class HomeIndexDto {
 
     public void setReviewsUrl(URI reviewsUrl) {
         this.reviewsUrl = reviewsUrl;
+    }
+
+    public URI getImagesUrl() {
+        return imagesUrl;
+    }
+
+    public void setImagesUrl(URI imagesUrl) {
+        this.imagesUrl = imagesUrl;
     }
 }
