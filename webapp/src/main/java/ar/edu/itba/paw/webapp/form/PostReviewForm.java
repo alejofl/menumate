@@ -4,7 +4,7 @@ import javax.validation.constraints.NotNull;
 
 public class PostReviewForm extends PutReviewForm {
 
-    @NotNull
+    @NotNull(message = "{NotNull.PostReviewForm.orderId}")
     private Long orderId;
 
     public Long getOrderId() {
