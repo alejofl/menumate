@@ -4,7 +4,7 @@ import javax.validation.constraints.Size;
 
 public class NewPasswordForm {
 
-    @Size(min = 8, max = 72)
+    @Size(min = 8, max = 72, message = "{Size.NewPasswordForm.password}")
     private String password;
 
     public String getPassword() {
