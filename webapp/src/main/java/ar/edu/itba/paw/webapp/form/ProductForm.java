@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.form;
 
+import ar.edu.itba.paw.webapp.form.validation.Image;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.DecimalMin;
@@ -20,6 +21,9 @@ public class ProductForm {
     @DecimalMin(value = "0", inclusive = false, message = "{DecimalMin.ProductForm.price}")
     @Digits(integer = 8, fraction = 2, message = "{Digits.ProductForm.price}")
     private BigDecimal price;
+
+    @Image(nullable = true)
+    private Long imageId;
 
     public String getName() {
         return name;
@@ -43,5 +47,13 @@ public class ProductForm {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
+    }
+
+    public Long getImageId() {
+        return imageId;
+    }
+
+    public void setImageId(Long imageId) {
+        this.imageId = imageId;
     }
 }

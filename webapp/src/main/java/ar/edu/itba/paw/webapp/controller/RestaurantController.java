@@ -23,6 +23,7 @@ import javax.ws.rs.core.*;
 import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Path(UriUtils.RESTAURANTS_URL)
@@ -115,9 +116,9 @@ public class RestaurantController {
                 restaurantForm.getAddress(),
                 restaurantForm.getDescription(),
                 restaurantForm.getMaxTables(),
-                null,
-                null,
-                null,
+                restaurantForm.getLogoId(),
+                restaurantForm.getPortrait1Id(),
+                restaurantForm.getPortrait2Id(),
                 true,
                 restaurantForm.getTagsAsEnum()
         );
@@ -125,8 +126,9 @@ public class RestaurantController {
         return Response.created(UriUtils.getRestaurantUri(uriInfo, restaurant.getRestaurantId())).build();
     }
 
-    @PUT
+    @PATCH
     @Path("/{restaurantId:\\d+}")
+    @Consumes(CustomMediaType.APPLICATION_RESTAURANT)
     public Response updateRestaurantById(
             @PathParam("restaurantId") final long restaurantId,
             @Valid @NotNull final RestaurantForm restaurantForm
@@ -138,6 +140,12 @@ public class RestaurantController {
                 restaurantForm.getAddress(),
                 restaurantForm.getDescription(),
                 restaurantForm.getTagsAsEnum()
+        );
+        restaurantService.updateImages(
+                restaurantId,
+                Optional.ofNullable(restaurantForm.getLogoId()),
+                Optional.ofNullable(restaurantForm.getPortrait1Id()),
+                Optional.ofNullable(restaurantForm.getPortrait2Id())
         );
 
         return Response.noContent().build();
@@ -252,14 +260,14 @@ public class RestaurantController {
                 categoryId,
                 productForm.getName(),
                 productForm.getDescription(),
-                null,
+                productForm.getImageId(),
                 productForm.getPrice()
         );
 
         return Response.created(UriUtils.getProductUri(uriInfo, product)).build();
     }
 
-    @PUT
+    @PATCH
     @Path("/{restaurantId:\\d+}/categories/{categoryId:\\d+}/products/{productId:\\d+}")
     @Consumes(CustomMediaType.APPLICATION_RESTAURANT_PRODUCTS)
     public Response updateProduct(
@@ -269,6 +277,7 @@ public class RestaurantController {
             @Valid @NotNull final ProductForm productForm
     ) {
         productService.update(restaurantId, categoryId, productId, productForm.getName(), productForm.getPrice(), productForm.getDescription());
+        productService.updateImage(restaurantId, categoryId, productId, Optional.ofNullable(productForm.getImageId()));
         return Response.noContent().build();
     }
 

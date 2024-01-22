@@ -38,7 +38,7 @@ public interface RestaurantService {
 
     Restaurant update(long restaurantId, String name, RestaurantSpecialty specialty, String address, String description, List<RestaurantTags> tags);
 
-    void updateImages(long restaurantId, byte[] logo, byte[] portrait1, byte[] portrait2);
+    void updateImages(long restaurantId, Optional<Long> logoId, Optional<Long> portrait1Id, Optional<Long> portrait2Id);
 
     void delete(long restaurantId);
 }
