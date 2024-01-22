@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface FutureOrPresent {
-    String message() default "Must be a future or present date";
+    String message() default "{FutureOrPresent.PromotionForm.startDateTime}";
 
     Class<?>[] groups() default {};
 
