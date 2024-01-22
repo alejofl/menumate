@@ -104,12 +104,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Transactional
     @Override
-    public void updateImage(long restaurantId, long categoryId, long productId, byte[] image) {
-        if (image == null || image.length == 0)
-            return;
-
+    public void updateImage(long restaurantId, long categoryId, long productId, Optional<Long> imageId) {
         final Product product = getByIdChecked(restaurantId, categoryId, productId, false);
-        imageDao.update(product.getImageId(), image);
+        imageId.ifPresent(product::setImageId);
 
         LOGGER.info("Updated image of product id {}", product.getProductId());
     }

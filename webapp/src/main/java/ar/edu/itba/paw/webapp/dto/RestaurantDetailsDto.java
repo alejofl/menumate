@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.dto;
 import ar.edu.itba.paw.model.RestaurantDetails;
 
 import javax.ws.rs.core.UriInfo;
+import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,6 +28,20 @@ public class RestaurantDetailsDto extends RestaurantDto {
 
     public static List<RestaurantDetailsDto> fromRestaurantDetailsCollection(final UriInfo uriInfo, final Collection<RestaurantDetails> restaurantDetails) {
         return restaurantDetails.stream().map(r -> fromRestaurantDetails(uriInfo, r)).collect(Collectors.toList());
+    }
+
+    public static RestaurantDetailsDto fromRestaurantDetailsWithCompletionTime(final UriInfo uriInfo, final RestaurantDetails restaurantDetails, Duration dineInCompletionTime, Duration deliveryCompletionTime, Duration takeAwayCompletionTime) {
+        RestaurantDetailsDto dto = fromRestaurantDetails(uriInfo, restaurantDetails);
+
+        if (dineInCompletionTime != null) {
+            dto.dineInCompletionTime = dineInCompletionTime.toMinutes();
+        } else if (deliveryCompletionTime != null) {
+            dto.deliveryCompletionTime = deliveryCompletionTime.toMinutes();
+        } else if (takeAwayCompletionTime != null) {
+            dto.takeAwayCompletionTime = takeAwayCompletionTime.toMinutes();
+        }
+
+        return dto;
     }
 
     public float getAverageRating() {

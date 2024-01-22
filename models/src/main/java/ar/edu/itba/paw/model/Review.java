@@ -2,6 +2,7 @@ package ar.edu.itba.paw.model;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = "order_reviews")
@@ -45,6 +46,10 @@ public class Review {
         return order;
     }
 
+    public String getReviewerName() {
+        return order.getUser().getName();
+    }
+
     public int getRating() {
         return rating;
     }
@@ -63,5 +68,10 @@ public class Review {
 
     public void setReply(String reply) {
         this.reply = reply;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(orderId, getReviewerName(), rating, date, comment, reply);
     }
 }

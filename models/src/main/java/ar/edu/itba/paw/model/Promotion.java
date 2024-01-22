@@ -4,6 +4,7 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = "promotions")
@@ -84,5 +85,10 @@ public class Promotion {
 
     public boolean hasEnded() {
         return endDate != null && !endDate.isAfter(LocalDateTime.now());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(promotionId, source.getProductId(), destination.getProductId(), startDate, endDate, getDiscountPercentage());
     }
 }

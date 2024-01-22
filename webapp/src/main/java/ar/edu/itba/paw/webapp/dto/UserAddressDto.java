@@ -8,11 +8,9 @@ import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class UserAddressDto {
-    private long addressId;
     private String address;
     private String name;
     private LocalDateTime lastUsed;
@@ -21,7 +19,6 @@ public class UserAddressDto {
 
     public static UserAddressDto fromUserAddress(final UriInfo uriInfo, final UserAddress userAddress) {
         UserAddressDto dto = new UserAddressDto();
-        dto.addressId = userAddress.getAddressId();
         dto.address = userAddress.getAddress();
         dto.name = userAddress.getName();
         dto.lastUsed = userAddress.getLastUsed();
@@ -33,14 +30,6 @@ public class UserAddressDto {
 
     public static List<UserAddressDto> fromUserAddressCollection(final UriInfo uriInfo, final Collection<UserAddress> userAddresses) {
         return userAddresses.stream().map(u -> fromUserAddress(uriInfo, u)).collect(Collectors.toList());
-    }
-
-    public long getAddressId() {
-        return addressId;
-    }
-
-    public void setAddressId(long addressId) {
-        this.addressId = addressId;
     }
 
     public String getAddress() {
@@ -73,10 +62,5 @@ public class UserAddressDto {
 
     public void setSelfUrl(URI selfUrl) {
         this.selfUrl = selfUrl;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(addressId, address, name, lastUsed);
     }
 }

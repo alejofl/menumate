@@ -38,7 +38,6 @@ public class UserRoleServiceImplTest {
     private static final long OTHER_USER_ID = 789L;
     private static final String DEFAULT_USER_EMAIL = "user@user.com";
     private static final UserRoleLevel MODERATOR_ROLE = UserRoleLevel.MODERATOR;
-    private static final String LANGUAGE = "en";
 
     @Test
     public void userHasRole() {
@@ -86,12 +85,12 @@ public class UserRoleServiceImplTest {
         User user = mock(User.class);
         when(userDao.getByEmail(DEFAULT_USER_EMAIL)).thenReturn(Optional.of(user));
 
-        assertTrue(userRoleService.setRole(DEFAULT_USER_EMAIL, MODERATOR_ROLE, LANGUAGE));
+        assertTrue(userRoleService.setRole(DEFAULT_USER_EMAIL, MODERATOR_ROLE));
     }
 
     @Test(expected = UserRoleNotFoundException.class)
     public void setExistingUserNotExistingRole() {
-        assertFalse(userRoleService.setRole(DEFAULT_USER_EMAIL, null, LANGUAGE));
+        assertFalse(userRoleService.setRole(DEFAULT_USER_EMAIL, null));
     }
 
     @Test
@@ -100,7 +99,7 @@ public class UserRoleServiceImplTest {
         when(user.getUserId()).thenReturn(DEFAULT_USER_ID);
         when(userDao.getByEmail(DEFAULT_USER_EMAIL)).thenReturn(Optional.empty());
         when(userDao.create(anyString(), any(), anyString(), anyString())).thenReturn(user);
-        assertTrue(userRoleService.setRole(DEFAULT_USER_EMAIL, MODERATOR_ROLE, LANGUAGE));
+        assertTrue(userRoleService.setRole(DEFAULT_USER_EMAIL, MODERATOR_ROLE));
     }
 
     @Test
@@ -115,7 +114,7 @@ public class UserRoleServiceImplTest {
         when(userRoleDao.getRole(DEFAULT_USER_ID)).thenReturn(Optional.of(userRole));
         when(userDao.getByEmail(DEFAULT_USER_EMAIL)).thenReturn(Optional.of(user));
 
-        assertTrue(userRoleService.setRole(DEFAULT_USER_EMAIL, MODERATOR_ROLE, LANGUAGE));
+        assertTrue(userRoleService.setRole(DEFAULT_USER_EMAIL, MODERATOR_ROLE));
         assertEquals(MODERATOR_ROLE, userRole.getLevel());
         assertEquals(DEFAULT_USER_ID, userRole.getUserId());
     }

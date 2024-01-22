@@ -44,19 +44,22 @@ public class JwtTokenUtil {
 
     private Claims buildClaims(ServletUriComponentsBuilder uriBuilder, User user, JwtTokenType type) {
         Claims claims = Jwts.claims();
-        claims.put(NAME_CLAIM, user.getName());
-
-        if (user.hasRole()) {
-            claims.put(ROLE_CLAIM, user.getRole().getLevel());
-        }
-
-        String selfUrl = uriBuilder
-                .path(UriUtils.USERS_URL + "/")
-                .path(String.valueOf(user.getUserId()))
-                .build().toString();
-
-        claims.put(SELF_URL_CLAIM, selfUrl);
         claims.put(TOKEN_TYPE_CLAIM, type);
+
+        if (!type.isRefreshToken()) {
+            claims.put(NAME_CLAIM, user.getName());
+
+            if (user.hasRole()) {
+                claims.put(ROLE_CLAIM, user.getRole().getLevel());
+            }
+
+            String selfUrl = uriBuilder
+                    .path(UriUtils.USERS_URL + "/")
+                    .path(String.valueOf(user.getUserId()))
+                    .build().toString();
+
+            claims.put(SELF_URL_CLAIM, selfUrl);
+        }
         return claims;
     }
 

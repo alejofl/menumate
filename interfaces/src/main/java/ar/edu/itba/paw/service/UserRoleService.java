@@ -21,7 +21,7 @@ public interface UserRoleService {
     /**
      * Sets a user's role if it exists.
      */
-    boolean setRole(String email, UserRoleLevel roleLevel, String language);
+    boolean setRole(String email, UserRoleLevel roleLevel);
 
     /**
      * Deletes a user's role.

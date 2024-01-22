@@ -4,6 +4,7 @@ import org.hibernate.annotations.Formula;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = "user_addresses")
@@ -79,5 +80,10 @@ public class UserAddress {
 
     public void setLastUsed(LocalDateTime lastUsed) {
         this.lastUsed = lastUsed;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(addressId, userId, address, name, lastUsed);
     }
 }

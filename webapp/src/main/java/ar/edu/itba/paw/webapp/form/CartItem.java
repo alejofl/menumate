@@ -7,15 +7,15 @@ import javax.validation.constraints.Size;
 
 public class CartItem {
 
-    @NotNull
+    @NotNull(message = "{NotNull.CartItem.productId}")
     private Long productId;
 
-    @Min(1)
-    @Max(100)
+    @Min(value = 1, message = "{Min.CartItem.quantity}")
+    @Max(value = 100, message = "{Max.CartItem.quantity}")
     @NotNull
     private Integer quantity;
 
-    @Size(max = 120)
+    @Size(max = 120, message = "{Size.CartItem.comment}")
     private String comment;
 
     public Long getProductId() {

@@ -102,17 +102,11 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Transactional
     @Override
-    public void updateImages(long restaurantId, byte[] logo, byte[] portrait1, byte[] portrait2) {
-        if ((logo == null || logo.length == 0) && (portrait1 == null || portrait1.length == 0) && (portrait2 == null || portrait2.length == 0))
-            return;
-
+    public void updateImages(long restaurantId, Optional<Long> logoId, Optional<Long> portrait1Id, Optional<Long> portrait2Id) {
         final Restaurant restaurant = getAndVerifyForUpdate(restaurantId);
-        if (logo != null && logo.length != 0)
-            imageDao.update(restaurant.getLogoId(), logo);
-        if (portrait1 != null && portrait1.length != 0)
-            imageDao.update(restaurant.getPortrait1Id(), portrait1);
-        if (portrait2 != null && portrait2.length != 0)
-            imageDao.update(restaurant.getPortrait2Id(), portrait2);
+        logoId.ifPresent(restaurant::setLogoId);
+        portrait1Id.ifPresent(restaurant::setPortrait1Id);
+        portrait2Id.ifPresent(restaurant::setPortrait2Id);
 
         LOGGER.info("Updated images of restaurant id {}", restaurant.getRestaurantId());
     }

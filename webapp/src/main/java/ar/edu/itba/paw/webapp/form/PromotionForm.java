@@ -12,28 +12,26 @@ import java.time.LocalDateTime;
 @ValidDuration(typeField = "type", daysField = "days", hoursField = "hours", minutesField = "minutes")
 @EndDateTimeAfterStartDateTime(typeField = "type", startDateTimeField = "startDateTime", endDateTimeField = "endDateTime")
 public class PromotionForm {
-    @NotNull
+    @NotNull(message = "{NotNull.PromotionForm.sourceProductId}")
     private Long sourceProductId;
 
-    @NotNull
-    @DecimalMin(value = "1", inclusive = true)
-    @DecimalMax(value = "100", inclusive = true)
-    @Digits(integer = 3, fraction = 2)
+    @NotNull(message = "{NotNull.PromotionForm.percentage}")
+    @DecimalMin(value = "1", inclusive = true, message = "{DecimalMin.PromotionForm.percentage}")
+    @DecimalMax(value = "100", inclusive = true, message = "{DecimalMax.PromotionForm.percentage}")
+    @Digits(integer = 3, fraction = 2, message = "{Digits.PromotionForm.percentage}")
     private BigDecimal percentage;
 
-    @NotNull
-    @EnumMessageCode(enumClass = PromotionType.class)
+    @NotNull(message = "{NotNull.PromotionForm.type}")
+    @EnumMessageCode(enumClass = PromotionType.class, message = "{EnumMessageCode.PromotionForm.type}")
     private String type;
 
-    @Min(0)
-    @Max(59)
+    @Size(min = 0, max = 59, message = "{Size.PromotionForm.minutes}")
     private Integer minutes;
 
-    @Min(0)
-    @Max(23)
+    @Size(min = 0, max = 23, message = "{Size.PromotionForm.hours}")
     private Integer hours;
 
-    @Min(0)
+    @Min(value = 0, message = "{Min.PromotionForm.days}")
     private Integer days;
 
     @FutureOrPresent

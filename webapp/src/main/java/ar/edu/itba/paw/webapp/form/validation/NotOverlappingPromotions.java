@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface NotOverlappingPromotions {
-    String message() default "Overlapping promotions";
+    String message() default "{NotOverlappingPromotions.PromotionForm}";
 
     Class<?>[] groups() default {};
 
