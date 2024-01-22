@@ -189,6 +189,7 @@ function MyProfile() {
             </>
         );
     }
+    console.log(addresses);
 
     const handleLoadMoreContent = async () => {
         await fetchNextPage();
@@ -212,15 +213,32 @@ function MyProfile() {
                                     value={user?.email} disabled/>
                                 <hr/>
                                 <h3 className="card-title">{t("myprofile.addresses")}</h3>
-                                {addresses?.map(address => (
-                                    <li key={address}
-                                        className="list-group-item d-flex align-items-center justify-content-between px-0 address-list">
-                                        <div className="d-flex align-items-center ">
-                                            <i className="bi bi-geo-alt"></i>
-                                        </div>
-                                        <div className="d-flex gap-3">{address.address}</div>
-                                    </li>
-                                ))}
+                                <ul className="px-0">
+                                    {addresses?.map(address => (
+                                        <li key={address}
+                                            className="list-group-item d-flex align-items-center justify-content-between px-0 address-list">
+                                            <div className="d-flex align-items-center gap-2">
+                                                <i className="bi bi-geo-alt"></i>
+                                                <div>
+                                                    {
+                                                        address.name && <small className="text-muted">{address.name}</small>
+                                                    }
+                                                    <p className="mb-0">{address.address}</p>
+                                                </div>
+                                            </div>
+                                            <div className="d-flex gap-3">
+                                                {
+                                                    !address.name
+                                                    &&
+                                                    <a className="add-address-modal-button" type="button"><i
+                                                        className="bi bi-save-fill text-success right-button"></i></a>
+                                                }
+                                                <a className="delete-address-modal-button" type="button"><i
+                                                    className="bi bi-trash-fill text-danger right-button"></i></a>
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ul>
                                 <div className="d-flex mt-2">
                                     <button className="btn btn-primary flex-grow-1" type="button"
                                         onClick={handleOpenRegisterAddressModal}>
