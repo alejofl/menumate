@@ -28,7 +28,8 @@
         "signup": "Regístrate",
         "loading": "Cargando...",
         "order_placed": "¡Gracias por tu pedido!",
-        "create_restaurant": "Crear restaurante"
+        "create_restaurant": "Crear restaurante",
+        "user_restaurants": "Mis restaurantes"
     },
     "error": {
         "modal": {
@@ -315,5 +316,10 @@
         "portrait2": "Imagen de portada secundaria",
         "preview": "Vista previa",
         "error": "Ocurrió un error al crear el restaurante. Por favor, intente de nuevo más tarde."
+    },
+    "user_restaurants": {
+        "pending_orders_zero": "Sin órdenes pendientes",
+        "pending_orders_one": "{{count}} orden pendiente",
+        "pending_orders_other": "{{count}} órdenes pendientes"
     }
 }

@@ -27,6 +27,7 @@ export const EMAIL_ALREADY_IN_USE_ERROR = {"message":"Email already in use!", "p
 export const IMAGE_MAX_SIZE = 1024 * 1024 * 5; // 1024 B = 1 KB && 1024 B * 1024 = 1 MB ==> MAX_SIZE = 5 MB
 
 export const PRICE_DECIMAL_DIGITS = 2;
+export const DEFAULT_RESTAURANT_COUNT = 12;
 export const MAXIMUM_CART_ITEMS = 500;
 export const ORDER_TYPE = {
     DELIVERY: "delivery",

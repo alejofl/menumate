@@ -49,7 +49,7 @@ function Home() {
                     </form>
                 </div>
                 <div className="landing-restaurants">
-                    <p className="landing-restaurants-title">{t("home.restaurants_title")}</p>
+                    <p className="page-title">{t("home.restaurants_title")}</p>
                     <div className="landing-restaurants-feed">
                         {
                             isLoading || isError

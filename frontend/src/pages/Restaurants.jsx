@@ -14,9 +14,9 @@ import ErrorModal from "../components/ErrorModal.jsx";
 import {selectComponents, selectStyles} from "../components/utils/SelectProperties.js";
 import RestaurantSpecialties from "../data/RestaurantSpecialties.js";
 import RestaurantTags from "../data/RestaurantTags.js";
+import {DEFAULT_RESTAURANT_COUNT} from "../utils.js";
 
 function Restaurants() {
-    const DEFAULT_RESTAURANT_COUNT = 12;
     const { t } = useTranslation();
     const api = useApi();
     const apiContext = useContext(ApiContext);

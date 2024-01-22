@@ -28,7 +28,8 @@
         "signup": "Sign Up",
         "loading": "Loading...",
         "order_placed": "Thank you for your order!",
-        "create_restaurant": "Create Restaurant"
+        "create_restaurant": "Create Restaurant",
+        "user_restaurants": "My Restaurants"
     },
     "error": {
         "modal": {
@@ -315,5 +316,10 @@
         "portrait2": "Secondary Portrait Image",
         "preview": "Preview",
         "error": "There was an error while creating the restaurant. Please try again later."
+    },
+    "user_restaurants": {
+        "pending_orders_zero": "No pending orders",
+        "pending_orders_one": "{{count}} pending order",
+        "pending_orders_other": "{{count}} pending orders"
     }
 }

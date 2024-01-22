@@ -41,13 +41,6 @@ main.home {
     padding: 12px;
 }
 
-.home .landing-restaurants-title {
-    color: var(--dark);
-    font-size: 30px;
-    font-weight: bold;
-    margin-bottom: 1rem;
-}
-
 .home .landing-restaurants .btn {
     margin-top: 8px;
 }
