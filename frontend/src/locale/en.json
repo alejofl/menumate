@@ -142,7 +142,9 @@
         "name_label": "Name",
         "email_label": "Email",
         "addresses": "Addresses",
-        "reviews": "Reviews"
+        "reviews": "Reviews",
+        "add_address": "Add address",
+        "address_label": "Address"
     },
     "login": {
         "email_address": "Email Address",
@@ -196,6 +198,10 @@
         "comment": {
             "required": "You must describe the problem",
             "max": "The comment must be at most {{max}} characters long"
+        },
+        "my_profile": {
+            "register_address_name_max": "The name must be at most {{max}} characters long",
+            "register_address_address_max": "The address must be at most {{max}} characters long"
         }
     },
     "reset_password": {

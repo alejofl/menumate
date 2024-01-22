@@ -85,3 +85,12 @@ export const ReportSchema = Yup.object().shape({
         .min(1, i18n.t("validation.comment.required"))
         .max(500, ({ max }) => i18n.t("validation.comment.max", {max: max}))
 });
+
+export const RegisterAddressSchema = Yup.object().shape({
+    name: Yup.string()
+        .max(20, ({ max }) => i18n.t("validation.my_profile.register_address_name_max", {max: max})),
+
+    address: Yup.string()
+        .required(i18n.t("validation.comment.required"))
+        .max(200, ({ max }) => i18n.t("validation.my_profile.register_address_address_max", {max: max}))
+});

@@ -4,7 +4,7 @@ import "./styles/myprofile.styles.css";
 import {useApi} from "../hooks/useApi.js";
 import {useContext, useState} from "react";
 import {useUserService} from "../hooks/services/useUserService.js";
-import {useInfiniteQuery, useQueries, useQuery} from "@tanstack/react-query";
+import {useInfiniteQuery, useMutation, useQueries, useQuery} from "@tanstack/react-query";
 import AuthContext from "../contexts/AuthContext.jsx";
 import {useSearchParams} from "react-router-dom";
 import {useOrderService} from "../hooks/services/useOrderService.js";
@@ -12,6 +12,9 @@ import ContentLoader from "react-content-loader";
 import {useRestaurantService} from "../hooks/services/useRestaurantService.js";
 import ErrorModal from "../components/ErrorModal.jsx";
 import Error from "./Error.jsx";
+import {ErrorMessage, Field, Form, Formik} from "formik";
+import {RegisterAddressSchema} from "../data/validation.js";
+import {BAD_REQUEST_STATUS_CODE, EMAIL_ALREADY_IN_USE_ERROR} from "../utils.js";
 
 
 
@@ -35,7 +38,7 @@ function MyProfile() {
         isPending : userIsPending,
         isError : userIsError,
         error : userError,
-        data : User
+        data : user
     } = useQuery({
         queryKey: ["user", "myProfile"],
         queryFn: async () => (
@@ -54,10 +57,10 @@ function MyProfile() {
         queryKey: ["addresses"],
         queryFn: async () => (
             await userService.getAddresses(
-                User.addressesUrl
+                user.addressesUrl
             )
         ),
-        enabled: !!User
+        enabled: !!user
     });
 
     const {
@@ -71,7 +74,7 @@ function MyProfile() {
         queryKey: ["reviews", queryKey],
         queryFn: async ({ pageParam }) => (
             await userService.getReviews(
-                User.reviewsUrl,
+                user.reviewsUrl,
                 {
                     ...query,
                     page: pageParam
@@ -80,7 +83,7 @@ function MyProfile() {
         ),
         getNextPageParam: (lastPage) => lastPage.nextPage?.page || undefined,
         keepPreviousData: true,
-        enabled: !!User
+        enabled: !!user
     });
     console.log(reviews);
 
@@ -97,7 +100,7 @@ function MyProfile() {
             })
             :
             [],
-        enabled: !!User
+        enabled: !!user
     });
 
     const restaurants = useQueries({
@@ -114,6 +117,44 @@ function MyProfile() {
             })
             : []
     });
+
+    const addressMutation = useMutation({
+        mutationFn: async ({name, address}) => {
+            await userService.registerAddress(
+                user.addressesUrl,
+                name,
+                address
+            );
+        }
+    });
+
+    const handleRegisterAddress = (values, {setSubmitting}) => {
+        addressMutation.mutate(
+            {
+                name: values.name,
+                address: values.address
+            },
+            {
+                onSuccess: () => handleCloseRegisterAddressModal(),
+                onError: (error) => {
+                    if (error.response.status === BAD_REQUEST_STATUS_CODE) {
+                        EMAIL_ALREADY_IN_USE_ERROR.message;
+                    }
+                }
+            }
+        );
+        setSubmitting(false);
+    };
+
+    const handleOpenRegisterAddressModal = () => {
+        // eslint-disable-next-line no-undef
+        const modal = new bootstrap.Modal(document.querySelector(".registerAddressModal .modal"));
+        modal.show();
+    };
+
+    const handleCloseRegisterAddressModal = () => {
+        window.location.reload();
+    };
 
     if (userIsError) {
         return (
@@ -161,20 +202,31 @@ function MyProfile() {
                         <div className="card">
                             <div className="card-body">
                                 <h3 className="card-title">{t("myprofile.profile")}</h3>
-                                <label htmlFor="exampleFormControlInput1" className="form-label">{t("myprofile.name_label")}</label>
-                                <input type="email" className="form-control" id="exampleFormControlInput1" disabled value={User?.name}/>
-                                <label htmlFor="exampleFormControlInput1" className="form-label">{t("myprofile.email_label")}</label>
-                                <input type="email" className="form-control" id="exampleFormControlInput1" value={User?.email} disabled/>
+                                <label htmlFor="exampleFormControlInput1"
+                                    className="form-label">{t("myprofile.name_label")}</label>
+                                <input type="email" className="form-control" id="exampleFormControlInput1" disabled
+                                    value={user?.name}/>
+                                <label htmlFor="exampleFormControlInput1"
+                                    className="form-label">{t("myprofile.email_label")}</label>
+                                <input type="email" className="form-control" id="exampleFormControlInput1"
+                                    value={user?.email} disabled/>
                                 <hr/>
                                 <h3 className="card-title">{t("myprofile.addresses")}</h3>
                                 {addresses?.map(address => (
-                                    <li key={address} className="list-group-item d-flex align-items-center justify-content-between px-0 address-list">
+                                    <li key={address}
+                                        className="list-group-item d-flex align-items-center justify-content-between px-0 address-list">
                                         <div className="d-flex align-items-center ">
                                             <i className="bi bi-geo-alt"></i>
                                         </div>
                                         <div className="d-flex gap-3">{address.address}</div>
                                     </li>
                                 ))}
+                                <div className="d-flex mt-2">
+                                    <button className="btn btn-primary flex-grow-1" type="button"
+                                        onClick={handleOpenRegisterAddressModal}>
+                                        {t("myprofile.add_address")}
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -187,7 +239,8 @@ function MyProfile() {
                                     ?
                                     new Array(DEFAULT_ORDER_COUNT).fill("").map((_, i) => {
                                         return (
-                                            <ContentLoader backgroundColor="#eaeaea" foregroundColor="#e0e0e0" width="100%" height="110" key={i}>
+                                            <ContentLoader backgroundColor="#eaeaea" foregroundColor="#e0e0e0"
+                                                width="100%" height="110" key={i}>
                                                 <rect x="0%" y="0" rx="0" ry="0" width="96%" height="100"/>
                                             </ContentLoader>
                                         );
@@ -212,12 +265,14 @@ function MyProfile() {
                                                                         orders.find(order => order.data?.orderId === review.orderId).data?.restaurantUrl
                                                                     ).data?.name
                                                                 }</b>
-                                                                <small className="text-muted">{review.date.toLocaleString()}</small>
+                                                                <small
+                                                                    className="text-muted">{review.date.toLocaleString()}</small>
                                                             </div>
                                                             <div className="d-flex gap-2 align-items-baseline mb-2 ">
                                                                 <div className="small-ratings">
                                                                     {[...Array(review.rating)].map(i => (
-                                                                        <i key={i} className="bi bi-star-fill rating-color"></i>
+                                                                        <i key={i}
+                                                                            className="bi bi-star-fill rating-color"></i>
                                                                     ))}
                                                                     {[...Array(STAR_RATING - review.rating)].map(i => (
                                                                         <i key={i} className="bi bi-star-fill"></i>
@@ -237,7 +292,8 @@ function MyProfile() {
                                 isFetchingNextPage &&
                                 new Array(query.size || DEFAULT_ORDER_COUNT).fill("").map((_, i) => {
                                     return (
-                                        <ContentLoader backgroundColor="#eaeaea" foregroundColor="#e0e0e0" width="100%" height="40rem" key={i}>
+                                        <ContentLoader backgroundColor="#eaeaea" foregroundColor="#e0e0e0" width="100%"
+                                            height="40rem" key={i}>
                                             <rect x="0%" y="0" rx="0" ry="0" width="96%" height="100"/>
                                         </ContentLoader>
                                     );
@@ -247,12 +303,14 @@ function MyProfile() {
                         {
                             hasNextPage &&
                             <div className="d-flex justify-content-center align-items-center pt-2 pb-3">
-                                <button onClick={handleLoadMoreContent} className="btn btn-primary" disabled={isFetchingNextPage}>
+                                <button onClick={handleLoadMoreContent} className="btn btn-primary"
+                                    disabled={isFetchingNextPage}>
                                     {
                                         isFetchingNextPage
                                             ?
                                             <>
-                                                <span className="spinner-border spinner-border-sm mx-4" role="status"></span>
+                                                <span className="spinner-border spinner-border-sm mx-4"
+                                                    role="status"></span>
                                                 <span className="visually-hidden">Loading...</span>
                                             </>
                                             :
@@ -265,6 +323,52 @@ function MyProfile() {
                     </div>
                 </div>
             </Page>
+
+            <div className="registerAddressModal">
+                <div className="modal" tabIndex="-1" id="newAddressModal">
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header"><h1 className="modal-title fs-5">
+                                {t("myprofile.add_address")}
+                            </h1>
+                            </div>
+                            <div className="modal-body">
+                                <Formik
+                                    initialValues={{
+                                        name: "",
+                                        address: ""
+                                    }}
+                                    validationSchema={RegisterAddressSchema}
+                                    onSubmit={handleRegisterAddress}
+                                >
+                                    {({isSubmitting}) => (
+                                        <Form>
+                                            <div className="mb-3">
+                                                <label htmlFor="name" className="form-label">{t("myprofile.name_label")}</label>
+                                                <Field type="text" className="form-control" name="name"
+                                                    autoComplete="name" id="name"/>
+                                                <ErrorMessage name="name" className="form-error" component="div"/>
+                                            </div>
+                                            <div className="mb-3">
+                                                <label htmlFor="address" className="form-label">{t("myprofile.address_label")}</label>
+                                                <Field type="text" className="form-control" name="address"
+                                                    autoComplete="address" id="address"/>
+                                                <ErrorMessage name="address" className="form-error" component="div"/>
+                                            </div>
+                                            <button className="btn btn-primary" type="submit"
+                                                disabled={isSubmitting}>{t("myprofile.add_address")}</button>
+                                        </Form>
+                                    )}
+                                </Formik>
+                                {/* <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>*/}
+                                {/* <button type="button" className="btn btn-primary">Save changes</button>*/}
+                            </div>
+                            <div className="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </>
     );
 }

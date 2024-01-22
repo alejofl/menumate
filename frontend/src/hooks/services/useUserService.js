@@ -141,6 +141,21 @@ export function useUserService(api) {
         }
     };
 
+    const registerAddress = async (url, name, address) => {
+        return await api.post(
+            url,
+            {
+                name: name,
+                address: address
+            },
+            {
+                headers: {
+                    "Content-Type": USER_ADDRESS_CONTENT_TYPE
+                }
+            }
+        );
+    };
+
     return {
         sendResetPasswordToken,
         resetPassword,
@@ -149,6 +164,7 @@ export function useUserService(api) {
         getUser,
         getAddresses,
         getReviews,
-        getRoleForRestaurant
+        getRoleForRestaurant,
+        registerAddress
     };
 }
