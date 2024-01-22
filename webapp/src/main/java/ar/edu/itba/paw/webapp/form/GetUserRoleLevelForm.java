@@ -8,7 +8,7 @@ import javax.ws.rs.QueryParam;
 public class GetUserRoleLevelForm {
 
     @QueryParam("role")
-    @EnumMessageCode(enumClass = UserRoleLevel.class)
+    @EnumMessageCode(enumClass = UserRoleLevel.class, message = "{EnumMessageCode.GetUserRoleLevelForm.role}")
     private String role;
 
     public String getRole() {
