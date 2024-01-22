@@ -5,11 +5,11 @@ import javax.ws.rs.QueryParam;
 
 public class PagingForm {
 
-    @Min(1)
+    @Min(value = 1, message = "{Min.PagingForm.size}")
     @QueryParam("size")
     private Integer size;
 
-    @Min(1)
+    @Min(value = 1, message = "{Min.PagingForm.page}")
     @QueryParam("page")
     private Integer page;
 
