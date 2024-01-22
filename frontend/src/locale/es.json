@@ -27,7 +27,8 @@
         "reset_password": "Restablecer contraseña",
         "signup": "Regístrate",
         "loading": "Cargando...",
-        "order_placed": "¡Gracias por tu pedido!"
+        "order_placed": "¡Gracias por tu pedido!",
+        "create_restaurant": "Crear restaurante"
     },
     "error": {
         "modal": {
@@ -188,6 +189,35 @@
         "comment": {
             "required": "Debe describir el problema",
             "max": "El comentario debe tener como máximo {{max}} caracteres"
+        },
+        "restaurant_name": {
+            "required": "El nombre del restaurante es obligatorio",
+            "max": "El nombre del restaurante debe tener como máximo {{max}} caracteres"
+        },
+        "restaurant_address": {
+            "required": "La dirección del restaurante es obligatoria",
+            "max": "La dirección del restaurante debe tener como máximo {{max}} caracteres"
+        },
+        "restaurant_specialty": {
+            "required": "La especialidad del restaurante es obligatoria",
+            "invalid": "La especialidad del restaurante es inválida"
+        },
+        "restaurant_tags": {
+            "required": "Las tags del restaurante son obligatorias",
+            "invalid": "Las tags del restaurante son inválidas"
+        },
+        "restaurant_description": {
+            "required": "La descripción del restaurante es obligatoria",
+            "max": "La descripción del restaurante debe tener como máximo {{max}} caracteres"
+        },
+        "restaurant_max_tables": {
+            "required": "La cantidad de mesas del restaurante es obligatoria",
+            "min": "La cantidad de mesas del restaurante debe ser al menos {{min}}"
+        },
+        "image": {
+            "required": "La imagen es obligatoria",
+            "size": "La imagen debe pesar como máximo 5 MB",
+            "type": "El archivo debe ser una imagen válida"
         }
     },
     "reset_password": {
@@ -269,5 +299,21 @@
         "title": "¡Tu pedido fue recibido!",
         "description": "Estate atento a tu correo electrónico para más información.",
         "button": "Ver detalles del pedido"
+    },
+    "create_restaurant": {
+        "title": "Crear restaurante",
+        "name": "Nombre del restaurante",
+        "address": "Dirección del restaurante",
+        "specialty": "Especialidad",
+        "specialty_placeholder": "Selecciona una especialidad...",
+        "tags": "Tags",
+        "tags_placeholder": "Selecciona una o más tags...",
+        "description": "Descripción",
+        "tables_quantity": "Cantidad de mesas",
+        "logo": "Logo del restaurante",
+        "portrait1": "Imagen de portada principal",
+        "portrait2": "Imagen de portada secundaria",
+        "preview": "Vista previa",
+        "error": "Ocurrió un error al crear el restaurante. Por favor, intente de nuevo más tarde."
     }
 }

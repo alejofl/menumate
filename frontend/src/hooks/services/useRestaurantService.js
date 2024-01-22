@@ -92,6 +92,22 @@ export function useRestaurantService(api) {
         );
     };
 
+    const createRestaurant = async (
+        url,
+        name,
+        address,
+        specialty,
+        tags,
+        description,
+        maxTables,
+        logo,
+        portrait1,
+        portrait2
+    ) => {
+        // TODO - Connect with API. Missing way to set images.
+        await console.log(url, name, address, specialty, tags, description, maxTables, logo, portrait1, portrait2);
+    };
+
     return {
         getRestaurants,
         getRestaurant,
@@ -99,6 +115,7 @@ export function useRestaurantService(api) {
         getProducts,
         getPromotions,
         getProduct,
-        reportRestaurant
+        reportRestaurant,
+        createRestaurant
     };
 }

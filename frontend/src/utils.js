@@ -24,6 +24,7 @@ export const USER_PASSWORD_CONTENT_TYPE = "application/vnd.menumate.userPassword
 export const JSON_CONTENT_TYPE = "application/json";
 
 export const EMAIL_ALREADY_IN_USE_ERROR = {"message":"Email already in use!", "path":"registerUser.arg0.email"};
+export const IMAGE_MAX_SIZE = 1024 * 1024 * 5; // 1024 B = 1 KB && 1024 B * 1024 = 1 MB ==> MAX_SIZE = 5 MB
 
 export const PRICE_DECIMAL_DIGITS = 2;
 export const MAXIMUM_CART_ITEMS = 500;
