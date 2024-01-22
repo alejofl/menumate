@@ -144,7 +144,8 @@
         "addresses": "Direcciones",
         "reviews": "Reseñas",
         "addAddress": "Añadir dirección",
-        "address_label": "Dirección"
+        "address_label": "Dirección",
+        "delete_address_title": "¿Estás seguro que quieres remover la dirección?"
     },
     "login": {
         "email_address": "Correo electrónico",
@@ -283,5 +284,9 @@
         "title": "¡Tu pedido fue recibido!",
         "description": "Estate atento a tu correo electrónico para más información.",
         "button": "Ver detalles del pedido"
+    },
+    "general_options": {
+        "yes": "Sí",
+        "no": "No"
     }
 }

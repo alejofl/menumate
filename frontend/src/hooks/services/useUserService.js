@@ -156,6 +156,12 @@ export function useUserService(api) {
         );
     };
 
+    const deleteAddress = async (url) => {
+        return await api.delete(
+            url
+        );
+    };
+
     return {
         sendResetPasswordToken,
         resetPassword,
@@ -165,6 +171,7 @@ export function useUserService(api) {
         getAddresses,
         getReviews,
         getRoleForRestaurant,
-        registerAddress
+        registerAddress,
+        deleteAddress
     };
 }

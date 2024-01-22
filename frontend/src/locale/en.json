@@ -144,7 +144,8 @@
         "addresses": "Addresses",
         "reviews": "Reviews",
         "add_address": "Add address",
-        "address_label": "Address"
+        "address_label": "Address",
+        "delete_address_title": "Are you sure you want to remove the address?"
     },
     "login": {
         "email_address": "Email Address",
@@ -283,5 +284,9 @@
         "title": "Your order was received!",
         "description": "Check your email for more information",
         "button": "See Order Details"
+    },
+    "general_options": {
+        "yes": "Yes",
+        "no": "No"
     }
 }

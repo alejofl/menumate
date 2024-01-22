@@ -33,6 +33,7 @@ function MyProfile() {
         ...(queryParams.get("size") ? {size: queryParams.get("size")} : {})
     });
     const queryKey = useState(query);
+    const [currentModal, setCurrentModal] = useState();
 
     const {
         isPending : userIsPending,
@@ -118,7 +119,7 @@ function MyProfile() {
             : []
     });
 
-    const addressMutation = useMutation({
+    const registerAddressMutation = useMutation({
         mutationFn: async ({name, address}) => {
             await userService.registerAddress(
                 user.addressesUrl,
@@ -129,7 +130,7 @@ function MyProfile() {
     });
 
     const handleRegisterAddress = (values, {setSubmitting}) => {
-        addressMutation.mutate(
+        registerAddressMutation.mutate(
             {
                 name: values.name,
                 address: values.address
@@ -153,6 +154,53 @@ function MyProfile() {
     };
 
     const handleCloseRegisterAddressModal = () => {
+        window.location.reload();
+    };
+
+    const deleteAddressMutation = useMutation({
+        mutationFn: async ({url}) => {
+            await userService.deleteAddress(url);
+        }
+    });
+
+    const handleDeleteAddress = () => {
+        deleteAddressMutation.mutate(
+            {
+                url: currentModal
+            },
+            {
+                onSuccess: () => handleCloseAndReloadDeleteAddressModal(),
+                onError: (error) => {
+                    if (error.response.status === BAD_REQUEST_STATUS_CODE) {
+                        EMAIL_ALREADY_IN_USE_ERROR.message;
+                    }
+                }
+            }
+        );
+    };
+
+    const handleOpenDeleteAddressModal = (url) => {
+        console.log("ESTE ES EL URL DE LA ADDRESS QUE QUIERO DELETEAR");
+        console.log(url);
+        setCurrentModal(url);
+        // eslint-disable-next-line no-undef
+        const modal = new bootstrap.Modal(document.querySelector(".registerDeleteModal .modal"));
+        modal.show();
+    };
+
+    const handleCloseDeleteAddressModal = () => {
+        const modalElement = document.querySelector(".registerDeleteModal .modal");
+
+        if (modalElement) {
+            // eslint-disable-next-line no-undef
+            const modal = bootstrap.Modal.getInstance(modalElement);
+            if (modal) {
+                modal.hide();
+            }
+        }
+    };
+
+    const handleCloseAndReloadDeleteAddressModal = () => {
         window.location.reload();
     };
 
@@ -221,7 +269,8 @@ function MyProfile() {
                                                 <i className="bi bi-geo-alt"></i>
                                                 <div>
                                                     {
-                                                        address.name && <small className="text-muted">{address.name}</small>
+                                                        address.name &&
+                                                        <small className="text-muted">{address.name}</small>
                                                     }
                                                     <p className="mb-0">{address.address}</p>
                                                 </div>
@@ -233,8 +282,9 @@ function MyProfile() {
                                                     <a className="add-address-modal-button" type="button"><i
                                                         className="bi bi-save-fill text-success right-button"></i></a>
                                                 }
-                                                <a className="delete-address-modal-button" type="button"><i
-                                                    className="bi bi-trash-fill text-danger right-button"></i></a>
+                                                <a className="delete-address-modal-button" type="button"
+                                                    onClick={() => handleOpenDeleteAddressModal(address.selfUrl)}><i
+                                                        className="bi bi-trash-fill text-danger right-button"></i></a>
                                             </div>
                                         </li>
                                     ))}
@@ -342,6 +392,28 @@ function MyProfile() {
                 </div>
             </Page>
 
+            <div className="registerDeleteModal">
+                <div className="modal fade" id="delete-address-modal" tabIndex="-1">
+                    <div className="modal-dialog modal-dialog-centered">
+                        <div className="modal-content">
+                            <div className="modal-body">
+                                <h1 className="modal-title fs-5">
+                                    {t("myprofile.delete_address_title")}
+                                </h1>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-secondary"
+                                    onClick={handleCloseDeleteAddressModal}>
+                                    {t("general_options.no")}
+                                </button>
+                                <button className="btn btn-danger" type="submit"
+                                    onClick={handleDeleteAddress}>{t("general_options.yes")}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div className="registerAddressModal">
                 <div className="modal" tabIndex="-1" id="newAddressModal">
                     <div className="modal-dialog">
@@ -362,13 +434,15 @@ function MyProfile() {
                                     {({isSubmitting}) => (
                                         <Form>
                                             <div className="mb-3">
-                                                <label htmlFor="name" className="form-label">{t("myprofile.name_label")}</label>
+                                                <label htmlFor="name"
+                                                    className="form-label">{t("myprofile.name_label")}</label>
                                                 <Field type="text" className="form-control" name="name"
                                                     autoComplete="name" id="name"/>
                                                 <ErrorMessage name="name" className="form-error" component="div"/>
                                             </div>
                                             <div className="mb-3">
-                                                <label htmlFor="address" className="form-label">{t("myprofile.address_label")}</label>
+                                                <label htmlFor="address"
+                                                    className="form-label">{t("myprofile.address_label")}</label>
                                                 <Field type="text" className="form-control" name="address"
                                                     autoComplete="address" id="address"/>
                                                 <ErrorMessage name="address" className="form-error" component="div"/>
@@ -378,8 +452,6 @@ function MyProfile() {
                                         </Form>
                                     )}
                                 </Formik>
-                                {/* <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>*/}
-                                {/* <button type="button" className="btn btn-primary">Save changes</button>*/}
                             </div>
                             <div className="modal-footer">
                             </div>
