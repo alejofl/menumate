@@ -8,17 +8,17 @@ import javax.validation.constraints.Size;
 
 public class RegisterForm {
 
-    @NotBlank
-    @Email
+    @NotBlank(message = "{NotBlank.RegisterForm.email}")
+    @Email(message = "{Email.RegisterForm.email}")
     @EmailNotInUse
     private String email;
 
-    @NotBlank
-    @Size(min = 8, max = 72)
+    @NotBlank(message = "{NotBlank.RegisterForm.password}")
+    @Size(min = 8, max = 72, message = "{Size.RegisterForm.password}")
     private String password;
 
-    @NotBlank
-    @Size(min = 2, max = 48)
+    @NotBlank(message = "{NotBlank.RegisterForm.name}")
+    @Size(min = 2, max = 48, message = "{Size.RegisterForm.name}")
     private String name;
 
     public String getEmail() {
