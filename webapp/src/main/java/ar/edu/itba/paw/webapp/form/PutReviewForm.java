@@ -7,12 +7,11 @@ import javax.validation.constraints.Size;
 
 public class PutReviewForm {
 
-    @NotNull
-    @Min(0)
-    @Max(5)
+    @NotNull(message = "{NotNull.PutReviewForm.rating}")
+    @Size(min = 0, max = 5, message = "{Size.PutReviewForm.rating}")
     private Integer rating;
 
-    @Size(max = 500)
+    @Size(max = 500, message = "{Size.PutReviewForm.comment}")
     private String comment;
 
     public Integer getRating() {
