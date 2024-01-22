@@ -94,6 +94,7 @@ export function useRestaurantService(api) {
 
     const createRestaurant = async (
         url,
+        imagesUrl,
         name,
         address,
         specialty,
@@ -104,8 +105,28 @@ export function useRestaurantService(api) {
         portrait1,
         portrait2
     ) => {
-        // TODO - Connect with API. Missing way to set images.
-        await console.log(url, name, address, specialty, tags, description, maxTables, logo, portrait1, portrait2);
+        const logoId = (await api.postForm(imagesUrl, {image: logo})).data.imageId;
+        const portrait1Id = (await api.postForm(imagesUrl, {image: portrait1})).data.imageId;
+        const portrait2Id = (await api.postForm(imagesUrl, {image: portrait2})).data.imageId;
+        return await api.post(
+            url,
+            {
+                name: name,
+                address: address,
+                specialty: specialty,
+                tags: tags,
+                description: description,
+                maxTables: maxTables,
+                logoId: logoId,
+                portrait1Id: portrait1Id,
+                portrait2Id: portrait2Id
+            },
+            {
+                headers: {
+                    "Content-Type": RESTAURANTS_CONTENT_TYPE
+                }
+            }
+        );
     };
 
     return {

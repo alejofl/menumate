@@ -6,7 +6,8 @@ const ApiContext = React.createContext({
     ordersUrl: "",
     restaurantsUrl: "",
     reviewsUrl: "",
-    usersUrl: ""
+    usersUrl: "",
+    imagesUrl: ""
 });
 
 export function ApiContextProvider({children}) {
@@ -16,6 +17,7 @@ export function ApiContextProvider({children}) {
     const [restaurantsUrl, setRestaurantsUrl] = useState("");
     const [reviewsUrl, setReviewsUrl] = useState("");
     const [usersUrl, setUsersUrl] = useState("");
+    const [imagesUrl, setImagesUrl] = useState("");
 
     useEffect(() => {
         Api.get("/")
@@ -24,6 +26,7 @@ export function ApiContextProvider({children}) {
                 setRestaurantsUrl(results.data.restaurantsUrl);
                 setReviewsUrl(results.data.reviewsUrl);
                 setUsersUrl(results.data.usersUrl);
+                setImagesUrl(results.data.imagesUrl);
             })
             .catch(() => setFailedDiscovery(true))
             .finally(() => setDidDiscovery(true));
@@ -37,7 +40,8 @@ export function ApiContextProvider({children}) {
                 ordersUrl: ordersUrl,
                 restaurantsUrl: restaurantsUrl,
                 reviewsUrl: reviewsUrl,
-                usersUrl: usersUrl
+                usersUrl: usersUrl,
+                imagesUrl: imagesUrl
             }}>
                 {children}
             </ApiContext.Provider>

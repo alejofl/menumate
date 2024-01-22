@@ -43,6 +43,7 @@ function CreateRestaurant() {
         }) => {
             await restaurantService.createRestaurant(
                 apiContext.restaurantsUrl,
+                apiContext.imagesUrl,
                 name,
                 address,
                 specialty,

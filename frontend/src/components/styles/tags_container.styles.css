@@ -15,3 +15,8 @@
     margin: 0;
     background: transparent; /* make scrollbar transparent */
 }
+
+.restaurant .information .tags_container .tags-container {
+    flex-wrap: wrap;
+    row-gap: 2px;
+}
