@@ -123,7 +123,8 @@ public class RestaurantController {
                 restaurantForm.getTagsAsEnum()
         );
 
-        return Response.created(UriUtils.getRestaurantUri(uriInfo, restaurant.getRestaurantId())).build();
+        final RestaurantDto restaurantDto = RestaurantDto.fromRestaurant(uriInfo, restaurant);
+        return Response.created(UriUtils.getRestaurantUri(uriInfo, restaurant.getRestaurantId())).entity(restaurantDto).build();
     }
 
     @PATCH
