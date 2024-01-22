@@ -4,11 +4,11 @@ import Review from "../../data/model/Review.js";
 import {REVIEW_CONTENT_TYPE} from "../../utils.js";
 
 export function userReviewService(api) {
-    const getReviews = async (url, params) => {
+    const getReviews = async (url, query) => {
         const response = await api.get(
             url,
             {
-                params: params,
+                params: query,
                 headers: {
                     "Accept": REVIEW_CONTENT_TYPE
                 }
