@@ -9,16 +9,16 @@ import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 
 public class ProductForm {
-    @NotBlank
-    @Size(max = 150)
+    @NotBlank(message = "{NotBlank.ProductForm.name}")
+    @Size(max = 150, message = "{Size.ProductForm.name}")
     private String name;
 
-    @Size(max = 300)
+    @Size(max = 300, message = "{Size.ProductForm.description}")
     private String description;
 
-    @NotNull
-    @DecimalMin(value = "0", inclusive = false)
-    @Digits(integer = 8, fraction = 2)
+    @NotNull(message = "{NotNull.ProductForm.price}")
+    @DecimalMin(value = "0", inclusive = false, message = "{DecimalMin.ProductForm.price}")
+    @Digits(integer = 8, fraction = 2, message = "{Digits.ProductForm.price}")
     private BigDecimal price;
 
     public String getName() {
