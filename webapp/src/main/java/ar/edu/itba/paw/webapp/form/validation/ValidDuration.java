@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidDuration {
-    String message() default "Not a valid duration";
+    String message() default "{ValidDuration.PromotionForm}";
 
     Class<?>[] groups() default {};
 
