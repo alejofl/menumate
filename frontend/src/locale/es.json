@@ -294,7 +294,8 @@
             "success": "¡Tu reporte fue enviado con éxito!",
             "success_button": "Volver a la página del restaurante",
             "error": "Ocurrió un error al enviar tu reporte. Por favor, intente de nuevo más tarde."
-        }
+        },
+        "disabled": "Este restaurante fue deshabilitado debido a reportes recibidos. Arregla los problemas y responde el correo electrónico que te enviamos para habilitarlo nuevamente."
     },
     "order_placed": {
         "title": "¡Tu pedido fue recibido!",

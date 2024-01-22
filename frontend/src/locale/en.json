@@ -294,7 +294,8 @@
             "success": "Your report was sent successfully!",
             "success_button": "Go back to the restaurant page",
             "error": "There was an error while sending your report. Please try again later."
-        }
+        },
+        "disabled": "This restaurant was disabled due to received reports. Fix the problems and reply to the email we sent you to enable it again."
     },
     "order_placed": {
         "title": "Your order was received!",

@@ -141,6 +141,12 @@ function Restaurant() {
                 <Error errorNumber={userError.response.status}/>
             </>
         );
+    } else if (!categoriesIsPending && !restaurant.active && userRoleIsError) {
+        return (
+            <>
+                <Error errorNumber="404"/>
+            </>
+        );
     } else if (userRoleIsError) {
         return (
             <>
@@ -173,6 +179,12 @@ function Restaurant() {
                     <div className="information">
                         <img src={restaurant.logoUrl} alt={restaurant.name} className="logo"/>
                         <div className="flex-grow-1">
+                            {
+                                !restaurant.active &&
+                                <div className="alert alert-warning" role="alert">
+                                    {t("restaurant.disabled")}
+                                </div>
+                            }
                             <h1>{restaurant.name}</h1>
                             <p className="mb-1">
                                 {restaurant.description || <i>{t("restaurant.no_description")}</i>}
