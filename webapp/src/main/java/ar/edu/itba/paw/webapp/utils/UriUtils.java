@@ -37,6 +37,10 @@ public final class UriUtils {
         return uriInfo.getBaseUriBuilder().path(REVIEWS_URL).build();
     }
 
+    public static URI getImagesUri(final UriInfo uriInfo) {
+        return uriInfo.getBaseUriBuilder().path(IMAGES_URL).build();
+    }
+
     /**
      * Returns a URI pointing to the given imageId, or null if imageId is null.
      */
