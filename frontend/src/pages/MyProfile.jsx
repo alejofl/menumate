@@ -33,7 +33,10 @@ function MyProfile() {
         ...(queryParams.get("size") ? {size: queryParams.get("size")} : {})
     });
     const queryKey = useState(query);
-    const [currentModal, setCurrentModal] = useState();
+    const [currentDeleteAddressModal, setCurrentDeleteAddressModal] = useState();
+    const [currentNameAddress, setCurrentNameAddress] = useState();
+    const [currentAddressAddress, setCurrentAddressAddress] = useState();
+    const [currentUrlAddress, setCurrentUrlAddress] = useState();
 
     const {
         isPending : userIsPending,
@@ -86,7 +89,6 @@ function MyProfile() {
         keepPreviousData: true,
         enabled: !!user
     });
-    console.log(reviews);
 
     const orders = useQueries({
         queries: reviews
@@ -111,8 +113,6 @@ function MyProfile() {
                 return {
                     queryKey: ["restaurant", order.data.orderId],
                     queryFn: async () => {
-                        console.log("PARECE QUE TENGO EL LINK");
-                        console.log(order.data.restaurantUrl);
                         return await restaurantService.getRestaurant(order.data.restaurantUrl);
                     }};
             })
@@ -166,7 +166,7 @@ function MyProfile() {
     const handleDeleteAddress = () => {
         deleteAddressMutation.mutate(
             {
-                url: currentModal
+                url: currentDeleteAddressModal
             },
             {
                 onSuccess: () => handleCloseAndReloadDeleteAddressModal(),
@@ -180,16 +180,14 @@ function MyProfile() {
     };
 
     const handleOpenDeleteAddressModal = (url) => {
-        console.log("ESTE ES EL URL DE LA ADDRESS QUE QUIERO DELETEAR");
-        console.log(url);
-        setCurrentModal(url);
+        setCurrentDeleteAddressModal(url);
         // eslint-disable-next-line no-undef
         const modal = new bootstrap.Modal(document.querySelector(".registerDeleteModal .modal"));
         modal.show();
     };
 
     const handleCloseDeleteAddressModal = () => {
-        const modalElement = document.querySelector(".registerDeleteModal .modal");
+        const modalElement = document.querySelector(".deleteAddressModal .modal");
 
         if (modalElement) {
             // eslint-disable-next-line no-undef
@@ -202,6 +200,43 @@ function MyProfile() {
 
     const handleCloseAndReloadDeleteAddressModal = () => {
         window.location.reload();
+    };
+
+    const updateAddressMutation = useMutation({
+        mutationFn: async ({name, address}) => {
+            await userService.updateAddress(
+                currentUrlAddress,
+                name,
+                address
+            );
+        }
+    });
+
+    const handleUpdateAddress = (values, {setSubmitting}) => {
+        updateAddressMutation.mutate(
+            {
+                name: values.name,
+                address: values.address
+            },
+            {
+                onSuccess: () => handleCloseRegisterAddressModal(),
+                onError: (error) => {
+                    if (error.response.status === BAD_REQUEST_STATUS_CODE) {
+                        EMAIL_ALREADY_IN_USE_ERROR.message;
+                    }
+                }
+            }
+        );
+        setSubmitting(false);
+    };
+
+    const handleOpenUpdateAddressModal = (address) => {
+        setCurrentUrlAddress(address.self);
+        setCurrentNameAddress(address.name);
+        setCurrentAddressAddress(address.address);
+        // eslint-disable-next-line no-undef
+        const modal = new bootstrap.Modal(document.querySelector(".updateAddressModal .modal"));
+        modal.show();
     };
 
     if (userIsError) {
@@ -237,7 +272,6 @@ function MyProfile() {
             </>
         );
     }
-    console.log(addresses);
 
     const handleLoadMoreContent = async () => {
         await fetchNextPage();
@@ -279,8 +313,9 @@ function MyProfile() {
                                                 {
                                                     !address.name
                                                     &&
-                                                    <a className="add-address-modal-button" type="button"><i
-                                                        className="bi bi-save-fill text-success right-button"></i></a>
+                                                    <a className="add-address-modal-button" type="button"
+                                                        onClick={() => handleOpenUpdateAddressModal(address)}><i
+                                                            className="bi bi-save-fill text-success right-button"></i></a>
                                                 }
                                                 <a className="delete-address-modal-button" type="button"
                                                     onClick={() => handleOpenDeleteAddressModal(address.selfUrl)}><i
@@ -392,8 +427,8 @@ function MyProfile() {
                 </div>
             </Page>
 
-            <div className="registerDeleteModal">
-                <div className="modal fade" id="delete-address-modal" tabIndex="-1">
+            <div className="deleteAddressModal">
+                <div className="modal fade" tabIndex="-1">
                     <div className="modal-dialog modal-dialog-centered">
                         <div className="modal-content">
                             <div className="modal-body">
@@ -415,7 +450,7 @@ function MyProfile() {
             </div>
 
             <div className="registerAddressModal">
-                <div className="modal" tabIndex="-1" id="newAddressModal">
+                <div className="modal" tabIndex="-1">
                     <div className="modal-dialog">
                         <div className="modal-content">
                             <div className="modal-header"><h1 className="modal-title fs-5">
@@ -430,6 +465,52 @@ function MyProfile() {
                                     }}
                                     validationSchema={RegisterAddressSchema}
                                     onSubmit={handleRegisterAddress}
+                                >
+                                    {({isSubmitting}) => (
+                                        <Form>
+                                            <div className="mb-3">
+                                                <label htmlFor="name"
+                                                    className="form-label">{t("myprofile.name_label")}</label>
+                                                <Field type="text" className="form-control" name="name"
+                                                    autoComplete="name" id="name"/>
+                                                <ErrorMessage name="name" className="form-error" component="div"/>
+                                            </div>
+                                            <div className="mb-3">
+                                                <label htmlFor="address"
+                                                    className="form-label">{t("myprofile.address_label")}</label>
+                                                <Field type="text" className="form-control" name="address"
+                                                    autoComplete="address" id="address"/>
+                                                <ErrorMessage name="address" className="form-error" component="div"/>
+                                            </div>
+                                            <button className="btn btn-primary" type="submit"
+                                                disabled={isSubmitting}>{t("myprofile.add_address")}</button>
+                                        </Form>
+                                    )}
+                                </Formik>
+                            </div>
+                            <div className="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="updateAddressModal">
+                <div className="modal" id="updateModal" tabIndex="-1">
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header"><h1 className="modal-title fs-5">
+                                {t("myprofile.add_address")}
+                            </h1>
+                            </div>
+                            <div className="modal-body">
+                                <Formik
+                                    initialValues={{
+                                        name: currentNameAddress,
+                                        address: currentAddressAddress
+                                    }}
+                                    enableReinitialize={true}
+                                    onSubmit={handleUpdateAddress}
                                 >
                                     {({isSubmitting}) => (
                                         <Form>

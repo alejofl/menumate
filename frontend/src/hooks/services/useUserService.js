@@ -162,6 +162,21 @@ export function useUserService(api) {
         );
     };
 
+    const updateAddress = async (url, name, address) => {
+        return await api.patch(
+            url,
+            {
+                name,
+                address
+            },
+            {
+                headers: {
+                    "Content-Type": USER_ADDRESS_CONTENT_TYPE
+                }
+            }
+        );
+    };
+
     return {
         sendResetPasswordToken,
         resetPassword,
@@ -172,6 +187,7 @@ export function useUserService(api) {
         getReviews,
         getRoleForRestaurant,
         registerAddress,
-        deleteAddress
+        deleteAddress,
+        updateAddress
     };
 }
