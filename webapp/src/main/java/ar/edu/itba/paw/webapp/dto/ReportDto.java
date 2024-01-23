@@ -14,7 +14,7 @@ public class ReportDto {
 
     private long reportId;
     private long restaurantId;
-    private long reporterId;
+    private Long reporterId;
     private Long handlerId;
     private LocalDateTime dateReported;
     private LocalDateTime dateHandled;
@@ -43,7 +43,7 @@ public class ReportDto {
 
         dto.selfUrl = UriUtils.getReportUri(uriInfo, report.getReportId(), report.getRestaurantId());
         dto.restaurantUrl = UriUtils.getRestaurantUri(uriInfo, report.getRestaurantId());
-        dto.reporterUrl = UriUtils.getUserUri(uriInfo, report.getReporterUserId());
+        dto.reporterUrl = dto.reporterId != null ? UriUtils.getUserUri(uriInfo, report.getReporterUserId()) : null;
         
         return dto;
     }
@@ -68,11 +68,11 @@ public class ReportDto {
         this.restaurantId = restaurantId;
     }
 
-    public long getReporterId() {
+    public Long getReporterId() {
         return reporterId;
     }
 
-    public void setReporterId(long reporterId) {
+    public void setReporterId(Long reporterId) {
         this.reporterId = reporterId;
     }
 

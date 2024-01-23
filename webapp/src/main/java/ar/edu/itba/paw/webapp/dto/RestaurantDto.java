@@ -35,6 +35,7 @@ public class RestaurantDto {
     private URI ordersUrl;
     private URI reviewsUrl;
     private String employeesUriTemplate;
+    private URI reportsUrl;
 
     protected static void fill(final RestaurantDto dto, final UriInfo uriInfo, final Restaurant restaurant) {
         dto.restaurantId = restaurant.getRestaurantId();
@@ -58,6 +59,7 @@ public class RestaurantDto {
         dto.ordersUrl = UriUtils.getOrdersByRestaurantUri(uriInfo, restaurant.getRestaurantId());
         dto.reviewsUrl = UriUtils.getReviewsByRestaurantUri(uriInfo, restaurant.getRestaurantId());
         dto.employeesUriTemplate = UriUtils.getRestaurantEmployeesUriTemplate(uriInfo, restaurant.getRestaurantId());
+        dto.reportsUrl = UriUtils.getReportsUri(uriInfo, restaurant.getRestaurantId());
     }
 
     public static RestaurantDto fromRestaurant(final UriInfo uriInfo, final Restaurant restaurant) {
@@ -244,5 +246,13 @@ public class RestaurantDto {
 
     public void setPromotionsUrl(URI promotionsUrl) {
         this.promotionsUrl = promotionsUrl;
+    }
+
+    public URI getReportsUrl() {
+        return reportsUrl;
+    }
+
+    public void setReportsUrl(URI reportsUrl) {
+        this.reportsUrl = reportsUrl;
     }
 }
