@@ -5,6 +5,7 @@ import ar.edu.itba.paw.exception.RestaurantNotFoundException;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.persistance.ImageDao;
 import ar.edu.itba.paw.persistance.RestaurantDao;
+import ar.edu.itba.paw.service.EmailService;
 import ar.edu.itba.paw.service.RestaurantService;
 import ar.edu.itba.paw.util.PaginatedResult;
 import org.slf4j.Logger;
@@ -30,6 +31,9 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Autowired
     private ImageDao imageDao;
+
+    @Autowired
+    private EmailService emailService;
 
     @Transactional
     @Override
@@ -115,5 +119,35 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Override
     public void delete(long restaurantId) {
         restaurantDao.delete(restaurantId);
+    }
+
+    @Transactional
+    @Override
+    public void handleActivation(long restaurantId, boolean activate) {
+        final Restaurant restaurant = getAndVerifyForUpdate(restaurantId);
+        if (restaurant.getIsActive() == activate) {
+            return;
+        }
+
+        restaurant.setIsActive(activate);
+        LOGGER.info("Updated restaurant {} isActive field to {}", restaurantId, activate);
+        if (!activate) {
+            emailService.sendRestaurantDeactivationEmail(restaurant);
+        }
+    }
+
+    @Transactional
+    @Override
+    public void handleDeletion(long restaurantId, boolean delete) {
+        final Restaurant restaurant = getById(restaurantId).orElseThrow(RestaurantNotFoundException::new);
+        if (restaurant.getDeleted() == delete) {
+            return;
+        }
+
+        restaurant.setDeleted(delete);
+        LOGGER.info("Updated restaurant {} deleted field to {}", restaurantId, delete);
+        if (delete) {
+            emailService.sendRestaurantDeletionEmail(restaurant);
+        }
     }
 }

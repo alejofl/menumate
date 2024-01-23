@@ -15,28 +15,28 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class RestaurantForm {
-    @NotBlank
-    @Size(max = 50)
+    @NotBlank(message = "{NotBlank.RestaurantForm.name}")
+    @Size(max = 50, message = "{Size.RestaurantForm.name}")
     private String name;
 
-    @NotBlank
-    @Size(max = 200)
+    @NotBlank(message = "{NotBlank.RestaurantForm.address}")
+    @Size(max = 200, message = "{Size.RestaurantForm.address}")
     private String address;
 
-    @NotNull
-    @EnumMessageCode(enumClass = RestaurantSpecialty.class)
+    @NotNull(message = "{NotNull.RestaurantForm.specialty}")
+    @EnumMessageCode(enumClass = RestaurantSpecialty.class, message = "{EnumMessageCode.RestaurantForm.specialty}")
     private String specialty;
 
-    @NotBlank
-    @Size(max = 300)
+    @NotBlank(message = "{NotBlank.RestaurantForm.description}")
+    @Size(max = 300, message = "{Size.RestaurantForm.description}")
     private String description;
 
-    @NotNull
-    @Min(1)
+    @NotNull(message = "{NotNull.RestaurantForm.maxTables}")
+    @Min(value = 1, message = "{Min.RestaurantForm.maxTables}")
     private Integer maxTables;
 
-    @NotEmpty
-    @EnumMessageCodeList(enumClass = RestaurantTags.class)
+    @NotEmpty(message = "{NotEmpty.RestaurantForm.tags}")
+    @EnumMessageCodeList(enumClass = RestaurantTags.class, message = "{EnumMessageCodeList.RestaurantForm.tags}")
     private List<String> tags;
 
     @Image(nullable = true)

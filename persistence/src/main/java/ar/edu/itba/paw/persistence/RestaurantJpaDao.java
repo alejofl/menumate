@@ -148,7 +148,7 @@ public class RestaurantJpaDao implements RestaurantDao {
         String search = generateSearchParam(query);
 
         StringBuilder sqlBuilder = new StringBuilder();
-        sqlBuilder.append("SELECT restaurant_id FROM restaurant_details AS r WHERE");
+        sqlBuilder.append("SELECT restaurant_id FROM restaurant_details AS r WHERE is_active = true AND");
         sqlBuilder.append(NAME_SEARCH_CONDITION_SQL);
         appendSpecialtiesCondition(sqlBuilder, specialties);
         appendTagsCondition(sqlBuilder, tags);

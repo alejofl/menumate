@@ -5,10 +5,10 @@ import javax.validation.constraints.Size;
 
 public class UpdateUserForm {
 
-    @Size(min = 2, max = 48)
+    @Size(min = 2, max = 48, message = "{Size.UpdateUserForm.name}")
     private String name;
 
-    @Pattern(regexp = "es|en")
+    @Pattern(regexp = "es|en", message = "{Pattern.UpdateUserForm.preferredLanguage}")
     private String preferredLanguage;
 
     public String getName() {

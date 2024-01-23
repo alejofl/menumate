@@ -4,6 +4,7 @@ import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.model.RestaurantSpecialty;
 import ar.edu.itba.paw.model.RestaurantTags;
 import ar.edu.itba.paw.persistance.RestaurantDao;
+import ar.edu.itba.paw.service.EmailService;
 import ar.edu.itba.paw.services.RestaurantServiceImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,14 +18,16 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RestaurantServiceImplTest {
 
     @Mock
     private RestaurantDao restaurantDao;
+
+    @Mock
+    private EmailService emailService;
 
     @InjectMocks
     private final RestaurantServiceImpl restaurantService = new RestaurantServiceImpl();
@@ -99,5 +102,90 @@ public class RestaurantServiceImplTest {
         assertNull(updatedRestaurant.getAddress());
         assertNull(updatedRestaurant.getDescription());
         assertTrue(updatedRestaurant.getTags().isEmpty());
+    }
+
+    @Test
+    public void testHandleActivationFromTrueToFalse() {
+        final Restaurant restaurant = spy(Restaurant.class);
+        restaurant.setRestaurantId(DEFAULT_RESTAURANT_ID);
+        restaurant.setIsActive(true);
+        restaurant.setDeleted(false);
+
+        when(restaurantDao.getById(DEFAULT_RESTAURANT_ID)).thenReturn(Optional.of(restaurant));
+
+        restaurantService.handleActivation(DEFAULT_RESTAURANT_ID, false);
+
+        assertFalse(restaurant.getIsActive());
+    }
+
+    @Test
+    public void testHandleActivationFromFalseToTrue() {
+        final Restaurant restaurant = spy(Restaurant.class);
+        restaurant.setRestaurantId(DEFAULT_RESTAURANT_ID);
+        restaurant.setIsActive(false);
+        restaurant.setDeleted(false);
+
+        when(restaurantDao.getById(DEFAULT_RESTAURANT_ID)).thenReturn(Optional.of(restaurant));
+
+        restaurantService.handleActivation(DEFAULT_RESTAURANT_ID, true);
+
+        assertTrue(restaurant.getIsActive());
+    }
+
+    @Test(expected = RestaurantNotFoundException.class)
+    public void testHandleActivationNoRestaurant() {
+        final Restaurant restaurant = mock(Restaurant.class);
+        when(restaurantDao.getById(DEFAULT_RESTAURANT_ID)).thenReturn(Optional.empty());
+
+        restaurantService.handleActivation(DEFAULT_RESTAURANT_ID, false);
+
+        assertFalse(restaurant.getIsActive());
+    }
+
+    @Test(expected = RestaurantDeletedException.class)
+    public void testHandleActivationDeletedRestaurant() {
+        final Restaurant restaurant = spy(Restaurant.class);
+        restaurant.setDeleted(true);
+        when(restaurantDao.getById(DEFAULT_RESTAURANT_ID)).thenReturn(Optional.of(restaurant));
+
+        restaurantService.handleActivation(DEFAULT_RESTAURANT_ID, false);
+
+        assertFalse(restaurant.getIsActive());
+    }
+
+    @Test
+    public void testHandleDeletionFromTrueToFalse() {
+        final Restaurant restaurant = spy(Restaurant.class);
+        restaurant.setRestaurantId(DEFAULT_RESTAURANT_ID);
+        restaurant.setDeleted(true);
+
+        when(restaurantDao.getById(DEFAULT_RESTAURANT_ID)).thenReturn(Optional.of(restaurant));
+
+        restaurantService.handleDeletion(DEFAULT_RESTAURANT_ID, false);
+
+        assertFalse(restaurant.getDeleted());
+    }
+
+    @Test
+    public void testHandleDeletionFromFalseToTrue() {
+        final Restaurant restaurant = spy(Restaurant.class);
+        restaurant.setRestaurantId(DEFAULT_RESTAURANT_ID);
+        restaurant.setDeleted(false);
+
+        when(restaurantDao.getById(DEFAULT_RESTAURANT_ID)).thenReturn(Optional.of(restaurant));
+
+        restaurantService.handleDeletion(DEFAULT_RESTAURANT_ID, true);
+
+        assertTrue(restaurant.getDeleted());
+    }
+
+    @Test(expected = RestaurantNotFoundException.class)
+    public void testHandleDeletionNoRestaurant() {
+        final Restaurant restaurant = mock(Restaurant.class);
+        when(restaurantDao.getById(DEFAULT_RESTAURANT_ID)).thenReturn(Optional.empty());
+
+        restaurantService.handleDeletion(DEFAULT_RESTAURANT_ID, false);
+
+        assertFalse(restaurant.getIsActive());
     }
 }

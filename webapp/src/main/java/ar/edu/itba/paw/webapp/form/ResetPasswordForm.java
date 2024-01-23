@@ -5,8 +5,8 @@ import org.hibernate.validator.constraints.NotBlank;
 
 public class ResetPasswordForm {
 
-    @NotBlank
-    @Email
+    @NotBlank(message = "{NotBlank.ResetPasswordForm.email}")
+    @Email(message = "{Email.ResetPasswordForm.email}")
     private String email;
 
     public String getEmail() {

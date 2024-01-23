@@ -4,13 +4,13 @@ import ar.edu.itba.paw.webapp.form.validation.BothFieldsNull;
 
 import javax.validation.constraints.Size;
 
-@BothFieldsNull(allowBothNull = false, allowBothNotNull = true, field1Name = "address", field2Name = "name", message = "Must specify an address or a name")
+@BothFieldsNull(allowBothNull = false, allowBothNotNull = true, field1Name = "address", field2Name = "name", message = "{BothFieldsNull.UpdateUserAddressForm}")
 public class UpdateUserAddressForm {
 
-    @Size(max = 200)
+    @Size(max = 200, message = "{Size.UpdateUserAddressForm.address}")
     private String address;
 
-    @Size(max = 20)
+    @Size(max = 20, message = "{Size.UpdateUserAddressForm.name}")
     private String name;
 
     public String getAddress() {

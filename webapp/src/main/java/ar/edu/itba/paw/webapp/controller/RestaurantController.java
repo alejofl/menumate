@@ -123,12 +123,14 @@ public class RestaurantController {
                 restaurantForm.getTagsAsEnum()
         );
 
-        return Response.created(UriUtils.getRestaurantUri(uriInfo, restaurant.getRestaurantId())).build();
+        final RestaurantDto restaurantDto = RestaurantDto.fromRestaurant(uriInfo, restaurant);
+        return Response.created(UriUtils.getRestaurantUri(uriInfo, restaurant.getRestaurantId())).entity(restaurantDto).build();
     }
 
     @PATCH
     @Path("/{restaurantId:\\d+}")
     @Consumes(CustomMediaType.APPLICATION_RESTAURANT)
+    @PreAuthorize("@accessValidator.checkRestaurantOwner(#restaurantId) or @accessValidator.checkRestaurantAdmin(#restaurantId)")
     public Response updateRestaurantById(
             @PathParam("restaurantId") final long restaurantId,
             @Valid @NotNull final RestaurantForm restaurantForm
@@ -428,5 +430,29 @@ public class RestaurantController {
         List<ReportDto> dtoList = ReportDto.fromReportCollection(uriInfo, pagedResult.getResult());
         final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<ReportDto>>(dtoList) {});
         return ControllerUtils.addPagingLinks(responseBuilder, pagedResult, uriInfo).build();
+    }
+
+    @PATCH
+    @Path("/{restaurantId:\\d+}")
+    @Consumes(CustomMediaType.APPLICATION_RESTAURANT_ACTIVATE)
+    @PreAuthorize("hasRole('MODERATOR')")
+    public Response updateRestaurantIsActive(
+        @PathParam("restaurantId") final long restaurantId,
+        @Valid @NotNull final UpdateRestaurantIsActiveForm restaurantIsActiveForm
+    ) {
+        restaurantService.handleActivation(restaurantId, restaurantIsActiveForm.getActivate());
+        return Response.noContent().build();
+    }
+
+    @PATCH
+    @Path("/{restaurantId:\\d+}")
+    @Consumes(CustomMediaType.APPLICATION_RESTAURANT_DELETE)
+    @PreAuthorize("hasRole('MODERATOR')")
+    public Response updateRestaurantDeletion(
+            @PathParam("restaurantId") final long restaurantId,
+            @Valid @NotNull final UpdateRestaurantDeletionForm restaurantDeletionForm
+    ) {
+        restaurantService.handleDeletion(restaurantId, restaurantDeletionForm.getDelete());
+        return Response.noContent().build();
     }
 }
