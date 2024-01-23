@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.webapp.mapper;
+package ar.edu.itba.paw.webapp.contextResolver;
 
 import org.glassfish.jersey.server.validation.ValidationConfig;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -16,7 +16,7 @@ import java.util.Locale;
  */
 
 @Provider
-public class ValidationContextResolverConfig implements ContextResolver<ValidationConfig> {
+public class ValidationContextResolver implements ContextResolver<ValidationConfig> {
 
     @Override
     public ValidationConfig getContext(Class<?> type) {

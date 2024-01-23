@@ -6,7 +6,7 @@ import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.model.UserAddress;
 import ar.edu.itba.paw.service.UserRoleService;
 import ar.edu.itba.paw.service.UserService;
-import ar.edu.itba.paw.webapp.api.CustomMediaType;
+import ar.edu.itba.paw.webapp.CustomMediaType;
 import ar.edu.itba.paw.webapp.auth.JwtTokenUtil;
 import ar.edu.itba.paw.webapp.dto.UserAddressDto;
 import ar.edu.itba.paw.webapp.dto.UserDto;
