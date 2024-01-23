@@ -34,7 +34,6 @@ export function useRestaurantService(api) {
     };
 
     const getRestaurant = async (url, details = false) => {
-        console.log("ENTRE AL SERVICIO DEL RESTAURANTE DEL RE CULO");
         const response = await api.get(url, {
             headers: {
                 "Accept": details ? RESTAURANT_DETAILS_CONTENT_TYPE : RESTAURANTS_CONTENT_TYPE

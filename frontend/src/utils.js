@@ -3,6 +3,7 @@
 export const BAD_REQUEST_STATUS_CODE = 400;
 export const UNAUTHORIZED_STATUS_CODE = 401;
 export const NOT_FOUND_STATUS_CODE = 404;
+export const METHOD_NOT_ALLOWED = 405;
 
 export const IMAGE_CONTENT_TYPE = "application/vnd.menumate.images.v1+json";
 export const ORDERS_CONTENT_TYPE = "application/vnd.menumate.orders.v1+json";

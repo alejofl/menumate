@@ -204,7 +204,8 @@
         },
         "my_profile": {
             "register_address_name_max": "The name must be at most {{max}} characters long",
-            "register_address_address_max": "The address must be at most {{max}} characters long"
+            "register_address_address_max": "The address must be at most {{max}} characters long",
+            "address_exits": "The address already exists"
         },
         "restaurant_name": {
             "required": "The restaurant name is required",
