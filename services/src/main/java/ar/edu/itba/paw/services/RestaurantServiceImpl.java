@@ -121,6 +121,7 @@ public class RestaurantServiceImpl implements RestaurantService {
         restaurantDao.delete(restaurantId);
     }
 
+    @Transactional
     @Override
     public void handleActivation(long restaurantId, boolean activate) {
         final Restaurant restaurant = getAndVerifyForUpdate(restaurantId);
@@ -135,6 +136,7 @@ public class RestaurantServiceImpl implements RestaurantService {
         }
     }
 
+    @Transactional
     @Override
     public void handleDeletion(long restaurantId, boolean delete) {
         final Restaurant restaurant = getById(restaurantId).orElseThrow(RestaurantNotFoundException::new);
