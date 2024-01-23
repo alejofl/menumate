@@ -24,7 +24,7 @@ public class ReportDto {
     private URI selfUrl;
     private URI restaurantUrl;
     private URI reporterUrl;
-    private URI handlerURL;
+    private URI handlerUrl;
 
     public static ReportDto fromReport(final UriInfo uriInfo, Report report) {
         final ReportDto dto = new ReportDto();
@@ -38,7 +38,7 @@ public class ReportDto {
         if(report.getIsHandled()) {
             dto.handlerId = report.getHandlerUserId();
             dto.dateHandled = report.getDateHandled();
-            dto.handlerURL = UriUtils.getUserUri(uriInfo, report.getHandlerUserId());
+            dto.handlerUrl = UriUtils.getUserUri(uriInfo, report.getHandlerUserId());
         }
 
         dto.selfUrl = UriUtils.getReportUri(uriInfo, report.getReportId(), report.getRestaurantId());
@@ -140,11 +140,11 @@ public class ReportDto {
         this.reporterUrl = reporterUrl;
     }
 
-    public URI getHandlerURL() {
-        return handlerURL;
+    public URI getHandlerUrl() {
+        return handlerUrl;
     }
 
-    public void setHandlerURL(URI handlerURL) {
-        this.handlerURL = handlerURL;
+    public void setHandlerUrl(URI handlerUrl) {
+        this.handlerUrl = handlerUrl;
     }
 }
