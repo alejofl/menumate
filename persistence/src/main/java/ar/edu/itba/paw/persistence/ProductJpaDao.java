@@ -67,7 +67,7 @@ public class ProductJpaDao implements ProductDao {
 
         if (product.getDeleted()) {
             LOGGER.error("Attempted to delete already-deleted product id {}", product.getProductId());
-            throw new ProductDeletedException("Product is already deleted");
+            throw new ProductDeletedException();
         }
 
         product.setDeleted(true);
