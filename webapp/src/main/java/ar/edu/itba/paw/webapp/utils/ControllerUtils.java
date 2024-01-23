@@ -104,10 +104,11 @@ public final class ControllerUtils {
         return response;
     }
 
-    public static void setUnconditionalCache(Response.ResponseBuilder responseBuilder) {
+    public static Response.ResponseBuilder setUnconditionalCache(Response.ResponseBuilder responseBuilder) {
         final CacheControl cacheControl = new CacheControl();
         cacheControl.setMaxAge(MAX_AGE);
         responseBuilder.cacheControl(cacheControl);
+        return responseBuilder;
     }
 
     // https://howtodoinjava.com/resteasy/jax-rs-resteasy-cache-control-with-etag-example/
