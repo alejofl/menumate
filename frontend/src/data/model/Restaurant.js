@@ -27,7 +27,8 @@ export default class Restaurant {
         reviewCount,
         dineInCompletionTime,
         takeAwayCompletionTime,
-        deliveryCompletionTime
+        deliveryCompletionTime,
+        pendingOrderCount
     ) {
         this.active = active;
         this.address = address;
@@ -55,6 +56,7 @@ export default class Restaurant {
         this.dineInCompletionTime = dineInCompletionTime;
         this.takeAwayCompletionTime = takeAwayCompletionTime;
         this.deliveryCompletionTime = deliveryCompletionTime;
+        this.pendingOrderCount = pendingOrderCount;
     }
 
     static fromJSON(object) {
@@ -84,7 +86,8 @@ export default class Restaurant {
             object.reviewCount,
             object.dineInCompletionTime,
             object.takeAwayCompletionTime,
-            object.deliveryCompletionTime
+            object.deliveryCompletionTime,
+            object.pendingOrderCount
         );
     }
 }

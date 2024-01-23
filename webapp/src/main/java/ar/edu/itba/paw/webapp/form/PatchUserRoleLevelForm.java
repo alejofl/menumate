@@ -7,7 +7,7 @@ import org.hibernate.validator.constraints.NotBlank;
 public class PatchUserRoleLevelForm {
 
     @NotBlank
-    @EnumMessageCode(enumClass = UserRoleLevel.class)
+    @EnumMessageCode(enumClass = UserRoleLevel.class, message = "{EnumMessageCode.PatchUserRoleLevelForm.role}")
     private String role;
 
     public String getRole() {

@@ -11,9 +11,12 @@ import "./styles/restaurants.styles.css";
 import Select from "react-select";
 import {useSearchParams} from "react-router-dom";
 import ErrorModal from "../components/ErrorModal.jsx";
+import {selectComponents, selectStyles} from "../components/utils/SelectProperties.js";
+import RestaurantSpecialties from "../data/RestaurantSpecialties.js";
+import RestaurantTags from "../data/RestaurantTags.js";
+import {DEFAULT_RESTAURANT_COUNT} from "../utils.js";
 
 function Restaurants() {
-    const DEFAULT_RESTAURANT_COUNT = 12;
     const { t } = useTranslation();
     const api = useApi();
     const apiContext = useContext(ApiContext);
@@ -30,134 +33,8 @@ function Restaurants() {
     });
     const [queryKey, setQueryKey] = useState(query);
 
-    const selectStyles = (last) => ({
-        container: (defaultStyle) => ({
-            ...defaultStyle,
-            flexGrow: 1
-        }),
-        control: (defaultStyle, state) => ({
-            ...defaultStyle,
-            width: "100%",
-            height: "100%",
-            flexGrow: 1,
-            minWidth: "0",
-            padding: "0.375rem 0.75rem",
-            marginLeft: "calc(var(--bs-border-width) * -1)",
-            borderTopLeftRadius: "0",
-            borderBottomLeftRadius: "0",
-            fontSize: "1rem",
-            fontWeight: 400,
-            lineHeight: 1.5,
-            color: "var(--bs-body-color)",
-            backgroundColor: "var(--bs-body-bg)",
-            backgroundClip: "padding-box",
-            "-webkit-appearance": "none",
-            "-moz-appearance": "none",
-            appearance: "none",
-            borderRadius: last ? "0" : "0.375rem",
-            transition: "border-color .15s ease-in-out,box-shadow .15s ease-in-out",
-            ":hover": {
-                borderColor: state.isFocused ? "var(--primary)" : "var(--bs-border-color)"
-            },
-            boxShadow: state.isFocused ? "0 0 0 0.25rem #ed7a5740" : "none",
-            border: state.isFocused ? "var(--bs-border-width) solid var(--primary)" : "var(--bs-border-width) solid var(--bs-border-color)"
-        }),
-        valueContainer: (defaultStyle) => ({
-            ...defaultStyle,
-            padding: 0
-        }),
-        placeholder: (defaultStyle) => ({
-            ...defaultStyle,
-            fontSize: "1rem",
-            fontWeight: 400,
-            lineHeight: 1.5,
-            color: "var(--bs-secondary-color)"
-        }),
-        dropdownIndicator: (defaultStyle) => ({
-            ...defaultStyle,
-            color: "var(--bs-secondary-color)",
-            paddingRight: 0
-        }),
-        option: (defaultStyle, state) => ({
-            ...defaultStyle,
-            backgroundColor: state.isSelected ? "var(--primary)" : state.isFocused ? "#ed7a5740" : "var(--bs-body-bg)",
-            ":active": {
-                backgroundColor: "var(--primary)",
-                color: "white"
-            }
-        }),
-        selectContainer: (defaultStyle) => ({
-            ...defaultStyle,
-            ":focus": {
-                borderColor: "var(--primary)",
-                outline: 0,
-                boxShadow: "0 0 0 0.25rem #ed7a5740"
-            }
-        })
-    });
-    const selectComponents = {
-        IndicatorSeparator: () => null,
-        ClearIndicator: () => null
-    };
-
-    const specialties = [
-        "american",
-        "argentine",
-        "asian",
-        "barbecue",
-        "breakfast",
-        "cafe",
-        "chinese",
-        "desserts",
-        "european",
-        "fast_food",
-        "french",
-        "gluten_free",
-        "grill",
-        "greek",
-        "hamburgers",
-        "ice_cream",
-        "indian",
-        "italian",
-        "japanese",
-        "korean",
-        "latin",
-        "mediterranean",
-        "mexican",
-        "middle_eastern",
-        "pizza",
-        "seafood",
-        "sushi",
-        "steakhouse",
-        "thai",
-        "turkish",
-        "vegan",
-        "vegetarian"
-    ].map(specialty => ({label: t(`restaurant_specialties.${specialty}`), value: specialty}));
-    const tags = [
-        "elegant",
-        "casual",
-        "cheap",
-        "cosy",
-        "family_friendly",
-        "kid_friendly",
-        "lgbt_friendly",
-        "pet_friendly",
-        "healthy",
-        "sustainable",
-        "locally_sourced",
-        "historic",
-        "trendy",
-        "romantic",
-        "outdoor_dining",
-        "fine_dining",
-        "international",
-        "wheelchair_accessible",
-        "live_music",
-        "karaoke",
-        "happy_hour",
-        "old_fashioned"
-    ].map(tag => ({label: t(`restaurant_tags.${tag}`), value: tag}));
+    const specialties = RestaurantSpecialties.map(specialty => ({label: t(`restaurant_specialties.${specialty}`), value: specialty}));
+    const tags = RestaurantTags.map(tag => ({label: t(`restaurant_tags.${tag}`), value: tag}));
     const orderBy = ["alphabetic", "rating", "price", "date"].map(order => ({label: t(`restaurants.options_order_by.${order}`), value: order}));
 
     const {
@@ -227,7 +104,7 @@ function Restaurants() {
                                 <Select
                                     placeholder={t("restaurants.specialties_placeholder")}
                                     isMulti
-                                    styles={selectStyles(false)}
+                                    styles={selectStyles(true, false)}
                                     components={selectComponents}
                                     noOptionsMessage={() => <span>{t("restaurants.no_options")}</span>}
                                     options={specialties}
@@ -241,7 +118,7 @@ function Restaurants() {
                                 <Select
                                     placeholder={t("restaurants.tags_placeholder")}
                                     isMulti
-                                    styles={selectStyles(false)}
+                                    styles={selectStyles(true, false)}
                                     components={selectComponents}
                                     noOptionsMessage={() => <span>{t("restaurants.no_options")}</span>}
                                     options={tags}
@@ -254,7 +131,7 @@ function Restaurants() {
                                 <span className="input-group-text search-input"><i className="bi bi-text-left default"></i></span>
                                 <Select
                                     placeholder={t("restaurants.orderby_placeholder")}
-                                    styles={selectStyles(true)}
+                                    styles={selectStyles(true, true)}
                                     components={selectComponents}
                                     noOptionsMessage={() => <span>{t("restaurants.no_options")}</span>}
                                     options={orderBy}

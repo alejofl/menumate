@@ -24,6 +24,6 @@
     justify-content: space-between;
 }
 
-.restaurant_card .card-body p {
+.restaurant_card .card-body p:not(.m-0) {
     margin-bottom: 8px !important;
 }

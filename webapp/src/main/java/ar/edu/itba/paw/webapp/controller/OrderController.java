@@ -22,7 +22,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
-import java.util.Date;
 import java.util.List;
 
 @Path(UriUtils.ORDERS_URL)
@@ -65,13 +64,7 @@ public class OrderController {
     @Produces(CustomMediaType.APPLICATION_ORDERS)
     public Response getOrderById(@PathParam("orderId") final long orderId, @Context Request request) {
         final Order order = orderService.getById(orderId).orElseThrow(OrderNotFoundException::new);
-        Date lastModified = order.getOrderLastUpdate();
-        Response.ResponseBuilder responseBuilder = ControllerUtils.evaluateLastModified(request, lastModified);
-        if (responseBuilder == null) {
-            final OrderDto dto = OrderDto.fromOrder(uriInfo, order);
-            return Response.ok(dto).lastModified(lastModified).build();
-        }
-        return responseBuilder.build();
+        return ControllerUtils.buildResponseUsingLastModified(request, order.getOrderLastUpdate(), () -> OrderDto.fromOrder(uriInfo, order));
     }
 
     @PATCH
@@ -96,10 +89,7 @@ public class OrderController {
 
     @POST
     @Consumes(CustomMediaType.APPLICATION_ORDERS)
-    public Response createOrder(
-            @Valid @NotNull final CheckoutForm checkoutForm,
-            @HeaderParam(HttpHeaders.ACCEPT_LANGUAGE) final String language
-    ) {
+    public Response createOrder(@Valid @NotNull final CheckoutForm checkoutForm) {
         final Order order = orderService.create(
                 checkoutForm.getOrderTypeAsEnum(),
                 checkoutForm.getRestaurantId(),
@@ -107,8 +97,7 @@ public class OrderController {
                 checkoutForm.getEmail(),
                 checkoutForm.getTableNumber(),
                 checkoutForm.getAddress(),
-                checkoutForm.getCartAsOrderItems(orderService),
-                language
+                checkoutForm.getCartAsOrderItems(orderService)
         );
 
         return Response.created(UriUtils.getOrderUri(uriInfo, order.getOrderId())).build();

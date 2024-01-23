@@ -1,0 +1,6 @@
+.create_restaurant .sticky {
+    display: inline-block;
+    align-self: start;
+    position: sticky;
+    top: 80px;
+}

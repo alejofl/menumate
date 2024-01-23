@@ -21,29 +21,29 @@ import java.util.List;
 @AllProductsFromSameRestaurant(restaurantIdField = "restaurantId", cartItemsField = "cart")
 public class CheckoutForm {
 
-    @NotBlank
-    @Size(max = 48)
+    @NotBlank(message = "{NotBlank.CheckoutForm.name}")
+    @Size(max = 48, message = "{Size.CheckoutForm.name}")
     private String name;
 
-    @NotBlank
-    @Email
+    @NotBlank(message = "{NotBlank.CheckoutForm.email}")
+    @Email(message = "{Email.CheckoutForm.email}")
     private String email;
 
-    @Min(1)
+    @Min(value = 1, message ="{Min.CheckoutForm.tableNumber}" )
     private Integer tableNumber;
 
-    @Size(min = 3, max = 120)
+    @Size(min = 3, max = 200, message = "{Size.CheckoutForm.address}")
     private String address;
 
-    @NotBlank
-    @EnumMessageCode(enumClass = OrderType.class)
+    @NotBlank(message = "{NotBlank.CheckoutForm.orderType}")
+    @EnumMessageCode(enumClass = OrderType.class, message = "{EnumMessageCode.CheckoutForm.orderType}")
     private String orderType;
 
-    @NotNull
+    @NotNull(message = "{NotNull.CheckoutForm.restaurantId}")
     private Long restaurantId;
 
-    @NotEmpty
-    @Size(min = 1, max = 500)
+    @NotEmpty(message = "{NotEmpty.CheckoutForm.cart}")
+    @Size(min = 1, max = 500, message = "{Size.CheckoutForm.cart}")
     @Valid
     private List<CartItem> cart;
 

@@ -20,8 +20,10 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
-import java.util.Date;
+import java.time.Duration;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Path(UriUtils.RESTAURANTS_URL)
@@ -84,21 +86,22 @@ public class RestaurantController {
     @Produces(CustomMediaType.APPLICATION_RESTAURANT)
     public Response getRestaurantById(@PathParam("restaurantId") final long restaurantId, @Context Request request) {
         final Restaurant restaurant = restaurantService.getById(restaurantId).orElseThrow(RestaurantNotFoundException::new);
-        final RestaurantDto dto = RestaurantDto.fromRestaurant(uriInfo, restaurant);
-        return ControllerUtils.buildResponseUsingEtag(request, dto);
+        return ControllerUtils.buildResponseUsingEtag(request, restaurant.hashCode(), () -> RestaurantDto.fromRestaurant(uriInfo, restaurant));
     }
 
     @GET
     @Path("/{restaurantId:\\d+}")
     @Produces(CustomMediaType.APPLICATION_RESTAURANT_DETAILS)
-    public Response getRestaurantDetails(@PathParam("restaurantId") final long restaurantId) {
+    public Response getRestaurantDetailsWithCompletionTime(@PathParam("restaurantId") final long restaurantId, @Context Request request) {
         final RestaurantDetails restaurantDetails = restaurantService.getRestaurantDetails(restaurantId).orElseThrow(RestaurantDetailsNotFoundException::new);
-        final RestaurantDetailsDto restaurantDetailsDto = RestaurantDetailsDto.fromRestaurantDetails(uriInfo, restaurantDetails);
-        restaurantService.getAverageOrderCompletionTime(restaurantId, OrderType.DINE_IN).ifPresent(time -> restaurantDetailsDto.setDineInCompletionTime(time.toMinutes()));
-        restaurantService.getAverageOrderCompletionTime(restaurantId, OrderType.DELIVERY).ifPresent(time -> restaurantDetailsDto.setDeliveryCompletionTime(time.toMinutes()));
-        restaurantService.getAverageOrderCompletionTime(restaurantId, OrderType.TAKEAWAY).ifPresent(time -> restaurantDetailsDto.setTakeAwayCompletionTime(time.toMinutes()));
-
-        return Response.ok(restaurantDetailsDto).build();
+        final Duration dineInAverageTime = restaurantService.getAverageOrderCompletionTime(restaurantId, OrderType.DINE_IN).orElse(null);
+        final Duration deliveryAverageTime = restaurantService.getAverageOrderCompletionTime(restaurantId, OrderType.DELIVERY).orElse(null);
+        final Duration takeawayAverageTime = restaurantService.getAverageOrderCompletionTime(restaurantId, OrderType.TAKEAWAY).orElse(null);
+        return ControllerUtils.buildResponseUsingEtag(
+                request,
+                Objects.hash(restaurantDetails.hashCode(), dineInAverageTime, deliveryAverageTime, takeawayAverageTime),
+                () -> RestaurantDetailsDto.fromRestaurantDetailsWithCompletionTime(uriInfo, restaurantDetails, dineInAverageTime, deliveryAverageTime, takeawayAverageTime)
+        );
     }
 
     @POST
@@ -113,9 +116,9 @@ public class RestaurantController {
                 restaurantForm.getAddress(),
                 restaurantForm.getDescription(),
                 restaurantForm.getMaxTables(),
-                null,
-                null,
-                null,
+                restaurantForm.getLogoId(),
+                restaurantForm.getPortrait1Id(),
+                restaurantForm.getPortrait2Id(),
                 true,
                 restaurantForm.getTagsAsEnum()
         );
@@ -123,8 +126,9 @@ public class RestaurantController {
         return Response.created(UriUtils.getRestaurantUri(uriInfo, restaurant.getRestaurantId())).build();
     }
 
-    @PUT
+    @PATCH
     @Path("/{restaurantId:\\d+}")
+    @Consumes(CustomMediaType.APPLICATION_RESTAURANT)
     public Response updateRestaurantById(
             @PathParam("restaurantId") final long restaurantId,
             @Valid @NotNull final RestaurantForm restaurantForm
@@ -136,6 +140,12 @@ public class RestaurantController {
                 restaurantForm.getAddress(),
                 restaurantForm.getDescription(),
                 restaurantForm.getTagsAsEnum()
+        );
+        restaurantService.updateImages(
+                restaurantId,
+                Optional.ofNullable(restaurantForm.getLogoId()),
+                Optional.ofNullable(restaurantForm.getPortrait1Id()),
+                Optional.ofNullable(restaurantForm.getPortrait2Id())
         );
 
         return Response.noContent().build();
@@ -166,8 +176,7 @@ public class RestaurantController {
             @Context Request request
     ) {
         final Category category = categoryService.getByIdChecked(restaurantId, categoryId, true);
-        final CategoryDto dto = CategoryDto.fromCategory(uriInfo, category);
-        return ControllerUtils.buildResponseUsingEtag(request, dto);
+        return ControllerUtils.buildResponseUsingEtag(request, category.hashCode(), () -> CategoryDto.fromCategory(uriInfo, category));
     }
 
     @POST
@@ -235,8 +244,7 @@ public class RestaurantController {
             @Context Request request
     ) {
         final Product product = productService.getByIdChecked(restaurantId, categoryId, productId, true);
-        final ProductDto dto = ProductDto.fromProduct(uriInfo, product);
-        return ControllerUtils.buildResponseUsingEtag(request, dto);
+        return ControllerUtils.buildResponseUsingEtag(request, product.hashCode(), () -> ProductDto.fromProduct(uriInfo, product));
     }
 
     @POST
@@ -252,14 +260,14 @@ public class RestaurantController {
                 categoryId,
                 productForm.getName(),
                 productForm.getDescription(),
-                null,
+                productForm.getImageId(),
                 productForm.getPrice()
         );
 
         return Response.created(UriUtils.getProductUri(uriInfo, product)).build();
     }
 
-    @PUT
+    @PATCH
     @Path("/{restaurantId:\\d+}/categories/{categoryId:\\d+}/products/{productId:\\d+}")
     @Consumes(CustomMediaType.APPLICATION_RESTAURANT_PRODUCTS)
     public Response updateProduct(
@@ -269,6 +277,7 @@ public class RestaurantController {
             @Valid @NotNull final ProductForm productForm
     ) {
         productService.update(restaurantId, categoryId, productId, productForm.getName(), productForm.getPrice(), productForm.getDescription());
+        productService.updateImage(restaurantId, categoryId, productId, Optional.ofNullable(productForm.getImageId()));
         return Response.noContent().build();
     }
 
@@ -305,8 +314,7 @@ public class RestaurantController {
             @Context Request request
     ) {
         final Promotion promotion = productService.getPromotionById(restaurantId, promotionId);
-        final PromotionDto dto = PromotionDto.fromPromotion(uriInfo, promotion, restaurantId);
-        return ControllerUtils.buildResponseUsingEtag(request, dto);
+        return ControllerUtils.buildResponseUsingEtag(request, promotion.hashCode(), () -> PromotionDto.fromPromotion(uriInfo, promotion, restaurantId));
     }
 
     @POST
@@ -377,13 +385,7 @@ public class RestaurantController {
             @Context Request request
     ) {
         final Report report = reportService.getByIdChecked(reportId, restaurantId);
-        final Date lastModified = report.getReportLastUpdate();
-        Response.ResponseBuilder responseBuilder = ControllerUtils.evaluateLastModified(request, lastModified);
-        if (responseBuilder == null) {
-            final ReportDto dto = ReportDto.fromReport(uriInfo, report);
-            return Response.ok(dto).lastModified(lastModified).build();
-        }
-        return responseBuilder.build();
+        return ControllerUtils.buildResponseUsingLastModified(request, report.getReportLastUpdate(), () -> ReportDto.fromReport(uriInfo, report));
     }
 
     @GET

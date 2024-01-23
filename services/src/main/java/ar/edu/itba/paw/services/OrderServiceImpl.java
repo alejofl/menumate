@@ -14,6 +14,7 @@ import ar.edu.itba.paw.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,8 +51,8 @@ public class OrderServiceImpl implements OrderService {
         orderList.addAll(items);
     }
 
-    private Order createDelivery(long restaurantId, String name, String email, String address, List<OrderItem> items, String language) {
-        final User user = userService.createIfNotExists(email, name, language);
+    private Order createDelivery(long restaurantId, String name, String email, String address, List<OrderItem> items) {
+        final User user = userService.createIfNotExists(email, name);
         final Order order = orderDao.createDelivery(restaurantId, user.getUserId(), address);
         userDao.refreshAddress(user.getUserId(), address);
         assingOrderItemsToOrder(order, items);
@@ -59,16 +60,16 @@ public class OrderServiceImpl implements OrderService {
         return order;
     }
 
-    private Order createDineIn(long restaurantId, String name, String email, int tableNumber, List<OrderItem> items, String language) {
-        final User user = userService.createIfNotExists(email, name, language);
+    private Order createDineIn(long restaurantId, String name, String email, int tableNumber, List<OrderItem> items) {
+        final User user = userService.createIfNotExists(email, name);
         final Order order = orderDao.createDineIn(restaurantId, user.getUserId(), tableNumber);
         assingOrderItemsToOrder(order, items);
         sendOrderReceivedEmails(order);
         return order;
     }
 
-    private Order createTakeAway(long restaurantId, String name, String email, List<OrderItem> items, String language) {
-        final User user = userService.createIfNotExists(email, name, language);
+    private Order createTakeAway(long restaurantId, String name, String email, List<OrderItem> items) {
+        final User user = userService.createIfNotExists(email, name);
         final Order order = orderDao.createTakeaway(restaurantId, user.getUserId());
         assingOrderItemsToOrder(order, items);
         sendOrderReceivedEmails(order);
@@ -82,14 +83,14 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional
     @Override
-    public Order create(OrderType orderType, Long restaurantId, String name, String email, Integer tableNumber, String address, List<OrderItem> items, String language) {
+    public Order create(OrderType orderType, Long restaurantId, String name, String email, Integer tableNumber, String address, List<OrderItem> items) {
         Order order;
         if (orderType == OrderType.DINE_IN) {
-            order = createDineIn(restaurantId, name, email, tableNumber, items, language);
+            order = createDineIn(restaurantId, name, email, tableNumber, items);
         } else if (orderType == OrderType.TAKEAWAY) {
-            order = createTakeAway(restaurantId, name, email, items, language);
+            order = createTakeAway(restaurantId, name, email, items);
         } else if (orderType == OrderType.DELIVERY) {
-            order = createDelivery(restaurantId, name, email, address, items, language);
+            order = createDelivery(restaurantId, name, email, address, items);
         } else {
             throw new InvalidOrderTypeException("Order type not supported");
         }

@@ -5,8 +5,8 @@ import org.hibernate.validator.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 public class CategoryForm {
-    @NotBlank
-    @Size(max = 50)
+    @NotBlank(message = "{NotBlank.CategoryForm.name}")
+    @Size(max = 50, message = "{Size.CategoryForm.name}")
     private String name;
 
     public String getName() {

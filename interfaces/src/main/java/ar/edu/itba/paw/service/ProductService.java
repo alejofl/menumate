@@ -20,7 +20,7 @@ public interface ProductService {
 
     Product update(long restaurantId, long categoryId, long productId, String name, BigDecimal price, String description);
 
-    void updateImage(long restaurantId, long categoryId, long productId, byte[] image);
+    void updateImage(long restaurantId, long categoryId, long productId, Optional<Long> imageId);
 
     void delete(long restaurantId, long categoryId, long productId);
 

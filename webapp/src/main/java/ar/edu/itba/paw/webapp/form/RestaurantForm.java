@@ -4,6 +4,7 @@ import ar.edu.itba.paw.model.RestaurantSpecialty;
 import ar.edu.itba.paw.model.RestaurantTags;
 import ar.edu.itba.paw.webapp.form.validation.EnumMessageCode;
 import ar.edu.itba.paw.webapp.form.validation.EnumMessageCodeList;
+import ar.edu.itba.paw.webapp.form.validation.Image;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -37,6 +38,15 @@ public class RestaurantForm {
     @NotEmpty
     @EnumMessageCodeList(enumClass = RestaurantTags.class)
     private List<String> tags;
+
+    @Image(nullable = true)
+    private Long logoId;
+
+    @Image(nullable = true)
+    private Long portrait1Id;
+
+    @Image(nullable = true)
+    private Long portrait2Id;
 
     public String getName() {
         return name;
@@ -92,5 +102,29 @@ public class RestaurantForm {
 
     public void setTags(List<String> tags) {
         this.tags = tags;
+    }
+
+    public Long getLogoId() {
+        return logoId;
+    }
+
+    public void setLogoId(Long logoId) {
+        this.logoId = logoId;
+    }
+
+    public Long getPortrait1Id() {
+        return portrait1Id;
+    }
+
+    public void setPortrait1Id(Long portrait1Id) {
+        this.portrait1Id = portrait1Id;
+    }
+
+    public Long getPortrait2Id() {
+        return portrait2Id;
+    }
+
+    public void setPortrait2Id(Long portrait2Id) {
+        this.portrait2Id = portrait2Id;
     }
 }

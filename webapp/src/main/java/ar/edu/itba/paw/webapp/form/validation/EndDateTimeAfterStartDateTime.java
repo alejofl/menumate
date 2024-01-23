@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface EndDateTimeAfterStartDateTime {
-    String message() default "End datetime must be after Start datetime";
+    String message() default "{EndDateTimeAfterStartDateTime.PromotionForm}";
 
     Class<?>[] groups() default {};
 

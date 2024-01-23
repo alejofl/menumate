@@ -8,7 +8,6 @@ import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class UserDto {
@@ -146,10 +145,5 @@ public class UserDto {
 
     public void setRole(String role) {
         this.role = role;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(email, name, dateJoined, isActive, preferredLanguage, role);
     }
 }

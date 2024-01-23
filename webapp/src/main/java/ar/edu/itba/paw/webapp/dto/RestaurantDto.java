@@ -9,7 +9,6 @@ import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class RestaurantDto {
@@ -245,10 +244,5 @@ public class RestaurantDto {
 
     public void setPromotionsUrl(URI promotionsUrl) {
         this.promotionsUrl = promotionsUrl;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(restaurantId, name, email, specialty, address, description, isActive, maxTables, deleted);
     }
 }

@@ -11,6 +11,7 @@ import ar.edu.itba.paw.service.UserRoleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,7 +57,7 @@ public class UserRoleServiceImpl implements UserRoleService {
 
     @Transactional
     @Override
-    public boolean setRole(String email, UserRoleLevel roleLevel, String language) {
+    public boolean setRole(String email, UserRoleLevel roleLevel) {
         if (roleLevel == null) {
             LOGGER.error("Attempted to set not-existing user role");
             throw new UserRoleNotFoundException("Cannot set invalid user role");
@@ -65,7 +66,7 @@ public class UserRoleServiceImpl implements UserRoleService {
         Optional<User> user = userDao.getByEmail(email);
         if (!user.isPresent()) {
             LOGGER.info("User {} does not exist. Creating user and setting role {}", email, roleLevel);
-            createUserAndSetRole(email, roleLevel, language);
+            createUserAndSetRole(email, roleLevel, LocaleContextHolder.getLocale().getLanguage());
             return true;
         }
         Optional<UserRole> currentRole = userRoleDao.getRole(user.get().getUserId());

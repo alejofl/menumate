@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidFieldsByOrderType {
-    String message() default "Missing fields required by order type (address/tableNumber)";
+    String message() default "{ValidFieldsByOrderType.CheckoutForm}";
 
     Class<?>[] groups() default {};
 

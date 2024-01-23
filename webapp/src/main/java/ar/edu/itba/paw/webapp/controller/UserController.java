@@ -46,17 +46,14 @@ public class UserController {
     @Produces(CustomMediaType.APPLICATION_USER)
     public Response getUser(@PathParam("userId") final long userId, @Context Request request) {
         final User user = userService.getById(userId).orElseThrow(UserNotFoundException::new);
-        final UserDto dto = UserDto.fromUser(uriInfo, user);
-        return ControllerUtils.buildResponseUsingEtag(request, dto);
+        return ControllerUtils.buildResponseUsingEtag(request, user.hashCode(), () -> UserDto.fromUser(uriInfo, user));
     }
 
     @POST
     @Consumes({CustomMediaType.APPLICATION_USER})
     public Response registerUser(
-            @Valid @NotNull final RegisterForm registerForm,
-            @HeaderParam(HttpHeaders.ACCEPT_LANGUAGE) final String language
-    ) {
-        final User user = userService.createOrConsolidate(registerForm.getEmail(), registerForm.getPassword(), registerForm.getName(), language);
+            @Valid @NotNull final RegisterForm registerForm) {
+        final User user = userService.createOrConsolidate(registerForm.getEmail(), registerForm.getPassword(), registerForm.getName());
         return Response.created(UriUtils.getUserUri(uriInfo, user.getUserId())).build();
     }
 
@@ -93,8 +90,7 @@ public class UserController {
             @Context Request request
     ) {
         final UserAddress address = userService.getAddressById(userId, addressId).orElseThrow(UserAddressNotFoundException::new);
-        final UserAddressDto dto = UserAddressDto.fromUserAddress(uriInfo, address);
-        return ControllerUtils.buildResponseUsingEtag(request, dto);
+        return ControllerUtils.buildResponseUsingEtag(request, address.hashCode(), () -> UserAddressDto.fromUserAddress(uriInfo, address));
     }
 
     @POST
@@ -148,17 +144,14 @@ public class UserController {
             @Valid @NotNull final PatchUserRoleLevelForm patchUserRoleLevelForm
     ) {
         final User user = userService.getById(userId).orElseThrow(UserNotFoundException::new);
-        userRoleService.setRole(user.getEmail(), patchUserRoleLevelForm.getRoleAsEnum(), user.getPreferredLanguage());
+        userRoleService.setRole(user.getEmail(), patchUserRoleLevelForm.getRoleAsEnum());
         return Response.noContent().build();
     }
 
     @POST
     @Consumes(CustomMediaType.APPLICATION_USER_ROLE)
-    public Response createUserRole(
-            @Valid @NotNull final PostUserRoleLevelForm addUserRoleForm,
-            @HeaderParam(HttpHeaders.ACCEPT_LANGUAGE) final String language
-    ) {
-        userRoleService.setRole(addUserRoleForm.getEmail(), addUserRoleForm.getRoleAsEnum(), language);
+    public Response createUserRole(@Valid @NotNull final PostUserRoleLevelForm addUserRoleForm) {
+        userRoleService.setRole(addUserRoleForm.getEmail(), addUserRoleForm.getRoleAsEnum());
         return Response.noContent().build();
     }
 

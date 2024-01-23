@@ -50,6 +50,7 @@ module.exports = {
     "space-before-function-paren": ["error", { "anonymous": "never", "named": "never", "asyncArrow": "always" }],
     "space-before-blocks": "error",
     "spaced-comment": ["error", "always", { "exceptions": ["-"] }],
-    "switch-colon-spacing": "error"
+    "switch-colon-spacing": "error",
+    "no-unused-vars": ["error", { "ignoreRestSiblings": true }]
   },
 }

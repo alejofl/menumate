@@ -10,6 +10,9 @@ import ResetPassword from "./pages/ResetPassword.jsx";
 import Register from "./pages/Register.jsx";
 import Restaurant from "./pages/Restaurant.jsx";
 import VerifyAccount from "./pages/VerifyAccount.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import CreateRestaurant from "./pages/CreateRestaurant.jsx";
+import {UserRestaurants} from "./pages/UserRestaurants.jsx";
 
 const router = createBrowserRouter(
     [
@@ -38,8 +41,16 @@ const router = createBrowserRouter(
             Component: Restaurants
         },
         {
+            path: "/restaurants/create",
+            element: <ProtectedRoute><CreateRestaurant/></ProtectedRoute>
+        },
+        {
             path: "/restaurants/:restaurantId",
             Component: Restaurant
+        },
+        {
+            path: "/user/restaurants",
+            element: <ProtectedRoute><UserRestaurants/></ProtectedRoute>
         },
         {
             path: "*",

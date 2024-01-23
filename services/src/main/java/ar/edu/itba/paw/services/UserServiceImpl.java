@@ -11,6 +11,7 @@ import ar.edu.itba.paw.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,14 +52,14 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public User createOrConsolidate(String email, String password, String name, String language) {
+    public User createOrConsolidate(String email, String password, String name) {
         password = password == null ? null : passwordEncoder.encode(password);
 
         final Optional<User> maybeUser = userDao.getByEmail(email);
         User user;
 
         if (!maybeUser.isPresent()) {
-            user = userDao.create(email, password, name, language);
+            user = userDao.create(email, password, name, LocaleContextHolder.getLocale().getLanguage());
         } else {
             user = maybeUser.get();
             if (password == null) {
@@ -84,9 +85,9 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public User createIfNotExists(String email, String name, String language) {
+    public User createIfNotExists(String email, String name) {
         final Optional<User> maybeUser = userDao.getByEmail(email);
-        return maybeUser.orElseGet(() -> userDao.create(email, null, name, language));
+        return maybeUser.orElseGet(() -> userDao.create(email, null, name, LocaleContextHolder.getLocale().getLanguage()));
     }
 
     @Override

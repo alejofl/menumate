@@ -2,7 +2,9 @@
 
 import * as Yup from "yup";
 import i18n from "../i18n";
-import {ORDER_TYPE} from "../utils.js";
+import {IMAGE_MAX_SIZE, ORDER_TYPE} from "../utils.js";
+import RestaurantTags from "./RestaurantTags.js";
+import RestaurantSpecialties from "./RestaurantSpecialties.js";
 
 export const LoginSchema = Yup.object().shape({
     email: Yup.string()
@@ -86,11 +88,54 @@ export const ReportSchema = Yup.object().shape({
         .max(500, ({ max }) => i18n.t("validation.comment.max", {max: max}))
 });
 
+
 export const RegisterAddressSchema = Yup.object().shape({
     name: Yup.string()
-        .max(20, ({ max }) => i18n.t("validation.my_profile.register_address_name_max", {max: max})),
+        .max(20, ({max}) => i18n.t("validation.my_profile.register_address_name_max", {max: max})),
 
     address: Yup.string()
         .required(i18n.t("validation.comment.required"))
-        .max(200, ({ max }) => i18n.t("validation.my_profile.register_address_address_max", {max: max}))
+        .max(200, ({max}) => i18n.t("validation.my_profile.register_address_address_max", {max: max}))
+});
+
+export const CreateRestaurantSchema = Yup.object().shape({
+    name: Yup.string()
+        .required(i18n.t("validation.restaurant_name.required"))
+        .max(50, ({ max }) => i18n.t("validation.restaurant_name.max", {max: max})),
+
+    address: Yup.string()
+        .required(i18n.t("validation.restaurant_address.required"))
+        .max(200, ({ max }) => i18n.t("validation.restaurant_address.max", {max: max})),
+
+    specialty: Yup.string()
+        .required(i18n.t("validation.restaurant_specialty.required"))
+        .oneOf(RestaurantSpecialties, i18n.t("validation.restaurant_specialty.invalid")),
+
+    tags: Yup.array()
+        .required(i18n.t("validation.restaurant_tags.required"))
+        .min(1, i18n.t("validation.restaurant_tags.required"))
+        .of(Yup.string().oneOf(RestaurantTags, i18n.t("validation.restaurant_tags.invalid"))),
+
+    description: Yup.string()
+        .required(i18n.t("validation.restaurant_description.required"))
+        .max(300, ({ max }) => i18n.t("validation.restaurant_description.max", {max: max})),
+
+    maxTables: Yup.number()
+        .required(i18n.t("validation.restaurant_max_tables.required"))
+        .min(1, ({ min }) => i18n.t("validation.restaurant_max_tables.min", {min: min})),
+
+    logo: Yup.mixed()
+        .required(i18n.t("validation.image.required"))
+        .test("fileSize", i18n.t("validation.image.size"), (value) => value.size <= IMAGE_MAX_SIZE)
+        .test("fileType", i18n.t("validation.image.type"), (value) => value.type.startsWith("image/")),
+
+    portrait1: Yup.mixed()
+        .required(i18n.t("validation.image.required"))
+        .test("fileSize", i18n.t("validation.image.size"), (value) => value.size <= IMAGE_MAX_SIZE)
+        .test("fileType", i18n.t("validation.image.type"), (value) => value.type.startsWith("image/")),
+
+    portrait2: Yup.mixed()
+        .required(i18n.t("validation.image.required"))
+        .test("fileSize", i18n.t("validation.image.size"), (value) => value.size <= IMAGE_MAX_SIZE)
+        .test("fileType", i18n.t("validation.image.type"), (value) => value.type.startsWith("image/"))
 });
