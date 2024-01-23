@@ -130,6 +130,7 @@ public class RestaurantController {
     @PATCH
     @Path("/{restaurantId:\\d+}")
     @Consumes(CustomMediaType.APPLICATION_RESTAURANT)
+    @PreAuthorize("@accessValidator.checkRestaurantOwner(#restaurantId) or @accessValidator.checkRestaurantAdmin(#restaurantId)")
     public Response updateRestaurantById(
             @PathParam("restaurantId") final long restaurantId,
             @Valid @NotNull final RestaurantForm restaurantForm
@@ -429,5 +430,17 @@ public class RestaurantController {
         List<ReportDto> dtoList = ReportDto.fromReportCollection(uriInfo, pagedResult.getResult());
         final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<ReportDto>>(dtoList) {});
         return ControllerUtils.addPagingLinks(responseBuilder, pagedResult, uriInfo).build();
+    }
+
+    @PATCH
+    @Path("/{restaurantId:\\d+}")
+    @Consumes(CustomMediaType.APPLICATION_RESTAURANT_ACTIVATE)
+    @PreAuthorize("hasRole('MODERATOR')")
+    public Response updateRestaurantIsActive(
+        @PathParam("restaurantId") final long restaurantId,
+        @Valid @NotNull final UpdateRestaurantIsActiveForm restaurantIsActiveForm
+    ) {
+        restaurantService.handleActivation(restaurantId, restaurantIsActiveForm.getActivate());
+        return Response.noContent().build();
     }
 }

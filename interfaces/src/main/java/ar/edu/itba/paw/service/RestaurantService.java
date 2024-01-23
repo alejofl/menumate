@@ -41,4 +41,6 @@ public interface RestaurantService {
     void updateImages(long restaurantId, Optional<Long> logoId, Optional<Long> portrait1Id, Optional<Long> portrait2Id);
 
     void delete(long restaurantId);
+
+    void handleActivation(long restaurantId, boolean activate);
 }
