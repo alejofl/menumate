@@ -1,19 +1,10 @@
 package ar.edu.itba.paw.exception;
 
-public class CannotSetRoleOfRestaurantOwnerException extends RuntimeException {
+import ar.edu.itba.paw.exception.base.CustomRuntimeException;
+import ar.edu.itba.paw.exception.base.ExceptionUtils;
+
+public class CannotSetRoleOfRestaurantOwnerException extends CustomRuntimeException {
     public CannotSetRoleOfRestaurantOwnerException() {
-        super();
-    }
-
-    public CannotSetRoleOfRestaurantOwnerException(String message) {
-        super(message);
-    }
-
-    public CannotSetRoleOfRestaurantOwnerException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public CannotSetRoleOfRestaurantOwnerException(Throwable cause) {
-        super(cause);
+        super(ExceptionUtils.BAD_REQUEST_STATUS_CODE, "exception.CannotSetRoleOfRestaurantOwnerException");
     }
 }
