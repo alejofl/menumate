@@ -219,6 +219,10 @@
             "required": "La imagen es obligatoria",
             "size": "La imagen debe pesar como máximo 5 MB",
             "type": "El archivo debe ser una imagen válida"
+        },
+        "review_reply": {
+            "required": "Debes escribir una respuesta",
+            "max": "La respuesta debe tener como máximo {{max}} caracteres"
         }
     },
     "reset_password": {
@@ -253,7 +257,13 @@
         "promotions": "Promociones activas",
         "reviews": {
             "title": "Reseñas",
-            "reply": "El restaurante respondió"
+            "reply": "El restaurante respondió",
+            "show_order_button": "Mostrar orden",
+            "reply_button": "Responder",
+            "reply_placeholder": "Escribe tu respuesta aquí...",
+            "send_button": "Enviar",
+            "cancel_button": "Cancelar",
+            "error_alert": "Ocurrió un error al enviar tu respuesta. Por favor, intenta de nuevo más tarde."
         },
         "toasts": {
             "dine_in": {
@@ -322,5 +332,21 @@
         "pending_orders_zero": "Sin órdenes pendientes",
         "pending_orders_one": "{{count}} orden pendiente",
         "pending_orders_other": "{{count}} órdenes pendientes"
+    },
+    "order": {
+        "title": "Orden #{{id}}",
+        "items": "Artículos de la orden",
+        "comments": "Comentarios",
+        "product": "Producto",
+        "quantity": "Cantidad",
+        "price": "Precio",
+        "details": "Detalles de la orden",
+        "customer": "Cliente",
+        "order_type": "Tipo de orden",
+        "table_number": "Número de mesa",
+        "total_price": "Precio total",
+        "dinein": "Comer en el restaurante",
+        "delivery": "Delivery",
+        "takeaway": "Take-Away"
     }
 }

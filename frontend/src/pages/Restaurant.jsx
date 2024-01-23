@@ -279,9 +279,9 @@ function Restaurant() {
                                     </div>
                                     <div className="product-container">
                                         {
-                                            products[i].data.map(product => (
+                                            products[i].data.map((product, i) => (
                                                 <ProductCard
-                                                    key={product.productId}
+                                                    key={i}
                                                     productId={product.productId}
                                                     name={product.name}
                                                     description={product.description}
@@ -325,11 +325,12 @@ function Restaurant() {
                 <RestaurantLocationToast restaurantId={restaurantId} dineIn={queryParams.has("qr")}/>
                 <RestaurantReportToast restaurantUrl={restaurant.selfUrl}/>
             </Page>
-            {showReviewModal && authContext.isAuthenticated && userRole.isOrderHandler
-                ?
-                <>TODO</>
-                :
-                showReviewModal && <ReviewsModal reviewsUrl={restaurant.reviewsUrl} onClose={() => setShowReviewModal(false)}/>
+            {showReviewModal &&
+                <ReviewsModal
+                    reviewsUrl={restaurant.reviewsUrl}
+                    isEmployee={authContext.isAuthenticated && userRole.isOrderHandler}
+                    onClose={() => setShowReviewModal(false)}
+                />
             }
             {showPlaceOrderModal &&
                 <PlaceOrderModal

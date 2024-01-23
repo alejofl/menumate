@@ -26,14 +26,10 @@ function RestaurantReportToast({ restaurantUrl }) {
     useEffect(() => {
         showToast(".restaurant_report_toast #icon-toast");
 
-        document.addEventListener("hidden.bs.modal", () => {
+        document.querySelector("#restaurant-report-modal").addEventListener("hidden.bs.modal", () => {
             setShowErrorAlert(false);
             setShowSuccessAlert(false);
         });
-
-        return () => {
-            document.removeEventListener("hidden.bs.modal", null);
-        };
     }, []);
 
     const reportRestaurantMutation = useMutation({

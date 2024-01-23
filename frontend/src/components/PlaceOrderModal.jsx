@@ -35,11 +35,7 @@ function PlaceOrderModal({restaurantId, maxTables, dineIn, dineInCompletionTime,
 
         countdownLatch.current = true;
 
-        document.addEventListener("hidden.bs.modal", () => onClose());
-
-        return () => {
-            document.removeEventListener("hidden.bs.modal", null);
-        };
+        document.querySelector(".place_order_modal .modal").addEventListener("hidden.bs.modal", () => onClose());
     }, [onClose]);
 
     const { isError: userIsError, data: userData, error: userError} = useQuery({

@@ -129,3 +129,9 @@ export const CreateRestaurantSchema = Yup.object().shape({
         .test("fileSize", i18n.t("validation.image.size"), (value) => value.size <= IMAGE_MAX_SIZE)
         .test("fileType", i18n.t("validation.image.type"), (value) => value.type.startsWith("image/"))
 });
+
+export const ReviewReplySchema = Yup.object().shape({
+    reply: Yup.string()
+        .required(i18n.t("validation.review_reply.required"))
+        .max(500, ({ max }) => i18n.t("validation.review_reply.max", {max: max}))
+});

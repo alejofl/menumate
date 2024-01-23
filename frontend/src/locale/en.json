@@ -219,6 +219,10 @@
             "required": "The image is required",
             "size": "The image must be at most 5 MB",
             "type": "The file must be a valid image file"
+        },
+        "review_reply": {
+            "required": "You must write a reply",
+            "max": "The reply must be at most {{max}} characters long"
         }
     },
     "reset_password": {
@@ -253,7 +257,13 @@
         "promotions": "Active Promotions",
         "reviews": {
             "title": "Reviews",
-            "reply": "The restaurant replied"
+            "reply": "The restaurant replied",
+            "show_order_button": "Show Order",
+            "reply_button": "Reply",
+            "reply_placeholder": "Write your reply here...",
+            "send_button": "Send",
+            "cancel_button": "Cancel",
+            "error_alert": "There was an error while sending your reply. Please try again later."
         },
         "toasts": {
             "dine_in": {
@@ -322,5 +332,21 @@
         "pending_orders_zero": "No pending orders",
         "pending_orders_one": "{{count}} pending order",
         "pending_orders_other": "{{count}} pending orders"
+    },
+    "order": {
+        "title": "Order #{{id}}",
+        "items": "Order Items",
+        "comments": "Comments",
+        "product": "Product",
+        "quantity": "Quantity",
+        "price": "Price",
+        "details": "Order Details",
+        "customer": "Customer",
+        "order_type": "Order Type",
+        "table_number": "Table Number",
+        "total_price": "Total Price",
+        "dinein": "Dine In",
+        "delivery": "Delivery",
+        "takeaway": "Take-Away"
     }
 }
