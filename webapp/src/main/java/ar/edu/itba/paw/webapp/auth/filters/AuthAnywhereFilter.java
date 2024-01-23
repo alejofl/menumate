@@ -85,7 +85,7 @@ public class AuthAnywhereFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 } else if (!user.getIsActive()) {
                     userService.sendVerificationToken(user.getEmail());
-                    throw new UserNotVerifiedException("User not verified", user);
+                    throw new UserNotVerifiedException(user);
                 } else {
                     final Authentication auth = authenticationManager.authenticate(
                             new UsernamePasswordAuthenticationToken(email, credentials)
