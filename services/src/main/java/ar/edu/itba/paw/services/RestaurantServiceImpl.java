@@ -134,4 +134,18 @@ public class RestaurantServiceImpl implements RestaurantService {
             emailService.sendRestaurantDeactivationEmail(restaurant);
         }
     }
+
+    @Override
+    public void handleDeletion(long restaurantId, boolean delete) {
+        final Restaurant restaurant = getById(restaurantId).orElseThrow(RestaurantNotFoundException::new);
+        if (restaurant.getDeleted() == delete) {
+            return;
+        }
+
+        restaurant.setDeleted(delete);
+        LOGGER.info("Updated restaurant {} deleted field to {}", restaurantId, delete);
+        if (delete) {
+            emailService.sendRestaurantDeletionEmail(restaurant);
+        }
+    }
 }
