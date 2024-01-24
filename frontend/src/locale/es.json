@@ -397,5 +397,13 @@
             "error": "Ocurrió un error al guardar los cambios. Por favor, intenta de nuevo más tarde.",
             "delete": "¿Estás seguro de que quieres eliminar este moderador?"
         }
+    },
+    "restaurant_orders": {
+        "title": "{{restaurantName}} | Órdenes",
+        "pending": "Pending",
+        "confirmed": "Confirmed",
+        "ready": "Ready",
+        "delivered": "Delivered",
+        "cancelled": "Cancelled"
     }
 }

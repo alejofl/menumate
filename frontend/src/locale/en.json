@@ -398,5 +398,13 @@
             "error": "There was an error while saving the changes. Please try again later.",
             "delete": "Are you sure you want to delete this moderator?"
         }
+    },
+    "restaurant_orders": {
+        "title": "{{restaurantName}} | Orders",
+        "pending": "Pending",
+        "confirmed": "Confirmed",
+        "ready": "Ready",
+        "delivered": "Delivered",
+        "cancelled": "Cancelled"
     }
 }

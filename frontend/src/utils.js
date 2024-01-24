@@ -46,6 +46,14 @@ export const ROLES = {
     MODERATOR: "ROLE_MODERATOR"
 };
 
+export const STATUS = {
+    PENDING: "pending",
+    CONFIRMED: "confirmed",
+    READY: "ready",
+    DELIVERED: "delivered",
+    CANCELLED: "cancelled"
+};
+
 export const WAIT_TIME = 500;
 
 export const GET_LANGUAGE_CODE = (language) => language.substring(0, 3);
