@@ -51,7 +51,18 @@ export const STATUS = {
     CONFIRMED: "confirmed",
     READY: "ready",
     DELIVERED: "delivered",
-    CANCELLED: "cancelled"
+    CANCELLED: "cancelled",
+    getStatusDescription: function(status, dateOrdered, dateConfirmed, dateReady, dateDelivered, dateCancelled) {
+        const statusDescriptions = {
+            [this.PENDING]: dateOrdered.toLocaleString(),
+            [this.CONFIRMED]: dateConfirmed.toLocaleString(),
+            [this.READY]: dateReady.toLocaleString(),
+            [this.DELIVERED]: dateDelivered.toLocaleString(),
+            [this.CANCELLED]: dateCancelled.toLocaleString()
+        };
+
+        return statusDescriptions[status] || "Unknown status";
+    }
 };
 
 export const WAIT_TIME = 500;

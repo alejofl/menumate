@@ -72,6 +72,7 @@ function RestaurantOrders() {
      * }
      */
     const {
+        isLoading: ordersIsLoading,
         data: orders
     } = useInfiniteQuery( {
         queryKey: ["orders", status, queryKey],
@@ -94,6 +95,7 @@ function RestaurantOrders() {
         enabled: restaurantIsSuccess && userIsSuccess
     });
     console.log(orders);
+    orders?.pages.flatMap(page => page.content).map(order => console.log(order.orderId));
 
     return (
         <>
@@ -162,6 +164,58 @@ function RestaurantOrders() {
                             </tr>
                         </thead>
                         <tbody className="table-striped">
+                            {
+                                ordersIsLoading
+                                    ?
+                                    <tr className="clickable-object">
+                                        <td className="text-start">NO CARGO</td>
+                                        <td className="text-center">NO CARGO</td>
+                                        <td className="text-center">NO CARGO</td>
+                                        <td className="text-center">NO CARGO</td>
+                                        <td className="text-end">NO CARGO</td>
+                                    </tr>
+                                    :
+                                    orders?.pages[0]?.content.length === 0
+                                        ?
+                                        <tr className="clickable-object">
+                                            <td className="text-start">CARGO PERO NO DEL TODO</td>
+                                            <td className="text-center">CARGO</td>
+                                            <td className="text-center">CARGO</td>
+                                            <td className="text-center">CARGO</td>
+                                            <td className="text-end">CARGO</td>
+                                        </tr>
+                                        :
+                                        orders?.pages.flatMap(page => page.content).map(order => (
+                                            <tr className="clickable-object" key={order.orderId}>
+                                                <td className="text-start">{order.orderId}</td>
+                                                <td className="text-center">
+                                                    {order.orderType === "delivery"
+                                                        ?
+                                                        t("order.delivery")
+                                                        :
+                                                        order.orderType === "takeaway"
+                                                            ?
+                                                            t("order.takeaway")
+                                                            :
+                                                            t("order.dinein")
+                                                    }
+                                                </td>
+                                                <td className="text-center">{order.tableNumber ? order.tableNumber : "-"}</td>
+                                                <td className="text-center">{order.address ? order.address : "-"}</td>
+                                                <td className="text-end">
+                                                    {STATUS.getStatusDescription(
+                                                        status,
+                                                        order.dateOrdered,
+                                                        order.dateConfirmed,
+                                                        order.dateReady,
+                                                        order.dateDelivered,
+                                                        order.dateCancelled
+                                                    )}
+                                                </td>
+                                            </tr>
+                                        ))
+
+                            }
                         </tbody>
                     </table>
                 </div>
