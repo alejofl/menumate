@@ -131,12 +131,12 @@ public class ProductServiceImpl implements ProductService {
         final Product source = productDao.getById(sourceProductId).orElseThrow(ProductNotFoundException::new);
         if (source.getCategory().getRestaurantId() != restaurantId) {
             LOGGER.error("Attempted to create a promotion with a product id {} that does not belong to the restaurant id {}", sourceProductId, restaurantId);
-            throw new InvalidUserArgumentException("Source product must belong to the restaurant");
+            throw new InvalidUserArgumentException("exception.InvalidUserArgumentException.createPromotion.sourceProduct");
         }
 
         if (source.getDeleted() || !source.getAvailable()) {
             LOGGER.error("Attempted to create a promotion from a{} product", source.getDeleted() ? " deleted" : "n unavailable");
-            throw new InvalidUserArgumentException("Product cannot be deleted nor unavailable");
+            throw new InvalidUserArgumentException("exception.InvalidUserArgumentException.createPromotion.deletedOrUnavailableProduct");
         }
 
         if (endDate != null) {

@@ -114,34 +114,34 @@ public class OrderServiceImpl implements OrderService {
         final OrderStatus status = order.getOrderStatus();
         if (!status.isInProgress()) {
             LOGGER.warn("Attempted to advance the status of order id {}, but order is {}", orderId, status.getMessageCode());
-            throw new InvalidUserArgumentException("Cannot update the status of a finished order");
+            throw new InvalidUserArgumentException("exception.InvalidUserArgumentException.advanceOrderStatus.finishedOrder");
         }
 
         switch (newStatus) {
             case CONFIRMED:
                 if (status != OrderStatus.PENDING)
-                    throw new InvalidUserArgumentException("Only orders whose status is PENDING may be marked as CONFIRMED");
+                    throw new InvalidUserArgumentException("exception.InvalidUserArgumentException.advanceOrderStatus.pending");
                 order.setDateConfirmed(LocalDateTime.now());
                 emailService.sendOrderConfirmation(order);
                 break;
 
             case READY:
                 if (status != OrderStatus.CONFIRMED)
-                    throw new InvalidUserArgumentException("Only orders whose status is CONFIRMED may be marked as READY");
+                    throw new InvalidUserArgumentException("exception.InvalidUserArgumentException.advanceOrderStatus.confirmed");
                 order.setDateReady(LocalDateTime.now());
                 emailService.sendOrderReady(order);
                 break;
 
             case DELIVERED:
                 if (status != OrderStatus.READY)
-                    throw new InvalidUserArgumentException("Only orders whose status is READY may be marked as DELIVERED");
+                    throw new InvalidUserArgumentException("exception.InvalidUserArgumentException.advanceOrderStatus.ready");
                 order.setDateDelivered(LocalDateTime.now());
                 emailService.sendOrderDelivered(order);
                 break;
 
             case REJECTED:
                 if (order.getDateConfirmed() != null)
-                    throw new InvalidUserArgumentException("Cannot reject an order that has been confirmed");
+                    throw new InvalidUserArgumentException("exception.InvalidUserArgumentException.advanceOrderStatus.reject");
             case CANCELLED:
                 order.setDateCancelled(LocalDateTime.now());
                 emailService.sendOrderCancelled(order);
@@ -149,7 +149,7 @@ public class OrderServiceImpl implements OrderService {
 
             default:
                 LOGGER.warn("Attempted to advance order id {} status from {} to {}", orderId, status.getMessageCode(), newStatus.getMessageCode());
-                throw new InvalidUserArgumentException(String.format("Cannot set the status of an order from %s to %s", status.getMessageCode(), newStatus.getMessageCode()));
+                throw new InvalidUserArgumentException("exception.InvalidUserArgumentException.advanceOrderStatus.default");
         }
 
         LOGGER.info("Updated status of order id {} to {}", order.getOrderId(), order.getOrderStatus());

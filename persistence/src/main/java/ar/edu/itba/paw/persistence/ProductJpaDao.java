@@ -151,7 +151,7 @@ public class ProductJpaDao implements ProductDao {
         Promotion promotion = promoQuery.getResultList().stream().findFirst().orElseThrow(PromotionNotFoundException::new);
         if (promotion.hasEnded()) {
             LOGGER.error("Attempted to stop an already-ended promotion id {}", promotion.getPromotionId());
-            throw new InvalidUserArgumentException("Cannot stop a promotion that has already ended");
+            throw new InvalidUserArgumentException("exception.InvalidUserArgumentException.stopPromotion");
         }
 
         promotion.setEndDate(LocalDateTime.now());
