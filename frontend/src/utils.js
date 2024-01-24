@@ -41,6 +41,9 @@ export const ROLE_FOR_RESTAURANT = {
     ADMIN: "admin",
     ORDER_HANDLER: "orderhandler"
 };
+export const ROLES = {
+    MODERATOR: "ROLE_MODERATOR"
+};
 
 export const WAIT_TIME = 500;
 

@@ -5,7 +5,9 @@
         "restaurants_button": "Más restaurantes"
     },
     "paging": {
-        "load_more": "Cargar más contenido"
+        "load_more": "Cargar más contenido",
+        "no": "No",
+        "yes": "Sí"
     },
     "copyright": "© 2023 MenuMate FLAN Inc. Todos los derechos reservados.",
     "navbar": {
@@ -365,6 +367,15 @@
             "activate_restaurant": "Activar restaurante",
             "delete_restaurant": "Eliminar restaurante",
             "restore_restaurant": "Restaurar restaurante"
+        },
+        "edit": {
+            "title": "Editar moderadores",
+            "add": "Agregar moderador",
+            "email": "Correo electrónico",
+            "warning": "Agregar este usuario como moderador le da permiso para eliminar cualquier elemento del sitio.",
+            "moderators": "Moderadores",
+            "error": "Ocurrió un error al guardar los cambios. Por favor, intenta de nuevo más tarde.",
+            "delete": "¿Estás seguro de que quieres eliminar este moderador?"
         }
     }
 }
