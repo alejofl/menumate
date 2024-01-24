@@ -4,7 +4,7 @@ import {
 import Home from "./pages/Home.jsx";
 import Error from "./pages/Error.jsx";
 import Restaurants from "./pages/Restaurants.jsx";
-import MyProfile from "./pages/MyProfile.jsx";
+import UserProfile from "./pages/UserProfile.jsx";
 import Login from "./pages/Login.jsx";
 import ResetPassword from "./pages/ResetPassword.jsx";
 import Register from "./pages/Register.jsx";
@@ -50,6 +50,10 @@ const router = createBrowserRouter(
             Component: Restaurant
         },
         {
+            path: "/user",
+            element: <ProtectedRoute><UserProfile/></ProtectedRoute>
+        },
+        {
             path: "/user/restaurants",
             element: <ProtectedRoute><UserRestaurants/></ProtectedRoute>
         },
@@ -60,10 +64,6 @@ const router = createBrowserRouter(
         {
             path: "*",
             element: <Error errorNumber="404"/>
-        },
-        {
-            path: "/user",
-            element: <ProtectedRoute><MyProfile/></ProtectedRoute>
         }
     ],
     {

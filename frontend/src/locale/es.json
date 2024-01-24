@@ -25,7 +25,7 @@
         "home": "Inicio",
         "error": "Error {{number}}",
         "restaurants": "Restaurantes",
-        "myprofile": "Mi Perfil",
+        "user_profile": "Mi Perfil",
         "login": "Iniciar sesión",
         "reset_password": "Restablecer contraseña",
         "signup": "Regístrate",
@@ -142,15 +142,15 @@
             "date": "Fecha"
         }
     },
-    "myprofile": {
+    "user_profile": {
         "profile": "Mi perfil",
         "name_label": "Nombre",
-        "email_label": "Email",
+        "email_label": "Correo electrónico",
         "addresses": "Direcciones",
         "reviews": "Reseñas",
-        "addAddress": "Añadir dirección",
+        "add_address": "Añadir dirección",
         "address_label": "Dirección",
-        "delete_address_title": "¿Estás seguro que quieres remover la dirección?"
+        "delete_address_title": "¿Estás seguro que quieres eliminar la dirección?"
     },
     "login": {
         "email_address": "Correo electrónico",
@@ -330,10 +330,6 @@
         "title": "¡Tu pedido fue recibido!",
         "description": "Estate atento a tu correo electrónico para más información.",
         "button": "Ver detalles del pedido"
-    },
-    "general_options": {
-        "yes": "Sí",
-        "no": "No"
     },
     "create_restaurant": {
         "title": "Crear restaurante",

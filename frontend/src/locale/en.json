@@ -25,7 +25,7 @@
         "home": "Home",
         "error": "Error {{number}}",
         "restaurants": "Restaurants",
-        "myprofile": "My Profile",
+        "user_profile": "My Profile",
         "login": "Login",
         "reset_password": "Reset Password",
         "signup": "Sign Up",
@@ -142,13 +142,13 @@
             "date": "Date"
         }
     },
-    "myprofile": {
+    "user_profile": {
         "profile": "My Profile",
         "name_label": "Name",
         "email_label": "Email",
         "addresses": "Addresses",
         "reviews": "Reviews",
-        "add_address": "Add address",
+        "add_address": "Add Address",
         "address_label": "Address",
         "delete_address_title": "Are you sure you want to remove the address?"
     },
@@ -331,10 +331,6 @@
         "title": "Your order was received!",
         "description": "Check your email for more information",
         "button": "See Order Details"
-    },
-    "general_options": {
-        "yes": "Yes",
-        "no": "No"
     },
     "create_restaurant": {
         "title": "Create Restaurant",
