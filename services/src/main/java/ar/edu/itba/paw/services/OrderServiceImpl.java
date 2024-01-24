@@ -246,4 +246,10 @@ public class OrderServiceImpl implements OrderService {
         order.setTableNumber(tableNumber);
         LOGGER.info("Order {} table number updated to {}", orderId, tableNumber);
     }
+
+    @Transactional
+    @Override
+    public void cancelPendingOrders(long restaurantId) {
+        orderDao.cancelPendingOrders(restaurantId);
+    }
 }
