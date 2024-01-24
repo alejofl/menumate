@@ -54,7 +54,7 @@ const router = createBrowserRouter(
         },
         {
             path: "/moderators",
-            element: <ProtectedRoute><ModeratorsPanel/></ProtectedRoute>
+            element: <ProtectedRoute moderator={true}><ModeratorsPanel/></ProtectedRoute>
         },
         {
             path: "*",
