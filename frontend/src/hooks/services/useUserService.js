@@ -1,10 +1,10 @@
 import {
     REVIEW_CONTENT_TYPE,
     NOT_FOUND_STATUS_CODE,
-    RESTAURANT_EMPLOYEES_CONTENT_TYPE,
+    RESTAURANT_EMPLOYEES_CONTENT_TYPE, ROLES,
     USER_ADDRESS_CONTENT_TYPE,
     USER_CONTENT_TYPE,
-    USER_PASSWORD_CONTENT_TYPE
+    USER_PASSWORD_CONTENT_TYPE, USER_ROLE_CONTENT_TYPE
 } from "../../utils.js";
 import User from "../../data/model/User.js";
 import Address from "../../data/model/Address.js";
@@ -156,6 +156,34 @@ export function useUserService(api) {
         );
     };
 
+    const getUsers = async (url, params) => {
+        const response = await api.get(
+            url,
+            {
+                params: params,
+                headers: {
+                    "Accept": USER_ROLE_CONTENT_TYPE
+                }
+            }
+        );
+        return Array.isArray(response.data) ? response.data.map(data => User.fromJSON(data)) : [];
+    };
+
+    const addModerator = async (url, email) => {
+        return await api.post(
+            url,
+            {
+                email: email,
+                role: ROLES.MODERATOR
+            },
+            {
+                headers: {
+                    "Content-Type": USER_ROLE_CONTENT_TYPE
+                }
+            }
+        );
+    };
+
     const deleteAddress = async (url) => {
         return await api.delete(
             url
@@ -177,6 +205,11 @@ export function useUserService(api) {
         );
     };
 
+    const deleteModerator = async (url) => {
+        return await api.delete(url);
+
+    };
+
     return {
         sendResetPasswordToken,
         resetPassword,
@@ -186,6 +219,9 @@ export function useUserService(api) {
         getAddresses,
         getReviews,
         getRoleForRestaurant,
+        getUsers,
+        addModerator,
+        deleteModerator,
         registerAddress,
         deleteAddress,
         updateAddress

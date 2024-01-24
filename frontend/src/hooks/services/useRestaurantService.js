@@ -5,7 +5,7 @@ import {
     REPORTS_CONTENT_TYPE,
     RESTAURANT_CATEGORIES_CONTENT_TYPE,
     RESTAURANT_DETAILS_CONTENT_TYPE, RESTAURANT_PRODUCTS_CONTENT_TYPE, RESTAURANT_PROMOTIONS_CONTENT_TYPE,
-    RESTAURANTS_CONTENT_TYPE
+    RESTAURANTS_CONTENT_TYPE, UNHANDLED_REPORTS_CONTENT_TYPE
 } from "../../utils.js";
 import Category from "../../data/model/Category.js";
 import Product from "../../data/model/Product.js";
@@ -129,6 +129,27 @@ export function useRestaurantService(api) {
         );
     };
 
+    const getRestaurantsWithUnhandledReports = async (url, query) => {
+        const response = await api.get(
+            url,
+            {
+                params: query,
+                headers: {
+                    "Accept": UNHANDLED_REPORTS_CONTENT_TYPE
+                }
+            }
+        );
+        const links = parseLinkHeader(response.headers?.link, {});
+        const restaurants = Array.isArray(response.data) ? response.data.map(data => Restaurant.fromJSON(data)) : [];
+        return new PagedContent(
+            restaurants,
+            links?.first,
+            links?.prev,
+            links?.next,
+            links?.last
+        );
+    };
+
     return {
         getRestaurants,
         getRestaurant,
@@ -137,6 +158,7 @@ export function useRestaurantService(api) {
         getPromotions,
         getProduct,
         reportRestaurant,
-        createRestaurant
+        createRestaurant,
+        getRestaurantsWithUnhandledReports
     };
 }

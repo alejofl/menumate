@@ -5,12 +5,14 @@
         "restaurants_button": "More restaurants"
     },
     "paging": {
-        "load_more": "Load More Content"
+        "load_more": "Load More Content",
+        "no": "No",
+        "yes": "Yes"
     },
     "copyright": "© 2023 MenuMate FLAN Inc. All rights reserved.",
     "navbar": {
         "explore": "Explore",
-        "moderator_pane": "Moderator Pane",
+        "moderator_pane": "Moderators Panel",
         "my_profile": "My Profile",
         "my_orders": "My Orders",
         "create_restaurant": "Create Restaurant",
@@ -30,7 +32,8 @@
         "loading": "Loading...",
         "order_placed": "Thank you for your order!",
         "create_restaurant": "Create Restaurant",
-        "user_restaurants": "My Restaurants"
+        "user_restaurants": "My Restaurants",
+        "moderators_panel": "Moderators Panel"
     },
     "error": {
         "modal": {
@@ -236,6 +239,10 @@
             "required": "The image is required",
             "size": "The image must be at most 5 MB",
             "type": "The file must be a valid image file"
+        },
+        "review_reply": {
+            "required": "You must write a reply",
+            "max": "The reply must be at most {{max}} characters long"
         }
     },
     "reset_password": {
@@ -270,7 +277,13 @@
         "promotions": "Active Promotions",
         "reviews": {
             "title": "Reviews",
-            "reply": "The restaurant replied"
+            "reply": "The restaurant replied",
+            "show_order_button": "Show Order",
+            "reply_button": "Reply",
+            "reply_placeholder": "Write your reply here...",
+            "send_button": "Send",
+            "cancel_button": "Cancel",
+            "error_alert": "There was an error while sending your reply. Please try again later."
         },
         "toasts": {
             "dine_in": {
@@ -311,7 +324,8 @@
             "success": "Your report was sent successfully!",
             "success_button": "Go back to the restaurant page",
             "error": "There was an error while sending your report. Please try again later."
-        }
+        },
+        "disabled": "This restaurant was disabled due to received reports. Fix the problems and reply to the email we sent you to enable it again."
     },
     "order_placed": {
         "title": "Your order was received!",
@@ -342,5 +356,47 @@
         "pending_orders_zero": "No pending orders",
         "pending_orders_one": "{{count}} pending order",
         "pending_orders_other": "{{count}} pending orders"
+    },
+    "order": {
+        "title": "Order #{{id}}",
+        "items": "Order Items",
+        "comments": "Comments",
+        "product": "Product",
+        "quantity": "Quantity",
+        "price": "Price",
+        "details": "Order Details",
+        "customer": "Customer",
+        "order_type": "Order Type",
+        "table_number": "Table Number",
+        "total_price": "Total Price",
+        "dinein": "Dine In",
+        "delivery": "Delivery",
+        "takeaway": "Take-Away"
+    },
+    "moderators_panel": {
+        "unhandled_reports_zero": "No unhandled reports",
+        "unhandled_reports_one": "{{count}} unhandled report",
+        "unhandled_reports_other": "{{count}} unhandled reports",
+        "reports": {
+            "title": "{{restaurantName}} | Reports",
+            "error_alert": "There was an error while saving the changes. Please try again later.",
+            "anonymous_user": "Anonymous User",
+            "mark_as_handled": "Mark as handled",
+            "already_handled": "Already marked as handled",
+            "view_restaurant": "View Restaurant",
+            "deactivate_restaurant": "Deactivate Restaurant",
+            "activate_restaurant": "Activate Restaurant",
+            "delete_restaurant": "Delete Restaurant",
+            "restore_restaurant": "Restore Restaurant"
+        },
+        "edit": {
+            "title": "Edit Moderators",
+            "add": "Add Moderator",
+            "email": "Email Address",
+            "warning": "Adding this person as moderator gives them permission to delete anything on the entire site.",
+            "moderators": "Moderators",
+            "error": "There was an error while saving the changes. Please try again later.",
+            "delete": "Are you sure you want to delete this moderator?"
+        }
     }
 }

@@ -264,4 +264,35 @@ public class EmailServiceImpl implements EmailService {
                 params
         );
     }
+
+    @Async
+    @Override
+    public void sendRestaurantDeactivationEmail(Restaurant restaurant) {
+        Locale locale = new Locale(restaurant.getOwner().getPreferredLanguage());
+        final Map<String, Object> params = new HashMap<>();
+        params.put("recipientName", restaurant.getOwner().getName());
+        params.put("restaurantName", restaurant.getName());
+        this.sendMessageUsingThymeleafTemplate(
+                "restaurant_deactivated",
+                restaurant.getOwner().getEmail(),
+                messageSource.getMessage("email.restaurantdeactivation.subject", new Object[]{restaurant.getName()}, locale),
+                locale,
+                params
+        );
+    }
+
+    @Override
+    public void sendRestaurantDeletionEmail(Restaurant restaurant) {
+        Locale locale = new Locale(restaurant.getOwner().getPreferredLanguage());
+        final Map<String, Object> params = new HashMap<>();
+        params.put("recipientName", restaurant.getOwner().getName());
+        params.put("restaurantName", restaurant.getName());
+        this.sendMessageUsingThymeleafTemplate(
+                "restaurant_deleted",
+                restaurant.getOwner().getEmail(),
+                messageSource.getMessage("email.restaurantdeleted.subject", new Object[]{restaurant.getName()}, locale),
+                locale,
+                params
+        );
+    }
 }

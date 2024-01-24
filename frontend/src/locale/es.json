@@ -5,7 +5,9 @@
         "restaurants_button": "Más restaurantes"
     },
     "paging": {
-        "load_more": "Cargar más contenido"
+        "load_more": "Cargar más contenido",
+        "no": "No",
+        "yes": "Sí"
     },
     "copyright": "© 2023 MenuMate FLAN Inc. Todos los derechos reservados.",
     "navbar": {
@@ -30,7 +32,8 @@
         "loading": "Cargando...",
         "order_placed": "¡Gracias por tu pedido!",
         "create_restaurant": "Crear restaurante",
-        "user_restaurants": "Mis restaurantes"
+        "user_restaurants": "Mis restaurantes",
+        "moderators_panel": "Panel de moderadores"
     },
     "error": {
         "modal": {
@@ -235,6 +238,10 @@
             "required": "La imagen es obligatoria",
             "size": "La imagen debe pesar como máximo 5 MB",
             "type": "El archivo debe ser una imagen válida"
+        },
+        "review_reply": {
+            "required": "Debes escribir una respuesta",
+            "max": "La respuesta debe tener como máximo {{max}} caracteres"
         }
     },
     "reset_password": {
@@ -269,7 +276,13 @@
         "promotions": "Promociones activas",
         "reviews": {
             "title": "Reseñas",
-            "reply": "El restaurante respondió"
+            "reply": "El restaurante respondió",
+            "show_order_button": "Mostrar orden",
+            "reply_button": "Responder",
+            "reply_placeholder": "Escribe tu respuesta aquí...",
+            "send_button": "Enviar",
+            "cancel_button": "Cancelar",
+            "error_alert": "Ocurrió un error al enviar tu respuesta. Por favor, intenta de nuevo más tarde."
         },
         "toasts": {
             "dine_in": {
@@ -310,7 +323,8 @@
             "success": "¡Tu reporte fue enviado con éxito!",
             "success_button": "Volver a la página del restaurante",
             "error": "Ocurrió un error al enviar tu reporte. Por favor, intente de nuevo más tarde."
-        }
+        },
+        "disabled": "Este restaurante fue deshabilitado debido a reportes recibidos. Arregla los problemas y responde el correo electrónico que te enviamos para habilitarlo nuevamente."
     },
     "order_placed": {
         "title": "¡Tu pedido fue recibido!",
@@ -341,5 +355,47 @@
         "pending_orders_zero": "Sin órdenes pendientes",
         "pending_orders_one": "{{count}} orden pendiente",
         "pending_orders_other": "{{count}} órdenes pendientes"
+    },
+    "order": {
+        "title": "Orden #{{id}}",
+        "items": "Artículos de la orden",
+        "comments": "Comentarios",
+        "product": "Producto",
+        "quantity": "Cantidad",
+        "price": "Precio",
+        "details": "Detalles de la orden",
+        "customer": "Cliente",
+        "order_type": "Tipo de orden",
+        "table_number": "Número de mesa",
+        "total_price": "Precio total",
+        "dinein": "Comer en el restaurante",
+        "delivery": "Delivery",
+        "takeaway": "Take-Away"
+    },
+    "moderators_panel": {
+        "unhandled_reports_zero": "No hay reportes sin resolver",
+        "unhandled_reports_one": "{{count}} reporte sin resolver",
+        "unhandled_reports_other": "{{count}} reportes sin resolver",
+        "reports": {
+            "title": "{{restaurantName}} | Reportes",
+            "error_alert": "Ocurrió un error al guardar los cambios. Por favor, intenta de nuevo más tarde.",
+            "anonymous_user": "Usuario anónimo",
+            "mark_as_handled": "Marcar como resuelto",
+            "already_handled": "Ya marcado como resuelto",
+            "view_restaurant": "Ver restaurante",
+            "deactivate_restaurant": "Desactivar restaurante",
+            "activate_restaurant": "Activar restaurante",
+            "delete_restaurant": "Eliminar restaurante",
+            "restore_restaurant": "Restaurar restaurante"
+        },
+        "edit": {
+            "title": "Editar moderadores",
+            "add": "Agregar moderador",
+            "email": "Correo electrónico",
+            "warning": "Agregar este usuario como moderador le da permiso para eliminar cualquier elemento del sitio.",
+            "moderators": "Moderadores",
+            "error": "Ocurrió un error al guardar los cambios. Por favor, intenta de nuevo más tarde.",
+            "delete": "¿Estás seguro de que quieres eliminar este moderador?"
+        }
     }
 }

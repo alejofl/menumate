@@ -11,6 +11,7 @@ import java.util.List;
 public final class RestaurantConstants {
 
     public static final long[] RESTAURANT_IDS = {506L, 600L, 1200L, 1300L};
+    public static final long INACTIVE_RESTAURANT_ID = 1500L;
     public static final long RESTAURANT_ID_WITH_NO_ORDERS = 1300L;
     public static final long RESTAURANT_ID_WITH_NO_REPORTS = 600L;
     public static final long RESTAURANT_ID_NON_EXISTENT = 10000L;

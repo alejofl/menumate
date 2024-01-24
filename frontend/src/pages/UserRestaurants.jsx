@@ -13,7 +13,7 @@ import ContentLoader from "react-content-loader";
 import {DEFAULT_RESTAURANT_COUNT} from "../utils.js";
 import RestaurantCardWithSnackbar from "../components/RestaurantCardWithSnackbar.jsx";
 
-export function UserRestaurants() {
+function UserRestaurants() {
     const { t } = useTranslation();
     const authContext = useContext(AuthContext);
     const api = useApi();
@@ -142,3 +142,5 @@ export function UserRestaurants() {
         </>
     );
 }
+
+export default UserRestaurants;

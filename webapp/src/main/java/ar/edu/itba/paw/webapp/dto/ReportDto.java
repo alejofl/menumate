@@ -14,7 +14,7 @@ public class ReportDto {
 
     private long reportId;
     private long restaurantId;
-    private long reporterId;
+    private Long reporterId;
     private Long handlerId;
     private LocalDateTime dateReported;
     private LocalDateTime dateHandled;
@@ -24,7 +24,7 @@ public class ReportDto {
     private URI selfUrl;
     private URI restaurantUrl;
     private URI reporterUrl;
-    private URI handlerURL;
+    private URI handlerUrl;
 
     public static ReportDto fromReport(final UriInfo uriInfo, Report report) {
         final ReportDto dto = new ReportDto();
@@ -38,12 +38,12 @@ public class ReportDto {
         if(report.getIsHandled()) {
             dto.handlerId = report.getHandlerUserId();
             dto.dateHandled = report.getDateHandled();
-            dto.handlerURL = UriUtils.getUserUri(uriInfo, report.getHandlerUserId());
+            dto.handlerUrl = UriUtils.getUserUri(uriInfo, report.getHandlerUserId());
         }
 
         dto.selfUrl = UriUtils.getReportUri(uriInfo, report.getReportId(), report.getRestaurantId());
         dto.restaurantUrl = UriUtils.getRestaurantUri(uriInfo, report.getRestaurantId());
-        dto.reporterUrl = UriUtils.getUserUri(uriInfo, report.getReporterUserId());
+        dto.reporterUrl = dto.reporterId != null ? UriUtils.getUserUri(uriInfo, report.getReporterUserId()) : null;
         
         return dto;
     }
@@ -68,11 +68,11 @@ public class ReportDto {
         this.restaurantId = restaurantId;
     }
 
-    public long getReporterId() {
+    public Long getReporterId() {
         return reporterId;
     }
 
-    public void setReporterId(long reporterId) {
+    public void setReporterId(Long reporterId) {
         this.reporterId = reporterId;
     }
 
@@ -140,11 +140,11 @@ public class ReportDto {
         this.reporterUrl = reporterUrl;
     }
 
-    public URI getHandlerURL() {
-        return handlerURL;
+    public URI getHandlerUrl() {
+        return handlerUrl;
     }
 
-    public void setHandlerURL(URI handlerURL) {
-        this.handlerURL = handlerURL;
+    public void setHandlerUrl(URI handlerUrl) {
+        this.handlerUrl = handlerUrl;
     }
 }

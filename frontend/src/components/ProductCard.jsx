@@ -32,14 +32,10 @@ function ProductCard({productId, name, description, price, discount, imageUrl, a
     };
 
     useEffect(() => {
-        document.addEventListener("hidden.bs.modal", () => {
+        document.querySelector(`#add-${productId}-to-cart`).addEventListener("hidden.bs.modal", () => {
             setQuantity(1);
             setComments("");
         });
-
-        return () => {
-            document.removeEventListener("hidden.bs.modal", null);
-        };
     });
 
     return (

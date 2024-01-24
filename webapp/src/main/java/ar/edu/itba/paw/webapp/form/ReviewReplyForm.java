@@ -5,8 +5,8 @@ import org.hibernate.validator.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 public class ReviewReplyForm {
-    @NotBlank
-    @Size(max = 500)
+    @NotBlank(message = "{NotBlank.ReviewReplyForm.reply}")
+    @Size(max = 500, message = "{Size.ReviewReplyFrom.reply}")
     private String reply;
 
     public String getReply() {

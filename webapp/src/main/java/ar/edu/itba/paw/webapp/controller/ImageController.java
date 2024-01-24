@@ -5,14 +5,13 @@ import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.service.ImageService;
 import ar.edu.itba.paw.webapp.api.CustomMediaType;
 import ar.edu.itba.paw.webapp.dto.ImageDto;
-import ar.edu.itba.paw.webapp.form.validation.ValidImage;
+import ar.edu.itba.paw.webapp.form.UploadImageForm;
 import ar.edu.itba.paw.webapp.utils.ControllerUtils;
 import ar.edu.itba.paw.webapp.utils.UriUtils;
-import org.glassfish.jersey.media.multipart.FormDataBodyPart;
-import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import javax.validation.constraints.Size;
+
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
@@ -34,20 +33,18 @@ public class ImageController {
     @Path("/{imageId:\\d+}")
     @Produces("image/jpeg")
     public Response getImage(@PathParam("imageId") int imageId) {
-        Image image = imageService.getById(imageId).orElseThrow(ImageNotFoundException::new);
+        final Image image = imageService.getById(imageId).orElseThrow(ImageNotFoundException::new);
         final Response.ResponseBuilder responseBuilder = Response.ok(image.getBytes())
-                .header("Content-Disposition", String.format("inline; filename=\"menumate_%d.jpg\"", imageId));
-        ControllerUtils.setUnconditionalCache(responseBuilder);
-        return responseBuilder.build();
+                .header(HttpHeaders.CONTENT_DISPOSITION, String.format("inline; filename=\"menumate_%d.jpg\"", imageId));
+        return ControllerUtils.setUnconditionalCache(responseBuilder).build();
     }
 
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(CustomMediaType.APPLICATION_IMAGE)
-    public Response uploadImage(@ValidImage @FormDataParam("image") FormDataBodyPart formDataBodyPart,
-                                @Size(max = ControllerUtils.IMAGE_MAX_SIZE) @FormDataParam("image") byte[] bytes) {
-        Image image = imageService.create(bytes);
-        ImageDto imageDto = ImageDto.fromImage(uriInfo, image);
+    public Response uploadImage(@Valid @BeanParam final UploadImageForm uploadImageForm) {
+        final Image image = imageService.create(uploadImageForm.getBytes());
+        final ImageDto imageDto = ImageDto.fromImage(uriInfo, image);
         return Response.created(UriUtils.getImageUri(uriInfo, image.getImageId())).entity(imageDto).build();
     }
 
@@ -55,7 +52,7 @@ public class ImageController {
     @Path("/{imageId:\\d+}")
     public Response deleteImage(@PathParam("imageId") int imageId) {
         imageService.delete(imageId);
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 }
 

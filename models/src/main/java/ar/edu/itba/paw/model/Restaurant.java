@@ -28,7 +28,7 @@ public class Restaurant {
     @Column(name = "owner_user_id", nullable = false, insertable = false, updatable = false)
     private long ownerUserId;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "owner_user_id", referencedColumnName = "user_id", nullable = false)
     private User owner;
 

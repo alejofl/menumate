@@ -141,6 +141,12 @@ function Restaurant() {
                 <Error errorNumber={userError.response.status}/>
             </>
         );
+    } else if (!categoriesIsPending && !restaurant.active && userRoleIsError) {
+        return (
+            <>
+                <Error errorNumber="404"/>
+            </>
+        );
     } else if (userRoleIsError) {
         return (
             <>
@@ -173,15 +179,23 @@ function Restaurant() {
                     <div className="information">
                         <img src={restaurant.logoUrl} alt={restaurant.name} className="logo"/>
                         <div className="flex-grow-1">
+                            {
+                                !restaurant.active &&
+                                <div className="alert alert-warning" role="alert">
+                                    {t("restaurant.disabled")}
+                                </div>
+                            }
                             <h1>{restaurant.name}</h1>
                             <p className="mb-1">
                                 {restaurant.description || <i>{t("restaurant.no_description")}</i>}
                             </p>
-                            <p><i className="bi bi-geo-alt"></i> {restaurant.address}</p>
+                            <p className="mb-2"><i className="bi bi-geo-alt"></i> {restaurant.address}</p>
                             {
                                 restaurant.reviewCount === 0
                                     ?
-                                    <small className="text-muted">{t("restaurant.no_reviews")}</small>
+                                    <div className="mb-2">
+                                        <small className="text-muted">{t("restaurant.no_reviews")}</small>
+                                    </div>
                                     :
                                     <>
                                         <Rating rating={restaurant.averageRating} count={restaurant.reviewCount}/>
@@ -267,9 +281,9 @@ function Restaurant() {
                                     </div>
                                     <div className="product-container">
                                         {
-                                            products[i].data.map(product => (
+                                            products[i].data.map((product, i) => (
                                                 <ProductCard
-                                                    key={product.productId}
+                                                    key={i}
                                                     productId={product.productId}
                                                     name={product.name}
                                                     description={product.description}
@@ -290,8 +304,8 @@ function Restaurant() {
                             <div className="card-header text-muted">{t("restaurant.my_order")}</div>
                             <ul className="list-group list-group-flush">
                                 {
-                                    cart.map((product) => (
-                                        <li className="list-group-item d-flex justify-content-between" key={product.productId}>
+                                    cart.map((product, i) => (
+                                        <li className="list-group-item d-flex justify-content-between" key={i}>
                                             <div className="d-flex align-items-center gap-1">
                                                 <span className="badge text-bg-secondary">x{product.quantity}</span>
                                                 <span>{product.name}</span>
@@ -302,7 +316,7 @@ function Restaurant() {
                                 }
                             </ul>
                             <div className="card-body d-flex">
-                                <button className="btn btn-primary flex-grow-1" id="place-order-button" type="button" disabled={cart.length === 0} onClick={() => setShowPlaceOrderModal(true)}>
+                                <button className={`btn btn-primary flex-grow-1 ${!restaurant.active ? "disabled" : ""}`} id="place-order-button" type="button" disabled={cart.length === 0 || !restaurant.active} onClick={() => setShowPlaceOrderModal(true)}>
                                     {t("restaurant.place_order")}
                                 </button>
                             </div>
@@ -311,15 +325,16 @@ function Restaurant() {
                 </div>
 
                 <RestaurantLocationToast restaurantId={restaurantId} dineIn={queryParams.has("qr")}/>
-                <RestaurantReportToast restaurantUrl={restaurant.selfUrl}/>
+                <RestaurantReportToast reportsUrl={restaurant.reportsUrl}/>
             </Page>
-            {showReviewModal && authContext.isAuthenticated && userRole.isOrderHandler
-                ?
-                <>TODO</>
-                :
-                showReviewModal && <ReviewsModal reviewsUrl={restaurant.reviewsUrl} onClose={() => setShowReviewModal(false)}/>
+            {showReviewModal &&
+                <ReviewsModal
+                    reviewsUrl={restaurant.reviewsUrl}
+                    isEmployee={authContext.isAuthenticated && userRole.isOrderHandler}
+                    onClose={() => setShowReviewModal(false)}
+                />
             }
-            {showPlaceOrderModal &&
+            {restaurant.active && showPlaceOrderModal &&
                 <PlaceOrderModal
                     restaurantId={restaurantId}
                     maxTables={restaurant.maxTables}

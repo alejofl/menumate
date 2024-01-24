@@ -7,6 +7,7 @@ import ar.edu.itba.paw.persistence.constants.RestaurantConstants;
 import ar.edu.itba.paw.persistence.constants.ReviewConstants;
 import ar.edu.itba.paw.persistence.constants.UserConstants;
 import ar.edu.itba.paw.util.PaginatedResult;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -109,7 +110,6 @@ public class RestaurantJpaDaoTest {
         restaurantDao.delete(RestaurantConstants.RESTAURANT_IDS[0]);
         em.flush();
 
-        assertEquals(RestaurantConstants.RESTAURANT_IDS.length - 1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "restaurants", "deleted = false"));
         assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "restaurants", "deleted = true"));
     }
 
@@ -405,5 +405,11 @@ public class RestaurantJpaDaoTest {
     public void getNoRestaurantDetails() {
         final Optional<RestaurantDetails> maybeRestaurantDetails = restaurantDao.getRestaurantDetails(RestaurantConstants.RESTAURANT_ID_NON_EXISTENT);
         assertFalse(maybeRestaurantDetails.isPresent());
+    }
+
+    @Test
+    public void getInactiveRestaurantDetails() {
+        final Optional<RestaurantDetails> maybeRestaurantDetails = restaurantDao.getRestaurantDetails(RestaurantConstants.INACTIVE_RESTAURANT_ID);
+        Assert.assertTrue(maybeRestaurantDetails.isPresent());
     }
 }

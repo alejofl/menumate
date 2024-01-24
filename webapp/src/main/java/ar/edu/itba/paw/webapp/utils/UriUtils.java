@@ -188,6 +188,13 @@ public final class UriUtils {
                 .build();
     }
 
+    public static URI getReportsUri(final UriInfo uriInfo,final long restaurantId) {
+        return uriInfo.getBaseUriBuilder()
+                .path(RESTAURANTS_URL).path(String.valueOf(restaurantId))
+                .path("reports")
+                .build();
+    }
+
     public static URI getReportUri(final UriInfo uriInfo, final long reportId, final long restaurantId) {
         return uriInfo.getBaseUriBuilder()
                 .path(RESTAURANTS_URL).path(String.valueOf(restaurantId))

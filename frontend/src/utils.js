@@ -22,6 +22,8 @@ export const USER_CONTENT_TYPE = "application/vnd.menumate.user.v1+json";
 export const USER_ADDRESS_CONTENT_TYPE = "application/vnd.menumate.user.address.v1+json";
 export const USER_ROLE_CONTENT_TYPE = "application/vnd.menumate.userRole.v1+json";
 export const USER_PASSWORD_CONTENT_TYPE = "application/vnd.menumate.userPassword.v1+json";
+export const ACTIVATE_RESTAURANT_CONTENT_TYPE = "application/vnd.menumate.restaurants.activate.v1+json";
+export const DELETE_RESTAURANT_CONTENT_TYPE = "application/vnd.menumate.restaurants.delete.v1+json";
 export const JSON_CONTENT_TYPE = "application/json";
 
 export const EMAIL_ALREADY_IN_USE_ERROR = {"message":"Email already in use!", "path":"registerUser.arg0.email"};
@@ -39,6 +41,9 @@ export const ROLE_FOR_RESTAURANT = {
     OWNER: "owner",
     ADMIN: "admin",
     ORDER_HANDLER: "orderhandler"
+};
+export const ROLES = {
+    MODERATOR: "ROLE_MODERATOR"
 };
 
 export const WAIT_TIME = 500;

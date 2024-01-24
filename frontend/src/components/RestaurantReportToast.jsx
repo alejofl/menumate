@@ -7,7 +7,7 @@ import {useMutation} from "@tanstack/react-query";
 import {useApi} from "../hooks/useApi.js";
 import {useRestaurantService} from "../hooks/services/useRestaurantService.js";
 
-function RestaurantReportToast({ restaurantUrl }) {
+function RestaurantReportToast({ reportsUrl }) {
     const { t } = useTranslation();
     const api = useApi();
     const restaurantService = useRestaurantService(api);
@@ -26,20 +26,16 @@ function RestaurantReportToast({ restaurantUrl }) {
     useEffect(() => {
         showToast(".restaurant_report_toast #icon-toast");
 
-        document.addEventListener("hidden.bs.modal", () => {
+        document.querySelector("#restaurant-report-modal").addEventListener("hidden.bs.modal", () => {
             setShowErrorAlert(false);
             setShowSuccessAlert(false);
         });
-
-        return () => {
-            document.removeEventListener("hidden.bs.modal", null);
-        };
     }, []);
 
     const reportRestaurantMutation = useMutation({
         mutationFn: async ({comment}) => {
             await restaurantService.reportRestaurant(
-                `${restaurantUrl}/reports`,
+                reportsUrl,
                 comment
             );
         }

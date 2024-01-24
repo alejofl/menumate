@@ -37,7 +37,9 @@ VALUES (506, 'C', 'restaurant@localhost', 10, 1, 1500, 'somewhere', 'description
        (1200, 'B', 'restaurant@localhost', 10, 3, 1500, 'somewhere', 'description',
         CURRENT_TIMESTAMP - INTERVAL '2' DAY, false, true),
        (1300, 'D', 'restaurant@localhost', 10, 4, 1500, 'somewhere', 'description',
-        CURRENT_TIMESTAMP - INTERVAL '3' DAY, false, true);
+        CURRENT_TIMESTAMP - INTERVAL '3' DAY, false, true),
+        (1500, 'E', 'restaurant@localhost', 10, 5, 1500, 'somewhere', 'description',
+        CURRENT_TIMESTAMP - INTERVAL '4' DAY, false, false);
 
 INSERT INTO restaurant_roles (restaurant_id, user_id, role_level)
 VALUES (1300, 3000, 1);

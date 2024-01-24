@@ -6,8 +6,8 @@ import org.hibernate.validator.constraints.NotBlank;
 
 public class UpdateOrderStatusForm {
 
-    @NotBlank
-    @EnumMessageCode(enumClass = OrderStatus.class)
+    @NotBlank(message = "{NotBlank.UpdateOrderStatusForm.status}")
+    @EnumMessageCode(enumClass = OrderStatus.class, message = "{EnumMessageCode.UpdateOrderStatus.status}")
     private String status;
 
     public String getStatus() {

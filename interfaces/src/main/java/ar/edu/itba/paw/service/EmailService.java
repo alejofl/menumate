@@ -24,4 +24,8 @@ public interface EmailService {
     void sendInvitationToRestaurantStaff(User user, Restaurant restaurant);
 
     void sendInvitationToUser(User user, String level);
+
+    void sendRestaurantDeactivationEmail(Restaurant restaurant);
+
+    void sendRestaurantDeletionEmail(Restaurant restaurant);
 }

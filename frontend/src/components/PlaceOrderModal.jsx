@@ -30,16 +30,12 @@ function PlaceOrderModal({restaurantId, maxTables, dineIn, dineInCompletionTime,
         }
 
         // eslint-disable-next-line no-undef
-        const modal = new bootstrap.Modal(document.querySelector(".place_order_modal .modal"));
+        const modal = bootstrap.Modal.getOrCreateInstance(document.querySelector(".place_order_modal .modal"));
         modal.show();
 
         countdownLatch.current = true;
 
-        document.addEventListener("hidden.bs.modal", () => onClose());
-
-        return () => {
-            document.removeEventListener("hidden.bs.modal", null);
-        };
+        document.querySelector(".place_order_modal .modal").addEventListener("hidden.bs.modal", () => onClose());
     }, [onClose]);
 
     const { isError: userIsError, data: userData, error: userError} = useQuery({
