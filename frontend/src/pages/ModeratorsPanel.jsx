@@ -1,10 +1,8 @@
 import Page from "../components/Page.jsx";
 import {useTranslation} from "react-i18next";
-import "./styles/user_restaurants.styles.css";
-import {useInfiniteQuery, useQuery} from "@tanstack/react-query";
-import {useContext} from "react";
-import AuthContext from "../contexts/AuthContext.jsx";
-import {useUserService} from "../hooks/services/useUserService.js";
+import "./styles/moderators_panel.styles.css";
+import {useInfiniteQuery} from "@tanstack/react-query";
+import {useContext, useState} from "react";
 import {useApi} from "../hooks/useApi.js";
 import {useSearchParams} from "react-router-dom";
 import {useRestaurantService} from "../hooks/services/useRestaurantService.js";
@@ -12,23 +10,16 @@ import Error from "./Error.jsx";
 import ContentLoader from "react-content-loader";
 import {DEFAULT_RESTAURANT_COUNT} from "../utils.js";
 import RestaurantCardWithSnackbar from "../components/RestaurantCardWithSnackbar.jsx";
+import ApiContext from "../contexts/ApiContext.jsx";
+import ReportsModal from "../components/ReportsModal.jsx";
 
-function UserRestaurants() {
+function ModeratorsPanel() {
     const { t } = useTranslation();
-    const authContext = useContext(AuthContext);
+    const apiContext = useContext(ApiContext);
     const api = useApi();
-    const userService = useUserService(api);
     const restaurantService = useRestaurantService(api);
 
     const [queryParams] = useSearchParams();
-
-    const { isError: userIsError, data: userData, error: userError} = useQuery({
-        queryKey: ["user", authContext.selfUrl],
-        queryFn: async () => (
-            await userService.getUser(authContext.selfUrl)
-        ),
-        enabled: authContext.isAuthenticated
-    });
 
     const {
         isPending,
@@ -39,10 +30,10 @@ function UserRestaurants() {
         hasNextPage,
         fetchNextPage
     } = useInfiniteQuery({
-        queryKey: ["user", authContext.selfUrl, "restaurants"],
+        queryKey: ["moderators", "restaurants"],
         queryFn: async ({ pageParam }) => (
-            await restaurantService.getRestaurants(
-                userData.restaurantsEmployedAtUrl,
+            await restaurantService.getRestaurantsWithUnhandledReports(
+                apiContext.restaurantsUrl,
                 {
                     page: pageParam,
                     ...(queryParams.get("size") ? {size: queryParams.get("size")} : {})
@@ -50,21 +41,20 @@ function UserRestaurants() {
             )
         ),
         getNextPageParam: (lastPage) => lastPage.nextPage?.page || undefined,
-        keepPreviousData: true,
-        enabled: !!userData
+        keepPreviousData: true
     });
+
+    const [showReportsModal, setShowReportsModal] = useState(false);
+    const [restaurantUrl, setRestaurantUrl] = useState("");
+    const [restaurantName, setRestaurantName] = useState("");
+    const [restaurantId, setRestaurantId] = useState("");
+    const [reportsUrl, setReportsUrl] = useState("");
 
     const handleLoadMoreContent = async () => {
         await fetchNextPage();
     };
 
-    if (userIsError) {
-        return (
-            <>
-                <Error errorNumber={userError.response.status}/>
-            </>
-        );
-    } else if (restaurantsIsError) {
+    if (restaurantsIsError) {
         return (
             <>
                 <Error errorNumber={restaurantsError.response.status}/>
@@ -73,15 +63,15 @@ function UserRestaurants() {
     }
     return (
         <>
-            <Page title={t("titles.user_restaurants")} className="user_restaurants">
-                <h1 className="page-title">{t("titles.user_restaurants")}</h1>
+            <Page title={t("titles.moderators_panel")} className="moderators_panel">
+                <h1 className="page-title">{t("titles.moderators_panel")}</h1>
                 <div className="restaurant-feed">
                     {
                         isPending
                             ?
                             new Array(DEFAULT_RESTAURANT_COUNT).fill("").map((_, i) => {
                                 return (
-                                    <ContentLoader backgroundColor="#eaeaea" foregroundColor="#e0e0e0" width="18rem" height="18rem" key={i}>
+                                    <ContentLoader key={i} backgroundColor="#eaeaea" foregroundColor="#e0e0e0" width="18rem" height="18rem">
                                         <rect x="0" y="0" rx="5" ry="5" width="100%" height="100%"/>
                                     </ContentLoader>
                                 );
@@ -94,18 +84,26 @@ function UserRestaurants() {
                                     <p>{t("restaurants.no_results")}</p>
                                 </div>
                                 :
-                                restaurants.pages.flatMap(page => page.content).map(restaurant => {
+                                restaurants.pages.flatMap(page => page.content).map((restaurant) => {
                                     return (
                                         <RestaurantCardWithSnackbar
-                                            key={restaurant.selfUrl}
+                                            key={restaurant.restaurantId}
                                             restaurantId={restaurant.restaurantId}
                                             name={restaurant.name}
                                             mainImage={restaurant.portrait1Url}
                                             hoverImage={restaurant.portrait2Url}
                                             address={restaurant.address}
-                                            snackbarText={t("user_restaurants.pending_orders", {count: restaurant.pendingOrderCount})}
-                                            isSnackbarSuccess={restaurant.pendingOrderCount === 0}
-                                            isSnackbarDanger={restaurant.pendingOrderCount > 0}
+                                            snackbarText={t("moderators_panel.unhandled_reports", {count: restaurant.unhandledReportsCount})}
+                                            isSnackbarSuccess={false}
+                                            isSnackbarDanger={restaurant.unhandledReportsCount > 0}
+                                            clickable={false}
+                                            onClick={() => {
+                                                setRestaurantUrl(restaurant.selfUrl);
+                                                setRestaurantId(restaurant.restaurantId);
+                                                setRestaurantName(restaurant.name);
+                                                setReportsUrl(restaurant.reportsUrl);
+                                                setShowReportsModal(true);
+                                            }}
                                         />
                                     );
                                 })
@@ -138,9 +136,19 @@ function UserRestaurants() {
                         </button>
                     </div>
                 }
+                {
+                    showReportsModal &&
+                    <ReportsModal
+                        restaurantUrl={restaurantUrl}
+                        restaurantId={restaurantId}
+                        restaurantName={restaurantName}
+                        reportsUrl={reportsUrl}
+                        onClose={() => setShowReportsModal(false)}
+                    />
+                }
             </Page>
         </>
     );
 }
 
-export default UserRestaurants;
+export default ModeratorsPanel;

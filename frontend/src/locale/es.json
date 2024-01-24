@@ -29,7 +29,8 @@
         "loading": "Cargando...",
         "order_placed": "¡Gracias por tu pedido!",
         "create_restaurant": "Crear restaurante",
-        "user_restaurants": "Mis restaurantes"
+        "user_restaurants": "Mis restaurantes",
+        "moderators_panel": "Panel de moderadores"
     },
     "error": {
         "modal": {
@@ -348,5 +349,22 @@
         "dinein": "Comer en el restaurante",
         "delivery": "Delivery",
         "takeaway": "Take-Away"
+    },
+    "moderators_panel": {
+        "unhandled_reports_zero": "No hay reportes sin resolver",
+        "unhandled_reports_one": "{{count}} reporte sin resolver",
+        "unhandled_reports_other": "{{count}} reportes sin resolver",
+        "reports": {
+            "title": "{{restaurantName}} | Reportes",
+            "error_alert": "Ocurrió un error al guardar los cambios. Por favor, intenta de nuevo más tarde.",
+            "anonymous_user": "Usuario anónimo",
+            "mark_as_handled": "Marcar como resuelto",
+            "already_handled": "Ya marcado como resuelto",
+            "view_restaurant": "Ver restaurante",
+            "deactivate_restaurant": "Desactivar restaurante",
+            "activate_restaurant": "Activar restaurante",
+            "delete_restaurant": "Eliminar restaurante",
+            "restore_restaurant": "Restaurar restaurante"
+        }
     }
 }

@@ -3,7 +3,7 @@ import PagedContent from "../../data/model/PagedContent.js";
 import Review from "../../data/model/Review.js";
 import {REVIEW_CONTENT_TYPE, REVIEW_REPLY_CONTENT_TYPE} from "../../utils.js";
 
-export function userReviewService(api) {
+export function useReviewService(api) {
     const getReviews = async (url, params) => {
         const response = await api.get(
             url,

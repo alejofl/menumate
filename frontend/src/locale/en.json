@@ -10,7 +10,7 @@
     "copyright": "© 2023 MenuMate FLAN Inc. All rights reserved.",
     "navbar": {
         "explore": "Explore",
-        "moderator_pane": "Moderator Pane",
+        "moderator_pane": "Moderators Panel",
         "my_profile": "My Profile",
         "my_orders": "My Orders",
         "create_restaurant": "Create Restaurant",
@@ -29,7 +29,8 @@
         "loading": "Loading...",
         "order_placed": "Thank you for your order!",
         "create_restaurant": "Create Restaurant",
-        "user_restaurants": "My Restaurants"
+        "user_restaurants": "My Restaurants",
+        "moderators_panel": "Moderators Panel"
     },
     "error": {
         "modal": {
@@ -348,5 +349,22 @@
         "dinein": "Dine In",
         "delivery": "Delivery",
         "takeaway": "Take-Away"
+    },
+    "moderators_panel": {
+        "unhandled_reports_zero": "No unhandled reports",
+        "unhandled_reports_one": "{{count}} unhandled report",
+        "unhandled_reports_other": "{{count}} unhandled reports",
+        "reports": {
+            "title": "{{restaurantName}} | Reports",
+            "error_alert": "There was an error while saving the changes. Please try again later.",
+            "anonymous_user": "Anonymous User",
+            "mark_as_handled": "Mark as handled",
+            "already_handled": "Already marked as handled",
+            "view_restaurant": "View Restaurant",
+            "deactivate_restaurant": "Deactivate Restaurant",
+            "activate_restaurant": "Activate Restaurant",
+            "delete_restaurant": "Delete Restaurant",
+            "restore_restaurant": "Restore Restaurant"
+        }
     }
 }

@@ -6,7 +6,7 @@ function ErrorModal({ title = undefined, message = undefined}) {
 
     useEffect(() => {
         // eslint-disable-next-line no-undef
-        const modal = new bootstrap.Modal(document.querySelector(".error_modal .modal"));
+        const modal = bootstrap.Modal.getOrCreateInstance(document.querySelector(".error_modal .modal"));
         modal.show();
     }, []);
 

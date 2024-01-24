@@ -2,7 +2,7 @@ import {useCallback, useEffect, useState} from "react";
 import { useTranslation } from "react-i18next";
 import {useInfiniteQuery, useMutation, useQueryClient} from "@tanstack/react-query";
 import {useApi} from "../hooks/useApi.js";
-import {userReviewService} from "../hooks/services/useReviewService.js";
+import {useReviewService} from "../hooks/services/useReviewService.js";
 import ContentLoader from "react-content-loader";
 import Rating from "./Rating.jsx";
 import InternalOrderModal from "./InternalOrderModal.jsx";
@@ -12,7 +12,7 @@ import {ReviewReplySchema} from "../data/validation.js";
 function ReviewsModal({reviewsUrl, isEmployee, onClose}) {
     const { t, i18n } = useTranslation();
     const api = useApi();
-    const reviewService = userReviewService(api);
+    const reviewService = useReviewService(api);
 
     const [showInternalOrderModal, setShowInternalOrderModal] = useState(false);
     const [orderUrl, setOrderUrl] = useState(null);
@@ -22,7 +22,7 @@ function ReviewsModal({reviewsUrl, isEmployee, onClose}) {
 
     useEffect(() => {
         // eslint-disable-next-line no-undef
-        const modal = new bootstrap.Modal(document.querySelector(".reviews_modal .modal"));
+        const modal = bootstrap.Modal.getOrCreateInstance(document.querySelector(".reviews_modal .modal"));
         modal.show();
     }, []);
     useEffect(() => {

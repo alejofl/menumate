@@ -7,7 +7,7 @@ import {useMutation} from "@tanstack/react-query";
 import {useApi} from "../hooks/useApi.js";
 import {useRestaurantService} from "../hooks/services/useRestaurantService.js";
 
-function RestaurantReportToast({ restaurantUrl }) {
+function RestaurantReportToast({ reportsUrl }) {
     const { t } = useTranslation();
     const api = useApi();
     const restaurantService = useRestaurantService(api);
@@ -35,7 +35,7 @@ function RestaurantReportToast({ restaurantUrl }) {
     const reportRestaurantMutation = useMutation({
         mutationFn: async ({comment}) => {
             await restaurantService.reportRestaurant(
-                `${restaurantUrl}/reports`,
+                reportsUrl,
                 comment
             );
         }

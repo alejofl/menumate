@@ -189,11 +189,13 @@ function Restaurant() {
                             <p className="mb-1">
                                 {restaurant.description || <i>{t("restaurant.no_description")}</i>}
                             </p>
-                            <p><i className="bi bi-geo-alt"></i> {restaurant.address}</p>
+                            <p className="mb-2"><i className="bi bi-geo-alt"></i> {restaurant.address}</p>
                             {
                                 restaurant.reviewCount === 0
                                     ?
-                                    <small className="text-muted">{t("restaurant.no_reviews")}</small>
+                                    <div className="mb-2">
+                                        <small className="text-muted">{t("restaurant.no_reviews")}</small>
+                                    </div>
                                     :
                                     <>
                                         <Rating rating={restaurant.averageRating} count={restaurant.reviewCount}/>
@@ -302,8 +304,8 @@ function Restaurant() {
                             <div className="card-header text-muted">{t("restaurant.my_order")}</div>
                             <ul className="list-group list-group-flush">
                                 {
-                                    cart.map((product) => (
-                                        <li className="list-group-item d-flex justify-content-between" key={product.productId}>
+                                    cart.map((product, i) => (
+                                        <li className="list-group-item d-flex justify-content-between" key={i}>
                                             <div className="d-flex align-items-center gap-1">
                                                 <span className="badge text-bg-secondary">x{product.quantity}</span>
                                                 <span>{product.name}</span>
@@ -323,7 +325,7 @@ function Restaurant() {
                 </div>
 
                 <RestaurantLocationToast restaurantId={restaurantId} dineIn={queryParams.has("qr")}/>
-                <RestaurantReportToast restaurantUrl={restaurant.selfUrl}/>
+                <RestaurantReportToast reportsUrl={restaurant.reportsUrl}/>
             </Page>
             {showReviewModal &&
                 <ReviewsModal
