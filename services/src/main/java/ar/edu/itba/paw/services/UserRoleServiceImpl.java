@@ -60,7 +60,7 @@ public class UserRoleServiceImpl implements UserRoleService {
     public boolean setRole(String email, UserRoleLevel roleLevel) {
         if (roleLevel == null) {
             LOGGER.error("Attempted to set not-existing user role");
-            throw new UserRoleNotFoundException("Cannot set invalid user role");
+            throw new UserRoleNotFoundException();
         }
 
         Optional<User> user = userDao.getByEmail(email);

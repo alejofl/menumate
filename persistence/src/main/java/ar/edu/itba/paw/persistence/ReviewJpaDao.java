@@ -108,7 +108,7 @@ public class ReviewJpaDao implements ReviewDao {
             em.remove(review);
         } catch (EntityNotFoundException e) {
             LOGGER.warn("Attempted to delete non-existing review id {}", orderId, e);
-            throw new ReviewNotFoundException(e);
+            throw new ReviewNotFoundException();
         }
     }
 

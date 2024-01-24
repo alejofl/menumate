@@ -57,7 +57,7 @@ public class RestaurantRoleServiceImpl implements RestaurantRoleService {
     private User createUserAndSetRole(String email, long restaurantId, RestaurantRoleLevel level, String language) {
         if (level == null) {
             LOGGER.error("Attempted to delete role of non existing user {}", email);
-            throw new UserNotFoundException("Cannot delete role of non existing user");
+            throw new UserNotFoundException();
         }
 
         final String name = email.split("@")[0];

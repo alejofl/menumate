@@ -82,7 +82,7 @@ public class UserJpaDao implements UserDao {
             // If the address is unnamed, we must enforce the maximum limit of unnamed addresses per user.
             int rows = name == null ? deleteExcessUnnamedAddresses(userId) : 0;
 
-            LOGGER.info("Registered {}named address for user id {} with address id {}, {} old rows deleted", name == null ? "un" : "", userId, ua.getAddressId(), rows);
+            LOGGER.info("Registered {} named address for user id {} with address id {}, {} old rows deleted", name == null ? "un" : "", userId, ua.getAddressId(), rows);
             return ua;
         } catch (PersistenceException e) {
             Throwable cause = e.getCause();
@@ -95,7 +95,7 @@ public class UserJpaDao implements UserDao {
 
                 LOGGER.warn("Failed to register address for user id {} due to constraint violation on {}", userId, problematicParam == null ? "unknown field" : problematicParam, e);
                 if (problematicParam != null)
-                    throw new InvalidUserArgumentException(String.format("This %s is already registered", problematicParam), e);
+                    throw new InvalidUserArgumentException("exception.InvalidUserArgumentException.registerAddress");
             }
             throw e;
         }
@@ -123,7 +123,7 @@ public class UserJpaDao implements UserDao {
 
                 LOGGER.warn("Failed to update address for user id {} due to constraint violation on {}", userId, problematicParam == null ? "unknown field" : problematicParam, e);
                 if (problematicParam != null)
-                    throw new InvalidUserArgumentException(String.format("This %s is already registered", problematicParam), e);
+                    throw new InvalidUserArgumentException("exception.InvalidUserArgumentException.updateAddress");
             }
             throw e;
         }
