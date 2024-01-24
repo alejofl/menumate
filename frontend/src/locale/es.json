@@ -33,7 +33,8 @@
         "order_placed": "¡Gracias por tu pedido!",
         "create_restaurant": "Crear restaurante",
         "user_restaurants": "Mis restaurantes",
-        "moderators_panel": "Panel de moderadores"
+        "moderators_panel": "Panel de moderadores",
+        "user_orders": "Mis órdenes"
     },
     "error": {
         "modal": {
@@ -363,10 +364,31 @@
         "customer": "Cliente",
         "order_type": "Tipo de orden",
         "table_number": "Número de mesa",
+        "address": "Dirección",
         "total_price": "Precio total",
         "dinein": "Comer en el restaurante",
         "delivery": "Delivery",
-        "takeaway": "Take-Away"
+        "takeaway": "Take-Away",
+        "in_progress": "En progreso",
+        "all": "Todas",
+        "product_quantity_zero": "Sin productos",
+        "product_quantity_one": "{{count}} producto",
+        "product_quantity_other": "{{count}} productos",
+        "status": {
+            "pending": "Pendiente",
+            "rejected": "Rechazada",
+            "cancelled": "Cancelada",
+            "confirmed": "Confirmada",
+            "ready": "Lista",
+            "delivered": "Entregada",
+            "order_pending": "Orden pendiente",
+            "order_rejected": "Orden rechazada",
+            "order_cancelled": "Orden cancelada",
+            "order_confirmed": "Orden confirmada",
+            "order_ready": "Orden lista",
+            "order_delivered": "Orden entregada"
+        },
+        "order_again": "Pedir de nuevo"
     },
     "moderators_panel": {
         "unhandled_reports_zero": "No hay reportes sin resolver",

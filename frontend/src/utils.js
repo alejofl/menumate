@@ -37,6 +37,44 @@ export const ORDER_TYPE = {
     TAKE_AWAY: "takeaway",
     DINE_IN: "dinein"
 };
+export const ORDER_STATUS = {
+    PENDING: {
+        text: "pending",
+        bgColor: "light",
+        color: "primary",
+        progress: "5%"
+    },
+    REJECTED: {
+        text: "rejected",
+        bgColor: "danger",
+        color: "danger",
+        progress: "100%"
+    },
+    CANCELLED: {
+        text: "cancelled",
+        bgColor: "danger",
+        color: "danger",
+        progress: "100%"
+    },
+    CONFIRMED: {
+        text: "confirmed",
+        bgColor: "light",
+        color: "primary",
+        progress: "33%"
+    },
+    READY: {
+        text: "ready",
+        bgColor: "light",
+        color: "primary",
+        progress: "66%"
+    },
+    DELIVERED: {
+        text: "delivered",
+        bgColor: "light",
+        color: "primary",
+        progress: "100%"
+    }
+};
 export const ROLE_FOR_RESTAURANT = {
     OWNER: "owner",
     ADMIN: "admin",
