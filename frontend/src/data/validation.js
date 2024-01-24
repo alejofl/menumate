@@ -94,7 +94,8 @@ export const RegisterAddressSchema = Yup.object().shape({
         .max(20, ({max}) => i18n.t("validation.my_profile.register_address_name_max", {max: max})),
 
     address: Yup.string()
-        .required(i18n.t("validation.comment.required"))
+        .required(i18n.t("validation.my_profile.required"))
+        .min(3, ({ min }) => i18n.t("validation.address.min", {min: min}))
         .max(200, ({max}) => i18n.t("validation.my_profile.register_address_address_max", {max: max}))
 });
 

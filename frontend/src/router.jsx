@@ -58,7 +58,7 @@ const router = createBrowserRouter(
         },
         {
             path: "/user",
-            Component: MyProfile
+            element: <ProtectedRoute><MyProfile/></ProtectedRoute>
         }
     ],
     {

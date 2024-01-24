@@ -14,13 +14,11 @@ import ErrorModal from "../components/ErrorModal.jsx";
 import Error from "./Error.jsx";
 import {ErrorMessage, Field, Form, Formik} from "formik";
 import {RegisterAddressSchema} from "../data/validation.js";
-import {BAD_REQUEST_STATUS_CODE, EMAIL_ALREADY_IN_USE_ERROR} from "../utils.js";
-
-
+import {BAD_REQUEST_STATUS_CODE, METHOD_NOT_ALLOWED} from "../utils.js";
 
 function MyProfile() {
     const STAR_RATING = 5;
-    const DEFAULT_ORDER_COUNT = 12;
+    const DEFAULT_ORDER_COUNT = 20;
     const { t } = useTranslation();
     const api = useApi();
     const authContext = useContext(AuthContext);
@@ -33,10 +31,13 @@ function MyProfile() {
         ...(queryParams.get("size") ? {size: queryParams.get("size")} : {})
     });
     const queryKey = useState(query);
+
     const [currentDeleteAddressModal, setCurrentDeleteAddressModal] = useState();
     const [currentNameAddress, setCurrentNameAddress] = useState();
     const [currentAddressAddress, setCurrentAddressAddress] = useState();
     const [currentUrlAddress, setCurrentUrlAddress] = useState();
+    const [addressRepeated, setAddressRepeated] = useState(false);
+    const [editOperation, setEditOperation] = useState(false);
 
     const {
         isPending : userIsPending,
@@ -119,6 +120,7 @@ function MyProfile() {
             : []
     });
 
+
     const registerAddressMutation = useMutation({
         mutationFn: async ({name, address}) => {
             await userService.registerAddress(
@@ -136,10 +138,10 @@ function MyProfile() {
                 address: values.address
             },
             {
-                onSuccess: () => handleCloseRegisterAddressModal(),
+                onSuccess: () => handleReload(),
                 onError: (error) => {
                     if (error.response.status === BAD_REQUEST_STATUS_CODE) {
-                        EMAIL_ALREADY_IN_USE_ERROR.message;
+                        setAddressRepeated(true);
                     }
                 }
             }
@@ -148,59 +150,21 @@ function MyProfile() {
     };
 
     const handleOpenRegisterAddressModal = () => {
+        setEditOperation(false);
+        setCurrentNameAddress("");
+        setCurrentAddressAddress("");
+        setCurrentUrlAddress("");
         // eslint-disable-next-line no-undef
-        const modal = new bootstrap.Modal(document.querySelector(".registerAddressModal .modal"));
+        const modal = new bootstrap.Modal(document.querySelector("#editAddressModal"));
+        document.querySelector("#editAddressModal").addEventListener("hidden.bs.modal", handleModalHidden);
         modal.show();
     };
 
-    const handleCloseRegisterAddressModal = () => {
+
+    const handleReload = () => {
         window.location.reload();
     };
 
-    const deleteAddressMutation = useMutation({
-        mutationFn: async ({url}) => {
-            await userService.deleteAddress(url);
-        }
-    });
-
-    const handleDeleteAddress = () => {
-        deleteAddressMutation.mutate(
-            {
-                url: currentDeleteAddressModal
-            },
-            {
-                onSuccess: () => handleCloseAndReloadDeleteAddressModal(),
-                onError: (error) => {
-                    if (error.response.status === BAD_REQUEST_STATUS_CODE) {
-                        EMAIL_ALREADY_IN_USE_ERROR.message;
-                    }
-                }
-            }
-        );
-    };
-
-    const handleOpenDeleteAddressModal = (url) => {
-        setCurrentDeleteAddressModal(url);
-        // eslint-disable-next-line no-undef
-        const modal = new bootstrap.Modal(document.querySelector(".registerDeleteModal .modal"));
-        modal.show();
-    };
-
-    const handleCloseDeleteAddressModal = () => {
-        const modalElement = document.querySelector(".deleteAddressModal .modal");
-
-        if (modalElement) {
-            // eslint-disable-next-line no-undef
-            const modal = bootstrap.Modal.getInstance(modalElement);
-            if (modal) {
-                modal.hide();
-            }
-        }
-    };
-
-    const handleCloseAndReloadDeleteAddressModal = () => {
-        window.location.reload();
-    };
 
     const updateAddressMutation = useMutation({
         mutationFn: async ({name, address}) => {
@@ -219,10 +183,10 @@ function MyProfile() {
                 address: values.address
             },
             {
-                onSuccess: () => handleCloseRegisterAddressModal(),
+                onSuccess: () => handleReload(),
                 onError: (error) => {
-                    if (error.response.status === BAD_REQUEST_STATUS_CODE) {
-                        EMAIL_ALREADY_IN_USE_ERROR.message;
+                    if (error.response.status === METHOD_NOT_ALLOWED) {
+                        setAddressRepeated(true);
                     }
                 }
             }
@@ -231,12 +195,55 @@ function MyProfile() {
     };
 
     const handleOpenUpdateAddressModal = (address) => {
-        setCurrentUrlAddress(address.self);
+        setEditOperation(true);
+        setCurrentUrlAddress(address.selfUrl);
         setCurrentNameAddress(address.name);
         setCurrentAddressAddress(address.address);
+
         // eslint-disable-next-line no-undef
-        const modal = new bootstrap.Modal(document.querySelector(".updateAddressModal .modal"));
+        const modal = bootstrap.Modal.getOrCreateInstance(document.querySelector("#editAddressModal"));
+        document.querySelector("#editAddressModal").addEventListener("hidden.bs.modal", handleModalHidden);
         modal.show();
+    };
+
+    const handleModalHidden = () => {
+        setAddressRepeated(false);
+    };
+
+    const deleteAddressMutation = useMutation({
+        mutationFn: async ({url}) => {
+            await userService.deleteAddress(url);
+        }
+    });
+
+    const handleDeleteAddress = () => {
+        deleteAddressMutation.mutate(
+            {
+                url: currentDeleteAddressModal
+            },
+            {
+                onSuccess: () => handleReload()
+            }
+        );
+    };
+
+    const handleOpenDeleteAddressModal = (url) => {
+        setCurrentDeleteAddressModal(url);
+        // eslint-disable-next-line no-undef
+        const modal = new bootstrap.Modal(document.querySelector(".deleteAddressModal .modal"));
+        modal.show();
+    };
+
+    const handleCloseDeleteAddressModal = () => {
+        const modalElement = document.querySelector(".deleteAddressModal .modal");
+
+        if (modalElement) {
+            // eslint-disable-next-line no-undef
+            const modal = bootstrap.Modal.getInstance(modalElement);
+            if (modal) {
+                modal.hide();
+            }
+        }
     };
 
     if (userIsError) {
@@ -286,11 +293,11 @@ function MyProfile() {
                             <div className="card-body">
                                 <h3 className="card-title">{t("myprofile.profile")}</h3>
                                 <label htmlFor="exampleFormControlInput1"
-                                    className="form-label">{t("myprofile.name_label")}</label>
+                                    className="form-label mt-2">{t("myprofile.name_label")}</label>
                                 <input type="email" className="form-control" id="exampleFormControlInput1" disabled
                                     value={user?.name}/>
                                 <label htmlFor="exampleFormControlInput1"
-                                    className="form-label">{t("myprofile.email_label")}</label>
+                                    className="form-label mt-2">{t("myprofile.email_label")}</label>
                                 <input type="email" className="form-control" id="exampleFormControlInput1"
                                     value={user?.email} disabled/>
                                 <hr/>
@@ -449,93 +456,50 @@ function MyProfile() {
                 </div>
             </div>
 
-            <div className="registerAddressModal">
-                <div className="modal" tabIndex="-1">
-                    <div className="modal-dialog">
-                        <div className="modal-content">
-                            <div className="modal-header"><h1 className="modal-title fs-5">
-                                {t("myprofile.add_address")}
-                            </h1>
-                            </div>
-                            <div className="modal-body">
-                                <Formik
-                                    initialValues={{
-                                        name: "",
-                                        address: ""
-                                    }}
-                                    validationSchema={RegisterAddressSchema}
-                                    onSubmit={handleRegisterAddress}
-                                >
-                                    {({isSubmitting}) => (
-                                        <Form>
-                                            <div className="mb-3">
-                                                <label htmlFor="name"
-                                                    className="form-label">{t("myprofile.name_label")}</label>
-                                                <Field type="text" className="form-control" name="name"
-                                                    autoComplete="name" id="name"/>
-                                                <ErrorMessage name="name" className="form-error" component="div"/>
-                                            </div>
-                                            <div className="mb-3">
-                                                <label htmlFor="address"
-                                                    className="form-label">{t("myprofile.address_label")}</label>
-                                                <Field type="text" className="form-control" name="address"
-                                                    autoComplete="address" id="address"/>
-                                                <ErrorMessage name="address" className="form-error" component="div"/>
-                                            </div>
-                                            <button className="btn btn-primary" type="submit"
-                                                disabled={isSubmitting}>{t("myprofile.add_address")}</button>
-                                        </Form>
-                                    )}
-                                </Formik>
-                            </div>
-                            <div className="modal-footer">
-                            </div>
+            <div className="modal" id="editAddressModal" tabIndex="-1">
+                <div className="modal-dialog">
+                    <div className="modal-content">
+                        <div className="modal-header"><h1 className="modal-title fs-5">
+                            {t("myprofile.add_address")}
+                        </h1>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <div className="updateAddressModal">
-                <div className="modal" id="updateModal" tabIndex="-1">
-                    <div className="modal-dialog">
-                        <div className="modal-content">
-                            <div className="modal-header"><h1 className="modal-title fs-5">
-                                {t("myprofile.add_address")}
-                            </h1>
-                            </div>
-                            <div className="modal-body">
-                                <Formik
-                                    initialValues={{
-                                        name: currentNameAddress,
-                                        address: currentAddressAddress
-                                    }}
-                                    enableReinitialize={true}
-                                    onSubmit={handleUpdateAddress}
-                                >
-                                    {({isSubmitting}) => (
-                                        <Form>
-                                            <div className="mb-3">
-                                                <label htmlFor="name"
-                                                    className="form-label">{t("myprofile.name_label")}</label>
-                                                <Field type="text" className="form-control" name="name"
-                                                    autoComplete="name" id="name"/>
-                                                <ErrorMessage name="name" className="form-error" component="div"/>
-                                            </div>
-                                            <div className="mb-3">
-                                                <label htmlFor="address"
-                                                    className="form-label">{t("myprofile.address_label")}</label>
-                                                <Field type="text" className="form-control" name="address"
-                                                    autoComplete="address" id="address"/>
-                                                <ErrorMessage name="address" className="form-error" component="div"/>
-                                            </div>
-                                            <button className="btn btn-primary" type="submit"
-                                                disabled={isSubmitting}>{t("myprofile.add_address")}</button>
-                                        </Form>
-                                    )}
-                                </Formik>
-                            </div>
-                            <div className="modal-footer">
-                            </div>
+                        <div className="modal-body">
+                            <Formik
+                                initialValues={{
+                                    name: currentNameAddress,
+                                    address: currentAddressAddress
+                                }}
+                                enableReinitialize
+                                validationSchema={RegisterAddressSchema}
+                                onSubmit={editOperation ? handleUpdateAddress : handleRegisterAddress}
+                            >
+                                {({isSubmitting}) => (
+                                    <Form>
+                                        <div className="mb-3">
+                                            <label htmlFor="name"
+                                                className="form-label">{t("myprofile.name_label")}</label>
+                                            <Field type="text" className="form-control" name="name"
+                                                autoComplete="name" id="name" value={currentNameAddress}
+                                                onChange={e => setCurrentNameAddress(e.target.value)}/>
+                                            <ErrorMessage name="name" className="form-error" component="div"/>
+                                        </div>
+                                        <div className="mb-3">
+                                            <label htmlFor="address"
+                                                className="form-label">{t("myprofile.address_label")}</label>
+                                            <Field type="text" className="form-control" name="address"
+                                                autoComplete="address" id="address" value={currentAddressAddress}
+                                                onChange={e => setCurrentAddressAddress(e.target.value)}/>
+                                            {addressRepeated && <div
+                                                className="form-error">{t("validation.my_profile.address_exits")}</div>}
+                                            <ErrorMessage name="address" className="form-error" component="div"/>
+                                        </div>
+                                        <button className="btn btn-primary" type="submit"
+                                            disabled={isSubmitting}>{t("myprofile.add_address")}</button>
+                                    </Form>
+                                )}
+                            </Formik>
+                        </div>
+                        <div className="modal-footer">
                         </div>
                     </div>
                 </div>
