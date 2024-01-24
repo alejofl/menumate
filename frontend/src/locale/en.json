@@ -405,6 +405,13 @@
         "confirmed": "Confirmed",
         "ready": "Ready",
         "delivered": "Delivered",
-        "cancelled": "Cancelled"
+        "cancelled": "Cancelled",
+        "table": {
+            "order_id": "Order ID",
+            "order_type": "Order Type",
+            "table_number": "Table Number",
+            "address": "Address",
+            "order_date": "Order Date"
+        }
     }
 }

@@ -15,3 +15,12 @@
     --bs-nav-link-hover-color: var(--secondary-dark);
     --bs-nav-pills-link-active-bg: var(--secondary);
 }
+
+.restaurant-orders-table tr {
+    height: 50px;
+    vertical-align: middle;
+}
+
+.restaurant-orders-table tbody tr {
+    cursor: pointer;
+}
