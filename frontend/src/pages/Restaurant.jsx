@@ -316,7 +316,7 @@ function Restaurant() {
                                 }
                             </ul>
                             <div className="card-body d-flex">
-                                <button className="btn btn-primary flex-grow-1" id="place-order-button" type="button" disabled={cart.length === 0} onClick={() => setShowPlaceOrderModal(true)}>
+                                <button className={`btn btn-primary flex-grow-1 ${!restaurant.active ? "disabled" : ""}`} id="place-order-button" type="button" disabled={cart.length === 0 || !restaurant.active} onClick={() => setShowPlaceOrderModal(true)}>
                                     {t("restaurant.place_order")}
                                 </button>
                             </div>
@@ -334,7 +334,7 @@ function Restaurant() {
                     onClose={() => setShowReviewModal(false)}
                 />
             }
-            {showPlaceOrderModal &&
+            {restaurant.active && showPlaceOrderModal &&
                 <PlaceOrderModal
                     restaurantId={restaurantId}
                     maxTables={restaurant.maxTables}
