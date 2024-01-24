@@ -92,7 +92,7 @@ public class OrderServiceImpl implements OrderService {
         } else if (orderType == OrderType.DELIVERY) {
             order = createDelivery(restaurantId, name, email, address, items);
         } else {
-            throw new InvalidOrderTypeException("Order type not supported");
+            throw new InvalidOrderTypeException();
         }
         return order;
     }
