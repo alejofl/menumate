@@ -168,6 +168,12 @@ function Restaurant() {
                 </Page>
             </>
         );
+    } else if (restaurant.deleted) {
+        return (
+            <>
+                <Error errorNumber="410"/>
+            </>
+        );
     }
     return (
         <>
@@ -182,7 +188,7 @@ function Restaurant() {
                             {
                                 !restaurant.active &&
                                 <div className="alert alert-warning" role="alert">
-                                    {t("restaurant.disabled")}
+                                    <b>{t("restaurant.disabled")}</b> {userRole.isOrderHandler ? t("restaurant.disabled_employee") : t("restaurant.disabled_user")}
                                 </div>
                             }
                             <h1>{restaurant.name}</h1>

@@ -55,6 +55,10 @@
             "title": "¡Ups! ¡Página no encontrada!",
             "description": "Parece que la página que estás buscando no existe o no está disponible."
         },
+        "410": {
+            "title": "¡Ups! ¡No disponible!",
+            "description": "Parece que la página que estás buscando ya no está disponible."
+        },
         "500": {
             "title": "¡Ups! ¡Algo salió mal!",
             "description": "Lamentamos los inconvenientes ocasionados. Hubo un error inesperado. Por favor, intente nuevamente más tarde."
@@ -329,7 +333,9 @@
             "success_button": "Volver a la página del restaurante",
             "error": "Ocurrió un error al enviar tu reporte. Por favor, intente de nuevo más tarde."
         },
-        "disabled": "Este restaurante fue deshabilitado debido a reportes recibidos. Arregla los problemas y responde el correo electrónico que te enviamos para habilitarlo nuevamente."
+        "disabled": "Este restaurante fue deshabilitado debido a reportes recibidos.",
+        "disabled_user": "No podrás crear un pedido hasta que sea habilitado nuevamente.",
+        "disabled_employee": "Arregla los problemas y responde el correo electrónico que te enviamos para habilitarlo nuevamente."
     },
     "order_placed": {
         "title": "¡Tu pedido fue recibido!",

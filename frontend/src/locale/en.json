@@ -55,6 +55,10 @@
             "title": "Oops! Page not found!",
             "description": "It looks like the page you're looking for doesn't exist or it is not available."
         },
+        "410": {
+            "title": "Oops! Gone!",
+            "description": "It looks like the page you're looking for isn't available anymore."
+        },
         "500": {
             "title": "Oops! Something went wrong!",
             "description": "We are sorry for the inconvenience. There was an unexpected error. Please try again later."
@@ -330,7 +334,9 @@
             "success_button": "Go back to the restaurant page",
             "error": "There was an error while sending your report. Please try again later."
         },
-        "disabled": "This restaurant was disabled due to received reports. Fix the problems and reply to the email we sent you to enable it again."
+        "disabled": "This restaurant was disabled due to received reports.",
+        "disabled_user": "You can't place an order until the restaurant is re-enabled.",
+        "disabled_employee": "Fix the problems and reply to the email we sent you to enable it again."
     },
     "order_placed": {
         "title": "Your order was received!",
