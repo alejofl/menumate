@@ -41,10 +41,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Optional<Product> getById(long productId) {
-        Optional<Product> product = productDao.getById(productId);
-        if (product.isPresent() && product.get().getDeleted())
-            throw new ProductDeletedException();
-        return product;
+        return productDao.getById(productId);
     }
 
     @Override

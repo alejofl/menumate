@@ -280,4 +280,25 @@ public class ProductJpaDaoTest {
         Optional<Promotion> promotion = productDao.getPromotionById(ProductConstants.NO_PROMOTION_ID);
         assertFalse(promotion.isPresent());
     }
+
+    @Test
+    @Rollback
+    public void testGetDeletedProduct() {
+        final Product product = em.find(Product.class, ProductConstants.PRODUCT_FROM_CATEGORY_RESTAURANT_0[0]);
+        product.setDeleted(true);
+        em.flush();
+        Optional<Product> maybeProduct = productDao.getById(product.getProductId());
+        assertTrue(maybeProduct.isPresent());
+        assertEquals(product.getProductId(), maybeProduct.get().getProductId());
+        assertTrue(maybeProduct.get().getDeleted());
+    }
+
+    @Test
+    @Rollback
+    public void testGetProduct() {
+        Optional<Product> maybeProduct = productDao.getById(ProductConstants.PRODUCT_FROM_CATEGORY_RESTAURANT_0[0]);
+        assertTrue(maybeProduct.isPresent());
+        assertEquals(ProductConstants.PRODUCT_FROM_CATEGORY_RESTAURANT_0[0], maybeProduct.get().getProductId().longValue());
+        assertFalse(maybeProduct.get().getDeleted());
+    }
 }
