@@ -1,19 +1,9 @@
 package ar.edu.itba.paw.exception;
 
-public class InvalidUserArgumentException extends ResourceNotFoundException {
-    public InvalidUserArgumentException() {
-        super();
-    }
+import ar.edu.itba.paw.exception.base.BadRequestException;
 
-    public InvalidUserArgumentException(String message) {
-        super(message);
-    }
-
-    public InvalidUserArgumentException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public InvalidUserArgumentException(Throwable cause) {
-        super(cause);
+public class InvalidUserArgumentException extends BadRequestException {
+    public InvalidUserArgumentException(String exceptionMessage) {
+        super(exceptionMessage);
     }
 }

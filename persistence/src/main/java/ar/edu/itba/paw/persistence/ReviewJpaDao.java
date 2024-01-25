@@ -93,7 +93,7 @@ public class ReviewJpaDao implements ReviewDao {
             return review;
         } catch (PersistenceException e) {
             if (e.getCause() instanceof ConstraintViolationException) {
-                throw new InvalidUserArgumentException("A review for this order already exists");
+                throw new InvalidUserArgumentException("exception.InvalidUserArgumentException.createReview");
             }
             LOGGER.warn("Failed to create review for orderId {} due to constraint violation", orderId, e);
             throw e;
@@ -108,7 +108,7 @@ public class ReviewJpaDao implements ReviewDao {
             em.remove(review);
         } catch (EntityNotFoundException e) {
             LOGGER.warn("Attempted to delete non-existing review id {}", orderId, e);
-            throw new ReviewNotFoundException(e);
+            throw new ReviewNotFoundException();
         }
     }
 

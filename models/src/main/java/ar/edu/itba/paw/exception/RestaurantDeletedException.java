@@ -1,19 +1,9 @@
 package ar.edu.itba.paw.exception;
 
+import ar.edu.itba.paw.exception.base.ResourceDeletedException;
+
 public class RestaurantDeletedException extends ResourceDeletedException {
     public RestaurantDeletedException() {
-        super();
-    }
-
-    public RestaurantDeletedException(String message) {
-        super(message);
-    }
-
-    public RestaurantDeletedException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public RestaurantDeletedException(Throwable cause) {
-        super(cause);
+        super("exception.RestaurantDeletedException");
     }
 }

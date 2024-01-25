@@ -173,7 +173,6 @@ CREATE VIEW restaurant_details AS
     ) AS average_price
     FROM restaurants LEFT OUTER JOIN (orders JOIN order_reviews ON orders.order_id = order_reviews.order_id)
         ON restaurants.restaurant_id = orders.restaurant_id
-    WHERE restaurants.deleted = false
     GROUP BY restaurants.restaurant_id
 );
 

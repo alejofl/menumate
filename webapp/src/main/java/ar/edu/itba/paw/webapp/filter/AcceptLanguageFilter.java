@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.webapp.mapper;
+package ar.edu.itba.paw.webapp.filter;
 
 import org.springframework.context.i18n.LocaleContextHolder;
 
