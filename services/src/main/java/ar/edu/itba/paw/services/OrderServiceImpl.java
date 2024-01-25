@@ -256,6 +256,11 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     @Override
     public void cancelNonDeliveredOrders(long restaurantId) {
-        orderDao.cancelNonDeliveredOrders(restaurantId);
+        List<Long> orderIds = orderDao.cancelNonDeliveredOrders(restaurantId);
+        orderIds.stream()
+                .map(orderDao::getById)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .forEach(order -> emailService.sendOrderCancelled(order));
     }
 }

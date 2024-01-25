@@ -175,10 +175,19 @@ public class OrderJpaDao implements OrderDao {
     }
 
     @Override
-    public void cancelNonDeliveredOrders(long restaurantId) {
-        final Query query = em.createQuery("UPDATE Order SET dateCancelled = CURRENT_TIMESTAMP WHERE restaurantId=:restaurantId AND dateDelivered = NULL AND dateCancelled = NULL");
-        query.setParameter("restaurantId", restaurantId);
-        int count = query.executeUpdate();
-        LOGGER.info("Cancelled {} pending orders of restaurant {}", count, restaurantId);
+    public List<Long> cancelNonDeliveredOrders(long restaurantId) {
+        final Query nativeQuery = em.createQuery("SELECT orderId FROM Order WHERE restaurantId = :restaurantId AND dateDelivered IS NULL AND dateCancelled IS NULL");
+        nativeQuery.setParameter("restaurantId", restaurantId);
+        final List<Long> idList = nativeQuery.getResultList().stream().mapToLong(n -> ((Number) n).longValue()).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
+
+        if (!idList.isEmpty()) {
+            final Query updateQuery = em.createQuery("UPDATE Order SET dateCancelled = CURRENT_TIMESTAMP WHERE orderId IN :idList");
+            updateQuery.setParameter("idList", idList);
+            int count = updateQuery.executeUpdate();
+            LOGGER.info("Cancelled {} pending orders of restaurant {}", count, restaurantId);
+        } else {
+            LOGGER.info("No pending orders to cancel for restaurant {}", restaurantId);
+        }
+        return idList;
     }
 }
