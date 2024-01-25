@@ -158,3 +158,10 @@ export const ReviewSchema = Yup.object().shape({
         .required(i18n.t("validation.review_comment.required"))
         .max(500, ({ max }) => i18n.t("validation.review_comment.max", {max: max}))
 });
+
+export const AddCategorySchema = Yup.object().shape({
+    name: Yup.string()
+        .required(i18n.t("validation.category_name.required"))
+        .min(1, ({ min }) => i18n.t("validation.category_name.min", {min: min}))
+        .max(50, ({ max }) => i18n.t("validation.category_name.max", {max: max}))
+});

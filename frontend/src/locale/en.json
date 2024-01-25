@@ -34,7 +34,8 @@
         "create_restaurant": "Create Restaurant",
         "user_restaurants": "My Restaurants",
         "moderators_panel": "Moderators Panel",
-        "user_orders": "My Orders"
+        "user_orders": "My Orders",
+        "edit_restaurant": "Edit {{name}}"
     },
     "error": {
         "modal": {
@@ -252,6 +253,11 @@
         "review_comment": {
             "required": "You must write a comment",
             "max": "The comment must be at most {{max}} characters long"
+        },
+        "category_name": {
+            "required": "The category name is required",
+            "min": "The category name must be at least {{min}} characters long",
+            "max": "The category name must be at most {{max}} characters long"
         }
     },
     "reset_password": {
@@ -336,7 +342,16 @@
         },
         "disabled": "This restaurant was disabled due to received reports.",
         "disabled_user": "You can't place an order until the restaurant is re-enabled.",
-        "disabled_employee": "Fix the problems and reply to the email we sent you to enable it again."
+        "disabled_employee": "Fix the problems and reply to the email we sent you to enable it again.",
+        "edit": {
+            "error": "There was an error while saving the changes. Please try again later.",
+            "done": "Done",
+            "edit_information": "Edit Information",
+            "edit_employees": "Edit Employees",
+            "add_product": "Add Product",
+            "add_category": "Add Category",
+            "category_name": "Category Name"
+        }
     },
     "order_placed": {
         "title": "Your order was received!",

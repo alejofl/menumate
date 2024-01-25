@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {useParams, useSearchParams} from "react-router-dom";
+import {Link, useParams, useSearchParams} from "react-router-dom";
 import Page from "../components/Page.jsx";
 import {useQueries, useQuery} from "@tanstack/react-query";
 import {useTranslation} from "react-i18next";
@@ -21,8 +21,9 @@ import OrderPlacedAnimation from "../components/OrderPlacedAnimation.jsx";
 import RestaurantReportToast from "../components/RestaurantReportToast.jsx";
 import AuthContext from "../contexts/AuthContext.jsx";
 import {useUserService} from "../hooks/services/useUserService.js";
+import EditRestaurant from "./EditRestaurant.jsx";
 
-function Restaurant() {
+function Restaurant({edit = false}) {
     const { t } = useTranslation();
     const api = useApi();
     const apiContext = useContext(ApiContext);
@@ -31,13 +32,13 @@ function Restaurant() {
     const userService = useUserService(api);
 
     const { restaurantId } = useParams();
-    const { isError: restaurantIsError, data: restaurant, error: restaurantError } = useQuery({
+    const { isError: restaurantIsError, data: restaurant, error: restaurantError, refetch: refetchRestaurant } = useQuery({
         queryKey: ["restaurant", restaurantId],
         queryFn: async () => (
             await restaurantService.getRestaurant(apiContext.restaurantsUriTemplate.fill({restaurantId: restaurantId}), true)
         )
     });
-    const { isPending: categoriesIsPending, isError: categoriesIsError, data: categories, error: categoriesError} = useQuery({
+    const { isPending: categoriesIsPending, isError: categoriesIsError, data: categories, error: categoriesError, refetch: refetchCategories } = useQuery({
         queryKey: ["restaurant", restaurantId, "categories"],
         queryFn: async () => (
             await restaurantService.getCategories(restaurant.categoriesUrl)
@@ -58,7 +59,7 @@ function Restaurant() {
             :
             []
     });
-    const { isPending: promotionsIsPending, isError: promotionsIsError, data: promotions, error: promotionsError} = useQuery({
+    const { isPending: promotionsIsPending, isError: promotionsIsError, data: promotions, error: promotionsError, refetch: refetchPromotions } = useQuery({
         queryKey: ["restaurant", restaurantId, "promotions"],
         queryFn: async () => (
             await restaurantService.getPromotions(restaurant.promotionsUrl)
@@ -174,6 +175,22 @@ function Restaurant() {
                 <Error errorNumber="410"/>
             </>
         );
+    } else if (edit && authContext.isAuthenticated && userRole.isAdmin) {
+        return (
+            <>
+                <EditRestaurant
+                    restaurant={restaurant}
+                    refetchRestaurant={refetchRestaurant}
+                    categories={categories}
+                    refetchCategories={refetchCategories}
+                    products={products}
+                    promotions={promotions}
+                    refetchPromotions={refetchPromotions}
+                    promotionProducts={promotionProducts}
+                    userRole={userRole}
+                />
+            </>
+        );
     }
     return (
         <>
@@ -214,13 +231,10 @@ function Restaurant() {
                         </div>
                         <div className="d-flex flex-column gap-2">
                             {authContext.isAuthenticated && userRole.isAdmin &&
-                                <button className="btn btn-secondary" type="button">{t("restaurant.edit_menu")}</button>
+                                <Link to="edit" className="btn btn-secondary" type="button">{t("restaurant.edit_menu")}</Link>
                             }
                             {authContext.isAuthenticated && userRole.isOrderHandler &&
-                                <button className="btn btn-secondary" type="button">{t("restaurant.see_orders")}</button>
-                            }
-                            {authContext.isAuthenticated && (userRole.isOwner || authContext.isModerator) &&
-                                <button className="btn btn-danger" type="button">{t("restaurant.delete_restaurant")}</button>
+                                <Link to="orders" className="btn btn-secondary" type="button">{t("restaurant.see_orders")}</Link>
                             }
                         </div>
                     </div>
