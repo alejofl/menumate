@@ -6,29 +6,29 @@ import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 
 public class HomeIndexDto {
-    private URI restaurantsUrl;
+    private String restaurantsUriTemplate;
     private URI usersUrl;
     private URI ordersUrl;
-    private URI reviewsUrl;
+    private String reviewsUriTemplate;
     private URI imagesUrl;
 
     public static HomeIndexDto from(final UriInfo uriInfo) {
         final HomeIndexDto dto = new HomeIndexDto();
-        dto.restaurantsUrl = UriUtils.getRestaurantsUri(uriInfo);
+        dto.restaurantsUriTemplate = UriUtils.getRestaurantsUriTemplate(uriInfo);
         dto.usersUrl = UriUtils.getUsersUri(uriInfo);
         dto.ordersUrl = UriUtils.getOrdersUri(uriInfo);
-        dto.reviewsUrl = UriUtils.getReviewsUri(uriInfo);
+        dto.reviewsUriTemplate = UriUtils.getReviewsUriTemplate(uriInfo);
         dto.imagesUrl = UriUtils.getImagesUri(uriInfo);
 
         return dto;
     }
 
-    public URI getRestaurantsUrl() {
-        return restaurantsUrl;
+    public String getRestaurantsUriTemplate() {
+        return restaurantsUriTemplate;
     }
 
-    public void setRestaurantsUrl(URI restaurantsUrl) {
-        this.restaurantsUrl = restaurantsUrl;
+    public void setRestaurantsUriTemplate(String restaurantsUriTemplate) {
+        this.restaurantsUriTemplate = restaurantsUriTemplate;
     }
 
     public URI getUsersUrl() {
@@ -47,12 +47,12 @@ public class HomeIndexDto {
         this.ordersUrl = ordersUrl;
     }
 
-    public URI getReviewsUrl() {
-        return reviewsUrl;
+    public String getReviewsUriTemplate() {
+        return reviewsUriTemplate;
     }
 
-    public void setReviewsUrl(URI reviewsUrl) {
-        this.reviewsUrl = reviewsUrl;
+    public void setReviewsUriTemplate(String reviewsUriTemplate) {
+        this.reviewsUriTemplate = reviewsUriTemplate;
     }
 
     public URI getImagesUrl() {

@@ -25,6 +25,15 @@ public final class UriUtils {
         return uriInfo.getBaseUriBuilder().path(RESTAURANTS_URL).build();
     }
 
+    public static String getRestaurantsUriTemplate(final UriInfo uriInfo) {
+        return UriComponentsBuilder.fromUri(
+                uriInfo
+                    .getBaseUriBuilder()
+                    .path(RESTAURANTS_URL)
+                    .build()
+        ).path("{/restaurantId}").build().toUriString();
+    }
+
     public static URI getUsersUri(final UriInfo uriInfo) {
         return uriInfo.getBaseUriBuilder().path(USERS_URL).build();
     }
@@ -35,6 +44,15 @@ public final class UriUtils {
 
     public static URI getReviewsUri(final UriInfo uriInfo) {
         return uriInfo.getBaseUriBuilder().path(REVIEWS_URL).build();
+    }
+
+    public static String getReviewsUriTemplate(final UriInfo uriInfo) {
+        return UriComponentsBuilder.fromUri(
+                uriInfo
+                        .getBaseUriBuilder()
+                        .path(REVIEWS_URL)
+                        .build()
+        ).path("{/orderId}").build().toUriString();
     }
 
     public static URI getImagesUri(final UriInfo uriInfo) {
