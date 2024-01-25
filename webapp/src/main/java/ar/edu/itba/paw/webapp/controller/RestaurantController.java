@@ -446,16 +446,4 @@ public class RestaurantController {
         restaurantService.handleActivation(restaurantId, restaurantIsActiveForm.getActivate());
         return Response.noContent().build();
     }
-
-    @PATCH
-    @Path("/{restaurantId:\\d+}")
-    @Consumes(CustomMediaType.APPLICATION_RESTAURANT_DELETE)
-    @PreAuthorize("hasRole('MODERATOR')")
-    public Response updateRestaurantDeletion(
-            @PathParam("restaurantId") final long restaurantId,
-            @Valid @NotNull final UpdateRestaurantDeletionForm restaurantDeletionForm
-    ) {
-        restaurantService.handleDeletion(restaurantId, restaurantDeletionForm.getDelete());
-        return Response.noContent().build();
-    }
 }

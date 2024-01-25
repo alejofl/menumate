@@ -43,6 +43,4 @@ public interface RestaurantService {
     void delete(long restaurantId);
 
     void handleActivation(long restaurantId, boolean activate);
-
-    void handleDeletion(long restaurantId, boolean delete);
 }

@@ -156,40 +156,4 @@ public class RestaurantServiceImplTest {
 
         assertFalse(restaurant.getIsActive());
     }
-
-    @Test
-    public void testHandleDeletionFromTrueToFalse() {
-        final Restaurant restaurant = spy(Restaurant.class);
-        restaurant.setRestaurantId(DEFAULT_RESTAURANT_ID);
-        restaurant.setDeleted(true);
-
-        when(restaurantDao.getById(DEFAULT_RESTAURANT_ID)).thenReturn(Optional.of(restaurant));
-
-        restaurantService.handleDeletion(DEFAULT_RESTAURANT_ID, false);
-
-        assertFalse(restaurant.getDeleted());
-    }
-
-    @Test
-    public void testHandleDeletionFromFalseToTrue() {
-        final Restaurant restaurant = spy(Restaurant.class);
-        restaurant.setRestaurantId(DEFAULT_RESTAURANT_ID);
-        restaurant.setDeleted(false);
-
-        when(restaurantDao.getById(DEFAULT_RESTAURANT_ID)).thenReturn(Optional.of(restaurant));
-
-        restaurantService.handleDeletion(DEFAULT_RESTAURANT_ID, true);
-
-        assertTrue(restaurant.getDeleted());
-    }
-
-    @Test(expected = RestaurantNotFoundException.class)
-    public void testHandleDeletionNoRestaurant() {
-        final Restaurant restaurant = mock(Restaurant.class);
-        when(restaurantDao.getById(DEFAULT_RESTAURANT_ID)).thenReturn(Optional.empty());
-
-        restaurantService.handleDeletion(DEFAULT_RESTAURANT_ID, false);
-
-        assertFalse(restaurant.getIsActive());
-    }
 }
