@@ -50,7 +50,7 @@ export function useOrderService(api) {
         return Array.isArray(response.data) ? response.data.map(data => OrderItem.fromJSON(data)) : [];
     };
 
-    const getOrders = async (url, userId, restaurantId, status, descending, inProgress, query) => {
+    const getOrders = async (url, userId, restaurantId, status, descending, inProgress, size, pageParam) => {
         const response = await api.get(
             url,
             {
@@ -60,7 +60,8 @@ export function useOrderService(api) {
                     status: status,
                     descending: descending,
                     inProgress: inProgress,
-                    size: query
+                    size: 1,
+                    page: pageParam
                 },
                 headers: {
                     "Content-Type": ORDERS_CONTENT_TYPE

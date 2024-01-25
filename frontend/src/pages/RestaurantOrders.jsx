@@ -11,8 +11,14 @@ import {STATUS} from "../utils.js";
 import {useOrderService} from "../hooks/services/useOrderService.js";
 import AuthContext from "../contexts/AuthContext.jsx";
 import {useUserService} from "../hooks/services/useUserService.js";
+import ContentLoader from "react-content-loader";
 
 function RestaurantOrders() {
+    const SORT = {
+        DESCENDING : -1,
+        ASCENDING : 1
+    };
+    const ROWS_SKELETON = 5;
     const { t } = useTranslation();
     const apiContext = useContext(ApiContext);
     const authContext = useContext(AuthContext);
@@ -21,7 +27,7 @@ function RestaurantOrders() {
     const restaurantService = useRestaurantService(api);
     const orderService = useOrderService(api);
     const [status, setStatus] = useState(STATUS.PENDING);
-    const [ascending, setAscending] = useState(true);
+    const [sorting, setSorting] = useState(SORT.ASCENDING);
 
     const [queryParams] = useSearchParams();
     const [query] = useState({
@@ -73,7 +79,10 @@ function RestaurantOrders() {
      */
     const {
         isLoading: ordersIsLoading,
-        data: orders
+        data: orders,
+        isFetchingNextPage: ordersIsFetchingNextPage,
+        hasNextPage: ordersHasNextPage,
+        fetchNextPage
     } = useInfiniteQuery( {
         queryKey: ["orders", status, queryKey],
         queryFn: async ({ pageParam }) => (
@@ -84,10 +93,8 @@ function RestaurantOrders() {
                 status,
                 null,
                 null,
-                {
-                    ...query,
-                    page: pageParam
-                }
+                query,
+                pageParam
             )
         ),
         getNextPageParam: (lastPage) => lastPage.nextPage?.page || undefined,
@@ -96,6 +103,10 @@ function RestaurantOrders() {
     });
     console.log(orders);
     orders?.pages.flatMap(page => page.content).map(order => console.log(order.orderId));
+
+    const handleLoadMoreContent = async () => {
+        await fetchNextPage();
+    };
 
     return (
         <>
@@ -153,71 +164,127 @@ function RestaurantOrders() {
                                 <th className="text-center" scope="col">{t("restaurant_orders.table.address")}</th>
                                 <th className="text-end" scope="col">{t("restaurant_orders.table.order_date")}
                                     <a className="clickable-object px-2">
-                                        {ascending
+                                        {sorting === SORT.ASCENDING
                                             ?
-                                            <i className="bi bi-arrow-down-square-fill" onClick={() => setAscending(false)}></i>
+                                            <i className="bi bi-arrow-down-square-fill" onClick={() => setSorting(SORT.DESCENDING)}></i>
                                             :
-                                            <i className="bi bi-arrow-up-square-fill" onClick={() => setAscending(true)}></i>
+                                            <i className="bi bi-arrow-up-square-fill" onClick={() => setSorting(SORT.ASCENDING)}></i>
                                         }
                                     </a>
                                 </th>
                             </tr>
                         </thead>
-                        <tbody className="table-striped">
+                        <tbody className="table-striped justify-center">
                             {
                                 ordersIsLoading
                                     ?
-                                    <tr className="clickable-object">
-                                        <td className="text-start">NO CARGO</td>
-                                        <td className="text-center">NO CARGO</td>
-                                        <td className="text-center">NO CARGO</td>
-                                        <td className="text-center">NO CARGO</td>
-                                        <td className="text-end">NO CARGO</td>
+                                    <tr>
+                                        {
+                                            new Array(ROWS_SKELETON).fill("").map((_, i) => {
+                                                return (
+                                                    <th className="text-start" key={i}>
+                                                        <ContentLoader backgroundColor="#eaeaea"
+                                                            foregroundColor="#e0e0e0"
+                                                            width="100%" height="20">
+                                                            <rect x="0%" y="0" rx="0" ry="0" width="100%"
+                                                                height="100"/>
+                                                        </ContentLoader>
+                                                    </th>
+                                                );
+                                            })
+                                        }
                                     </tr>
                                     :
                                     orders?.pages[0]?.content.length === 0
                                         ?
-                                        <tr className="clickable-object">
-                                            <td className="text-start">CARGO PERO NO DEL TODO</td>
-                                            <td className="text-center">CARGO</td>
-                                            <td className="text-center">CARGO</td>
-                                            <td className="text-center">CARGO</td>
-                                            <td className="text-end">CARGO</td>
-                                        </tr>
+                                        <div></div>
                                         :
-                                        orders?.pages.flatMap(page => page.content).map(order => (
-                                            <tr className="clickable-object" key={order.orderId}>
-                                                <td className="text-start">{order.orderId}</td>
-                                                <td className="text-center">
-                                                    {order.orderType === "delivery"
-                                                        ?
-                                                        t("order.delivery")
-                                                        :
-                                                        order.orderType === "takeaway"
+                                        orders?.pages.flatMap(page => page.content)
+                                            .sort(() => sorting)
+                                            .map(order => (
+                                                <tr className="clickable-object" key={order.orderId}>
+                                                    <td className="text-start">{order.orderId}</td>
+                                                    <td className="text-center">
+                                                        {order.orderType === "delivery"
                                                             ?
-                                                            t("order.takeaway")
+                                                            t("order.delivery")
                                                             :
-                                                            t("order.dinein")
-                                                    }
-                                                </td>
-                                                <td className="text-center">{order.tableNumber ? order.tableNumber : "-"}</td>
-                                                <td className="text-center">{order.address ? order.address : "-"}</td>
-                                                <td className="text-end">
-                                                    {STATUS.getStatusDescription(
-                                                        status,
-                                                        order.dateOrdered,
-                                                        order.dateConfirmed,
-                                                        order.dateReady,
-                                                        order.dateDelivered,
-                                                        order.dateCancelled
-                                                    )}
-                                                </td>
-                                            </tr>
-                                        ))
-
+                                                            order.orderType === "takeaway"
+                                                                ?
+                                                                t("order.takeaway")
+                                                                :
+                                                                t("order.dinein")
+                                                        }
+                                                    </td>
+                                                    <td className="text-center">
+                                                        {order.tableNumber ? order.tableNumber : "-"}
+                                                    </td>
+                                                    <td className="text-center">
+                                                        {order.address ? order.address : "-"}
+                                                    </td>
+                                                    <td className="text-end">
+                                                        {STATUS.getStatusDescription(
+                                                            status,
+                                                            order.dateOrdered,
+                                                            order.dateConfirmed,
+                                                            order.dateReady,
+                                                            order.dateDelivered,
+                                                            order.dateCancelled
+                                                        )}
+                                                    </td>
+                                                </tr>
+                                            ))
+                            }
+                            {
+                                ordersIsFetchingNextPage &&
+                                <tr>
+                                    {
+                                        new Array(ROWS_SKELETON).fill("").map((_, i) => {
+                                            return (
+                                                <th className="text-start" key={i}>
+                                                    <ContentLoader backgroundColor="#eaeaea"
+                                                        foregroundColor="#e0e0e0"
+                                                        width="100%" height="20">
+                                                        <rect x="0%" y="0" rx="0" ry="0" width="100%"
+                                                            height="100"/>
+                                                    </ContentLoader>
+                                                </th>
+                                            );
+                                        })
+                                    }
+                                </tr>
                             }
                         </tbody>
                     </table>
+                    {
+                        orders?.pages[0]?.content.length === 0
+                            ?
+                            <div className="empty-results">
+                                <h1><i className="bi bi-slash-circle"></i></h1>
+                                <p>{t("restaurant_orders.table.empty_results")}</p>
+                            </div>
+                            :
+                            <div></div>
+                    }
+                    {
+                        ordersHasNextPage &&
+                        <div className="d-flex justify-content-center align-items-center pt-2 pb-3">
+                            <button onClick={handleLoadMoreContent} className="btn btn-primary"
+                                disabled={ordersIsFetchingNextPage}>
+                                {
+                                    ordersIsFetchingNextPage
+                                        ?
+                                        <>
+                                            <span className="spinner-border spinner-border-sm mx-4"
+                                                role="status"></span>
+                                            <span className="visually-hidden">Loading...</span>
+                                        </>
+                                        :
+                                        t("paging.load_more")
+                                }
+                            </button>
+                        </div>
+                    }
                 </div>
             </Page>
         </>

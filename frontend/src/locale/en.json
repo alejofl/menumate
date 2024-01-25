@@ -411,7 +411,8 @@
             "order_type": "Order Type",
             "table_number": "Table Number",
             "address": "Address",
-            "order_date": "Order Date"
+            "order_date": "Order Date",
+            "empty_results": "There's nothing here"
         }
     }
 }

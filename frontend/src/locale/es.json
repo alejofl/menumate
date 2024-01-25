@@ -410,7 +410,8 @@
             "order_type": "Tipo de order",
             "table_number": "Numero de mesa",
             "address": "Dirección",
-            "order_date": "Fecha"
+            "order_date": "Fecha",
+            "empty_results": "No hay nada aquí"
         }
     }
 }
