@@ -60,7 +60,7 @@ export function useOrderService(api) {
                     status: status,
                     descending: descending,
                     inProgress: inProgress,
-                    size: 1,
+                    size: size,
                     page: pageParam
                 },
                 headers: {

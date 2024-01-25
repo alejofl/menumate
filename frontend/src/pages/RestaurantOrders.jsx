@@ -46,15 +46,6 @@ function RestaurantOrders() {
         )
     });
 
-    /*
-     * const {
-     *     isPending : userIsPending,
-     *     isError : userIsError,
-     *     error : userError,
-     *     data : user,
-     *     isSuccess : userIsSuccess
-     * }
-     */
     const {
         data : user,
         isSuccess : userIsSuccess
@@ -67,16 +58,6 @@ function RestaurantOrders() {
         )
     });
 
-    /*
-     * const {
-     *     isLoading : ordersIsLoading,
-     *     isError : ordersIsError,
-     *     data: orders,
-     *     isFetchingNextPage,
-     *     hasNextPage,
-     *     fetchNextPage
-     * }
-     */
     const {
         isLoading: ordersIsLoading,
         data: orders,
@@ -101,8 +82,6 @@ function RestaurantOrders() {
         keepPreviousData: true,
         enabled: restaurantIsSuccess && userIsSuccess
     });
-    console.log(orders);
-    orders?.pages.flatMap(page => page.content).map(order => console.log(order.orderId));
 
     const handleLoadMoreContent = async () => {
         await fetchNextPage();
