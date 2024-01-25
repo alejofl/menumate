@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.webapp.auth.filters;
+package ar.edu.itba.paw.webapp.filter;
 
 import ar.edu.itba.paw.webapp.utils.ControllerUtils;
 import org.springframework.http.HttpHeaders;

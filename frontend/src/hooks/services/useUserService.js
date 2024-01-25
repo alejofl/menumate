@@ -1,16 +1,14 @@
 import {
-    REVIEW_CONTENT_TYPE,
     NOT_FOUND_STATUS_CODE,
-    RESTAURANT_EMPLOYEES_CONTENT_TYPE, ROLES,
+    RESTAURANT_EMPLOYEES_CONTENT_TYPE,
+    ROLES,
     USER_ADDRESS_CONTENT_TYPE,
     USER_CONTENT_TYPE,
-    USER_PASSWORD_CONTENT_TYPE, USER_ROLE_CONTENT_TYPE
+    USER_PASSWORD_CONTENT_TYPE,
+    USER_ROLE_CONTENT_TYPE
 } from "../../utils.js";
 import User from "../../data/model/User.js";
 import Address from "../../data/model/Address.js";
-import Review from "../../data/model/Review.js";
-import {parseLinkHeader} from "@web3-storage/parse-link-header";
-import PagedContent from "../../data/model/PagedContent.js";
 import UserRoleForRestaurant from "../../data/model/UserRoleForRestaurant.js";
 
 export function useUserService(api) {
@@ -97,29 +95,7 @@ export function useUserService(api) {
                 }
             }
         );
-        const ans = Array.isArray(response.data) ? response.data.map(data => Address.fromJSON(data)) : [];
-        return ans;
-    };
-
-    const getReviews = async (url, query) => {
-        const response = await api.get(
-            url,
-            {
-                params: query,
-                headers: {
-                    "Accept": REVIEW_CONTENT_TYPE
-                }
-            }
-        );
-        const links = parseLinkHeader(response.headers?.link, {});
-        const reviews = Array.isArray(response.data) ? response.data.map(data => Review.fromJSON(data)) : [];
-        return new PagedContent(
-            reviews,
-            links?.first,
-            links?.prev,
-            links?.next,
-            links?.last
-        );
+        return Array.isArray(response.data) ? response.data.map(data => Address.fromJSON(data)) : [];
     };
 
     const getRoleForRestaurant = async (url) => {
@@ -207,7 +183,6 @@ export function useUserService(api) {
 
     const deleteModerator = async (url) => {
         return await api.delete(url);
-
     };
 
     return {
@@ -217,7 +192,6 @@ export function useUserService(api) {
         register,
         getUser,
         getAddresses,
-        getReviews,
         getRoleForRestaurant,
         getUsers,
         addModerator,

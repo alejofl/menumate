@@ -31,7 +31,7 @@ export function useOrderService(api) {
             url,
             {
                 headers: {
-                    "Content-Type": ORDERS_CONTENT_TYPE
+                    "Accept": ORDERS_CONTENT_TYPE
                 }
             }
         );
@@ -43,28 +43,44 @@ export function useOrderService(api) {
             url,
             {
                 headers: {
-                    "Content-Type": ORDER_ITEMS_CONTENT_TYPE
+                    "Accept": ORDER_ITEMS_CONTENT_TYPE
                 }
             }
         );
         return Array.isArray(response.data) ? response.data.map(data => OrderItem.fromJSON(data)) : [];
     };
 
-    const getOrders = async (url, userId, restaurantId, status, descending, inProgress, size, pageParam) => {
+
+    /*
+     * const getOrders = async (url, userId, restaurantId, status, descending, inProgress, size, pageParam) =>
+     * {
+     *     const response = await api.get(
+     *         url,
+     *         {
+     *             params: {
+     *                 userId: userId,
+     *                 restaurantId: restaurantId,
+     *                 status: status,
+     *                 descending: descending,
+     *                 inProgress: inProgress,
+     *                 size: size,
+     *                 page: pageParam
+     *             },
+     *             headers: {
+     *                 "Content-Type": ORDERS_CONTENT_TYPE
+     *             }
+     *         }
+     *     );
+     * };
+     */
+
+    const getOrders = async (url, params) => {
         const response = await api.get(
             url,
             {
-                params: {
-                    userId: userId,
-                    restaurantId: restaurantId,
-                    status: status,
-                    descending: descending,
-                    inProgress: inProgress,
-                    size: size,
-                    page: pageParam
-                },
+                params: params,
                 headers: {
-                    "Content-Type": ORDERS_CONTENT_TYPE
+                    "Accept": ORDERS_CONTENT_TYPE
                 }
             }
         );

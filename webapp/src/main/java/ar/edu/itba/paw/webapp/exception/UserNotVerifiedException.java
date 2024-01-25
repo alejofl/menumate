@@ -5,9 +5,10 @@ import org.springframework.security.authentication.DisabledException;
 
 public class UserNotVerifiedException extends DisabledException {
     private final User user;
+    private static final String MESSAGGE = "exception.UserNotVerifiedException";
 
-    public UserNotVerifiedException(final String msg, final User user) {
-        super(msg);
+    public UserNotVerifiedException(User user) {
+        super(MESSAGGE);
         this.user = user;
     }
 

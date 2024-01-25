@@ -185,4 +185,23 @@ public class OrderJpaDaoTest {
         }
         assertEquals(0, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "orders", "restaurant_id = " + RestaurantConstants.RESTAURANT_IDS[1] + " AND date_confirmed IS NULL"));
     }
+
+    @Test
+    @Rollback
+    public void testCancelPendingOrders() {
+        final int totalOrders = OrderConstants.ORDER_IDS_RESTAURANT_1.length;
+        orderDao.cancelPendingOrders(RestaurantConstants.RESTAURANT_IDS[1]);
+        assertEquals(totalOrders, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "orders", "restaurant_id = " + RestaurantConstants.RESTAURANT_IDS[1] + "AND date_cancelled IS NOT NULL AND date_ordered IS NOT NULL AND date_confirmed IS NULL AND date_ready IS NULL AND date_delivered IS NULL"));
+    }
+
+    @Test
+    @Rollback
+    public void testCancelNoPendingOrders() {
+        for (Long ids : OrderConstants.ORDER_IDS_RESTAURANT_1) {
+            Order order = em.find(Order.class, ids);
+            order.setDateConfirmed(LocalDateTime.now());
+        }
+        orderDao.cancelPendingOrders(RestaurantConstants.RESTAURANT_IDS[1]);
+        assertEquals(0, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "orders", "restaurant_id = " + RestaurantConstants.RESTAURANT_IDS[1] + "AND date_cancelled IS NOT NULL AND date_ordered IS NOT NULL AND date_confirmed IS NULL AND date_ready IS NULL AND date_delivered IS NULL"));
+    }
 }

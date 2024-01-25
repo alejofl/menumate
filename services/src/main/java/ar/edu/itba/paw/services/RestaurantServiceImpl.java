@@ -6,6 +6,7 @@ import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.persistance.ImageDao;
 import ar.edu.itba.paw.persistance.RestaurantDao;
 import ar.edu.itba.paw.service.EmailService;
+import ar.edu.itba.paw.service.OrderService;
 import ar.edu.itba.paw.service.RestaurantService;
 import ar.edu.itba.paw.util.PaginatedResult;
 import org.slf4j.Logger;
@@ -34,6 +35,8 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Autowired
     private EmailService emailService;
+
+    private OrderService orderService;
 
     @Transactional
     @Override
@@ -147,6 +150,7 @@ public class RestaurantServiceImpl implements RestaurantService {
         restaurant.setDeleted(delete);
         LOGGER.info("Updated restaurant {} deleted field to {}", restaurantId, delete);
         if (delete) {
+            orderService.cancelPendingOrders(restaurantId);
             emailService.sendRestaurantDeletionEmail(restaurant);
         }
     }

@@ -25,7 +25,7 @@
         "home": "Inicio",
         "error": "Error {{number}}",
         "restaurants": "Restaurantes",
-        "myprofile": "Mi Perfil",
+        "user_profile": "Mi Perfil",
         "login": "Iniciar sesión",
         "reset_password": "Restablecer contraseña",
         "signup": "Regístrate",
@@ -33,7 +33,8 @@
         "order_placed": "¡Gracias por tu pedido!",
         "create_restaurant": "Crear restaurante",
         "user_restaurants": "Mis restaurantes",
-        "moderators_panel": "Panel de moderadores"
+        "moderators_panel": "Panel de moderadores",
+        "user_orders": "Mis órdenes"
     },
     "error": {
         "modal": {
@@ -142,15 +143,15 @@
             "date": "Fecha"
         }
     },
-    "myprofile": {
+    "user_profile": {
         "profile": "Mi perfil",
         "name_label": "Nombre",
-        "email_label": "Email",
+        "email_label": "Correo electrónico",
         "addresses": "Direcciones",
         "reviews": "Reseñas",
-        "addAddress": "Añadir dirección",
+        "add_address": "Añadir dirección",
         "address_label": "Dirección",
-        "delete_address_title": "¿Estás seguro que quieres remover la dirección?"
+        "delete_address_title": "¿Estás seguro que quieres eliminar la dirección?"
     },
     "login": {
         "email_address": "Correo electrónico",
@@ -242,6 +243,10 @@
         "review_reply": {
             "required": "Debes escribir una respuesta",
             "max": "La respuesta debe tener como máximo {{max}} caracteres"
+        },
+        "review_comment": {
+            "required": "Debes escribir un comentario",
+            "max": "El comentario debe tener como máximo {{max}} caracteres"
         }
     },
     "reset_password": {
@@ -331,10 +336,6 @@
         "description": "Estate atento a tu correo electrónico para más información.",
         "button": "Ver detalles del pedido"
     },
-    "general_options": {
-        "yes": "Sí",
-        "no": "No"
-    },
     "create_restaurant": {
         "title": "Crear restaurante",
         "name": "Nombre del restaurante",
@@ -367,10 +368,38 @@
         "customer": "Cliente",
         "order_type": "Tipo de orden",
         "table_number": "Número de mesa",
+        "address": "Dirección",
         "total_price": "Precio total",
         "dinein": "Comer en el restaurante",
         "delivery": "Delivery",
-        "takeaway": "Take-Away"
+        "takeaway": "Take-Away",
+        "in_progress": "En progreso",
+        "all": "Todas",
+        "product_quantity_zero": "Sin productos",
+        "product_quantity_one": "{{count}} producto",
+        "product_quantity_other": "{{count}} productos",
+        "status": {
+            "pending": "Pendiente",
+            "rejected": "Rechazada",
+            "cancelled": "Cancelada",
+            "confirmed": "Confirmada",
+            "ready": "Lista",
+            "delivered": "Entregada",
+            "order_pending": "Orden pendiente",
+            "order_rejected": "Orden rechazada",
+            "order_cancelled": "Orden cancelada",
+            "order_confirmed": "Orden confirmada",
+            "order_ready": "Orden lista",
+            "order_delivered": "Orden entregada"
+        },
+        "order_again": "Pedir de nuevo",
+        "your_review": "Tu reseña",
+        "review": "Escribir una reseña",
+        "rating": "Puntuación",
+        "experience": "Cuéntanos tu experiencia",
+        "send_review": "Enviar reseña",
+        "cancel": "Cancelar",
+        "error": "Ocurrió un error al enviar tu reseña. Por favor, intente de nuevo más tarde."
     },
     "moderators_panel": {
         "unhandled_reports_zero": "No hay reportes sin resolver",

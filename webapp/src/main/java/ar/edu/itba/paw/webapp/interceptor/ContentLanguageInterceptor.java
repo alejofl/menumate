@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.webapp.interceptors;
+package ar.edu.itba.paw.webapp.interceptor;
 
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.servlet.HandlerInterceptor;

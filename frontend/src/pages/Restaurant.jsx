@@ -34,7 +34,7 @@ function Restaurant() {
     const { isError: restaurantIsError, data: restaurant, error: restaurantError } = useQuery({
         queryKey: ["restaurant", restaurantId],
         queryFn: async () => (
-            await restaurantService.getRestaurant(`${apiContext.restaurantsUrl}/${restaurantId}`, true)
+            await restaurantService.getRestaurant(apiContext.restaurantsUriTemplate.fill({restaurantId: restaurantId}), true)
         )
     });
     const { isPending: categoriesIsPending, isError: categoriesIsError, data: categories, error: categoriesError} = useQuery({

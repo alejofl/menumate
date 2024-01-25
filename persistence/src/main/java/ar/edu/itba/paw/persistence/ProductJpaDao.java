@@ -67,7 +67,7 @@ public class ProductJpaDao implements ProductDao {
 
         if (product.getDeleted()) {
             LOGGER.error("Attempted to delete already-deleted product id {}", product.getProductId());
-            throw new ProductDeletedException("Product is already deleted");
+            throw new ProductDeletedException();
         }
 
         product.setDeleted(true);
@@ -151,7 +151,7 @@ public class ProductJpaDao implements ProductDao {
         Promotion promotion = promoQuery.getResultList().stream().findFirst().orElseThrow(PromotionNotFoundException::new);
         if (promotion.hasEnded()) {
             LOGGER.error("Attempted to stop an already-ended promotion id {}", promotion.getPromotionId());
-            throw new InvalidUserArgumentException("Cannot stop a promotion that has already ended");
+            throw new InvalidUserArgumentException("exception.InvalidUserArgumentException.stopPromotion");
         }
 
         promotion.setEndDate(LocalDateTime.now());

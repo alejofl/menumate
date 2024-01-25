@@ -1,19 +1,9 @@
 package ar.edu.itba.paw.exception;
 
+import ar.edu.itba.paw.exception.base.ResourceNotFoundException;
+
 public class UserNotFoundException extends ResourceNotFoundException {
     public UserNotFoundException() {
-        super();
-    }
-
-    public UserNotFoundException(String message) {
-        super(message);
-    }
-
-    public UserNotFoundException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public UserNotFoundException(Throwable cause) {
-        super(cause);
+        super("exception.UserNotFoundException");
     }
 }

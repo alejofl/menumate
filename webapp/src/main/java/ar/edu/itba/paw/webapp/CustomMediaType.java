@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.webapp.api;
+package ar.edu.itba.paw.webapp;
 
 public class CustomMediaType {
 

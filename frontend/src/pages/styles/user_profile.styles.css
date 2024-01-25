@@ -1,51 +1,45 @@
-main.myprofile {
+main.user_profile {
     display: block;
 }
 
-.myprofile .profile-container {
+.user_profile .profile-container {
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: flex-start;
 }
 
-.myprofile .user-info-container {
+.user_profile .user-info-container {
     display: flex;
     flex-direction: column;
     flex: 35% 0 0;
     justify-content: flex-start;
     align-content: center;
-    margin: 2% 2%;
+    margin-right: 24px;
 }
 
-.myprofile .reviews-container {
+.user_profile .reviews-container {
     display: flex;
     flex-grow: 1;
     flex-direction: column;
     justify-content: flex-start;
-    align-content: center;
+    align-items: center;
 }
 
-.myprofile .page-title {
-    text-align: center;
-    padding-top: 30px;
+.user_profile .reviews-container .card {
+    width: 100%;
 }
 
-.myprofile .my-review-card-header {
+.user_profile .my-review-card-header {
     display: flex;
     flex-direction: row;
     justify-content:space-between;
     align-content: center;
 }
 
-.myprofile .my-review-card-header-info {
-    display:flex;
-    flex-direction:column;
+.user_profile .my-review-card-header-info {
+    display: flex;
+    flex-direction: column;
     justify-content: flex-end;
     align-items: flex-start;
 }
-
-.myprofile .small-ratings i {
-    color: #cecece;
-}
-

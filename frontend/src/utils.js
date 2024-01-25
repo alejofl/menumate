@@ -3,7 +3,7 @@
 export const BAD_REQUEST_STATUS_CODE = 400;
 export const UNAUTHORIZED_STATUS_CODE = 401;
 export const NOT_FOUND_STATUS_CODE = 404;
-export const METHOD_NOT_ALLOWED = 405;
+export const METHOD_NOT_ALLOWED_STATUS_CODE = 405;
 
 export const IMAGE_CONTENT_TYPE = "application/vnd.menumate.images.v1+json";
 export const ORDERS_CONTENT_TYPE = "application/vnd.menumate.orders.v1+json";
@@ -36,6 +36,44 @@ export const ORDER_TYPE = {
     DELIVERY: "delivery",
     TAKE_AWAY: "takeaway",
     DINE_IN: "dinein"
+};
+export const ORDER_STATUS = {
+    PENDING: {
+        text: "pending",
+        bgColor: "light",
+        color: "primary",
+        progress: "5%"
+    },
+    REJECTED: {
+        text: "rejected",
+        bgColor: "danger",
+        color: "danger",
+        progress: "100%"
+    },
+    CANCELLED: {
+        text: "cancelled",
+        bgColor: "danger",
+        color: "danger",
+        progress: "100%"
+    },
+    CONFIRMED: {
+        text: "confirmed",
+        bgColor: "light",
+        color: "primary",
+        progress: "33%"
+    },
+    READY: {
+        text: "ready",
+        bgColor: "light",
+        color: "primary",
+        progress: "66%"
+    },
+    DELIVERED: {
+        text: "delivered",
+        bgColor: "light",
+        color: "primary",
+        progress: "100%"
+    }
 };
 export const ROLE_FOR_RESTAURANT = {
     OWNER: "owner",

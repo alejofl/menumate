@@ -69,13 +69,13 @@ function RestaurantOrders() {
         queryFn: async ({ pageParam }) => (
             await orderService.getOrders(
                 apiContext.ordersUrl,
-                user.userId,
-                restaurant.restaurantId,
-                status,
-                null,
-                null,
-                query,
-                pageParam
+                {
+                    userId: user.userId,
+                    restaurantId: restaurant.restaurantId,
+                    status: status,
+                    query,
+                    page : pageParam
+                }
             )
         ),
         getNextPageParam: (lastPage) => lastPage.nextPage?.page || undefined,

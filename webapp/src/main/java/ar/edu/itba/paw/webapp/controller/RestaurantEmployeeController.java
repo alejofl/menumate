@@ -5,7 +5,7 @@ import ar.edu.itba.paw.model.RestaurantRoleLevel;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.service.RestaurantRoleService;
 import ar.edu.itba.paw.util.Pair;
-import ar.edu.itba.paw.webapp.api.CustomMediaType;
+import ar.edu.itba.paw.webapp.CustomMediaType;
 import ar.edu.itba.paw.webapp.auth.AccessValidator;
 import ar.edu.itba.paw.webapp.dto.RestaurantRoleDto;
 import ar.edu.itba.paw.webapp.form.AddRestaurantEmployeeForm;

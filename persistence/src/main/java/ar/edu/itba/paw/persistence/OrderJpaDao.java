@@ -173,4 +173,12 @@ public class OrderJpaDao implements OrderDao {
 
         return new PaginatedResult<>(orders, pageNumber, pageSize, count);
     }
+
+    @Override
+    public void cancelPendingOrders(long restaurantId) {
+        final Query query = em.createQuery("UPDATE Order SET dateCancelled = CURRENT_TIMESTAMP WHERE restaurantId=:restaurantId AND dateConfirmed = NULL AND dateReady = NULL AND dateDelivered = NULL AND dateCancelled = NULL");
+        query.setParameter("restaurantId", restaurantId);
+        int count = query.executeUpdate();
+        LOGGER.info("Cancelled {} pending orders of restaurant {}", count, restaurantId);
+    }
 }

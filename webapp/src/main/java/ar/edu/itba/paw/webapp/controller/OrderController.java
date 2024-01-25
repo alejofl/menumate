@@ -5,7 +5,7 @@ import ar.edu.itba.paw.model.Order;
 import ar.edu.itba.paw.model.OrderItem;
 import ar.edu.itba.paw.service.OrderService;
 import ar.edu.itba.paw.util.PaginatedResult;
-import ar.edu.itba.paw.webapp.api.CustomMediaType;
+import ar.edu.itba.paw.webapp.CustomMediaType;
 import ar.edu.itba.paw.webapp.auth.AccessValidator;
 import ar.edu.itba.paw.webapp.dto.OrderDto;
 import ar.edu.itba.paw.webapp.dto.OrderItemDto;

@@ -30,7 +30,7 @@ public class PawUserDetailsService implements UserDetailsService {
         final User user = userService.getByEmail(email).orElseThrow(() -> new UsernameNotFoundException("No user for email " + email));
 
         if (!user.getIsActive())
-            throw new UserNotVerifiedException("User exists but is not verified", user);
+            throw new UserNotVerifiedException(user);
 
         if (user.getPassword() == null)
             throw new UsernameNotFoundException("User exists but is not consolidated");

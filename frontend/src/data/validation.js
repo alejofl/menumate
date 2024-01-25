@@ -152,3 +152,9 @@ export const AddModeratorSchema = Yup.object().shape({
         .required(i18n.t("validation.email.required"))
         .matches(/^(([^<>()[\]\\.,;:\s@"]+(.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@(([[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}])|(([a-zA-Z-0-9]+.)+[a-zA-Z]{2,}))$/, i18n.t("validation.email.invalid"))
 });
+
+export const ReviewSchema = Yup.object().shape({
+    comment: Yup.string()
+        .required(i18n.t("validation.review_comment.required"))
+        .max(500, ({ max }) => i18n.t("validation.review_comment.max", {max: max}))
+});

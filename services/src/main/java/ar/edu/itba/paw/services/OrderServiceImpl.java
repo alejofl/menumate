@@ -1,20 +1,18 @@
 package ar.edu.itba.paw.services;
 
-import ar.edu.itba.paw.exception.InvalidOrderTypeException;
-import ar.edu.itba.paw.exception.InvalidUserArgumentException;
-import ar.edu.itba.paw.exception.OrderNotFoundException;
+import ar.edu.itba.paw.exception.*;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.persistance.OrderDao;
 import ar.edu.itba.paw.persistance.UserDao;
 import ar.edu.itba.paw.service.EmailService;
 import ar.edu.itba.paw.service.OrderService;
+import ar.edu.itba.paw.service.RestaurantService;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.util.PaginatedResult;
 import ar.edu.itba.paw.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +32,9 @@ public class OrderServiceImpl implements OrderService {
     private UserService userService;
 
     @Autowired
+    private RestaurantService restaurantService;
+
+    @Autowired
     private UserDao userDao;
 
     @Autowired
@@ -44,7 +45,7 @@ public class OrderServiceImpl implements OrderService {
         emailService.sendOrderReceivalForRestaurant(order);
     }
 
-    private void assingOrderItemsToOrder(Order order, List<OrderItem> items) {
+    private void passingOrderItemsToOrder(Order order, List<OrderItem> items) {
         for (OrderItem item : items)
             item.setOrderId(order.getOrderId());
         final List<OrderItem> orderList = order.getItems();
@@ -55,7 +56,7 @@ public class OrderServiceImpl implements OrderService {
         final User user = userService.createIfNotExists(email, name);
         final Order order = orderDao.createDelivery(restaurantId, user.getUserId(), address);
         userDao.refreshAddress(user.getUserId(), address);
-        assingOrderItemsToOrder(order, items);
+        passingOrderItemsToOrder(order, items);
         sendOrderReceivedEmails(order);
         return order;
     }
@@ -63,7 +64,7 @@ public class OrderServiceImpl implements OrderService {
     private Order createDineIn(long restaurantId, String name, String email, int tableNumber, List<OrderItem> items) {
         final User user = userService.createIfNotExists(email, name);
         final Order order = orderDao.createDineIn(restaurantId, user.getUserId(), tableNumber);
-        assingOrderItemsToOrder(order, items);
+        passingOrderItemsToOrder(order, items);
         sendOrderReceivedEmails(order);
         return order;
     }
@@ -71,7 +72,7 @@ public class OrderServiceImpl implements OrderService {
     private Order createTakeAway(long restaurantId, String name, String email, List<OrderItem> items) {
         final User user = userService.createIfNotExists(email, name);
         final Order order = orderDao.createTakeaway(restaurantId, user.getUserId());
-        assingOrderItemsToOrder(order, items);
+        passingOrderItemsToOrder(order, items);
         sendOrderReceivedEmails(order);
         return order;
     }
@@ -84,6 +85,11 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     @Override
     public Order create(OrderType orderType, Long restaurantId, String name, String email, Integer tableNumber, String address, List<OrderItem> items) {
+        final Restaurant restaurant = restaurantService.getById(restaurantId).orElseThrow(RestaurantNotFoundException::new);
+        if (!restaurant.getIsActive() || restaurant.getDeleted()) {
+            throw new CannotCreateOrderException();
+        }
+
         Order order;
         if (orderType == OrderType.DINE_IN) {
             order = createDineIn(restaurantId, name, email, tableNumber, items);
@@ -92,7 +98,7 @@ public class OrderServiceImpl implements OrderService {
         } else if (orderType == OrderType.DELIVERY) {
             order = createDelivery(restaurantId, name, email, address, items);
         } else {
-            throw new InvalidOrderTypeException("Order type not supported");
+            throw new InvalidOrderTypeException();
         }
         return order;
     }
@@ -114,34 +120,34 @@ public class OrderServiceImpl implements OrderService {
         final OrderStatus status = order.getOrderStatus();
         if (!status.isInProgress()) {
             LOGGER.warn("Attempted to advance the status of order id {}, but order is {}", orderId, status.getMessageCode());
-            throw new InvalidUserArgumentException("Cannot update the status of a finished order");
+            throw new InvalidUserArgumentException("exception.InvalidUserArgumentException.advanceOrderStatus.finishedOrder");
         }
 
         switch (newStatus) {
             case CONFIRMED:
                 if (status != OrderStatus.PENDING)
-                    throw new InvalidUserArgumentException("Only orders whose status is PENDING may be marked as CONFIRMED");
+                    throw new InvalidUserArgumentException("exception.InvalidUserArgumentException.advanceOrderStatus.pending");
                 order.setDateConfirmed(LocalDateTime.now());
                 emailService.sendOrderConfirmation(order);
                 break;
 
             case READY:
                 if (status != OrderStatus.CONFIRMED)
-                    throw new InvalidUserArgumentException("Only orders whose status is CONFIRMED may be marked as READY");
+                    throw new InvalidUserArgumentException("exception.InvalidUserArgumentException.advanceOrderStatus.confirmed");
                 order.setDateReady(LocalDateTime.now());
                 emailService.sendOrderReady(order);
                 break;
 
             case DELIVERED:
                 if (status != OrderStatus.READY)
-                    throw new InvalidUserArgumentException("Only orders whose status is READY may be marked as DELIVERED");
+                    throw new InvalidUserArgumentException("exception.InvalidUserArgumentException.advanceOrderStatus.ready");
                 order.setDateDelivered(LocalDateTime.now());
                 emailService.sendOrderDelivered(order);
                 break;
 
             case REJECTED:
                 if (order.getDateConfirmed() != null)
-                    throw new InvalidUserArgumentException("Cannot reject an order that has been confirmed");
+                    throw new InvalidUserArgumentException("exception.InvalidUserArgumentException.advanceOrderStatus.reject");
             case CANCELLED:
                 order.setDateCancelled(LocalDateTime.now());
                 emailService.sendOrderCancelled(order);
@@ -149,7 +155,7 @@ public class OrderServiceImpl implements OrderService {
 
             default:
                 LOGGER.warn("Attempted to advance order id {} status from {} to {}", orderId, status.getMessageCode(), newStatus.getMessageCode());
-                throw new InvalidUserArgumentException(String.format("Cannot set the status of an order from %s to %s", status.getMessageCode(), newStatus.getMessageCode()));
+                throw new InvalidUserArgumentException("exception.InvalidUserArgumentException.advanceOrderStatus.default");
         }
 
         LOGGER.info("Updated status of order id {} to {}", order.getOrderId(), order.getOrderStatus());
@@ -245,5 +251,11 @@ public class OrderServiceImpl implements OrderService {
 
         order.setTableNumber(tableNumber);
         LOGGER.info("Order {} table number updated to {}", orderId, tableNumber);
+    }
+
+    @Transactional
+    @Override
+    public void cancelPendingOrders(long restaurantId) {
+        orderDao.cancelPendingOrders(restaurantId);
     }
 }
