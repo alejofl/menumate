@@ -243,6 +243,10 @@
         "review_reply": {
             "required": "Debes escribir una respuesta",
             "max": "La respuesta debe tener como máximo {{max}} caracteres"
+        },
+        "review_comment": {
+            "required": "Debes escribir un comentario",
+            "max": "El comentario debe tener como máximo {{max}} caracteres"
         }
     },
     "reset_password": {
@@ -388,7 +392,14 @@
             "order_ready": "Orden lista",
             "order_delivered": "Orden entregada"
         },
-        "order_again": "Pedir de nuevo"
+        "order_again": "Pedir de nuevo",
+        "your_review": "Tu reseña",
+        "review": "Escribir una reseña",
+        "rating": "Puntuación",
+        "experience": "Cuéntanos tu experiencia",
+        "send_review": "Enviar reseña",
+        "cancel": "Cancelar",
+        "error": "Ocurrió un error al enviar tu reseña. Por favor, intente de nuevo más tarde."
     },
     "moderators_panel": {
         "unhandled_reports_zero": "No hay reportes sin resolver",

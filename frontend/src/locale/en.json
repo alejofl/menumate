@@ -244,6 +244,10 @@
         "review_reply": {
             "required": "You must write a reply",
             "max": "The reply must be at most {{max}} characters long"
+        },
+        "review_comment": {
+            "required": "You must write a comment",
+            "max": "The comment must be at most {{max}} characters long"
         }
     },
     "reset_password": {
@@ -389,7 +393,14 @@
             "order_ready": "Order Ready",
             "order_delivered": "Order Delivered"
         },
-        "order_again": "Order Again"
+        "order_again": "Order Again",
+        "your_review": "Your Review",
+        "review": "Leave a Review",
+        "rating": "Rating",
+        "experience": "Tell us about your experience",
+        "send_review": "Send Review",
+        "cancel": "Cancel",
+        "error": "There was an error while sending your review. Please try again later."
     },
     "moderators_panel": {
         "unhandled_reports_zero": "No unhandled reports",

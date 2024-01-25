@@ -25,7 +25,6 @@ export function ApiContextProvider({children}) {
     useEffect(() => {
         Api.get("/")
             .then(results => {
-                console.log(results);
                 setOrdersUrl(results.data.ordersUrl);
                 setRestaurantsUriTemplateString(results.data.restaurantsUriTemplate);
                 setReviewsUriTemplateString(results.data.reviewsUriTemplate);

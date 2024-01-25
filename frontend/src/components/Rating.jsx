@@ -9,8 +9,8 @@ function Rating({ rating, count, showText = true }) {
     return (
         <div className="rating">
             <div className="small-ratings">
-                {[...Array(ratingNumber)].map((_, index) => <i className="bi bi-star-fill rating-color" key={index}></i>)}
-                {[...Array(STAR_COUNT - ratingNumber)].map((_, index) => <i className="bi bi-star-fill" key={index}></i>)}
+                {[...Array(ratingNumber)].map((_, index) => <i className="bi bi-star-fill default rating-color" key={index}></i>)}
+                {[...Array(STAR_COUNT - ratingNumber)].map((_, index) => <i className="bi bi-star-fill default" key={index}></i>)}
                 {
                     showText &&
                     <small className="text-muted ps-1">

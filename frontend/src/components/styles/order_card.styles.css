@@ -71,3 +71,9 @@
 .order_details_modal table tfoot th {
     border: 0;
 }
+
+.order_review_modal .small-ratings i {
+    margin-right: 4px;
+    font-size: 1.5rem;
+    cursor: pointer;
+}

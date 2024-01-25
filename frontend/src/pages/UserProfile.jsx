@@ -16,6 +16,7 @@ import {ErrorMessage, Field, Form, Formik} from "formik";
 import {RegisterAddressSchema} from "../data/validation.js";
 import {BAD_REQUEST_STATUS_CODE, METHOD_NOT_ALLOWED_STATUS_CODE} from "../utils.js";
 import Rating from "../components/Rating.jsx";
+import {useReviewService} from "../hooks/services/useReviewService.js";
 
 function UserProfile() {
     const DEFAULT_ORDER_COUNT = 20;
@@ -23,6 +24,7 @@ function UserProfile() {
     const api = useApi();
     const authContext = useContext(AuthContext);
     const userService = useUserService(api);
+    const reviewService = useReviewService(api);
     const orderService = useOrderService(api);
     const restaurantService = useRestaurantService(api);
 
@@ -79,7 +81,7 @@ function UserProfile() {
     } = useInfiniteQuery( {
         queryKey: ["user", authContext.selfUrl, "reviews"],
         queryFn: async ({ pageParam }) => (
-            await userService.getReviews(
+            await reviewService.getReviews(
                 user.reviewsUrl,
                 {
                     ...query,
