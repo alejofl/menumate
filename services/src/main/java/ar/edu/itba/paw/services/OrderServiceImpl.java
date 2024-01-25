@@ -13,7 +13,6 @@ import ar.edu.itba.paw.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,7 +45,7 @@ public class OrderServiceImpl implements OrderService {
         emailService.sendOrderReceivalForRestaurant(order);
     }
 
-    private void assingOrderItemsToOrder(Order order, List<OrderItem> items) {
+    private void passingOrderItemsToOrder(Order order, List<OrderItem> items) {
         for (OrderItem item : items)
             item.setOrderId(order.getOrderId());
         final List<OrderItem> orderList = order.getItems();
@@ -57,7 +56,7 @@ public class OrderServiceImpl implements OrderService {
         final User user = userService.createIfNotExists(email, name);
         final Order order = orderDao.createDelivery(restaurantId, user.getUserId(), address);
         userDao.refreshAddress(user.getUserId(), address);
-        assingOrderItemsToOrder(order, items);
+        passingOrderItemsToOrder(order, items);
         sendOrderReceivedEmails(order);
         return order;
     }
@@ -65,7 +64,7 @@ public class OrderServiceImpl implements OrderService {
     private Order createDineIn(long restaurantId, String name, String email, int tableNumber, List<OrderItem> items) {
         final User user = userService.createIfNotExists(email, name);
         final Order order = orderDao.createDineIn(restaurantId, user.getUserId(), tableNumber);
-        assingOrderItemsToOrder(order, items);
+        passingOrderItemsToOrder(order, items);
         sendOrderReceivedEmails(order);
         return order;
     }
@@ -73,7 +72,7 @@ public class OrderServiceImpl implements OrderService {
     private Order createTakeAway(long restaurantId, String name, String email, List<OrderItem> items) {
         final User user = userService.createIfNotExists(email, name);
         final Order order = orderDao.createTakeaway(restaurantId, user.getUserId());
-        assingOrderItemsToOrder(order, items);
+        passingOrderItemsToOrder(order, items);
         sendOrderReceivedEmails(order);
         return order;
     }
