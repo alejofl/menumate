@@ -36,12 +36,13 @@ public class RestaurantController {
     private final UserService userService;
     private final ReportService reportService;
     private final AccessValidator accessValidator;
+    private final OrderService orderService;
 
     @Context
     private UriInfo uriInfo;
 
     @Autowired
-    public RestaurantController(final RestaurantService restaurantService, final CategoryService categoryService, final ProductService productService, final RestaurantRoleService restaurantRoleService, final AccessValidator accessValidator, final UserService userService, final ReportService reportService) {
+    public RestaurantController(final RestaurantService restaurantService, final CategoryService categoryService, final ProductService productService, final RestaurantRoleService restaurantRoleService, final AccessValidator accessValidator, final UserService userService, final ReportService reportService, final OrderService orderService) {
         this.restaurantService = restaurantService;
         this.categoryService = categoryService;
         this.productService = productService;
@@ -49,6 +50,7 @@ public class RestaurantController {
         this.accessValidator = accessValidator;
         this.userService = userService;
         this.reportService =  reportService;
+        this.orderService = orderService;
     }
 
     @GET
@@ -157,6 +159,7 @@ public class RestaurantController {
     @Path("/{restaurantId:\\d+}")
     public Response deleteRestaurantById(@PathParam("restaurantId") final long restaurantId) {
         restaurantService.delete(restaurantId);
+        orderService.cancelNonDeliveredOrders(restaurantId);
         return Response.noContent().build();
     }
 

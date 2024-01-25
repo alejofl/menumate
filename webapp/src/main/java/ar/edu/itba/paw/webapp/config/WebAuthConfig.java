@@ -73,7 +73,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, UriUtils.RESTAURANTS_URL).authenticated()
                 .antMatchers(HttpMethod.GET, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}").permitAll()
                 .antMatchers(HttpMethod.PATCH, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}").permitAll() // Checked with @PreAuthorize
-                .antMatchers(HttpMethod.DELETE, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}").access("hasRole('MODERATOR') or @accessValidator.checkRestaurantOwner(#restaurantId)")
+                .antMatchers(HttpMethod.DELETE, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}").access("@accessValidator.checkRestaurantOwner(#restaurantId)")
 
                 .antMatchers(HttpMethod.GET, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/categories").permitAll()
                 .antMatchers(HttpMethod.POST, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/categories").access("@accessValidator.checkRestaurantAdmin(#restaurantId)")
