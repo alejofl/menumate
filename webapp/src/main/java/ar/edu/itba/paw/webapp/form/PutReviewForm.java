@@ -8,17 +8,18 @@ import javax.validation.constraints.Size;
 public class PutReviewForm {
 
     @NotNull(message = "{NotNull.PutReviewForm.rating}")
-    @Size(min = 0, max = 5, message = "{Size.PutReviewForm.rating}")
-    private Integer rating;
+    @Min(value = 0, message = "{Min.PutReviewForm.rating}")
+    @Max(value = 5, message = "{Max.PutReviewForm.rating}")
+    private int rating;
 
     @Size(max = 500, message = "{Size.PutReviewForm.comment}")
     private String comment;
 
-    public Integer getRating() {
+    public int getRating() {
         return rating;
     }
 
-    public void setRating(Integer rating) {
+    public void setRating(int rating) {
         this.rating = rating;
     }
 
