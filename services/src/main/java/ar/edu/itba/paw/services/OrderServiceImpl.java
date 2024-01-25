@@ -1,13 +1,12 @@
 package ar.edu.itba.paw.services;
 
-import ar.edu.itba.paw.exception.InvalidOrderTypeException;
-import ar.edu.itba.paw.exception.InvalidUserArgumentException;
-import ar.edu.itba.paw.exception.OrderNotFoundException;
+import ar.edu.itba.paw.exception.*;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.persistance.OrderDao;
 import ar.edu.itba.paw.persistance.UserDao;
 import ar.edu.itba.paw.service.EmailService;
 import ar.edu.itba.paw.service.OrderService;
+import ar.edu.itba.paw.service.RestaurantService;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.util.PaginatedResult;
 import ar.edu.itba.paw.util.Utils;
@@ -32,6 +31,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private RestaurantService restaurantService;
 
     @Autowired
     private UserDao userDao;
@@ -84,6 +86,11 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     @Override
     public Order create(OrderType orderType, Long restaurantId, String name, String email, Integer tableNumber, String address, List<OrderItem> items) {
+        final Restaurant restaurant = restaurantService.getById(restaurantId).orElseThrow(RestaurantNotFoundException::new);
+        if (!restaurant.getIsActive() || restaurant.getDeleted()) {
+            throw new CannotCreateOrderException();
+        }
+
         Order order;
         if (orderType == OrderType.DINE_IN) {
             order = createDineIn(restaurantId, name, email, tableNumber, items);
