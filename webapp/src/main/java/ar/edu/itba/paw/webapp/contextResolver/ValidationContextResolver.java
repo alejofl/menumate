@@ -10,7 +10,7 @@ import javax.ws.rs.ext.Provider;
 import java.util.Locale;
 
 /***
- * https://download.oracle.com/otn-pub/jcp/bean_validation-1.0-fr-oth-JSpec/bean_validation-1_0-final-spec.pdf?AuthParam=1705788017_fc7d0b2abadbea3d1c028972942036d3
+ * https://download.oracle.com/otn-pub/jcp/bean_validation-1.0-fr-oth-JSpec/bean_validation-1_0-final-spec.pdf
  * https://www.baeldung.com/spring-validation-message-interpolation
  * https://www.cwiki.us/display/JERSEYEN/Configuring+Bean+Validation+Support
  */
