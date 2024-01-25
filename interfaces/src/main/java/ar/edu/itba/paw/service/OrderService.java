@@ -33,5 +33,5 @@ public interface OrderService {
 
     void updateTableNumber(long orderId, int tableNumber);
 
-    void cancelPendingOrders(long restaurantId);
+    void cancelNonDeliveredOrders(long restaurantId);
 }

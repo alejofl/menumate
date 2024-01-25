@@ -255,7 +255,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional
     @Override
-    public void cancelPendingOrders(long restaurantId) {
-        orderDao.cancelPendingOrders(restaurantId);
+    public void cancelNonDeliveredOrders(long restaurantId) {
+        orderDao.cancelNonDeliveredOrders(restaurantId);
     }
 }

@@ -150,7 +150,7 @@ public class RestaurantServiceImpl implements RestaurantService {
         restaurant.setDeleted(delete);
         LOGGER.info("Updated restaurant {} deleted field to {}", restaurantId, delete);
         if (delete) {
-            orderService.cancelPendingOrders(restaurantId);
+            orderService.cancelNonDeliveredOrders(restaurantId);
             emailService.sendRestaurantDeletionEmail(restaurant);
         }
     }
