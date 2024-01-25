@@ -71,6 +71,51 @@ public class RestaurantJpaDaoTest {
     }
 
     @Test
+    @Rollback
+    public void testGetByIdInactiveRestaurant() {
+        final Restaurant restaurant = em.find(Restaurant.class, RestaurantConstants.RESTAURANT_IDS[0]);
+        restaurant.setIsActive(false);
+        em.flush();
+
+        Optional<Restaurant> maybeRestaurant = restaurantDao.getById(RestaurantConstants.RESTAURANT_IDS[0]);
+        assertTrue(maybeRestaurant.isPresent());
+        assertEquals(RestaurantConstants.RESTAURANT_IDS[0], maybeRestaurant.get().getRestaurantId().longValue());
+        assertEquals(UserConstants.RESTAURANT_OWNER_ID, maybeRestaurant.get().getOwnerUserId());
+        assertEquals(RestaurantConstants.RESTAURANT_NAMES[0], maybeRestaurant.get().getName());
+        assertEquals(RestaurantConstants.RESTAURANT_EMAIL, maybeRestaurant.get().getEmail());
+        assertEquals(RestaurantConstants.RESTAURANTS_SPECIALITY.get(0).ordinal(), maybeRestaurant.get().getSpecialty().ordinal());
+        assertEquals(RestaurantConstants.RESTAURANT_ADDRESS, maybeRestaurant.get().getAddress());
+        assertEquals(RestaurantConstants.RESTAURANT_DESCRIPTION, maybeRestaurant.get().getDescription());
+        assertEquals(RestaurantConstants.MAX_TABLES, maybeRestaurant.get().getMaxTables());
+        assertEquals(!RestaurantConstants.RESTAURANT_IS_ACTIVE, maybeRestaurant.get().getIsActive());
+        assertEquals(RestaurantConstants.RESTAURANT_DELETED, maybeRestaurant.get().getDeleted());
+        assertEquals(RestaurantConstants.RESTAURANT_CREATION_DATE.getDayOfYear(), maybeRestaurant.get().getDateCreated().getDayOfYear());
+    }
+
+    @Test
+    @Rollback
+    public void testGetByIdDeletedRestaurant() {
+        final Restaurant restaurant = em.find(Restaurant.class, RestaurantConstants.RESTAURANT_IDS[0]);
+        restaurant.setIsActive(false);
+        restaurant.setDeleted(true);
+        em.flush();
+
+        Optional<Restaurant> maybeRestaurant = restaurantDao.getById(RestaurantConstants.RESTAURANT_IDS[0]);
+        assertTrue(maybeRestaurant.isPresent());
+        assertEquals(RestaurantConstants.RESTAURANT_IDS[0], maybeRestaurant.get().getRestaurantId().longValue());
+        assertEquals(UserConstants.RESTAURANT_OWNER_ID, maybeRestaurant.get().getOwnerUserId());
+        assertEquals(RestaurantConstants.RESTAURANT_NAMES[0], maybeRestaurant.get().getName());
+        assertEquals(RestaurantConstants.RESTAURANT_EMAIL, maybeRestaurant.get().getEmail());
+        assertEquals(RestaurantConstants.RESTAURANTS_SPECIALITY.get(0).ordinal(), maybeRestaurant.get().getSpecialty().ordinal());
+        assertEquals(RestaurantConstants.RESTAURANT_ADDRESS, maybeRestaurant.get().getAddress());
+        assertEquals(RestaurantConstants.RESTAURANT_DESCRIPTION, maybeRestaurant.get().getDescription());
+        assertEquals(RestaurantConstants.MAX_TABLES, maybeRestaurant.get().getMaxTables());
+        assertEquals(!RestaurantConstants.RESTAURANT_IS_ACTIVE, maybeRestaurant.get().getIsActive());
+        assertEquals(!RestaurantConstants.RESTAURANT_DELETED, maybeRestaurant.get().getDeleted());
+        assertEquals(RestaurantConstants.RESTAURANT_CREATION_DATE.getDayOfYear(), maybeRestaurant.get().getDateCreated().getDayOfYear());
+    }
+
+    @Test
     public void testFindByIdNotFound() {
         Optional<Restaurant> maybeRestaurant = restaurantDao.getById(NON_EXISTENT_RESTAURANT_ID);
 
@@ -408,8 +453,23 @@ public class RestaurantJpaDaoTest {
     }
 
     @Test
+    @Rollback
     public void getInactiveRestaurantDetails() {
-        final Optional<RestaurantDetails> maybeRestaurantDetails = restaurantDao.getRestaurantDetails(RestaurantConstants.INACTIVE_RESTAURANT_ID);
-        Assert.assertTrue(maybeRestaurantDetails.isPresent());
+        final Restaurant restaurant = em.find(Restaurant.class, RestaurantConstants.RESTAURANT_IDS[0]);
+        restaurant.setIsActive(false);
+        em.flush();
+        final Optional<RestaurantDetails> maybeRestaurantDetails = restaurantDao.getRestaurantDetails(restaurant.getRestaurantId());
+        assertTrue(maybeRestaurantDetails.isPresent());
+    }
+
+    @Test
+    @Rollback
+    public void getDeletedRestaurantDetails() {
+        final Restaurant restaurant = em.find(Restaurant.class, RestaurantConstants.RESTAURANT_IDS[0]);
+        restaurant.setIsActive(false);
+        restaurant.setDeleted(true);
+        em.flush();
+        final Optional<RestaurantDetails> maybeRestaurantDetails = restaurantDao.getRestaurantDetails(restaurant.getRestaurantId());
+        assertTrue(maybeRestaurantDetails.isPresent());
     }
 }

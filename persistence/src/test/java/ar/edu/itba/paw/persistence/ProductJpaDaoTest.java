@@ -77,7 +77,7 @@ public class ProductJpaDaoTest {
     }
 
     @Test
-    public void testFindProductById() {
+    public void testFindDeletedProductById() {
         final Optional<Product> product = productDao.getById(ProductConstants.PRODUCT_DELETED_FROM_CATEGORY_RESTAURANT_0);
 
         assertTrue(product.isPresent());
@@ -86,8 +86,20 @@ public class ProductJpaDaoTest {
         assertEquals(ProductConstants.DEFAULT_PRODUCT_PRICE, product.get().getPrice());
         assertEquals(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[0], product.get().getCategoryId());
         assertEquals(ProductConstants.DEFAULT_PRODUCT_DESCRIPTION, product.get().getDescription());
-        assertTrue(product.get().getAvailable());
         assertTrue(product.get().getDeleted());
+    }
+
+    @Test
+    public void testFindAvailableProductById() {
+        final Optional<Product> product = productDao.getById(ProductConstants.PRODUCT_FROM_CATEGORY_RESTAURANT_0[0]);
+
+        assertTrue(product.isPresent());
+        assertEquals(ProductConstants.PRODUCT_FROM_CATEGORY_RESTAURANT_0[0], product.get().getProductId().longValue());
+        assertEquals(ProductConstants.DEFAULT_PRODUCT_NAME, product.get().getName());
+        assertEquals(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[0], product.get().getCategoryId());
+        assertEquals(ProductConstants.DEFAULT_PRODUCT_DESCRIPTION, product.get().getDescription());
+        assertTrue(product.get().getAvailable());
+        assertFalse(product.get().getDeleted());
     }
 
     @Test
@@ -254,4 +266,18 @@ public class ProductJpaDaoTest {
         assertTrue(promotion.getSource().getAvailable());
     }
 
+    @Test
+    public void testGetPromotionById() {
+        Optional<Promotion> promotion = productDao.getPromotionById(ProductConstants.PROMOTION_ID);
+        assertTrue(promotion.isPresent());
+        assertEquals(ProductConstants.PROMOTION_ID, promotion.get().getPromotionId().longValue());
+        assertEquals(ProductConstants.PROMOTION_SOURCE_ID, promotion.get().getSource().getProductId().longValue());
+        assertEquals(ProductConstants.PROMOTION_DESTINATION_ID, promotion.get().getDestination().getProductId().longValue());
+    }
+
+    @Test
+    public void testGetNoPromotionById() {
+        Optional<Promotion> promotion = productDao.getPromotionById(ProductConstants.NO_PROMOTION_ID);
+        assertFalse(promotion.isPresent());
+    }
 }
