@@ -36,7 +36,7 @@ public class UserRoleServiceImpl implements UserRoleService {
     public boolean doesUserHaveRole(long userId, UserRoleLevel roleLevel) {
         if (roleLevel == null) {
             LOGGER.error("Called doesUserHaveRole() with user role null");
-            throw new IllegalArgumentException("roleLevel must not be null");
+            throw new IllegalArgumentException("exception.IllegalArgumentException.doesUserHaveRole");
         }
         Optional<UserRole> userRole = userRoleDao.getRole(userId);
         return userRole.isPresent() && roleLevel.equals(userRole.get().getLevel());

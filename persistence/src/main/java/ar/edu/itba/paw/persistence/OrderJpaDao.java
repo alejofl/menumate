@@ -56,10 +56,10 @@ public class OrderJpaDao implements OrderDao {
         if (product == null)
             throw new ProductNotFoundException();
         if (product.getDeleted() || !product.getAvailable())
-            throw new IllegalStateException("The product is unavailable or has been deleted");
+            throw new IllegalStateException("exception.IllegalStateException.createOrderItem.productActiveOrDeleted");
         final Category category = em.find(Category.class, product.getCategoryId());
         if (category.getRestaurantId() != restaurantId)
-            throw new IllegalStateException("Product does not belong to the restaurant");
+            throw new IllegalStateException("exception.IllegalStateException.createOrderItem.productDoesNotBelongToRestaurant");
 
         return new OrderItem(product, lineNumber, quantity, comment);
     }

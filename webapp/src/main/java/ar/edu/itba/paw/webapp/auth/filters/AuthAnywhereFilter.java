@@ -75,7 +75,7 @@ public class AuthAnywhereFilter extends OncePerRequestFilter {
                 if (maybeToken.isPresent()) {
                     Token tkn = maybeToken.get();
                     if (tkn.getUser().getUserId().longValue() != user.getUserId()) {
-                        throw new BadCredentialsException("Token doesn't belong to user");
+                        throw new BadCredentialsException("exception.BadCredentialsException.token");
                     }
                     userService.verifyUser(tkn.getToken());
 
