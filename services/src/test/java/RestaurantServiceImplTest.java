@@ -5,6 +5,7 @@ import ar.edu.itba.paw.model.RestaurantSpecialty;
 import ar.edu.itba.paw.model.RestaurantTags;
 import ar.edu.itba.paw.persistance.RestaurantDao;
 import ar.edu.itba.paw.service.EmailService;
+import ar.edu.itba.paw.service.OrderService;
 import ar.edu.itba.paw.services.RestaurantServiceImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,6 +29,9 @@ public class RestaurantServiceImplTest {
 
     @Mock
     private EmailService emailService;
+
+    @Mock
+    private OrderService orderService;
 
     @InjectMocks
     private final RestaurantServiceImpl restaurantService = new RestaurantServiceImpl();
