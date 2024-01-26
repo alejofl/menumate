@@ -100,7 +100,7 @@ function CreateRestaurant() {
                         portrait1: "",
                         portrait2: ""
                     }}
-                    validationSchema={CreateRestaurantSchema}
+                    validationSchema={() => CreateRestaurantSchema(false)}
                     onSubmit={handleSubmit}
                 >
                     {({values, isSubmitting}) => (

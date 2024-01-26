@@ -99,7 +99,7 @@ export const RegisterAddressSchema = Yup.object().shape({
         .max(200, ({max}) => i18n.t("validation.my_profile.register_address_address_max", {max: max}))
 });
 
-export const CreateRestaurantSchema = Yup.object().shape({
+export const CreateRestaurantSchema = (edit) => Yup.object().shape({
     name: Yup.string()
         .required(i18n.t("validation.restaurant_name.required"))
         .max(50, ({ max }) => i18n.t("validation.restaurant_name.max", {max: max})),
@@ -125,20 +125,17 @@ export const CreateRestaurantSchema = Yup.object().shape({
         .required(i18n.t("validation.restaurant_max_tables.required"))
         .min(1, ({ min }) => i18n.t("validation.restaurant_max_tables.min", {min: min})),
 
-    logo: Yup.mixed()
-        .required(i18n.t("validation.image.required"))
-        .test("fileSize", i18n.t("validation.image.size"), (value) => value && value.size <= IMAGE_MAX_SIZE)
-        .test("fileType", i18n.t("validation.image.type"), (value) => value && value.type.startsWith("image/")),
+    logo: (edit ? Yup.mixed().notRequired() : Yup.mixed().required(i18n.t("validation.image.required")))
+        .test("fileSize", i18n.t("validation.image.size"), (value) => (edit && !value) || (value && value.size <= IMAGE_MAX_SIZE))
+        .test("fileType", i18n.t("validation.image.type"), (value) => (edit && !value) || (value && value.type.startsWith("image/"))),
 
-    portrait1: Yup.mixed()
-        .required(i18n.t("validation.image.required"))
-        .test("fileSize", i18n.t("validation.image.size"), (value) => value && value.size <= IMAGE_MAX_SIZE)
-        .test("fileType", i18n.t("validation.image.type"), (value) => value && value.type.startsWith("image/")),
+    portrait1: (edit ? Yup.mixed().notRequired() : Yup.mixed().required(i18n.t("validation.image.required")))
+        .test("fileSize", i18n.t("validation.image.size"), (value) => (edit && !value) || (value && value.size <= IMAGE_MAX_SIZE))
+        .test("fileType", i18n.t("validation.image.type"), (value) => (edit && !value) || (value && value.type.startsWith("image/"))),
 
-    portrait2: Yup.mixed()
-        .required(i18n.t("validation.image.required"))
-        .test("fileSize", i18n.t("validation.image.size"), (value) => value && value.size <= IMAGE_MAX_SIZE)
-        .test("fileType", i18n.t("validation.image.type"), (value) => value && value.type.startsWith("image/"))
+    portrait2: (edit ? Yup.mixed().notRequired() : Yup.mixed().required(i18n.t("validation.image.required")))
+        .test("fileSize", i18n.t("validation.image.size"), (value) => (edit && !value) || (value && value.size <= IMAGE_MAX_SIZE))
+        .test("fileType", i18n.t("validation.image.type"), (value) => (edit && !value) || (value && value.type.startsWith("image/")))
 });
 
 export const ReviewReplySchema = Yup.object().shape({

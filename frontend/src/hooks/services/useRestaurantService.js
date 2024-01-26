@@ -189,6 +189,52 @@ export function useRestaurantService(api) {
         return await api.delete(url);
     };
 
+    const editRestaurantInformation = async (
+        url,
+        imagesUrl,
+        name,
+        address,
+        specialty,
+        tags,
+        description,
+        maxTables,
+        logo,
+        portrait1,
+        portrait2
+    ) => {
+        let logoId = null;
+        let portrait1Id = null;
+        let portrait2Id = null;
+        if (logo !== null) {
+            logoId = (await api.postForm(imagesUrl, {image: logo})).data.imageId;
+        }
+        if (portrait1 !== null) {
+            portrait1Id = (await api.postForm(imagesUrl, {image: portrait1})).data.imageId;
+        }
+        if (portrait2 !== null) {
+            portrait2Id = (await api.postForm(imagesUrl, {image: portrait2})).data.imageId;
+        }
+        return await api.patch(
+            url,
+            {
+                name: name,
+                address: address,
+                specialty: specialty,
+                tags: tags,
+                description: description,
+                maxTables: maxTables,
+                ...(logoId !== null ? {"logoId": logoId} : {}),
+                ...(portrait1Id !== null ? {"portrait1Id": portrait1Id} : {}),
+                ...(portrait2Id !== null ? {"portrait2Id": portrait2Id} : {})
+            },
+            {
+                headers: {
+                    "Content-Type": RESTAURANTS_CONTENT_TYPE
+                }
+            }
+        );
+    };
+
     return {
         getRestaurants,
         getRestaurant,
@@ -201,6 +247,7 @@ export function useRestaurantService(api) {
         getRestaurantsWithUnhandledReports,
         addCategory,
         addProduct,
-        deleteRestaurant
+        deleteRestaurant,
+        editRestaurantInformation
     };
 }

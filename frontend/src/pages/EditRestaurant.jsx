@@ -16,8 +16,12 @@ import ProductCard from "../components/ProductCard.jsx";
 import AuthContext from "../contexts/AuthContext.jsx";
 import {Link, useNavigate} from "react-router-dom";
 import {ErrorMessage, Field, Form, Formik} from "formik";
-import {AddCategorySchema, AddProductSchema} from "../data/validation.js";
+import {AddCategorySchema, AddProductSchema, CreateRestaurantSchema} from "../data/validation.js";
 import ImagePlaceholder from "../assets/image-placeholder.png";
+import Select from "react-select";
+import {selectComponents, selectStyles} from "../components/utils/SelectProperties.js";
+import RestaurantSpecialties from "../data/RestaurantSpecialties.js";
+import RestaurantTags from "../data/RestaurantTags.js";
 
 // eslint-disable-next-line no-unused-vars
 function EditRestaurant({restaurant, categories, products, promotions, promotionProducts, userRole, refetchRestaurant, refetchCategories, refetchPromotions}) {
@@ -38,13 +42,24 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
      * });
      */
 
+    const specialties = RestaurantSpecialties.map(specialty => ({
+        label: t(`restaurant_specialties.${specialty}`),
+        value: specialty
+    }));
+    const tags = RestaurantTags.map(tag => ({
+        label: t(`restaurant_tags.${tag}`),
+        value: tag
+    }));
+
     const addCategoryFormRef = useRef();
     const addProductFormRef = useRef();
+    const editRestaurantInformationFormRef = useRef();
 
     const [showDeleteRestaurantError, setShowDeleteRestaurantError] = useState(false);
     const [showAddCategoryError, setShowAddCategoryError] = useState(false);
     const [showAddProductError, setShowAddProductError] = useState(false);
     const [addProductUrl, setAddProductUrl] = useState("");
+    const [showEditRestaurantInformationError, setShowEditRestaurantInformationError] = useState(false);
 
     useEffect(() => {
         document.querySelector("#add-category-modal").addEventListener("hidden.bs.modal", () => {
@@ -55,6 +70,10 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
             addProductFormRef.current?.resetForm();
             setShowAddProductError(false);
             setAddProductUrl("");
+        });
+        document.querySelector("#edit-information-modal").addEventListener("hidden.bs.modal", () => {
+            editRestaurantInformationFormRef.current?.resetForm();
+            setShowEditRestaurantInformationError(false);
         });
     }, []);
 
@@ -83,6 +102,23 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
                 description,
                 price,
                 image
+            );
+        }
+    });
+    const editRestaurantInformationMutation = useMutation({
+        mutationFn: async ({name, address, specialty, tags, description, maxTables, logo, portrait1, portrait2}) => {
+            await restaurantService.editRestaurantInformation(
+                restaurant.selfUrl,
+                apiContext.imagesUrl,
+                name,
+                address,
+                specialty,
+                tags,
+                description,
+                maxTables,
+                logo,
+                portrait1,
+                portrait2
             );
         }
     });
@@ -121,6 +157,34 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
                     bootstrap.Modal.getOrCreateInstance(document.querySelector("#add-product-modal")).hide();
                 },
                 onError: () => setShowAddProductError(true)
+            }
+        );
+        setSubmitting(false);
+    };
+
+    const handleEditRestaurantInformation = (values, {setSubmitting}) => {
+        const logo = values.logo !== "" ? values.logo : null;
+        const portrait1 = values.portrait1 !== "" ? values.portrait1 : null;
+        const portrait2 = values.portrait2 !== "" ? values.portrait2 : null;
+        editRestaurantInformationMutation.mutate(
+            {
+                name: values.name,
+                address: values.address,
+                specialty: values.specialty,
+                tags: values.tags,
+                description: values.description,
+                maxTables: values.maxTables,
+                logo: logo,
+                portrait1: portrait1,
+                portrait2: portrait2
+            },
+            {
+                onSuccess: () => {
+                    refetchRestaurant();
+                    // eslint-disable-next-line no-undef
+                    bootstrap.Modal.getOrCreateInstance(document.querySelector("#edit-information-modal")).hide();
+                },
+                onError: () => setShowEditRestaurantInformationError(true)
             }
         );
         setSubmitting(false);
@@ -169,7 +233,7 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
                         </div>
                         <div className="d-flex flex-column gap-2">
                             <Link to={`/restaurants/${restaurant.restaurantId}`} className="btn btn-primary" type="button">{t("restaurant.edit.done")}</Link>
-                            <button className="btn btn-secondary" type="button">{t("restaurant.edit.edit_information")}</button>
+                            <button className="btn btn-secondary" type="button" data-bs-toggle="modal" data-bs-target="#edit-information-modal">{t("restaurant.edit.edit_information")}</button>
                             {authContext.isAuthenticated && (userRole.isOwner) &&
                                 <>
                                     <button className="btn btn-secondary" type="button">{t("restaurant.edit.edit_employees")}</button>
@@ -409,6 +473,153 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
                                 <button type="button" data-bs-dismiss="modal" className="btn btn-secondary">{t("paging.no")}</button>
                                 <button type="button" className="btn btn-danger" onClick={deleteRestaurantMutation.mutate}>{t("paging.yes")}</button>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="modal fade" id="edit-information-modal" tabIndex="-1">
+                    <div className="modal-dialog modal-dialog-centered">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5">{t("restaurant.edit.edit_information")}</h1>
+                                <button type="button" className="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <Formik
+                                innerRef={editRestaurantInformationFormRef}
+                                initialValues={{
+                                    name: restaurant.name,
+                                    address: restaurant.address,
+                                    specialty: restaurant.specialty,
+                                    tags: restaurant.tags,
+                                    description: restaurant.description,
+                                    maxTables: restaurant.maxTables,
+                                    logo: "",
+                                    portrait1: "",
+                                    portrait2: ""
+                                }}
+                                validationSchema={() => CreateRestaurantSchema(true)}
+                                onSubmit={handleEditRestaurantInformation}
+                                enableReinitialize={true}
+                            >
+                                {({isSubmitting}) => (
+                                    <Form>
+                                        <div className="modal-body">
+                                            {showEditRestaurantInformationError && <div className="alert alert-danger" role="alert">{t("restaurant.edit.error")}</div>}
+                                            <div className="mb-3">
+                                                <label htmlFor="name" className="form-label">{t("create_restaurant.name")}</label>
+                                                <Field name="name" type="text" className="form-control" id="name"/>
+                                                <ErrorMessage name="name" className="form-error" component="div"/>
+                                            </div>
+                                            <div className="mb-3">
+                                                <label htmlFor="address" className="form-label">{t("create_restaurant.address")}</label>
+                                                <Field name="address" type="text" className="form-control" id="address"/>
+                                                <ErrorMessage name="address" className="form-error" component="div"/>
+                                            </div>
+                                            <div className="mb-3">
+                                                <label htmlFor="specialty" className="form-label">{t("create_restaurant.specialty")}</label>
+                                                <Field name="specialty">
+                                                    {({field, form}) => (
+                                                        <Select
+                                                            placeholder={t("create_restaurant.specialty_placeholder")}
+                                                            styles={selectStyles(false, false)}
+                                                            components={selectComponents}
+                                                            options={specialties}
+                                                            closeMenuOnSelect={true}
+                                                            id="specialty"
+                                                            name={field.name}
+                                                            value={specialties.find(option => option.value === field.value)}
+                                                            onChange={option => form.setFieldValue(field.name, option.value)}
+                                                            onBlur={field.onBlur}
+                                                        />
+                                                    )}
+                                                </Field>
+                                                <ErrorMessage name="specialty" className="form-error" component="div"/>
+                                            </div>
+                                            <div className="mb-3">
+                                                <label htmlFor="tags" className="form-label">{t("create_restaurant.tags")}</label>
+                                                <Field name="tags">
+                                                    {({field, form}) => (
+                                                        <Select
+                                                            placeholder={t("create_restaurant.tags_placeholder")}
+                                                            styles={selectStyles(false, false)}
+                                                            components={selectComponents}
+                                                            options={tags}
+                                                            closeMenuOnSelect={false}
+                                                            isMulti
+                                                            id="tags"
+                                                            name={field.name}
+                                                            value={tags.filter(option => field.value.includes(option.value))}
+                                                            onChange={options => form.setFieldValue(field.name, options.map(option => option.value))}
+                                                            onBlur={field.onBlur}
+                                                        />
+                                                    )}
+                                                </Field>
+                                                <ErrorMessage name="tags" className="form-error" component="div"/>
+                                            </div>
+                                            <div className="mb-3">
+                                                <label htmlFor="description" className="form-label">{t("create_restaurant.description")}</label>
+                                                <Field as="textarea" name="description" className="form-control" id="description" rows="3"/>
+                                                <ErrorMessage name="description" className="form-error" component="div"/>
+                                            </div>
+                                            <div className="mb-3">
+                                                <label htmlFor="maxTables" className="form-label">{t("create_restaurant.tables_quantity")}</label>
+                                                <Field name="maxTables" type="number" className="form-control" id="maxTables"/>
+                                                <ErrorMessage name="maxTables" className="form-error" component="div"/>
+                                            </div>
+                                            <div className="mb-3">
+                                                <label htmlFor="logo" className="form-label">{t("restaurant.edit.change_logo")}</label>
+                                                <Field name="logo">
+                                                    {({field: {value, onChange, ...field}, form}) => (
+                                                        <input
+                                                            type="file"
+                                                            className="form-control"
+                                                            id="logo"
+                                                            accept="image/*"
+                                                            {...field}
+                                                            onChange={event => form.setFieldValue(field.name, event.currentTarget.files[0])}
+                                                        />
+                                                    )}
+                                                </Field>
+                                                <ErrorMessage name="logo" className="form-error" component="div"/>
+                                            </div>
+                                            <div className="mb-3">
+                                                <label htmlFor="portrait1" className="form-label">{t("restaurant.edit.change_portrait1")}</label>
+                                                <Field name="portrait1">
+                                                    {({field: {value, onChange, ...field}, form}) => (
+                                                        <input
+                                                            type="file"
+                                                            className="form-control"
+                                                            id="portrait1"
+                                                            accept="image/*"
+                                                            {...field}
+                                                            onChange={event => form.setFieldValue(field.name, event.currentTarget.files[0])}
+                                                        />
+                                                    )}
+                                                </Field> <ErrorMessage name="portrait1" className="form-error" component="div"/>
+                                            </div>
+                                            <div className="mb-3">
+                                                <label htmlFor="portrait2" className="form-label">{t("restaurant.edit.change_portrait2")}</label>
+                                                <Field name="portrait2">
+                                                    {({field: {value, onChange, ...field}, form}) => (
+                                                        <input
+                                                            type="file"
+                                                            className="form-control"
+                                                            id="portrait2"
+                                                            accept="image/*"
+                                                            {...field}
+                                                            onChange={event => form.setFieldValue(field.name, event.currentTarget.files[0])}
+                                                        />
+                                                    )}
+                                                </Field>
+                                                <ErrorMessage name="portrait2" className="form-error" component="div"/>
+                                            </div>
+                                        </div>
+                                        <div className="modal-footer">
+                                            <button type="submit" className="btn btn-primary" disabled={isSubmitting}>{t("restaurant.edit.edit_information")}</button>
+                                        </div>
+                                    </Form>
+                                )}
+                            </Formik>
                         </div>
                     </div>
                 </div>
