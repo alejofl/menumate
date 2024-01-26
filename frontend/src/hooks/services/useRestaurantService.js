@@ -108,7 +108,7 @@ export function useRestaurantService(api) {
         const logoId = (await api.postForm(imagesUrl, {image: logo})).data.imageId;
         const portrait1Id = (await api.postForm(imagesUrl, {image: portrait1})).data.imageId;
         const portrait2Id = (await api.postForm(imagesUrl, {image: portrait2})).data.imageId;
-        return await api.post(
+        return (await api.post(
             url,
             {
                 name: name,
@@ -126,7 +126,7 @@ export function useRestaurantService(api) {
                     "Content-Type": RESTAURANTS_CONTENT_TYPE
                 }
             }
-        );
+        )).data.restaurantId;
     };
 
     const getRestaurantsWithUnhandledReports = async (url, query) => {
