@@ -95,7 +95,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Transactional
     @Override
-    public Restaurant update(long restaurantId, String name, RestaurantSpecialty specialty, String address, int maxTables, String description, List<RestaurantTags> tags) {
+    public Restaurant update(long restaurantId, String name, RestaurantSpecialty specialty, String address, int maxTables, String description, List<RestaurantTags> tags, Long logoId, Long portrait1Id, Long portrait2Id) {
         final Restaurant restaurant = getAndVerifyForUpdate(restaurantId);
         restaurant.setName(name);
         restaurant.setSpecialty(specialty);
@@ -104,19 +104,12 @@ public class RestaurantServiceImpl implements RestaurantService {
         restaurant.setDescription(description);
         restaurant.getTags().clear();
         restaurant.getTags().addAll(tags);
-        LOGGER.info("Updated name, specialty, address, description and tags of restaurant id {}", restaurant.getRestaurantId());
+
+        Optional.ofNullable(logoId).ifPresent(restaurant::setLogoId);
+        Optional.ofNullable(portrait1Id).ifPresent(restaurant::setPortrait1Id);
+        Optional.ofNullable(portrait2Id).ifPresent(restaurant::setPortrait2Id);
+        LOGGER.info("Updated name, specialty, address, description, max tables, logo, portraits and tags of restaurant id {}", restaurant.getRestaurantId());
         return restaurant;
-    }
-
-    @Transactional
-    @Override
-    public void updateImages(long restaurantId, Optional<Long> logoId, Optional<Long> portrait1Id, Optional<Long> portrait2Id) {
-        final Restaurant restaurant = getAndVerifyForUpdate(restaurantId);
-        logoId.ifPresent(restaurant::setLogoId);
-        portrait1Id.ifPresent(restaurant::setPortrait1Id);
-        portrait2Id.ifPresent(restaurant::setPortrait2Id);
-
-        LOGGER.info("Updated images of restaurant id {}", restaurant.getRestaurantId());
     }
 
     @Transactional

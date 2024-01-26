@@ -42,6 +42,9 @@ public class RestaurantServiceImplTest {
     private static final int DEFAULT_RESTAURANT_MAX_TABLES = 200;
     private static final String DEFAULT_RESTAURANT_DESCRIPTION = "Default Description";
     private static final RestaurantSpecialty DEFAULT_RESTAURANT_SPECIALTY = RestaurantSpecialty.ITALIAN;
+    private static final Long DEFAULT_LOGO_ID = 51L;
+    private static final Long DEFAULT_PORTRAIT_ID_1 = 80L;
+    private static final Long DEFAULT_PORTRAIT_ID_2 = 70L;
     private static final String NEW_RESTAURANT_NAME = "New Name";
     private static final String NEW_RESTAURANT_ADDRESS = "New Address";
     private static final String NEW_RESTAURANT_DESCRIPTION = "New Description";
@@ -49,6 +52,9 @@ public class RestaurantServiceImplTest {
     private static final List<RestaurantTags> DEFAULT_RESTAURANT_TAGS = new ArrayList<>(Arrays.asList(RestaurantTags.HAPPY_HOUR, RestaurantTags.CASUAL));
     private static final List<RestaurantTags> NEW_RESTAURANT_TAGS = new ArrayList<>(Arrays.asList(RestaurantTags.ROMANTIC, RestaurantTags.COSY));
     private static final RestaurantSpecialty NEW_RESTAURANT_SPECIALTY = RestaurantSpecialty.CHINESE;
+    private static final Long NEW_LOGO_ID = 100L;
+    private static final Long NEW_PORTRAIT_ID_1 = 150L;
+    private static final Long NEW_PORTRAIT_ID_2 = 200L;
 
     @Test
     public void testUpdateRestaurant() {
@@ -60,11 +66,14 @@ public class RestaurantServiceImplTest {
         existingRestaurant.setMaxTables(DEFAULT_RESTAURANT_MAX_TABLES);
         existingRestaurant.setDescription(DEFAULT_RESTAURANT_DESCRIPTION);
         existingRestaurant.setTags(DEFAULT_RESTAURANT_TAGS);
+        existingRestaurant.setLogoId(DEFAULT_LOGO_ID);
+        existingRestaurant.setPortrait1Id(DEFAULT_PORTRAIT_ID_1);
+        existingRestaurant.setPortrait2Id(DEFAULT_PORTRAIT_ID_2);
         existingRestaurant.setDeleted(false);
 
         when(restaurantDao.getById(DEFAULT_RESTAURANT_ID)).thenReturn(Optional.of(existingRestaurant));
 
-        final Restaurant updatedRestaurant = restaurantService.update(DEFAULT_RESTAURANT_ID, NEW_RESTAURANT_NAME, NEW_RESTAURANT_SPECIALTY, NEW_RESTAURANT_ADDRESS, NEW_RESTAURANT_MAX_TABLES, NEW_RESTAURANT_DESCRIPTION, NEW_RESTAURANT_TAGS);
+        final Restaurant updatedRestaurant = restaurantService.update(DEFAULT_RESTAURANT_ID, NEW_RESTAURANT_NAME, NEW_RESTAURANT_SPECIALTY, NEW_RESTAURANT_ADDRESS, NEW_RESTAURANT_MAX_TABLES, NEW_RESTAURANT_DESCRIPTION, NEW_RESTAURANT_TAGS, NEW_LOGO_ID, NEW_PORTRAIT_ID_1, NEW_PORTRAIT_ID_2);
 
         assertEquals(DEFAULT_RESTAURANT_ID, updatedRestaurant.getRestaurantId().intValue());
         assertEquals(NEW_RESTAURANT_NAME, updatedRestaurant.getName());
@@ -73,12 +82,46 @@ public class RestaurantServiceImplTest {
         assertEquals(NEW_RESTAURANT_DESCRIPTION, updatedRestaurant.getDescription());
         assertEquals(NEW_RESTAURANT_TAGS, updatedRestaurant.getTags());
         assertEquals(NEW_RESTAURANT_MAX_TABLES, updatedRestaurant.getMaxTables());
+        assertEquals(NEW_LOGO_ID, updatedRestaurant.getLogoId());
+        assertEquals(NEW_PORTRAIT_ID_1, updatedRestaurant.getPortrait1Id());
+        assertEquals(NEW_PORTRAIT_ID_2, updatedRestaurant.getPortrait2Id());
+    }
+
+    @Test
+    public void tesUpdateNoImageFromRestaurant() {
+        final Restaurant existingRestaurant = spy(Restaurant.class);
+        existingRestaurant.setRestaurantId(DEFAULT_RESTAURANT_ID);
+        existingRestaurant.setName(DEFAULT_RESTAURANT_NAME);
+        existingRestaurant.setSpecialty(DEFAULT_RESTAURANT_SPECIALTY);
+        existingRestaurant.setAddress(DEFAULT_RESTAURANT_ADDRESS);
+        existingRestaurant.setMaxTables(DEFAULT_RESTAURANT_MAX_TABLES);
+        existingRestaurant.setDescription(DEFAULT_RESTAURANT_DESCRIPTION);
+        existingRestaurant.setTags(DEFAULT_RESTAURANT_TAGS);
+        existingRestaurant.setLogoId(DEFAULT_LOGO_ID);
+        existingRestaurant.setPortrait1Id(DEFAULT_PORTRAIT_ID_1);
+        existingRestaurant.setPortrait2Id(DEFAULT_PORTRAIT_ID_2);
+        existingRestaurant.setDeleted(false);
+
+        when(restaurantDao.getById(DEFAULT_RESTAURANT_ID)).thenReturn(Optional.of(existingRestaurant));
+
+        final Restaurant updatedRestaurant = restaurantService.update(DEFAULT_RESTAURANT_ID, NEW_RESTAURANT_NAME, NEW_RESTAURANT_SPECIALTY, NEW_RESTAURANT_ADDRESS, NEW_RESTAURANT_MAX_TABLES, NEW_RESTAURANT_DESCRIPTION, NEW_RESTAURANT_TAGS, null, null, null);
+
+        assertEquals(DEFAULT_RESTAURANT_ID, updatedRestaurant.getRestaurantId().intValue());
+        assertEquals(NEW_RESTAURANT_NAME, updatedRestaurant.getName());
+        assertEquals(NEW_RESTAURANT_SPECIALTY, updatedRestaurant.getSpecialty());
+        assertEquals(NEW_RESTAURANT_ADDRESS, updatedRestaurant.getAddress());
+        assertEquals(NEW_RESTAURANT_DESCRIPTION, updatedRestaurant.getDescription());
+        assertEquals(NEW_RESTAURANT_TAGS, updatedRestaurant.getTags());
+        assertEquals(NEW_RESTAURANT_MAX_TABLES, updatedRestaurant.getMaxTables());
+        assertEquals(DEFAULT_LOGO_ID, updatedRestaurant.getLogoId());
+        assertEquals(DEFAULT_PORTRAIT_ID_1, updatedRestaurant.getPortrait1Id());
+        assertEquals(DEFAULT_PORTRAIT_ID_2, updatedRestaurant.getPortrait2Id());
     }
 
     @Test(expected = RestaurantNotFoundException.class)
     public void testUpdateNonExistingRestaurant() {
         when(restaurantDao.getById(DEFAULT_RESTAURANT_ID)).thenReturn(Optional.empty());
-        restaurantService.update(DEFAULT_RESTAURANT_ID, NEW_RESTAURANT_NAME, NEW_RESTAURANT_SPECIALTY, NEW_RESTAURANT_ADDRESS, NEW_RESTAURANT_MAX_TABLES, NEW_RESTAURANT_DESCRIPTION, NEW_RESTAURANT_TAGS);
+        restaurantService.update(DEFAULT_RESTAURANT_ID, NEW_RESTAURANT_NAME, NEW_RESTAURANT_SPECIALTY, NEW_RESTAURANT_ADDRESS, NEW_RESTAURANT_MAX_TABLES, NEW_RESTAURANT_DESCRIPTION, NEW_RESTAURANT_TAGS, NEW_LOGO_ID, NEW_PORTRAIT_ID_1, NEW_PORTRAIT_ID_2);
     }
 
     @Test(expected = RestaurantDeletedException.class)
@@ -86,7 +129,7 @@ public class RestaurantServiceImplTest {
         final Restaurant deletedRestaurant = spy(Restaurant.class);
         deletedRestaurant.setDeleted(true);
         when(restaurantDao.getById(DEFAULT_RESTAURANT_ID)).thenReturn(Optional.of(deletedRestaurant));
-        restaurantService.update(DEFAULT_RESTAURANT_ID, NEW_RESTAURANT_NAME, NEW_RESTAURANT_SPECIALTY, NEW_RESTAURANT_ADDRESS, NEW_RESTAURANT_MAX_TABLES, NEW_RESTAURANT_DESCRIPTION, NEW_RESTAURANT_TAGS);
+        restaurantService.update(DEFAULT_RESTAURANT_ID, NEW_RESTAURANT_NAME, NEW_RESTAURANT_SPECIALTY, NEW_RESTAURANT_ADDRESS, NEW_RESTAURANT_MAX_TABLES, NEW_RESTAURANT_DESCRIPTION, NEW_RESTAURANT_TAGS, NEW_LOGO_ID, NEW_PORTRAIT_ID_1, NEW_PORTRAIT_ID_2);
     }
 
     @Test

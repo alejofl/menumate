@@ -144,15 +144,11 @@ public class RestaurantController {
                 restaurantForm.getAddress(),
                 restaurantForm.getMaxTables(),
                 restaurantForm.getDescription(),
-                restaurantForm.getTagsAsEnum()
+                restaurantForm.getTagsAsEnum(),
+                restaurantForm.getLogoId(),
+                restaurantForm.getPortrait1Id(),
+                restaurantForm.getPortrait2Id()
         );
-        restaurantService.updateImages(
-                restaurantId,
-                Optional.ofNullable(restaurantForm.getLogoId()),
-                Optional.ofNullable(restaurantForm.getPortrait1Id()),
-                Optional.ofNullable(restaurantForm.getPortrait2Id())
-        );
-
         return Response.noContent().build();
     }
 
