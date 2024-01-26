@@ -3,10 +3,10 @@ import { useTranslation } from "react-i18next";
 import {useApi} from "../hooks/useApi.js";
 import {useOrderService} from "../hooks/services/useOrderService.js";
 import {useRestaurantService} from "../hooks/services/useRestaurantService.js";
-import {useQueries, useQuery} from "@tanstack/react-query";
+import {useMutation, useQueries, useQuery} from "@tanstack/react-query";
 import {useUserService} from "../hooks/services/useUserService.js";
 import Error from "../pages/Error.jsx";
-import {ORDER_TYPE, PRICE_DECIMAL_DIGITS} from "../utils.js";
+import {ORDER_TYPE, PRICE_DECIMAL_DIGITS, STATUS} from "../utils.js";
 
 function InternalOrderModal({orderUrl, showActions, onClose}) {
     const { t } = useTranslation();
@@ -58,6 +58,31 @@ function InternalOrderModal({orderUrl, showActions, onClose}) {
             :
             []
     });
+
+    const updateStatusMutation = useMutation({
+        mutationFn: async ({ newStatus }) => (
+            await orderService.updateStatus(
+                order.selfUrl,
+                {
+                    status: newStatus
+                }
+            )
+        )
+    });
+    const handleUpdateStatusMutation = ( newStatus ) => {
+        updateStatusMutation.mutate(
+            {
+                newStatus: newStatus
+            },
+            {
+                onSuccess: () => {
+                    // eslint-disable-next-line no-undef
+                    const modal = bootstrap.Modal.getOrCreateInstance(document.querySelector(".internal_order_modal .modal"));
+                    modal.hide();
+                }
+            }
+        );
+    };
 
     if (orderIsError) {
         return (
@@ -182,7 +207,31 @@ function InternalOrderModal({orderUrl, showActions, onClose}) {
                         {
                             showActions &&
                             <div className="modal-footer">
-                                {/* TODO */}
+                                <button className="btn btn-danger" type="submit"
+                                    onClick={() => handleUpdateStatusMutation(STATUS.CANCELLED)}>
+                                    {t("restaurant_orders.order_detail_modal.cancel_order")}
+                                </button>
+                                {
+                                    order?.status === STATUS.PENDING
+                                        ?
+                                        <button className="btn btn-success" type="submit"
+                                            onClick={() => handleUpdateStatusMutation(STATUS.CONFIRMED)}>
+                                            {t("restaurant_orders.order_detail_modal.confirm_order")}
+                                        </button>
+                                        :
+                                        order?.status === STATUS.CONFIRMED
+                                            ?
+                                            <button className="btn btn-success" type="submit"
+                                                onClick={() => handleUpdateStatusMutation(STATUS.READY)}>
+                                                {t("restaurant_orders.order_detail_modal.mark_as_ready")}
+                                            </button>
+                                            :
+                                            order?.status === STATUS.READY &&
+                                            <button className="btn btn-success" type="submit"
+                                                onClick={() => handleUpdateStatusMutation(STATUS.DELIVERED)}>
+                                                {t("restaurant_orders.order_detail_modal.mark_as_delivered")}
+                                            </button>
+                                }
                             </div>
                         }
                     </div>

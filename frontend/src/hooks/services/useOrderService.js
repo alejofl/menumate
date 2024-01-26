@@ -71,10 +71,23 @@ export function useOrderService(api) {
         );
     };
 
+    const updateStatus = async (url, status) => {
+        return await api.patch(
+            url,
+            status,
+            {
+                headers: {
+                    "Content-Type": ORDERS_CONTENT_TYPE
+                }
+            }
+        );
+    };
+
     return {
         placeOrder,
         getOrder,
         getOrderItems,
-        getOrders
+        getOrders,
+        updateStatus
     };
 }

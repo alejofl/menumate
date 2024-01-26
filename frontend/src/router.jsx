@@ -14,6 +14,7 @@ import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import CreateRestaurant from "./pages/CreateRestaurant.jsx";
 import UserRestaurants from "./pages/UserRestaurants.jsx";
 import ModeratorsPanel from "./pages/ModeratorsPanel.jsx";
+import RestaurantOrders from "./pages/RestaurantOrders.jsx";
 import UserOrders from "./pages/UserOrders.jsx";
 
 const router = createBrowserRouter(
@@ -73,6 +74,10 @@ const router = createBrowserRouter(
         {
             path: "*",
             element: <Error errorNumber="404"/>
+        },
+        {
+            path: "/restaurants/:restaurantId/orders",
+            element: <ProtectedRoute><RestaurantOrders/></ProtectedRoute>
         }
     ],
     {
