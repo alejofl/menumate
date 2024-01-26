@@ -99,7 +99,7 @@ export const RegisterAddressSchema = Yup.object().shape({
         .max(200, ({max}) => i18n.t("validation.my_profile.register_address_address_max", {max: max}))
 });
 
-export const CreateRestaurantSchema = Yup.object().shape({
+export const CreateRestaurantSchema = (edit) => Yup.object().shape({
     name: Yup.string()
         .required(i18n.t("validation.restaurant_name.required"))
         .max(50, ({ max }) => i18n.t("validation.restaurant_name.max", {max: max})),
@@ -125,20 +125,17 @@ export const CreateRestaurantSchema = Yup.object().shape({
         .required(i18n.t("validation.restaurant_max_tables.required"))
         .min(1, ({ min }) => i18n.t("validation.restaurant_max_tables.min", {min: min})),
 
-    logo: Yup.mixed()
-        .required(i18n.t("validation.image.required"))
-        .test("fileSize", i18n.t("validation.image.size"), (value) => value.size <= IMAGE_MAX_SIZE)
-        .test("fileType", i18n.t("validation.image.type"), (value) => value.type.startsWith("image/")),
+    logo: (edit ? Yup.mixed().notRequired() : Yup.mixed().required(i18n.t("validation.image.required")))
+        .test("fileSize", i18n.t("validation.image.size"), (value) => (edit && !value) || (value && value.size <= IMAGE_MAX_SIZE))
+        .test("fileType", i18n.t("validation.image.type"), (value) => (edit && !value) || (value && value.type.startsWith("image/"))),
 
-    portrait1: Yup.mixed()
-        .required(i18n.t("validation.image.required"))
-        .test("fileSize", i18n.t("validation.image.size"), (value) => value.size <= IMAGE_MAX_SIZE)
-        .test("fileType", i18n.t("validation.image.type"), (value) => value.type.startsWith("image/")),
+    portrait1: (edit ? Yup.mixed().notRequired() : Yup.mixed().required(i18n.t("validation.image.required")))
+        .test("fileSize", i18n.t("validation.image.size"), (value) => (edit && !value) || (value && value.size <= IMAGE_MAX_SIZE))
+        .test("fileType", i18n.t("validation.image.type"), (value) => (edit && !value) || (value && value.type.startsWith("image/"))),
 
-    portrait2: Yup.mixed()
-        .required(i18n.t("validation.image.required"))
-        .test("fileSize", i18n.t("validation.image.size"), (value) => value.size <= IMAGE_MAX_SIZE)
-        .test("fileType", i18n.t("validation.image.type"), (value) => value.type.startsWith("image/"))
+    portrait2: (edit ? Yup.mixed().notRequired() : Yup.mixed().required(i18n.t("validation.image.required")))
+        .test("fileSize", i18n.t("validation.image.size"), (value) => (edit && !value) || (value && value.size <= IMAGE_MAX_SIZE))
+        .test("fileType", i18n.t("validation.image.type"), (value) => (edit && !value) || (value && value.type.startsWith("image/")))
 });
 
 export const ReviewReplySchema = Yup.object().shape({
@@ -157,4 +154,32 @@ export const ReviewSchema = Yup.object().shape({
     comment: Yup.string()
         .required(i18n.t("validation.review_comment.required"))
         .max(500, ({ max }) => i18n.t("validation.review_comment.max", {max: max}))
+});
+
+export const AddCategorySchema = Yup.object().shape({
+    name: Yup.string()
+        .required(i18n.t("validation.category_name.required"))
+        .min(1, ({ min }) => i18n.t("validation.category_name.min", {min: min}))
+        .max(50, ({ max }) => i18n.t("validation.category_name.max", {max: max}))
+});
+
+export const AddProductSchema = Yup.object().shape({
+    productName: Yup.string()
+        .required(i18n.t("validation.product_name.required"))
+        .min(1, ({ min }) => i18n.t("validation.product_name.min", {min: min}))
+        .max(150, ({ max }) => i18n.t("validation.product_name.max", {max: max})),
+
+    description: Yup.string()
+        .notRequired()
+        .max(300, ({ max }) => i18n.t("validation.product_description.max", {max: max})),
+
+    price: Yup.number()
+        .required(i18n.t("validation.product_price.required"))
+        .min(0.01, ({ min }) => i18n.t("validation.product_price.min", {min: min}))
+        .max(99999999, ({ max }) => i18n.t("validation.product_price.max", {max: max})),
+
+    image: Yup.mixed()
+        .notRequired()
+        .test("fileSize", i18n.t("validation.image.size"), (value) => !value || (value && value.size <= IMAGE_MAX_SIZE))
+        .test("fileType", i18n.t("validation.image.type"), (value) => !value || (value && value.type.startsWith("image/")))
 });

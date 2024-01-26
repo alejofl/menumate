@@ -87,3 +87,26 @@ main.restaurant {
     flex-wrap: wrap;
     margin-bottom: 3rem;
 }
+
+.restaurant .content .menu .add-button {
+    background-color: transparent;
+    border: 5px dashed var(--gray);
+}
+
+.restaurant .content .menu .add-button i {
+    font-size: 2rem;
+    color: var(--gray);
+}
+
+.restaurant .content .menu .add-button span {
+    font-weight: 900;
+    text-transform: uppercase;
+    color: var(--gray);
+    text-align: center;
+}
+
+.restaurant .content .menu .product-container .add-button {
+    width: 200px;
+    min-height: 200px;
+    height: 100%;
+}

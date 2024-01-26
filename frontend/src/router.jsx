@@ -52,6 +52,10 @@ const router = createBrowserRouter(
             Component: Restaurant
         },
         {
+            path: "/restaurants/:restaurantId/edit",
+            element: <ProtectedRoute><Restaurant edit={true}/></ProtectedRoute>
+        },
+        {
             path: "/user",
             element: <ProtectedRoute><UserProfile/></ProtectedRoute>
         },

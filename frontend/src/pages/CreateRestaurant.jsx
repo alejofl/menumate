@@ -13,9 +13,11 @@ import {useApi} from "../hooks/useApi.js";
 import {useContext, useState} from "react";
 import ApiContext from "../contexts/ApiContext.jsx";
 import "./styles/create_restaurant.styles.css";
+import {useNavigate} from "react-router-dom";
 
 function CreateRestaurant() {
     const { t } = useTranslation();
+    const navigate = useNavigate();
     const api = useApi();
     const apiContext = useContext(ApiContext);
     const restaurantService = useRestaurantService(api);
@@ -41,7 +43,7 @@ function CreateRestaurant() {
             portrait1,
             portrait2
         }) => {
-            await restaurantService.createRestaurant(
+            return await restaurantService.createRestaurant(
                 apiContext.restaurantsUrl,
                 apiContext.imagesUrl,
                 name,
@@ -73,8 +75,8 @@ function CreateRestaurant() {
                 portrait2: values.portrait2
             },
             {
-                onSuccess: () => {
-                    // TODO - Redirect to edit menu page. To do it we need to get the restaurantId from the response.
+                onSuccess: (restaurantId) => {
+                    navigate(`/restaurants/${restaurantId}/edit`);
                     resetForm();
                 },
                 onError: () => setShowErrorAlert(true)
@@ -98,7 +100,7 @@ function CreateRestaurant() {
                         portrait1: "",
                         portrait2: ""
                     }}
-                    validationSchema={CreateRestaurantSchema}
+                    validationSchema={() => CreateRestaurantSchema(false)}
                     onSubmit={handleSubmit}
                 >
                     {({values, isSubmitting}) => (

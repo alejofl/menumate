@@ -108,7 +108,7 @@ export function useRestaurantService(api) {
         const logoId = (await api.postForm(imagesUrl, {image: logo})).data.imageId;
         const portrait1Id = (await api.postForm(imagesUrl, {image: portrait1})).data.imageId;
         const portrait2Id = (await api.postForm(imagesUrl, {image: portrait2})).data.imageId;
-        return await api.post(
+        return (await api.post(
             url,
             {
                 name: name,
@@ -126,7 +126,7 @@ export function useRestaurantService(api) {
                     "Content-Type": RESTAURANTS_CONTENT_TYPE
                 }
             }
-        );
+        )).data.restaurantId;
     };
 
     const getRestaurantsWithUnhandledReports = async (url, query) => {
@@ -150,6 +150,109 @@ export function useRestaurantService(api) {
         );
     };
 
+    const addCategory = async (url, name) => {
+        return await api.post(
+            url,
+            {
+                name: name
+            },
+            {
+                headers: {
+                    "Content-Type": RESTAURANT_CATEGORIES_CONTENT_TYPE
+                }
+            }
+        );
+    };
+
+    const addProduct = async (url, imagesUrl, name, description, price, image) => {
+        let imageId = null;
+        if (image !== null) {
+            imageId = (await api.postForm(imagesUrl, {image: image})).data.imageId;
+        }
+        return await api.post(
+            url,
+            {
+                name: name,
+                description: description,
+                price: price,
+                ...(imageId !== null ? {"imageId": imageId} : {})
+            },
+            {
+                headers: {
+                    "Content-Type": RESTAURANT_PRODUCTS_CONTENT_TYPE
+                }
+            }
+        );
+    };
+
+    const deleteRestaurant = async (url) => {
+        return await api.delete(url);
+    };
+
+    const editRestaurantInformation = async (
+        url,
+        imagesUrl,
+        name,
+        address,
+        specialty,
+        tags,
+        description,
+        maxTables,
+        logo,
+        portrait1,
+        portrait2
+    ) => {
+        let logoId = null;
+        let portrait1Id = null;
+        let portrait2Id = null;
+        if (logo !== null) {
+            logoId = (await api.postForm(imagesUrl, {image: logo})).data.imageId;
+        }
+        if (portrait1 !== null) {
+            portrait1Id = (await api.postForm(imagesUrl, {image: portrait1})).data.imageId;
+        }
+        if (portrait2 !== null) {
+            portrait2Id = (await api.postForm(imagesUrl, {image: portrait2})).data.imageId;
+        }
+        return await api.patch(
+            url,
+            {
+                name: name,
+                address: address,
+                specialty: specialty,
+                tags: tags,
+                description: description,
+                maxTables: maxTables,
+                ...(logoId !== null ? {"logoId": logoId} : {}),
+                ...(portrait1Id !== null ? {"portrait1Id": portrait1Id} : {}),
+                ...(portrait2Id !== null ? {"portrait2Id": portrait2Id} : {})
+            },
+            {
+                headers: {
+                    "Content-Type": RESTAURANTS_CONTENT_TYPE
+                }
+            }
+        );
+    };
+
+    const editCategory = async (url, name) => {
+        return await api.patch(
+            url,
+            {
+                name: name
+            },
+            {
+                headers: {
+                    "Content-Type": RESTAURANT_CATEGORIES_CONTENT_TYPE
+                }
+            }
+        );
+    };
+
+    const deleteCategory = async (url) => {
+        return await api.delete(url);
+    };
+
     return {
         getRestaurants,
         getRestaurant,
@@ -159,6 +262,12 @@ export function useRestaurantService(api) {
         getProduct,
         reportRestaurant,
         createRestaurant,
-        getRestaurantsWithUnhandledReports
+        getRestaurantsWithUnhandledReports,
+        addCategory,
+        addProduct,
+        deleteRestaurant,
+        editRestaurantInformation,
+        editCategory,
+        deleteCategory
     };
 }
