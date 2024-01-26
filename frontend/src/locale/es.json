@@ -366,7 +366,8 @@
             "product_name": "Nombre del producto",
             "product_description": "Descripción del producto",
             "product_price": "Precio del producto",
-            "product_image": "Imagen del producto"
+            "product_image": "Imagen del producto",
+            "delete_restaurant": "¿Estás seguro de que quieres eliminar este restaurante? Esta acción es irreversible."
         }
     },
     "order_placed": {

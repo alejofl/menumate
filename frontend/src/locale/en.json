@@ -367,7 +367,8 @@
             "product_name": "Product Name",
             "product_description": "Product Description",
             "product_price": "Product Price",
-            "product_image": "Product Image"
+            "product_image": "Product Image",
+            "delete_restaurant": "Are you sure you want to delete this restaurant? This actions is irreversible."
         }
     },
     "order_placed": {

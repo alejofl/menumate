@@ -14,7 +14,7 @@ import "./styles/restaurant.styles.css";
 import TagsContainer from "../components/TagsContainer.jsx";
 import ProductCard from "../components/ProductCard.jsx";
 import AuthContext from "../contexts/AuthContext.jsx";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {ErrorMessage, Field, Form, Formik} from "formik";
 import {AddCategorySchema, AddProductSchema} from "../data/validation.js";
 import ImagePlaceholder from "../assets/image-placeholder.png";
@@ -22,6 +22,7 @@ import ImagePlaceholder from "../assets/image-placeholder.png";
 // eslint-disable-next-line no-unused-vars
 function EditRestaurant({restaurant, categories, products, promotions, promotionProducts, userRole, refetchRestaurant, refetchCategories, refetchPromotions}) {
     const { t } = useTranslation();
+    const navigate = useNavigate();
     const api = useApi();
     const apiContext = useContext(ApiContext);
     const authContext = useContext(AuthContext);
@@ -40,6 +41,7 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
     const addCategoryFormRef = useRef();
     const addProductFormRef = useRef();
 
+    const [showDeleteRestaurantError, setShowDeleteRestaurantError] = useState(false);
     const [showAddCategoryError, setShowAddCategoryError] = useState(false);
     const [showAddProductError, setShowAddProductError] = useState(false);
     const [addProductUrl, setAddProductUrl] = useState("");
@@ -56,6 +58,17 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
         });
     }, []);
 
+    const deleteRestaurantMutation = useMutation({
+        mutationFn: async () => {
+            await restaurantService.deleteRestaurant(restaurant.selfUrl);
+        },
+        onSuccess: () => {
+            // eslint-disable-next-line no-undef
+            bootstrap.Modal.getOrCreateInstance(document.querySelector("#delete-restaurant-modal")).hide();
+            navigate("/");
+        },
+        onError: () => setShowDeleteRestaurantError(true)
+    });
     const addCategoryMutation = useMutation({
         mutationFn: async ({name}) => {
             await restaurantService.addCategory(restaurant.categoriesUrl, name);
@@ -160,7 +173,7 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
                             {authContext.isAuthenticated && (userRole.isOwner) &&
                                 <>
                                     <button className="btn btn-secondary" type="button">{t("restaurant.edit.edit_employees")}</button>
-                                    <button className="btn btn-danger" type="button">{t("restaurant.delete_restaurant")}</button>
+                                    <button className="btn btn-danger" type="button" data-bs-toggle="modal" data-bs-target="#delete-restaurant-modal">{t("restaurant.delete_restaurant")}</button>
                                 </>
                             }
                         </div>
@@ -252,7 +265,7 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
                             ))
                         }
                         <div className="clickable-object" data-bs-toggle="modal" data-bs-target="#add-category-modal">
-                            <div className="card my-4 add-button">
+                            <div className="card mb-4 add-button">
                                 <div className="card-body d-flex justify-content-center align-items-center gap-2">
                                     <i className="bi bi-plus-circle-fill default"></i>
                                     <span>{t("restaurant.edit.add_category")}</span>
@@ -381,6 +394,21 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
                                     </Form>
                                 )}
                             </Formik>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="modal fade" id="delete-restaurant-modal" tabIndex="-1">
+                    <div className="modal-dialog modal-dialog-centered">
+                        <div className="modal-content">
+                            <div className="modal-body">
+                                {showDeleteRestaurantError && <div className="alert alert-danger" role="alert">{t("restaurant.edit.error")}</div>}
+                                <h1 className="modal-title fs-5">{t("restaurant.edit.delete_restaurant")}</h1>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" data-bs-dismiss="modal" className="btn btn-secondary">{t("paging.no")}</button>
+                                <button type="button" className="btn btn-danger" onClick={deleteRestaurantMutation.mutate}>{t("paging.yes")}</button>
+                            </div>
                         </div>
                     </div>
                 </div>

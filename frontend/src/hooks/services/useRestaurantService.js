@@ -185,6 +185,10 @@ export function useRestaurantService(api) {
         );
     };
 
+    const deleteRestaurant = async (url) => {
+        return await api.delete(url);
+    };
+
     return {
         getRestaurants,
         getRestaurant,
@@ -196,6 +200,7 @@ export function useRestaurantService(api) {
         createRestaurant,
         getRestaurantsWithUnhandledReports,
         addCategory,
-        addProduct
+        addProduct,
+        deleteRestaurant
     };
 }
