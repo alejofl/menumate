@@ -5,7 +5,7 @@ import ApiContext from "../contexts/ApiContext.jsx";
 import {useApi} from "../hooks/useApi.js";
 import {useRestaurantService} from "../hooks/services/useRestaurantService.js";
 import {useParams, useSearchParams} from "react-router-dom";
-import {useInfiniteQuery, useQuery} from "@tanstack/react-query";
+import {useInfiniteQuery, useQueries, useQuery} from "@tanstack/react-query";
 import "./styles/restaurant_orders.css";
 import {STATUS} from "../utils.js";
 import {useOrderService} from "../hooks/services/useOrderService.js";
@@ -34,6 +34,9 @@ function RestaurantOrders() {
         ...(queryParams.get("size") ? {size: queryParams.get("size")} : {})
     });
     const queryKey = useState(query);
+
+    const [currentOrder, setCurrentOrder] = useState("");
+    const [currentOrderId, setCurrentOrderId] = useState();
 
     const { restaurantId } = useParams();
     const {
@@ -65,7 +68,7 @@ function RestaurantOrders() {
         hasNextPage: ordersHasNextPage,
         fetchNextPage
     } = useInfiniteQuery( {
-        queryKey: ["orders", status, queryKey],
+        queryKey: ["orders", status, sorting, queryKey],
         queryFn: async ({ pageParam }) => (
             await orderService.getOrders(
                 apiContext.ordersUrl,
@@ -73,6 +76,7 @@ function RestaurantOrders() {
                     userId: user.userId,
                     restaurantId: restaurant.restaurantId,
                     status: status,
+                    descending: sorting === SORT.DESCENDING,
                     query,
                     page : pageParam
                 }
@@ -85,6 +89,55 @@ function RestaurantOrders() {
 
     const handleLoadMoreContent = async () => {
         await fetchNextPage();
+    };
+    console.log(apiContext.ordersUrl);
+
+    const {
+        data: order
+    } = useQuery({
+        queryKey: ["order", currentOrder, currentOrderId],
+        queryFn: async () => (
+            await orderService.getOrder(
+                currentOrder
+            )
+        )
+    });
+
+    const {
+        data: orderItems,
+        isSuccess: isSuccessOrderItems
+    } = useQuery({
+        queryKey: ["orderItems", order],
+        queryFn: async () => (
+            await orderService.getOrderItems(
+                order.itemsUrl
+            )
+        ),
+        enabled: !!order
+    });
+
+    console.log(orderItems);
+
+    const products = useQueries({
+        queries: isSuccessOrderItems
+            ?
+            orderItems.map(orderItem => {
+                return {
+                    queryKey: ["order", orderItem.productUrl],
+                    queryFn: async () => (
+                        await restaurantService.getProduct(orderItem.productUrl)
+                    )
+                };
+            })
+            :
+            []
+    });
+    console.log(products);
+    const handleOrder = () => {
+        // eslint-disable-next-line no-undef
+        const modal = bootstrap.Modal.getOrCreateInstance(document.querySelector("#order-details"));
+        // document.querySelector("#editAddressModal").addEventListener("hidden.bs.modal", handleModalHidden);
+        modal.show();
     };
 
     return (
@@ -179,9 +232,9 @@ function RestaurantOrders() {
                                         <div></div>
                                         :
                                         orders?.pages.flatMap(page => page.content)
-                                            .sort(() => sorting)
                                             .map(order => (
-                                                <tr className="clickable-object" key={order.orderId}>
+                                                <tr className="clickable-object" key={order.orderId}
+                                                    onClick={() => { handleOrder(); setCurrentOrder(order.selfUrl); setCurrentOrderId(order.orderId); }}>
                                                     <td className="text-start">{order.orderId}</td>
                                                     <td className="text-center">
                                                         {order.orderType === "delivery"
@@ -264,6 +317,139 @@ function RestaurantOrders() {
                             </button>
                         </div>
                     }
+                </div>
+
+                <div className="modal fade" id="order-details" tabIndex="-1">
+                    <div className="modal-dialog modal-dialog-scrollable modal-lg modal-dialog-centered">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title">{t("order.title", {id: order?.orderId})}</h5>
+                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div className="modal-body">
+                                <h4>{t("order.items")}</h4>
+                                <table className="table table-hover">
+                                    <thead className="table-light">
+                                        <tr>
+                                            <th scope="col" className="text-start">#</th>
+                                            <th scope="col" className="text-center">{t("order.product")}</th>
+                                            <th scope="col" className="text-center">{t("order.comments")}</th>
+                                            <th scope="col" className="text-center">{t("order.quantity")}</th>
+                                            <th scope="col" className="text-end">{t("order.price")}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="order-items">
+                                        {
+                                            isSuccessOrderItems && products.every(query => query.isSuccess) &&
+                                            orderItems.map(orderItem => (
+                                                <tr key={orderItem}>
+                                                    <th scope="col" className="text-start">{orderItem.lineNumber}</th>
+                                                    <th scope="col" className="text-center">
+                                                        {products.find(product =>
+                                                            product.data.selfUrl === orderItem.productUrl
+                                                        )?.data.name}
+                                                    </th>
+                                                    <th scope="col" className="text-center">{orderItem.comment}</th>
+                                                    <th scope="col" className="text-center">{orderItem.quantity}</th>
+                                                    <th scope="col" className="text-end">
+                                                        {products.find(product =>
+                                                            product.data.selfUrl === orderItem.productUrl
+                                                        ).data.price}
+                                                    </th>
+                                                </tr>
+                                            ))
+                                        }
+                                    </tbody>
+                                </table>
+                                <h4>{t("order.details")}</h4>
+                                {/* <ul className="list-group list-group-flush">*/}
+                                {/*    <li className="list-group-item d-flex align-items-center">*/}
+                                {/*        <i className="bi bi-person me-3"></i>*/}
+                                {/*        <div>*/}
+                                {/*            <small className="text-muted">{t("order.customer")}</small>*/}
+                                {/*            <p className="mb-0" id="order-details-customer">*/}
+                                {/*            </p>*/}
+                                {/*        </div>*/}
+                                {/*    </li>*/}
+                                {/*    <li className="list-group-item d-flex align-items-center order-details-0-data">*/}
+                                {/*        <i className="bi bi-card-list me-3"></i>*/}
+                                {/*        <div>*/}
+                                {/*            <small className="text-muted">{t("order.order_type")}</small>*/}
+                                {/*            <p className="mb-0">*/}
+                                {/*                <spring:message code="restaurant.menu.form.dinein"/>*/}
+                                {/*            </p>*/}
+                                {/*        </div>*/}
+                                {/*    </li>*/}
+                                {/*    <li className="list-group-item d-flex align-items-center order-details-0-data">*/}
+                                {/*        <i className="bi bi-hash me-3"></i>*/}
+                                {/*        <div>*/}
+                                {/*            <small className="text-muted">{t("order.table_number")}</small>*/}
+                                {/*            <p className="mb-0" id="order-details-table-number">*/}
+                                {/*            </p>*/}
+                                {/*        </div>*/}
+                                {/*    </li>*/}
+                                {/*    <li className="list-group-item d-flex align-items-center order-details-1-data">*/}
+                                {/*        <i className="bi bi-card-list me-3"></i>*/}
+                                {/*        <div>*/}
+                                {/*            <small className="text-muted"><spring:message code="userorders.ordertype"/></small>*/}
+                                {/*            <p className="mb-0">*/}
+                                {/*                <spring:message code="restaurant.menu.form.takeaway"/>*/}
+                                {/*            </p>*/}
+                                {/*        </div>*/}
+                                {/*    </li>*/}
+                                {/*    <li className="list-group-item d-flex align-items-center order-details-2-data">*/}
+                                {/*        <i className="bi bi-card-list me-3"></i>*/}
+                                {/*        <div>*/}
+                                {/*            <small className="text-muted"><spring:message code="userorders.ordertype"/></small>*/}
+                                {/*            <p className="mb-0">*/}
+                                {/*                <spring:message code="restaurant.menu.form.delivery"/>*/}
+                                {/*            </p>*/}
+                                {/*        </div>*/}
+                                {/*    </li>*/}
+                                {/*    <li className="list-group-item d-flex align-items-center order-details-2-data">*/}
+                                {/*        <i className="bi bi-geo-alt me-3"></i>*/}
+                                {/*        <div>*/}
+                                {/*            <small className="text-muted"><spring:message code="restaurant.menu.form.address"/></small>*/}
+                                {/*            <p className="mb-0" id="order-details-address">*/}
+                                {/*            </p>*/}
+                                {/*        </div>*/}
+                                {/*    </li>*/}
+                                {/*    <li className="list-group-item d-flex align-items-center">*/}
+                                {/*        <i className="bi bi-cash me-3"></i>*/}
+                                {/*        <div>*/}
+                                {/*            <small className="text-muted"><spring:message code="restaurantorders.modal.total"/></small>*/}
+                                {/*            <p className="mb-0" id="order-total-price">*/}
+                                {/*            </p>*/}
+                                {/*        </div>*/}
+                                {/*    </li>*/}
+                                {/* </ul>*/}
+                            </div>
+                            {/* <c:if test="${status != 'delivered' && status != 'cancelled'}">*/}
+                            {/*    <div class="modal-footer">*/}
+                            {/*        <form action="<c:url value="/orders/$1/cancel"/>" method="post" id="cancel-order-form">*/}
+                            {/*            <button type="submit" class="btn btn-danger"><spring:message code="restaurantorders.cancel"/></button>*/}
+                            {/*        </form>*/}
+                            {/*        <c:choose>*/}
+                            {/*            <c:when test="${status == 'pending'}">*/}
+                            {/*                <form action="<c:url value="/orders/$1/confirm"/>" method="post" id="change-order-status-form">*/}
+                            {/*                    <button type="submit" class="btn btn-success"><spring:message code="restaurantorders.confirm"/></button>*/}
+                            {/*                </form>*/}
+                            {/*            </c:when>*/}
+                            {/*            <c:when test="${status == 'confirmed'}">*/}
+                            {/*                <form action="<c:url value="/orders/$1/ready"/>" method="post" id="change-order-status-form">*/}
+                            {/*                    <button type="submit" class="btn btn-success"><spring:message code="restaurantorders.ready.action"/></button>*/}
+                            {/*                </form>*/}
+                            {/*            </c:when>*/}
+                            {/*            <c:when test="${status == 'ready'}">*/}
+                            {/*                <form action="<c:url value="/orders/$1/deliver"/>" method="post" id="change-order-status-form">*/}
+                            {/*                    <button type="submit" class="btn btn-success"><spring:message code="restaurantorders.deliver"/></button>*/}
+                            {/*                </form>*/}
+                            {/*            </c:when>*/}
+                            {/*        </c:choose>*/}
+                            {/*    </div>*/}
+                            {/* </c:if>*/}
+                        </div>
+                    </div>
                 </div>
             </Page>
         </>
