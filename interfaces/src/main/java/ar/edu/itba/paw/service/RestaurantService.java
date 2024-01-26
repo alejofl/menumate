@@ -36,13 +36,11 @@ public interface RestaurantService {
 
     Optional<Duration> getAverageOrderCompletionTime(long restaurantId, OrderType orderType);
 
-    Restaurant update(long restaurantId, String name, RestaurantSpecialty specialty, String address, String description, List<RestaurantTags> tags);
+    Restaurant update(long restaurantId, String name, RestaurantSpecialty specialty, String address, int maxTables, String description, List<RestaurantTags> tags);
 
     void updateImages(long restaurantId, Optional<Long> logoId, Optional<Long> portrait1Id, Optional<Long> portrait2Id);
 
     void delete(long restaurantId);
 
     void handleActivation(long restaurantId, boolean activate);
-
-    void handleDeletion(long restaurantId, boolean delete);
 }

@@ -41,10 +41,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Optional<Product> getById(long productId) {
-        Optional<Product> product = productDao.getById(productId);
-        if (product.isPresent() && product.get().getDeleted())
-            throw new ProductDeletedException();
-        return product;
+        return productDao.getById(productId);
     }
 
     @Override
@@ -125,7 +122,7 @@ public class ProductServiceImpl implements ProductService {
     public Promotion createPromotion(long restaurantId, long sourceProductId, LocalDateTime startDate, LocalDateTime endDate, BigDecimal discountPercentage) {
         if (discountPercentage.compareTo(BigDecimal.ONE) < 0 || discountPercentage.compareTo(BigDecimal.valueOf(100)) > 0) {
             LOGGER.error("Attempted to create product with discount outside range {}", discountPercentage);
-            throw new IllegalArgumentException("Discount must be in the range [1, 100]");
+            throw new IllegalArgumentException("exception.IllegalArgumentException.createPromotion.discountPercentage");
         }
 
         final Product source = productDao.getById(sourceProductId).orElseThrow(ProductNotFoundException::new);
@@ -142,13 +139,13 @@ public class ProductServiceImpl implements ProductService {
         if (endDate != null) {
             if (!endDate.isAfter(startDate)) {
                 LOGGER.error("Attempted to create a promotion with endDate <= startDate");
-                throw new IllegalArgumentException("endDate must be either null, or after startDate");
+                throw new IllegalArgumentException("exception.IllegalArgumentException.createPromotion.endDateVSStartDate");
             }
 
             LocalDateTime now = LocalDateTime.now();
             if (!endDate.isAfter(now)) {
                 LOGGER.error("Attempted to create a promotion with endDate <= now");
-                throw new IllegalArgumentException("endDate must be either null or in the past");
+                throw new IllegalArgumentException("exception.IllegalArgumentException.createPromotion.endDateVSNow");
             }
         }
 
@@ -158,7 +155,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Optional<Promotion> hasPromotionInRange(long sourceProductId, LocalDateTime startDate, LocalDateTime endDate) {
         if (!startDate.isBefore(endDate))
-            throw new IllegalArgumentException("endDate must be after startDate");
+            throw new IllegalArgumentException("exception.IllegalArgumentException.hasPromotionInRange.endDateVsStartDate");
 
         return productDao.hasPromotionInRange(sourceProductId, startDate, endDate);
     }

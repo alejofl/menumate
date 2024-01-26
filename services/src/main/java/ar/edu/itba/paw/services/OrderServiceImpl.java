@@ -209,7 +209,7 @@ public class OrderServiceImpl implements OrderService {
                 break;
             default:
                 LOGGER.error("Attempted to force set order status to unknown OrderStatus value: {}", orderStatus);
-                throw new IllegalArgumentException("No such OrderType enum constant");
+                throw new IllegalArgumentException("exception.IllegalArgumentException.setOrderStatus");
         }
 
         LOGGER.info("Forced set order {} set to status {}", orderId, orderStatus);
@@ -221,16 +221,16 @@ public class OrderServiceImpl implements OrderService {
         final Order order = orderDao.getById(orderId).orElseThrow(OrderNotFoundException::new);
         if (order.getOrderType() != OrderType.DELIVERY) {
             LOGGER.error("Attempted to update address of non-delivery order {}", orderId);
-            throw new IllegalStateException("Invalid order type");
+            throw new IllegalStateException("exception.IllegalArgumentException.updateAddress.orderType");
         } else if (!order.getOrderStatus().isInProgress()) {
             LOGGER.error("Attempted to update address of closed order {}", orderId);
-            throw new IllegalStateException("Invalid order status");
+            throw new IllegalStateException("exception.IllegalArgumentException.updateAddress.orderStatus");
         }
 
         address = address == null ? null : address.trim();
         if (address == null || address.isEmpty()) {
             LOGGER.error("Attempted to update address of order {} to null-or-blank value", orderId);
-            throw new IllegalArgumentException("Cannot set order address to null");
+            throw new IllegalArgumentException("exception.IllegalArgumentException.updateAddress.address");
         }
 
         order.setAddress(address.trim());
@@ -243,10 +243,10 @@ public class OrderServiceImpl implements OrderService {
         final Order order = orderDao.getById(orderId).orElseThrow(OrderNotFoundException::new);
         if (order.getOrderType() != OrderType.DINE_IN) {
             LOGGER.error("Attempted to update tablenum of non-dinein order {}", orderId);
-            throw new IllegalStateException("Invalid order type");
+            throw new IllegalStateException("exception.IllegalArgumentException.updateTableNumber.orderType");
         } else if (!order.getOrderStatus().isInProgress()) {
             LOGGER.error("Attempted to update tablenum of closed order {}", orderId);
-            throw new IllegalStateException("Invalid order status");
+            throw new IllegalStateException("exception.IllegalArgumentException.updateTableNumber.orderStatus");
         }
 
         order.setTableNumber(tableNumber);
@@ -255,7 +255,12 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional
     @Override
-    public void cancelPendingOrders(long restaurantId) {
-        orderDao.cancelPendingOrders(restaurantId);
+    public void cancelNonDeliveredOrders(long restaurantId) {
+        List<Long> orderIds = orderDao.cancelNonDeliveredOrders(restaurantId);
+        orderIds.stream()
+                .map(orderDao::getById)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .forEach(order -> emailService.sendOrderCancelled(order));
     }
 }

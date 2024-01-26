@@ -23,5 +23,5 @@ public interface OrderDao {
 
     PaginatedResult<Order> get(Long userId, Long restaurantId, OrderStatus orderStatus, boolean onlyInProgress, boolean descending, int pageNumber, int pageSize);
 
-    void cancelPendingOrders(long restaurantId);
+    List<Long> cancelNonDeliveredOrders(long restaurantId);
 }

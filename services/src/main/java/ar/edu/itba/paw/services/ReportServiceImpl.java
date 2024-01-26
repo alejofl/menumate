@@ -66,7 +66,7 @@ public class ReportServiceImpl implements ReportService {
 
         if (report.getIsHandled()) {
             LOGGER.warn("Attempted to mark report id {} as handled, but report is already handled", report.getReportId());
-            throw new IllegalStateException("Report is already handled");
+            throw new IllegalStateException("exception.IllegalStateException.markHandled");
         }
 
         report.setHandlerUserId(handlerUserId);

@@ -64,12 +64,12 @@ public class UserServiceImpl implements UserService {
             user = maybeUser.get();
             if (password == null) {
                 LOGGER.error("Attempted to createOrConsolidate existing user id {} with a null password", user.getUserId());
-                throw new IllegalArgumentException("Cannot createOrConsolidate an existing user with a null password");
+                throw new IllegalArgumentException("exception.IllegalArgumentException.createOrConsolidate.nullPassword");
             }
 
             if (user.getPassword() != null) {
                 LOGGER.error("Attempted to createOrConsolidate an existing and consolidated user id {}", user.getUserId());
-                throw new IllegalStateException("Cannot createOrConsolidate an already consolidated user");
+                throw new IllegalStateException("exception.IllegalArgumentException.createOrConsolidate.consolidated");
             }
 
             user.setPassword(password);
@@ -185,7 +185,7 @@ public class UserServiceImpl implements UserService {
     public boolean updatePassword(long userId, String newPassword) {
         if (newPassword == null) {
             LOGGER.info("Attempted to update password with null newPassword");
-            throw new IllegalArgumentException("newPassword must not be null");
+            throw new IllegalArgumentException("exception.IllegalArgumentException.updatePassword");
         }
 
         Optional<User> maybeUser = userDao.getById(userId);

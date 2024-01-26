@@ -136,7 +136,7 @@ public class CategoryJpaDao implements CategoryDao {
 
         if (rows == 0) {
             LOGGER.error("Attempted to move product id {} to category id {} but no rows were modified", productId, newCategoryId);
-            throw new IllegalStateException("Either tried to move products between restaurants, or product or category not found");
+            throw new IllegalStateException("exception.IllegalStateException.moveProduct");
         }
 
         LOGGER.info("Moved product id {} to category {}, {} product{} updated", productId, newCategoryId, rows, rows == 1 ? "" : "s");

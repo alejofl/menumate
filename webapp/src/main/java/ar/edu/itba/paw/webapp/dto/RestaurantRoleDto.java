@@ -15,26 +15,31 @@ import java.util.stream.Collectors;
 public class RestaurantRoleDto {
 
     private long userId;
+    private String name;
+    private String email;
+
     private String role;
 
     private URI selfUrl;
     private URI userUrl;
     private URI restaurantUrl;
 
-    public static RestaurantRoleDto from(final UriInfo uriInfo, final long restaurantId, final long userId, RestaurantRoleLevel level) {
+    public static RestaurantRoleDto from(final UriInfo uriInfo, final long restaurantId, final User user, RestaurantRoleLevel level) {
         final RestaurantRoleDto dto = new RestaurantRoleDto();
-        dto.userId = userId;
+        dto.userId = user.getUserId();
+        dto.name = user.getName();
+        dto.email = user.getEmail();
         dto.role = level.getMessageCode();
 
-        dto.selfUrl = UriUtils.getRestaurantEmployeeUri(uriInfo, restaurantId, userId);
-        dto.userUrl = UriUtils.getUserUri(uriInfo, userId);
+        dto.selfUrl = UriUtils.getRestaurantEmployeeUri(uriInfo, restaurantId, user.getUserId());
+        dto.userUrl = UriUtils.getUserUri(uriInfo, user.getUserId());
         dto.restaurantUrl = UriUtils.getRestaurantUri(uriInfo, restaurantId);
 
         return dto;
     }
 
     public static RestaurantRoleDto from(final UriInfo uriInfo, final long restaurantId, final Pair<User, RestaurantRoleLevel> pair) {
-        return from(uriInfo, restaurantId, pair.getKey().getUserId(), pair.getValue());
+        return from(uriInfo, restaurantId, pair.getKey(), pair.getValue());
     }
 
     public static List<RestaurantRoleDto> fromCollection(final UriInfo uriInfo, final long restaurantId, final Collection<Pair<User, RestaurantRoleLevel>> pairs) {
@@ -47,6 +52,22 @@ public class RestaurantRoleDto {
 
     public void setUserId(long userId) {
         this.userId = userId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getRole() {

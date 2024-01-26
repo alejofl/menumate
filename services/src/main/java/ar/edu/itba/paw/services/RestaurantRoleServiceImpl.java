@@ -72,7 +72,7 @@ public class RestaurantRoleServiceImpl implements RestaurantRoleService {
     public void updateRole(long userId, long restaurantId, RestaurantRoleLevel level) {
         if (level == RestaurantRoleLevel.OWNER) {
             LOGGER.error("Attempted to set role of user {} at restaurant {} to owner", userId, restaurantId);
-            throw new IllegalArgumentException("Cannot set a restaurant role level to owner");
+            throw new IllegalArgumentException("exception.IllegalArgumentException.updateRole");
         }
 
         final Optional<RestaurantRole> maybeRole = restaurantRoleDao.getRole(userId, restaurantId);
@@ -91,7 +91,7 @@ public class RestaurantRoleServiceImpl implements RestaurantRoleService {
     public Pair<User, Boolean> setRole(String email, long restaurantId, RestaurantRoleLevel level) {
         if (level == RestaurantRoleLevel.OWNER) {
             LOGGER.error("Attempted to set role of user {} at restaurant {} to owner", email, restaurantId);
-            throw new IllegalArgumentException("Cannot set a restaurant role level to owner");
+            throw new IllegalArgumentException("exception.IllegalArgumentException.setRole");
         }
 
         final Optional<User> user = userDao.getByEmail(email);
@@ -135,7 +135,7 @@ public class RestaurantRoleServiceImpl implements RestaurantRoleService {
     public boolean doesUserHaveRole(long userId, long restaurantId, RestaurantRoleLevel minimumRoleLevel) {
         if (minimumRoleLevel == null) {
             LOGGER.error("Called doesUserHaveRole() with role null");
-            throw new IllegalArgumentException("minimumRoleLevel must not be null");
+            throw new IllegalArgumentException("exception.IllegalArgumentException.doesUserHaveRole");
         }
 
         if (minimumRoleLevel == RestaurantRoleLevel.OWNER) {

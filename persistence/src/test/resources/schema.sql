@@ -173,7 +173,6 @@ CREATE VIEW restaurant_details AS
     ) AS average_price
     FROM restaurants LEFT OUTER JOIN (orders JOIN order_reviews ON orders.order_id = order_reviews.order_id)
         ON restaurants.restaurant_id = orders.restaurant_id
-    WHERE restaurants.deleted = false
     GROUP BY restaurants.restaurant_id
 );
 
@@ -186,9 +185,17 @@ CREATE VIEW restaurant_role_details AS
             AND date_delivered IS NULL AND date_cancelled IS NULL
     ) AS inprogress_order_count
     FROM (
-        (SELECT user_id, restaurant_id, role_level FROM restaurant_roles)
-        UNION
-        (SELECT owner_user_id AS user_id, restaurant_id, 0 AS role_level FROM restaurants)
+         (
+             SELECT user_id, restaurant_id, role_level
+             FROM restaurant_roles NATURAL JOIN restaurants
+             WHERE deleted = false
+         )
+         UNION
+         (
+             SELECT owner_user_id AS user_id, restaurant_id, 0 AS role_level
+             FROM restaurants
+             WHERE deleted = false
+         )
     ) AS roles_grouped
 );
 

@@ -57,7 +57,7 @@ public class RestaurantJpaDao implements RestaurantDao {
             case PRICE:
                 return "r.average_price";
             default:
-                throw new IllegalArgumentException("Invalid or not implemented RestaurantOrderBy: " + orderBy);
+                throw new IllegalArgumentException("exception.IllegalArgumentException.getOrderByColumn");
         }
     }
 
@@ -75,7 +75,7 @@ public class RestaurantJpaDao implements RestaurantDao {
             case PRICE:
                 return "averageProductPrice " + direction + ", restaurantId";
             default:
-                throw new IllegalArgumentException("Invalid or not implemented RestaurantOrderBy: " + orderBy);
+                throw new IllegalArgumentException("exception.IllegalArgumentException.getOrderByColumnHql");
         }
     }
 
@@ -148,7 +148,7 @@ public class RestaurantJpaDao implements RestaurantDao {
         String search = generateSearchParam(query);
 
         StringBuilder sqlBuilder = new StringBuilder();
-        sqlBuilder.append("SELECT restaurant_id FROM restaurant_details AS r WHERE is_active = true AND");
+        sqlBuilder.append("SELECT restaurant_id FROM restaurant_details AS r WHERE is_active = true AND deleted = false AND");
         sqlBuilder.append(NAME_SEARCH_CONDITION_SQL);
         appendSpecialtiesCondition(sqlBuilder, specialties);
         appendTagsCondition(sqlBuilder, tags);
