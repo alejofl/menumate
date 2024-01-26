@@ -47,8 +47,6 @@ function RestaurantOrders() {
 
     const {
         data: restaurant,
-        // eslint-disable-next-line no-unused-vars
-        isSuccess : restaurantIsSuccess,
         isError: restaurantIsError
     } = useQuery({
         queryKey: [restaurantId],
@@ -59,8 +57,6 @@ function RestaurantOrders() {
 
     const {
         data : user,
-        // eslint-disable-next-line no-unused-vars
-        isSuccess : userIsSuccess,
         isError: userIsError
     } = useQuery({
         queryKey: ["user"],
