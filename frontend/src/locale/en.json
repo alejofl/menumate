@@ -258,6 +258,19 @@
             "required": "The category name is required",
             "min": "The category name must be at least {{min}} characters long",
             "max": "The category name must be at most {{max}} characters long"
+        },
+        "product_name": {
+            "required": "The product name is required",
+            "min": "The product name must be at least {{min}} characters long",
+            "max": "The product name must be at most {{max}} characters long"
+        },
+        "product_description": {
+            "max": "The product description must be at most {{max}} characters long"
+        },
+        "product_price": {
+            "required": "The product price is required",
+            "min": "The product price must be at least ${{min}}",
+            "max": "The product price must be at most ${{max}}"
         }
     },
     "reset_password": {
@@ -350,7 +363,11 @@
             "edit_employees": "Edit Employees",
             "add_product": "Add Product",
             "add_category": "Add Category",
-            "category_name": "Category Name"
+            "category_name": "Category Name",
+            "product_name": "Product Name",
+            "product_description": "Product Description",
+            "product_price": "Product Price",
+            "product_image": "Product Image"
         }
     },
     "order_placed": {

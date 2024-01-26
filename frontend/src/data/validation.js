@@ -127,18 +127,18 @@ export const CreateRestaurantSchema = Yup.object().shape({
 
     logo: Yup.mixed()
         .required(i18n.t("validation.image.required"))
-        .test("fileSize", i18n.t("validation.image.size"), (value) => value.size <= IMAGE_MAX_SIZE)
-        .test("fileType", i18n.t("validation.image.type"), (value) => value.type.startsWith("image/")),
+        .test("fileSize", i18n.t("validation.image.size"), (value) => value && value.size <= IMAGE_MAX_SIZE)
+        .test("fileType", i18n.t("validation.image.type"), (value) => value && value.type.startsWith("image/")),
 
     portrait1: Yup.mixed()
         .required(i18n.t("validation.image.required"))
-        .test("fileSize", i18n.t("validation.image.size"), (value) => value.size <= IMAGE_MAX_SIZE)
-        .test("fileType", i18n.t("validation.image.type"), (value) => value.type.startsWith("image/")),
+        .test("fileSize", i18n.t("validation.image.size"), (value) => value && value.size <= IMAGE_MAX_SIZE)
+        .test("fileType", i18n.t("validation.image.type"), (value) => value && value.type.startsWith("image/")),
 
     portrait2: Yup.mixed()
         .required(i18n.t("validation.image.required"))
-        .test("fileSize", i18n.t("validation.image.size"), (value) => value.size <= IMAGE_MAX_SIZE)
-        .test("fileType", i18n.t("validation.image.type"), (value) => value.type.startsWith("image/"))
+        .test("fileSize", i18n.t("validation.image.size"), (value) => value && value.size <= IMAGE_MAX_SIZE)
+        .test("fileType", i18n.t("validation.image.type"), (value) => value && value.type.startsWith("image/"))
 });
 
 export const ReviewReplySchema = Yup.object().shape({
@@ -164,4 +164,25 @@ export const AddCategorySchema = Yup.object().shape({
         .required(i18n.t("validation.category_name.required"))
         .min(1, ({ min }) => i18n.t("validation.category_name.min", {min: min}))
         .max(50, ({ max }) => i18n.t("validation.category_name.max", {max: max}))
+});
+
+export const AddProductSchema = Yup.object().shape({
+    productName: Yup.string()
+        .required(i18n.t("validation.product_name.required"))
+        .min(1, ({ min }) => i18n.t("validation.product_name.min", {min: min}))
+        .max(150, ({ max }) => i18n.t("validation.product_name.max", {max: max})),
+
+    description: Yup.string()
+        .notRequired()
+        .max(300, ({ max }) => i18n.t("validation.product_description.max", {max: max})),
+
+    price: Yup.number()
+        .required(i18n.t("validation.product_price.required"))
+        .min(0.01, ({ min }) => i18n.t("validation.product_price.min", {min: min}))
+        .max(99999999, ({ max }) => i18n.t("validation.product_price.max", {max: max})),
+
+    image: Yup.mixed()
+        .notRequired()
+        .test("fileSize", i18n.t("validation.image.size"), (value) => !value || (value && value.size <= IMAGE_MAX_SIZE))
+        .test("fileType", i18n.t("validation.image.type"), (value) => !value || (value && value.type.startsWith("image/")))
 });

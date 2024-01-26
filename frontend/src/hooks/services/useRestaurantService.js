@@ -164,6 +164,27 @@ export function useRestaurantService(api) {
         );
     };
 
+    const addProduct = async (url, imagesUrl, name, description, price, image) => {
+        let imageId = null;
+        if (image !== null) {
+            imageId = (await api.postForm(imagesUrl, {image: image})).data.imageId;
+        }
+        return await api.post(
+            url,
+            {
+                name: name,
+                description: description,
+                price: price,
+                ...(imageId !== null ? {"imageId": imageId} : {})
+            },
+            {
+                headers: {
+                    "Content-Type": RESTAURANT_PRODUCTS_CONTENT_TYPE
+                }
+            }
+        );
+    };
+
     return {
         getRestaurants,
         getRestaurant,
@@ -174,6 +195,7 @@ export function useRestaurantService(api) {
         reportRestaurant,
         createRestaurant,
         getRestaurantsWithUnhandledReports,
-        addCategory
+        addCategory,
+        addProduct
     };
 }

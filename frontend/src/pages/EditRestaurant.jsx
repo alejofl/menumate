@@ -4,7 +4,7 @@ import {useMutation} from "@tanstack/react-query";
 import {useTranslation} from "react-i18next";
 import {useApi} from "../hooks/useApi.js";
 import {useContext} from "react";
-// import ApiContext from "../contexts/ApiContext.jsx";
+import ApiContext from "../contexts/ApiContext.jsx";
 import {useRestaurantService} from "../hooks/services/useRestaurantService.js";
 /*
  * import Error from "./Error.jsx";
@@ -16,13 +16,14 @@ import ProductCard from "../components/ProductCard.jsx";
 import AuthContext from "../contexts/AuthContext.jsx";
 import {Link} from "react-router-dom";
 import {ErrorMessage, Field, Form, Formik} from "formik";
-import {AddCategorySchema} from "../data/validation.js";
+import {AddCategorySchema, AddProductSchema} from "../data/validation.js";
+import ImagePlaceholder from "../assets/image-placeholder.png";
 
 // eslint-disable-next-line no-unused-vars
 function EditRestaurant({restaurant, categories, products, promotions, promotionProducts, userRole, refetchRestaurant, refetchCategories, refetchPromotions}) {
     const { t } = useTranslation();
     const api = useApi();
-    // const apiContext = useContext(ApiContext);
+    const apiContext = useContext(ApiContext);
     const authContext = useContext(AuthContext);
     const restaurantService = useRestaurantService(api);
 
@@ -37,19 +38,39 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
      */
 
     const addCategoryFormRef = useRef();
+    const addProductFormRef = useRef();
 
     const [showAddCategoryError, setShowAddCategoryError] = useState(false);
+    const [showAddProductError, setShowAddProductError] = useState(false);
+    const [addProductUrl, setAddProductUrl] = useState("");
 
     useEffect(() => {
         document.querySelector("#add-category-modal").addEventListener("hidden.bs.modal", () => {
             addCategoryFormRef.current?.resetForm();
             setShowAddCategoryError(false);
         });
+        document.querySelector("#add-product-modal").addEventListener("hidden.bs.modal", () => {
+            addProductFormRef.current?.resetForm();
+            setShowAddProductError(false);
+            setAddProductUrl("");
+        });
     }, []);
 
     const addCategoryMutation = useMutation({
         mutationFn: async ({name}) => {
             await restaurantService.addCategory(restaurant.categoriesUrl, name);
+        }
+    });
+    const addProductMutation = useMutation({
+        mutationFn: async ({productName, description, price, image}) => {
+            await restaurantService.addProduct(
+                addProductUrl,
+                apiContext.imagesUrl,
+                productName,
+                description,
+                price,
+                image
+            );
         }
     });
 
@@ -64,7 +85,29 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
                     // eslint-disable-next-line no-undef
                     bootstrap.Modal.getOrCreateInstance(document.querySelector("#add-category-modal")).hide();
                 },
-                onError: () => setShowAddCategoryError(false)
+                onError: () => setShowAddCategoryError(true)
+            }
+        );
+        setSubmitting(false);
+    };
+
+    const handleAddProduct = (values, {setSubmitting}) => {
+        const image = values.image !== "" ? values.image : null;
+        addProductMutation.mutate(
+            {
+                productName: values.productName,
+                description: values.description,
+                price: values.price,
+                image: image
+            },
+            {
+                onSuccess: () => {
+                    const productIndex = categories.sort((a, b) => a.orderNum < b.orderNum).findIndex(category => category.productsUrl === addProductUrl);
+                    products[productIndex].refetch();
+                    // eslint-disable-next-line no-undef
+                    bootstrap.Modal.getOrCreateInstance(document.querySelector("#add-product-modal")).hide();
+                },
+                onError: () => setShowAddProductError(true)
             }
         );
         setSubmitting(false);
@@ -196,7 +239,7 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
                                                 />
                                             ))
                                         }
-                                        <div className="clickable-object" data-bs-toggle="modal" data-bs-target="#add-item-modal">
+                                        <div className="clickable-object" data-bs-toggle="modal" data-bs-target="#add-product-modal" onClick={() => setAddProductUrl(category.productsUrl)}>
                                             <div className="card add-button">
                                                 <div className="card-body d-flex justify-content-center flex-column align-items-center gap-2">
                                                     <i className="bi bi-plus-circle-fill default"></i>
@@ -246,6 +289,94 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
                                         </div>
                                         <div className="modal-footer">
                                             <button type="submit" className="btn btn-primary" disabled={isSubmitting}>{t("restaurant.edit.add_category")}</button>
+                                        </div>
+                                    </Form>
+                                )}
+                            </Formik>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="modal fade" id="add-product-modal" tabIndex="-1">
+                    <div className="modal-dialog modal-dialog-centered">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5">{t("restaurant.edit.add_product")}</h1>
+                                <button type="button" className="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <Formik
+                                innerRef={addProductFormRef}
+                                initialValues={{
+                                    productName: "",
+                                    description: "",
+                                    price: 1.00,
+                                    image: ""
+                                }}
+                                validationSchema={AddProductSchema}
+                                onSubmit={handleAddProduct}
+                            >
+                                {({values, isSubmitting}) => (
+                                    <Form>
+                                        <div className="modal-body">
+                                            {showAddProductError && <div className="alert alert-danger" role="alert">{t("restaurant.edit.error")}</div>}
+                                            <div>
+                                                <div className="mb-3">
+                                                    <label htmlFor="productName" className="form-label">{t("restaurant.edit.product_name")}</label>
+                                                    <Field name="productName" type="text" className="form-control" id="productName"/>
+                                                    <ErrorMessage name="productName" component="div" className="form-error"/>
+                                                </div>
+                                                <div className="mb-3">
+                                                    <label htmlFor="description" className="form-label">{t("restaurant.edit.product_description")}</label>
+                                                    <Field as="textarea" className="form-control" name="description" id="description" rows="3"/>
+                                                    <ErrorMessage name="description" component="div" className="form-error"/>
+                                                </div>
+                                                <div className="mb-3">
+                                                    <label htmlFor="price" className="form-label">{t("restaurant.edit.product_price")}</label>
+                                                    <div className="input-group">
+                                                        <span className="input-group-text">$</span>
+                                                        <Field name="price" step="0.01" min="0" type="number" className="form-control" id="price"/>
+                                                    </div>
+                                                    <ErrorMessage name="price" component="div" className="form-error"/>
+                                                </div>
+                                                <div className="mb-3">
+                                                    <label htmlFor="image" className="form-label">{t("restaurant.edit.product_image")}</label>
+                                                    <Field name="image">
+                                                        {({field: {value, onChange, ...field}, form}) => (
+                                                            <input
+                                                                type="file"
+                                                                className="form-control"
+                                                                id="image"
+                                                                accept="image/*"
+                                                                {...field}
+                                                                onChange={event => form.setFieldValue(field.name, event.currentTarget.files[0])}
+                                                            />
+                                                        )}
+                                                    </Field>
+                                                    <ErrorMessage name="image" component="div" className="form-error"/>
+                                                </div>
+                                            </div>
+                                            <hr/>
+                                            <div className="d-flex justify-content-center product_card">
+                                                <div className="card">
+                                                    <div className="image-container">
+                                                        <img src={values.image ? URL.createObjectURL(values.image) : ImagePlaceholder} alt={values.productName || t("restaurant.edit.product_name")} className="img-fluid rounded-start"/>
+                                                    </div>
+                                                    <div className="card-body">
+                                                        <div>
+                                                            <p className="card-text">{values.productName || t("restaurant.edit.product_name")}</p>
+                                                            <p className="card-text">
+                                                                <small className="text-body-secondary">{values.description || t("restaurant.edit.product_description")}</small>
+                                                            </p>
+                                                        </div>
+                                                        <h5 className="card-title">
+                                                            ${values.price || "1.00"}
+                                                        </h5>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="modal-footer">
+                                            <button type="submit" className="btn btn-primary" disabled={isSubmitting}>{t("restaurant.edit.add_product")}</button>
                                         </div>
                                     </Form>
                                 )}
