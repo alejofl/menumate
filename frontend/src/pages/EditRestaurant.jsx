@@ -54,12 +54,16 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
     const addCategoryFormRef = useRef();
     const addProductFormRef = useRef();
     const editRestaurantInformationFormRef = useRef();
+    const editCategoryFormRef = useRef();
 
     const [showDeleteRestaurantError, setShowDeleteRestaurantError] = useState(false);
     const [showAddCategoryError, setShowAddCategoryError] = useState(false);
     const [showAddProductError, setShowAddProductError] = useState(false);
     const [addProductUrl, setAddProductUrl] = useState("");
     const [showEditRestaurantInformationError, setShowEditRestaurantInformationError] = useState(false);
+    const [showEditCategoryError, setShowEditCategoryError] = useState(false);
+    const [editCategoryName, setEditCategoryName] = useState("");
+    const [editCategoryUrl, setEditCategoryUrl] = useState("");
 
     useEffect(() => {
         document.querySelector("#add-category-modal").addEventListener("hidden.bs.modal", () => {
@@ -74,6 +78,12 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
         document.querySelector("#edit-information-modal").addEventListener("hidden.bs.modal", () => {
             editRestaurantInformationFormRef.current?.resetForm();
             setShowEditRestaurantInformationError(false);
+        });
+        document.querySelector("#edit-category-modal").addEventListener("hidden.bs.modal", () => {
+            editCategoryFormRef.current?.resetForm();
+            setShowEditCategoryError(false);
+            setEditCategoryName("");
+            setEditCategoryUrl("");
         });
     }, []);
 
@@ -120,6 +130,11 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
                 portrait1,
                 portrait2
             );
+        }
+    });
+    const editCategoryMutation = useMutation({
+        mutationFn: async ({name}) => {
+            await restaurantService.editCategory(editCategoryUrl, name);
         }
     });
 
@@ -185,6 +200,23 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
                     bootstrap.Modal.getOrCreateInstance(document.querySelector("#edit-information-modal")).hide();
                 },
                 onError: () => setShowEditRestaurantInformationError(true)
+            }
+        );
+        setSubmitting(false);
+    };
+
+    const handleEditCategory = (values, {setSubmitting}) => {
+        editCategoryMutation.mutate(
+            {
+                name: values.name
+            },
+            {
+                onSuccess: () => {
+                    refetchCategories();
+                    // eslint-disable-next-line no-undef
+                    bootstrap.Modal.getOrCreateInstance(document.querySelector("#edit-category-modal")).hide();
+                },
+                onError: () => setShowEditCategoryError(true)
             }
         );
         setSubmitting(false);
@@ -300,6 +332,21 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
                                     <div className="card mb-4" id={`category-${category.orderNum}`}>
                                         <div className="card-body d-flex justify-content-between align-items-center">
                                             <h3 className="mb-0">{category.name}</h3>
+                                            <div className="d-flex align-items-center gap-3">
+                                                {i !== 0 && <i className="bi bi-arrow-up-circle-fill default text-secondary clickable-object"></i>}
+                                                {i !== (categories.length - 1) && <i className="bi bi-arrow-down-circle-fill default text-secondary clickable-object"></i>}
+                                                <i
+                                                    className="bi bi-pencil-fill clickable-object"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#edit-category-modal"
+                                                    onClick={() => {
+                                                        setEditCategoryName(category.name);
+                                                        setEditCategoryUrl(category.selfUrl);
+                                                    }}
+                                                >
+                                                </i>
+                                                <i className="bi bi-trash-fill default text-danger clickable-object"></i>
+                                            </div>
                                         </div>
                                     </div>
                                     <div className="product-container">
@@ -595,7 +642,8 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
                                                             onChange={event => form.setFieldValue(field.name, event.currentTarget.files[0])}
                                                         />
                                                     )}
-                                                </Field> <ErrorMessage name="portrait1" className="form-error" component="div"/>
+                                                </Field>
+                                                <ErrorMessage name="portrait1" className="form-error" component="div"/>
                                             </div>
                                             <div className="mb-3">
                                                 <label htmlFor="portrait2" className="form-label">{t("restaurant.edit.change_portrait2")}</label>
@@ -616,6 +664,42 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
                                         </div>
                                         <div className="modal-footer">
                                             <button type="submit" className="btn btn-primary" disabled={isSubmitting}>{t("restaurant.edit.edit_information")}</button>
+                                        </div>
+                                    </Form>
+                                )}
+                            </Formik>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="modal fade" id="edit-category-modal" tabIndex="-1">
+                    <div className="modal-dialog modal-dialog-centered">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5">{t("restaurant.edit.edit_category")}</h1>
+                                <button type="button" className="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <Formik
+                                innerRef={editCategoryFormRef}
+                                initialValues={{
+                                    name: editCategoryName
+                                }}
+                                validationSchema={AddCategorySchema}
+                                onSubmit={handleEditCategory}
+                                enableReinitialize={true}
+                            >
+                                {({isSubmitting}) => (
+                                    <Form>
+                                        <div className="modal-body">
+                                            {showEditCategoryError && <div className="alert alert-danger" role="alert">{t("restaurant.edit.error")}</div>}
+                                            <div>
+                                                <label htmlFor="name" className="form-label">{t("restaurant.edit.category_name")}</label>
+                                                <Field name="name" type="text" className="form-control" id="name"/>
+                                                <ErrorMessage name="name" component="div" className="form-error"/>
+                                            </div>
+                                        </div>
+                                        <div className="modal-footer">
+                                            <button type="submit" className="btn btn-primary" disabled={isSubmitting}>{t("restaurant.edit.edit_category")}</button>
                                         </div>
                                     </Form>
                                 )}

@@ -370,7 +370,8 @@
             "delete_restaurant": "¿Estás seguro de que quieres eliminar este restaurante? Esta acción es irreversible.",
             "change_logo": "Cambiar logo del restaurante",
             "change_portrait1": "Cambiar imagen de portada principal",
-            "change_portrait2": "Cambiar imagen de portada secundaria"
+            "change_portrait2": "Cambiar imagen de portada secundaria",
+            "edit_category": "Editar categoría"
         }
     },
     "order_placed": {

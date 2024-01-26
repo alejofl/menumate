@@ -235,6 +235,20 @@ export function useRestaurantService(api) {
         );
     };
 
+    const editCategory = async (url, name) => {
+        return await api.patch(
+            url,
+            {
+                name: name
+            },
+            {
+                headers: {
+                    "Content-Type": RESTAURANT_CATEGORIES_CONTENT_TYPE
+                }
+            }
+        );
+    };
+
     return {
         getRestaurants,
         getRestaurant,
@@ -248,6 +262,7 @@ export function useRestaurantService(api) {
         addCategory,
         addProduct,
         deleteRestaurant,
-        editRestaurantInformation
+        editRestaurantInformation,
+        editCategory
     };
 }
