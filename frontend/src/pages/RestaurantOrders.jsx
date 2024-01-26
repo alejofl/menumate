@@ -5,7 +5,7 @@ import ApiContext from "../contexts/ApiContext.jsx";
 import {useApi} from "../hooks/useApi.js";
 import {useRestaurantService} from "../hooks/services/useRestaurantService.js";
 import {useParams, useSearchParams} from "react-router-dom";
-import {useInfiniteQuery, useQueries, useQuery} from "@tanstack/react-query";
+import {useInfiniteQuery, useMutation, useQueries, useQuery, useQueryClient} from "@tanstack/react-query";
 import "./styles/restaurant_orders.css";
 import {PRICE_DECIMAL_DIGITS, STATUS} from "../utils.js";
 import {useOrderService} from "../hooks/services/useOrderService.js";
@@ -38,9 +38,12 @@ function RestaurantOrders() {
     const [currentOrder, setCurrentOrder] = useState("");
     const [currentOrderId, setCurrentOrderId] = useState();
 
+    const queryClient = useQueryClient();
+
     const { restaurantId } = useParams();
     const {
         data: restaurant,
+        // eslint-disable-next-line no-unused-vars
         isSuccess : restaurantIsSuccess
     } = useQuery({
         queryKey: [restaurantId],
@@ -51,6 +54,7 @@ function RestaurantOrders() {
 
     const {
         data : user,
+        // eslint-disable-next-line no-unused-vars
         isSuccess : userIsSuccess
     } = useQuery({
         queryKey: ["user"],
@@ -84,7 +88,7 @@ function RestaurantOrders() {
         ),
         getNextPageParam: (lastPage) => lastPage.nextPage?.page || undefined,
         keepPreviousData: true,
-        enabled: restaurantIsSuccess && userIsSuccess
+        enabled: !!user && !!restaurant
     });
 
     const handleLoadMoreContent = async () => {
@@ -147,24 +151,32 @@ function RestaurantOrders() {
             []
     });
 
-    /*
-     * const updateStatusMutation = useMutation({
-     *     mutationFn: async ({status}) => (
-     *         await orderService.updateStatus(
-     *             order.selfUrl,
-     *             status
-     *         )
-     *     )
-     * });
-     *
-     * const handleUpdateStatusMutation = (status) => {
-     *     updateStatusMutation.mutate(
-     *         {
-     *             status
-     *         }
-     *     );
-     * };
-     */
+
+    const updateStatusMutation = useMutation({
+        mutationFn: async ({ newStatus }) => (
+            await orderService.updateStatus(
+                order.selfUrl,
+                {
+                    status: newStatus
+                }
+            )
+        )
+    });
+    const handleUpdateStatusMutation = ({ newStatus }) => {
+        updateStatusMutation.mutate(
+            {
+                newStatus: newStatus
+            },
+            {
+                onSuccess: () => {
+                    queryClient.fetchInfiniteQuery({queryKey: ["orders", status, sorting, queryKey]});
+                    // eslint-disable-next-line no-undef
+                    bootstrap.Modal.getOrCreateInstance(document.querySelector("#order-details")).hide();
+                }
+            }
+        );
+    };
+
     const handleOrder = () => {
         // eslint-disable-next-line no-undef
         const modal = bootstrap.Modal.getOrCreateInstance(document.querySelector("#order-details"));
@@ -465,27 +477,30 @@ function RestaurantOrders() {
                             {
                                 status !== STATUS.DELIVERED && status !== STATUS.CANCELLED &&
                                 <div className="modal-footer">
-                                    <button className="btn btn-danger" type="submit">
+                                    <button className="btn btn-danger" type="submit"
+                                        onClick={() => handleUpdateStatusMutation({newStatus: STATUS.CANCELLED})}>
                                         {t("restaurant_orders.order_detail_modal.cancel_order")}
                                     </button>
                                     {
                                         status === STATUS.PENDING
                                             ?
-                                            <button className="btn btn-success" type="submit">
+                                            <button className="btn btn-success" type="submit"
+                                                onClick={() => handleUpdateStatusMutation({newStatus: STATUS.CONFIRMED})}>
                                                 {t("restaurant_orders.order_detail_modal.confirm_order")}
                                             </button>
                                             :
                                             status === STATUS.CONFIRMED
                                                 ?
-                                                <button className="btn btn-success" type="submit">
+                                                <button className="btn btn-success" type="submit"
+                                                    onClick={() => handleUpdateStatusMutation({newStatus: STATUS.READY})}>
                                                     {t("restaurant_orders.order_detail_modal.mark_as_ready")}
                                                 </button>
                                                 :
                                                 status === STATUS.READY &&
-                                                <button className="btn btn-success" type="submit">
+                                                <button className="btn btn-success" type="submit"
+                                                    onClick={() => handleUpdateStatusMutation({newStatus: STATUS.DELIVERED})}>
                                                     {t("restaurant_orders.order_detail_modal.mark_as_delivered")}
                                                 </button>
-
                                     }
                                 </div>
                             }
