@@ -142,6 +142,7 @@ public class RestaurantController {
                 restaurantForm.getName(),
                 restaurantForm.getSpecialtyAsEnum(),
                 restaurantForm.getAddress(),
+                restaurantForm.getMaxTables(),
                 restaurantForm.getDescription(),
                 restaurantForm.getTagsAsEnum()
         );
