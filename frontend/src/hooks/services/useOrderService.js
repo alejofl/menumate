@@ -72,7 +72,6 @@ export function useOrderService(api) {
     };
 
     const updateStatus = async (url, status) => {
-        console.log(status);
         return await api.patch(
             url,
             status,

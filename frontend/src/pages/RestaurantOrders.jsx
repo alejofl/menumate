@@ -5,13 +5,15 @@ import ApiContext from "../contexts/ApiContext.jsx";
 import {useApi} from "../hooks/useApi.js";
 import {useRestaurantService} from "../hooks/services/useRestaurantService.js";
 import {useParams, useSearchParams} from "react-router-dom";
-import {useInfiniteQuery, useMutation, useQueries, useQuery, useQueryClient} from "@tanstack/react-query";
+import {useInfiniteQuery, useQuery, useQueryClient} from "@tanstack/react-query";
 import "./styles/restaurant_orders.css";
-import {PRICE_DECIMAL_DIGITS, STATUS} from "../utils.js";
+import {STATUS} from "../utils.js";
 import {useOrderService} from "../hooks/services/useOrderService.js";
 import AuthContext from "../contexts/AuthContext.jsx";
 import {useUserService} from "../hooks/services/useUserService.js";
 import ContentLoader from "react-content-loader";
+import Error from "./Error.jsx";
+import InternalOrderModal from "../components/InternalOrderModal.jsx";
 
 function RestaurantOrders() {
     const SORT = {
@@ -19,32 +21,35 @@ function RestaurantOrders() {
         ASCENDING : 1
     };
     const ROWS_SKELETON = 5;
+
     const { t } = useTranslation();
     const apiContext = useContext(ApiContext);
     const authContext = useContext(AuthContext);
     const api = useApi();
+
     const userService = useUserService(api);
     const restaurantService = useRestaurantService(api);
     const orderService = useOrderService(api);
+
     const [status, setStatus] = useState(STATUS.PENDING);
     const [sorting, setSorting] = useState(SORT.ASCENDING);
-
     const [queryParams] = useSearchParams();
     const [query] = useState({
         ...(queryParams.get("size") ? {size: queryParams.get("size")} : {})
     });
     const queryKey = useState(query);
 
-    const [currentOrder, setCurrentOrder] = useState("");
-    const [currentOrderId, setCurrentOrderId] = useState();
+    const [showInternalOrderModal, setShowInternalOrderModal] = useState(false);
+    const [orderUrl, setOrderUrl] = useState("");
 
     const queryClient = useQueryClient();
-
     const { restaurantId } = useParams();
+
     const {
         data: restaurant,
         // eslint-disable-next-line no-unused-vars
-        isSuccess : restaurantIsSuccess
+        isSuccess : restaurantIsSuccess,
+        isError: restaurantIsError
     } = useQuery({
         queryKey: [restaurantId],
         queryFn: async () => (
@@ -55,7 +60,8 @@ function RestaurantOrders() {
     const {
         data : user,
         // eslint-disable-next-line no-unused-vars
-        isSuccess : userIsSuccess
+        isSuccess : userIsSuccess,
+        isError: userIsError
     } = useQuery({
         queryKey: ["user"],
         queryFn: async () => (
@@ -70,7 +76,8 @@ function RestaurantOrders() {
         data: orders,
         isFetchingNextPage: ordersIsFetchingNextPage,
         hasNextPage: ordersHasNextPage,
-        fetchNextPage
+        fetchNextPage,
+        isError: ordersIsError
     } = useInfiniteQuery( {
         queryKey: ["orders", status, sorting, queryKey],
         queryFn: async ({ pageParam }) => (
@@ -94,95 +101,36 @@ function RestaurantOrders() {
     const handleLoadMoreContent = async () => {
         await fetchNextPage();
     };
-    console.log(apiContext.ordersUrl);
 
-    const {
-        data: order,
-        isSuccess: isSuccessOrder
-    } = useQuery({
-        queryKey: ["order", currentOrder, currentOrderId],
-        queryFn: async () => (
-            await orderService.getOrder(
-                currentOrder
-            )
-        )
-    });
+    const handleOnShowInternalOrderModal = (orderUrl) => {
+        setOrderUrl(orderUrl);
+        setShowInternalOrderModal(true);
+    };
+    const handleOnCloseInternalOrderModal = () => {
+        queryClient.fetchInfiniteQuery({queryKey: ["orders", status, sorting, queryKey]});
+        setOrderUrl("");
+        setShowInternalOrderModal(false);
+    };
 
-    const {
-        data: userOrder,
-        isSuccess: isSuccessUserOrder
-    } = useQuery({
-        queryKey: ["user", order],
-        queryFn: async () => (
-            await userService.getUser(
-                order.userUrl
-            )
-        ),
-        enabled: !!order
-    });
-
-    const {
-        data: orderItems,
-        isSuccess: isSuccessOrderItems
-    } = useQuery({
-        queryKey: ["orderItems", order],
-        queryFn: async () => (
-            await orderService.getOrderItems(
-                order.itemsUrl
-            )
-        ),
-        enabled: !!order
-    });
-
-    console.log(orderItems);
-
-    const products = useQueries({
-        queries: isSuccessOrderItems
-            ?
-            orderItems.map(orderItem => {
-                return {
-                    queryKey: ["order", orderItem.productUrl],
-                    queryFn: async () => (
-                        await restaurantService.getProduct(orderItem.productUrl)
-                    )
-                };
-            })
-            :
-            []
-    });
-
-
-    const updateStatusMutation = useMutation({
-        mutationFn: async ({ newStatus }) => (
-            await orderService.updateStatus(
-                order.selfUrl,
-                {
-                    status: newStatus
-                }
-            )
-        )
-    });
-    const handleUpdateStatusMutation = ({ newStatus }) => {
-        updateStatusMutation.mutate(
-            {
-                newStatus: newStatus
-            },
-            {
-                onSuccess: () => {
-                    queryClient.fetchInfiniteQuery({queryKey: ["orders", status, sorting, queryKey]});
-                    // eslint-disable-next-line no-undef
-                    bootstrap.Modal.getOrCreateInstance(document.querySelector("#order-details")).hide();
-                }
-            }
+    if (restaurantIsError) {
+        return (
+            <>
+                <Error errorNumber={restaurantIsError.response.status}/>
+            </>
         );
-    };
-
-    const handleOrder = () => {
-        // eslint-disable-next-line no-undef
-        const modal = bootstrap.Modal.getOrCreateInstance(document.querySelector("#order-details"));
-        // document.querySelector("#editAddressModal").addEventListener("hidden.bs.modal", handleModalHidden);
-        modal.show();
-    };
+    } else if (userIsError) {
+        return (
+            <>
+                <Error errorNumber={userIsError.response.status}/>
+            </>
+        );
+    } else if (ordersIsError) {
+        return (
+            <>
+                <Error errorNumber={ordersIsError.response.status}/>
+            </>
+        );
+    }
 
     return (
         <>
@@ -278,7 +226,7 @@ function RestaurantOrders() {
                                         orders?.pages.flatMap(page => page.content)
                                             .map(order => (
                                                 <tr className="clickable-object" key={order.orderId}
-                                                    onClick={() => { handleOrder(); setCurrentOrder(order.selfUrl); setCurrentOrderId(order.orderId); }}>
+                                                    onClick={() => handleOnShowInternalOrderModal(order.selfUrl)}>
                                                     <td className="text-start">{order.orderId}</td>
                                                     <td className="text-center">
                                                         {order.orderType === "delivery"
@@ -362,151 +310,14 @@ function RestaurantOrders() {
                         </div>
                     }
                 </div>
-
-                <div className="modal fade" id="order-details" tabIndex="-1">
-                    <div className="modal-dialog modal-dialog-scrollable modal-lg modal-dialog-centered">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h5 className="modal-title">{t("order.title", {id: order?.orderId})}</h5>
-                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div className="modal-body">
-                                <h4>{t("order.items")}</h4>
-                                <table className="table table-hover item-order-table">
-                                    <thead className="table-light">
-                                        <tr>
-                                            <th scope="col" className="text-start">#</th>
-                                            <th scope="col" className="text-center">{t("order.product")}</th>
-                                            <th scope="col" className="text-center">{t("order.comments")}</th>
-                                            <th scope="col" className="text-center">{t("order.quantity")}</th>
-                                            <th scope="col" className="text-end">{t("order.price")}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="order-items">
-                                        {
-                                            isSuccessOrderItems && products.every(query => query.isSuccess) &&
-                                            orderItems.map(orderItem => (
-                                                <tr key={orderItem}>
-                                                    <th scope="col" className="text-start">{orderItem.lineNumber}</th>
-                                                    <th scope="col" className="text-center">
-                                                        {products.find(product =>
-                                                            product.data.selfUrl === orderItem.productUrl
-                                                        )?.data.name}
-                                                    </th>
-                                                    <th scope="col" className="text-center">{orderItem.comment}</th>
-                                                    <th scope="col" className="text-center">{orderItem.quantity}</th>
-                                                    <th scope="col" className="text-end">$
-                                                        {products.find(product =>
-                                                            product.data.selfUrl === orderItem.productUrl
-                                                        ).data.price}
-                                                    </th>
-                                                </tr>
-                                            ))
-                                        }
-                                    </tbody>
-                                </table>
-                                <h4>{t("order.details")}</h4>
-                                {
-                                    isSuccessOrder && isSuccessUserOrder && isSuccessOrderItems &&
-                                    <ul className="list-group list-group-flush">
-                                        <li className="list-group-item d-flex align-items-center">
-                                            <i className="bi bi-person me-3"></i>
-                                            <div>
-                                                <small className="text-muted">{t("order.customer")}</small>
-                                                <p className="mb-0">{userOrder.name}</p>
-                                            </div>
-                                        </li>
-                                        <li className="list-group-item d-flex align-items-center order-details-0-data">
-                                            <i className="bi bi-card-list me-3"></i>
-                                            <div>
-                                                <small className="text-muted">{t("order.order_type")}</small>
-                                                <p className="mb-0">
-                                                    {order.orderType === "delivery"
-                                                        ?
-                                                        t("order.delivery")
-                                                        :
-                                                        order.orderType === "takeaway"
-                                                            ?
-                                                            t("order.takeaway")
-                                                            :
-                                                            t("order.dinein")
-                                                    }
-                                                </p>
-                                            </div>
-                                        </li>
-                                        {
-                                            order.orderType === "delivery"
-                                                ?
-                                                <li className="list-group-item d-flex align-items-center order-details-2-data">
-                                                    <i className="bi bi-geo-alt me-3"></i>
-                                                    <div>
-                                                        <small className="text-muted">{t("order.address")}</small>
-                                                        <p className="mb-0"
-                                                            id="order-details-address">{order.address}</p>
-                                                    </div>
-                                                </li>
-                                                :
-                                                order.orderType === "takeaway"
-                                                    ?
-                                                    t("order.takeaway")
-                                                    :
-                                                    <li className="list-group-item d-flex align-items-center order-details-0-data">
-                                                        <i className="bi bi-hash me-3"></i>
-                                                        <div>
-                                                            <small
-                                                                className="text-muted">{t("order.table_number")}</small>
-                                                            <p className="mb-0"
-                                                                id="order-details-table-number">{order.tableNumber}</p>
-                                                        </div>
-                                                    </li>
-                                        }
-                                        <li className="list-group-item d-flex align-items-center">
-                                            <i className="bi bi-cash me-3"></i>
-                                            <div>
-                                                <small className="text-muted">{t("order.total_price")}</small>
-                                                <p className="mb-0" id="order-total-price">
-                                                    ${products.every(query => query.isSuccess) && orderItems
-                                                        .reduce((total, item, i) => total + item.quantity * products[i].data.price, 0)
-                                                        .toFixed(PRICE_DECIMAL_DIGITS)}
-                                                </p>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                }
-                            </div>
-                            {
-                                status !== STATUS.DELIVERED && status !== STATUS.CANCELLED &&
-                                <div className="modal-footer">
-                                    <button className="btn btn-danger" type="submit"
-                                        onClick={() => handleUpdateStatusMutation({newStatus: STATUS.CANCELLED})}>
-                                        {t("restaurant_orders.order_detail_modal.cancel_order")}
-                                    </button>
-                                    {
-                                        status === STATUS.PENDING
-                                            ?
-                                            <button className="btn btn-success" type="submit"
-                                                onClick={() => handleUpdateStatusMutation({newStatus: STATUS.CONFIRMED})}>
-                                                {t("restaurant_orders.order_detail_modal.confirm_order")}
-                                            </button>
-                                            :
-                                            status === STATUS.CONFIRMED
-                                                ?
-                                                <button className="btn btn-success" type="submit"
-                                                    onClick={() => handleUpdateStatusMutation({newStatus: STATUS.READY})}>
-                                                    {t("restaurant_orders.order_detail_modal.mark_as_ready")}
-                                                </button>
-                                                :
-                                                status === STATUS.READY &&
-                                                <button className="btn btn-success" type="submit"
-                                                    onClick={() => handleUpdateStatusMutation({newStatus: STATUS.DELIVERED})}>
-                                                    {t("restaurant_orders.order_detail_modal.mark_as_delivered")}
-                                                </button>
-                                    }
-                                </div>
-                            }
-                        </div>
-                    </div>
-                </div>
+                {
+                    showInternalOrderModal &&
+                    <InternalOrderModal
+                        orderUrl={orderUrl}
+                        showActions={status !== STATUS.DELIVERED && status !== STATUS.CANCELLED}
+                        onClose={() => handleOnCloseInternalOrderModal()}>
+                    </InternalOrderModal>
+                }
             </Page>
         </>
     )
