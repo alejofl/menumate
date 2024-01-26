@@ -1,9 +1,11 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.exception.RoleNotFoundException;
+import ar.edu.itba.paw.exception.UserNotFoundException;
 import ar.edu.itba.paw.model.RestaurantRoleLevel;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.service.RestaurantRoleService;
+import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.util.Pair;
 import ar.edu.itba.paw.webapp.CustomMediaType;
 import ar.edu.itba.paw.webapp.auth.AccessValidator;
@@ -27,15 +29,18 @@ import java.util.Objects;
 public class RestaurantEmployeeController {
     private final RestaurantRoleService restaurantRoleService;
 
+    private final UserService userService;
+
     private final AccessValidator accessValidator;
 
     @Context
     private UriInfo uriInfo;
 
     @Autowired
-    public RestaurantEmployeeController(final RestaurantRoleService restaurantRoleService, final AccessValidator accessValidator) {
+    public RestaurantEmployeeController(final RestaurantRoleService restaurantRoleService, final AccessValidator accessValidator, final UserService userService) {
         this.restaurantRoleService = restaurantRoleService;
         this.accessValidator = accessValidator;
+        this.userService = userService;
     }
 
     @GET
@@ -55,7 +60,8 @@ public class RestaurantEmployeeController {
             @Context Request request
     ) {
         final RestaurantRoleLevel role = restaurantRoleService.getRole(userId, restaurantId).orElseThrow(RoleNotFoundException::new);
-        return ControllerUtils.buildResponseUsingEtag(request, Objects.hash(restaurantId, userId, role), ()-> RestaurantRoleDto.from(uriInfo, restaurantId, userId, role));
+        final User user = userService.getById(userId).orElseThrow(UserNotFoundException::new);
+        return ControllerUtils.buildResponseUsingEtag(request, Objects.hash(restaurantId, userId, role), ()-> RestaurantRoleDto.from(uriInfo, restaurantId, user, role));
     }
 
     @POST
