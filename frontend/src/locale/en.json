@@ -442,6 +442,12 @@
             "address": "Address",
             "order_date": "Order Date",
             "empty_results": "There's nothing here"
+        },
+        "order_detail_modal": {
+            "cancel_order": "Cancel Order",
+            "confirm_order": "Confirm Order",
+            "mark_as_ready": "Mark as Ready",
+            "mark_as_delivered": "Mark as Delivered"
         }
     }
 }

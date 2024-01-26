@@ -31,3 +31,7 @@
     align-items: center;
     color: #b6b6b6;
 }
+
+.item-order-table tbody th {
+    font-weight: normal;
+}

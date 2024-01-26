@@ -441,6 +441,12 @@
             "address": "Dirección",
             "order_date": "Fecha",
             "empty_results": "No hay nada aquí"
+        },
+        "order_detail_modal": {
+            "cancel_order": "Cancelar orden",
+            "confirm_order": "Confirmar orden",
+            "mark_as_ready": "Marcar como lista",
+            "mark_as_delivered": "Marcar como entregada"
         }
     }
 }
