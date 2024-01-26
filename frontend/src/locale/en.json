@@ -372,7 +372,8 @@
             "change_logo": "Change Restaurant Logo",
             "change_portrait1": "Change Main Portrait Image",
             "change_portrait2": "Change Secondary Portrait Image",
-            "edit_category": "Edit Category"
+            "edit_category": "Edit Category",
+            "delete_category": "Are you sure you want to delete this category? This actions is irreversible."
         }
     },
     "order_placed": {

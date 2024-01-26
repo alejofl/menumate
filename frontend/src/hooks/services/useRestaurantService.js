@@ -249,6 +249,10 @@ export function useRestaurantService(api) {
         );
     };
 
+    const deleteCategory = async (url) => {
+        return await api.delete(url);
+    };
+
     return {
         getRestaurants,
         getRestaurant,
@@ -263,6 +267,7 @@ export function useRestaurantService(api) {
         addProduct,
         deleteRestaurant,
         editRestaurantInformation,
-        editCategory
+        editCategory,
+        deleteCategory
     };
 }

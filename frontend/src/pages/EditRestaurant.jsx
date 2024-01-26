@@ -64,6 +64,8 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
     const [showEditCategoryError, setShowEditCategoryError] = useState(false);
     const [editCategoryName, setEditCategoryName] = useState("");
     const [editCategoryUrl, setEditCategoryUrl] = useState("");
+    const [showDeleteCategoryError, setShowDeleteCategoryError] = useState(false);
+    const [deleteCategoryUrl, setDeleteCategoryUrl] = useState("");
 
     useEffect(() => {
         document.querySelector("#add-category-modal").addEventListener("hidden.bs.modal", () => {
@@ -84,6 +86,10 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
             setShowEditCategoryError(false);
             setEditCategoryName("");
             setEditCategoryUrl("");
+        });
+        document.querySelector("#delete-category-modal").addEventListener("hidden.bs.modal", () => {
+            setShowDeleteRestaurantError(false);
+            setDeleteCategoryUrl("");
         });
     }, []);
 
@@ -136,6 +142,17 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
         mutationFn: async ({name}) => {
             await restaurantService.editCategory(editCategoryUrl, name);
         }
+    });
+    const deleteCategoryMutation = useMutation({
+        mutationFn: async () => {
+            await restaurantService.deleteCategory(deleteCategoryUrl);
+        },
+        onSuccess: () => {
+            refetchCategories();
+            // eslint-disable-next-line no-undef
+            bootstrap.Modal.getOrCreateInstance(document.querySelector("#delete-category-modal")).hide();
+        },
+        onError: () => setShowDeleteCategoryError(true)
     });
 
     const handleAddCategory = (values, {setSubmitting}) => {
@@ -345,7 +362,13 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
                                                     }}
                                                 >
                                                 </i>
-                                                <i className="bi bi-trash-fill default text-danger clickable-object"></i>
+                                                <i
+                                                    className="bi bi-trash-fill default text-danger clickable-object"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#delete-category-modal"
+                                                    onClick={() => setDeleteCategoryUrl(category.selfUrl)}
+                                                >
+                                                </i>
                                             </div>
                                         </div>
                                     </div>
@@ -704,6 +727,21 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
                                     </Form>
                                 )}
                             </Formik>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="modal fade" id="delete-category-modal" tabIndex="-1">
+                    <div className="modal-dialog modal-dialog-centered">
+                        <div className="modal-content">
+                            <div className="modal-body">
+                                {showDeleteCategoryError && <div className="alert alert-danger" role="alert">{t("restaurant.edit.error")}</div>}
+                                <h1 className="modal-title fs-5">{t("restaurant.edit.delete_category")}</h1>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" data-bs-dismiss="modal" className="btn btn-secondary">{t("paging.no")}</button>
+                                <button type="button" className="btn btn-danger" onClick={deleteCategoryMutation.mutate}>{t("paging.yes")}</button>
+                            </div>
                         </div>
                     </div>
                 </div>

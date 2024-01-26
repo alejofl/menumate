@@ -371,7 +371,8 @@
             "change_logo": "Cambiar logo del restaurante",
             "change_portrait1": "Cambiar imagen de portada principal",
             "change_portrait2": "Cambiar imagen de portada secundaria",
-            "edit_category": "Editar categoría"
+            "edit_category": "Editar categoría",
+            "delete_category": "¿Estás seguro de que quieres eliminar esta categoría? Esta acción es irreversible."
         }
     },
     "order_placed": {
