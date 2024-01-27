@@ -199,17 +199,7 @@ public class RestaurantController {
             @PathParam("categoryId") final long categoryId,
             @Valid @NotNull final UpdateCategoryForm categoryForm
     ) {
-        final Category category;
-        String name = categoryForm.getNameTrimmed();
-        if (name == null)
-            category = categoryService.getByIdChecked(restaurantId, categoryId, false);
-        else
-            category = categoryService.updateName(restaurantId, categoryId, name);
-
-        Integer orderNum = categoryForm.getOrderNum();
-        if (orderNum != null)
-            categoryService.setOrder(category, orderNum);
-
+        categoryService.updateCategory(restaurantId, categoryId, categoryForm.getNameTrimmed(), categoryForm.getOrderNum());
         return Response.noContent().build();
     }
 

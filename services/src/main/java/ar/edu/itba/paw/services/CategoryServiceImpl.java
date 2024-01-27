@@ -76,6 +76,19 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Transactional
     @Override
+    public Category updateCategory(long restaurantId, long categoryId, String name, Integer orderNum) {
+        final Category category = (name == null) ? getByIdChecked(restaurantId, categoryId, false) :
+                                                   updateName(restaurantId, categoryId, name);
+
+        if (orderNum != null) {
+            setOrder(category, orderNum);
+        }
+
+        return category;
+    }
+
+    @Transactional
+    @Override
     public Category updateName(long restaurantId, long categoryId, String name) {
         final Category category = getByIdChecked(restaurantId, categoryId, false);
         category.setName(name);
