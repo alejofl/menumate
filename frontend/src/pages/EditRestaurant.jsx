@@ -398,7 +398,7 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
                         <div className="card">
                             <div className="card-header text-muted">{t("restaurant.categories")}</div>
                             <div className="card-body">
-                                <div className="nav nav-pills small">
+                                <div className="nav nav-pills flex-column small">
                                     {
                                         categories.sort((a, b) => a.orderNum < b.orderNum).map(category => (
                                             <button
@@ -418,7 +418,7 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
                             </div>
                         </div>
                     </div>
-                    <div className="menu px-4">
+                    <div className="menu ps-4 pe-2">
                         {promotions.length > 0 &&
                             <React.Fragment>
                                 <div className="card mb-4 bg-promotion">

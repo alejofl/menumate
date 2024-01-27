@@ -244,7 +244,7 @@ function Restaurant({edit = false}) {
                         <div className="card">
                             <div className="card-header text-muted">{t("restaurant.categories")}</div>
                             <div className="card-body">
-                                <div className="nav nav-pills small">
+                                <div className="nav nav-pills flex-column small">
                                     {
                                         categories.sort((a, b) => a.orderNum < b.orderNum).map(category => (
                                             <button
