@@ -199,3 +199,54 @@ export const EditEmployeeRoleSchema = Yup.object().shape({
         .required(i18n.t("validation.role.required"))
         .oneOf([ROLE_FOR_RESTAURANT.ADMIN, ROLE_FOR_RESTAURANT.ORDER_HANDLER], i18n.t("validation.role.invalid"))
 });
+
+export const CreateScheduledPromotionSchema = Yup.object().shape({
+    percentage: Yup.number()
+        .required(i18n.t("validation.percentage.required"))
+        .min(1, ({ min }) => i18n.t("validation.percentage.min", {min: min}))
+        .max(99, ({ max }) => i18n.t("validation.percentage.max", {max: max})),
+
+    startDateTime: Yup.date()
+        .required(i18n.t("validation.start_datetime.required"))
+        .min(new Date(), i18n.t("validation.start_datetime.min")),
+
+    endDateTime: Yup.date()
+        .required(i18n.t("validation.end_datetime.required"))
+        .min(Yup.ref("startDateTime"), i18n.t("validation.end_datetime.min"))
+});
+
+export const CreateInstantPromotionSchema = Yup.object()
+    .shape({
+        percentage: Yup.number()
+            .required(i18n.t("validation.percentage.required"))
+            .min(1, ({ min }) => i18n.t("validation.percentage.min", {min: min}))
+            .max(99, ({ max }) => i18n.t("validation.percentage.max", {max: max})),
+
+        days: Yup.number()
+            .required(i18n.t("validation.days.required"))
+            .min(0, ({ min }) => i18n.t("validation.days.min", {min: min})),
+
+        hours: Yup.number()
+            .required(i18n.t("validation.hours.required"))
+            .min(0, ({ min }) => i18n.t("validation.hours.min", {min: min}))
+            .max(23, ({ max }) => i18n.t("validation.hours.max", {max: max})),
+
+        minutes: Yup.number()
+            .required(i18n.t("validation.minutes.required"))
+            .min(0, ({ min }) => i18n.t("validation.minutes.min", {min: min}))
+            .max(59, ({ max }) => i18n.t("validation.minutes.max", {max: max}))
+    })
+    .test({
+        name: "validDuration",
+        test: (values, context) => {
+            const {days, hours, minutes} = values;
+            if (days === 0 && hours === 0 && minutes === 0) {
+                return context.createError({
+                    message: i18n.t("validation.duration.invalid"),
+                    path: "days"
+                });
+            }
+            return true;
+        }
+    })
+;

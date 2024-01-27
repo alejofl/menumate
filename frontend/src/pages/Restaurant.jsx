@@ -62,7 +62,7 @@ function Restaurant({edit = false}) {
     const { isPending: promotionsIsPending, isError: promotionsIsError, data: promotions, error: promotionsError, refetch: refetchPromotions } = useQuery({
         queryKey: ["restaurant", restaurantId, "promotions"],
         queryFn: async () => (
-            await restaurantService.getPromotions(restaurant.promotionsUrl)
+            await restaurantService.getPromotions(restaurant.promotionsUrl, edit)
         ),
         enabled: !!restaurant
     });

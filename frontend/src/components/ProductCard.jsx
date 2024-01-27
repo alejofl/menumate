@@ -1,11 +1,13 @@
 import "./styles/product_card.styles.css";
 import ImagePlaceholder from "../assets/image-placeholder.png";
 import {useTranslation} from "react-i18next";
-import {useEffect, useState} from "react";
-import {PRICE_DECIMAL_DIGITS} from "../utils.js";
+import {useEffect, useRef, useState} from "react";
+import {BAD_REQUEST_STATUS_CODE, OVERLAPPING_PROMOTIONS_ERROR, PRICE_DECIMAL_DIGITS, PROMOTION_TYPE} from "../utils.js";
 import {useMutation} from "@tanstack/react-query";
 import {useApi} from "../hooks/useApi.js";
 import {useRestaurantService} from "../hooks/services/useRestaurantService.js";
+import {ErrorMessage, Field, Form, Formik} from "formik";
+import {CreateInstantPromotionSchema, CreateScheduledPromotionSchema} from "../data/validation.js";
 
 function ProductCard({
     productId,
@@ -21,6 +23,7 @@ function ProductCard({
     edit = false,
     productUrl = null,
     promotionUrl = null,
+    promotionsUrl = null,
     promotionStartDate = null,
     promotionEndDate = null,
     refetch
@@ -35,10 +38,15 @@ function ProductCard({
     const api = useApi();
     const restaurantService = useRestaurantService(api);
 
+    const createPromotionFormRef = useRef();
+
     const [quantity, setQuantity] = useState(1);
     const [comments, setComments] = useState("");
     const [showDeleteProductError, setShowDeleteProductError] = useState(false);
     const [showDeletePromotionError, setShowDeletePromotionError] = useState(false);
+    const [showCreatePromotionError, setShowCreatePromotionError] = useState(false);
+    const [promotionType, setPromotionType] = useState(PROMOTION_TYPE.INSTANT);
+    const [showCreatePromotionOverlappingError, setShowCreatePromotionOverlappingError] = useState(false);
 
     const handleChangeQuantity = (newValue, increment) => {
         const value = parseInt(newValue);
@@ -68,6 +76,12 @@ function ProductCard({
             document.querySelector(`#delete-promotion-${productId}-modal`).addEventListener("hidden.bs.modal", () => {
                 setShowDeletePromotionError(false);
             });
+            document.querySelector(`#create-promotion-${productId}-modal`).addEventListener("hidden.bs.modal", () => {
+                createPromotionFormRef.current?.resetForm();
+                setShowCreatePromotionError(false);
+                setShowCreatePromotionOverlappingError(false);
+                setPromotionType(PROMOTION_TYPE.INSTANT);
+            });
         }
     });
 
@@ -93,63 +107,108 @@ function ProductCard({
         },
         onError: () => setShowDeletePromotionError(true)
     });
+    const createPromotionMutation = useMutation({
+        mutationFn: async ({percentage, days, minutes, hours, startDateTime, endDateTime}) => (
+            await restaurantService.createPromotion(
+                promotionsUrl,
+                {
+                    sourceProductId: productId,
+                    percentage: percentage,
+                    type: promotionType,
+                    ...(promotionType === PROMOTION_TYPE.INSTANT && {days: days, hours: hours, minutes: minutes}),
+                    ...(promotionType === PROMOTION_TYPE.SCHEDULED && {startDateTime: startDateTime, endDateTime: endDateTime})
+                }
+            )
+        )
+    });
+
+    const handleCreatePromotion = (values, {setSubmitting}) => {
+        createPromotionMutation.mutate(
+            {
+                percentage: values.percentage,
+                days: values.days,
+                hours: values.hours,
+                minutes: values.minutes,
+                startDateTime: values.startDateTime,
+                endDateTime: values.endDateTime
+            },
+            {
+                onSuccess: async () => {
+                    // eslint-disable-next-line no-undef
+                    bootstrap.Modal.getOrCreateInstance(document.querySelector(`#create-promotion-${productId}-modal`)).hide();
+                    await refetch();
+                },
+                onError: (error) => {
+                    if (error.response.status === BAD_REQUEST_STATUS_CODE && error.response.data.some(err => err.path === OVERLAPPING_PROMOTIONS_ERROR)) {
+                        setShowCreatePromotionOverlappingError(true);
+                    } else {
+                        setShowCreatePromotionError(true);
+                    }
+                }
+            }
+        );
+        setSubmitting(false);
+    };
 
     const card = (
-        <div className="card">
+        <div className={"card" + (edit && discount && promotionStartDate > Date.now() ? " promotion-disabled" : "")}>
             <div className="image-container">
                 <img src={imageUrl || ImagePlaceholder} alt={name} className="img-fluid rounded-start"/>
             </div>
-            <div className="card-body">
-                <div>
-                    {
-                        edit
-                            ?
-                            <div className="d-flex justify-content-between">
-                                <p className="card-text">{name}</p>
-                                <div className="d-flex gap-2 ps-2">
-                                    {
-                                        discount
-                                            ?
-                                            <i
-                                                className="bi bi-x-circle text-danger default clickable-object"
-                                                data-bs-toggle="modal"
-                                                data-bs-target={`#delete-promotion-${productId}-modal`}
-                                            >
-                                            </i>
-                                            :
-                                            <>
+            <div className="d-flex flex-column space-between w-100">
+                <div className="card-body">
+                    <div>
+                        {
+                            edit
+                                ?
+                                <div className="d-flex justify-content-between">
+                                    <p className="card-text">{name}</p>
+                                    <div className="d-flex gap-2 ps-2">
+                                        {
+                                            discount
+                                                ?
                                                 <i
-                                                    className="bi bi-percent default text-promotion clickable-object"
-                                                >
-                                                </i>
-                                                <i
-                                                    className="bi bi-pencil-fill clickable-object"
-                                                >
-                                                </i>
-                                                <i
-                                                    className="bi bi-trash-fill default text-danger clickable-object"
+                                                    className="bi bi-x-circle text-danger default clickable-object"
                                                     data-bs-toggle="modal"
-                                                    data-bs-target={`#delete-product-${productId}-modal`}
+                                                    data-bs-target={`#delete-promotion-${productId}-modal`}
                                                 >
                                                 </i>
-                                            </>
-                                    }
-
+                                                :
+                                                <>
+                                                    <i
+                                                        className="bi bi-percent default text-promotion clickable-object"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target={`#create-promotion-${productId}-modal`}
+                                                    >
+                                                    </i>
+                                                    <i
+                                                        className="bi bi-pencil-fill clickable-object"
+                                                    >
+                                                    </i>
+                                                    <i
+                                                        className="bi bi-trash-fill default text-danger clickable-object"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target={`#delete-product-${productId}-modal`}
+                                                    >
+                                                    </i>
+                                                </>
+                                        }
+                                    </div>
                                 </div>
-                            </div>
-                            :
-                            <p className="card-text">{name}</p>
-                    }
-                    <p className="card-text">
-                        <small className="text-body-secondary">{description || t("restaurant.product.no_description")}</small>
-                    </p>
+                                :
+                                <p className="card-text">{name}</p>
+                        }
+                        <p className="card-text">
+                            <small className="text-body-secondary">{description || t("restaurant.product.no_description")}</small>
+                        </p>
+                    </div>
+                    <h5 className="card-title">
+                        ${price}
+                        {discount && <span className="badge bg-promotion ms-2">-{discount}%</span>}
+                    </h5>
                 </div>
-                <h5 className="card-title">
-                    ${price}
-                    {discount && <span className="badge bg-promotion ms-2">-{discount}%</span>}
-                </h5>
                 {
-                    discount &&
+                    discount && edit &&
                     <div className="card-footer">
                         <small>
                             <span className="text-promotion">{t("restaurant.edit.promotion_from")}</span> {promotionStartDate.toLocaleString(i18n.language)}
@@ -246,6 +305,118 @@ function ProductCard({
                                     <button type="button" data-bs-dismiss="modal" className="btn btn-secondary">{t("paging.no")}</button>
                                     <button type="button" className="btn btn-danger" onClick={deletePromotionMutation.mutate}>{t("paging.yes")}</button>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="modal fade" id={`create-promotion-${productId}-modal`} tabIndex="-1">
+                        <div className="modal-dialog modal-dialog-centered">
+                            <div className="modal-content">
+                                <div className="modal-header">
+                                    <h1 className="modal-title fs-5">{t("restaurant.edit.create_promotion")}</h1>
+                                    <button type="button" className="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <Formik
+                                    innerRef={createPromotionFormRef}
+                                    initialValues={{
+                                        percentage: "",
+                                        days: 0,
+                                        hours: 0,
+                                        minutes: 0,
+                                        startDateTime: "",
+                                        endDateTime: ""
+                                    }}
+                                    validationSchema={promotionType === PROMOTION_TYPE.INSTANT ? CreateInstantPromotionSchema : CreateScheduledPromotionSchema}
+                                    onSubmit={handleCreatePromotion}
+                                >
+                                    {({isSubmitting, setErrors}) => (
+                                        <Form>
+                                            <div className="modal-body">
+                                                {showCreatePromotionError &&
+                                                    <div className="alert alert-danger" role="alert">{t("restaurant.edit.error")}</div>}
+                                                <div className="mb-3">
+                                                    <label htmlFor="percentage" className="form-label">{t("restaurant.edit.promotion_percentage")}</label>
+                                                    <div className="input-group">
+                                                        <Field name="percentage" type="number" min="1" max="99" className="form-control" id="percentage"/>
+                                                        <span className="input-group-text">%</span>
+                                                    </div>
+                                                    <ErrorMessage name="percentage" component="div" className="form-error"/>
+                                                </div>
+                                                <div className="nav nav-pills nav-justified mb-3 promotion-nav" role="tablist">
+                                                    <button
+                                                        className="nav-link active"
+                                                        data-bs-toggle="tab"
+                                                        data-bs-target={`#promotion-${productId}-instant`}
+                                                        type="button"
+                                                        role="tab"
+                                                        onClick={() => {
+                                                            setPromotionType(PROMOTION_TYPE.INSTANT);
+                                                            setErrors({});
+                                                        }}
+                                                    >
+                                                        {t("restaurant.edit.instant_promotion")}
+                                                    </button>
+                                                    <button
+                                                        className="nav-link"
+                                                        data-bs-toggle="tab"
+                                                        data-bs-target={`#promotion-${productId}-scheduled`}
+                                                        type="button"
+                                                        role="tab"
+                                                        onClick={() => {
+                                                            setPromotionType(PROMOTION_TYPE.SCHEDULED);
+                                                            setErrors({});
+                                                        }}
+                                                    >
+                                                        {t("restaurant.edit.scheduled_promotion")}
+                                                    </button>
+                                                </div>
+                                                <div className="tab-content">
+                                                    <div className="tab-pane active show fade" id={`promotion-${productId}-instant`} role="tabpanel" tabIndex="0">
+                                                        <div className="mb-3">
+                                                            <label className="form-label">{t("restaurant.edit.promotion_duration.label")}</label>
+                                                            <div className="d-flex gap-3">
+                                                                <div className="input-group">
+                                                                    <Field name="days" type="number" min="0" className="form-control"/>
+                                                                    <span className="input-group-text">{t("restaurant.edit.promotion_duration.days")}</span>
+                                                                </div>
+                                                                <div className="input-group">
+                                                                    <Field name="hours" type="number" min="0" className="form-control"/>
+                                                                    <span className="input-group-text">{t("restaurant.edit.promotion_duration.hours")}</span>
+                                                                </div>
+                                                                <div className="input-group">
+                                                                    <Field name="minutes" type="number" min="0" className="form-control"/>
+                                                                    <span className="input-group-text">{t("restaurant.edit.promotion_duration.minutes")}</span>
+                                                                </div>
+                                                            </div>
+                                                            <ErrorMessage name="days" component="div" className="form-error"/>
+                                                            <ErrorMessage name="hours" component="div" className="form-error"/>
+                                                            <ErrorMessage name="minutes" component="div" className="form-error"/>
+                                                            {showCreatePromotionOverlappingError &&
+                                                                <div className="form-error">{t("restaurant.edit.promotion_overlapping")}</div>}
+                                                        </div>
+                                                    </div>
+                                                    <div className="tab-pane fade" id={`promotion-${productId}-scheduled`} role="tabpanel" tabIndex="0">
+                                                        <div className="mb-3">
+                                                            <label htmlFor="startDateTime" className="form-label">{t("restaurant.edit.promotion_start")}</label>
+                                                            <Field name="startDateTime" type="datetime-local" className="form-control" id="startDateTime"/>
+                                                            <ErrorMessage name="startDateTime" component="div" className="form-error"/>
+                                                        </div>
+                                                        <div className="mb-3">
+                                                            <label htmlFor="endDateTime" className="form-label">{t("restaurant.edit.promotion_end")}</label>
+                                                            <Field name="endDateTime" type="datetime-local" className="form-control" id="endDateTime" onBlur={() => setShowCreatePromotionOverlappingError(false)}/>
+                                                            <ErrorMessage name="endDateTime" component="div" className="form-error"/>
+                                                            {showCreatePromotionOverlappingError &&
+                                                                <div className="form-error">{t("restaurant.edit.promotion_overlapping")}</div>}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="modal-footer">
+                                                <button type="submit" className="btn btn-promotion" disabled={isSubmitting}>{t("restaurant.edit.create_promotion")}</button>
+                                            </div>
+                                        </Form>
+                                    )}
+                                </Formik>
                             </div>
                         </div>
                     </div>

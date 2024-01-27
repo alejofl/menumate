@@ -65,12 +65,18 @@ export function useRestaurantService(api) {
         return Array.isArray(response.data) ? response.data.map(data => Product.fromJSON(data)) : [];
     };
 
-    const getPromotions = async (url) => {
-        const response = await api.get(url, {
-            headers: {
-                "Accept": RESTAURANT_PROMOTIONS_CONTENT_TYPE
+    const getPromotions = async (url, living) => {
+        const response = await api.get(
+            url,
+            {
+                params: {
+                    living: living
+                },
+                headers: {
+                    "Accept": RESTAURANT_PROMOTIONS_CONTENT_TYPE
+                }
             }
-        });
+        );
         return Array.isArray(response.data) ? response.data.map(data => Promotion.fromJSON(data)) : [];
     };
 
@@ -323,6 +329,18 @@ export function useRestaurantService(api) {
         return await api.delete(url);
     };
 
+    const createPromotion = async (url, data) => {
+        return await api.post(
+            url,
+            data,
+            {
+                headers: {
+                    "Content-Type": RESTAURANT_PROMOTIONS_CONTENT_TYPE
+                }
+            }
+        );
+    };
+
     return {
         getRestaurants,
         getRestaurant,
@@ -345,6 +363,7 @@ export function useRestaurantService(api) {
         editEmployeeRole,
         updateCategoryOrder,
         deleteProduct,
-        deletePromotion
+        deletePromotion,
+        createPromotion
     };
 }

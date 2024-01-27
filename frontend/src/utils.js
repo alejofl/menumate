@@ -27,6 +27,7 @@ export const DELETE_RESTAURANT_CONTENT_TYPE = "application/vnd.menumate.restaura
 export const JSON_CONTENT_TYPE = "application/json";
 
 export const EMAIL_ALREADY_IN_USE_ERROR = {"message":"Email already in use!", "path":"registerUser.arg0.email"};
+export const OVERLAPPING_PROMOTIONS_ERROR = "createPromotion.arg1";
 export const IMAGE_MAX_SIZE = 1024 * 1024 * 5; // 1024 B = 1 KB && 1024 B * 1024 = 1 MB ==> MAX_SIZE = 5 MB
 
 export const PRICE_DECIMAL_DIGITS = 2;
@@ -83,24 +84,16 @@ export const ROLE_FOR_RESTAURANT = {
 export const ROLES = {
     MODERATOR: "ROLE_MODERATOR"
 };
-
 export const STATUS = {
     PENDING: "pending",
     CONFIRMED: "confirmed",
     READY: "ready",
     DELIVERED: "delivered",
-    CANCELLED: "cancelled",
-    getStatusDescription: (status, dateOrdered, dateConfirmed, dateReady, dateDelivered, dateCancelled) => {
-        const statusDescriptions = {
-            [this.PENDING]: dateOrdered.toLocaleString(),
-            [this.CONFIRMED]: dateConfirmed.toLocaleString(),
-            [this.READY]: dateReady.toLocaleString(),
-            [this.DELIVERED]: dateDelivered.toLocaleString(),
-            [this.CANCELLED]: dateCancelled.toLocaleString()
-        };
-
-        return statusDescriptions[status];
-    }
+    CANCELLED: "cancelled"
+};
+export const PROMOTION_TYPE = {
+    INSTANT: "instant",
+    SCHEDULED: "scheduled"
 };
 
 export const WAIT_TIME = 500;

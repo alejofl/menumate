@@ -275,6 +275,36 @@
         "role": {
             "required": "El rol del empleado es obligatorio",
             "invalid": "El rol del empleado debe ser uno de la lista de opciones"
+        },
+        "percentage": {
+            "required": "El porcentaje de la promoción es obligatorio",
+            "min": "El porcentaje de la promoción debe ser al menos {{min}}",
+            "max": "El porcentaje de la promoción debe ser como máximo {{max}}"
+        },
+        "start_datetime": {
+            "required": "La fecha y hora de inicio de la promoción son obligatorias",
+            "min": "La fecha de inicio de la promoción debe ser una fecha futura"
+        },
+        "end_datetime": {
+            "required": "La fecha y hora de finalización de la promoción son obligatorias",
+            "min": "La fecha de finalización de la promoción debe ser después de la fecha de inicio"
+        },
+        "days": {
+            "required": "Los días de la promoción son obligatorios",
+            "min": "Los días de la promoción son inválidos"
+        },
+        "hours": {
+            "required": "Las horas de la promoción son obligatorias",
+            "min": "Las horas de la promoción son inválidas",
+            "max": "Las horas de la promoción son inválidas"
+        },
+        "minutes": {
+            "required": "Los minutos de la promoción son obligatorios",
+            "min": "Los minutos de la promoción son inválidos",
+            "max": "Los minutos de la promoción son inválidos"
+        },
+        "duration": {
+            "invalid": "La duración de la promoción es inválida"
         }
     },
     "reset_password": {
@@ -392,7 +422,21 @@
             "promotion_from": "Desde",
             "promotion_to": "Hasta",
             "delete_product": "¿Estás seguro de que quieres eliminar este producto? Todas las promociones activas para este producto también serán eliminadas.",
-            "delete_promotion": "¿Estás seguro de que quieres detener esta promoción?"
+            "delete_promotion": "¿Estás seguro de que quieres detener esta promoción?",
+            "create_promotion": "Crear promoción",
+            "promotion_percentage": "Porcentaje",
+            "instant_promotion": "Promoción instantánea",
+            "scheduled_promotion": "Promoción programada",
+            "promotion_duration": {
+                "label": "Duración",
+                "days": "días",
+                "hours": "horas",
+                "minutes": "minutos"
+            },
+            "promotion_start": "Fecha y hora de inicio",
+            "promotion_end": "Fecha y hora de finalización",
+            "promotion_overlapping": "Ya existe una promoción para este producto en el rango de tiempo dado.",
+            "promotions": "Promociones"
         }
     },
     "order_placed": {

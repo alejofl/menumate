@@ -423,7 +423,7 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
                             <React.Fragment>
                                 <div className="card mb-4 bg-promotion">
                                     <div className="card-body d-flex justify-content-between align-items-center">
-                                        <h3 className="mb-0 text-white">{t("restaurant.promotions")}</h3>
+                                        <h3 className="mb-0 text-white">{t("restaurant.edit.promotions")}</h3>
                                     </div>
                                 </div>
                                 <div className="product-container">
@@ -441,7 +441,11 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
                                                 promotionUrl={promotion.selfUrl}
                                                 promotionStartDate={promotion.startDate}
                                                 promotionEndDate={promotion.endDate}
-                                                refetch={async () => await refetchPromotions()}
+                                                refetch={async () => {
+                                                    await refetchPromotions();
+                                                    const productsIndex = categories.sort((a, b) => a.orderNum < b.orderNum).findIndex(category => category.selfUrl === promotionProducts[i].data.categoryUrl);
+                                                    await products[productsIndex].refetch();
+                                                }}
                                             />
                                         ))
                                     }
@@ -509,6 +513,7 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
                                                     imageUrl={product.imageUrl}
                                                     edit={true}
                                                     productUrl={product.selfUrl}
+                                                    promotionsUrl={restaurant.promotionsUrl}
                                                     refetch={async () => {
                                                         await products[i].refetch();
                                                         await refetchPromotions();

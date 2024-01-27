@@ -55,3 +55,9 @@
 .add-product-to-cart .inputs input {
     flex-grow: 1;
 }
+
+.product_card .promotion-disabled img, .product_card .promotion-disabled p, .product_card .promotion-disabled h5, .product_card .promotion-disabled .card-footer {
+    opacity: 0.5;
+    filter: grayscale(100%);
+    user-select: none;
+}
