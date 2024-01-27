@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ProductDto {
+    private long productId;
     private String name;
     private String description;
     private BigDecimal price;
@@ -23,6 +24,7 @@ public class ProductDto {
 
     public static ProductDto fromProduct(final UriInfo uriInfo, final Product product) {
         final ProductDto dto = new ProductDto();
+        dto.productId = product.getProductId();
         dto.name = product.getName();
         dto.description = product.getDescription();
         dto.price = product.getPrice();
@@ -38,6 +40,14 @@ public class ProductDto {
 
     public static List<ProductDto> fromProductCollection(final UriInfo uriInfo, final Collection<Product> products) {
         return products.stream().map(p -> fromProduct(uriInfo, p)).collect(Collectors.toList());
+    }
+
+    public long getProductId() {
+        return productId;
+    }
+
+    public void setProductId(long productId) {
+        this.productId = productId;
     }
 
     public String getName() {
