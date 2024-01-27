@@ -2,7 +2,7 @@
 
 import * as Yup from "yup";
 import i18n from "../i18n";
-import {IMAGE_MAX_SIZE, ORDER_TYPE} from "../utils.js";
+import {IMAGE_MAX_SIZE, ORDER_TYPE, ROLE_FOR_RESTAURANT} from "../utils.js";
 import RestaurantTags from "./RestaurantTags.js";
 import RestaurantSpecialties from "./RestaurantSpecialties.js";
 
@@ -182,4 +182,14 @@ export const AddProductSchema = Yup.object().shape({
         .notRequired()
         .test("fileSize", i18n.t("validation.image.size"), (value) => !value || (value && value.size <= IMAGE_MAX_SIZE))
         .test("fileType", i18n.t("validation.image.type"), (value) => !value || (value && value.type.startsWith("image/")))
+});
+
+export const AddEmployeeSchema = Yup.object().shape({
+    email: Yup.string()
+        .required(i18n.t("validation.email.required"))
+        .matches(/^(([^<>()[\]\\.,;:\s@"]+(.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@(([[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}])|(([a-zA-Z-0-9]+.)+[a-zA-Z]{2,}))$/, i18n.t("validation.email.invalid")),
+
+    role: Yup.string()
+        .required(i18n.t("validation.role.required"))
+        .oneOf([ROLE_FOR_RESTAURANT.ADMIN, ROLE_FOR_RESTAURANT.ORDER_HANDLER], i18n.t("validation.role.invalid"))
 });

@@ -271,6 +271,10 @@
             "required": "El precio del producto es obligatorio",
             "min": "El precio del producto debe ser al menos ${{min}}",
             "max": "El precio del producto debe ser como máximo ${{max}}"
+        },
+        "role": {
+            "required": "El rol del empleado es obligatorio",
+            "invalid": "El rol del empleado debe ser uno de la lista de opciones"
         }
     },
     "reset_password": {
@@ -373,7 +377,17 @@
             "change_portrait1": "Cambiar imagen de portada principal",
             "change_portrait2": "Cambiar imagen de portada secundaria",
             "edit_category": "Editar categoría",
-            "delete_category": "¿Estás seguro de que quieres eliminar esta categoría? Esta acción es irreversible."
+            "delete_category": "¿Estás seguro de que quieres eliminar esta categoría? Esta acción es irreversible.",
+            "add_employee": "Añadir empleado",
+            "employee_email": "Correo electrónico del empleado",
+            "employee_role": "Rol del empleado",
+            "employee_role_help_text": "Los miembros del staff solo pueden ver y manejar órdenes. Los administradores también pueden editar el menú del restaurante, pero no pueden editar empleados.",
+            "roles": {
+                "owner": "Dueño",
+                "admin": "Administrador",
+                "orderhandler": "Miembro del staff"
+            },
+            "restaurant_employees": "Empleados del restaurante"
         }
     },
     "order_placed": {

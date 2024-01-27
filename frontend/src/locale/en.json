@@ -272,6 +272,10 @@
             "required": "The product price is required",
             "min": "The product price must be at least ${{min}}",
             "max": "The product price must be at most ${{max}}"
+        },
+        "role": {
+            "required": "The employee role is required",
+            "invalid": "The employee role must be one of the list of options"
         }
     },
     "reset_password": {
@@ -374,7 +378,18 @@
             "change_portrait1": "Change Main Portrait Image",
             "change_portrait2": "Change Secondary Portrait Image",
             "edit_category": "Edit Category",
-            "delete_category": "Are you sure you want to delete this category? This actions is irreversible."
+            "delete_category": "Are you sure you want to delete this category? This actions is irreversible.",
+            "add_employee": "Add Employee",
+            "employee_email": "Employee Email",
+            "employee_role": "Employee Role",
+            "employee_role_help_text": "Staff members can only see and handle orders. Administrators can also edit the restaurant menu, but they can't edit employees.",
+            "roles": {
+                "owner": "Owner",
+                "admin": "Administrator",
+                "orderhandler": "Staff"
+            },
+            "restaurant_employees": "Restaurant Employees"
+
         }
     },
     "order_placed": {

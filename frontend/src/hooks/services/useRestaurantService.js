@@ -4,12 +4,17 @@ import PagedContent from "../../data/model/PagedContent.js";
 import {
     REPORTS_CONTENT_TYPE,
     RESTAURANT_CATEGORIES_CONTENT_TYPE,
-    RESTAURANT_DETAILS_CONTENT_TYPE, RESTAURANT_PRODUCTS_CONTENT_TYPE, RESTAURANT_PROMOTIONS_CONTENT_TYPE,
-    RESTAURANTS_CONTENT_TYPE, UNHANDLED_REPORTS_CONTENT_TYPE
+    RESTAURANT_DETAILS_CONTENT_TYPE,
+    RESTAURANT_EMPLOYEES_CONTENT_TYPE,
+    RESTAURANT_PRODUCTS_CONTENT_TYPE,
+    RESTAURANT_PROMOTIONS_CONTENT_TYPE,
+    RESTAURANTS_CONTENT_TYPE,
+    UNHANDLED_REPORTS_CONTENT_TYPE
 } from "../../utils.js";
 import Category from "../../data/model/Category.js";
 import Product from "../../data/model/Product.js";
 import Promotion from "../../data/model/Promotion.js";
+import UserRoleForRestaurant from "../../data/model/UserRoleForRestaurant.js";
 
 export function useRestaurantService(api) {
     const getRestaurants = async (url, query) => {
@@ -253,6 +258,30 @@ export function useRestaurantService(api) {
         return await api.delete(url);
     };
 
+    const getEmployees = async (url) => {
+        const response = await api.get(url, {
+            headers: {
+                "Accept": RESTAURANT_EMPLOYEES_CONTENT_TYPE
+            }
+        });
+        return Array.isArray(response.data) ? response.data.map(data => UserRoleForRestaurant.fromJSON(data)) : [];
+    };
+
+    const addEmployee = async (url, email, role) => {
+        return await api.post(
+            url,
+            {
+                email: email,
+                role: role
+            },
+            {
+                headers: {
+                    "Content-Type": RESTAURANT_EMPLOYEES_CONTENT_TYPE
+                }
+            }
+        );
+    };
+
     return {
         getRestaurants,
         getRestaurant,
@@ -268,6 +297,8 @@ export function useRestaurantService(api) {
         deleteRestaurant,
         editRestaurantInformation,
         editCategory,
-        deleteCategory
+        deleteCategory,
+        getEmployees,
+        addEmployee
     };
 }
