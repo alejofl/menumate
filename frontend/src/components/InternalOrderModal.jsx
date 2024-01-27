@@ -69,7 +69,7 @@ function InternalOrderModal({orderUrl, showActions, onClose}) {
             )
         )
     });
-    const handleUpdateStatusMutation = ( newStatus ) => {
+    const handleUpdateStatusMutation = (newStatus) => {
         updateStatusMutation.mutate(
             {
                 newStatus: newStatus
@@ -205,32 +205,32 @@ function InternalOrderModal({orderUrl, showActions, onClose}) {
                             }
                         </div>
                         {
-                            showActions &&
+                            showActions && !orderItemsIsPending &&
                             <div className="modal-footer">
                                 <button className="btn btn-danger" type="submit"
                                     onClick={() => handleUpdateStatusMutation(STATUS.CANCELLED)}>
                                     {t("restaurant_orders.order_detail_modal.cancel_order")}
                                 </button>
                                 {
-                                    order?.status === STATUS.PENDING
-                                        ?
-                                        <button className="btn btn-success" type="submit"
-                                            onClick={() => handleUpdateStatusMutation(STATUS.CONFIRMED)}>
-                                            {t("restaurant_orders.order_detail_modal.confirm_order")}
-                                        </button>
-                                        :
-                                        order?.status === STATUS.CONFIRMED
-                                            ?
-                                            <button className="btn btn-success" type="submit"
-                                                onClick={() => handleUpdateStatusMutation(STATUS.READY)}>
-                                                {t("restaurant_orders.order_detail_modal.mark_as_ready")}
-                                            </button>
-                                            :
-                                            order?.status === STATUS.READY &&
-                                            <button className="btn btn-success" type="submit"
-                                                onClick={() => handleUpdateStatusMutation(STATUS.DELIVERED)}>
-                                                {t("restaurant_orders.order_detail_modal.mark_as_delivered")}
-                                            </button>
+                                    order.status === STATUS.PENDING &&
+                                    <button className="btn btn-success" type="submit"
+                                        onClick={() => handleUpdateStatusMutation(STATUS.CONFIRMED)}>
+                                        {t("restaurant_orders.order_detail_modal.confirm_order")}
+                                    </button>
+                                }
+                                {
+                                    order.status === STATUS.CONFIRMED &&
+                                    <button className="btn btn-success" type="submit"
+                                        onClick={() => handleUpdateStatusMutation(STATUS.READY)}>
+                                        {t("restaurant_orders.order_detail_modal.mark_as_ready")}
+                                    </button>
+                                }
+                                {
+                                    order.status === STATUS.READY &&
+                                    <button className="btn btn-success" type="submit"
+                                        onClick={() => handleUpdateStatusMutation(STATUS.DELIVERED)}>
+                                        {t("restaurant_orders.order_detail_modal.mark_as_delivered")}
+                                    </button>
                                 }
                             </div>
                         }

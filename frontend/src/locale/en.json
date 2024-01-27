@@ -35,7 +35,8 @@
         "user_restaurants": "My Restaurants",
         "moderators_panel": "Moderators Panel",
         "user_orders": "My Orders",
-        "edit_restaurant": "Edit {{name}}"
+        "edit_restaurant": "Edit {{name}}",
+        "restaurant_orders": "{{name}} Orders"
     },
     "error": {
         "modal": {

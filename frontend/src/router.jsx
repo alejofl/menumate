@@ -56,6 +56,10 @@ const router = createBrowserRouter(
             element: <ProtectedRoute><Restaurant edit={true}/></ProtectedRoute>
         },
         {
+            path: "/restaurants/:restaurantId/orders",
+            element: <ProtectedRoute><RestaurantOrders/></ProtectedRoute>
+        },
+        {
             path: "/user",
             element: <ProtectedRoute><UserProfile/></ProtectedRoute>
         },
@@ -74,10 +78,6 @@ const router = createBrowserRouter(
         {
             path: "*",
             element: <Error errorNumber="404"/>
-        },
-        {
-            path: "/restaurants/:restaurantId/orders",
-            element: <ProtectedRoute><RestaurantOrders/></ProtectedRoute>
         }
     ],
     {

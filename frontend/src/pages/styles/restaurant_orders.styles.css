@@ -1,19 +1,7 @@
-.restaurant_orders .page-title {
-    text-align: center;
-    padding-top: 30px;
-}
-
 .restaurant_orders {
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    margin: 0;
-}
-
-.restaurant_orders .nav {
-    --bs-nav-link-color: var(--secondary);
-    --bs-nav-link-hover-color: var(--secondary-dark);
-    --bs-nav-pills-link-active-bg: var(--secondary);
 }
 
 .restaurant-orders-table tr {
@@ -30,8 +18,4 @@
     flex-direction: column;
     align-items: center;
     color: #b6b6b6;
-}
-
-.item-order-table tbody th {
-    font-weight: normal;
 }

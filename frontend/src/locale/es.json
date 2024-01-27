@@ -35,7 +35,8 @@
         "user_restaurants": "Mis restaurantes",
         "moderators_panel": "Panel de moderadores",
         "user_orders": "Mis órdenes",
-        "edit_restaurant": "Editar {{name}}"
+        "edit_restaurant": "Editar {{name}}",
+        "restaurant_orders": "Órdenes de {{name}}"
     },
     "error": {
         "modal": {
@@ -473,17 +474,17 @@
     },
     "restaurant_orders": {
         "title": "{{restaurantName}} | Órdenes",
-        "pending": "Pending",
-        "confirmed": "Confirmed",
-        "ready": "Ready",
-        "delivered": "Delivered",
-        "cancelled": "Cancelled",
+        "pending": "Pendientes",
+        "confirmed": "Confirmadas",
+        "ready": "Listas",
+        "delivered": "Entregadas",
+        "cancelled": "Canceladas",
         "table": {
             "order_id": "ID de la orden",
             "order_type": "Tipo de order",
             "table_number": "Numero de mesa",
             "address": "Dirección",
-            "order_date": "Fecha",
+            "order_date": "Fecha de la orden",
             "empty_results": "No hay nada aquí"
         },
         "order_detail_modal": {

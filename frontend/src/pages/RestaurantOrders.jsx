@@ -6,7 +6,7 @@ import {useApi} from "../hooks/useApi.js";
 import {useRestaurantService} from "../hooks/services/useRestaurantService.js";
 import {useParams, useSearchParams} from "react-router-dom";
 import {useInfiniteQuery, useQuery, useQueryClient} from "@tanstack/react-query";
-import "./styles/restaurant_orders.css";
+import "./styles/restaurant_orders.styles.css";
 import {STATUS} from "../utils.js";
 import {useOrderService} from "../hooks/services/useOrderService.js";
 import AuthContext from "../contexts/AuthContext.jsx";
@@ -22,7 +22,7 @@ function RestaurantOrders() {
     };
     const ROWS_SKELETON = 5;
 
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const apiContext = useContext(ApiContext);
     const authContext = useContext(AuthContext);
     const api = useApi();
@@ -37,7 +37,6 @@ function RestaurantOrders() {
     const [query] = useState({
         ...(queryParams.get("size") ? {size: queryParams.get("size")} : {})
     });
-    const queryKey = useState(query);
 
     const [showInternalOrderModal, setShowInternalOrderModal] = useState(false);
     const [orderUrl, setOrderUrl] = useState("");
@@ -49,49 +48,59 @@ function RestaurantOrders() {
         data: restaurant,
         isError: restaurantIsError
     } = useQuery({
-        queryKey: [restaurantId],
+        queryKey: ["restaurant", restaurantId],
         queryFn: async () => (
             await restaurantService.getRestaurant(`${apiContext.restaurantsUrl}/${restaurantId}`, true)
         )
     });
-
     const {
-        data : user,
-        isError: userIsError
+        isError: userIsError,
+        data: user,
+        error: userError
     } = useQuery({
-        queryKey: ["user"],
+        queryKey: ["user", authContext.selfUrl],
         queryFn: async () => (
-            await userService.getUser(
-                authContext.selfUrl
-            )
+            await userService.getUser(authContext.selfUrl)
         )
     });
-
     const {
-        isLoading: ordersIsLoading,
+        isPending: userRoleIsPending,
+        isError: userRoleIsError,
+        data: userRole,
+        error: userRoleError
+    } = useQuery({
+        queryKey: ["restaurant", restaurantId, "employees", user?.userId],
+        queryFn: async () => (
+            await userService.getRoleForRestaurant(
+                restaurant.employeesUriTemplate.fill({userId: user.userId})
+            )
+        ),
+        enabled: !!user && !!restaurant
+    });
+    const {
+        isPending: ordersIsPending,
         data: orders,
         isFetchingNextPage: ordersIsFetchingNextPage,
         hasNextPage: ordersHasNextPage,
         fetchNextPage,
         isError: ordersIsError
     } = useInfiniteQuery( {
-        queryKey: ["orders", status, sorting, queryKey],
+        queryKey: ["orders", status, sorting, query],
         queryFn: async ({ pageParam }) => (
             await orderService.getOrders(
                 apiContext.ordersUrl,
                 {
-                    userId: user.userId,
                     restaurantId: restaurant.restaurantId,
                     status: status,
                     descending: sorting === SORT.DESCENDING,
-                    query,
+                    ...query,
                     page : pageParam
                 }
             )
         ),
         getNextPageParam: (lastPage) => lastPage.nextPage?.page || undefined,
         keepPreviousData: true,
-        enabled: !!user && !!restaurant
+        enabled: !!restaurant
     });
 
     const handleLoadMoreContent = async () => {
@@ -103,7 +112,7 @@ function RestaurantOrders() {
         setShowInternalOrderModal(true);
     };
     const handleOnCloseInternalOrderModal = () => {
-        queryClient.fetchInfiniteQuery({queryKey: ["orders", status, sorting, queryKey]});
+        queryClient.fetchInfiniteQuery({queryKey: ["orders", status, sorting, query]});
         setOrderUrl("");
         setShowInternalOrderModal(false);
     };
@@ -114,66 +123,87 @@ function RestaurantOrders() {
                 <Error errorNumber={restaurantIsError.response.status}/>
             </>
         );
-    } else if (userIsError) {
-        return (
-            <>
-                <Error errorNumber={userIsError.response.status}/>
-            </>
-        );
     } else if (ordersIsError) {
         return (
             <>
                 <Error errorNumber={ordersIsError.response.status}/>
             </>
         );
+    } else if (userIsError) {
+        return (
+            <>
+                <Error errorNumber={userError.response.status}/>
+            </>
+        );
+    } else if (userRoleIsError) {
+        return (
+            <>
+                <Error errorNumber={userRoleError.response.status}/>
+            </>
+        );
+    } else if (!userRoleIsPending && !userRole.isOrderHandler) {
+        return (
+            <>
+                <Error errorNumber={403}/>
+            </>
+        );
     }
-
     return (
         <>
-            <Page title={t("titles.home")} className="restaurant_orders">
+            <Page title={t("titles.restaurant_orders", {name: restaurant?.name})} className="restaurant_orders">
                 <div className="page-title">
                     <h1>{t("restaurant_orders.title", {restaurantName: restaurant?.name})}</h1>
                 </div>
-                <div className="restaurant-orders-view">
+                <div>
                     <nav>
-                        <ul className="nav nav-pills nav-fill mb-3">
+                        <ul className="nav nav-pills nav-fill mb-4 secondary-nav">
                             <li className="nav-item">
-                                <a className={"nav-link" + (status === STATUS.PENDING ? " active" : "")} aria-current="page"
-                                    onClick={() => setStatus(STATUS.PENDING)}>
-                                    {t("restaurant_orders.pending")}
-                                </a>
-                            </li>
-                            <li className="nav-item">
-                                <a className={"nav-link" + (status === STATUS.CONFIRMED ? " active" : "")}
+                                <button
+                                    className={"nav-link" + (status === STATUS.PENDING ? " active" : "")}
                                     aria-current="page"
-                                    onClick={() => setStatus(STATUS.CONFIRMED)}>
-                                    {t("restaurant_orders.confirmed")}
-                                </a>
+                                    onClick={() => setStatus(STATUS.PENDING)}
+                                >
+                                    {t("restaurant_orders.pending")}
+                                </button>
                             </li>
                             <li className="nav-item">
-                                <a className={"nav-link" + (status === STATUS.READY ? " active" : "")} aria-current="page"
+                                <button
+                                    className={"nav-link" + (status === STATUS.CONFIRMED ? " active" : "")}
+                                    aria-current="page"
+                                    onClick={() => setStatus(STATUS.CONFIRMED)}
+                                >
+                                    {t("restaurant_orders.confirmed")}
+                                </button>
+                            </li>
+                            <li className="nav-item">
+                                <button
+                                    className={"nav-link" + (status === STATUS.READY ? " active" : "")}
+                                    aria-current="page"
                                     onClick={() => setStatus(STATUS.READY)}>
                                     {t("restaurant_orders.ready")}
-                                </a>
+                                </button>
                             </li>
                             <li className="nav-item">
-                                <a className={"nav-link" + (status === STATUS.DELIVERED ? " active" : "")}
+                                <button
+                                    className={"nav-link" + (status === STATUS.DELIVERED ? " active" : "")}
                                     aria-current="page"
-                                    onClick={() => setStatus(STATUS.DELIVERED)}>
+                                    onClick={() => setStatus(STATUS.DELIVERED)}
+                                >
                                     {t("restaurant_orders.delivered")}
-                                </a>
+                                </button>
                             </li>
                             <li className="nav-item">
-                                <a className={"nav-link" + (status === STATUS.CANCELLED ? " active" : "")}
+                                <button
+                                    className={"nav-link" + (status === STATUS.CANCELLED ? " active" : "")}
                                     aria-current="page"
-                                    onClick={() => setStatus(STATUS.CANCELLED)}>
+                                    onClick={() => setStatus(STATUS.CANCELLED)}
+                                >
                                     {t("restaurant_orders.cancelled")}
-                                </a>
+                                </button>
                             </li>
                         </ul>
                     </nav>
                 </div>
-
                 <div className="table-responsive w-75">
                     <table className="table table-hover restaurant-orders-table">
                         <thead className="table-light">
@@ -183,77 +213,53 @@ function RestaurantOrders() {
                                 <th className="text-center" scope="col">{t("restaurant_orders.table.table_number")}</th>
                                 <th className="text-center" scope="col">{t("restaurant_orders.table.address")}</th>
                                 <th className="text-end" scope="col">{t("restaurant_orders.table.order_date")}
-                                    <a className="clickable-object px-2">
+                                    <span className="clickable-object px-2">
                                         {sorting === SORT.ASCENDING
                                             ?
                                             <i className="bi bi-arrow-down-square-fill" onClick={() => setSorting(SORT.DESCENDING)}></i>
                                             :
                                             <i className="bi bi-arrow-up-square-fill" onClick={() => setSorting(SORT.ASCENDING)}></i>
                                         }
-                                    </a>
+                                    </span>
                                 </th>
                             </tr>
                         </thead>
                         <tbody className="table-striped justify-center">
-                            {
-                                ordersIsLoading
-                                    ?
-                                    <tr>
+                            {ordersIsPending
+                                ?
+                                new Array(ROWS_SKELETON).fill("").map((_, i) => (
+                                    <tr key={i}>
                                         {
-                                            new Array(ROWS_SKELETON).fill("").map((_, i) => {
-                                                return (
-                                                    <th className="text-start" key={i}>
-                                                        <ContentLoader backgroundColor="#eaeaea"
-                                                            foregroundColor="#e0e0e0"
-                                                            width="100%" height="20">
-                                                            <rect x="0%" y="0" rx="0" ry="0" width="100%"
-                                                                height="100"/>
-                                                        </ContentLoader>
-                                                    </th>
-                                                );
-                                            })
+                                            new Array(ROWS_SKELETON).fill("").map((_, j) => (
+                                                <th className="text-start" key={j}>
+                                                    <ContentLoader backgroundColor="#eaeaea"
+                                                        foregroundColor="#e0e0e0"
+                                                        width="100%" height="20">
+                                                        <rect x="0%" y="0" rx="0" ry="0" width="100%"
+                                                            height="100"/>
+                                                    </ContentLoader>
+                                                </th>
+                                            ))
                                         }
                                     </tr>
-                                    :
-                                    orders?.pages[0]?.content.length === 0
-                                        ?
-                                        <div></div>
-                                        :
-                                        orders?.pages.flatMap(page => page.content)
-                                            .map(order => (
-                                                <tr className="clickable-object" key={order.orderId}
-                                                    onClick={() => handleOnShowInternalOrderModal(order.selfUrl)}>
-                                                    <td className="text-start">{order.orderId}</td>
-                                                    <td className="text-center">
-                                                        {order.orderType === "delivery"
-                                                            ?
-                                                            t("order.delivery")
-                                                            :
-                                                            order.orderType === "takeaway"
-                                                                ?
-                                                                t("order.takeaway")
-                                                                :
-                                                                t("order.dinein")
-                                                        }
-                                                    </td>
-                                                    <td className="text-center">
-                                                        {order.tableNumber ? order.tableNumber : "-"}
-                                                    </td>
-                                                    <td className="text-center">
-                                                        {order.address ? order.address : "-"}
-                                                    </td>
-                                                    <td className="text-end">
-                                                        {STATUS.getStatusDescription(
-                                                            status,
-                                                            order.dateOrdered,
-                                                            order.dateConfirmed,
-                                                            order.dateReady,
-                                                            order.dateDelivered,
-                                                            order.dateCancelled
-                                                        )}
-                                                    </td>
-                                                </tr>
-                                            ))
+                                ))
+                                :
+                                orders?.pages[0]?.content.length !== 0 &&
+                                orders?.pages.flatMap(page => page.content).map(order => (
+                                    <tr
+                                        className="clickable-object"
+                                        key={order.orderId}
+                                        onClick={() => handleOnShowInternalOrderModal(order.selfUrl)}
+                                    >
+                                        <td className="text-start">{order.orderId}</td>
+                                        <td className="text-center">{t(`order.${order.orderType}`)}</td>
+                                        <td className="text-center">{order.tableNumber || "-"}</td>
+                                        <td className="text-center">{order.address || "-"}</td>
+                                        <td className="text-end">
+                                            {order.dateOrdered.toLocaleString(i18n.language)}
+                                        </td>
+                                    </tr>
+                                ))
                             }
                             {
                                 ordersIsFetchingNextPage &&
@@ -277,14 +283,11 @@ function RestaurantOrders() {
                         </tbody>
                     </table>
                     {
-                        orders?.pages[0]?.content.length === 0
-                            ?
+                        orders?.pages[0]?.content.length === 0 &&
                             <div className="empty-results">
-                                <h1><i className="bi bi-slash-circle"></i></h1>
+                                <h1><i className="bi bi-slash-circle default"></i></h1>
                                 <p>{t("restaurant_orders.table.empty_results")}</p>
                             </div>
-                            :
-                            <div></div>
                     }
                     {
                         ordersHasNextPage &&
@@ -295,8 +298,7 @@ function RestaurantOrders() {
                                     ordersIsFetchingNextPage
                                         ?
                                         <>
-                                            <span className="spinner-border spinner-border-sm mx-4"
-                                                role="status"></span>
+                                            <span className="spinner-border spinner-border-sm mx-4" role="status"></span>
                                             <span className="visually-hidden">Loading...</span>
                                         </>
                                         :

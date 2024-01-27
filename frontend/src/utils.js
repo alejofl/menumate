@@ -90,7 +90,7 @@ export const STATUS = {
     READY: "ready",
     DELIVERED: "delivered",
     CANCELLED: "cancelled",
-    getStatusDescription: function(status, dateOrdered, dateConfirmed, dateReady, dateDelivered, dateCancelled) {
+    getStatusDescription: (status, dateOrdered, dateConfirmed, dateReady, dateDelivered, dateCancelled) => {
         const statusDescriptions = {
             [this.PENDING]: dateOrdered.toLocaleString(),
             [this.CONFIRMED]: dateConfirmed.toLocaleString(),
@@ -99,7 +99,7 @@ export const STATUS = {
             [this.CANCELLED]: dateCancelled.toLocaleString()
         };
 
-        return statusDescriptions[status] || "Unknown status";
+        return statusDescriptions[status];
     }
 };
 
