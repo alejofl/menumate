@@ -25,10 +25,12 @@ public class PromotionForm {
     @EnumMessageCode(enumClass = PromotionType.class, message = "{EnumMessageCode.PromotionForm.type}")
     private String type;
 
-    @Size(min = 0, max = 59, message = "{Size.PromotionForm.minutes}")
+    @Min(value = 0, message = "{Min.PromotionForm.minutes}")
+    @Max(value = 59, message = "{Max.PromotionForm.minutes}")
     private Integer minutes;
 
-    @Size(min = 0, max = 23, message = "{Size.PromotionForm.hours}")
+    @Min(value = 0, message = "{Min.PromotionForm.hours}")
+    @Max(value = 23, message = "{Max.PromotionForm.hours}")
     private Integer hours;
 
     @Min(value = 0, message = "{Min.PromotionForm.days}")
