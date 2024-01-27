@@ -20,6 +20,7 @@ public class CustomMediaType {
     public static final String APPLICATION_RESTAURANT_DETAILS = "application/vnd.menumate.restaurantDetails.v1+json";
     public static final String APPLICATION_RESTAURANT_CATEGORIES = "application/vnd.menumate.restaurant.categories.v1+json";
     public static final String APPLICATION_RESTAURANT_PRODUCTS = "application/vnd.menumate.restaurant.products.v1+json";
+    public static final String APPLICATION_RESTAURANT_PRODUCT_CATEGORY = "application/vnd.menumate.restaurant.product.newCategory.v1+json";
     public static final String APPLICATION_RESTAURANT_PROMOTIONS = "application/vnd.menumate.restaurant.promotions.v1+json";
     public static final String APPLICATION_RESTAURANT_REPORTS = "application/vnd.menumate.restaurant.reports.v1+json";
     public static final String APPLICATION_RESTAURANTS_UNHANDLED_REPORTS = "application/vnd.menumate.restaurantUnhandledReports.v1+json";

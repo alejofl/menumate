@@ -83,6 +83,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/categories/{categoryId:\\d+}/products").permitAll()
                 .antMatchers(HttpMethod.POST, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/categories/{categoryId:\\d+}/products").access("@accessValidator.checkRestaurantAdmin(#restaurantId)")
                 .antMatchers(HttpMethod.PUT, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/categories/{categoryId:\\d+}/products/{productId:\\d+}").access("@accessValidator.checkRestaurantAdmin(#restaurantId)")
+                .antMatchers(HttpMethod.PATCH, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/categories/{categoryId:\\d+}/products/{productId:\\d+}").access("@accessValidator.checkRestaurantAdmin(#restaurantId)")
                 .antMatchers(HttpMethod.GET, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/categories/{categoryId:\\d+}/products/{productId:\\d+}").permitAll()
                 .antMatchers(HttpMethod.DELETE, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/categories/{categoryId:\\d+}/products/{productId:\\d+}").access("@accessValidator.checkRestaurantAdmin(#restaurantId)")
 
@@ -116,7 +117,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, UriUtils.ORDERS_URL).permitAll()
                 .antMatchers(HttpMethod.GET, UriUtils.ORDERS_URL + "/{orderId:\\d+}").access("@accessValidator.checkOrderOwnerOrHandler(#orderId)")
                 .antMatchers(HttpMethod.GET, UriUtils.ORDERS_URL + "/{orderId:\\d+}/items").access("@accessValidator.checkOrderOwnerOrHandler(#orderId)")
-                .antMatchers(HttpMethod.PATCH, UriUtils.ORDERS_URL + "/{orderId:\\d+}").access("@accessValidator.checkOrderHandler(#orderId)")
+                .antMatchers(HttpMethod.PATCH, UriUtils.ORDERS_URL + "/{orderId:\\d+}").access("@accessValidator.checkOrderHandler(#orderId) ")
 
                 .antMatchers(HttpMethod.GET, UriUtils.REVIEWS_URL).permitAll()
                 .antMatchers(HttpMethod.GET, UriUtils.REVIEWS_URL + "/{orderId:\\d+}").permitAll()

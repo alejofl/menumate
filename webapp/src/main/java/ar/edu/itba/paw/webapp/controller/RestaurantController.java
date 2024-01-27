@@ -281,6 +281,19 @@ public class RestaurantController {
         return Response.noContent().build();
     }
 
+    @PATCH
+    @Path("/{restaurantId:\\d+}/categories/{categoryId:\\d+}/products/{productId:\\d+}")
+    @Consumes(CustomMediaType.APPLICATION_RESTAURANT_PRODUCT_CATEGORY)
+    public Response updateProductCategory(
+            @PathParam("restaurantId") final long restaurantId,
+            @PathParam("categoryId") final long categoryId,
+            @PathParam("productId") final long productId,
+            @Valid @NotNull final ProductCategoryForm productCategoryForm
+    ) {
+        categoryService.moveProduct(productId, productCategoryForm.getNewCategoryId());
+        return Response.noContent().build();
+    }
+
     @DELETE
     @Path("/{restaurantId:\\d+}/categories/{categoryId:\\d+}/products/{productId:\\d+}")
     public Response deleteProduct(
