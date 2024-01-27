@@ -9,13 +9,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CategoryServiceImplTest {
@@ -31,13 +30,15 @@ public class CategoryServiceImplTest {
 
     private static final long CATEGORY_ID = 1;
     private static final long RESTAURANT_ID = 1;
-    private static final String ORIGINAL_CATEGORY_NAME = "Category Name";
+    private static final String DEFAULT_CATEGORY_NAME = "Category Name";
     private static final String NEW_CATEGORY_NAME = "New Category Name";
+    private static final int DEFAULT_ORDER_NUM = 1;
+    private static final int NEW_ORDER_NUM = 10;
 
     @Test
     public void testUpdateNameExistingCategory() {
-        final Category existingCategory = Mockito.spy(Category.class);
-        existingCategory.setName(ORIGINAL_CATEGORY_NAME);
+        final Category existingCategory = spy(Category.class);
+        existingCategory.setName(DEFAULT_CATEGORY_NAME);
         existingCategory.setRestaurantId(RESTAURANT_ID);
         when(categoryDao.getById(CATEGORY_ID)).thenReturn(Optional.of(existingCategory));
 
@@ -49,7 +50,7 @@ public class CategoryServiceImplTest {
     @Test(expected = CategoryNotFoundException.class)
     public void testUpdateNameNonExistingCategory() {
         when(categoryDao.getById(CATEGORY_ID)).thenReturn(Optional.empty());
-        when(restaurantDao.getById(RESTAURANT_ID)).thenReturn(Optional.of(Mockito.mock(Restaurant.class)));
+        when(restaurantDao.getById(RESTAURANT_ID)).thenReturn(Optional.of(mock(Restaurant.class)));
         categoryServiceImpl.updateName(RESTAURANT_ID, CATEGORY_ID, NEW_CATEGORY_NAME);
     }
 
@@ -58,5 +59,58 @@ public class CategoryServiceImplTest {
         when(categoryDao.getById(CATEGORY_ID)).thenReturn(Optional.empty());
         when(restaurantDao.getById(RESTAURANT_ID)).thenReturn(Optional.empty());
         categoryServiceImpl.updateName(RESTAURANT_ID, CATEGORY_ID, NEW_CATEGORY_NAME);
+    }
+
+    @Test
+    public void testUpdateCategoryWithNonNullNameAndOrderNum() {
+        final Category category = spy(Category.class);
+        category.setRestaurantId(RESTAURANT_ID);
+        category.setName(NEW_CATEGORY_NAME);
+        category.setOrderNum(DEFAULT_ORDER_NUM);
+
+        when(categoryDao.getById(CATEGORY_ID)).thenReturn(Optional.of(category));
+
+        final Category updatedCategory = categoryServiceImpl.updateCategory(RESTAURANT_ID, CATEGORY_ID, NEW_CATEGORY_NAME, null);
+
+        assertEquals(RESTAURANT_ID, updatedCategory.getRestaurantId());
+        assertEquals(NEW_CATEGORY_NAME, updatedCategory.getName());
+        assertEquals(DEFAULT_ORDER_NUM, updatedCategory.getOrderNum());
+    }
+
+    @Test
+    public void testUpdateCategoryWithNullName() {
+        final Category category = spy(Category.class);
+        category.setRestaurantId(RESTAURANT_ID);
+        category.setName(DEFAULT_CATEGORY_NAME);
+        category.setOrderNum(DEFAULT_ORDER_NUM);
+
+        when(categoryDao.getById(CATEGORY_ID)).thenReturn(Optional.of(category));
+
+        final Category updatedCategory = categoryServiceImpl.updateCategory(RESTAURANT_ID, CATEGORY_ID, null, null);
+
+        assertEquals(RESTAURANT_ID, updatedCategory.getRestaurantId());
+        assertEquals(DEFAULT_CATEGORY_NAME, updatedCategory.getName());
+        assertEquals(DEFAULT_ORDER_NUM, updatedCategory.getOrderNum());
+    }
+
+    @Test
+    public void testUpdateCategoryWithNoNullOrderNumWithNullName() {
+        final Category category = spy(Category.class);
+        category.setRestaurantId(RESTAURANT_ID);
+        category.setName(DEFAULT_CATEGORY_NAME);
+        category.setOrderNum(DEFAULT_ORDER_NUM);
+
+        when(categoryDao.getById(CATEGORY_ID)).thenReturn(Optional.of(category));
+        doAnswer(invocation -> {
+            int newOrderNum = invocation.getArgument(1);
+            category.setOrderNum(newOrderNum);
+            return null;
+        }).when(categoryDao).setOrder(eq(category), anyInt());
+
+        final Category updatedCategory = categoryServiceImpl.updateCategory(RESTAURANT_ID, CATEGORY_ID, null, NEW_ORDER_NUM);
+
+        assertEquals(RESTAURANT_ID, updatedCategory.getRestaurantId());
+        assertEquals(DEFAULT_CATEGORY_NAME, updatedCategory.getName());
+        assertEquals(NEW_ORDER_NUM, updatedCategory.getOrderNum());
     }
 }

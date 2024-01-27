@@ -131,7 +131,7 @@ public class RestaurantController {
     @PATCH
     @Path("/{restaurantId:\\d+}")
     @Consumes(CustomMediaType.APPLICATION_RESTAURANT)
-    @PreAuthorize("@accessValidator.checkRestaurantOwner(#restaurantId) or @accessValidator.checkRestaurantAdmin(#restaurantId)")
+    @PreAuthorize("@accessValidator.checkRestaurantAdmin(#restaurantId)")
     public Response updateRestaurantById(
             @PathParam("restaurantId") final long restaurantId,
             @Valid @NotNull final RestaurantForm restaurantForm
@@ -199,17 +199,7 @@ public class RestaurantController {
             @PathParam("categoryId") final long categoryId,
             @Valid @NotNull final UpdateCategoryForm categoryForm
     ) {
-        final Category category;
-        String name = categoryForm.getNameTrimmed();
-        if (name == null)
-            category = categoryService.getByIdChecked(restaurantId, categoryId, false);
-        else
-            category = categoryService.updateName(restaurantId, categoryId, name);
-
-        Integer orderNum = categoryForm.getOrderNum();
-        if (orderNum != null)
-            categoryService.setOrder(category, orderNum);
-
+        categoryService.updateCategory(restaurantId, categoryId, categoryForm.getNameTrimmed(), categoryForm.getOrderNum());
         return Response.noContent().build();
     }
 
@@ -278,6 +268,19 @@ public class RestaurantController {
             @Valid @NotNull final ProductForm productForm
     ) {
         productService.update(restaurantId, categoryId, productId, productForm.getName(), productForm.getPrice(), productForm.getDescription(), productForm.getImageId());
+        return Response.noContent().build();
+    }
+
+    @PATCH
+    @Path("/{restaurantId:\\d+}/categories/{categoryId:\\d+}/products/{productId:\\d+}")
+    @Consumes(CustomMediaType.APPLICATION_RESTAURANT_PRODUCT_CATEGORY)
+    public Response updateProductCategory(
+            @PathParam("restaurantId") final long restaurantId,
+            @PathParam("categoryId") final long categoryId,
+            @PathParam("productId") final long productId,
+            @Valid @NotNull final ProductCategoryForm productCategoryForm
+    ) {
+        categoryService.moveProduct(productId, productCategoryForm.getNewCategoryId());
         return Response.noContent().build();
     }
 
