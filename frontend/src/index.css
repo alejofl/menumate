@@ -130,6 +130,10 @@ i.bi:not(.default) {
     background-color: rgba(var(--promotion-rgb),1)!important;
 }
 
+.text-promotion {
+    color: var(--promotion);
+}
+
 .secondary-nav {
     --bs-nav-link-color: var(--secondary);
     --bs-nav-link-hover-color: var(--secondary-dark);

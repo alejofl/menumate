@@ -28,7 +28,6 @@ import RestaurantSpecialties from "../data/RestaurantSpecialties.js";
 import RestaurantTags from "../data/RestaurantTags.js";
 import {ROLE_FOR_RESTAURANT} from "../utils.js";
 
-// eslint-disable-next-line no-unused-vars
 function EditRestaurant({restaurant, categories, products, promotions, promotionProducts, userRole, refetchRestaurant, refetchCategories, refetchPromotions}) {
     const {t} = useTranslation();
     const navigate = useNavigate();
@@ -439,6 +438,10 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
                                                 imageUrl={promotionProducts[i].data.imageUrl}
                                                 discount={promotion.discountPercentage}
                                                 edit={true}
+                                                promotionUrl={promotion.selfUrl}
+                                                promotionStartDate={promotion.startDate}
+                                                promotionEndDate={promotion.endDate}
+                                                refetch={async () => await refetchPromotions()}
                                             />
                                         ))
                                     }
@@ -496,15 +499,20 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
                                     </div>
                                     <div className="product-container">
                                         {
-                                            products[i].data.map((product, i) => (
+                                            products[i].data.map((product, j) => (
                                                 <ProductCard
-                                                    key={i}
+                                                    key={j}
                                                     productId={product.productId}
                                                     name={product.name}
                                                     description={product.description}
                                                     price={product.price}
                                                     imageUrl={product.imageUrl}
                                                     edit={true}
+                                                    productUrl={product.selfUrl}
+                                                    refetch={async () => {
+                                                        await products[i].refetch();
+                                                        await refetchPromotions();
+                                                    }}
                                                 />
                                             ))
                                         }

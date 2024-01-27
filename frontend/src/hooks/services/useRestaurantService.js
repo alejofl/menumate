@@ -315,6 +315,14 @@ export function useRestaurantService(api) {
         return order;
     };
 
+    const deleteProduct = async (url) => {
+        return await api.delete(url);
+    };
+
+    const deletePromotion = async (url) => {
+        return await api.delete(url);
+    };
+
     return {
         getRestaurants,
         getRestaurant,
@@ -335,6 +343,8 @@ export function useRestaurantService(api) {
         addEmployee,
         deleteEmployee,
         editEmployeeRole,
-        updateCategoryOrder
+        updateCategoryOrder,
+        deleteProduct,
+        deletePromotion
     };
 }

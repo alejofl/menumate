@@ -388,7 +388,11 @@
                 "orderhandler": "Miembro del staff"
             },
             "restaurant_employees": "Empleados del restaurante",
-            "delete_employee": "¿Estás seguro de que quieres eliminar este empleado? Puedes agregarlo nuevamente más tarde."
+            "delete_employee": "¿Estás seguro de que quieres eliminar este empleado? Puedes agregarlo nuevamente más tarde.",
+            "promotion_from": "Desde",
+            "promotion_to": "Hasta",
+            "delete_product": "¿Estás seguro de que quieres eliminar este producto? Todas las promociones activas para este producto también serán eliminadas.",
+            "delete_promotion": "¿Estás seguro de que quieres detener esta promoción?"
         }
     },
     "order_placed": {
