@@ -3,8 +3,10 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.exception.CategoryDeletedException;
 import ar.edu.itba.paw.exception.CategoryNotFoundException;
 import ar.edu.itba.paw.model.Category;
+import ar.edu.itba.paw.model.Product;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import ar.edu.itba.paw.persistence.constants.CategoryConstants;
+import ar.edu.itba.paw.persistence.constants.ProductConstants;
 import ar.edu.itba.paw.persistence.constants.RestaurantConstants;
 import org.junit.Before;
 import org.junit.Test;
@@ -162,5 +164,74 @@ public class CategoryJpaDaoTest {
         assertEquals(2, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "categories", "restaurant_id = " + RestaurantConstants.RESTAURANT_IDS[0] + " AND deleted = true"));
         assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "categories", "restaurant_id = " + RestaurantConstants.RESTAURANT_IDS[0] + " AND deleted = false"));
         assertEquals(CategoryConstants.TOTAL_COUNT - 2, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "categories", "restaurant_id = " + RestaurantConstants.RESTAURANT_IDS[0]));
+    }
+
+    @Test
+    @Rollback
+    public void testMoveProductOneCategoryDown() {
+        Product product = em.find(Product.class, ProductConstants.PRODUCT_FROM_CATEGORY_RESTAURANT_0[0]);
+        long oldCategoryId = product.getCategoryId();
+        categoryDao.moveProduct(product.getProductId(), CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[1]);
+        em.flush();
+
+        assertNotEquals(oldCategoryId, CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[1]);
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "products", "product_id = " + product.getProductId() + " AND category_id = " + CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[1]));
+        assertEquals(0, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "products", "product_id = " + product.getProductId() + " AND category_id = " + oldCategoryId));
+    }
+
+    @Test
+    @Rollback
+    public void testMoveProductTwoCategoriesDown() {
+        Product product = em.find(Product.class, ProductConstants.PRODUCT_FROM_CATEGORY_RESTAURANT_0[0]);
+        long oldCategoryId = product.getCategoryId();
+        categoryDao.moveProduct(product.getProductId(), CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[2]);
+        em.flush();
+
+        assertNotEquals(oldCategoryId, CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[2]);
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "products", "product_id = " + product.getProductId() + " AND category_id = " + CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[2]));
+        assertEquals(0, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "products", "product_id = " + product.getProductId() + " AND category_id = " + oldCategoryId));
+    }
+
+    @Test
+    @Rollback
+    public void testMoveProductNoCategories() {
+        Product product = em.find(Product.class, ProductConstants.PRODUCT_FROM_CATEGORY_RESTAURANT_0[0]);
+        categoryDao.moveProduct(product.getProductId(), CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[0]);
+        em.flush();
+
+        assertEquals(product.getCategory().getCategoryId().longValue(), CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[0]);
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "products", "product_id = " + ProductConstants.PRODUCT_FROM_CATEGORY_RESTAURANT_0[0] + " AND category_id = " + CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[0]));
+    }
+
+    @Test
+    @Rollback
+    public void testMoveProductOneCategoryUp() {
+        Product product = em.find(Product.class, ProductConstants.PRODUCT_FROM_CATEGORY_RESTAURANT_0[0]);
+        product.setCategoryId(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[1]);
+        em.flush();
+
+        long oldCategoryId = product.getCategoryId();
+        categoryDao.moveProduct(product.getProductId(), CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[0]);
+        em.flush();
+
+        assertNotEquals(oldCategoryId, CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[0]);
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "products", "product_id = " + product.getProductId() + " AND category_id = " + CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[0]));
+        assertEquals(0, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "products", "product_id = " + product.getProductId() + " AND category_id = " + oldCategoryId));
+    }
+
+    @Test
+    @Rollback
+    public void testMoveProductTwoCategoriesUp() {
+        Product product = em.find(Product.class, ProductConstants.PRODUCT_FROM_CATEGORY_RESTAURANT_0[0]);
+        product.setCategoryId(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[2]);
+        em.flush();
+
+        long oldCategoryId = product.getCategoryId();
+        categoryDao.moveProduct(product.getProductId(), CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[0]);
+        em.flush();
+
+        assertNotEquals(oldCategoryId, CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[0]);
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "products", "product_id = " + product.getProductId() + " AND category_id = " + CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[0]));
+        assertEquals(0, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "products", "product_id = " + product.getProductId() + " AND category_id = " + oldCategoryId));
     }
 }
