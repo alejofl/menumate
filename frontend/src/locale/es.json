@@ -387,7 +387,8 @@
                 "admin": "Administrador",
                 "orderhandler": "Miembro del staff"
             },
-            "restaurant_employees": "Empleados del restaurante"
+            "restaurant_employees": "Empleados del restaurante",
+            "delete_employee": "¿Estás seguro de que quieres eliminar este empleado? Puedes agregarlo nuevamente más tarde."
         }
     },
     "order_placed": {

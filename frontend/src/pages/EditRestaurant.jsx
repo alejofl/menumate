@@ -70,6 +70,8 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
     const [showDeleteCategoryError, setShowDeleteCategoryError] = useState(false);
     const [deleteCategoryUrl, setDeleteCategoryUrl] = useState("");
     const [showAddEmployeeError, setShowAddEmployeeError] = useState(false);
+    const [showDeleteEmployeeError, setShowDeleteEmployeeError] = useState(false);
+    const [deleteEmployeeUrl, setDeleteEmployeeUrl] = useState("");
 
     useEffect(() => {
         if (employeesIsPending) {
@@ -102,6 +104,10 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
         document.querySelector("#edit-employees-modal").addEventListener("hidden.bs.modal", () => {
             addEmployeeFormRef.current?.resetForm();
             setShowAddEmployeeError(false);
+        });
+        document.querySelector("#delete-employee-modal").addEventListener("hidden.bs.modal", () => {
+            setShowDeleteEmployeeError(false);
+            setDeleteEmployeeUrl("");
         });
     }, [employeesIsPending]);
 
@@ -170,6 +176,19 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
         mutationFn: async ({email, role}) => {
             await restaurantService.addEmployee(restaurant.employeesUriTemplate.fill({}), email, role);
         }
+    });
+    const deleteEmployeeMutation = useMutation({
+        mutationFn: async () => {
+            await restaurantService.deleteEmployee(deleteEmployeeUrl);
+        },
+        onSuccess: () => {
+            refetchEmployees();
+            // eslint-disable-next-line no-undef
+            bootstrap.Modal.getOrCreateInstance(document.querySelector("#delete-employee-modal")).hide();
+            // eslint-disable-next-line no-undef
+            bootstrap.Modal.getOrCreateInstance(document.querySelector("#edit-employees-modal")).show();
+        },
+        onError: () => setShowDeleteEmployeeError(true)
     });
 
     const handleAddCategory = (values, {setSubmitting}) => {
@@ -802,7 +821,8 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
                             </div>
                             <div className="modal-body">
                                 <h4>{t("restaurant.edit.add_employee")}</h4>
-                                {showAddEmployeeError && <div className="alert alert-danger" role="alert">{t("restaurant.edit.error")}</div>}
+                                {showAddEmployeeError &&
+                                    <div className="alert alert-danger" role="alert">{t("restaurant.edit.error")}</div>}
                                 <Formik
                                     innerRef={addEmployeeFormRef}
                                     initialValues={{
@@ -841,7 +861,8 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
                                                     <i className="bi bi-person me-3"></i>
                                                     <div className="d-flex justify-content-between align-items-center w-100">
                                                         <p className="mb-0">
-                                                            {employee.name} <a href={`mailto:${employee.email}`}>&lt;{employee.email}&gt;</a>
+                                                            <span>{employee.name} </span>
+                                                            <a href={`mailto:${employee.email}`}>&lt;{employee.email}&gt;</a>
                                                         </p>
                                                         <div className="d-flex align-items-center">
                                                             <p className="mb-0">{t(`restaurant.edit.roles.${employee.role}`)}</p>
@@ -849,7 +870,13 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
                                                                 employee.role !== ROLE_FOR_RESTAURANT.OWNER && employee.userUrl !== authContext.selfUrl &&
                                                                 <div className="d-flex align-items-center gap-3 ms-3">
                                                                     <i className="bi bi-pencil-fill clickable-object"></i>
-                                                                    <i className="bi bi-trash-fill text-danger default clickable-object"></i>
+                                                                    <i
+                                                                        className="bi bi-trash-fill text-danger default clickable-object"
+                                                                        data-bs-toggle="modal"
+                                                                        data-bs-target="#delete-employee-modal"
+                                                                        onClick={() => setDeleteEmployeeUrl(employee.selfUrl)}
+                                                                    >
+                                                                    </i>
                                                                 </div>
                                                             }
                                                         </div>
@@ -859,6 +886,22 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
                                         }
                                     </ul>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="modal fade" id="delete-employee-modal" tabIndex="-1">
+                    <div className="modal-dialog modal-dialog-centered">
+                        <div className="modal-content">
+                            <div className="modal-body">
+                                {showDeleteEmployeeError &&
+                                    <div className="alert alert-danger" role="alert">{t("restaurant.edit.error")}</div>}
+                                <h1 className="modal-title fs-5">{t("restaurant.edit.delete_employee")}</h1>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" data-bs-toggle="modal" data-bs-target="#edit-employees-modal" className="btn btn-secondary">{t("paging.no")}</button>
+                                <button type="button" className="btn btn-danger" onClick={deleteEmployeeMutation.mutate}>{t("paging.yes")}</button>
                             </div>
                         </div>
                     </div>

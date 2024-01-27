@@ -282,6 +282,10 @@ export function useRestaurantService(api) {
         );
     };
 
+    const deleteEmployee = async (url) => {
+        return await api.delete(url);
+    };
+
     return {
         getRestaurants,
         getRestaurant,
@@ -299,6 +303,7 @@ export function useRestaurantService(api) {
         editCategory,
         deleteCategory,
         getEmployees,
-        addEmployee
+        addEmployee,
+        deleteEmployee
     };
 }

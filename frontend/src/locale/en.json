@@ -388,8 +388,8 @@
                 "admin": "Administrator",
                 "orderhandler": "Staff"
             },
-            "restaurant_employees": "Restaurant Employees"
-
+            "restaurant_employees": "Restaurant Employees",
+            "delete_employee": "Are you sure you want to delete this employee? You can add them back later."
         }
     },
     "order_placed": {
