@@ -207,6 +207,17 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
             await restaurantService.editEmployeeRole(editEmployeeRoleUrl, role);
         }
     });
+    const updateCategoryOrderMutation = useMutation({
+        mutationFn: async ({categoryUrl, categoryOrder}) => {
+            return await restaurantService.updateCategoryOrder(categoryUrl, categoryOrder);
+        },
+        onSuccess: async () => {
+            await refetchCategories();
+            for (const product of products) {
+                await product.refetch();
+            }
+        }
+    });
 
     const handleAddCategory = (values, {setSubmitting}) => {
         addCategoryMutation.mutate(
@@ -443,10 +454,26 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
                                             <div className="d-flex align-items-center gap-3">
                                                 {
                                                     i !== 0 &&
-                                                    <i className="bi bi-arrow-up-circle-fill default text-secondary clickable-object"></i>}
+                                                    <i
+                                                        className="bi bi-arrow-up-circle-fill default text-secondary clickable-object"
+                                                        onClick={() => updateCategoryOrderMutation.mutate({
+                                                            categoryUrl: category.selfUrl,
+                                                            categoryOrder: category.orderNum - 1
+                                                        })}
+                                                    >
+                                                    </i>
+                                                }
                                                 {
                                                     i !== (categories.length - 1) &&
-                                                    <i className="bi bi-arrow-down-circle-fill default text-secondary clickable-object"></i>}
+                                                    <i
+                                                        className="bi bi-arrow-down-circle-fill default text-secondary clickable-object"
+                                                        onClick={() => updateCategoryOrderMutation.mutate({
+                                                            categoryUrl: category.selfUrl,
+                                                            categoryOrder: category.orderNum + 1
+                                                        })}
+                                                    >
+                                                    </i>
+                                                }
                                                 <i
                                                     className="bi bi-pencil-fill clickable-object"
                                                     data-bs-toggle="modal"

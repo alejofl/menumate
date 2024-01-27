@@ -300,6 +300,21 @@ export function useRestaurantService(api) {
         );
     };
 
+    const updateCategoryOrder = async (url, order) => {
+        await api.patch(
+            url,
+            {
+                orderNum: order
+            },
+            {
+                headers: {
+                    "Content-Type": RESTAURANT_CATEGORIES_CONTENT_TYPE
+                }
+            }
+        );
+        return order;
+    };
+
     return {
         getRestaurants,
         getRestaurant,
@@ -319,6 +334,7 @@ export function useRestaurantService(api) {
         getEmployees,
         addEmployee,
         deleteEmployee,
-        editEmployeeRole
+        editEmployeeRole,
+        updateCategoryOrder
     };
 }
