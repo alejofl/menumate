@@ -193,3 +193,9 @@ export const AddEmployeeSchema = Yup.object().shape({
         .required(i18n.t("validation.role.required"))
         .oneOf([ROLE_FOR_RESTAURANT.ADMIN, ROLE_FOR_RESTAURANT.ORDER_HANDLER], i18n.t("validation.role.invalid"))
 });
+
+export const EditEmployeeRoleSchema = Yup.object().shape({
+    role: Yup.string()
+        .required(i18n.t("validation.role.required"))
+        .oneOf([ROLE_FOR_RESTAURANT.ADMIN, ROLE_FOR_RESTAURANT.ORDER_HANDLER], i18n.t("validation.role.invalid"))
+});

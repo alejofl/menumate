@@ -286,6 +286,20 @@ export function useRestaurantService(api) {
         return await api.delete(url);
     };
 
+    const editEmployeeRole = async (url, role) => {
+        return await api.put(
+            url,
+            {
+                role: role
+            },
+            {
+                headers: {
+                    "Content-Type": RESTAURANT_EMPLOYEES_CONTENT_TYPE
+                }
+            }
+        );
+    };
+
     return {
         getRestaurants,
         getRestaurant,
@@ -304,6 +318,7 @@ export function useRestaurantService(api) {
         deleteCategory,
         getEmployees,
         addEmployee,
-        deleteEmployee
+        deleteEmployee,
+        editEmployeeRole
     };
 }

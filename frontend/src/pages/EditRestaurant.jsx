@@ -14,7 +14,13 @@ import ProductCard from "../components/ProductCard.jsx";
 import AuthContext from "../contexts/AuthContext.jsx";
 import {Link, useNavigate} from "react-router-dom";
 import {ErrorMessage, Field, Form, Formik} from "formik";
-import {AddCategorySchema, AddEmployeeSchema, AddProductSchema, CreateRestaurantSchema} from "../data/validation.js";
+import {
+    AddCategorySchema,
+    AddEmployeeSchema,
+    AddProductSchema,
+    CreateRestaurantSchema,
+    EditEmployeeRoleSchema
+} from "../data/validation.js";
 import ImagePlaceholder from "../assets/image-placeholder.png";
 import Select from "react-select";
 import {selectComponents, selectStyles} from "../components/utils/SelectProperties.js";
@@ -58,6 +64,7 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
     const editRestaurantInformationFormRef = useRef();
     const editCategoryFormRef = useRef();
     const addEmployeeFormRef = useRef();
+    const editEmployeeRoleFormRef = useRef();
 
     const [showDeleteRestaurantError, setShowDeleteRestaurantError] = useState(false);
     const [showAddCategoryError, setShowAddCategoryError] = useState(false);
@@ -72,6 +79,8 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
     const [showAddEmployeeError, setShowAddEmployeeError] = useState(false);
     const [showDeleteEmployeeError, setShowDeleteEmployeeError] = useState(false);
     const [deleteEmployeeUrl, setDeleteEmployeeUrl] = useState("");
+    const [showEditEmployeeRoleError, setShowEditEmployeeRoleError] = useState(false);
+    const [editEmployeeRoleUrl, setEditEmployeeRoleUrl] = useState("");
 
     useEffect(() => {
         if (employeesIsPending) {
@@ -104,6 +113,9 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
         document.querySelector("#edit-employees-modal").addEventListener("hidden.bs.modal", () => {
             addEmployeeFormRef.current?.resetForm();
             setShowAddEmployeeError(false);
+            editEmployeeRoleFormRef.current?.resetForm();
+            setShowEditEmployeeRoleError(false);
+            setEditEmployeeRoleUrl("");
         });
         document.querySelector("#delete-employee-modal").addEventListener("hidden.bs.modal", () => {
             setShowDeleteEmployeeError(false);
@@ -189,6 +201,11 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
             bootstrap.Modal.getOrCreateInstance(document.querySelector("#edit-employees-modal")).show();
         },
         onError: () => setShowDeleteEmployeeError(true)
+    });
+    const editEmployeeRoleMutation = useMutation({
+        mutationFn: async ({role}) => {
+            await restaurantService.editEmployeeRole(editEmployeeRoleUrl, role);
+        }
     });
 
     const handleAddCategory = (values, {setSubmitting}) => {
@@ -288,6 +305,24 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
                     setShowAddEmployeeError(false);
                 },
                 onError: () => setShowAddEmployeeError(true)
+            }
+        );
+        setSubmitting(false);
+    };
+
+    const handleEditEmployeeRole = (values, {setSubmitting, resetForm}) => {
+        editEmployeeRoleMutation.mutate(
+            {
+                role: values.role
+            },
+            {
+                onSuccess: () => {
+                    resetForm();
+                    refetchEmployees();
+                    setShowEditEmployeeRoleError(false);
+                    setEditEmployeeRoleUrl("");
+                },
+                onError: () => setShowEditEmployeeRoleError(true)
             }
         );
         setSubmitting(false);
@@ -854,6 +889,8 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
                                 </Formik>
                                 <div className="mt-4">
                                     <h4>{t("restaurant.edit.restaurant_employees")}</h4>
+                                    {showEditEmployeeRoleError &&
+                                        <div className="alert alert-danger" role="alert">{t("restaurant.edit.error")}</div>}
                                     <ul className="list-group list-group-flush">
                                         {
                                             employees.map((employee, i) => (
@@ -865,19 +902,67 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
                                                             <a href={`mailto:${employee.email}`}>&lt;{employee.email}&gt;</a>
                                                         </p>
                                                         <div className="d-flex align-items-center">
-                                                            <p className="mb-0">{t(`restaurant.edit.roles.${employee.role}`)}</p>
                                                             {
-                                                                employee.role !== ROLE_FOR_RESTAURANT.OWNER && employee.userUrl !== authContext.selfUrl &&
-                                                                <div className="d-flex align-items-center gap-3 ms-3">
-                                                                    <i className="bi bi-pencil-fill clickable-object"></i>
-                                                                    <i
-                                                                        className="bi bi-trash-fill text-danger default clickable-object"
-                                                                        data-bs-toggle="modal"
-                                                                        data-bs-target="#delete-employee-modal"
-                                                                        onClick={() => setDeleteEmployeeUrl(employee.selfUrl)}
-                                                                    >
-                                                                    </i>
-                                                                </div>
+                                                                (employee.role !== ROLE_FOR_RESTAURANT.OWNER && employee.userUrl !== authContext.selfUrl)
+                                                                    ?
+                                                                    <>
+                                                                        {
+                                                                            editEmployeeRoleUrl === employee.selfUrl
+                                                                                ?
+                                                                                <Formik
+                                                                                    innerRef={editEmployeeRoleFormRef}
+                                                                                    initialValues={{
+                                                                                        role: employee.role
+                                                                                    }}
+                                                                                    validationSchema={EditEmployeeRoleSchema}
+                                                                                    onSubmit={handleEditEmployeeRole}
+                                                                                >
+                                                                                    {({handleSubmit}) => (
+                                                                                        <Form>
+                                                                                            <div className="d-flex align-items-center gap-3 ms-3">
+                                                                                                <Field as="select" name="role" className="form-select">
+                                                                                                    <option value={ROLE_FOR_RESTAURANT.ADMIN}>{t(`restaurant.edit.roles.${ROLE_FOR_RESTAURANT.ADMIN}`)}</option>
+                                                                                                    <option value={ROLE_FOR_RESTAURANT.ORDER_HANDLER}>{t(`restaurant.edit.roles.${ROLE_FOR_RESTAURANT.ORDER_HANDLER}`)}</option>
+                                                                                                </Field>
+                                                                                                <ErrorMessage name="role" component="div" className="form-error d-none"/>
+                                                                                                <i
+                                                                                                    className="bi bi-check-circle-fill text-success default clickable-object"
+                                                                                                    onClick={() => handleSubmit()}
+                                                                                                >
+                                                                                                </i>
+                                                                                                <i
+                                                                                                    className="bi bi-trash-fill text-danger default clickable-object"
+                                                                                                    data-bs-toggle="modal"
+                                                                                                    data-bs-target="#delete-employee-modal"
+                                                                                                    onClick={() => setDeleteEmployeeUrl(employee.selfUrl)}
+                                                                                                >
+                                                                                                </i>
+                                                                                            </div>
+                                                                                        </Form>
+                                                                                    )}
+                                                                                </Formik>
+                                                                                :
+                                                                                <>
+                                                                                    <p className="mb-0">{t(`restaurant.edit.roles.${employee.role}`)}</p>
+                                                                                    <div className="d-flex align-items-center gap-3 ms-3">
+                                                                                        <i
+                                                                                            className="bi bi-pencil-fill clickable-object"
+                                                                                            onClick={() => setEditEmployeeRoleUrl(employee.selfUrl)}
+                                                                                        >
+                                                                                        </i>
+                                                                                        <i
+                                                                                            className="bi bi-trash-fill text-danger default clickable-object"
+                                                                                            data-bs-toggle="modal"
+                                                                                            data-bs-target="#delete-employee-modal"
+                                                                                            onClick={() => setDeleteEmployeeUrl(employee.selfUrl)}
+                                                                                        >
+                                                                                        </i>
+                                                                                    </div>
+                                                                                </>
+                                                                        }
+                                                                    </>
+                                                                    :
+                                                                    <p className="mb-0">{t(`restaurant.edit.roles.${employee.role}`)}</p>
                                                             }
                                                         </div>
                                                     </div>
