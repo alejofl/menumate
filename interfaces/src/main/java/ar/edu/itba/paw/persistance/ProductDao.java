@@ -25,7 +25,7 @@ public interface ProductDao {
 
     Optional<Promotion> hasPromotionInRange(long sourceProductId, LocalDateTime startDate, LocalDateTime endDate);
 
-    void updateNameAndDescription(Product product, String name, String description);
+    void updateNameDescriptionAndImage(Product product, String name, String description, Long imageId);
 
     void stopPromotion(long restaurantId, long promotionId);
 

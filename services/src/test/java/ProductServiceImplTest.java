@@ -36,12 +36,14 @@ public class ProductServiceImplTest {
     private static final long DEFAULT_PRODUCT_ID = 1L;
     private static final long DEFAULT_CATEGORY_ID = 55L;
     private static final long DEFAULT_RESTAURANT_ID = 69L;
+    private static final long DEFAULT_IMAGE_ID = 100L;
     private static final String DEFAULT_PRODUCT_DESCRIPTION = "Default Description";
     private static final String DEFAULT_PRODUCT_NAME = "Default Name";
     private static final BigDecimal DEFAULT_PRODUCT_PRICE = new BigDecimal("9.99");
     private static final String NEW_PRODUCT_NAME = "New Name";
     private static final BigDecimal NEW_PRODUCT_PRICE = new BigDecimal("10.99");
     private static final String NEW_PRODUCT_DESCRIPTION = "New Description";
+    private static final long NEW_IMAGE_ID = 150L;
     private static final LocalDateTime DEFAULT_PROMOTION_START_DATE = LocalDateTime.now();
     private static final LocalDateTime DEFAULT_PROMOTION_END_DATE = DEFAULT_PROMOTION_START_DATE.plusDays(7);
     private static final BigDecimal DEFAULT_PROMOTION_DISCOUNT = BigDecimal.valueOf(10);
@@ -59,7 +61,7 @@ public class ProductServiceImplTest {
         when(restaurantDao.getById(DEFAULT_RESTAURANT_ID)).thenReturn(Optional.of(restaurant));
 
         when(productDao.getById(DEFAULT_PRODUCT_ID)).thenReturn(Optional.empty());
-        productService.update(DEFAULT_RESTAURANT_ID, DEFAULT_CATEGORY_ID, DEFAULT_PRODUCT_ID, NEW_PRODUCT_NAME, NEW_PRODUCT_PRICE, NEW_PRODUCT_DESCRIPTION);
+        productService.update(DEFAULT_RESTAURANT_ID, DEFAULT_CATEGORY_ID, DEFAULT_PRODUCT_ID, NEW_PRODUCT_NAME, NEW_PRODUCT_PRICE, NEW_PRODUCT_DESCRIPTION, NEW_IMAGE_ID);
     }
 
     @Test(expected = ProductDeletedException.class)
@@ -74,7 +76,7 @@ public class ProductServiceImplTest {
 
         when(productDao.getById(DEFAULT_PRODUCT_ID)).thenReturn(Optional.of(product));
 
-        productService.update(DEFAULT_RESTAURANT_ID, DEFAULT_CATEGORY_ID, DEFAULT_PRODUCT_ID, NEW_PRODUCT_NAME, NEW_PRODUCT_PRICE, DEFAULT_PRODUCT_DESCRIPTION);
+        productService.update(DEFAULT_RESTAURANT_ID, DEFAULT_CATEGORY_ID, DEFAULT_PRODUCT_ID, NEW_PRODUCT_NAME, NEW_PRODUCT_PRICE, DEFAULT_PRODUCT_DESCRIPTION, NEW_IMAGE_ID);
     }
 
     @Test
@@ -88,19 +90,51 @@ public class ProductServiceImplTest {
         product.setName(DEFAULT_PRODUCT_NAME);
         product.setDescription(DEFAULT_PRODUCT_DESCRIPTION);
         product.setCategory(category);
+        product.setImageId(DEFAULT_IMAGE_ID);
+
+        when(productDao.getById(DEFAULT_PRODUCT_ID)).thenReturn(Optional.of(product));
+        doAnswer(invocation -> {
+            product.setName(NEW_PRODUCT_NAME);
+            product.setDescription(NEW_PRODUCT_DESCRIPTION);
+            product.setImageId(NEW_IMAGE_ID);
+            return null;
+        }).when(productDao).updateNameDescriptionAndImage(product, NEW_PRODUCT_NAME, NEW_PRODUCT_DESCRIPTION, NEW_IMAGE_ID);
+
+
+        Product ret = productService.update(DEFAULT_RESTAURANT_ID, DEFAULT_CATEGORY_ID, DEFAULT_PRODUCT_ID, NEW_PRODUCT_NAME, DEFAULT_PRODUCT_PRICE, NEW_PRODUCT_DESCRIPTION, NEW_IMAGE_ID);
+
+        assertEquals(NEW_PRODUCT_NAME, ret.getName());
+        assertEquals(NEW_PRODUCT_DESCRIPTION, ret.getDescription());
+        assertEquals(NEW_IMAGE_ID, ret.getImageId().longValue());
+        assertEquals(DEFAULT_PRODUCT_PRICE, ret.getPrice());
+    }
+
+    @Test
+    public void testUpdateProductWithSamePriceNoNewImage() {
+        final Category category = mockCategory();
+
+        final Product product = spy(Product.class);
+        product.setProductId(DEFAULT_PRODUCT_ID);
+        product.setPrice(DEFAULT_PRODUCT_PRICE);
+        product.setDeleted(false);
+        product.setName(DEFAULT_PRODUCT_NAME);
+        product.setDescription(DEFAULT_PRODUCT_DESCRIPTION);
+        product.setCategory(category);
+        product.setImageId(DEFAULT_IMAGE_ID);
 
         when(productDao.getById(DEFAULT_PRODUCT_ID)).thenReturn(Optional.of(product));
         doAnswer(invocation -> {
             product.setName(NEW_PRODUCT_NAME);
             product.setDescription(NEW_PRODUCT_DESCRIPTION);
             return null;
-        }).when(productDao).updateNameAndDescription(product, NEW_PRODUCT_NAME, NEW_PRODUCT_DESCRIPTION);
+        }).when(productDao).updateNameDescriptionAndImage(product, NEW_PRODUCT_NAME, NEW_PRODUCT_DESCRIPTION, DEFAULT_IMAGE_ID);
 
 
-        Product ret = productService.update(DEFAULT_RESTAURANT_ID, DEFAULT_CATEGORY_ID, DEFAULT_PRODUCT_ID, NEW_PRODUCT_NAME, DEFAULT_PRODUCT_PRICE, NEW_PRODUCT_DESCRIPTION);
+        Product ret = productService.update(DEFAULT_RESTAURANT_ID, DEFAULT_CATEGORY_ID, DEFAULT_PRODUCT_ID, NEW_PRODUCT_NAME, DEFAULT_PRODUCT_PRICE, NEW_PRODUCT_DESCRIPTION, DEFAULT_IMAGE_ID);
 
         assertEquals(NEW_PRODUCT_NAME, ret.getName());
         assertEquals(NEW_PRODUCT_DESCRIPTION, ret.getDescription());
+        assertEquals(DEFAULT_IMAGE_ID, ret.getImageId().longValue());
         assertEquals(DEFAULT_PRODUCT_PRICE, ret.getPrice());
     }
 
@@ -116,6 +150,7 @@ public class ProductServiceImplTest {
         existingProduct.setCategory(category);
         existingProduct.setName(DEFAULT_PRODUCT_NAME);
         existingProduct.setDescription(DEFAULT_PRODUCT_DESCRIPTION);
+        existingProduct.setImageId(DEFAULT_IMAGE_ID);
         existingProduct.setPrice(DEFAULT_PRODUCT_PRICE);
         existingProduct.setDeleted(false);
 
@@ -127,17 +162,59 @@ public class ProductServiceImplTest {
         newProduct.setName(DEFAULT_PRODUCT_NAME);
         newProduct.setDescription(DEFAULT_PRODUCT_DESCRIPTION);
         newProduct.setPrice(NEW_PRODUCT_PRICE);
+        newProduct.setImageId(NEW_IMAGE_ID);
         newProduct.setDeleted(false);
 
-        when(productDao.create(DEFAULT_CATEGORY_ID, DEFAULT_PRODUCT_NAME, DEFAULT_PRODUCT_DESCRIPTION, null, NEW_PRODUCT_PRICE)).thenReturn(newProduct);
+        when(productDao.create(DEFAULT_CATEGORY_ID, DEFAULT_PRODUCT_NAME, DEFAULT_PRODUCT_DESCRIPTION, NEW_IMAGE_ID, NEW_PRODUCT_PRICE)).thenReturn(newProduct);
 
-        final Product result = productService.update(DEFAULT_RESTAURANT_ID, DEFAULT_CATEGORY_ID, DEFAULT_PRODUCT_ID, DEFAULT_PRODUCT_NAME, NEW_PRODUCT_PRICE, DEFAULT_PRODUCT_DESCRIPTION);
+        final Product result = productService.update(DEFAULT_RESTAURANT_ID, DEFAULT_CATEGORY_ID, DEFAULT_PRODUCT_ID, DEFAULT_PRODUCT_NAME, NEW_PRODUCT_PRICE, DEFAULT_PRODUCT_DESCRIPTION, NEW_IMAGE_ID);
 
         assertTrue(existingProduct.getDeleted());
         assertEquals(DEFAULT_CATEGORY_ID, result.getCategoryId());
         assertEquals(DEFAULT_PRODUCT_NAME, result.getName());
         assertEquals(DEFAULT_PRODUCT_DESCRIPTION, result.getDescription());
         assertEquals(NEW_PRODUCT_PRICE, result.getPrice());
+        assertEquals(NEW_IMAGE_ID, result.getImageId().longValue());
+        assertFalse(result.getDeleted());
+    }
+
+    @Test
+    public void testUpdateProductWithDifferentPriceNoNewImage() {
+        final Category category = mock(Category.class);
+        when(category.getCategoryId()).thenReturn(DEFAULT_CATEGORY_ID);
+        when(category.getRestaurantId()).thenReturn(DEFAULT_RESTAURANT_ID);
+
+        final Product existingProduct = spy(Product.class);
+        existingProduct.setProductId(DEFAULT_PRODUCT_ID);
+        existingProduct.setCategoryId(DEFAULT_CATEGORY_ID);
+        existingProduct.setCategory(category);
+        existingProduct.setName(DEFAULT_PRODUCT_NAME);
+        existingProduct.setDescription(DEFAULT_PRODUCT_DESCRIPTION);
+        existingProduct.setImageId(DEFAULT_IMAGE_ID);
+        existingProduct.setPrice(DEFAULT_PRODUCT_PRICE);
+        existingProduct.setDeleted(false);
+
+        when(productDao.getById(DEFAULT_PRODUCT_ID)).thenReturn(Optional.of(existingProduct));
+
+        final Product newProduct = spy(Product.class);
+        newProduct.setProductId(DEFAULT_PRODUCT_ID);
+        newProduct.setCategoryId(DEFAULT_CATEGORY_ID);
+        newProduct.setName(DEFAULT_PRODUCT_NAME);
+        newProduct.setDescription(DEFAULT_PRODUCT_DESCRIPTION);
+        newProduct.setPrice(NEW_PRODUCT_PRICE);
+        newProduct.setImageId(DEFAULT_IMAGE_ID);
+        newProduct.setDeleted(false);
+
+        when(productDao.create(DEFAULT_CATEGORY_ID, DEFAULT_PRODUCT_NAME, DEFAULT_PRODUCT_DESCRIPTION, DEFAULT_IMAGE_ID, NEW_PRODUCT_PRICE)).thenReturn(newProduct);
+
+        final Product result = productService.update(DEFAULT_RESTAURANT_ID, DEFAULT_CATEGORY_ID, DEFAULT_PRODUCT_ID, DEFAULT_PRODUCT_NAME, NEW_PRODUCT_PRICE, DEFAULT_PRODUCT_DESCRIPTION, DEFAULT_IMAGE_ID);
+
+        assertTrue(existingProduct.getDeleted());
+        assertEquals(DEFAULT_CATEGORY_ID, result.getCategoryId());
+        assertEquals(DEFAULT_PRODUCT_NAME, result.getName());
+        assertEquals(DEFAULT_PRODUCT_DESCRIPTION, result.getDescription());
+        assertEquals(NEW_PRODUCT_PRICE, result.getPrice());
+        assertEquals(DEFAULT_IMAGE_ID, result.getImageId().longValue());
         assertFalse(result.getDeleted());
     }
 

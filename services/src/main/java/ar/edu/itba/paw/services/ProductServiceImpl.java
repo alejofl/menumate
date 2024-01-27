@@ -83,29 +83,22 @@ public class ProductServiceImpl implements ProductService {
 
     @Transactional
     @Override
-    public Product update(long restaurantId, long categoryId, long productId, String name, BigDecimal price, String description) {
+    public Product update(long restaurantId, long categoryId, long productId, String name, BigDecimal price, String description, Long imageId) {
         final Product product = getByIdChecked(restaurantId, categoryId, productId, false);
 
         if (product.getPrice().equals(price)) {
-            productDao.updateNameAndDescription(product, name, description);
+            productDao.updateNameDescriptionAndImage(product, name, description, imageId);
             return product;
         }
 
+        imageId = (imageId != null) ? imageId : product.getImageId();
+        product.setImageId(imageId);
         product.setDeleted(true);
         product.setAvailable(false);
         final Product newProduct = productDao.create(product.getCategoryId(), name, description, product.getImageId(), price);
         LOGGER.info("Logical-deleted product id {} and inserted {} to update price", product.getProductId(), newProduct.getProductId());
         productDao.stopPromotionsBySource(productId);
         return newProduct;
-    }
-
-    @Transactional
-    @Override
-    public void updateImage(long restaurantId, long categoryId, long productId, Optional<Long> imageId) {
-        final Product product = getByIdChecked(restaurantId, categoryId, productId, false);
-        imageId.ifPresent(product::setImageId);
-
-        LOGGER.info("Updated image of product id {}", product.getProductId());
     }
 
     @Transactional

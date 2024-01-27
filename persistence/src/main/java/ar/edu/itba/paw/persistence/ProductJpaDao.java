@@ -21,6 +21,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Repository
@@ -122,21 +123,25 @@ public class ProductJpaDao implements ProductDao {
     }
 
     @Override
-    public void updateNameAndDescription(Product product, String name, String description) {
+    public void updateNameDescriptionAndImage(Product product, String name, String description, Long imageId) {
+        Long previousImageId = product.getImageId();
+        imageId = (imageId != null) ? imageId : product.getImageId();
+        product.setImageId(imageId);
         product.setName(name);
         product.setDescription(description);
 
         // Update active promotion copies
         Query query = em.createQuery(
-                "UPDATE Product p SET p.name = :name, p.description = :description WHERE p.deleted = false AND" +
+                "UPDATE Product p SET p.name = :name, p.description = :description, p.imageId = :imageId WHERE p.deleted = false AND" +
                         " EXISTS(FROM Promotion WHERE destination.productId = p.productId AND source.productId = :productId)"
         );
         query.setParameter("productId", product.getProductId());
         query.setParameter("name", name);
         query.setParameter("description", description);
+        query.setParameter("imageId", imageId);
         int rows = query.executeUpdate();
 
-        LOGGER.info("Updated name and description of product id {} alongside {} promotion cop{}", product.getProductId(), rows, rows == 1 ? "y" : "ies");
+        LOGGER.info("Updated {} name, description and image of product id {} alongside {} promotion cop{}", !Objects.equals(imageId, previousImageId) ? "imageId," : "", product.getProductId(), rows, rows == 1 ? "y" : "ies");
     }
 
     @Override

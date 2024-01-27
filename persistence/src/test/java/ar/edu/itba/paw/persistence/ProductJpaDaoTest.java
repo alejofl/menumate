@@ -8,6 +8,7 @@ import ar.edu.itba.paw.model.Promotion;
 import ar.edu.itba.paw.persistance.ProductDao;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import ar.edu.itba.paw.persistence.constants.CategoryConstants;
+import ar.edu.itba.paw.persistence.constants.ImageConstants;
 import ar.edu.itba.paw.persistence.constants.ProductConstants;
 import ar.edu.itba.paw.persistence.constants.RestaurantConstants;
 import org.junit.Before;
@@ -129,14 +130,17 @@ public class ProductJpaDaoTest {
         final Product product = em.find(Product.class, ProductConstants.PRODUCT_FROM_CATEGORY_RESTAURANT_0[0]);
         final String oldName = product.getName();
         final String oldDescription = product.getDescription();
+        final Long oldImageId = product.getImageId();
 
-        productDao.updateNameAndDescription(product, ProductConstants.DEFAULT_STRING, ProductConstants.DEFAULT_STRING);
+        productDao.updateNameDescriptionAndImage(product, ProductConstants.DEFAULT_STRING, ProductConstants.DEFAULT_STRING, ImageConstants.EXISTING_IMAGE_ID);
         em.flush();
 
         assertNotEquals(oldDescription, product.getDescription());
         assertNotEquals(oldName, product.getName());
+        assertNotEquals(oldImageId, product.getImageId());
         assertEquals(ProductConstants.DEFAULT_STRING, product.getName());
         assertEquals(ProductConstants.DEFAULT_STRING, product.getDescription());
+        assertEquals(ImageConstants.EXISTING_IMAGE_ID, product.getImageId().longValue());
     }
 
     @Test
@@ -146,13 +150,36 @@ public class ProductJpaDaoTest {
         final Promotion promotion = em.find(Promotion.class, ProductConstants.PROMOTION_ID);
         final String oldName = product.getName();
         final String oldDescription = product.getDescription();
+        final Long oldImageId = product.getImageId();
 
-        productDao.updateNameAndDescription(product, ProductConstants.DEFAULT_STRING, ProductConstants.DEFAULT_STRING);
+        productDao.updateNameDescriptionAndImage(product, ProductConstants.DEFAULT_STRING, ProductConstants.DEFAULT_STRING, ImageConstants.EXISTING_IMAGE_ID);
+        em.flush();
+        assertNotEquals(oldDescription, promotion.getDestination().getDescription());
+        assertNotEquals(oldName, promotion.getDestination().getName());
+        assertNotEquals(oldImageId, product.getImageId());
+        assertEquals(ProductConstants.DEFAULT_STRING, promotion.getDestination().getDescription());
+        assertEquals(ProductConstants.DEFAULT_STRING, promotion.getDestination().getName());
+        assertEquals(ImageConstants.EXISTING_IMAGE_ID, promotion.getDestination().getImageId().longValue());
+    }
+
+    @Test
+    @Rollback
+    public void updateProductAndPromotionsNoImageUpdate() {
+        final Product product = em.find(Product.class, ProductConstants.PROMOTION_DESTINATION_ID);
+        final Promotion promotion = em.find(Promotion.class, ProductConstants.PROMOTION_ID);
+        final String oldName = product.getName();
+        final String oldDescription = product.getDescription();
+        final Long oldImageId = ImageConstants.EXISTING_IMAGE_ID;
+        product.setImageId(oldImageId);
+        em.flush();
+
+        productDao.updateNameDescriptionAndImage(product, ProductConstants.DEFAULT_STRING, ProductConstants.DEFAULT_STRING, null);
         em.flush();
         assertNotEquals(oldDescription, promotion.getDestination().getDescription());
         assertNotEquals(oldName, promotion.getDestination().getName());
         assertEquals(ProductConstants.DEFAULT_STRING, promotion.getDestination().getDescription());
         assertEquals(ProductConstants.DEFAULT_STRING, promotion.getDestination().getName());
+        assertEquals(ImageConstants.EXISTING_IMAGE_ID, promotion.getDestination().getImageId().longValue());
     }
 
     @Test
