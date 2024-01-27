@@ -131,7 +131,7 @@ public class RestaurantController {
     @PATCH
     @Path("/{restaurantId:\\d+}")
     @Consumes(CustomMediaType.APPLICATION_RESTAURANT)
-    @PreAuthorize("@accessValidator.checkRestaurantOwner(#restaurantId) or @accessValidator.checkRestaurantAdmin(#restaurantId)")
+    @PreAuthorize("@accessValidator.checkRestaurantAdmin(#restaurantId)")
     public Response updateRestaurantById(
             @PathParam("restaurantId") final long restaurantId,
             @Valid @NotNull final RestaurantForm restaurantForm
