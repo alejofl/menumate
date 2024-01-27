@@ -23,7 +23,6 @@ import javax.ws.rs.core.*;
 import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Path(UriUtils.RESTAURANTS_URL)
@@ -278,8 +277,7 @@ public class RestaurantController {
             @PathParam("productId") final long productId,
             @Valid @NotNull final ProductForm productForm
     ) {
-        productService.update(restaurantId, categoryId, productId, productForm.getName(), productForm.getPrice(), productForm.getDescription());
-        productService.updateImage(restaurantId, categoryId, productId, Optional.ofNullable(productForm.getImageId()));
+        productService.update(restaurantId, categoryId, productId, productForm.getName(), productForm.getPrice(), productForm.getDescription(), productForm.getImageId());
         return Response.noContent().build();
     }
 
