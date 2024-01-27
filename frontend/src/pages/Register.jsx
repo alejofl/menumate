@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import {Link, useNavigate} from "react-router-dom";
+import {Link, useNavigate, useSearchParams} from "react-router-dom";
 import Page from "../components/Page.jsx";
 import "./styles/login.styles.css";
 import {useContext, useEffect, useState} from "react";
@@ -20,6 +20,7 @@ function Register() {
     const userService = useUserService(api);
     const navigate = useNavigate();
 
+    const [queryParams] = useSearchParams();
     const [emailAlreadyInUse, setEmailAlreadyInUse] = useState(false);
 
     const registerMutation = useMutation({
@@ -70,7 +71,7 @@ function Register() {
                         <Formik
                             initialValues={{
                                 name: "",
-                                email: "",
+                                email: queryParams.get("email") || "",
                                 password: "",
                                 repeatPassword: ""
                             }}
