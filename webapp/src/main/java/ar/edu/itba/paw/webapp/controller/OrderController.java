@@ -44,7 +44,7 @@ public class OrderController {
     @Produces(CustomMediaType.APPLICATION_ORDERS)
     @PreAuthorize("@accessValidator.checkCanListOrders(#getOrdersForm.userId, #getOrdersForm.restaurantId)")
     public Response getOrders(@Valid @BeanParam final GetOrdersForm getOrdersForm) {
-        PaginatedResult<Order> orderPage = orderService.get(
+        final PaginatedResult<Order> orderPage = orderService.get(
                 getOrdersForm.getUserId(),
                 getOrdersForm.getRestaurantId(),
                 getOrdersForm.getStatusAsEnum(),
@@ -55,7 +55,7 @@ public class OrderController {
         );
 
         final List<OrderDto> dtoList = OrderDto.fromOrderCollection(uriInfo, orderPage.getResult());
-        Response.ResponseBuilder builder = Response.ok(new GenericEntity<List<OrderDto>>(dtoList) {});
+        final Response.ResponseBuilder builder = Response.ok(new GenericEntity<List<OrderDto>>(dtoList) {});
         return ControllerUtils.addPagingLinks(builder, orderPage, uriInfo).build();
     }
 

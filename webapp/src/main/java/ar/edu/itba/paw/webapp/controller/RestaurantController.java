@@ -155,7 +155,6 @@ public class RestaurantController {
     @Path("/{restaurantId:\\d+}")
     public Response deleteRestaurantById(@PathParam("restaurantId") final long restaurantId) {
         restaurantService.delete(restaurantId);
-        orderService.cancelNonDeliveredOrders(restaurantId);
         return Response.noContent().build();
     }
 
@@ -304,7 +303,7 @@ public class RestaurantController {
             @PathParam("restaurantId") final long restaurantId,
             @QueryParam("living") @DefaultValue("false") final boolean living
     ) {
-        List<Promotion> promotions = living ? restaurantService.getLivingPromotions(restaurantId) : restaurantService.getActivePromotions(restaurantId);
+        final List<Promotion> promotions = living ? restaurantService.getLivingPromotions(restaurantId) : restaurantService.getActivePromotions(restaurantId);
         final List<PromotionDto> dtoList = PromotionDto.fromPromotionCollection(uriInfo, promotions, restaurantId);
         return Response.ok(new GenericEntity<List<PromotionDto>>(dtoList) {}).build();
     }
@@ -398,12 +397,12 @@ public class RestaurantController {
     public Response getRestaurantsWithUnhandledReports(
             @Valid @BeanParam GetRestaurantsWithReports restaurantsWithReportsForm
     ) {
-        PaginatedResult<Pair<Restaurant, Integer>> pagedResult = reportService.getCountByRestaurant(
+        final PaginatedResult<Pair<Restaurant, Integer>> pagedResult = reportService.getCountByRestaurant(
             restaurantsWithReportsForm.getPageOrDefault(),
             restaurantsWithReportsForm.getSizeOrDefault(ControllerUtils.DEFAULT_REPORTS_PAGE_SIZE)
         );
 
-        List<RestaurantDto> dtoList = pagedResult.getResult().stream()
+        final List<RestaurantDto> dtoList = pagedResult.getResult().stream()
                 .map(pair -> {
                     Restaurant restaurant = pair.getKey();
                     Integer reportCount = pair.getValue();
@@ -424,12 +423,12 @@ public class RestaurantController {
             @PathParam("restaurantId") final long restaurantId,
             @Valid @BeanParam PagingForm pagingForm
     ) {
-        PaginatedResult<Report> pagedResult = reportService.getByRestaurant(
+        final PaginatedResult<Report> pagedResult = reportService.getByRestaurant(
                 restaurantId,
                 pagingForm.getPageOrDefault(),
                 pagingForm.getSizeOrDefault(ControllerUtils.DEFAULT_REPORTS_PAGE_SIZE)
         );
-        List<ReportDto> dtoList = ReportDto.fromReportCollection(uriInfo, pagedResult.getResult());
+        final List<ReportDto> dtoList = ReportDto.fromReportCollection(uriInfo, pagedResult.getResult());
         final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<ReportDto>>(dtoList) {});
         return ControllerUtils.addPagingLinks(responseBuilder, pagedResult, uriInfo).build();
     }

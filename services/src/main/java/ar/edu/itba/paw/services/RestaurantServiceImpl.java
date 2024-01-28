@@ -36,6 +36,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
     private OrderService orderService;
 
     @Transactional
@@ -116,6 +117,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Override
     public void delete(long restaurantId) {
         restaurantDao.delete(restaurantId);
+        orderService.cancelNonDeliveredOrders(restaurantId);
     }
 
     @Transactional
