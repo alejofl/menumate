@@ -66,7 +66,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     @Transactional
     public void deleteReviewReply(long orderId) {
-        Review review = reviewDao.getByOrder(orderId).orElseThrow(ReviewNotFoundException::new);
+        final Review review = reviewDao.getByOrder(orderId).orElseThrow(ReviewNotFoundException::new);
         review.setReply(null);
         LOGGER.info("Deleted reply of review with id {}", review.getOrderId());
     }

@@ -39,7 +39,7 @@ public class TokenServiceImpl implements TokenService {
     @Transactional
     @Override
     public Token manageUserToken(User user) {
-        Optional<Token> maybeToken = tokenDao.getByUserId(user.getUserId());
+        final Optional<Token> maybeToken = tokenDao.getByUserId(user.getUserId());
         Token token;
         if (maybeToken.isPresent()) {
             token = maybeToken.get();

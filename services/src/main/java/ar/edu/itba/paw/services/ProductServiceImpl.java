@@ -77,7 +77,7 @@ public class ProductServiceImpl implements ProductService {
         // Ensure the category exists under that restaurant, throw an appropriate exception otherwise.
         final Category category = categoryService.getByIdChecked(restaurantId, categoryId, false);
 
-        Optional<Image> image = imageId == null? Optional.empty() : imageDao.getById(imageId);
+        final Optional<Image> image = imageId == null? Optional.empty() : imageDao.getById(imageId);
         return productDao.create(category, name, description, image.map(Image::getImageId).orElse(null), price);
     }
 

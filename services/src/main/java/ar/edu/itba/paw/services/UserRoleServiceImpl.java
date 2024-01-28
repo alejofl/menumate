@@ -38,19 +38,19 @@ public class UserRoleServiceImpl implements UserRoleService {
             LOGGER.error("Called doesUserHaveRole() with user role null");
             throw new IllegalArgumentException("exception.IllegalArgumentException.doesUserHaveRole");
         }
-        Optional<UserRole> userRole = userRoleDao.getRole(userId);
+        final Optional<UserRole> userRole = userRoleDao.getRole(userId);
         return userRole.isPresent() && roleLevel.equals(userRole.get().getLevel());
     }
 
     @Override
     public Optional<UserRoleLevel> getRole(long userId) {
-        Optional<UserRole> userRole = userRoleDao.getRole(userId);
+        final Optional<UserRole> userRole = userRoleDao.getRole(userId);
         return userRole.map(UserRole::getLevel);
     }
 
     private void createUserAndSetRole(String email, UserRoleLevel level, String language) {
-        String name = email.split("@")[0];
-        User user = userDao.create(email, null, name, language);
+        final String name = email.split("@")[0];
+        final User user = userDao.create(email, null, name, language);
         userRoleDao.create(user.getUserId(), level);
         emailService.sendInvitationToUser(user, level.getMessageCode().replaceAll("^ROLE_", "").toLowerCase());
     }
@@ -63,13 +63,13 @@ public class UserRoleServiceImpl implements UserRoleService {
             throw new UserRoleNotFoundException();
         }
 
-        Optional<User> user = userDao.getByEmail(email);
+        final Optional<User> user = userDao.getByEmail(email);
         if (!user.isPresent()) {
             LOGGER.info("User {} does not exist. Creating user and setting role {}", email, roleLevel);
             createUserAndSetRole(email, roleLevel, LocaleContextHolder.getLocale().getLanguage());
             return true;
         }
-        Optional<UserRole> currentRole = userRoleDao.getRole(user.get().getUserId());
+        final Optional<UserRole> currentRole = userRoleDao.getRole(user.get().getUserId());
         if (currentRole.isPresent()) {
             currentRole.get().setLevel(roleLevel);
             LOGGER.info("User already has a role. Changing role from {} to {}", currentRole.get(), roleLevel);

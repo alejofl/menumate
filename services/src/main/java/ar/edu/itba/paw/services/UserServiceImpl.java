@@ -139,7 +139,7 @@ public class UserServiceImpl implements UserService {
             return;
         }
 
-        Token token = tokenService.manageUserToken(user);
+        final Token token = tokenService.manageUserToken(user);
         emailService.sendUserVerificationEmail(user, token.getToken());
     }
 
@@ -152,14 +152,14 @@ public class UserServiceImpl implements UserService {
             LOGGER.info("Ignored sending password reset token request for unknown email");
             return;
         }
-        Token token = tokenService.manageUserToken(user);
+        final Token token = tokenService.manageUserToken(user);
         emailService.sendResetPasswordEmail(user, token.getToken());
     }
 
     @Transactional
     @Override
     public Optional<User> verifyUser(String token) {
-        Optional<Token> maybeToken = tokenService.getByToken(token);
+        final Optional<Token> maybeToken = tokenService.getByToken(token);
         if (!maybeToken.isPresent()) {
             LOGGER.info("Ignored verifyUser call due to token not found or stale");
             return Optional.empty();
@@ -188,12 +188,12 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("exception.IllegalArgumentException.updatePassword");
         }
 
-        Optional<User> maybeUser = userDao.getById(userId);
+        final Optional<User> maybeUser = userDao.getById(userId);
         if (!maybeUser.isPresent()) {
             LOGGER.info("Ignored updating password due to unknown email");
             return false;
         }
-        User user = maybeUser.get();
+        final User user = maybeUser.get();
         user.setPassword(passwordEncoder.encode(newPassword));
         LOGGER.info("Updated password for user id {}", user.getUserId());
         return true;
