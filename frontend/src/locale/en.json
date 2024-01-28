@@ -529,8 +529,7 @@
             "view_restaurant": "View Restaurant",
             "deactivate_restaurant": "Deactivate Restaurant",
             "activate_restaurant": "Activate Restaurant",
-            "delete_restaurant": "Delete Restaurant",
-            "restore_restaurant": "Restore Restaurant"
+            "delete_restaurant": "Delete Restaurant"
         },
         "edit": {
             "title": "Edit Moderators",
