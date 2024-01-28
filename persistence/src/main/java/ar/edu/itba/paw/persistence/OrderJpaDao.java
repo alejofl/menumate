@@ -78,7 +78,7 @@ public class OrderJpaDao implements OrderDao {
         query.setParameter("orderId", orderId);
 
         // Note: orders must always have at least one item, so if we don't get any items, the order doesn't exist.
-        List<OrderItem> items = query.getResultList();
+        final List<OrderItem> items = query.getResultList();
         return items.isEmpty() ? Optional.empty() : Optional.of(items);
     }
 
@@ -108,12 +108,12 @@ public class OrderJpaDao implements OrderDao {
     public PaginatedResult<Order> get(Long userId, Long restaurantId, OrderStatus orderStatus, boolean onlyInProgress, boolean descending, int pageNumber, int pageSize) {
         Utils.validatePaginationParams(pageNumber, pageSize);
 
-        String orderDir = descending ? "DESC" : "ASC";
-        String statusCondString = getOrderStatusConditionString(orderStatus);
-        String inProgressCondString = getInProgressConditionString(onlyInProgress);
+        final String orderDir = descending ? "DESC" : "ASC";
+        final String statusCondString = getOrderStatusConditionString(orderStatus);
+        final String inProgressCondString = getInProgressConditionString(onlyInProgress);
 
-        StringBuilder queryBuilder = new StringBuilder("SELECT order_id FROM orders");
-        StringBuilder countQueryBuilder = new StringBuilder("SELECT COUNT(*) FROM orders");
+        final StringBuilder queryBuilder = new StringBuilder("SELECT order_id FROM orders");
+        final StringBuilder countQueryBuilder = new StringBuilder("SELECT COUNT(*) FROM orders");
         String andToken = " WHERE";
 
         if (userId != null) {
@@ -142,8 +142,8 @@ public class OrderJpaDao implements OrderDao {
 
         queryBuilder.append(" ORDER BY date_ordered ").append(orderDir);
 
-        Query nativeQuery = em.createNativeQuery(queryBuilder.toString());
-        Query countQuery = em.createNativeQuery(countQueryBuilder.toString());
+        final Query nativeQuery = em.createNativeQuery(queryBuilder.toString());
+        final Query countQuery = em.createNativeQuery(countQueryBuilder.toString());
         nativeQuery.setMaxResults(pageSize);
         nativeQuery.setFirstResult((pageNumber - 1) * pageSize);
 
@@ -169,7 +169,7 @@ public class OrderJpaDao implements OrderDao {
         );
         query.setParameter("idList", idList);
 
-        List<Order> orders = query.getResultList();
+        final List<Order> orders = query.getResultList();
 
         return new PaginatedResult<>(orders, pageNumber, pageSize, count);
     }

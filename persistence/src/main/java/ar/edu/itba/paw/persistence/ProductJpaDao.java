@@ -75,12 +75,12 @@ public class ProductJpaDao implements ProductDao {
         product.setAvailable(false);
 
         // Delete products from promotions generated with this product
-        Query query = em.createQuery("UPDATE Product p SET p.deleted = true, p.available = false WHERE p.deleted = false AND EXISTS(FROM Promotion r WHERE r.source.productId = :sourceId AND r.destination.productId = p.productId)");
+        final Query query = em.createQuery("UPDATE Product p SET p.deleted = true, p.available = false WHERE p.deleted = false AND EXISTS(FROM Promotion r WHERE r.source.productId = :sourceId AND r.destination.productId = p.productId)");
         query.setParameter("sourceId", product.getProductId());
         int rows = query.executeUpdate();
 
         // Close any promotions generated with this product
-        Query promoQuery = em.createQuery("UPDATE Promotion SET endDate = now() WHERE source.productId = :sourceId AND (endDate IS NULL OR endDate > now())");
+        final Query promoQuery = em.createQuery("UPDATE Promotion SET endDate = now() WHERE source.productId = :sourceId AND (endDate IS NULL OR endDate > now())");
         promoQuery.setParameter("sourceId", product.getProductId());
         int promoRows = promoQuery.executeUpdate();
 
@@ -89,8 +89,8 @@ public class ProductJpaDao implements ProductDao {
 
     @Override
     public Promotion createPromotion(Product source, LocalDateTime startDate, LocalDateTime endDate, BigDecimal discountPercentage) {
-        BigDecimal hundred = BigDecimal.valueOf(100);
-        BigDecimal promotionPrice = source.getPrice().multiply(hundred.subtract(discountPercentage)).divide(hundred, 2, RoundingMode.FLOOR);
+        final BigDecimal hundred = BigDecimal.valueOf(100);
+        final BigDecimal promotionPrice = source.getPrice().multiply(hundred.subtract(discountPercentage)).divide(hundred, 2, RoundingMode.FLOOR);
         final Product destination = new Product(source.getCategory(), source.getName(), source.getDescription(), source.getImageId(), promotionPrice, true);
         em.persist(destination);
         em.flush();
@@ -124,14 +124,14 @@ public class ProductJpaDao implements ProductDao {
 
     @Override
     public void updateNameDescriptionAndImage(Product product, String name, String description, Long imageId) {
-        Long previousImageId = product.getImageId();
+        final Long previousImageId = product.getImageId();
         imageId = (imageId != null) ? imageId : product.getImageId();
         product.setImageId(imageId);
         product.setName(name);
         product.setDescription(description);
 
         // Update active promotion copies
-        Query query = em.createQuery(
+        final Query query = em.createQuery(
                 "UPDATE Product p SET p.name = :name, p.description = :description, p.imageId = :imageId WHERE p.deleted = false AND" +
                         " EXISTS(FROM Promotion WHERE destination.productId = p.productId AND source.productId = :productId)"
         );
@@ -146,14 +146,14 @@ public class ProductJpaDao implements ProductDao {
 
     @Override
     public void stopPromotion(long restaurantId, long promotionId) {
-        TypedQuery<Promotion> promoQuery = em.createQuery(
+        final TypedQuery<Promotion> promoQuery = em.createQuery(
                 "FROM Promotion WHERE promotionId = :promotionId AND source.category.restaurantId = :restaurantId",
                 Promotion.class
         );
         promoQuery.setParameter("restaurantId", restaurantId);
         promoQuery.setParameter("promotionId", promotionId);
 
-        Promotion promotion = promoQuery.getResultList().stream().findFirst().orElseThrow(PromotionNotFoundException::new);
+        final Promotion promotion = promoQuery.getResultList().stream().findFirst().orElseThrow(PromotionNotFoundException::new);
         if (promotion.hasEnded()) {
             LOGGER.error("Attempted to stop an already-ended promotion id {}", promotion.getPromotionId());
             throw new InvalidUserArgumentException("exception.InvalidUserArgumentException.stopPromotion");
@@ -172,12 +172,12 @@ public class ProductJpaDao implements ProductDao {
         product.setAvailable(true);
 
         // Delete products from promotions generated with this product
-        Query delQuery = em.createQuery("UPDATE Product p SET p.deleted = true WHERE p.deleted = false AND EXISTS(FROM Promotion r WHERE r.source.productId = :sourceId AND r.destination.productId = p.productId)");
+        final Query delQuery = em.createQuery("UPDATE Product p SET p.deleted = true WHERE p.deleted = false AND EXISTS(FROM Promotion r WHERE r.source.productId = :sourceId AND r.destination.productId = p.productId)");
         delQuery.setParameter("sourceId", sourceProductId);
         int delRows = delQuery.executeUpdate();
 
         // Close any promotions generated with this product
-        Query promoQuery = em.createQuery("UPDATE Promotion SET endDate = now() WHERE source.productId = :sourceId AND (endDate IS NULL OR endDate > now())");
+        final Query promoQuery = em.createQuery("UPDATE Promotion SET endDate = now() WHERE source.productId = :sourceId AND (endDate IS NULL OR endDate > now())");
         promoQuery.setParameter("sourceId", sourceProductId);
         int promoRows = promoQuery.executeUpdate();
 
@@ -188,13 +188,13 @@ public class ProductJpaDao implements ProductDao {
     @Override
     public void startActivePromotions() {
         // Set as unavailable all products that have an active promotion
-        Query unavQuery = em.createQuery("UPDATE Product p SET p.available = false WHERE p.available = true AND p.deleted = false" +
+        final Query unavQuery = em.createQuery("UPDATE Product p SET p.available = false WHERE p.available = true AND p.deleted = false" +
                 " AND EXISTS(FROM Promotion WHERE source.productId = p.productId AND startDate <= now() AND (endDate IS NULL OR endDate > now()))"
         );
         int unavRows = unavQuery.executeUpdate();
 
         // Set as available all destination products from those promotions
-        Query avQuery = em.createQuery("UPDATE Product p SET p.available = true WHERE p.available = false AND p.deleted = false" +
+        final Query avQuery = em.createQuery("UPDATE Product p SET p.available = true WHERE p.available = false AND p.deleted = false" +
                 " AND EXISTS(FROM Promotion WHERE destination.productId = p.productId AND startDate <= now() AND (endDate IS NULL OR endDate > now()))"
         );
         int avRows = avQuery.executeUpdate();
@@ -206,7 +206,7 @@ public class ProductJpaDao implements ProductDao {
     @Override
     public void closeInactivePromotions() {
         // Set as available all products whose promotion ended and don't have another active promotion
-        Query avQuery = em.createQuery(
+        final Query avQuery = em.createQuery(
                 "UPDATE Product p SET p.available = true WHERE p.available = false" +
                         " AND EXISTS(FROM Promotion WHERE source.productId = p.productId AND endDate IS NOT NULL AND endDate <= now())" +
                         " AND NOT EXISTS(FROM Promotion WHERE source.productId = p.productId AND startDate <= now() AND (endDate IS NULL OR endDate > now()))"
@@ -214,7 +214,7 @@ public class ProductJpaDao implements ProductDao {
         int avRows = avQuery.executeUpdate();
 
         // Logical-delete all products from inactive promotions
-        Query delQuery = em.createQuery(
+        final Query delQuery = em.createQuery(
                 "UPDATE Product p SET p.deleted = true WHERE p.deleted = false AND" +
                         " EXISTS(FROM Promotion WHERE destination.productId = p.productId AND endDate IS NOT NULL AND endDate <= now())"
         );
@@ -225,7 +225,7 @@ public class ProductJpaDao implements ProductDao {
 
     @Override
     public boolean areAllProductsFromRestaurant(long restaurantId, List<Long> productIds) {
-        Query query = em.createQuery("SELECT COUNT(p.productId) FROM Product p JOIN Category c ON p.categoryId = c.categoryId WHERE p.productId IN :productIds AND c.restaurantId = :restaurantId AND p.available = true AND p.deleted = false");
+        final Query query = em.createQuery("SELECT COUNT(p.productId) FROM Product p JOIN Category c ON p.categoryId = c.categoryId WHERE p.productId IN :productIds AND c.restaurantId = :restaurantId AND p.available = true AND p.deleted = false");
         query.setParameter("restaurantId", restaurantId);
         query.setParameter("productIds", productIds);
         int count = ((Number) query.getSingleResult()).intValue();

@@ -36,8 +36,8 @@ public class ReviewJpaDao implements ReviewDao {
     public PaginatedResult<Review> get(Long userId, Long restaurantId, int pageNumber, int pageSize) {
         Utils.validatePaginationParams(pageNumber, pageSize);
 
-        StringBuilder queryBuilder = new StringBuilder("SELECT r.order_id FROM order_reviews AS r JOIN orders AS o ON r.order_id = o.order_id");
-        StringBuilder countBuilder = new StringBuilder("SELECT COUNT(*) FROM order_reviews AS r JOIN orders AS o ON r.order_id = o.order_id");
+        final StringBuilder queryBuilder = new StringBuilder("SELECT r.order_id FROM order_reviews AS r JOIN orders AS o ON r.order_id = o.order_id");
+        final StringBuilder countBuilder = new StringBuilder("SELECT COUNT(*) FROM order_reviews AS r JOIN orders AS o ON r.order_id = o.order_id");
         String andToken = " WHERE ";
 
         if (userId != null) {
@@ -54,8 +54,8 @@ public class ReviewJpaDao implements ReviewDao {
 
         queryBuilder.append(" ORDER BY r.date DESC, r.order_id");
 
-        Query nativeQuery = em.createNativeQuery(queryBuilder.toString());
-        Query countQuery = em.createNativeQuery(countBuilder.toString());
+        final Query nativeQuery = em.createNativeQuery(queryBuilder.toString());
+        final Query countQuery = em.createNativeQuery(countBuilder.toString());
 
         if (userId != null) {
             nativeQuery.setParameter("userId", userId);
@@ -79,7 +79,7 @@ public class ReviewJpaDao implements ReviewDao {
         final TypedQuery<Review> query = em.createQuery("FROM Review WHERE orderId IN :idList ORDER BY date DESC, orderId", Review.class);
         query.setParameter("idList", idList);
 
-        List<Review> reviews = query.getResultList();
+        final List<Review> reviews = query.getResultList();
         return new PaginatedResult<>(reviews, pageNumber, pageSize, count);
     }
 
@@ -114,18 +114,18 @@ public class ReviewJpaDao implements ReviewDao {
 
     @Override
     public AverageCountPair getRestaurantAverage(long restaurantId) {
-        Query query = em.createQuery("SELECT COALESCE(AVG(CAST(rating AS float)), 0), COUNT(*) FROM Review WHERE order.restaurantId = :restaurantId");
+        final Query query = em.createQuery("SELECT COALESCE(AVG(CAST(rating AS float)), 0), COUNT(*) FROM Review WHERE order.restaurantId = :restaurantId");
         query.setParameter("restaurantId", restaurantId);
-        Object[] result = (Object[]) query.getSingleResult();
+        final Object[] result = (Object[]) query.getSingleResult();
         return new AverageCountPair(((Number) result[0]).floatValue(), ((Number) result[1]).intValue());
     }
 
     @Override
     public AverageCountPair getRestaurantAverageSince(long restaurantId, LocalDateTime datetime) {
-        Query query = em.createQuery("SELECT COALESCE(AVG(CAST(rating AS float)), 0), COUNT(*) FROM Review WHERE date >= :datetime AND order.restaurantId = :restaurantId");
+        final Query query = em.createQuery("SELECT COALESCE(AVG(CAST(rating AS float)), 0), COUNT(*) FROM Review WHERE date >= :datetime AND order.restaurantId = :restaurantId");
         query.setParameter("restaurantId", restaurantId);
         query.setParameter("datetime", datetime);
-        Object[] result = (Object[]) query.getSingleResult();
+        final Object[] result = (Object[]) query.getSingleResult();
         return new AverageCountPair(((Number) result[0]).floatValue(), ((Number) result[1]).intValue());
     }
 }

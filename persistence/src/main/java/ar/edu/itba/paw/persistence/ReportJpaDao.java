@@ -105,7 +105,7 @@ public class ReportJpaDao implements ReportDao {
     public PaginatedResult<Report> get(Long restaurantId, Long reporterUserId, Long handlerUserId, Boolean isHandled, boolean descending, int pageNumber, int pageSize) {
         Utils.validatePaginationParams(pageNumber, pageSize);
 
-        StringBuilder sqlBuilder = new StringBuilder("SELECT report_id FROM restaurant_reports");
+        final StringBuilder sqlBuilder = new StringBuilder("SELECT report_id FROM restaurant_reports");
         appendFilterConditions(sqlBuilder, restaurantId, reporterUserId, handlerUserId, isHandled);
 
         sqlBuilder.append(" ORDER BY (date_handled IS NOT NULL), ")
@@ -113,7 +113,7 @@ public class ReportJpaDao implements ReportDao {
                 .append(descending ? " DESC" : " ASC")
                 .append(", report_id");
 
-        Query nativeQuery = em.createNativeQuery(sqlBuilder.toString());
+        final Query nativeQuery = em.createNativeQuery(sqlBuilder.toString());
         nativeQuery.setMaxResults(pageSize);
         nativeQuery.setFirstResult((pageNumber - 1) * pageSize);
         if (restaurantId != null) nativeQuery.setParameter("restaurantId", restaurantId);
@@ -126,7 +126,7 @@ public class ReportJpaDao implements ReportDao {
         sqlBuilder.append("SELECT COUNT(*) FROM restaurant_reports");
         appendFilterConditions(sqlBuilder, restaurantId, reporterUserId, handlerUserId, isHandled);
 
-        Query countQuery = em.createNativeQuery(sqlBuilder.toString());
+        final Query countQuery = em.createNativeQuery(sqlBuilder.toString());
         if (restaurantId != null) countQuery.setParameter("restaurantId", restaurantId);
         if (reporterUserId != null) countQuery.setParameter("reporterId", reporterUserId);
         if (handlerUserId != null) countQuery.setParameter("handlerId", handlerUserId);
@@ -141,7 +141,7 @@ public class ReportJpaDao implements ReportDao {
                 .append(descending ? " DESC" : " ASC")
                 .append(", reportId");
 
-        TypedQuery<Report> resultsQuery = em.createQuery(
+        final TypedQuery<Report> resultsQuery = em.createQuery(
                 sqlBuilder.toString(),
                 Report.class
         );
