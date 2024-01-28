@@ -101,7 +101,7 @@ public class ProductServiceImplTest {
         }).when(productDao).updateNameDescriptionAndImage(product, NEW_PRODUCT_NAME, NEW_PRODUCT_DESCRIPTION, NEW_IMAGE_ID);
 
 
-        Product ret = productService.update(DEFAULT_RESTAURANT_ID, DEFAULT_CATEGORY_ID, DEFAULT_PRODUCT_ID, NEW_PRODUCT_NAME, DEFAULT_PRODUCT_PRICE, NEW_PRODUCT_DESCRIPTION, NEW_IMAGE_ID);
+        final Product ret = productService.update(DEFAULT_RESTAURANT_ID, DEFAULT_CATEGORY_ID, DEFAULT_PRODUCT_ID, NEW_PRODUCT_NAME, DEFAULT_PRODUCT_PRICE, NEW_PRODUCT_DESCRIPTION, NEW_IMAGE_ID);
 
         assertEquals(NEW_PRODUCT_NAME, ret.getName());
         assertEquals(NEW_PRODUCT_DESCRIPTION, ret.getDescription());
@@ -130,7 +130,7 @@ public class ProductServiceImplTest {
         }).when(productDao).updateNameDescriptionAndImage(product, NEW_PRODUCT_NAME, NEW_PRODUCT_DESCRIPTION, DEFAULT_IMAGE_ID);
 
 
-        Product ret = productService.update(DEFAULT_RESTAURANT_ID, DEFAULT_CATEGORY_ID, DEFAULT_PRODUCT_ID, NEW_PRODUCT_NAME, DEFAULT_PRODUCT_PRICE, NEW_PRODUCT_DESCRIPTION, DEFAULT_IMAGE_ID);
+        final Product ret = productService.update(DEFAULT_RESTAURANT_ID, DEFAULT_CATEGORY_ID, DEFAULT_PRODUCT_ID, NEW_PRODUCT_NAME, DEFAULT_PRODUCT_PRICE, NEW_PRODUCT_DESCRIPTION, DEFAULT_IMAGE_ID);
 
         assertEquals(NEW_PRODUCT_NAME, ret.getName());
         assertEquals(NEW_PRODUCT_DESCRIPTION, ret.getDescription());

@@ -220,8 +220,8 @@ public class ProductJpaDaoTest {
     @Test
     @Rollback
     public void testStopPromotionByDestination() {
-        Product destination = em.find(Product.class, ProductConstants.PROMOTION_DESTINATION_ID);
-        Product source = em.find(Product.class, ProductConstants.PROMOTION_SOURCE_ID);
+        final Product destination = em.find(Product.class, ProductConstants.PROMOTION_DESTINATION_ID);
+        final Product source = em.find(Product.class, ProductConstants.PROMOTION_SOURCE_ID);
 
         productDao.stopPromotion(RestaurantConstants.RESTAURANT_IDS[3], ProductConstants.PROMOTION_ID);
         em.flush();
@@ -233,8 +233,8 @@ public class ProductJpaDaoTest {
     @Test
     @Rollback
     public void testStopPromotionBySource() {
-        Product destination = em.find(Product.class, ProductConstants.PROMOTION_DESTINATION_ID);
-        Product source = em.find(Product.class, ProductConstants.PROMOTION_SOURCE_ID);
+        final Product destination = em.find(Product.class, ProductConstants.PROMOTION_DESTINATION_ID);
+        final Product source = em.find(Product.class, ProductConstants.PROMOTION_SOURCE_ID);
 
         productDao.stopPromotionsBySource(ProductConstants.PROMOTION_SOURCE_ID);
         em.flush();
@@ -258,7 +258,7 @@ public class ProductJpaDaoTest {
     @Test(expected = InvalidUserArgumentException.class)
     @Rollback
     public void testStopPromotionByDestinationAlreadyEnded() {
-        Promotion promotion = em.find(Promotion.class, ProductConstants.PROMOTION_ID);
+        final Promotion promotion = em.find(Promotion.class, ProductConstants.PROMOTION_ID);
         promotion.setEndDate(LocalDateTime.now().minusDays(1));
 
         productDao.stopPromotion(RestaurantConstants.RESTAURANT_IDS[3], ProductConstants.PROMOTION_ID);
@@ -268,8 +268,8 @@ public class ProductJpaDaoTest {
     @Test
     @Rollback
     public void testStartActivePromotions() {
-        Product destination = em.find(Product.class, ProductConstants.PROMOTION_DESTINATION_ID);
-        Product source = em.find(Product.class, ProductConstants.PROMOTION_SOURCE_ID);
+        final Product destination = em.find(Product.class, ProductConstants.PROMOTION_DESTINATION_ID);
+        final Product source = em.find(Product.class, ProductConstants.PROMOTION_SOURCE_ID);
         destination.setAvailable(false);
         source.setAvailable(true);
 
@@ -283,7 +283,7 @@ public class ProductJpaDaoTest {
     @Test
     @Rollback
     public void testStopActivePromotions() {
-        Promotion promotion = em.find(Promotion.class, ProductConstants.PROMOTION_ID);
+        final Promotion promotion = em.find(Promotion.class, ProductConstants.PROMOTION_ID);
         promotion.setEndDate(LocalDateTime.now().minusDays(1));
 
         productDao.closeInactivePromotions();
@@ -295,7 +295,7 @@ public class ProductJpaDaoTest {
 
     @Test
     public void testGetPromotionById() {
-        Optional<Promotion> promotion = productDao.getPromotionById(ProductConstants.PROMOTION_ID);
+        final Optional<Promotion> promotion = productDao.getPromotionById(ProductConstants.PROMOTION_ID);
         assertTrue(promotion.isPresent());
         assertEquals(ProductConstants.PROMOTION_ID, promotion.get().getPromotionId().longValue());
         assertEquals(ProductConstants.PROMOTION_SOURCE_ID, promotion.get().getSource().getProductId().longValue());
@@ -304,7 +304,7 @@ public class ProductJpaDaoTest {
 
     @Test
     public void testGetNoPromotionById() {
-        Optional<Promotion> promotion = productDao.getPromotionById(ProductConstants.NO_PROMOTION_ID);
+        final Optional<Promotion> promotion = productDao.getPromotionById(ProductConstants.NO_PROMOTION_ID);
         assertFalse(promotion.isPresent());
     }
 
@@ -314,7 +314,7 @@ public class ProductJpaDaoTest {
         final Product product = em.find(Product.class, ProductConstants.PRODUCT_FROM_CATEGORY_RESTAURANT_0[0]);
         product.setDeleted(true);
         em.flush();
-        Optional<Product> maybeProduct = productDao.getById(product.getProductId());
+        final Optional<Product> maybeProduct = productDao.getById(product.getProductId());
         assertTrue(maybeProduct.isPresent());
         assertEquals(product.getProductId(), maybeProduct.get().getProductId());
         assertTrue(maybeProduct.get().getDeleted());
@@ -323,7 +323,7 @@ public class ProductJpaDaoTest {
     @Test
     @Rollback
     public void testGetProduct() {
-        Optional<Product> maybeProduct = productDao.getById(ProductConstants.PRODUCT_FROM_CATEGORY_RESTAURANT_0[0]);
+        final Optional<Product> maybeProduct = productDao.getById(ProductConstants.PRODUCT_FROM_CATEGORY_RESTAURANT_0[0]);
         assertTrue(maybeProduct.isPresent());
         assertEquals(ProductConstants.PRODUCT_FROM_CATEGORY_RESTAURANT_0[0], maybeProduct.get().getProductId().longValue());
         assertFalse(maybeProduct.get().getDeleted());

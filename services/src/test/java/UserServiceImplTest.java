@@ -168,7 +168,7 @@ public class UserServiceImplTest {
         final Token userToken = mock(Token.class);
         when(tokenService.getByToken(TOKEN)).thenReturn(Optional.of(userToken));
 
-        User user = mock(User.class);
+        final User user = mock(User.class);
         when(user.getIsActive()).thenReturn(false);
 
         when(userToken.getUser()).thenReturn(user);

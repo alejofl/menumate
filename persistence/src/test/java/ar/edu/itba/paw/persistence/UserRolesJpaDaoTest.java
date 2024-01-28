@@ -5,7 +5,6 @@ import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.model.UserRole;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import ar.edu.itba.paw.persistence.constants.UserConstants;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,6 +24,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
@@ -54,7 +56,7 @@ public class UserRolesJpaDaoTest {
     public void testCreate() {
         rolesDao.create(UserConstants.ACTIVE_USER_ID, UserConstants.MODERATOR_ROLE);
         em.flush();
-        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "user_roles", "user_id = " + UserConstants.ACTIVE_USER_ID + " AND role_level = " + UserConstants.MODERATOR_ROLE.ordinal()));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "user_roles", "user_id = " + UserConstants.ACTIVE_USER_ID + " AND role_level = " + UserConstants.MODERATOR_ROLE.ordinal()));
     }
 
     @Test(expected = PersistenceException.class)
@@ -78,37 +80,37 @@ public class UserRolesJpaDaoTest {
     public void testDeleteWhenExistingRole() {
         rolesDao.delete(UserConstants.USER_ID_MODERATOR_ROLE);
         em.flush();
-        Assert.assertEquals(0, JdbcTestUtils.countRowsInTable(jdbcTemplate, "user_roles"));
+        assertEquals(0, JdbcTestUtils.countRowsInTable(jdbcTemplate, "user_roles"));
     }
 
     @Test
     public void testGetNoRoleOnNonExistingUser() {
-        Assert.assertEquals(Optional.empty(), rolesDao.getRole(USER_ID_NONE));
+        assertEquals(Optional.empty(), rolesDao.getRole(USER_ID_NONE));
     }
 
     @Test
     public void testGetNoRoleOnExistingUser() {
-        Assert.assertEquals(Optional.empty(), rolesDao.getRole(UserConstants.ACTIVE_USER_ID));
+        assertEquals(Optional.empty(), rolesDao.getRole(UserConstants.ACTIVE_USER_ID));
     }
 
     @Test
     public void testGetRoleOnExistingUser() {
-        Optional<UserRole> role = rolesDao.getRole(UserConstants.USER_ID_MODERATOR_ROLE);
-        Assert.assertTrue(role.isPresent());
-        Assert.assertEquals(UserConstants.MODERATOR_ROLE, role.get().getLevel());
+        final Optional<UserRole> role = rolesDao.getRole(UserConstants.USER_ID_MODERATOR_ROLE);
+        assertTrue(role.isPresent());
+        assertEquals(UserConstants.MODERATOR_ROLE, role.get().getLevel());
     }
 
     @Test
     public void testGetByRoleOne() {
-        List<User> result = rolesDao.getByRole(UserConstants.MODERATOR_ROLE);
-        Assert.assertEquals(1, result.size());
-        Assert.assertEquals(UserConstants.USER_ID_MODERATOR_ROLE, (long) result.get(0).getUserId());
+        final List<User> result = rolesDao.getByRole(UserConstants.MODERATOR_ROLE);
+        assertEquals(1, result.size());
+        assertEquals(UserConstants.USER_ID_MODERATOR_ROLE, (long) result.get(0).getUserId());
     }
 
     @Test
     @Rollback
     public void testGetByRoleMany() {
-        ArrayList<Long> ids = new ArrayList<>();
+        final ArrayList<Long> ids = new ArrayList<>();
         ids.add(UserConstants.ACTIVE_USER_ID);
         ids.add(UserConstants.RESTAURANT_OWNER_ID);
         ids.add(UserConstants.USER_ID_MODERATOR_ROLE);
@@ -116,9 +118,9 @@ public class UserRolesJpaDaoTest {
         jdbcTemplate.execute("INSERT INTO user_roles (user_id, role_level) VALUES (" + UserConstants.ACTIVE_USER_ID + ", " + UserConstants.MODERATOR_ROLE.ordinal() + ")");
         jdbcTemplate.execute("INSERT INTO user_roles (user_id, role_level) VALUES (" + UserConstants.RESTAURANT_OWNER_ID + ", " + UserConstants.MODERATOR_ROLE.ordinal() + ")");
 
-        List<User> result = rolesDao.getByRole(UserConstants.MODERATOR_ROLE);
-        Assert.assertEquals(3, result.size());
-        Assert.assertEquals(ids.get(0).longValue(), (long) result.get(0).getUserId());
-        Assert.assertEquals(ids.get(1).longValue(), (long) result.get(1).getUserId());
+        final List<User> result = rolesDao.getByRole(UserConstants.MODERATOR_ROLE);
+        assertEquals(3, result.size());
+        assertEquals(ids.get(0).longValue(), (long) result.get(0).getUserId());
+        assertEquals(ids.get(1).longValue(), (long) result.get(1).getUserId());
     }
 }

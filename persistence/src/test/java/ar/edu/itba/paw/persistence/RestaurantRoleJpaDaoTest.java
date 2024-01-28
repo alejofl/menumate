@@ -116,7 +116,7 @@ public class RestaurantRoleJpaDaoTest {
 
     @Test
     public void testGetRole() {
-        Optional<RestaurantRole> role = rolesDao.getRole(UserConstants.USER_ID_RESTAURANT_ADMIN_ROLE, RestaurantConstants.RESTAURANT_ID_WITH_NO_ORDERS);
+        final Optional<RestaurantRole> role = rolesDao.getRole(UserConstants.USER_ID_RESTAURANT_ADMIN_ROLE, RestaurantConstants.RESTAURANT_ID_WITH_NO_ORDERS);
 
         assertTrue(role.isPresent());
         assertEquals(UserConstants.ADMIN_ROLE, role.get().getLevel());
@@ -124,26 +124,26 @@ public class RestaurantRoleJpaDaoTest {
 
     @Test
     public void testGetByRestaurantNone() {
-        List<RestaurantRole> result = rolesDao.getByRestaurant(RESTAURANT_ID_NONE);
+        final List<RestaurantRole> result = rolesDao.getByRestaurant(RESTAURANT_ID_NONE);
         assertEquals(0, result.size());
     }
 
     @Test
     public void testGetByRestaurant() {
-        List<RestaurantRole> result = rolesDao.getByRestaurant(RestaurantConstants.RESTAURANT_ID_WITH_NO_ORDERS);
+        final List<RestaurantRole> result = rolesDao.getByRestaurant(RestaurantConstants.RESTAURANT_ID_WITH_NO_ORDERS);
         assertEquals(1, result.size());
         assertEquals(UserConstants.ADMIN_ROLE, result.get(0).getLevel());
     }
 
     @Test
     public void testGetByUserNone() {
-        PaginatedResult<RestaurantRoleDetails> result = rolesDao.getByUser(USER_ID_NONE, 1, 10);
+        final PaginatedResult<RestaurantRoleDetails> result = rolesDao.getByUser(USER_ID_NONE, 1, 10);
         assertEquals(0, result.getTotalCount());
     }
 
     @Test
     public void testGetByUser() {
-        PaginatedResult<RestaurantRoleDetails> result = rolesDao.getByUser(UserConstants.USER_ID_RESTAURANT_ADMIN_ROLE, 1, 10);
+        final PaginatedResult<RestaurantRoleDetails> result = rolesDao.getByUser(UserConstants.USER_ID_RESTAURANT_ADMIN_ROLE, 1, 10);
         assertEquals(1, result.getTotalCount());
         assertEquals(UserConstants.ADMIN_ROLE, result.getResult().get(0).getLevel());
         assertEquals(RestaurantConstants.RESTAURANT_ID_WITH_NO_ORDERS, result.getResult().get(0).getRestaurantId());

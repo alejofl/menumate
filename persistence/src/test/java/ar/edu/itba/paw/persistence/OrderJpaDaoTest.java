@@ -56,7 +56,7 @@ public class OrderJpaDaoTest {
     @Test
     @Rollback
     public void testCreationDineIn() {
-        Order order = orderDao.createDineIn(RestaurantConstants.RESTAURANT_IDS[0], UserConstants.ACTIVE_USER_ID, OrderConstants.DEFAULT_ORDER_TABLE);
+        final Order order = orderDao.createDineIn(RestaurantConstants.RESTAURANT_IDS[0], UserConstants.ACTIVE_USER_ID, OrderConstants.DEFAULT_ORDER_TABLE);
         em.flush();
 
         assertEquals(OrderType.DINE_IN, order.getOrderType());
@@ -67,7 +67,7 @@ public class OrderJpaDaoTest {
     @Test
     @Rollback
     public void testCreationTakeaway() {
-        Order order = orderDao.createTakeaway(RestaurantConstants.RESTAURANT_IDS[0], UserConstants.ACTIVE_USER_ID);
+        final Order order = orderDao.createTakeaway(RestaurantConstants.RESTAURANT_IDS[0], UserConstants.ACTIVE_USER_ID);
         em.flush();
 
         assertEquals(OrderType.TAKEAWAY, order.getOrderType());
@@ -78,7 +78,7 @@ public class OrderJpaDaoTest {
     @Test
     @Rollback
     public void testCreationDelivery() {
-        Order order = orderDao.createDelivery(RestaurantConstants.RESTAURANT_IDS[0], UserConstants.ACTIVE_USER_ID, OrderConstants.DEFAULT_ORDER_ADDRESS);
+        final Order order = orderDao.createDelivery(RestaurantConstants.RESTAURANT_IDS[0], UserConstants.ACTIVE_USER_ID, OrderConstants.DEFAULT_ORDER_ADDRESS);
         em.flush();
 
         assertEquals(OrderType.DELIVERY, order.getOrderType());
@@ -89,7 +89,7 @@ public class OrderJpaDaoTest {
 
     @Test
     public void testFindActiveOrdersById() {
-        Optional<Order> order = orderDao.getById(OrderConstants.ORDER_IDS_RESTAURANT_0[0]);
+        final Optional<Order> order = orderDao.getById(OrderConstants.ORDER_IDS_RESTAURANT_0[0]);
 
         assertTrue(order.isPresent());
         assertEquals(OrderConstants.ORDER_IDS_RESTAURANT_0[0], order.get().getOrderId().longValue());
@@ -101,10 +101,10 @@ public class OrderJpaDaoTest {
 
     @Test
     public void testGetOrderByIdWithOrderItems() {
-        Optional<Order> order = orderDao.getById(ProductConstants.ORDER_ITEMS_FOR_ORDER_IDS[0]);
+        final Optional<Order> order = orderDao.getById(ProductConstants.ORDER_ITEMS_FOR_ORDER_IDS[0]);
 
         assertTrue(order.isPresent());
-        List<OrderItem> orderItems = order.get().getItems();
+        final List<OrderItem> orderItems = order.get().getItems();
         assertNotNull(orderItems);
         assertEquals(1, orderItems.size());
         for (OrderItem oi : orderItems) {
@@ -117,14 +117,14 @@ public class OrderJpaDaoTest {
 
     @Test
     public void testFindNoOrderById() {
-        Optional<Order> order = orderDao.getById(NON_EXISTING_ORDER_ID);
+        final Optional<Order> order = orderDao.getById(NON_EXISTING_ORDER_ID);
 
         assertFalse(order.isPresent());
     }
 
     @Test
     public void testFindActiveOrdersByUserId() {
-        List<Order> orders = orderDao.get(UserConstants.ACTIVE_USER_ID, null, null, false, true, 1, OrderConstants.TOTAL_ORDER_COUNT * 2).getResult();
+        final List<Order> orders = orderDao.get(UserConstants.ACTIVE_USER_ID, null, null, false, true, 1, OrderConstants.TOTAL_ORDER_COUNT * 2).getResult();
 
         assertNotNull(orders);
         assertEquals(OrderConstants.TOTAL_ORDER_COUNT, orders.size());
@@ -136,7 +136,7 @@ public class OrderJpaDaoTest {
 
     @Test
     public void testFindEmptyOrdersByUserId() {
-        List<Order> orders = orderDao.get(UserConstants.RESTAURANT_OWNER_ID, null, null, false, true, 1, OrderConstants.TOTAL_ORDER_COUNT * 2).getResult();
+        final List<Order> orders = orderDao.get(UserConstants.RESTAURANT_OWNER_ID, null, null, false, true, 1, OrderConstants.TOTAL_ORDER_COUNT * 2).getResult();
 
         assertNotNull(orders);
         assertEquals(0, orders.size());
@@ -145,13 +145,13 @@ public class OrderJpaDaoTest {
     @Test
     public void testFindActiveOrdersByRestaurantIdPagedWithNoOrderStatus() {
         final int totalOrders = OrderConstants.ORDER_IDS_RESTAURANT_0.length;
-        PaginatedResult<Order> page = orderDao.get(null, RestaurantConstants.RESTAURANT_IDS[0], null, false, true, 1, totalOrders);
+        final PaginatedResult<Order> page = orderDao.get(null, RestaurantConstants.RESTAURANT_IDS[0], null, false, true, 1, totalOrders);
 
 
         assertEquals(totalOrders, page.getTotalCount());
         assertEquals(totalOrders, page.getResult().size());
 
-        List<Order> allOrders = page.getResult();
+        final List<Order> allOrders = page.getResult();
         for (int i = 0; i < totalOrders; i++) {
             assertEquals(OrderConstants.ORDER_IDS_RESTAURANT_0[i], allOrders.get(i).getOrderId().longValue());
             assertEquals(RestaurantConstants.RESTAURANT_IDS[0], allOrders.get(i).getRestaurantId());
@@ -170,12 +170,12 @@ public class OrderJpaDaoTest {
             order.setDateConfirmed(LocalDateTime.now());
         }
 
-        PaginatedResult<Order> page = orderDao.get(null, RestaurantConstants.RESTAURANT_IDS[1], OrderStatus.CONFIRMED, false, true, 1, totalOrders);
+        final PaginatedResult<Order> page = orderDao.get(null, RestaurantConstants.RESTAURANT_IDS[1], OrderStatus.CONFIRMED, false, true, 1, totalOrders);
 
         assertEquals(totalOrders, page.getTotalCount());
         assertEquals(totalOrders, page.getResult().size());
 
-        List<Order> allOrders = page.getResult();
+        final List<Order> allOrders = page.getResult();
         for (int i = 0; i < totalOrders; i++) {
             assertEquals(OrderConstants.ORDER_IDS_RESTAURANT_1[i], allOrders.get(i).getOrderId().longValue());
             assertEquals(RestaurantConstants.RESTAURANT_IDS[1], allOrders.get(i).getRestaurantId());

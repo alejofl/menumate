@@ -45,5 +45,6 @@ public final class ProductConstants {
     public static final LocalDateTime DEFAULT_PROMOTION_END_DATE = LocalDateTime.now().plusDays(4);
 
     private ProductConstants() {
+        throw new AssertionError();
     }
 }

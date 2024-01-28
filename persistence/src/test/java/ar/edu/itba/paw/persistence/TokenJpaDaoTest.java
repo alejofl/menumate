@@ -86,11 +86,11 @@ public class TokenJpaDaoTest {
 
     @Test
     public void testGetTokenByToken() {
-        User userWithToken = em.find(User.class, UserConstants.USER_ID_1_WITH_TOKENS);
-        Optional<Token> maybeToken = tokenDao.getByToken(UserConstants.TOKEN1);
+        final User userWithToken = em.find(User.class, UserConstants.USER_ID_1_WITH_TOKENS);
+        final Optional<Token> maybeToken = tokenDao.getByToken(UserConstants.TOKEN1);
 
         assertTrue(maybeToken.isPresent());
-        Token token = maybeToken.get();
+        final Token token = maybeToken.get();
 
         assertEquals(token.getToken(), UserConstants.TOKEN1);
         assertEquals(token.getUser().getUserId(), userWithToken.getUserId());
@@ -104,11 +104,11 @@ public class TokenJpaDaoTest {
 
     @Test
     public void testGetTokenByUserId() {
-        User userWithToken = em.find(User.class, UserConstants.USER_ID_1_WITH_TOKENS);
-        Optional<Token> maybeToken = tokenDao.getByUserId(userWithToken.getUserId());
+        final User userWithToken = em.find(User.class, UserConstants.USER_ID_1_WITH_TOKENS);
+        final Optional<Token> maybeToken = tokenDao.getByUserId(userWithToken.getUserId());
 
         assertTrue(maybeToken.isPresent());
-        Token token = maybeToken.get();
+        final Token token = maybeToken.get();
 
         assertEquals(token.getToken(), UserConstants.TOKEN1);
         assertEquals(token.getUser().getUserId(), userWithToken.getUserId());
@@ -116,8 +116,8 @@ public class TokenJpaDaoTest {
 
     @Test
     public void testGetNoTokenByUserId() {
-        User userWithToken = em.find(User.class, UserConstants.INACTIVE_USER_ID);
-        Optional<Token> maybeToken = tokenDao.getByUserId(userWithToken.getUserId());
+        final User userWithToken = em.find(User.class, UserConstants.INACTIVE_USER_ID);
+        final Optional<Token> maybeToken = tokenDao.getByUserId(userWithToken.getUserId());
         assertFalse(maybeToken.isPresent());
     }
 
