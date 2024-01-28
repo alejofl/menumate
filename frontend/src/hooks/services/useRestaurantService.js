@@ -5,7 +5,7 @@ import {
     REPORTS_CONTENT_TYPE,
     RESTAURANT_CATEGORIES_CONTENT_TYPE,
     RESTAURANT_DETAILS_CONTENT_TYPE,
-    RESTAURANT_EMPLOYEES_CONTENT_TYPE,
+    RESTAURANT_EMPLOYEES_CONTENT_TYPE, RESTAURANT_PRODUCT_NEW_CATEGORY_CONTENT_TYPE,
     RESTAURANT_PRODUCTS_CONTENT_TYPE,
     RESTAURANT_PROMOTIONS_CONTENT_TYPE,
     RESTAURANTS_CONTENT_TYPE,
@@ -341,6 +341,41 @@ export function useRestaurantService(api) {
         );
     };
 
+    const editProduct = async (url, imagesUrl, name, description, price, category, image) => {
+        let imageId = null;
+        if (image !== null) {
+            imageId = (await api.postForm(imagesUrl, {image: image})).data.imageId;
+        }
+        const newProductUrl = (await api.patch(
+            url,
+            {
+                name: name,
+                description: description,
+                price: price,
+                ...(imageId !== null ? {"imageId": imageId} : {})
+            },
+            {
+                headers: {
+                    "Content-Type": RESTAURANT_PRODUCTS_CONTENT_TYPE
+                }
+            }
+        )).data.selfUrl;
+        if (category !== null) {
+            await api.patch(
+                newProductUrl,
+                {
+                    newCategoryId: category
+                },
+                {
+                    headers: {
+                        "Content-Type": RESTAURANT_PRODUCT_NEW_CATEGORY_CONTENT_TYPE
+                    }
+                }
+            );
+        }
+        return category;
+    };
+
     return {
         getRestaurants,
         getRestaurant,
@@ -364,6 +399,7 @@ export function useRestaurantService(api) {
         updateCategoryOrder,
         deleteProduct,
         deletePromotion,
-        createPromotion
+        createPromotion,
+        editProduct
     };
 }

@@ -250,3 +250,28 @@ export const CreateInstantPromotionSchema = Yup.object()
         }
     })
 ;
+
+export const EditProductSchema = (categories) => Yup.object().shape({
+    productName: Yup.string()
+        .required(i18n.t("validation.product_name.required"))
+        .min(1, ({ min }) => i18n.t("validation.product_name.min", {min: min}))
+        .max(150, ({ max }) => i18n.t("validation.product_name.max", {max: max})),
+
+    description: Yup.string()
+        .notRequired()
+        .max(300, ({ max }) => i18n.t("validation.product_description.max", {max: max})),
+
+    price: Yup.number()
+        .required(i18n.t("validation.product_price.required"))
+        .min(0.01, ({ min }) => i18n.t("validation.product_price.min", {min: min}))
+        .max(99999999, ({ max }) => i18n.t("validation.product_price.max", {max: max})),
+
+    category: Yup.number()
+        .required(i18n.t("validation.product_category.required"))
+        .oneOf(categories.map(c => c.id), i18n.t("validation.product_category.invalid")),
+
+    image: Yup.mixed()
+        .notRequired()
+        .test("fileSize", i18n.t("validation.image.size"), (value) => !value || (value && value.size <= IMAGE_MAX_SIZE))
+        .test("fileType", i18n.t("validation.image.type"), (value) => !value || (value && value.type.startsWith("image/")))
+});

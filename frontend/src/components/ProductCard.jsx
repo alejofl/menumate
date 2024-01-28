@@ -1,13 +1,18 @@
 import "./styles/product_card.styles.css";
 import ImagePlaceholder from "../assets/image-placeholder.png";
 import {useTranslation} from "react-i18next";
-import {useEffect, useRef, useState} from "react";
+import {useContext, useEffect, useRef, useState} from "react";
 import {BAD_REQUEST_STATUS_CODE, OVERLAPPING_PROMOTIONS_ERROR, PRICE_DECIMAL_DIGITS, PROMOTION_TYPE} from "../utils.js";
 import {useMutation} from "@tanstack/react-query";
 import {useApi} from "../hooks/useApi.js";
 import {useRestaurantService} from "../hooks/services/useRestaurantService.js";
 import {ErrorMessage, Field, Form, Formik} from "formik";
-import {CreateInstantPromotionSchema, CreateScheduledPromotionSchema} from "../data/validation.js";
+import {
+    CreateInstantPromotionSchema,
+    CreateScheduledPromotionSchema,
+    EditProductSchema
+} from "../data/validation.js";
+import ApiContext from "../contexts/ApiContext.jsx";
 
 function ProductCard({
     productId,
@@ -21,6 +26,8 @@ function ProductCard({
     disabled,
 
     edit = false,
+    currentCategory = null,
+    categories = null,
     productUrl = null,
     promotionUrl = null,
     promotionsUrl = null,
@@ -36,9 +43,11 @@ function ProductCard({
 
     const { t, i18n } = useTranslation();
     const api = useApi();
+    const apiContext = useContext(ApiContext);
     const restaurantService = useRestaurantService(api);
 
     const createPromotionFormRef = useRef();
+    const editProductFormRef = useRef();
 
     const [quantity, setQuantity] = useState(1);
     const [comments, setComments] = useState("");
@@ -47,6 +56,7 @@ function ProductCard({
     const [showCreatePromotionError, setShowCreatePromotionError] = useState(false);
     const [promotionType, setPromotionType] = useState(PROMOTION_TYPE.INSTANT);
     const [showCreatePromotionOverlappingError, setShowCreatePromotionOverlappingError] = useState(false);
+    const [showEditProductError, setShowEditProductError] = useState(false);
 
     const handleChangeQuantity = (newValue, increment) => {
         const value = parseInt(newValue);
@@ -81,6 +91,10 @@ function ProductCard({
                 setShowCreatePromotionError(false);
                 setShowCreatePromotionOverlappingError(false);
                 setPromotionType(PROMOTION_TYPE.INSTANT);
+            });
+            document.querySelector(`#edit-product-${productId}-modal`).addEventListener("hidden.bs.modal", () => {
+                editProductFormRef.current?.resetForm();
+                setShowEditProductError(false);
             });
         }
     });
@@ -121,6 +135,19 @@ function ProductCard({
             )
         )
     });
+    const editProductMutation = useMutation({
+        mutationFn: async ({productName, description, price, category, image}) => (
+            await restaurantService.editProduct(
+                productUrl,
+                apiContext.imagesUrl,
+                productName,
+                description,
+                price,
+                category,
+                image
+            )
+        )
+    });
 
     const handleCreatePromotion = (values, {setSubmitting}) => {
         createPromotionMutation.mutate(
@@ -145,6 +172,29 @@ function ProductCard({
                         setShowCreatePromotionError(true);
                     }
                 }
+            }
+        );
+        setSubmitting(false);
+    };
+
+    const handleEditProduct = (values, {setSubmitting}) => {
+        const image = values.image !== "" ? values.image : null;
+        const category = values.category !== currentCategory ? values.category : null;
+        editProductMutation.mutate(
+            {
+                productName: values.productName,
+                description: values.description,
+                price: values.price,
+                category: category,
+                image: image
+            },
+            {
+                onSuccess: async (categoryId) => {
+                    // eslint-disable-next-line no-undef
+                    bootstrap.Modal.getOrCreateInstance(document.querySelector(`#edit-product-${productId}-modal`)).hide();
+                    await refetch(categoryId);
+                },
+                onError: () => setShowEditProductError(true)
             }
         );
         setSubmitting(false);
@@ -183,6 +233,8 @@ function ProductCard({
                                                     </i>
                                                     <i
                                                         className="bi bi-pencil-fill clickable-object"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target={`#edit-product-${productId}-modal`}
                                                     >
                                                     </i>
                                                     <i
@@ -413,6 +465,107 @@ function ProductCard({
                                             </div>
                                             <div className="modal-footer">
                                                 <button type="submit" className="btn btn-promotion" disabled={isSubmitting}>{t("restaurant.edit.create_promotion")}</button>
+                                            </div>
+                                        </Form>
+                                    )}
+                                </Formik>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="modal fade" id={`edit-product-${productId}-modal`} tabIndex="-1">
+                        <div className="modal-dialog modal-dialog-centered">
+                            <div className="modal-content">
+                                <div className="modal-header">
+                                    <h1 className="modal-title fs-5">{t("restaurant.edit.edit_product")}</h1>
+                                    <button type="button" className="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <Formik
+                                    innerRef={editProductFormRef}
+                                    initialValues={{
+                                        productName: name,
+                                        description: description,
+                                        price: price,
+                                        category: currentCategory,
+                                        image: ""
+                                    }}
+                                    validationSchema={() => EditProductSchema(categories)}
+                                    onSubmit={handleEditProduct}
+                                >
+                                    {({values, isSubmitting}) => (
+                                        <Form>
+                                            <div className="modal-body">
+                                                {showEditProductError &&
+                                                    <div className="alert alert-danger" role="alert">{t("restaurant.edit.error")}</div>}
+                                                <div>
+                                                    <div className="mb-3">
+                                                        <label htmlFor="productName" className="form-label">{t("restaurant.edit.product_name")}</label>
+                                                        <Field name="productName" type="text" className="form-control" id="productName"/>
+                                                        <ErrorMessage name="productName" component="div" className="form-error"/>
+                                                    </div>
+                                                    <div className="mb-3">
+                                                        <label htmlFor="description" className="form-label">{t("restaurant.edit.product_description")}</label>
+                                                        <Field as="textarea" className="form-control" name="description" id="description" rows="3"/>
+                                                        <ErrorMessage name="description" component="div" className="form-error"/>
+                                                    </div>
+                                                    <div className="mb-3">
+                                                        <label htmlFor="price" className="form-label">{t("restaurant.edit.product_price")}</label>
+                                                        <div className="input-group">
+                                                            <span className="input-group-text">$</span>
+                                                            <Field name="price" step="0.01" min="0" type="number" className="form-control" id="price"/>
+                                                        </div>
+                                                        <ErrorMessage name="price" component="div" className="form-error"/>
+                                                    </div>
+                                                    <div className="mb-3">
+                                                        <label htmlFor="category" className="form-label">{t("restaurant.edit.change_product_category")}</label>
+                                                        <Field name="category" as="select" className="form-select" id="category">
+                                                            {
+                                                                categories.map((category) => (
+                                                                    <option key={category.id} value={category.id}>{category.name}</option>
+                                                                ))
+                                                            }
+                                                        </Field>
+                                                        <ErrorMessage name="category" component="div" className="form-error"/>
+                                                    </div>
+                                                    <div className="mb-3">
+                                                        <label htmlFor="image" className="form-label">{t("restaurant.edit.product_image")}</label>
+                                                        <Field name="image">
+                                                            {({field: {value, onChange, ...field}, form}) => (
+                                                                <input
+                                                                    type="file"
+                                                                    className="form-control"
+                                                                    id="image"
+                                                                    accept="image/*"
+                                                                    {...field}
+                                                                    onChange={event => form.setFieldValue(field.name, event.currentTarget.files[0])}
+                                                                />
+                                                            )}
+                                                        </Field>
+                                                        <ErrorMessage name="image" component="div" className="form-error"/>
+                                                    </div>
+                                                </div>
+                                                <hr/>
+                                                <div className="d-flex justify-content-center product_card">
+                                                    <div className="card">
+                                                        <div className="image-container">
+                                                            <img src={values.image ? URL.createObjectURL(values.image) : imageUrl || ImagePlaceholder} alt={values.productName || t("restaurant.edit.product_name")} className="img-fluid rounded-start"/>
+                                                        </div>
+                                                        <div className="card-body">
+                                                            <div>
+                                                                <p className="card-text">{values.productName || t("restaurant.edit.product_name")}</p>
+                                                                <p className="card-text">
+                                                                    <small className="text-body-secondary">{values.description || t("restaurant.edit.product_description")}</small>
+                                                                </p>
+                                                            </div>
+                                                            <h5 className="card-title">
+                                                                ${values.price || "1.00"}
+                                                            </h5>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="modal-footer">
+                                                <button type="submit" className="btn btn-primary" disabled={isSubmitting}>{t("restaurant.edit.edit_product")}</button>
                                             </div>
                                         </Form>
                                     )}

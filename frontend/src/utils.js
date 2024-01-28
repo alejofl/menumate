@@ -12,6 +12,7 @@ export const RESTAURANTS_CONTENT_TYPE = "application/vnd.menumate.restaurants.v1
 export const RESTAURANT_DETAILS_CONTENT_TYPE = "application/vnd.menumate.restaurantDetails.v1+json";
 export const RESTAURANT_CATEGORIES_CONTENT_TYPE = "application/vnd.menumate.restaurant.categories.v1+json";
 export const RESTAURANT_PRODUCTS_CONTENT_TYPE = "application/vnd.menumate.restaurant.products.v1+json";
+export const RESTAURANT_PRODUCT_NEW_CATEGORY_CONTENT_TYPE = "application/vnd.menumate.restaurant.product.newCategory.v1+json";
 export const RESTAURANT_PROMOTIONS_CONTENT_TYPE = "application/vnd.menumate.restaurant.promotions.v1+json";
 export const RESTAURANT_EMPLOYEES_CONTENT_TYPE = "application/vnd.menumate.restaurant.employee.v1+json";
 export const REPORTS_CONTENT_TYPE = "application/vnd.menumate.restaurant.reports.v1+json";

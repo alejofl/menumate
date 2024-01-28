@@ -512,10 +512,16 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
                                                     price={product.price}
                                                     imageUrl={product.imageUrl}
                                                     edit={true}
+                                                    currentCategory={category.categoryId}
+                                                    categories={categories.map(c => ({id: c.categoryId, name: c.name}))}
                                                     productUrl={product.selfUrl}
                                                     promotionsUrl={restaurant.promotionsUrl}
-                                                    refetch={async () => {
+                                                    refetch={async (categoryId = null) => {
                                                         await products[i].refetch();
+                                                        if (categoryId) {
+                                                            const productsIndex = categories.sort((a, b) => a.orderNum - b.orderNum).findIndex(c => c.categoryId === parseInt(categoryId));
+                                                            await (products[productsIndex].refetch());
+                                                        }
                                                         await refetchPromotions();
                                                     }}
                                                 />

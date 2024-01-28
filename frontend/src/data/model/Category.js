@@ -1,5 +1,6 @@
 export default class Category {
-    constructor(deleted, name, orderNum, productsUrl, restaurantUrl, selfUrl) {
+    constructor(categoryId, deleted, name, orderNum, productsUrl, restaurantUrl, selfUrl) {
+        this.categoryId = categoryId;
         this.deleted = deleted;
         this.name = name;
         this.orderNum = orderNum;
@@ -10,6 +11,7 @@ export default class Category {
 
     static fromJSON(object) {
         return new Category(
+            object.categoryId,
             object.deleted,
             object.name,
             object.orderNum,

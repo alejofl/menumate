@@ -305,6 +305,10 @@
         },
         "duration": {
             "invalid": "La duración de la promoción es inválida"
+        },
+        "product_category": {
+            "required": "La categoría del producto es obligatoria",
+            "invalid": "La categoría del producto debe ser una de la lista de opciones"
         }
     },
     "reset_password": {
@@ -436,7 +440,9 @@
             "promotion_start": "Fecha y hora de inicio",
             "promotion_end": "Fecha y hora de finalización",
             "promotion_overlapping": "Ya existe una promoción para este producto en el rango de tiempo dado.",
-            "promotions": "Promociones"
+            "promotions": "Promociones",
+            "edit_product": "Editar producto",
+            "change_product_category": "Cambiar categoría del producto"
         }
     },
     "order_placed": {
