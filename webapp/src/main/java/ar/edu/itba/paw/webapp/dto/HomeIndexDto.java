@@ -8,7 +8,7 @@ import java.net.URI;
 public class HomeIndexDto {
     private String restaurantsUriTemplate;
     private URI usersUrl;
-    private URI ordersUrl;
+    private String ordersUriTemplate;
     private String reviewsUriTemplate;
     private URI imagesUrl;
 
@@ -16,7 +16,7 @@ public class HomeIndexDto {
         final HomeIndexDto dto = new HomeIndexDto();
         dto.restaurantsUriTemplate = UriUtils.getRestaurantsUriTemplate(uriInfo);
         dto.usersUrl = UriUtils.getUsersUri(uriInfo);
-        dto.ordersUrl = UriUtils.getOrdersUri(uriInfo);
+        dto.ordersUriTemplate = UriUtils.getOrdersUriTemplate(uriInfo);
         dto.reviewsUriTemplate = UriUtils.getReviewsUriTemplate(uriInfo);
         dto.imagesUrl = UriUtils.getImagesUri(uriInfo);
 
@@ -39,12 +39,12 @@ public class HomeIndexDto {
         this.usersUrl = usersUrl;
     }
 
-    public URI getOrdersUrl() {
-        return ordersUrl;
+    public String getOrdersUriTemplate() {
+        return ordersUriTemplate;
     }
 
-    public void setOrdersUrl(URI ordersUrl) {
-        this.ordersUrl = ordersUrl;
+    public void setOrdersUriTemplate(String ordersUriTemplate) {
+        this.ordersUriTemplate = ordersUriTemplate;
     }
 
     public String getReviewsUriTemplate() {
