@@ -30,7 +30,7 @@ function OrderPlacedAnimation() {
                         <p>{t("order_placed.description")}</p>
                     </div>
                     <div className="m-2">
-                        <Link type="button" className="btn btn-primary-inverted" to="/orders">
+                        <Link type="button" className="btn btn-primary-inverted" to="/user/orders">
                             {t("order_placed.button")}
                         </Link>
                     </div>
