@@ -5,13 +5,12 @@ import AuthContext from "../contexts/AuthContext.jsx";
 import {GET_LANGUAGE_CODE, ORDER_TYPE, PRICE_DECIMAL_DIGITS} from "../utils.js";
 import {useMutation, useQuery} from "@tanstack/react-query";
 import {useUserService} from "../hooks/services/useUserService.js";
-import Error from "../pages/Error.jsx";
 import {ErrorMessage, Field, Form, Formik} from "formik";
 import {PlaceOrderSchema} from "../data/validation.js";
 import ApiContext from "../contexts/ApiContext.jsx";
 import {useOrderService} from "../hooks/services/useOrderService.js";
 
-function PlaceOrderModal({restaurantId, maxTables, dineIn, dineInCompletionTime, deliveryCompletionTime, takeAwayCompletionTime, cart, onClose, onOrderCompleted}) {
+function PlaceOrderModal({restaurantId, maxTables, dineIn, dineInCompletionTime, deliveryCompletionTime, takeAwayCompletionTime, cart, onClose, onOrderCompleted, onError}) {
     const { t, i18n } = useTranslation();
     const api = useApi();
     const apiContext = useContext(ApiContext);
@@ -96,17 +95,9 @@ function PlaceOrderModal({restaurantId, maxTables, dineIn, dineInCompletionTime,
     };
 
     if (userIsError) {
-        return (
-            <>
-                <Error errorNumber={userError.response.status}/>
-            </>
-        );
+        onError(userError.response.status);
     } else if (addressesIsError) {
-        return (
-            <>
-                <Error errorNumber={addressesError.response.status}/>
-            </>
-        );
+        onError(addressesError.response.status);
     }
     if (authContext.isAuthenticated && isPending) {
         return (

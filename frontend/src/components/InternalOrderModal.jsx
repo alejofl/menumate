@@ -5,10 +5,9 @@ import {useOrderService} from "../hooks/services/useOrderService.js";
 import {useRestaurantService} from "../hooks/services/useRestaurantService.js";
 import {useMutation, useQueries, useQuery} from "@tanstack/react-query";
 import {useUserService} from "../hooks/services/useUserService.js";
-import Error from "../pages/Error.jsx";
 import {ORDER_TYPE, PRICE_DECIMAL_DIGITS, STATUS} from "../utils.js";
 
-function InternalOrderModal({orderUrl, showActions, onClose}) {
+function InternalOrderModal({orderUrl, showActions, onClose, onError}) {
     const { t } = useTranslation();
     const api = useApi();
     const orderService = useOrderService(api);
@@ -85,29 +84,14 @@ function InternalOrderModal({orderUrl, showActions, onClose}) {
     };
 
     if (orderIsError) {
-        return (
-            <>
-                <Error errorNumber={orderError.response.status}/>
-            </>
-        );
+        onError(orderError.response.status);
     } else if (orderItemsIsError) {
-        return (
-            <>
-                <Error errorNumber={orderItemsError.response.status}/>
-            </>
-        );
+        onError(orderItemsError.response.status);
     } else if (userIsError) {
-        return (
-            <>
-                <Error errorNumber={userError.response.status}/>
-            </>
-        );
+        onError(userError.response.status);
     } else if (products.some(product => product.isError)) {
-        return (
-            <>
-                <Error errorNumber={500}/>
-            </>
-        );
+        // eslint-disable-next-line no-magic-numbers
+        onError(500);
     }
     return (
         <div className="internal_order_modal">

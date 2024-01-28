@@ -106,6 +106,7 @@ function Restaurant({edit = false}) {
     const [showReviewModal, setShowReviewModal] = useState(false);
     const [showPlaceOrderModal, setShowPlaceOrderModal] = useState(false);
     const [showOrderPlacedAnimation, setShowOrderPlacedAnimation] = useState(false);
+    const [error, setError] = useState(null);
 
     const [queryParams] = useSearchParams();
 
@@ -153,6 +154,12 @@ function Restaurant({edit = false}) {
         return (
             <>
                 <Error errorNumber={userRoleError.response.status}/>
+            </>
+        );
+    } else if (error) {
+        return (
+            <>
+                <Error errorNumber={error}/>
             </>
         );
     } else if (categoriesIsPending || promotionsIsPending || products.some(product => product.isPending) || promotionProducts.some(product => product.isPending) || (authContext.isAuthenticated && userRoleIsPending)) {
@@ -360,6 +367,7 @@ function Restaurant({edit = false}) {
                     reviewsUrl={restaurant.reviewsUrl}
                     isEmployee={authContext.isAuthenticated && userRole.isOrderHandler}
                     onClose={() => setShowReviewModal(false)}
+                    onError={(e) => setError(e)}
                 />
             }
             {restaurant.active && showPlaceOrderModal &&
@@ -373,6 +381,7 @@ function Restaurant({edit = false}) {
                     cart={cart}
                     onOrderCompleted={() => setShowOrderPlacedAnimation(true)}
                     onClose={() => setShowPlaceOrderModal(false)}
+                    onError={(e) => setError(e)}
                 />
             }
         </>

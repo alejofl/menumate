@@ -68,6 +68,10 @@ const router = createBrowserRouter(
             element: <ProtectedRoute><UserOrders/></ProtectedRoute>
         },
         {
+            path: "/user/orders/:orderId",
+            element: <ProtectedRoute><UserOrders/></ProtectedRoute>
+        },
+        {
             path: "/user/restaurants",
             element: <ProtectedRoute><UserRestaurants/></ProtectedRoute>
         },

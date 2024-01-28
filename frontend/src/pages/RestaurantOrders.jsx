@@ -40,6 +40,7 @@ function RestaurantOrders() {
 
     const [showInternalOrderModal, setShowInternalOrderModal] = useState(false);
     const [orderUrl, setOrderUrl] = useState("");
+    const [error, setError] = useState(null);
 
     const queryClient = useQueryClient();
     const { restaurantId } = useParams();
@@ -145,6 +146,12 @@ function RestaurantOrders() {
         return (
             <>
                 <Error errorNumber={403}/>
+            </>
+        );
+    } else if (error) {
+        return (
+            <>
+                <Error errorNumber={error}/>
             </>
         );
     }
@@ -314,6 +321,7 @@ function RestaurantOrders() {
                         orderUrl={orderUrl}
                         showActions={status !== STATUS.DELIVERED && status !== STATUS.CANCELLED}
                         onClose={() => handleOnCloseInternalOrderModal()}>
+                        onError={(e) => setError(e)}
                     </InternalOrderModal>
                 }
             </Page>

@@ -92,6 +92,8 @@ function ModeratorsPanel() {
     const [showEditModeratorErrorAlert, setShowEditModeratorErrorAlert] = useState(false);
     const [moderatorUrl, setModeratorUrl] = useState("");
 
+    const [error, setError] = useState(null);
+
     const handleLoadMoreContent = async () => {
         await fetchNextPage();
     };
@@ -122,6 +124,12 @@ function ModeratorsPanel() {
         return (
             <>
                 <Error errorNumber={moderatorsError.response.status}/>
+            </>
+        );
+    } else if (error) {
+        return (
+            <>
+                <Error errorNumber={error}/>
             </>
         );
     }
@@ -209,6 +217,7 @@ function ModeratorsPanel() {
                         restaurantName={restaurantName}
                         reportsUrl={reportsUrl}
                         onClose={() => setShowReportsModal(false)}
+                        onError={(e) => setError(e)}
                     />
                 }
 

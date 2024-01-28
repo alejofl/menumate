@@ -9,19 +9,23 @@ import {useApi} from "../hooks/useApi.js";
 import Error from "./Error.jsx";
 import ContentLoader from "react-content-loader";
 import {DEFAULT_RESTAURANT_COUNT} from "../utils.js";
-import {useSearchParams} from "react-router-dom";
+import {useParams, useSearchParams} from "react-router-dom";
 import {useOrderService} from "../hooks/services/useOrderService.js";
 import OrderCard from "../components/OrderCard.jsx";
+import ApiContext from "../contexts/ApiContext.jsx";
 
 function UserOrders() {
     const { t } = useTranslation();
     const authContext = useContext(AuthContext);
+    const apiContext = useContext(ApiContext);
     const api = useApi();
     const userService = useUserService(api);
     const orderService = useOrderService(api);
 
+    const { orderId } = useParams();
     const [queryParams] = useSearchParams();
     const [inProgress, setInProgress] = useState(true);
+    const [error, setError] = useState(null);
 
     const { isError: userIsError, data: user, error: userError} = useQuery({
         queryKey: ["user", authContext.selfUrl],
@@ -57,8 +61,6 @@ function UserOrders() {
         enabled: !!user
     });
 
-
-
     const handleLoadMoreContent = async () => {
         await fetchNextPage();
     };
@@ -73,6 +75,12 @@ function UserOrders() {
         return (
             <>
                 <Error errorNumber={ordersError.response.status}/>
+            </>
+        );
+    } else if (error) {
+        return (
+            <>
+                <Error errorNumber={error}/>
             </>
         );
     }
@@ -111,11 +119,18 @@ function UserOrders() {
                                     <p>{t("restaurants.no_results")}</p>
                                 </div>
                                 :
-                                orders.pages.flatMap(page => page.content).map((order, i) => {
-                                    return (
-                                        <OrderCard orderUrl={order.selfUrl} key={i}/>
-                                    );
-                                })
+                                <>
+                                    {
+                                        orderId && <OrderCard orderUrl={`${apiContext.ordersUrl}/${orderId}`} showCard={false} onError={(e) => setError(e)}/>
+                                    }
+                                    {
+                                        orders.pages.flatMap(page => page.content).map((order, i) => {
+                                            return (
+                                                <OrderCard orderUrl={order.selfUrl} key={i} onError={(e) => setError(e)}/>
+                                            );
+                                        })
+                                    }
+                                </>
                     }
                     {
                         isFetchingNextPage &&

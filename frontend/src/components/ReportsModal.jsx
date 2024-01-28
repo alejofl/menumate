@@ -3,12 +3,11 @@ import { useTranslation } from "react-i18next";
 import {useInfiniteQuery, useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {useApi} from "../hooks/useApi.js";
 import ContentLoader from "react-content-loader";
-import Error from "../pages/Error.jsx";
 import {useReportService} from "../hooks/services/useReportService.js";
 import {useRestaurantService} from "../hooks/services/useRestaurantService.js";
 import {useNavigate} from "react-router-dom";
 
-function ReportsModal({restaurantUrl, restaurantId, restaurantName, reportsUrl, onClose}) {
+function ReportsModal({restaurantUrl, restaurantId, restaurantName, reportsUrl, onClose, onError}) {
     const { t, i18n } = useTranslation();
     const navigate = useNavigate();
     const api = useApi();
@@ -92,13 +91,9 @@ function ReportsModal({restaurantUrl, restaurantId, restaurantName, reportsUrl, 
     };
 
     if (reportsIsError) {
-        return (
-            <Error error={reportsError.response.status}/>
-        );
+        onError(reportsError.response.status);
     } else if (restaurantIsError) {
-        return (
-            <Error error={restaurantError.response.status}/>
-        );
+        onError(restaurantError.response.status);
     }
     return (
         <>

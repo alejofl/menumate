@@ -5,18 +5,17 @@ import {useMutation, useQueries, useQuery, useQueryClient} from "@tanstack/react
 import {useOrderService} from "../hooks/services/useOrderService.js";
 import {useApi} from "../hooks/useApi.js";
 import {useRestaurantService} from "../hooks/services/useRestaurantService.js";
-import Error from "../pages/Error.jsx";
 import ContentLoader from "react-content-loader";
 import {NOT_FOUND_STATUS_CODE, ORDER_STATUS, ORDER_TYPE, PRICE_DECIMAL_DIGITS} from "../utils.js";
 import {useNavigate} from "react-router-dom";
 import Rating from "./Rating.jsx";
 import {useReviewService} from "../hooks/services/useReviewService.js";
-import {useContext, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import ApiContext from "../contexts/ApiContext.jsx";
 import {ErrorMessage, Field, Form, Formik} from "formik";
 import {ReviewSchema} from "../data/validation.js";
 
-function OrderCard({orderUrl}) {
+function OrderCard({orderUrl, showCard = true, onError}) {
     const { t, i18n } = useTranslation();
     const apiContext = useContext(ApiContext);
     const api = useApi();
@@ -26,20 +25,20 @@ function OrderCard({orderUrl}) {
 
     const navigate = useNavigate();
 
-    const { isError: orderIsError, data: order} = useQuery({
+    const { isError: orderIsError, data: order, error: orderError} = useQuery({
         queryKey: ["order", orderUrl],
         queryFn: async () => (
             await orderService.getOrder(orderUrl)
         )
     });
-    const { isPending: restaurantIsPending, isError: restaurantIsError, data: restaurant } = useQuery({
+    const { isPending: restaurantIsPending, isError: restaurantIsError, data: restaurant, error: restaurantError } = useQuery({
         queryKey: ["order", orderUrl, "restaurant"],
         queryFn: async () => (
             await restaurantService.getRestaurant(order.restaurantUrl, false)
         ),
         enabled: !!order
     });
-    const { isPending: orderItemsIsPending, isError: orderItemsIsError, data: orderItems} = useQuery({
+    const { isPending: orderItemsIsPending, isError: orderItemsIsError, data: orderItems, error: orderItemsError} = useQuery({
         queryKey: ["order", orderUrl, "items"],
         queryFn: async () => (
             await orderService.getOrderItems(order.itemsUrl)
@@ -109,10 +108,25 @@ function OrderCard({orderUrl}) {
         setSubmitting(false);
     };
 
-    if (orderIsError || restaurantIsError || orderItemsIsError || products.some(product => product.isError)) {
-        return (
-            <Error errorNumber={500}/>
-        );
+    useEffect(() => {
+        if (
+            !(orderIsError || restaurantIsError || orderItemsIsError || products.some(product => product.isError)) &&
+            !(restaurantIsPending || orderItemsIsPending || products.some(product => product.isPending) || reviewIsPending) &&
+            !showCard
+        ) {
+            // eslint-disable-next-line no-undef
+            bootstrap.Modal.getOrCreateInstance(document.querySelector(`#order-${order.orderId}-details`)).show();
+        }
+    }, [restaurantIsPending, orderItemsIsPending, products, reviewIsPending]);
+
+    if (orderIsError) {
+        onError(orderError.response.status);
+    } else if (restaurantIsError) {
+        onError(restaurantError.response.status);
+    } else if (orderItemsIsError) {
+        onError(orderItemsError.response.status);
+    } else if (products.some(product => product.isError)) {
+        onError(500);
     } else if (restaurantIsPending || orderItemsIsPending || products.some(product => product.isPending) || reviewIsPending) {
         return (
             <ContentLoader backgroundColor="#eaeaea" foregroundColor="#e0e0e0" width="15rem" height="20rem">
@@ -122,44 +136,47 @@ function OrderCard({orderUrl}) {
     }
     return (
         <>
-            <div className="order_card">
-                <div className="clickable-object" data-bs-toggle="modal" data-bs-target={`#order-${order.orderId}-details`}>
-                    <div className="card">
-                        <div className="card-body d-flex align-items-center">
-                            <img src={restaurant.logoUrl} alt={restaurant.name}/>
-                            <div>
-                                <small className="text-muted">
-                                    {t("order.title", {id: order.orderId})}
-                                </small>
-                                <h5 className="card-title mb-0">
-                                    {restaurant.name}
-                                </h5>
+            {
+                showCard &&
+                <div className="order_card">
+                    <div className="clickable-object" data-bs-toggle="modal" data-bs-target={`#order-${order.orderId}-details`}>
+                        <div className="card">
+                            <div className="card-body d-flex align-items-center">
+                                <img src={restaurant.logoUrl} alt={restaurant.name}/>
+                                <div>
+                                    <small className="text-muted">
+                                        {t("order.title", {id: order.orderId})}
+                                    </small>
+                                    <h5 className="card-title mb-0">
+                                        {restaurant.name}
+                                    </h5>
+                                </div>
                             </div>
-                        </div>
-                        <ul className="list-group list-group-flush">
-                            <li className="list-group-item">
-                                <i className="bi bi-card-list me-2"></i>
-                                {t(`order.${order.orderType}`)}
-                            </li>
-                            <li className="list-group-item">
-                                <i className="bi bi-calendar-event me-2"></i>
-                                {order.dateOrdered.toLocaleString(i18n.language)}
-                            </li>
-                            <li className="list-group-item">
-                                <i className="bi bi-cart me-2"></i>
-                                {t("order.product_quantity", {count: orderItems.reduce((total, item) => total + item.quantity, 0)})}
-                            </li>
-                            <li className="list-group-item">
-                                <i className="bi bi-cash-stack me-2"></i>
-                                ${orderItems.reduce((total, item, i) => total + item.quantity * products[i].data.price, 0).toFixed(PRICE_DECIMAL_DIGITS)}
-                            </li>
-                        </ul>
-                        <div className="card-footer">
-                            {t(`order.status.order_${order.status}`)}
+                            <ul className="list-group list-group-flush">
+                                <li className="list-group-item">
+                                    <i className="bi bi-card-list me-2"></i>
+                                    {t(`order.${order.orderType}`)}
+                                </li>
+                                <li className="list-group-item">
+                                    <i className="bi bi-calendar-event me-2"></i>
+                                    {order.dateOrdered.toLocaleString(i18n.language)}
+                                </li>
+                                <li className="list-group-item">
+                                    <i className="bi bi-cart me-2"></i>
+                                    {t("order.product_quantity", {count: orderItems.reduce((total, item) => total + item.quantity, 0)})}
+                                </li>
+                                <li className="list-group-item">
+                                    <i className="bi bi-cash-stack me-2"></i>
+                                    ${orderItems.reduce((total, item, i) => total + item.quantity * products[i].data.price, 0).toFixed(PRICE_DECIMAL_DIGITS)}
+                                </li>
+                            </ul>
+                            <div className="card-footer">
+                                {t(`order.status.order_${order.status}`)}
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            }
 
             <div className="modal fade order_details_modal" id={`order-${order.orderId}-details`} tabIndex="-1">
                 <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">

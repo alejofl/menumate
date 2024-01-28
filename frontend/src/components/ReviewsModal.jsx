@@ -9,7 +9,7 @@ import InternalOrderModal from "./InternalOrderModal.jsx";
 import {ErrorMessage, Field, Form, Formik} from "formik";
 import {ReviewReplySchema} from "../data/validation.js";
 
-function ReviewsModal({reviewsUrl, isEmployee, onClose}) {
+function ReviewsModal({reviewsUrl, isEmployee, onClose, onError}) {
     const { t, i18n } = useTranslation();
     const api = useApi();
     const reviewService = useReviewService(api);
@@ -226,7 +226,7 @@ function ReviewsModal({reviewsUrl, isEmployee, onClose}) {
                     </div>
                 </div>
             </div>
-            {showInternalOrderModal && <InternalOrderModal orderUrl={orderUrl} onClose={handleCloseOrderModal} showActions={false}/>}
+            {showInternalOrderModal && <InternalOrderModal orderUrl={orderUrl} onClose={handleCloseOrderModal} showActions={false} onError={(e) => onError(e)}/>}
         </div>
     );
 }
