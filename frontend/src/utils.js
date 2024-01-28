@@ -27,7 +27,7 @@ export const ACTIVATE_RESTAURANT_CONTENT_TYPE = "application/vnd.menumate.restau
 export const DELETE_RESTAURANT_CONTENT_TYPE = "application/vnd.menumate.restaurants.delete.v1+json";
 export const JSON_CONTENT_TYPE = "application/json";
 
-export const EMAIL_ALREADY_IN_USE_ERROR = {"message":"Email already in use!", "path":"registerUser.arg0.email"};
+export const EMAIL_ALREADY_IN_USE_ERROR = "registerUser.arg0.email";
 export const OVERLAPPING_PROMOTIONS_ERROR = "createPromotion.arg1";
 export const IMAGE_MAX_SIZE = 1024 * 1024 * 5; // 1024 B = 1 KB && 1024 B * 1024 = 1 MB ==> MAX_SIZE = 5 MB
 

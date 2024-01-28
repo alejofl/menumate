@@ -10,7 +10,11 @@ import ApiContext from "../contexts/ApiContext.jsx";
 import {useMutation} from "@tanstack/react-query";
 import {useUserService} from "../hooks/services/useUserService.js";
 import AuthContext from "../contexts/AuthContext.jsx";
-import {BAD_REQUEST_STATUS_CODE, EMAIL_ALREADY_IN_USE_ERROR, GET_LANGUAGE_CODE} from "../utils.js";
+import {
+    BAD_REQUEST_STATUS_CODE,
+    EMAIL_ALREADY_IN_USE_ERROR,
+    GET_LANGUAGE_CODE
+} from "../utils.js";
 
 function Register() {
     const { t, i18n } = useTranslation();
@@ -22,6 +26,7 @@ function Register() {
 
     const [queryParams] = useSearchParams();
     const [emailAlreadyInUse, setEmailAlreadyInUse] = useState(false);
+    const [showRegisterError, setShowRegisterError] = useState(false);
 
     const registerMutation = useMutation({
         mutationFn: async ({name, email, password}) => {
@@ -45,10 +50,10 @@ function Register() {
             {
                 onSuccess: () => navigate("/auth/login?alertType=success&alertMessage=login.register_success"),
                 onError: (error) => {
-                    if (error.response.status === BAD_REQUEST_STATUS_CODE) {
-                        setEmailAlreadyInUse(error.response.data.some((error) => (
-                            error.message === EMAIL_ALREADY_IN_USE_ERROR.message && error.path === EMAIL_ALREADY_IN_USE_ERROR.path
-                        )));
+                    if (error.response.status === BAD_REQUEST_STATUS_CODE && error.response.data.some(err => err.path === EMAIL_ALREADY_IN_USE_ERROR)) {
+                        setEmailAlreadyInUse(true);
+                    } else {
+                        setShowRegisterError(true);
                     }
                 }
             }
@@ -68,6 +73,7 @@ function Register() {
                 <div className="card">
                     <div className="card-body">
                         <h2 className="card-title mb-3">{t("titles.signup")}</h2>
+                        {showRegisterError && <div className="alert alert-danger">{t("signup.error")}</div>}
                         <Formik
                             initialValues={{
                                 name: "",

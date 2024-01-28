@@ -323,7 +323,8 @@
         "repeat_password": "Confirmar contraseña",
         "button": "Regístrate",
         "already_have_account": "¿Ya tienes una cuenta?",
-        "login_here": "¡Inicia sesión aquí!"
+        "login_here": "¡Inicia sesión aquí!",
+        "error": "Ocurrió un error al crear tu cuenta. Por favor, intente de nuevo más tarde."
     },
     "restaurant": {
         "no_description": "Este restaurante no tiene una descripción.",
