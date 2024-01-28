@@ -265,10 +265,11 @@ public class RestaurantController {
             @PathParam("restaurantId") final long restaurantId,
             @PathParam("categoryId") final long categoryId,
             @PathParam("productId") final long productId,
-            @Valid @NotNull final ProductForm productForm
+            @Valid @NotNull final ProductForm productForm,
+            @Context Request request
     ) {
-        productService.update(restaurantId, categoryId, productId, productForm.getName(), productForm.getPrice(), productForm.getDescription(), productForm.getImageId());
-        return Response.noContent().build();
+        final Product product = productService.update(restaurantId, categoryId, productId, productForm.getName(), productForm.getPrice(), productForm.getDescription(), productForm.getImageId());
+        return ControllerUtils.buildResponseUsingEtag(request, product.hashCode(), () -> ProductDto.fromProduct(uriInfo, product));
     }
 
     @PATCH
