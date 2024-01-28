@@ -57,7 +57,7 @@ public class ImageJpaDaoTest {
         imageDao.update(ImageConstants.EXISTING_IMAGE_ID, ImageConstants.NON_EXISTING_IMAGE_INFO);
         em.flush();
 
-        Image image = em.find(Image.class, ImageConstants.EXISTING_IMAGE_ID);
+        final Image image = em.find(Image.class, ImageConstants.EXISTING_IMAGE_ID);
         assertArrayEquals(ImageConstants.NON_EXISTING_IMAGE_INFO, image.getBytes());
     }
 
@@ -71,7 +71,7 @@ public class ImageJpaDaoTest {
 
     @Test
     public void testGetExistingImageById() {
-        Optional<Image> image = imageDao.getById(ImageConstants.EXISTING_IMAGE_ID);
+        final Optional<Image> image = imageDao.getById(ImageConstants.EXISTING_IMAGE_ID);
         assertTrue(image.isPresent());
         assertArrayEquals(ImageConstants.EXISTING_IMAGE_INFO, image.get().getBytes());
         assertEquals(Optional.of(ImageConstants.EXISTING_IMAGE_ID).get(), image.get().getImageId());
@@ -79,7 +79,7 @@ public class ImageJpaDaoTest {
 
     @Test
     public void testGetNonExistingImageById() {
-        Optional<Image> image = imageDao.getById(ImageConstants.NON_EXISTING_IMAGE_ID);
+        final Optional<Image> image = imageDao.getById(ImageConstants.NON_EXISTING_IMAGE_ID);
         assertFalse(image.isPresent());
     }
 

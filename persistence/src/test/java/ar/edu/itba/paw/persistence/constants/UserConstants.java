@@ -38,5 +38,6 @@ public final class UserConstants {
     public static final RestaurantRoleLevel ORDER_HANDLER_ROLE = RestaurantRoleLevel.ORDER_HANDLER;
 
     private UserConstants() {
+        throw new AssertionError();
     }
 }

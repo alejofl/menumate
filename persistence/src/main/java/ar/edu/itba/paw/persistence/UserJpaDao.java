@@ -32,14 +32,14 @@ public class UserJpaDao implements UserDao {
 
     @Override
     public Optional<User> getByEmail(String email) {
-        TypedQuery<User> query = em.createQuery("FROM User WHERE email = :email", User.class);
+        final TypedQuery<User> query = em.createQuery("FROM User WHERE email = :email", User.class);
         query.setParameter("email", email);
         return query.getResultList().stream().findFirst();
     }
 
     @Override
     public Optional<UserAddress> getAddressById(long userId, long addressId) {
-        TypedQuery<UserAddress> query = em.createQuery(
+        final TypedQuery<UserAddress> query = em.createQuery(
                 "FROM UserAddress WHERE userId = :userId AND addressId = :addressId",
                 UserAddress.class
         );
@@ -59,14 +59,14 @@ public class UserJpaDao implements UserDao {
     private static final String GET_LASTUSED_TO_DELETE_SQL = "SELECT last_used FROM user_addresses WHERE name IS NULL ORDER BY last_used DESC LIMIT 1 OFFSET " + MAX_USER_ADDRESSES_REMEMBERED;
 
     private int deleteExcessUnnamedAddresses(long userId) {
-        Query timestampQuery = em.createNativeQuery(GET_LASTUSED_TO_DELETE_SQL);
-        List<?> resultList = timestampQuery.getResultList();
+        final Query timestampQuery = em.createNativeQuery(GET_LASTUSED_TO_DELETE_SQL);
+        final List<?> resultList = timestampQuery.getResultList();
 
         if (resultList.isEmpty())
             return 0;
 
-        LocalDateTime minLastUsed = ((Timestamp) resultList.get(0)).toLocalDateTime();
-        Query deleteQuery = em.createQuery("DELETE FROM UserAddress WHERE name IS NULL AND lastUsed <= :timestamp");
+        final LocalDateTime minLastUsed = ((Timestamp) resultList.get(0)).toLocalDateTime();
+        final Query deleteQuery = em.createQuery("DELETE FROM UserAddress WHERE name IS NULL AND lastUsed <= :timestamp");
         deleteQuery.setParameter("timestamp", minLastUsed);
         return deleteQuery.executeUpdate();
     }
@@ -85,11 +85,11 @@ public class UserJpaDao implements UserDao {
             LOGGER.info("Registered {} named address for user id {} with address id {}, {} old rows deleted", name == null ? "un" : "", userId, ua.getAddressId(), rows);
             return ua;
         } catch (PersistenceException e) {
-            Throwable cause = e.getCause();
+            final Throwable cause = e.getCause();
             if (cause instanceof ConstraintViolationException) {
-                ConstraintViolationException c = (ConstraintViolationException) cause;
-                String constraintName = c.getConstraintName();
-                String problematicParam = constraintName == null ? null :
+                final ConstraintViolationException c = (ConstraintViolationException) cause;
+                final String constraintName = c.getConstraintName();
+                final String problematicParam = constraintName == null ? null :
                         constraintName.contains("user_id_address") ? "address" :
                                 constraintName.contains("user_id_name") ? "name" : "address or name";
 
@@ -113,11 +113,11 @@ public class UserJpaDao implements UserDao {
             LOGGER.info("Updated user id {} address id {}, set address{}", userId, addressId, name == null ? "" : " and name");
             return ua;
         } catch (PersistenceException e) {
-            Throwable cause = e.getCause();
+            final Throwable cause = e.getCause();
             if (cause instanceof ConstraintViolationException) {
-                ConstraintViolationException c = (ConstraintViolationException) cause;
-                String constraintName = c.getConstraintName();
-                String problematicParam = constraintName == null ? null :
+                final ConstraintViolationException c = (ConstraintViolationException) cause;
+                final String constraintName = c.getConstraintName();
+                final String problematicParam = constraintName == null ? null :
                         constraintName.contains("user_id_address") ? "address" :
                         constraintName.contains("user_id_name") ? "name" : null;
 
@@ -132,13 +132,13 @@ public class UserJpaDao implements UserDao {
     @Override
     public UserAddress refreshAddress(long userId, String address) {
         // Update the UserAddress if it exists
-        TypedQuery<UserAddress> query = em.createQuery(
+        final TypedQuery<UserAddress> query = em.createQuery(
                 "FROM UserAddress WHERE userId = :userId AND address = :address",
                 UserAddress.class
         );
         query.setParameter("userId", userId);
         query.setParameter("address", address);
-        Optional<UserAddress> maybeAddress = query.getResultList().stream().findFirst();
+        final Optional<UserAddress> maybeAddress = query.getResultList().stream().findFirst();
 
         // If the UserAddress exists and was updated, that's it; it's been refreshed.
         if (maybeAddress.isPresent()) {
@@ -162,7 +162,7 @@ public class UserJpaDao implements UserDao {
 
     @Override
     public void deleteAddress(long userId, long addressId) {
-        Query addressQuery = em.createQuery("DELETE FROM UserAddress WHERE userId = :userId AND addressId = :addressId");
+        final Query addressQuery = em.createQuery("DELETE FROM UserAddress WHERE userId = :userId AND addressId = :addressId");
         addressQuery.setParameter("userId", userId);
         addressQuery.setParameter("addressId", addressId);
         int rows = addressQuery.executeUpdate();

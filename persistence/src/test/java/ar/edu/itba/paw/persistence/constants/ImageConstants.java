@@ -8,5 +8,6 @@ public final class ImageConstants {
     public static final byte[] EXISTING_IMAGE_INFO = {33, 18, 86};
 
     private ImageConstants() {
+        throw new AssertionError();
     }
 }

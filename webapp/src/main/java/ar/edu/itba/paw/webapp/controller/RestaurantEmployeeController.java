@@ -61,7 +61,7 @@ public class RestaurantEmployeeController {
     ) {
         final RestaurantRoleLevel role = restaurantRoleService.getRole(userId, restaurantId).orElseThrow(RoleNotFoundException::new);
         final User user = userService.getById(userId).orElseThrow(UserNotFoundException::new);
-        return ControllerUtils.buildResponseUsingEtag(request, Objects.hash(restaurantId, userId, role), ()-> RestaurantRoleDto.from(uriInfo, restaurantId, user, role));
+        return ControllerUtils.buildResponseUsingEtag(request, Objects.hash(restaurantId, user.hashCode(), role), ()-> RestaurantRoleDto.from(uriInfo, restaurantId, user, role));
     }
 
     @POST

@@ -14,5 +14,6 @@ public final class CategoryConstants {
     public static final String CATEGORY_DESCRIPTION = "description";
 
     private CategoryConstants() {
+        throw new AssertionError();
     }
 }

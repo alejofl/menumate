@@ -169,7 +169,7 @@ public class CategoryJpaDaoTest {
     @Test
     @Rollback
     public void testMoveProductOneCategoryDown() {
-        Product product = em.find(Product.class, ProductConstants.PRODUCT_FROM_CATEGORY_RESTAURANT_0[0]);
+        final Product product = em.find(Product.class, ProductConstants.PRODUCT_FROM_CATEGORY_RESTAURANT_0[0]);
         long oldCategoryId = product.getCategoryId();
         categoryDao.moveProduct(product.getProductId(), CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[1]);
         em.flush();
@@ -182,7 +182,7 @@ public class CategoryJpaDaoTest {
     @Test
     @Rollback
     public void testMoveProductTwoCategoriesDown() {
-        Product product = em.find(Product.class, ProductConstants.PRODUCT_FROM_CATEGORY_RESTAURANT_0[0]);
+        final Product product = em.find(Product.class, ProductConstants.PRODUCT_FROM_CATEGORY_RESTAURANT_0[0]);
         long oldCategoryId = product.getCategoryId();
         categoryDao.moveProduct(product.getProductId(), CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[2]);
         em.flush();
@@ -195,7 +195,7 @@ public class CategoryJpaDaoTest {
     @Test
     @Rollback
     public void testMoveProductNoCategories() {
-        Product product = em.find(Product.class, ProductConstants.PRODUCT_FROM_CATEGORY_RESTAURANT_0[0]);
+        final Product product = em.find(Product.class, ProductConstants.PRODUCT_FROM_CATEGORY_RESTAURANT_0[0]);
         categoryDao.moveProduct(product.getProductId(), CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[0]);
         em.flush();
 
@@ -206,7 +206,7 @@ public class CategoryJpaDaoTest {
     @Test
     @Rollback
     public void testMoveProductOneCategoryUp() {
-        Product product = em.find(Product.class, ProductConstants.PRODUCT_FROM_CATEGORY_RESTAURANT_0[0]);
+        final Product product = em.find(Product.class, ProductConstants.PRODUCT_FROM_CATEGORY_RESTAURANT_0[0]);
         product.setCategoryId(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[1]);
         em.flush();
 
@@ -222,7 +222,7 @@ public class CategoryJpaDaoTest {
     @Test
     @Rollback
     public void testMoveProductTwoCategoriesUp() {
-        Product product = em.find(Product.class, ProductConstants.PRODUCT_FROM_CATEGORY_RESTAURANT_0[0]);
+        final Product product = em.find(Product.class, ProductConstants.PRODUCT_FROM_CATEGORY_RESTAURANT_0[0]);
         product.setCategoryId(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[2]);
         em.flush();
 

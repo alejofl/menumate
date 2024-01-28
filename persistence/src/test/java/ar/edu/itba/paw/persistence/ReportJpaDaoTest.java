@@ -95,8 +95,8 @@ public class ReportJpaDaoTest {
 
     @Test
     public void testGetAllAscending() {
-        PaginatedResult<Report> page = reportDao.get(null, null, null, null, false, 1, ReportConstants.REPORT_IDS.length);
-        List<Report> results = page.getResult();
+        final PaginatedResult<Report> page = reportDao.get(null, null, null, null, false, 1, ReportConstants.REPORT_IDS.length);
+        final List<Report> results = page.getResult();
 
         // Assert all IDs are present
         assertEquals(ReportConstants.REPORT_IDS.length, results.size());
@@ -112,8 +112,8 @@ public class ReportJpaDaoTest {
 
     @Test
     public void testGetAllDescending() {
-        PaginatedResult<Report> page = reportDao.get(null, null, null, null, true, 1, ReportConstants.REPORT_IDS.length);
-        List<Report> results = page.getResult();
+        final PaginatedResult<Report> page = reportDao.get(null, null, null, null, true, 1, ReportConstants.REPORT_IDS.length);
+        final List<Report> results = page.getResult();
 
         // Assert all IDs are present
         assertEquals(ReportConstants.REPORT_IDS.length, results.size());
@@ -128,11 +128,11 @@ public class ReportJpaDaoTest {
 
     @Test
     public void testGetPaging() {
-        PaginatedResult<Report> page1 = reportDao.get(null, null, null, null, true, 1, 3);
-        PaginatedResult<Report> page2 = reportDao.get(null, null, null, null, true, 2, 3);
+        final PaginatedResult<Report> page1 = reportDao.get(null, null, null, null, true, 1, 3);
+        final PaginatedResult<Report> page2 = reportDao.get(null, null, null, null, true, 2, 3);
 
-        List<Report> results1 = page1.getResult();
-        List<Report> results2 = page2.getResult();
+        final List<Report> results1 = page1.getResult();
+        final List<Report> results2 = page2.getResult();
 
         assertEquals(ReportConstants.REPORT_IDS.length, page1.getTotalCount());
         assertEquals(ReportConstants.REPORT_IDS.length, page2.getTotalCount());
@@ -155,7 +155,7 @@ public class ReportJpaDaoTest {
 
     @Test
     public void testGetUnhandled() {
-        List<Report> results = reportDao.get(null, null, null, false, false, 1, ReportConstants.REPORT_IDS.length).getResult();
+        final List<Report> results = reportDao.get(null, null, null, false, false, 1, ReportConstants.REPORT_IDS.length).getResult();
 
         assertEquals(ReportConstants.UNHANDLED_REPORT_IDS.length, results.size());
         assertFalse(Arrays.stream(ReportConstants.UNHANDLED_REPORT_IDS).anyMatch(
@@ -171,7 +171,7 @@ public class ReportJpaDaoTest {
 
     @Test
     public void testGetByHandler() {
-        List<Report> results = reportDao.get(null, null, UserConstants.USER_ID_MODERATOR_ROLE, true, true, 1, ReportConstants.REPORT_IDS.length).getResult();
+        final List<Report> results = reportDao.get(null, null, UserConstants.USER_ID_MODERATOR_ROLE, true, true, 1, ReportConstants.REPORT_IDS.length).getResult();
 
         assertEquals(ReportConstants.HANDLED_REPORT_IDS.length, results.size());
         assertFalse(Arrays.stream(ReportConstants.HANDLED_REPORT_IDS).anyMatch(
@@ -187,7 +187,7 @@ public class ReportJpaDaoTest {
 
     @Test
     public void testGetByRestaurant() {
-        List<Report> results = reportDao.get(ReportConstants.RESTAURANT_IDS_WITH_REPORTS[0], null, null, null, true, 1, ReportConstants.REPORT_IDS.length).getResult();
+        final List<Report> results = reportDao.get(ReportConstants.RESTAURANT_IDS_WITH_REPORTS[0], null, null, null, true, 1, ReportConstants.REPORT_IDS.length).getResult();
 
         assertEquals(ReportConstants.REPORT_IDS_FROM_FIRST_RESTAURANT.length, results.size());
         assertFalse(Arrays.stream(ReportConstants.REPORT_IDS_FROM_FIRST_RESTAURANT).anyMatch(
@@ -204,7 +204,7 @@ public class ReportJpaDaoTest {
 
     @Test
     public void testGetByRestaurantWithNoReports() {
-        List<Report> results = reportDao.get(RestaurantConstants.RESTAURANT_ID_WITH_NO_REPORTS, null, null, null, true, 1, ReportConstants.REPORT_IDS.length).getResult();
+        final List<Report> results = reportDao.get(RestaurantConstants.RESTAURANT_ID_WITH_NO_REPORTS, null, null, null, true, 1, ReportConstants.REPORT_IDS.length).getResult();
         assertEquals(0, results.size());
     }
 
@@ -217,8 +217,8 @@ public class ReportJpaDaoTest {
         jdbcTemplate.execute("INSERT INTO restaurant_reports (report_id, restaurant_id, reporter_user_id, handler_user_id, date_reported, date_handled, comment) VALUES (2225, "+ReportConstants.RESTAURANT_IDS_WITH_REPORTS[1]+", null, null, now(), null, 'I also do not like the color red in their logo')");
         jdbcTemplate.execute("INSERT INTO restaurant_reports (report_id, restaurant_id, reporter_user_id, handler_user_id, date_reported, date_handled, comment) VALUES (2226, "+RestaurantConstants.RESTAURANT_ID_WITH_NO_REPORTS+", null, "+UserConstants.USER_ID_MODERATOR_ROLE+", now(), now(), 'I wish I could afford this')");
 
-        PaginatedResult<Pair<Restaurant, Integer>> page = reportDao.getCountByRestaurant(1, RestaurantConstants.RESTAURANT_IDS.length);
-        List<Pair<Restaurant, Integer>> results = page.getResult();
+        final PaginatedResult<Pair<Restaurant, Integer>> page = reportDao.getCountByRestaurant(1, RestaurantConstants.RESTAURANT_IDS.length);
+        final List<Pair<Restaurant, Integer>> results = page.getResult();
 
         assertEquals(RestaurantConstants.RESTAURANT_IDS.length, page.getTotalCount());
         assertEquals(RestaurantConstants.RESTAURANT_IDS.length, results.size());
@@ -241,11 +241,11 @@ public class ReportJpaDaoTest {
         jdbcTemplate.execute("INSERT INTO restaurant_reports (report_id, restaurant_id, reporter_user_id, handler_user_id, date_reported, date_handled, comment) VALUES (2225, "+ReportConstants.RESTAURANT_IDS_WITH_REPORTS[1]+", null, null, now(), null, 'I also do not like the color red in their logo')");
         jdbcTemplate.execute("INSERT INTO restaurant_reports (report_id, restaurant_id, reporter_user_id, handler_user_id, date_reported, date_handled, comment) VALUES (2226, "+RestaurantConstants.RESTAURANT_ID_WITH_NO_REPORTS+", null, "+UserConstants.USER_ID_MODERATOR_ROLE+", now(), now(), 'I wish I could afford this')");
 
-        PaginatedResult<Pair<Restaurant, Integer>> page1 = reportDao.getCountByRestaurant(1, 3);
-        PaginatedResult<Pair<Restaurant, Integer>> page2 = reportDao.getCountByRestaurant(2, 3);
+        final PaginatedResult<Pair<Restaurant, Integer>> page1 = reportDao.getCountByRestaurant(1, 3);
+        final PaginatedResult<Pair<Restaurant, Integer>> page2 = reportDao.getCountByRestaurant(2, 3);
 
-        List<Pair<Restaurant, Integer>> results1 = page1.getResult();
-        List<Pair<Restaurant, Integer>> results2 = page2.getResult();
+        final List<Pair<Restaurant, Integer>> results1 = page1.getResult();
+        final List<Pair<Restaurant, Integer>> results2 = page2.getResult();
 
         assertEquals(RestaurantConstants.RESTAURANT_IDS.length, page1.getTotalCount());
         assertEquals(3, results1.size());

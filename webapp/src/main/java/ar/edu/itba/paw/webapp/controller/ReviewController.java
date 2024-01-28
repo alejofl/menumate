@@ -42,15 +42,15 @@ public class ReviewController {
     @GET
     @Consumes(CustomMediaType.APPLICATION_REVIEW)
     public Response getReviews(@Valid @BeanParam final GetReviewsForm getReviewsForm) {
-        PaginatedResult<Review> page = reviewService.get(
+        final PaginatedResult<Review> page = reviewService.get(
                 getReviewsForm.getUserId(),
                 getReviewsForm.getRestaurantId(),
                 getReviewsForm.getPageOrDefault(),
                 getReviewsForm.getSizeOrDefault(ControllerUtils.DEFAULT_REVIEWS_PAGE_SIZE)
         );
 
-        List<ReviewDto> dtoList = ReviewDto.fromReviewCollection(uriInfo, page.getResult());
-        Response.ResponseBuilder builder = Response.ok(new GenericEntity<List<ReviewDto>>(dtoList) {});
+        final List<ReviewDto> dtoList = ReviewDto.fromReviewCollection(uriInfo, page.getResult());
+        final Response.ResponseBuilder builder = Response.ok(new GenericEntity<List<ReviewDto>>(dtoList) {});
         return ControllerUtils.addPagingLinks(builder, page, uriInfo).build();
     }
 

@@ -149,7 +149,7 @@ public class RestaurantRoleServiceImpl implements RestaurantRoleService {
 
     @Override
     public List<Pair<User, RestaurantRoleLevel>> getByRestaurant(long restaurantId) {
-        List<Pair<User, RestaurantRoleLevel>> roles = new ArrayList<>();
+        final List<Pair<User, RestaurantRoleLevel>> roles = new ArrayList<>();
 
         final Restaurant restaurant = restaurantDao.getById(restaurantId).orElse(null);
         if (restaurant == null)

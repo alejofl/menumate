@@ -23,5 +23,6 @@ public final class OrderConstants {
     };
 
     private OrderConstants() {
+        throw new AssertionError();
     }
 }

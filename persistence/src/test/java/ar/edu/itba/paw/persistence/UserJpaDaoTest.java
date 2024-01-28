@@ -54,7 +54,7 @@ public class UserJpaDaoTest {
 
     @Test
     public void testFindActiveUserById() {
-        Optional<User> maybeUser = userDao.getById(UserConstants.ACTIVE_USER_ID);
+        final Optional<User> maybeUser = userDao.getById(UserConstants.ACTIVE_USER_ID);
 
         assertTrue(maybeUser.isPresent());
         assertEquals(UserConstants.ACTIVE_USER_ID, maybeUser.get().getUserId().longValue());
@@ -66,7 +66,7 @@ public class UserJpaDaoTest {
 
     @Test
     public void testFindNonActiveUserById() {
-        Optional<User> maybeUser = userDao.getById(UserConstants.INACTIVE_USER_ID);
+        final Optional<User> maybeUser = userDao.getById(UserConstants.INACTIVE_USER_ID);
 
         assertTrue(maybeUser.isPresent());
         assertEquals(UserConstants.INACTIVE_USER_ID, maybeUser.get().getUserId().longValue());
@@ -78,7 +78,7 @@ public class UserJpaDaoTest {
 
     @Test
     public void testFindActiveUserByEmail() {
-        Optional<User> maybeUser = userDao.getByEmail(UserConstants.ACTIVE_USER_EMAIL);
+        final Optional<User> maybeUser = userDao.getByEmail(UserConstants.ACTIVE_USER_EMAIL);
 
         assertTrue(maybeUser.isPresent());
         assertEquals(UserConstants.ACTIVE_USER_ID, maybeUser.get().getUserId().longValue());
@@ -91,20 +91,20 @@ public class UserJpaDaoTest {
 
     @Test
     public void testFindByIdDoesNotExist() {
-        Optional<User> maybeUser = userDao.getById(NON_EXISTENT_USER_ID);
+        final Optional<User> maybeUser = userDao.getById(NON_EXISTENT_USER_ID);
         assertFalse(maybeUser.isPresent());
     }
 
     @Test
     public void testFindByEmailDoesNotExist() {
-        Optional<User> maybeUser = userDao.getByEmail(NON_EXISTENT_USER_EMAIL);
+        final Optional<User> maybeUser = userDao.getByEmail(NON_EXISTENT_USER_EMAIL);
         assertFalse(maybeUser.isPresent());
     }
 
     @Test
     @Rollback
     public void testCreate() {
-        User user = userDao.create(NON_EXISTENT_USER_EMAIL, UserConstants.PASSWORD, UserConstants.USERNAME, UserConstants.PREFERRED_LANGUAGE);
+        final User user = userDao.create(NON_EXISTENT_USER_EMAIL, UserConstants.PASSWORD, UserConstants.USERNAME, UserConstants.PREFERRED_LANGUAGE);
         em.flush();
 
         assertNotNull(user);

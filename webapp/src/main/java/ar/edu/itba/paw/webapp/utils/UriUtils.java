@@ -42,6 +42,15 @@ public final class UriUtils {
         return uriInfo.getBaseUriBuilder().path(ORDERS_URL).build();
     }
 
+    public static String getOrdersUriTemplate(final UriInfo uriInfo) {
+        return UriComponentsBuilder.fromUri(
+                uriInfo
+                        .getBaseUriBuilder()
+                        .path(ORDERS_URL)
+                        .build()
+        ).path("{/orderId}").build().toUriString();
+    }
+
     public static URI getReviewsUri(final UriInfo uriInfo) {
         return uriInfo.getBaseUriBuilder().path(REVIEWS_URL).build();
     }

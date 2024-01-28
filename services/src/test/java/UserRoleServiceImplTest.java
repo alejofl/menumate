@@ -41,7 +41,7 @@ public class UserRoleServiceImplTest {
 
     @Test
     public void userHasRole() {
-        UserRole userRole = mock(UserRole.class);
+        final UserRole userRole = mock(UserRole.class);
         when(userRole.getLevel()).thenReturn(MODERATOR_ROLE);
         when(userRoleDao.getRole(DEFAULT_USER_ID)).thenReturn(Optional.of(userRole));
 
@@ -61,7 +61,7 @@ public class UserRoleServiceImplTest {
 
     @Test
     public void getUserExistingRole() {
-        UserRole userRole = mock(UserRole.class);
+        final UserRole userRole = mock(UserRole.class);
         when(userRole.getLevel()).thenReturn(MODERATOR_ROLE);
         when(userRoleDao.getRole(DEFAULT_USER_ID)).thenReturn(Optional.of(userRole));
 
@@ -82,7 +82,7 @@ public class UserRoleServiceImplTest {
 
     @Test
     public void setExistingUserExistingRole() {
-        User user = mock(User.class);
+        final User user = mock(User.class);
         when(userDao.getByEmail(DEFAULT_USER_EMAIL)).thenReturn(Optional.of(user));
 
         assertTrue(userRoleService.setRole(DEFAULT_USER_EMAIL, MODERATOR_ROLE));
@@ -95,7 +95,7 @@ public class UserRoleServiceImplTest {
 
     @Test
     public void setNotExistingUserExistingRole() {
-        User user = mock(User.class);
+        final User user = mock(User.class);
         when(user.getUserId()).thenReturn(DEFAULT_USER_ID);
         when(userDao.getByEmail(DEFAULT_USER_EMAIL)).thenReturn(Optional.empty());
         when(userDao.create(anyString(), any(), anyString(), anyString())).thenReturn(user);
@@ -104,7 +104,7 @@ public class UserRoleServiceImplTest {
 
     @Test
     public void setExistingUserSameRole() {
-        User user = mock(User.class);
+        final User user = mock(User.class);
         when(user.getUserId()).thenReturn(DEFAULT_USER_ID);
 
         UserRole userRole = spy(UserRole.class);

@@ -47,8 +47,8 @@ public class EmailServiceImpl implements EmailService {
 
     private void sendHtmlMessage(String to, String subject, String htmlBody) {
         try {
-            MimeMessage message = emailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, "UTF-8");
+            final MimeMessage message = emailSender.createMimeMessage();
+            final MimeMessageHelper helper = new MimeMessageHelper(message, "UTF-8");
             helper.setTo(to);
             helper.setFrom(environment.getProperty("email.address"));
             helper.setSubject(subject);
@@ -64,20 +64,20 @@ public class EmailServiceImpl implements EmailService {
     // This method will concatenate the baseUrl.
     // Only one link should be served for each email.
     private void sendMessageUsingThymeleafTemplate(String template, String to, String subject, Locale locale, Map<String, Object> params) {
-        Context thymeleafContext = new Context(locale);
+        final Context thymeleafContext = new Context(locale);
         final String baseUrl = environment.getProperty("email.base_url");
         if (params.containsKey("link")) {
             params.put("link", baseUrl + params.get("link"));
         }
         thymeleafContext.setVariables(params);
-        String htmlBody = thymeleafTemplateEngine.process(template, thymeleafContext);
+        final String htmlBody = thymeleafTemplateEngine.process(template, thymeleafContext);
         sendHtmlMessage(to, subject, htmlBody);
     }
 
     @Async
     @Override
     public void sendOrderReceivalForUser(Order order) {
-        Locale locale = new Locale(order.getUser().getPreferredLanguage());
+        final Locale locale = new Locale(order.getUser().getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
         params.put("recipientName", order.getUser().getName());
         params.put("orderId", order.getOrderId());
@@ -96,8 +96,8 @@ public class EmailServiceImpl implements EmailService {
     @Async
     @Override
     public void sendOrderReceivalForRestaurant(Order order) {
-        Restaurant restaurant = order.getRestaurant();
-        Locale locale = new Locale(restaurant.getOwner().getPreferredLanguage());
+        final Restaurant restaurant = order.getRestaurant();
+        final Locale locale = new Locale(restaurant.getOwner().getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
         params.put("userName", order.getUser().getName());
         params.put("orderId", order.getOrderId());
@@ -116,7 +116,7 @@ public class EmailServiceImpl implements EmailService {
     @Async
     @Override
     public void sendOrderConfirmation(Order order) {
-        Locale locale = new Locale(order.getUser().getPreferredLanguage());
+        final Locale locale = new Locale(order.getUser().getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
         params.put("recipientName", order.getUser().getName());
         params.put("orderId", order.getOrderId());
@@ -134,7 +134,7 @@ public class EmailServiceImpl implements EmailService {
     @Async
     @Override
     public void sendOrderReady(Order order) {
-        Locale locale = new Locale(order.getUser().getPreferredLanguage());
+        final Locale locale = new Locale(order.getUser().getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
         params.put("recipientName", order.getUser().getName());
         params.put("orderId", order.getOrderId());
@@ -152,7 +152,7 @@ public class EmailServiceImpl implements EmailService {
     @Async
     @Override
     public void sendOrderDelivered(Order order) {
-        Locale locale = new Locale(order.getUser().getPreferredLanguage());
+        final Locale locale = new Locale(order.getUser().getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
         params.put("recipientName", order.getUser().getName());
         params.put("orderId", order.getOrderId());
@@ -170,7 +170,7 @@ public class EmailServiceImpl implements EmailService {
     @Async
     @Override
     public void sendOrderCancelled(Order order) {
-        Locale locale = new Locale(order.getUser().getPreferredLanguage());
+        final Locale locale = new Locale(order.getUser().getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
         params.put("recipientName", order.getUser().getName());
         params.put("orderId", order.getOrderId());
@@ -188,7 +188,7 @@ public class EmailServiceImpl implements EmailService {
     @Async
     @Override
     public void sendUserVerificationEmail(User user, String token) {
-        Locale locale = new Locale(user.getPreferredLanguage());
+        final Locale locale = new Locale(user.getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
         try {
             params.put("link", String.format("/auth/verify?email=%s&token=%s", URLEncoder.encode(user.getEmail(), StandardCharsets.UTF_8.name()), URLEncoder.encode(token, StandardCharsets.UTF_8.name())));
@@ -208,7 +208,7 @@ public class EmailServiceImpl implements EmailService {
     @Async
     @Override
     public void sendResetPasswordEmail(User user, String token) {
-        Locale locale = new Locale(user.getPreferredLanguage());
+        final Locale locale = new Locale(user.getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
         try {
             params.put("link", String.format("/auth/reset-password?email=%s&token=%s", URLEncoder.encode(user.getEmail(), StandardCharsets.UTF_8.name()), URLEncoder.encode(token, StandardCharsets.UTF_8.name())));
@@ -228,7 +228,7 @@ public class EmailServiceImpl implements EmailService {
     @Async
     @Override
     public void sendInvitationToRestaurantStaff(User user, Restaurant restaurant) {
-        Locale locale = new Locale(user.getPreferredLanguage());
+        final Locale locale = new Locale(user.getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
         try {
             params.put("link", "/auth/register?email=" + URLEncoder.encode(user.getEmail(), StandardCharsets.UTF_8.name()));
@@ -248,7 +248,7 @@ public class EmailServiceImpl implements EmailService {
     @Async
     @Override
     public void sendInvitationToUser(User user, String role) {
-        Locale locale = new Locale(user.getPreferredLanguage());
+        final Locale locale = new Locale(user.getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
         try {
             params.put("link", "/auth/register?email=" + URLEncoder.encode(user.getEmail(), StandardCharsets.UTF_8.name()));
@@ -268,7 +268,7 @@ public class EmailServiceImpl implements EmailService {
     @Async
     @Override
     public void sendRestaurantDeactivationEmail(Restaurant restaurant) {
-        Locale locale = new Locale(restaurant.getOwner().getPreferredLanguage());
+        final Locale locale = new Locale(restaurant.getOwner().getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
         params.put("recipientName", restaurant.getOwner().getName());
         params.put("restaurantName", restaurant.getName());
@@ -283,7 +283,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public void sendRestaurantDeletionEmail(Restaurant restaurant) {
-        Locale locale = new Locale(restaurant.getOwner().getPreferredLanguage());
+        final Locale locale = new Locale(restaurant.getOwner().getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
         params.put("recipientName", restaurant.getOwner().getName());
         params.put("restaurantName", restaurant.getName());

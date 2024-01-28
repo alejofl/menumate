@@ -32,5 +32,6 @@ public final class RestaurantConstants {
     );
 
     private RestaurantConstants() {
+        throw new AssertionError();
     }
 }

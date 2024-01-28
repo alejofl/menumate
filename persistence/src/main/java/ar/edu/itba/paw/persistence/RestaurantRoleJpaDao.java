@@ -54,7 +54,7 @@ public class RestaurantRoleJpaDao implements RestaurantRoleDao {
 
     @Override
     public List<RestaurantRole> getByRestaurant(long restaurantId) {
-        TypedQuery<RestaurantRole> query = em.createQuery(
+        final TypedQuery<RestaurantRole> query = em.createQuery(
                 "FROM RestaurantRole WHERE restaurantId = :restaurantId ORDER BY level",
                 RestaurantRole.class
         );
@@ -66,14 +66,14 @@ public class RestaurantRoleJpaDao implements RestaurantRoleDao {
     public PaginatedResult<RestaurantRoleDetails> getByUser(long userId, int pageNumber, int pageSize) {
         Utils.validatePaginationParams(pageNumber, pageSize);
 
-        Query nativeQuery = em.createNativeQuery("SELECT restaurant_id FROM restaurant_role_details WHERE user_id = ? ORDER BY inprogress_order_count DESC, restaurant_id");
+        final Query nativeQuery = em.createNativeQuery("SELECT restaurant_id FROM restaurant_role_details WHERE user_id = ? ORDER BY inprogress_order_count DESC, restaurant_id");
         nativeQuery.setParameter(1, userId);
         nativeQuery.setMaxResults(pageSize);
         nativeQuery.setFirstResult((pageNumber - 1) * pageSize);
 
         final List<Long> idList = nativeQuery.getResultList().stream().mapToLong(n -> ((Number) n).longValue()).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
 
-        Query countQuery = em.createNativeQuery("SELECT COUNT(*) FROM restaurant_role_details WHERE user_id = ?");
+        final Query countQuery = em.createNativeQuery("SELECT COUNT(*) FROM restaurant_role_details WHERE user_id = ?");
         countQuery.setParameter(1, userId);
         int count = ((Number) countQuery.getSingleResult()).intValue();
 
@@ -87,7 +87,7 @@ public class RestaurantRoleJpaDao implements RestaurantRoleDao {
         query.setParameter("userId", userId);
         query.setParameter("idList", idList);
 
-        List<RestaurantRoleDetails> roles = query.getResultList();
+        final List<RestaurantRoleDetails> roles = query.getResultList();
         return new PaginatedResult<>(roles, pageNumber, pageSize, count);
     }
 }
