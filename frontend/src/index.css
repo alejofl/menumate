@@ -26,6 +26,10 @@
     --bs-link-hover-color-rgb: var(--primary-dark-rgb);
 }
 
+.toast-container {
+    --bs-toast-zindex: 1034;
+}
+
 .dropdown-item:active {
     --bs-dropdown-link-active-bg: var(--primary);
 }
