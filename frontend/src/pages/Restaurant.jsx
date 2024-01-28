@@ -331,7 +331,14 @@ function Restaurant({edit = false}) {
                                                 <span className="badge text-bg-secondary">x{product.quantity}</span>
                                                 <span>{product.name}</span>
                                             </div>
-                                            <span className="no-wrap"><strong>${(product.price * product.quantity).toFixed(PRICE_DECIMAL_DIGITS)}</strong></span>
+                                            <div className="d-flex align-items-center gap-1">
+                                                <span className="no-wrap"><strong>${(product.price * product.quantity).toFixed(PRICE_DECIMAL_DIGITS)}</strong></span>
+                                                <i
+                                                    className="bi bi-trash-fill default text-danger clickable-object"
+                                                    onClick={() => setCart(cart.filter((_, index) => index !== i))}
+                                                >
+                                                </i>
+                                            </div>
                                         </li>
                                     ))
                                 }
