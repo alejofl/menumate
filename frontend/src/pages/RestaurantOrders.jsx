@@ -51,7 +51,7 @@ function RestaurantOrders() {
     } = useQuery({
         queryKey: ["restaurant", restaurantId],
         queryFn: async () => (
-            await restaurantService.getRestaurant(`${apiContext.restaurantsUrl}/${restaurantId}`, true)
+            await restaurantService.getRestaurant(apiContext.restaurantsUriTemplate.fill({restaurantId: restaurantId}), true)
         )
     });
     const {

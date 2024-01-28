@@ -121,7 +121,7 @@ function UserOrders() {
                                 :
                                 <>
                                     {
-                                        orderId && <OrderCard orderUrl={`${apiContext.ordersUrl}/${orderId}`} showCard={false} onError={(e) => setError(e)}/>
+                                        orderId && <OrderCard orderUrl={apiContext.ordersUriTemplate.fill({orderId: orderId})} showCard={false} onError={(e) => setError(e)}/>
                                     }
                                     {
                                         orders.pages.flatMap(page => page.content).map((order, i) => {

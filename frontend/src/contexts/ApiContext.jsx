@@ -5,6 +5,7 @@ import UriTemplate from "uri-templates";
 const ApiContext = React.createContext({
     didDiscovery: false,
     ordersUrl: "",
+    ordersUriTemplate: "",
     restaurantsUrl: "",
     restaurantsUriTemplate: "",
     reviewsUrl: "",
@@ -16,7 +17,7 @@ const ApiContext = React.createContext({
 export function ApiContextProvider({children}) {
     const [didDiscovery, setDidDiscovery] = useState(false);
     const [failedDiscovery, setFailedDiscovery] = useState(false);
-    const [ordersUrl, setOrdersUrl] = useState("");
+    const [ordersUriTemplateString, setOrdersUriTemplateString] = useState("");
     const [restaurantsUriTemplateString, setRestaurantsUriTemplateString] = useState("");
     const [reviewsUriTemplateString, setReviewsUriTemplateString] = useState("");
     const [usersUrl, setUsersUrl] = useState("");
@@ -25,7 +26,7 @@ export function ApiContextProvider({children}) {
     useEffect(() => {
         Api.get("/")
             .then(results => {
-                setOrdersUrl(results.data.ordersUrl);
+                setOrdersUriTemplateString(results.data.ordersUriTemplate);
                 setRestaurantsUriTemplateString(results.data.restaurantsUriTemplate);
                 setReviewsUriTemplateString(results.data.reviewsUriTemplate);
                 setUsersUrl(results.data.usersUrl);
@@ -40,7 +41,8 @@ export function ApiContextProvider({children}) {
             <ApiContext.Provider value={{
                 didDiscovery: didDiscovery,
                 failedDiscovery: failedDiscovery,
-                ordersUrl: ordersUrl,
+                ordersUriTemplate: UriTemplate(ordersUriTemplateString),
+                ordersUrl: UriTemplate(ordersUriTemplateString).fill({}),
                 restaurantsUriTemplate: UriTemplate(restaurantsUriTemplateString),
                 restaurantsUrl: UriTemplate(restaurantsUriTemplateString).fill({}),
                 reviewsUriTemplate: UriTemplate(reviewsUriTemplateString),
