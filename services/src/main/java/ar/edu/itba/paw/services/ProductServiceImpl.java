@@ -86,7 +86,7 @@ public class ProductServiceImpl implements ProductService {
     public Product update(long restaurantId, long categoryId, long productId, String name, BigDecimal price, String description, Long imageId) {
         final Product product = getByIdChecked(restaurantId, categoryId, productId, false);
 
-        if (product.getPrice().equals(price)) {
+        if (product.getPrice().compareTo(price) == 0) {
             productDao.updateNameDescriptionAndImage(product, name, description, imageId);
             return product;
         }
