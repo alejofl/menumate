@@ -82,7 +82,7 @@ public class EmailServiceImpl implements EmailService {
         params.put("recipientName", order.getUser().getName());
         params.put("orderId", order.getOrderId());
         params.put("restaurantName", order.getRestaurant().getName());
-        params.put("link", "/orders/" + order.getOrderId());
+        params.put("link", "/user/orders/" + order.getOrderId());
         params.put("price", order.getPrice());
         this.sendMessageUsingThymeleafTemplate(
                 "user_order_received",
@@ -120,7 +120,7 @@ public class EmailServiceImpl implements EmailService {
         final Map<String, Object> params = new HashMap<>();
         params.put("recipientName", order.getUser().getName());
         params.put("orderId", order.getOrderId());
-        params.put("link", "/orders/" + order.getOrderId());
+        params.put("link", "/user/orders/" + order.getOrderId());
         params.put("restaurantName", order.getRestaurant().getName());
         this.sendMessageUsingThymeleafTemplate(
                 "user_order_confirmed",
@@ -138,7 +138,7 @@ public class EmailServiceImpl implements EmailService {
         final Map<String, Object> params = new HashMap<>();
         params.put("recipientName", order.getUser().getName());
         params.put("orderId", order.getOrderId());
-        params.put("link", "/orders/" + order.getOrderId());
+        params.put("link", "/user/orders/" + order.getOrderId());
         params.put("restaurantName", order.getRestaurant().getName());
         this.sendMessageUsingThymeleafTemplate(
                 "user_order_ready",
@@ -156,7 +156,7 @@ public class EmailServiceImpl implements EmailService {
         final Map<String, Object> params = new HashMap<>();
         params.put("recipientName", order.getUser().getName());
         params.put("orderId", order.getOrderId());
-        params.put("link", "/orders/" + order.getOrderId());
+        params.put("link", "/user/orders/" + order.getOrderId());
         params.put("restaurantName", order.getRestaurant().getName());
         this.sendMessageUsingThymeleafTemplate(
                 "user_order_delivered",
