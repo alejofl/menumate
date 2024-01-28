@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import "./styles/restaurant_card.styles.css";
 import Rating from "./Rating.jsx";
 import TagsContainer from "./TagsContainer.jsx";
+import ImagePlaceholder from "../assets/image-placeholder.png";
 
 function RestaurantCard({ restaurantId, mainImage, hoverImage, name, address, rating, ratingCount, tags }) {
     return (
@@ -10,7 +11,7 @@ function RestaurantCard({ restaurantId, mainImage, hoverImage, name, address, ra
                 <div className="card">
                     <div
                         className="card-img"
-                        style={{"--main_image": `url(${mainImage})`, "--hover_image": `url(${hoverImage})`}}
+                        style={{"--main_image": `url(${mainImage || ImagePlaceholder})`, "--hover_image": `url(${hoverImage || ImagePlaceholder})`}}
                     />
                     <div className="card-body">
                         <div>

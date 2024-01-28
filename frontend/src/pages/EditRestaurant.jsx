@@ -362,11 +362,11 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
         <>
             <Page title={t("titles.edit_restaurant", {name: restaurant.name})} className="restaurant">
                 <div className="header">
-                    <img src={restaurant.portrait1Url} alt={restaurant.name}/>
+                    <img src={restaurant.portrait1Url || ImagePlaceholder} alt={restaurant.name}/>
                 </div>
                 <div className="d-flex justify-content-center">
                     <div className="information">
-                        <img src={restaurant.logoUrl} alt={restaurant.name} className="logo"/>
+                        <img src={restaurant.logoUrl || ImagePlaceholder} alt={restaurant.name} className="logo"/>
                         <div className="flex-grow-1">
                             {
                                 !restaurant.active &&

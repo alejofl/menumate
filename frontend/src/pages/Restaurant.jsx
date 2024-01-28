@@ -22,6 +22,7 @@ import RestaurantReportToast from "../components/RestaurantReportToast.jsx";
 import AuthContext from "../contexts/AuthContext.jsx";
 import {useUserService} from "../hooks/services/useUserService.js";
 import EditRestaurant from "./EditRestaurant.jsx";
+import ImagePlaceholder from "../assets/image-placeholder.png";
 
 function Restaurant({edit = false}) {
     const { t } = useTranslation();
@@ -196,11 +197,11 @@ function Restaurant({edit = false}) {
         <>
             <Page title={restaurant.name} className="restaurant">
                 <div className="header">
-                    <img src={restaurant.portrait1Url} alt={restaurant.name}/>
+                    <img src={restaurant.portrait1Url || ImagePlaceholder} alt={restaurant.name}/>
                 </div>
                 <div className="d-flex justify-content-center">
                     <div className="information">
-                        <img src={restaurant.logoUrl} alt={restaurant.name} className="logo"/>
+                        <img src={restaurant.logoUrl || ImagePlaceholder} alt={restaurant.name} className="logo"/>
                         <div className="flex-grow-1">
                             {
                                 !restaurant.active &&

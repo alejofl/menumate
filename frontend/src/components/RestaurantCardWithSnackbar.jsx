@@ -1,12 +1,13 @@
 import { Link } from "react-router-dom";
 import "./styles/restaurant_card.styles.css";
+import ImagePlaceholder from "../assets/image-placeholder.png";
 
 function RestaurantCardWithSnackbar({ restaurantId, mainImage, hoverImage, name, address, snackbarText, isSnackbarSuccess, isSnackbarDanger, clickable = true, ...rest }) {
     const card = (
         <div className="card">
             <div
                 className="card-img"
-                style={{"--main_image": `url(${mainImage})`, "--hover_image": `url(${hoverImage})`}}
+                style={{"--main_image": `url(${mainImage || ImagePlaceholder})`, "--hover_image": `url(${hoverImage || ImagePlaceholder})`}}
             />
             <div className="card-body">
                 <div>
