@@ -5,6 +5,10 @@ import react from "@vitejs/plugin-react-swc";
 export default defineConfig(({ mode }) => {
     return {
         base: mode === "production" ? "/paw-2023a-01" : "/",
-        plugins: [react()]
+        plugins: [react()],
+        test: {
+            environment: "jsdom",
+            setupFiles: ["./src/__tests__/setup/setup.js"]
+        }
     };
 });
