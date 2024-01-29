@@ -46,7 +46,6 @@ public class UserServiceImplTest {
     private static final String EMAIL = "email";
     private static final String TOKEN = "token";
     private static final String ADDRESS = "address";
-    private static final String LANGUAGE = "en";
 
 
     @Before
@@ -64,7 +63,7 @@ public class UserServiceImplTest {
         final Token userVerificationToken = mock(Token.class);
 
         when(userDao.getByEmail(EMAIL)).thenReturn(Optional.empty());
-        when(userDao.create(EMAIL, PASSWORD, USERNAME, LANGUAGE)).thenReturn(user);
+        when(userDao.create(eq(EMAIL), eq(PASSWORD), eq(USERNAME), anyString())).thenReturn(user);
         when(tokenService.manageUserToken(eq(user))).thenReturn(userVerificationToken);
 
         final User result = userServiceImpl.createOrConsolidate(EMAIL, PASSWORD, USERNAME);
@@ -123,7 +122,7 @@ public class UserServiceImplTest {
     @Test
     public void testCreateIfNotExistsUserDoesNotExist() {
         final User createdUser = mock(User.class);
-        when(userDao.create(EMAIL, null, USERNAME, LANGUAGE)).thenReturn(createdUser);
+        when(userDao.create(eq(EMAIL), eq(null), eq(USERNAME), anyString())).thenReturn(createdUser);
         when(createdUser.getEmail()).thenReturn(EMAIL);
         when(createdUser.getName()).thenReturn(USERNAME);
         when(createdUser.getPassword()).thenReturn(PASSWORD);
