@@ -43,3 +43,10 @@ main.user_profile {
     justify-content: flex-end;
     align-items: flex-start;
 }
+
+.user_profile .empty-results {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #b6b6b6;
+}

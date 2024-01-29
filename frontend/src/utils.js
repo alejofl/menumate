@@ -99,4 +99,4 @@ export const PROMOTION_TYPE = {
 
 export const WAIT_TIME = 500;
 
-export const GET_LANGUAGE_CODE = (language) => language.substring(0, 3);
+export const GET_LANGUAGE_CODE = (language) => language.substring(0, 2);

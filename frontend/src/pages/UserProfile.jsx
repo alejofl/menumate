@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import Page from "../components/Page.jsx";
 import "./styles/user_profile.styles.css";
 import {useApi} from "../hooks/useApi.js";
-import {useContext, useState} from "react";
+import {useContext, useRef, useState} from "react";
 import {useUserService} from "../hooks/services/useUserService.js";
 import {useInfiniteQuery, useMutation, useQueries, useQuery, useQueryClient} from "@tanstack/react-query";
 import AuthContext from "../contexts/AuthContext.jsx";
@@ -39,6 +39,8 @@ function UserProfile() {
     const [currentUrlAddress, setCurrentUrlAddress] = useState("");
     const [addressRepeated, setAddressRepeated] = useState(false);
     const [editOperation, setEditOperation] = useState(false);
+
+    const editAddressFormRef = useRef();
 
     const queryClient = useQueryClient();
 
@@ -211,6 +213,7 @@ function UserProfile() {
     };
 
     const handleModalHidden = () => {
+        editAddressFormRef.current?.resetForm();
         setAddressRepeated(false);
     };
 
@@ -458,6 +461,7 @@ function UserProfile() {
                                 enableReinitialize
                                 validationSchema={RegisterAddressSchema}
                                 onSubmit={editOperation ? handleUpdateAddress : handleRegisterAddress}
+                                innerRef={editAddressFormRef}
                             >
                                 {({isSubmitting}) => (
                                     <Form>
