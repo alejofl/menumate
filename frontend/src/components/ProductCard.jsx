@@ -80,22 +80,25 @@ function ProductCard({
                 setComments("");
             });
         } else {
-            document.querySelector(`#delete-product-${productId}-modal`).addEventListener("hidden.bs.modal", () => {
-                setShowDeleteProductError(false);
-            });
-            document.querySelector(`#delete-promotion-${productId}-modal`).addEventListener("hidden.bs.modal", () => {
-                setShowDeletePromotionError(false);
-            });
-            document.querySelector(`#create-promotion-${productId}-modal`).addEventListener("hidden.bs.modal", () => {
-                createPromotionFormRef.current?.resetForm();
-                setShowCreatePromotionError(false);
-                setShowCreatePromotionOverlappingError(false);
-                setPromotionType(PROMOTION_TYPE.INSTANT);
-            });
-            document.querySelector(`#edit-product-${productId}-modal`).addEventListener("hidden.bs.modal", () => {
-                editProductFormRef.current?.resetForm();
-                setShowEditProductError(false);
-            });
+            if (discount) {
+                document.querySelector(`#delete-promotion-${productId}-modal`).addEventListener("hidden.bs.modal", () => {
+                    setShowDeletePromotionError(false);
+                });
+            } else {
+                document.querySelector(`#delete-product-${productId}-modal`).addEventListener("hidden.bs.modal", () => {
+                    setShowDeleteProductError(false);
+                });
+                document.querySelector(`#create-promotion-${productId}-modal`).addEventListener("hidden.bs.modal", () => {
+                    createPromotionFormRef.current?.resetForm();
+                    setShowCreatePromotionError(false);
+                    setShowCreatePromotionOverlappingError(false);
+                    setPromotionType(PROMOTION_TYPE.INSTANT);
+                });
+                document.querySelector(`#edit-product-${productId}-modal`).addEventListener("hidden.bs.modal", () => {
+                    editProductFormRef.current?.resetForm();
+                    setShowEditProductError(false);
+                });
+            }
         }
     });
 
@@ -327,7 +330,26 @@ function ProductCard({
             }
 
             {
-                edit &&
+                edit && discount &&
+                <div className="modal fade" id={`delete-promotion-${productId}-modal`} tabIndex="-1">
+                    <div className="modal-dialog modal-dialog-centered">
+                        <div className="modal-content">
+                            <div className="modal-body">
+                                {showDeletePromotionError &&
+                                    <div className="alert alert-danger" role="alert">{t("restaurant.edit.error")}</div>}
+                                <h1 className="modal-title fs-5">{t("restaurant.edit.delete_promotion")}</h1>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" data-bs-dismiss="modal" className="btn btn-secondary">{t("paging.no")}</button>
+                                <button type="button" className="btn btn-danger" onClick={deletePromotionMutation.mutate}>{t("paging.yes")}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            {
+                edit && !discount &&
                 <>
                     <div className="modal fade" id={`delete-product-${productId}-modal`} tabIndex="-1">
                         <div className="modal-dialog modal-dialog-centered">
@@ -340,22 +362,6 @@ function ProductCard({
                                 <div className="modal-footer">
                                     <button type="button" data-bs-dismiss="modal" className="btn btn-secondary">{t("paging.no")}</button>
                                     <button type="button" className="btn btn-danger" onClick={deleteProductMutation.mutate}>{t("paging.yes")}</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="modal fade" id={`delete-promotion-${productId}-modal`} tabIndex="-1">
-                        <div className="modal-dialog modal-dialog-centered">
-                            <div className="modal-content">
-                                <div className="modal-body">
-                                    {showDeletePromotionError &&
-                                        <div className="alert alert-danger" role="alert">{t("restaurant.edit.error")}</div>}
-                                    <h1 className="modal-title fs-5">{t("restaurant.edit.delete_promotion")}</h1>
-                                </div>
-                                <div className="modal-footer">
-                                    <button type="button" data-bs-dismiss="modal" className="btn btn-secondary">{t("paging.no")}</button>
-                                    <button type="button" className="btn btn-danger" onClick={deletePromotionMutation.mutate}>{t("paging.yes")}</button>
                                 </div>
                             </div>
                         </div>
