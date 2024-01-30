@@ -9,6 +9,26 @@ import {
 } from "../../utils.js";
 
 export const userHandler = [
+    http.post(apiUrl(""), ({request}) => {
+        if (request.headers.get("Content-Type") === USER_CONTENT_TYPE) {
+            return new HttpResponse(null, {status: 201});
+        } else {
+            return new HttpResponse(null, {status: 415});
+        }
+    }),
+
+    http.get(apiUrl(""), () => {
+        return new HttpResponse(null,
+            {
+                status: 200,
+                headers: {
+                    "x-menumate-authtoken": "mockAuthToken",
+                    "x-menumate-refreshtoken": "mockRefreshToken"
+                }
+            }
+        );
+    }),
+
     http.post(apiUrl("/users/:id"), ({request}) => {
         if (request.headers.get("Content-Type") === USER_PASSWORD_CONTENT_TYPE) {
             return new HttpResponse(null, {status: 201});

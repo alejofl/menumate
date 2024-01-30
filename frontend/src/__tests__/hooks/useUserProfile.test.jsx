@@ -11,7 +11,7 @@ describe("useUserService", () => {
     describe("sendResetPasswordToken", () => {
         it("should return 201 Created", async () => {
             const userService = useUserService(Api);
-            const response = await userService.sendResetPasswordToken(apiUrl("/users/1"));
+            const response = await userService.sendResetPasswordToken(apiUrl("/users/1"), {});
             expect(response.status).toBe(201);
         });
     });
@@ -19,40 +19,25 @@ describe("useUserService", () => {
     describe("resetPassword", () => {
         it("should return 204 No Content", async () => {
             const userService = useUserService(Api);
-            const response = await userService.resetPassword(apiUrl("/users/1"));
+            const response = await userService.resetPassword(apiUrl("/users/1"), {});
             expect(response.status).toBe(204);
         });
     });
 
-    /*
-     * describe("login", () => {
-     *     it("should return an array", async () => {
-     *         const userService = useUserService(Api);
-     *         const response = await userService.getAddresses(apiUrl("/users/1/addresses"));
-     *         expect(Array.isArray(response)).toBe(true);
-     *     });
-     *
-     *     it("should return an array of Address", async () => {
-     *         const userService = useUserService(Api);
-     *         const response = await userService.getAddresses(apiUrl("/users/1/addresses"));
-     *         response.forEach((item) => expect(item).toBeInstanceOf(Address));
-     *     });
-     *
-     *     it("should return correct data", async () => {
-     *         const userService = useUserService(Api);
-     *         const response = await userService.getAddresses(apiUrl("/users/1/addresses"));
-     *         expect(response[0].address).toEqual(expect.any(String));
-     *         expect(response[0].lastUsed).toEqual(expect.any(Date));
-     *         expect(response[0].name).toEqual(expect.any(String));
-     *         expect(response[0].selfUrl).toEqual(expect.any(String));
-     *     });
-     * });
-     */
+    describe("login", () => {
+        it("should return success, jwt and refreshToken", async () => {
+            const userService = useUserService(Api);
+            const response = await userService.login(apiUrl(""), {});
+            expect(response.success).toEqual(expect.any(Boolean));
+            expect(response.jwt).toEqual(expect.any(String));
+            expect(response.refreshToken).toEqual(expect.any(String));
+        });
+    });
 
     describe("register", () => {
         it("should return 201 Created", async () => {
             const userService = useUserService(Api);
-            const response = await userService.register(apiUrl("/users"));
+            const response = await userService.register(apiUrl("/users"), {});
             expect(response.status).toBe(201);
         });
     });
@@ -60,7 +45,7 @@ describe("useUserService", () => {
     describe("registerAddress", () => {
         it("should return 201 Created", async () => {
             const userService = useUserService(Api);
-            const response = await userService.registerAddress(apiUrl("/users/1/addresses"));
+            const response = await userService.registerAddress(apiUrl("/users/1/addresses"), {});
             expect(response.status).toBe(201);
         });
     });
@@ -93,7 +78,7 @@ describe("useUserService", () => {
     describe("getUsers", () => {
         it("should return an array", async () => {
             const userService = useUserService(Api);
-            const response = await userService.getUsers(apiUrl("/users"));
+            const response = await userService.getUsers(apiUrl("/users"), {});
             expect(Array.isArray(response)).toBe(true);
         });
 
@@ -147,7 +132,7 @@ describe("useUserService", () => {
     describe("updateAddress", () => {
         it("should return 204 No Content", async () => {
             const userService = useUserService(Api);
-            const response = await userService.updateAddress(apiUrl("/users/1/addresses/1"));
+            const response = await userService.updateAddress(apiUrl("/users/1/addresses/1"), {});
             expect(response.status).toBe(204);
         });
     });
@@ -182,7 +167,7 @@ describe("useUserService", () => {
     describe("addModerator", () => {
         it("should return 201 Created", async () => {
             const userService = useUserService(Api);
-            const response = await userService.addModerator(apiUrl("restaurants/1/employees"));
+            const response = await userService.addModerator(apiUrl("restaurants/1/employees"), {});
             expect(response.status).toBe(201);
         });
     });
