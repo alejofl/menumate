@@ -3,11 +3,13 @@ import { beforeAll, beforeEach, afterEach, afterAll } from "vitest";
 import { ordersHandlers } from "../mocks/OrdersApiMock.js";
 import {restaurantsHandlers} from "../mocks/RestaurantsApiMock.js";
 import {imagesHandlers} from "../mocks/ImagesApiMock.js";
+import {userHandler} from "../mocks/UserProfileMock.js";
 
 const server = setupServer(...[
     ...ordersHandlers,
     ...restaurantsHandlers,
-    ...imagesHandlers
+    ...imagesHandlers,
+    ...userHandler
 ]);
 
 // Enable request interception.
