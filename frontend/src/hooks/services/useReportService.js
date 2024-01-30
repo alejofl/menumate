@@ -1,6 +1,6 @@
 import { parseLinkHeader } from "@web3-storage/parse-link-header";
 import PagedContent from "../../data/model/PagedContent.js";
-import {ACTIVATE_RESTAURANT_CONTENT_TYPE, DELETE_RESTAURANT_CONTENT_TYPE, REPORTS_CONTENT_TYPE} from "../../utils.js";
+import {ACTIVATE_RESTAURANT_CONTENT_TYPE, REPORTS_CONTENT_TYPE} from "../../utils.js";
 import Report from "../../data/model/Report.js";
 
 export function useReportService(api) {
@@ -43,24 +43,9 @@ export function useReportService(api) {
         );
     };
 
-    const toggleDeleteForRestaurant = async (url, deleted) => {
-        return await api.patch(
-            url,
-            {
-                delete: deleted
-            },
-            {
-                headers: {
-                    "Content-Type": DELETE_RESTAURANT_CONTENT_TYPE
-                }
-            }
-        );
-    };
-
     return {
         getReports,
         markAsHandled,
-        toggleActiveForRestaurant,
-        toggleDeleteForRestaurant
+        toggleActiveForRestaurant
     };
 }
