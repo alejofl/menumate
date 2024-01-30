@@ -4,7 +4,7 @@ import {
     REPORTS_CONTENT_TYPE,
     RESTAURANT_CATEGORIES_CONTENT_TYPE,
     RESTAURANT_DETAILS_CONTENT_TYPE,
-    RESTAURANT_EMPLOYEES_CONTENT_TYPE,
+    RESTAURANT_EMPLOYEES_CONTENT_TYPE, RESTAURANT_PRODUCT_NEW_CATEGORY_CONTENT_TYPE,
     RESTAURANT_PRODUCTS_CONTENT_TYPE,
     RESTAURANT_PROMOTIONS_CONTENT_TYPE, RESTAURANTS_CONTENT_TYPE,
     UNHANDLED_REPORTS_CONTENT_TYPE
@@ -353,7 +353,7 @@ export const restaurantsHandlers = [
 
     http.post(apiUrl("/restaurants"), ({request}) => {
         if (request.headers.get("Content-Type") === RESTAURANTS_CONTENT_TYPE) {
-            return new HttpResponse(null, {status: 201});
+            return new HttpResponse(JSON.stringify({restaurantId: 1}), {status: 201});
         } else {
             return new HttpResponse(null, {status: 415});
         }
@@ -495,6 +495,8 @@ export const restaurantsHandlers = [
                     "selfUrl": "http://localhost:8080/paw-2023a-01/api/restaurants/3/categories/12/products/112"
                 }
             );
+        } else if (request.headers.get("Content-Type") === RESTAURANT_PRODUCT_NEW_CATEGORY_CONTENT_TYPE) {
+            return new HttpResponse(null, {status: 204});
         } else {
             return new HttpResponse(null, {status: 415});
         }
