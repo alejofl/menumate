@@ -3,8 +3,10 @@ import { beforeAll, beforeEach, afterEach, afterAll } from "vitest";
 import { ordersHandlers } from "../mocks/OrdersApiMock.js";
 import {restaurantsHandlers} from "../mocks/RestaurantsApiMock.js";
 import {imagesHandlers} from "../mocks/ImagesApiMock.js";
+import {homeIndexHandlers} from "../mocks/HomeIndexApiMock.js";
 
 const server = setupServer(...[
+    ...homeIndexHandlers,
     ...ordersHandlers,
     ...restaurantsHandlers,
     ...imagesHandlers
