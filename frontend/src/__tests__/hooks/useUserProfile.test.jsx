@@ -5,6 +5,7 @@ import Api from "../../data/Api.js";
 import {apiUrl} from "../setup/utils.js";
 import Address from "../../data/model/Address.js";
 import User from "../../data/model/User.js";
+import UserRoleForRestaurant from "../../data/model/UserRoleForRestaurant.js";
 
 describe("useUserService", () => {
     describe("sendResetPasswordToken", () => {
@@ -159,12 +160,38 @@ describe("useUserService", () => {
         });
     });
 
-    /*
-     * describe("getRoleForRestaurant", () => {
-     *     it("should return a UserRoleForRestaurant", async () => {
-     *         const userService = useUserService(Api);
-     *         const response = await userService.getRoleForRestaurant(apiUrl("user/1/"))
-     *     })
-     * });
-     */
+    describe("getRoleForRestaurant", () => {
+        it("should return a UserRoleForRestaurant", async () => {
+            const userService = useUserService(Api);
+            const response = await userService.getRoleForRestaurant(apiUrl("restaurants/1/employees/1"));
+            expect(response).toBeInstanceOf(UserRoleForRestaurant);
+        });
+
+        it("should return correct data", async () => {
+            const userService = useUserService(Api);
+            const response = await userService.getRoleForRestaurant(apiUrl("restaurants/1/employees/1"));
+            expect(response.email).toEqual(expect.any(String));
+            expect(response.name).toEqual(expect.any(String));
+            expect(response.restaurantUrl).toEqual(expect.any(String));
+            expect(response.role).toEqual(expect.any(String));
+            expect(response.selfUrl).toEqual(expect.any(String));
+            expect(response.userUrl).toEqual(expect.any(String));
+        });
+    });
+
+    describe("addModerator", () => {
+        it("should return 201 Created", async () => {
+            const userService = useUserService(Api);
+            const response = await userService.addModerator(apiUrl("restaurants/1/employees"));
+            expect(response.status).toBe(201);
+        });
+    });
+
+    describe("deleteModerator", () => {
+        it("should return 204 No Content", async () => {
+            const userService = useUserService(Api);
+            const response = await userService.deleteModerator(apiUrl("restaurants/1/employees/1"));
+            expect(response.status).toBe(204);
+        });
+    });
 });
