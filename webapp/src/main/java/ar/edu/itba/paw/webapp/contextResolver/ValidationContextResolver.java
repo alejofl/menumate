@@ -15,6 +15,7 @@ import java.util.Locale;
  * https://download.oracle.com/otn-pub/jcp/bean_validation-1.0-fr-oth-JSpec/bean_validation-1_0-final-spec.pdf
  * https://www.baeldung.com/spring-validation-message-interpolation
  * https://www.cwiki.us/display/JERSEYEN/Configuring+Bean+Validation+Support
+ * https://docs.jboss.org/hibernate/stable/validator/reference/en-US/html_single/#section-custom-message-interpolation
  */
 
 @Provider
