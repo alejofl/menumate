@@ -17,23 +17,6 @@ export const userHandler = [
         }
     }),
 
-    http.get(apiUrl(""), ({request}) => {
-        if (request.headers.get("Accept") === USER_CONTENT_TYPE) {
-            return HttpResponse.json(
-                null,
-                {
-                    status: 200,
-                    headers: {
-                        "x-menumate-authtoken": "mockAuthToken",
-                        "x-menumate-refreshtoken": "mockRefreshToken"
-                    }
-                }
-            );
-        } else {
-            return new HttpResponse(null, {status: 406});
-        }
-    }),
-
     http.post(apiUrl("/users/:id"), ({request}) => {
         if (request.headers.get("Content-Type") === USER_PASSWORD_CONTENT_TYPE) {
             return new HttpResponse(null, {status: 201});
@@ -62,17 +45,17 @@ export const userHandler = [
         if (request.headers.get("Accept") === USER_CONTENT_TYPE) {
             return HttpResponse.json(
                 {
-                    "addressesUrl": "URL",
-                    "dateJoined": "2024-01-30T16:59:49.591",
-                    "email": "user@gmail.com",
+                    "addressesUrl": "http://localhost:8080/paw-2023a-01/api/users/1/addresses",
+                    "dateJoined": "2023-05-11T20:08:20.462976",
+                    "email": "alejo@misterflores.com",
                     "isActive": true,
-                    "name": "User",
-                    "ordersUrl": "URL",
-                    "preferredLanguage": "en",
-                    "restaurantsEmployedAtUrl": "URL",
-                    "reviewsUrl": "URL",
-                    "role": "ROLE_MODERATOR",
-                    "selfUrl": "URL",
+                    "name": "Alejo Flores",
+                    "ordersUrl": "http://localhost:8080/paw-2023a-01/api/orders?userId=1",
+                    "preferredLanguage": "es",
+                    "restaurantsEmployedAtUrl": "http://localhost:8080/paw-2023a-01/api/restaurants?forEmployeeId=1",
+                    "reviewsUrl": "http://localhost:8080/paw-2023a-01/api/reviews?userId=1",
+                    "role": "moderator",
+                    "selfUrl": "http://localhost:8080/paw-2023a-01/api/users/1",
                     "userId": parseInt(params.id)
                 }
             );
@@ -85,32 +68,32 @@ export const userHandler = [
         if (request.headers.get("Accept") === USER_ROLE_CONTENT_TYPE) {
             return HttpResponse.json([
                 {
-                    "addressesUrl": "URL",
-                    "dateJoined": "2024-01-30T16:59:49.591",
-                    "email": "user1@gmail.com",
+                    "addressesUrl": "http://localhost:8080/paw-2023a-01/api/users/2/addresses",
+                    "dateJoined": "2023-05-11T20:08:20.463146",
+                    "email": "nllanos@itba.edu.ar",
                     "isActive": true,
-                    "name": "User1",
-                    "ordersUrl": "URL",
+                    "name": "Nehuen",
+                    "ordersUrl": "http://localhost:8080/paw-2023a-01/api/orders?userId=2",
                     "preferredLanguage": "en",
-                    "restaurantsEmployedAtUrl": "URL",
-                    "reviewsUrl": "URL",
-                    "role": "ROLE_MODERATOR",
-                    "selfUrl": "URL",
-                    "userId": 1
+                    "restaurantsEmployedAtUrl": "http://localhost:8080/paw-2023a-01/api/restaurants?forEmployeeId=2",
+                    "reviewsUrl": "http://localhost:8080/paw-2023a-01/api/reviews?userId=2",
+                    "role": "moderator",
+                    "selfUrl": "http://localhost:8080/paw-2023a-01/api/users/2",
+                    "userId": 2
                 },
                 {
-                    "addressesUrl": "URL",
-                    "dateJoined": "2024-01-30T16:59:49.591",
-                    "email": "user2@gmail.com",
+                    "addressesUrl": "http://localhost:8080/paw-2023a-01/api/users/1/addresses",
+                    "dateJoined": "2023-05-11T20:08:20.462976",
+                    "email": "alejo@misterflores.com",
                     "isActive": true,
-                    "name": "User2",
-                    "ordersUrl": "URL",
-                    "preferredLanguage": "en",
-                    "restaurantsEmployedAtUrl": "URL",
-                    "reviewsUrl": "URL",
-                    "role": "ROLE_MODERATOR",
-                    "selfUrl": "URL",
-                    "userId": 2
+                    "name": "Alejo Flores",
+                    "ordersUrl": "http://localhost:8080/paw-2023a-01/api/orders?userId=1",
+                    "preferredLanguage": "es",
+                    "restaurantsEmployedAtUrl": "http://localhost:8080/paw-2023a-01/api/restaurants?forEmployeeId=1",
+                    "reviewsUrl": "http://localhost:8080/paw-2023a-01/api/reviews?userId=1",
+                    "role": "moderator",
+                    "selfUrl": "http://localhost:8080/paw-2023a-01/api/users/1",
+                    "userId": 1
                 }
             ]);
         } else {
@@ -130,16 +113,22 @@ export const userHandler = [
         if (request.headers.get("Accept") === USER_ADDRESS_CONTENT_TYPE) {
             return HttpResponse.json([
                 {
-                    "address": "Arenales 100",
-                    "lastUsed": "2024-01-30T16:59:49.591",
-                    "name": "Casa",
-                    "selfUrl": "URL"
+                    "address": "Julian Alvarez 2623",
+                    "lastUsed": "2024-01-28T12:51:07.600",
+                    "name": "Nehui",
+                    "selfUrl": "http://localhost:8080/paw-2023a-01/api/users/1/addresses/2"
                 },
                 {
-                    "address": "Bulnes 201",
-                    "lastUsed": "2024-02-30T16:59:49.591",
-                    "name": "Trabajo",
-                    "selfUrl": "URL"
+                    "address": "prueba",
+                    "lastUsed": "2024-01-24T13:33:28.744",
+                    "name": "Prueba",
+                    "selfUrl": "http://localhost:8080/paw-2023a-01/api/users/1/addresses/6"
+                },
+                {
+                    "address": "Edison 439, Martinez",
+                    "lastUsed": "2024-01-16T02:32:12.289848",
+                    "name": "Casa",
+                    "selfUrl": "http://localhost:8080/paw-2023a-01/api/users/1/addresses/1"
                 }
             ]);
         } else {
@@ -163,12 +152,13 @@ export const userHandler = [
         if (request.headers.get("Accept") === RESTAURANT_EMPLOYEES_CONTENT_TYPE) {
             return HttpResponse.json(
                 {
-                    "email": "user@gmail.com",
-                    "name": "User",
-                    "restaurantUrl": "URL",
-                    "role": "owner",
-                    "selfUrl": "URL",
-                    "userUrl": "URL"
+                    "email": "alejo@misterflores.com",
+                    "name": "Alejo Flores",
+                    "restaurantUrl": "http://localhost:8080/paw-2023a-01/api/restaurants/2",
+                    "role": "admin",
+                    "selfUrl": "http://localhost:8080/paw-2023a-01/api/restaurants/2/employees/1",
+                    "userId": 1,
+                    "userUrl": "http://localhost:8080/paw-2023a-01/api/users/1"
                 }
             );
         } else {

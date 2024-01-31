@@ -14,14 +14,15 @@ export const ordersHandlers = [
     http.get(apiUrl("/orders/:id"), ({request, params}) => {
         if (request.headers.get("Accept") === ORDERS_CONTENT_TYPE) {
             return HttpResponse.json({
-                "dateOrdered": "2023-05-16T16:54:14.764599",
-                "itemsUrl": "URL",
+                "address": "Julian Alvarez 2623",
+                "dateOrdered": "2024-01-28T12:51:07.576997",
+                "itemsUrl": "http://localhost:8080/paw-2023a-01/api/orders/32/items",
                 "orderId": parseInt(params.id),
-                "orderType": "takeaway",
-                "restaurantUrl": "URL",
-                "selfUrl": "URL",
+                "orderType": "delivery",
+                "restaurantUrl": "http://localhost:8080/paw-2023a-01/api/restaurants/1",
+                "selfUrl": "http://localhost:8080/paw-2023a-01/api/orders/32",
                 "status": "pending",
-                "userUrl": "URL"
+                "userUrl": "http://localhost:8080/paw-2023a-01/api/users/1"
             });
         } else {
             return new HttpResponse(null, {status: 406});
@@ -33,12 +34,12 @@ export const ordersHandlers = [
             return HttpResponse.json([
                 {
                     "lineNumber": 1,
-                    "productUrl": "URL",
-                    "quantity": 4
+                    "productUrl": "http://localhost:8080/paw-2023a-01/api/restaurants/1/categories/2/products/4",
+                    "quantity": 1
                 },
                 {
                     "lineNumber": 2,
-                    "productUrl": "URL",
+                    "productUrl": "http://localhost:8080/paw-2023a-01/api/restaurants/1/categories/3/products/8",
                     "quantity": 1
                 }
             ]);
@@ -51,58 +52,47 @@ export const ordersHandlers = [
         if (request.headers.get("Accept") === ORDERS_CONTENT_TYPE) {
             return HttpResponse.json([
                 {
-                    "dateConfirmed": "2023-05-13T13:38:44.213727",
-                    "dateDelivered": "2023-05-13T13:38:50.054667",
-                    "dateOrdered": "2023-05-13T13:38:28.798012",
-                    "dateReady": "2023-05-13T13:38:47.026651",
-                    "itemsUrl": "URL",
-                    "orderId": 1,
-                    "orderType": "takeaway",
-                    "restaurantUrl": "URL",
-                    "selfUrl": "URL",
-                    "status": "delivered",
-                    "userUrl": "URL"
-                },
-                {
-                    "dateConfirmed": "2023-05-23T18:35:27.058598",
-                    "dateDelivered": "2023-05-23T18:35:32.357684",
-                    "dateOrdered": "2023-05-23T18:34:58.691331",
-                    "dateReady": "2023-05-23T18:35:30.087099",
-                    "itemsUrl": "URL",
-                    "orderId": 7,
-                    "orderType": "takeaway",
-                    "restaurantUrl": "URL",
-                    "selfUrl": "URL",
-                    "status": "delivered",
-                    "userUrl": "URL"
-                },
-                {
-                    "address": "Edison 439, Martinez",
-                    "dateConfirmed": "2023-06-10T01:03:45.335",
-                    "dateDelivered": "2023-06-10T01:04:03.749",
-                    "dateOrdered": "2023-06-05T11:11:59.161896",
-                    "dateReady": "2023-06-10T01:04:00.736",
-                    "itemsUrl": "URL",
-                    "orderId": 10,
+                    "address": "Julian Alvarez 2623",
+                    "dateOrdered": "2024-01-28T12:51:07.576997",
+                    "itemsUrl": "http://localhost:8080/paw-2023a-01/api/orders/32/items",
+                    "orderId": 32,
                     "orderType": "delivery",
-                    "restaurantUrl": "URL",
-                    "selfUrl": "URL",
-                    "status": "delivered",
-                    "userUrl": "URL"
+                    "restaurantUrl": "http://localhost:8080/paw-2023a-01/api/restaurants/1",
+                    "selfUrl": "http://localhost:8080/paw-2023a-01/api/orders/32",
+                    "status": "pending",
+                    "userUrl": "http://localhost:8080/paw-2023a-01/api/users/1"
                 },
                 {
-                    "address": "---,Garay 415, Quilmes",
-                    "dateConfirmed": "2023-06-10T01:03:47.834",
-                    "dateDelivered": "2023-06-10T01:04:07.308",
-                    "dateOrdered": "2023-06-05T19:30:03.066291",
-                    "dateReady": "2023-06-10T01:03:55.512",
-                    "itemsUrl": "URL",
-                    "orderId": 12,
+                    "dateOrdered": "2024-01-17T18:20:37.003379",
+                    "itemsUrl": "http://localhost:8080/paw-2023a-01/api/orders/31/items",
+                    "orderId": 31,
+                    "orderType": "dinein",
+                    "restaurantUrl": "http://localhost:8080/paw-2023a-01/api/restaurants/3",
+                    "selfUrl": "http://localhost:8080/paw-2023a-01/api/orders/31",
+                    "status": "pending",
+                    "tableNumber": 12000,
+                    "userUrl": "http://localhost:8080/paw-2023a-01/api/users/1"
+                },
+                {
+                    "address": "Julian Alvarez 2623",
+                    "dateOrdered": "2024-01-17T18:16:18.825544",
+                    "itemsUrl": "http://localhost:8080/paw-2023a-01/api/orders/30/items",
+                    "orderId": 30,
                     "orderType": "delivery",
-                    "restaurantUrl": "URL",
-                    "selfUrl": "URL",
-                    "status": "delivered",
-                    "userUrl": "URL"
+                    "restaurantUrl": "http://localhost:8080/paw-2023a-01/api/restaurants/3",
+                    "selfUrl": "http://localhost:8080/paw-2023a-01/api/orders/30",
+                    "status": "pending",
+                    "userUrl": "http://localhost:8080/paw-2023a-01/api/users/1"
+                },
+                {
+                    "dateOrdered": "2024-01-17T18:13:47.163233",
+                    "itemsUrl": "http://localhost:8080/paw-2023a-01/api/orders/29/items",
+                    "orderId": 29,
+                    "orderType": "takeaway",
+                    "restaurantUrl": "http://localhost:8080/paw-2023a-01/api/restaurants/3",
+                    "selfUrl": "http://localhost:8080/paw-2023a-01/api/orders/29",
+                    "status": "pending",
+                    "userUrl": "http://localhost:8080/paw-2023a-01/api/users/1"
                 }
             ]);
         } else {
