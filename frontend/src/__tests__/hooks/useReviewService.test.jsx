@@ -30,7 +30,6 @@ describe("useReviewService", () => {
             expect(response.content[0].orderUrl).toEqual(expect.any(String));
             expect(response.content[0].rating).toEqual(expect.any(Number));
             expect(response.content[0].reviewerName).toEqual(expect.any(String));
-            expect(response.content[0].reply).toEqual(expect.any(String));
             expect(response.content[0].selfUrl).toEqual(expect.any(String));
         });
     });

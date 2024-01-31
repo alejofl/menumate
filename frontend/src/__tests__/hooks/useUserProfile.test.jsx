@@ -27,8 +27,8 @@ describe("useUserService", () => {
     describe("login", () => {
         it("should return success, jwt and refreshToken", async () => {
             const userService = useUserService(Api);
-            const response = await userService.login(apiUrl(""), {});
-            expect(response.success).toEqual(expect.any(Boolean));
+            const response = await userService.login(apiUrl("/"), {});
+            expect(response.success).toBe(true);
             expect(response.jwt).toEqual(expect.any(String));
             expect(response.refreshToken).toEqual(expect.any(String));
         });
