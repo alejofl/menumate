@@ -17,6 +17,7 @@ import {RegisterAddressSchema} from "../data/validation.js";
 import {BAD_REQUEST_STATUS_CODE, METHOD_NOT_ALLOWED_STATUS_CODE} from "../utils.js";
 import Rating from "../components/Rating.jsx";
 import {useReviewService} from "../hooks/services/useReviewService.js";
+import { Modal } from "bootstrap";
 
 function UserProfile() {
     const DEFAULT_ORDER_COUNT = 20;
@@ -144,8 +145,7 @@ function UserProfile() {
             {
                 onSuccess: () => {
                     queryClient.invalidateQueries({queryKey: ["user", authContext.selfUrl, "addresses"]});
-                    // eslint-disable-next-line no-undef
-                    bootstrap.Modal.getOrCreateInstance(document.querySelector("#editAddressModal")).hide();
+                    Modal.getOrCreateInstance(document.querySelector("#editAddressModal")).hide();
                 },
                 onError: (error) => {
                     if (error.response.status === BAD_REQUEST_STATUS_CODE) {
@@ -162,8 +162,7 @@ function UserProfile() {
         setCurrentNameAddress("");
         setCurrentAddressAddress("");
         setCurrentUrlAddress("");
-        // eslint-disable-next-line no-undef
-        const modal = bootstrap.Modal.getOrCreateInstance(document.querySelector("#editAddressModal"));
+        const modal = Modal.getOrCreateInstance(document.querySelector("#editAddressModal"));
         document.querySelector("#editAddressModal").addEventListener("hidden.bs.modal", handleModalHidden);
         modal.show();
     };
@@ -187,8 +186,7 @@ function UserProfile() {
             {
                 onSuccess: () => {
                     queryClient.invalidateQueries({queryKey: ["user", authContext.selfUrl, "addresses"]});
-                    // eslint-disable-next-line no-undef
-                    bootstrap.Modal.getOrCreateInstance(document.querySelector("#editAddressModal")).hide();
+                    Modal.getOrCreateInstance(document.querySelector("#editAddressModal")).hide();
                 },
                 onError: (error) => {
                     if (error.response.status === METHOD_NOT_ALLOWED_STATUS_CODE) {
@@ -206,8 +204,7 @@ function UserProfile() {
         setCurrentNameAddress(address.name || "");
         setCurrentAddressAddress(address.address || "");
 
-        // eslint-disable-next-line no-undef
-        const modal = bootstrap.Modal.getOrCreateInstance(document.querySelector("#editAddressModal"));
+        const modal = Modal.getOrCreateInstance(document.querySelector("#editAddressModal"));
         document.querySelector("#editAddressModal").addEventListener("hidden.bs.modal", handleModalHidden);
         modal.show();
     };
@@ -236,8 +233,7 @@ function UserProfile() {
 
     const handleOpenDeleteAddressModal = (url) => {
         setCurrentDeleteAddressModal(url);
-        // eslint-disable-next-line no-undef
-        const modal = new bootstrap.Modal(document.querySelector(".deleteAddressModal .modal"));
+        const modal = new Modal(document.querySelector(".deleteAddressModal .modal"));
         modal.show();
     };
 

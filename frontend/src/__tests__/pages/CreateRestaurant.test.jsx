@@ -1,5 +1,4 @@
 import {describe, it, expect} from "vitest";
-// import {render, fireEvent, screen} from "../setup/react.jsx";
 import {render, fireEvent, screen, waitForElementToBeRemoved} from "../setup/react.jsx";
 import CreateRestaurant from "../../pages/CreateRestaurant.jsx";
 

@@ -6,6 +6,7 @@ import ContentLoader from "react-content-loader";
 import {useReportService} from "../hooks/services/useReportService.js";
 import {useRestaurantService} from "../hooks/services/useRestaurantService.js";
 import {useNavigate} from "react-router-dom";
+import {Modal} from "bootstrap";
 
 function ReportsModal({restaurantUrl, restaurantId, restaurantName, reportsUrl, onClose, onError}) {
     const { t, i18n } = useTranslation();
@@ -18,8 +19,7 @@ function ReportsModal({restaurantUrl, restaurantId, restaurantName, reportsUrl, 
     const [showErrorAlert, setShowErrorAlert] = useState(false);
 
     useEffect(() => {
-        // eslint-disable-next-line no-undef
-        const modal = bootstrap.Modal.getOrCreateInstance(document.querySelector(".reports_modal .modal"));
+        const modal = Modal.getOrCreateInstance(document.querySelector(".reports_modal .modal"));
         modal.show();
     }, []);
     useEffect(() => {
@@ -134,10 +134,8 @@ function ReportsModal({restaurantUrl, restaurantId, restaurantName, reportsUrl, 
                                             className="btn btn-danger btn-sm flex-grow-1"
                                             onClick={() => {
                                                 document.querySelector(".reports_modal .modal").removeEventListener("hidden.bs.modal", closeModal);
-                                                // eslint-disable-next-line no-undef
-                                                bootstrap.Modal.getOrCreateInstance(document.querySelector(".reports_modal .modal")).hide();
-                                                // eslint-disable-next-line no-undef
-                                                bootstrap.Modal.getOrCreateInstance(document.querySelector("#delete-restaurant-modal")).show();
+                                                Modal.getOrCreateInstance(document.querySelector(".reports_modal .modal")).hide();
+                                                Modal.getOrCreateInstance(document.querySelector("#delete-restaurant-modal")).show();
                                             }}
                                         >
                                             {t("moderators_panel.reports.delete_restaurant")}

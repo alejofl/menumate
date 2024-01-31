@@ -27,6 +27,7 @@ import {selectComponents, selectStyles} from "../components/utils/SelectProperti
 import RestaurantSpecialties from "../data/RestaurantSpecialties.js";
 import RestaurantTags from "../data/RestaurantTags.js";
 import {ROLE_FOR_RESTAURANT} from "../utils.js";
+import {Modal} from "bootstrap";
 
 function EditRestaurant({restaurant, categories, products, promotions, promotionProducts, userRole, refetchRestaurant, refetchCategories, refetchPromotions}) {
     const {t} = useTranslation();
@@ -127,8 +128,7 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
             await restaurantService.deleteRestaurant(restaurant.selfUrl);
         },
         onSuccess: () => {
-            // eslint-disable-next-line no-undef
-            bootstrap.Modal.getOrCreateInstance(document.querySelector("#delete-restaurant-modal")).hide();
+            Modal.getOrCreateInstance(document.querySelector("#delete-restaurant-modal")).hide();
             navigate("/");
         },
         onError: () => setShowDeleteRestaurantError(true)
@@ -178,8 +178,7 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
         },
         onSuccess: () => {
             refetchCategories();
-            // eslint-disable-next-line no-undef
-            bootstrap.Modal.getOrCreateInstance(document.querySelector("#delete-category-modal")).hide();
+            Modal.getOrCreateInstance(document.querySelector("#delete-category-modal")).hide();
         },
         onError: () => setShowDeleteCategoryError(true)
     });
@@ -194,10 +193,8 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
         },
         onSuccess: () => {
             refetchEmployees();
-            // eslint-disable-next-line no-undef
-            bootstrap.Modal.getOrCreateInstance(document.querySelector("#delete-employee-modal")).hide();
-            // eslint-disable-next-line no-undef
-            bootstrap.Modal.getOrCreateInstance(document.querySelector("#edit-employees-modal")).show();
+            Modal.getOrCreateInstance(document.querySelector("#delete-employee-modal")).hide();
+            Modal.getOrCreateInstance(document.querySelector("#edit-employees-modal")).show();
         },
         onError: () => setShowDeleteEmployeeError(true)
     });
@@ -226,8 +223,7 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
             {
                 onSuccess: () => {
                     refetchCategories();
-                    // eslint-disable-next-line no-undef
-                    bootstrap.Modal.getOrCreateInstance(document.querySelector("#add-category-modal")).hide();
+                    Modal.getOrCreateInstance(document.querySelector("#add-category-modal")).hide();
                 },
                 onError: () => setShowAddCategoryError(true)
             }
@@ -248,8 +244,7 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
                 onSuccess: () => {
                     const productIndex = categories.sort((a, b) => a.orderNum < b.orderNum).findIndex(category => category.productsUrl === addProductUrl);
                     products[productIndex].refetch();
-                    // eslint-disable-next-line no-undef
-                    bootstrap.Modal.getOrCreateInstance(document.querySelector("#add-product-modal")).hide();
+                    Modal.getOrCreateInstance(document.querySelector("#add-product-modal")).hide();
                 },
                 onError: () => setShowAddProductError(true)
             }
@@ -276,8 +271,7 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
             {
                 onSuccess: () => {
                     refetchRestaurant();
-                    // eslint-disable-next-line no-undef
-                    bootstrap.Modal.getOrCreateInstance(document.querySelector("#edit-information-modal")).hide();
+                    Modal.getOrCreateInstance(document.querySelector("#edit-information-modal")).hide();
                 },
                 onError: () => setShowEditRestaurantInformationError(true)
             }
@@ -293,8 +287,7 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
             {
                 onSuccess: () => {
                     refetchCategories();
-                    // eslint-disable-next-line no-undef
-                    bootstrap.Modal.getOrCreateInstance(document.querySelector("#edit-category-modal")).hide();
+                    Modal.getOrCreateInstance(document.querySelector("#edit-category-modal")).hide();
                 },
                 onError: () => setShowEditCategoryError(true)
             }

@@ -13,6 +13,7 @@ import {
     EditProductSchema
 } from "../data/validation.js";
 import ApiContext from "../contexts/ApiContext.jsx";
+import {Modal} from "bootstrap";
 
 function ProductCard({
     productId,
@@ -107,8 +108,7 @@ function ProductCard({
             restaurantService.deleteProduct(productUrl)
         ),
         onSuccess: async () => {
-            // eslint-disable-next-line no-undef
-            bootstrap.Modal.getOrCreateInstance(document.querySelector(`#delete-product-${productId}-modal`)).hide();
+            Modal.getOrCreateInstance(document.querySelector(`#delete-product-${productId}-modal`)).hide();
             await refetch();
         },
         onError: () => setShowDeleteProductError(true)
@@ -118,8 +118,7 @@ function ProductCard({
             restaurantService.deletePromotion(promotionUrl)
         ),
         onSuccess: async () => {
-            // eslint-disable-next-line no-undef
-            bootstrap.Modal.getOrCreateInstance(document.querySelector(`#delete-promotion-${productId}-modal`)).hide();
+            Modal.getOrCreateInstance(document.querySelector(`#delete-promotion-${productId}-modal`)).hide();
             await refetch();
         },
         onError: () => setShowDeletePromotionError(true)
@@ -164,8 +163,7 @@ function ProductCard({
             },
             {
                 onSuccess: async () => {
-                    // eslint-disable-next-line no-undef
-                    bootstrap.Modal.getOrCreateInstance(document.querySelector(`#create-promotion-${productId}-modal`)).hide();
+                    Modal.getOrCreateInstance(document.querySelector(`#create-promotion-${productId}-modal`)).hide();
                     await refetch();
                 },
                 onError: (error) => {
@@ -193,8 +191,7 @@ function ProductCard({
             },
             {
                 onSuccess: async (categoryId) => {
-                    // eslint-disable-next-line no-undef
-                    bootstrap.Modal.getOrCreateInstance(document.querySelector(`#edit-product-${productId}-modal`)).hide();
+                    Modal.getOrCreateInstance(document.querySelector(`#edit-product-${productId}-modal`)).hide();
                     await refetch(categoryId);
                 },
                 onError: () => setShowEditProductError(true)

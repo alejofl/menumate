@@ -2,13 +2,13 @@ import {useEffect} from "react";
 import {useTranslation} from "react-i18next";
 import {Link} from "react-router-dom";
 import "./styles/restaurant_toast.styles.css";
+import { Toast, Tooltip } from "bootstrap";
 
 function RestaurantLocationToast({ restaurantId, dineIn }) {
     const { t } = useTranslation();
 
     const showToast = (querySelector) => {
-        // eslint-disable-next-line no-undef
-        const toast = bootstrap.Toast.getOrCreateInstance(document.querySelector(querySelector));
+        const toast = Toast.getOrCreateInstance(document.querySelector(querySelector));
         if (!toast.isShown()) {
             toast.show();
         }
@@ -18,8 +18,7 @@ function RestaurantLocationToast({ restaurantId, dineIn }) {
         showToast(".restaurant_location_toast #icon-toast");
         showToast(".restaurant_location_toast #text-toast");
 
-        // eslint-disable-next-line no-undef
-        [...document.querySelectorAll('[data-bs-toggle="tooltip"]')].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl, {"trigger": "hover"}));
+        [...document.querySelectorAll('[data-bs-toggle="tooltip"]')].map(tooltipTriggerEl => new Tooltip(tooltipTriggerEl, {"trigger": "hover"}));
     }, []);
 
     return (
@@ -48,7 +47,7 @@ function RestaurantLocationToast({ restaurantId, dineIn }) {
                     </div>
                 </div>
                 <div className="toast text-bg-primary" id="icon-toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false" onClick={() => showToast(".restaurant_location_toast #text-toast")}>
-                    <div className="d-flex" data-bs-toggle="tooltip" data-bs-title={dineIn ? t("restaurant.toasts.dine_in.text") : t("restaurant.toasts.delivery.text")}>
+                    <div className="d-flex" data-bs-toggle="tooltip" data-bs-original-title={dineIn ? t("restaurant.toasts.dine_in.text") : t("restaurant.toasts.delivery.text")}>
                         <div className="toast-body">
                             <h5 className="m-0">
                                 {dineIn ? <i className="bi bi-collection-fill default"></i> : <i className="bi bi-car-front-fill default"></i>}

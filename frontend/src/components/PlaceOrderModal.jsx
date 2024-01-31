@@ -9,6 +9,7 @@ import {ErrorMessage, Field, Form, Formik} from "formik";
 import {PlaceOrderSchema} from "../data/validation.js";
 import ApiContext from "../contexts/ApiContext.jsx";
 import {useOrderService} from "../hooks/services/useOrderService.js";
+import {Modal} from "bootstrap";
 
 function PlaceOrderModal({restaurantId, maxTables, dineIn, dineInCompletionTime, deliveryCompletionTime, takeAwayCompletionTime, cart, onClose, onOrderCompleted, onError}) {
     const { t, i18n } = useTranslation();
@@ -28,8 +29,7 @@ function PlaceOrderModal({restaurantId, maxTables, dineIn, dineInCompletionTime,
             return;
         }
 
-        // eslint-disable-next-line no-undef
-        const modal = bootstrap.Modal.getOrCreateInstance(document.querySelector(".place_order_modal .modal"));
+        const modal = Modal.getOrCreateInstance(document.querySelector(".place_order_modal .modal"));
         modal.show();
 
         countdownLatch.current = true;
@@ -84,8 +84,7 @@ function PlaceOrderModal({restaurantId, maxTables, dineIn, dineInCompletionTime,
             },
             {
                 onSuccess: () => {
-                    // eslint-disable-next-line no-undef
-                    bootstrap.Modal.getInstance(".place_order_modal .modal").hide();
+                    Modal.getInstance(".place_order_modal .modal").hide();
                     onOrderCompleted();
                 },
                 onError: () => setShowErrorAlert(true)

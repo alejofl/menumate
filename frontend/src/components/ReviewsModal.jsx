@@ -8,6 +8,7 @@ import Rating from "./Rating.jsx";
 import InternalOrderModal from "./InternalOrderModal.jsx";
 import {ErrorMessage, Field, Form, Formik} from "formik";
 import {ReviewReplySchema} from "../data/validation.js";
+import { Modal } from "bootstrap";
 
 function ReviewsModal({reviewsUrl, isEmployee, onClose, onError}) {
     const { t, i18n } = useTranslation();
@@ -21,8 +22,7 @@ function ReviewsModal({reviewsUrl, isEmployee, onClose, onError}) {
     const [showErrorAlert, setShowErrorAlert] = useState(false);
 
     useEffect(() => {
-        // eslint-disable-next-line no-undef
-        const modal = bootstrap.Modal.getOrCreateInstance(document.querySelector(".reviews_modal .modal"));
+        const modal = Modal.getOrCreateInstance(document.querySelector(".reviews_modal .modal"));
         modal.show();
     }, []);
     useEffect(() => {
@@ -65,16 +65,14 @@ function ReviewsModal({reviewsUrl, isEmployee, onClose, onError}) {
 
     const handleShowOrderClicked = (orderUrl) => {
         document.querySelector(".reviews_modal .modal").removeEventListener("hidden.bs.modal", closeModal);
-        // eslint-disable-next-line no-undef
-        bootstrap.Modal.getOrCreateInstance(document.querySelector(".reviews_modal .modal")).hide();
+        Modal.getOrCreateInstance(document.querySelector(".reviews_modal .modal")).hide();
         setOrderUrl(orderUrl);
         setShowInternalOrderModal(true);
     };
 
     const handleCloseOrderModal = () => {
         setShowInternalOrderModal(false);
-        // eslint-disable-next-line no-undef
-        bootstrap.Modal.getOrCreateInstance(document.querySelector(".reviews_modal .modal")).show();
+        Modal.getOrCreateInstance(document.querySelector(".reviews_modal .modal")).show();
         document.querySelector(".reviews_modal .modal").addEventListener("hidden.bs.modal", closeModal);
     };
 

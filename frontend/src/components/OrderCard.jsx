@@ -14,6 +14,7 @@ import {useContext, useEffect, useState} from "react";
 import ApiContext from "../contexts/ApiContext.jsx";
 import {ErrorMessage, Field, Form, Formik} from "formik";
 import {ReviewSchema} from "../data/validation.js";
+import {Modal} from "bootstrap";
 
 function OrderCard({orderUrl, showCard = true, onError}) {
     const { t, i18n } = useTranslation();
@@ -93,10 +94,8 @@ function OrderCard({orderUrl, showCard = true, onError}) {
             {
                 onSuccess: () => {
                     queryClient.invalidateQueries({queryKey: ["order", orderUrl, "review"]});
-                    // eslint-disable-next-line no-undef
-                    bootstrap.Modal.getOrCreateInstance(document.querySelector(`#review-${order.orderId}-modal`)).hide();
-                    // eslint-disable-next-line no-undef
-                    bootstrap.Modal.getOrCreateInstance(document.querySelector(`#order-${order.orderId}-details`)).show();
+                    Modal.getOrCreateInstance(document.querySelector(`#review-${order.orderId}-modal`)).hide();
+                    Modal.getOrCreateInstance(document.querySelector(`#order-${order.orderId}-details`)).show();
                     setHoverRating(0);
                     setRating(0);
                     setShowReviewErrorAlert(false);
@@ -114,8 +113,7 @@ function OrderCard({orderUrl, showCard = true, onError}) {
             !(restaurantIsPending || orderItemsIsPending || products.some(product => product.isPending) || reviewIsPending) &&
             !showCard
         ) {
-            // eslint-disable-next-line no-undef
-            bootstrap.Modal.getOrCreateInstance(document.querySelector(`#order-${order.orderId}-details`)).show();
+            Modal.getOrCreateInstance(document.querySelector(`#order-${order.orderId}-details`)).show();
         }
     }, [restaurantIsPending, orderItemsIsPending, products, reviewIsPending]);
 

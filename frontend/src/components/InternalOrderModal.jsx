@@ -6,6 +6,7 @@ import {useRestaurantService} from "../hooks/services/useRestaurantService.js";
 import {useMutation, useQueries, useQuery} from "@tanstack/react-query";
 import {useUserService} from "../hooks/services/useUserService.js";
 import {ORDER_TYPE, PRICE_DECIMAL_DIGITS, STATUS} from "../utils.js";
+import {Modal} from "bootstrap";
 
 function InternalOrderModal({orderUrl, showActions, onClose, onError}) {
     const { t } = useTranslation();
@@ -15,8 +16,7 @@ function InternalOrderModal({orderUrl, showActions, onClose, onError}) {
     const restaurantService = useRestaurantService(api);
 
     useEffect(() => {
-        // eslint-disable-next-line no-undef
-        const modal = bootstrap.Modal.getOrCreateInstance(document.querySelector(".internal_order_modal .modal"));
+        const modal = Modal.getOrCreateInstance(document.querySelector(".internal_order_modal .modal"));
         modal.show();
     }, []);
     useEffect(() => {
@@ -75,8 +75,7 @@ function InternalOrderModal({orderUrl, showActions, onClose, onError}) {
             },
             {
                 onSuccess: () => {
-                    // eslint-disable-next-line no-undef
-                    const modal = bootstrap.Modal.getOrCreateInstance(document.querySelector(".internal_order_modal .modal"));
+                    const modal = Modal.getOrCreateInstance(document.querySelector(".internal_order_modal .modal"));
                     modal.hide();
                 }
             }

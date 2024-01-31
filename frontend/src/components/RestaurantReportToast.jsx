@@ -6,6 +6,7 @@ import {ReportSchema} from "../data/validation.js";
 import {useMutation} from "@tanstack/react-query";
 import {useApi} from "../hooks/useApi.js";
 import {useRestaurantService} from "../hooks/services/useRestaurantService.js";
+import {Toast} from "bootstrap";
 
 function RestaurantReportToast({ reportsUrl }) {
     const { t } = useTranslation();
@@ -13,8 +14,7 @@ function RestaurantReportToast({ reportsUrl }) {
     const restaurantService = useRestaurantService(api);
 
     const showToast = (querySelector) => {
-        // eslint-disable-next-line no-undef
-        const toast = bootstrap.Toast.getOrCreateInstance(document.querySelector(querySelector));
+        const toast = Toast.getOrCreateInstance(document.querySelector(querySelector));
         if (!toast.isShown()) {
             toast.show();
         }

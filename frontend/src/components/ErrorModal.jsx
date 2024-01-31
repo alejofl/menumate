@@ -1,12 +1,12 @@
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { Modal } from "bootstrap";
 
 function ErrorModal({ title = undefined, message = undefined}) {
     const { t } = useTranslation();
 
     useEffect(() => {
-        // eslint-disable-next-line no-undef
-        const modal = bootstrap.Modal.getOrCreateInstance(document.querySelector(".error_modal .modal"));
+        const modal = Modal.getOrCreateInstance(document.querySelector(".error_modal .modal"));
         modal.show();
     }, []);
 
