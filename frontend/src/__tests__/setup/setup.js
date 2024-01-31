@@ -5,13 +5,15 @@ import {restaurantsHandlers} from "../mocks/RestaurantsApiMock.js";
 import {imagesHandlers} from "../mocks/ImagesApiMock.js";
 import {userHandler} from "../mocks/UserProfileMock.js";
 import {homeIndexHandlers} from "../mocks/HomeIndexApiMock.js";
+import {reviewHandlers} from "../mocks/ReviewApiMock.js";
 
 const server = setupServer(...[
     ...homeIndexHandlers,
     ...ordersHandlers,
     ...restaurantsHandlers,
     ...userHandler,
-    ...imagesHandlers
+    ...imagesHandlers,
+    ...reviewHandlers
 ]);
 
 // Enable request interception.
