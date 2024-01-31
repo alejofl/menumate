@@ -19,7 +19,10 @@ public class ValidationExceptionMapper implements ExceptionMapper<ConstraintViol
     @Override
     public Response toResponse(ConstraintViolationException exception) {
         final Response.Status status = Response.Status.BAD_REQUEST;
-        LOGGER.error("ConstraintViolationException: {} - Message: {} - Status code: {}", exception.getClass().getName(), exception.getConstraintViolations(), status);
+        LOGGER.error("ConstraintViolationException: {} - Message: {} - Status code: {}",
+                exception.getClass().getName(),
+                exception.getConstraintViolations(),
+                status.getStatusCode());
 
         final List<ValidationErrorDto> validationErrors = ValidationErrorDto.fromConstraintViolationCollection(exception.getConstraintViolations());
         return Response.status(status).entity(new GenericEntity<List<ValidationErrorDto>>(validationErrors) {}).build();

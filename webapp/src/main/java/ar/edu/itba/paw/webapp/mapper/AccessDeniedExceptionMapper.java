@@ -17,7 +17,10 @@ public class AccessDeniedExceptionMapper implements ExceptionMapper<AccessDenied
     public Response toResponse(AccessDeniedException exception) {
         final Response.Status status = ControllerUtils.getCurrentUserIdOrNull() == null ? Response.Status.UNAUTHORIZED : Response.Status.FORBIDDEN;
 
-        LOGGER.error("AccessDeniedException: {} - Message: {} - Status code: {}", exception.getClass(), exception.getMessage(), status.getStatusCode());
+        LOGGER.error("AccessDeniedException: {} - Message: {} - Status code: {}",
+                exception.getClass(),
+                exception.getMessage(),
+                status.getStatusCode());
 
         return Response.status(status).entity(exception.getMessage()).build();
     }

@@ -24,10 +24,10 @@ public class CustomRuntimeExceptionMapper implements ExceptionMapper<CustomRunti
 
     @Override
     public Response toResponse(CustomRuntimeException exception) {
-        LOGGER.error("Runtime Exception: {} - Status code: {} - Message: {}",
+        LOGGER.error("Runtime Exception: {} - Message: {} - Status code: {}",
                 exception.getClass().getName(),
-                exception.getStatusCode(),
-                messageSource.getMessage(exception.getExceptionMessage(), null, Locale.ENGLISH));
+                messageSource.getMessage(exception.getExceptionMessage(), null, Locale.ENGLISH),
+                exception.getStatusCode());
 
         return Response
                 .status(exception.getStatusCode())

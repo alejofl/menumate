@@ -24,10 +24,10 @@ public class CustomExceptionMapper implements ExceptionMapper<CustomException> {
 
     @Override
     public Response toResponse(CustomException exception) {
-        LOGGER.error("Exception: {} - Status code: {} - Message: {}",
+        LOGGER.error("Exception: {} - Message: {} - Status code: {}",
                 exception.getClass().getName(),
-                exception.getStatusCode(),
-                messageSource.getMessage(exception.getExceptionMessage(), null, Locale.ENGLISH));
+                messageSource.getMessage(exception.getExceptionMessage(), null, Locale.ENGLISH),
+                exception.getStatusCode());
 
         return Response.status(exception.getStatusCode())
                 .entity(messageSource.getMessage(exception.getExceptionMessage(), null, LocaleContextHolder.getLocale()))

@@ -18,7 +18,10 @@ public class WebApplicationExceptionMapper implements ExceptionMapper<WebApplica
 
     @Override
     public Response toResponse(WebApplicationException exception) {
-        LOGGER.error("WebApplicationException: {} - Message: {}", exception.getClass().getName(), exception.getMessage());
+        LOGGER.error("WebApplicationException: {} - Message: {} - Status code: {}",
+                exception.getClass().getName(),
+                exception.getMessage(),
+                exception.getResponse().getStatus());
 
         return Response
                 .status(exception.getResponse().getStatus())

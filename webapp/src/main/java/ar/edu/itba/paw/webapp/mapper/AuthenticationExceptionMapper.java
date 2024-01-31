@@ -25,7 +25,10 @@ public class AuthenticationExceptionMapper implements ExceptionMapper<Authentica
     public Response toResponse(AuthenticationException exception) {
         final Response.Status status = Response.Status.UNAUTHORIZED;
 
-        LOGGER.error("AuthenticationException: {} - Message: {} - Status code: {}", exception.getClass(), exception.getMessage(), status.getStatusCode());
+        LOGGER.error("AuthenticationException: {} - Message: {} - Status code: {}",
+                exception.getClass(),
+                exception.getMessage(),
+                status.getStatusCode());
 
         String message;
         try {

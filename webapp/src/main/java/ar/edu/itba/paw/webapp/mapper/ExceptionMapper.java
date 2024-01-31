@@ -37,7 +37,10 @@ public class ExceptionMapper implements javax.ws.rs.ext.ExceptionMapper<Exceptio
 
         final Response.Status status = EXCEPTION_STATUS_MAP.getOrDefault(exception.getClass(), DEFAULT_STATUS);
 
-        LOGGER.error("Exception: {} - Message: {} - Status code: {}", exception.getClass(), exception.getMessage(), status.getStatusCode());
+        LOGGER.error("Exception: {} - Message: {} - Status code: {}",
+                exception.getClass(),
+                exception.getMessage(),
+                status.getStatusCode());
 
         String message;
         try {
