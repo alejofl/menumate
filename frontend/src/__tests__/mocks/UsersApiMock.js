@@ -8,7 +8,7 @@ import {
     USER_ROLE_CONTENT_TYPE
 } from "../../utils.js";
 
-export const userHandler = [
+export const usersHandlers = [
     http.post(apiUrl(""), ({request}) => {
         if (request.headers.get("Content-Type") === USER_CONTENT_TYPE) {
             return new HttpResponse(null, {status: 201});
