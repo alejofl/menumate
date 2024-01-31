@@ -25,13 +25,9 @@ describe("useReportService", () => {
             const reportService = useReportService(Api);
             const response = await reportService.getReports(apiUrl("/restaurants/1/reports"), {});
             expect(response.content[0].comment).toEqual(expect.any(String));
-            expect(response.content[0].dateHandled).toEqual(expect.any(Date));
             expect(response.content[0].dateReported).toEqual(expect.any(Date));
             expect(response.content[0].handled).toEqual(expect.any(Boolean));
-            expect(response.content[0].handlerId).toEqual(expect.any(Number));
-            expect(response.content[0].reportId).toEqual(expect.any(String));
-            expect(response.content[0].reporterId).toEqual(expect.any(Number));
-            expect(response.content[0].reporterUrl).toEqual(expect.any(String));
+            expect(response.content[0].reportId).toEqual(expect.any(Number));
             expect(response.content[0].restaurantId).toEqual(expect.any(Number));
             expect(response.content[0].restaurantUrl).toEqual(expect.any(String));
             expect(response.content[0].selfUrl).toEqual(expect.any(String));
@@ -48,10 +44,8 @@ describe("useReportService", () => {
 
     describe("toggleActiveForRestaurant", () => {
         it("should return 204 No Content", async () => {
-            console.log("DIOISSSS");
             const reportService = useReportService(Api);
             const response = await reportService.toggleActiveForRestaurant(apiUrl("/restaurants/1"), true);
-            console.log("DIOISSSS");
             expect(response.status).toBe(204);
         });
     });

@@ -1,6 +1,7 @@
 import { http, HttpResponse } from "msw";
 import {apiUrl} from "../setup/utils.js";
 import {
+    ACTIVATE_RESTAURANT_CONTENT_TYPE,
     REPORTS_CONTENT_TYPE,
     RESTAURANT_CATEGORIES_CONTENT_TYPE,
     RESTAURANT_DETAILS_CONTENT_TYPE,
@@ -380,7 +381,7 @@ export const restaurantsHandlers = [
     }),
 
     http.patch(apiUrl("/restaurants/:id"), ({request}) => {
-        if (request.headers.get("Content-Type") === RESTAURANTS_CONTENT_TYPE) {
+        if (request.headers.get("Content-Type") === RESTAURANTS_CONTENT_TYPE || request.headers.get("Content-Type") === ACTIVATE_RESTAURANT_CONTENT_TYPE) {
             return new HttpResponse(null, {status: 204});
         } else {
             return new HttpResponse(null, {status: 415});
