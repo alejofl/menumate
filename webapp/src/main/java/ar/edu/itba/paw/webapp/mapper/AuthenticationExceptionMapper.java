@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.webapp.mapper;
 
-import ar.edu.itba.paw.webapp.utils.ControllerUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Component;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
-import java.util.NoSuchElementException;
 
 @Component
 @Provider
@@ -25,14 +23,14 @@ public class AuthenticationExceptionMapper implements ExceptionMapper<Authentica
 
     @Override
     public Response toResponse(AuthenticationException exception) {
-        Response.Status status = ControllerUtils.getCurrentUserIdOrNull() == null ? Response.Status.UNAUTHORIZED : Response.Status.FORBIDDEN;
+        final Response.Status status = Response.Status.UNAUTHORIZED;
 
-        LOGGER.error("Exception: {} - Message: {} - Status code: {}", exception.getClass(), exception.getMessage(), status.getStatusCode());
+        LOGGER.error("AuthenticationException: {} - Message: {} - Status code: {}", exception.getClass(), exception.getMessage(), status.getStatusCode());
 
         String message;
         try {
             message = messageSource.getMessage(exception.getMessage(), null, LocaleContextHolder.getLocale());
-        } catch (NoSuchElementException e) {
+        } catch (Exception e) {
             message = exception.getMessage();
         }
 

@@ -1,6 +1,8 @@
 package ar.edu.itba.paw.webapp.contextResolver;
 
 import org.glassfish.jersey.server.validation.ValidationConfig;
+import org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator;
+import org.hibernate.validator.resourceloading.PlatformResourceBundleLocator;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 import javax.validation.MessageInterpolator;
@@ -13,6 +15,7 @@ import java.util.Locale;
  * https://download.oracle.com/otn-pub/jcp/bean_validation-1.0-fr-oth-JSpec/bean_validation-1_0-final-spec.pdf
  * https://www.baeldung.com/spring-validation-message-interpolation
  * https://www.cwiki.us/display/JERSEYEN/Configuring+Bean+Validation+Support
+ * https://docs.jboss.org/hibernate/stable/validator/reference/en-US/html_single/#section-custom-message-interpolation
  */
 
 @Provider
@@ -30,7 +33,16 @@ public class ValidationContextResolver implements ContextResolver<ValidationConf
         private final MessageInterpolator defaultInterpolator;
 
         public LocaleContextHolderMessageInterpolator() {
-            defaultInterpolator = Validation.byDefaultProvider().configure().getDefaultMessageInterpolator();
+            defaultInterpolator = Validation
+                    .byDefaultProvider()
+                    .configure()
+                    .messageInterpolator(
+                            new ResourceBundleMessageInterpolator(
+                                    new PlatformResourceBundleLocator("i18n/ValidationMessages")
+                            )
+                    )
+                    .buildValidatorFactory()
+                    .getMessageInterpolator();
         }
 
         @Override

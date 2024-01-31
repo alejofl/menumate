@@ -11,7 +11,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 @Component
 @Provider
@@ -36,14 +35,14 @@ public class ExceptionMapper implements javax.ws.rs.ext.ExceptionMapper<Exceptio
     @Override
     public Response toResponse(Exception exception) {
 
-        Response.Status status = EXCEPTION_STATUS_MAP.getOrDefault(exception.getClass(), DEFAULT_STATUS);
+        final Response.Status status = EXCEPTION_STATUS_MAP.getOrDefault(exception.getClass(), DEFAULT_STATUS);
 
         LOGGER.error("Exception: {} - Message: {} - Status code: {}", exception.getClass(), exception.getMessage(), status.getStatusCode());
 
         String message;
         try {
             message = messageSource.getMessage(exception.getMessage(), null, LocaleContextHolder.getLocale());
-        } catch (NoSuchElementException e) {
+        } catch (Exception e) {
             message = exception.getMessage();
         }
 

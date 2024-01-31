@@ -20,7 +20,7 @@ public final class ControllerUtils {
     public static final int DEFAULT_MYRESTAURANTS_PAGE_SIZE = 20;
     public static final int MAX_RESTAURANTS_FOR_HOMEPAGE = 4;
     public static final int IMAGE_MAX_SIZE = 1024 * 1024 * 5; // 1024 B = 1 KB && 1024 B * 1024 = 1 MB ==> MAX_SIZE = 5 MB
-    public static final int MAX_AGE = 31536000;
+    public static final int IMAGE_MAX_AGE = 2592000;
 
     private ControllerUtils() {
 
@@ -104,9 +104,9 @@ public final class ControllerUtils {
         return response;
     }
 
-    public static Response.ResponseBuilder setUnconditionalCache(Response.ResponseBuilder responseBuilder) {
+    public static Response.ResponseBuilder setUnconditionalCache(Response.ResponseBuilder responseBuilder, int maxAge) {
         final CacheControl cacheControl = new CacheControl();
-        cacheControl.setMaxAge(MAX_AGE);
+        cacheControl.setMaxAge(maxAge);
         responseBuilder.cacheControl(cacheControl);
         return responseBuilder;
     }

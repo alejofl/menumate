@@ -23,9 +23,9 @@ public class AcceptLanguageFilter implements ContainerRequestFilter {
 
     @Override
     public void filter(ContainerRequestContext requestContext) {
-        List<Locale> acceptableLanguages = requestContext.getAcceptableLanguages();
+        final List<Locale> acceptableLanguages = requestContext.getAcceptableLanguages();
 
-        Locale selectedLocale = acceptableLanguages.stream()
+        final Locale selectedOrDefaultLocale = acceptableLanguages.stream()
                 .filter(locale -> {
                     String language = locale.getLanguage().toLowerCase();
                     return language.equals(ES_LOCALE) || language.equals(EN_LOCALE) || language.equals(ANY_LANGUAGE);
@@ -34,7 +34,7 @@ public class AcceptLanguageFilter implements ContainerRequestFilter {
                 .orElseGet(() -> new Locale(EN_LOCALE));
 
         // Associate the given Locale with the current thread
-        LocaleContextHolder.setLocale(selectedLocale);
+        LocaleContextHolder.setLocale(selectedOrDefaultLocale);
     }
 }
 
