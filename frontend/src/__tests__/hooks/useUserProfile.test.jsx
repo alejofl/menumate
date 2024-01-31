@@ -148,13 +148,13 @@ describe("useUserService", () => {
     describe("getRoleForRestaurant", () => {
         it("should return a UserRoleForRestaurant", async () => {
             const userService = useUserService(Api);
-            const response = await userService.getRoleForRestaurant(apiUrl("restaurants/1/employees/1"));
+            const response = await userService.getRoleForRestaurant(apiUrl("/restaurants/1/employees/1"));
             expect(response).toBeInstanceOf(UserRoleForRestaurant);
         });
 
         it("should return correct data", async () => {
             const userService = useUserService(Api);
-            const response = await userService.getRoleForRestaurant(apiUrl("restaurants/1/employees/1"));
+            const response = await userService.getRoleForRestaurant(apiUrl("/restaurants/1/employees/1"));
             expect(response.email).toEqual(expect.any(String));
             expect(response.name).toEqual(expect.any(String));
             expect(response.restaurantUrl).toEqual(expect.any(String));
@@ -167,7 +167,7 @@ describe("useUserService", () => {
     describe("addModerator", () => {
         it("should return 201 Created", async () => {
             const userService = useUserService(Api);
-            const response = await userService.addModerator(apiUrl("restaurants/1/employees"), {});
+            const response = await userService.addModerator(apiUrl("/users"), {});
             expect(response.status).toBe(201);
         });
     });
@@ -175,7 +175,7 @@ describe("useUserService", () => {
     describe("deleteModerator", () => {
         it("should return 204 No Content", async () => {
             const userService = useUserService(Api);
-            const response = await userService.deleteModerator(apiUrl("restaurants/1/employees/1"));
+            const response = await userService.deleteModerator(apiUrl("/users/1"));
             expect(response.status).toBe(204);
         });
     });

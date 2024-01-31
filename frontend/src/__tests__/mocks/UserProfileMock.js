@@ -51,7 +51,7 @@ export const userHandler = [
     }),
 
     http.post(apiUrl("/users"), ({request}) => {
-        if (request.headers.get("Content-Type") === USER_CONTENT_TYPE) {
+        if (request.headers.get("Content-Type") === USER_CONTENT_TYPE || request.headers.get("Content-Type") === USER_ROLE_CONTENT_TYPE) {
             return new HttpResponse(null, {status: 201});
         } else {
             return new HttpResponse(null, {status: 415});
@@ -176,15 +176,7 @@ export const userHandler = [
         }
     }),
 
-    http.post(apiUrl("restaurants/:restaurantId/employees"), ({request}) => {
-        if (request.headers.get("Content-Type") === USER_ROLE_CONTENT_TYPE) {
-            return new HttpResponse(null, {status: 201});
-        } else {
-            return new HttpResponse(null, {status: 415});
-        }
-    }),
-
-    http.delete(apiUrl("restaurants/:restaurantId/employees/:userId"), () => {
+    http.delete(apiUrl("/users/:id"), () => {
         return new HttpResponse(null, {status: 204});
     })
 ];
