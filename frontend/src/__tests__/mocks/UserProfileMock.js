@@ -17,16 +17,21 @@ export const userHandler = [
         }
     }),
 
-    http.get(apiUrl(""), () => {
-        return new HttpResponse(null,
-            {
-                status: 200,
-                headers: {
-                    "x-menumate-authtoken": "mockAuthToken",
-                    "x-menumate-refreshtoken": "mockRefreshToken"
+    http.get(apiUrl(""), ({request}) => {
+        if (request.headers.get("Accept") === USER_CONTENT_TYPE) {
+            return HttpResponse.json(
+                null,
+                {
+                    status: 200,
+                    headers: {
+                        "x-menumate-authtoken": "mockAuthToken",
+                        "x-menumate-refreshtoken": "mockRefreshToken"
+                    }
                 }
-            }
-        );
+            );
+        } else {
+            return new HttpResponse(null, {status: 406});
+        }
     }),
 
     http.post(apiUrl("/users/:id"), ({request}) => {
