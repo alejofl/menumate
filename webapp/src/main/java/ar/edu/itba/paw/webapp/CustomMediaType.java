@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.webapp;
 
-public class CustomMediaType {
+public final class CustomMediaType {
 
     /***
      * Image controller
