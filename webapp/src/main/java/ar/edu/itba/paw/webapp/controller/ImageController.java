@@ -47,12 +47,5 @@ public class ImageController {
         final ImageDto imageDto = ImageDto.fromImage(uriInfo, image);
         return Response.created(UriUtils.getImageUri(uriInfo, image.getImageId())).entity(imageDto).build();
     }
-
-    @DELETE
-    @Path("/{imageId:\\d+}")
-    public Response deleteImage(@PathParam("imageId") int imageId) {
-        imageService.delete(imageId);
-        return Response.noContent().build();
-    }
 }
 

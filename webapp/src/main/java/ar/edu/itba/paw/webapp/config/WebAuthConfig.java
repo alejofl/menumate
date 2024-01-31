@@ -68,6 +68,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
                 .and().authorizeRequests()
                 .antMatchers(HttpMethod.GET, UriUtils.IMAGES_URL + "/{imageId:\\d+}").permitAll()
+                .antMatchers(HttpMethod.POST, UriUtils.IMAGES_URL + "/{imageId:\\d+}").authenticated()
 
                 .antMatchers(HttpMethod.GET, UriUtils.RESTAURANTS_URL).permitAll() // Checked with @PreAuthorize
                 .antMatchers(HttpMethod.POST, UriUtils.RESTAURANTS_URL).authenticated()
