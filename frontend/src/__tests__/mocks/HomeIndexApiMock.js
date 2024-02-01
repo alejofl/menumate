@@ -1,5 +1,5 @@
 import { http, HttpResponse } from "msw";
-import {apiUrl} from "../setup/utils.js";
+import {apiUrl, DUMMY_AUTH_TOKEN, DUMMY_REFRESH_TOKEN} from "../setup/utils.js";
 
 export const homeIndexHandlers = [
     http.get(apiUrl("/"), ({request}) => {
@@ -17,8 +17,8 @@ export const homeIndexHandlers = [
                         request.headers.get("Authorization")
                             ?
                             {
-                                "x-menumate-authtoken": "eyJhbGciOiJIUzUxMiJ9.eyJ0b2tlblR5cGUiOiJNT0NLLUFDQ0VTUyIsIm5hbWUiOiJKb2huIERvZSIsInJvbGUiOiJNT0RFUkFUT1IiLCJzZWxmVXJsIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3Bhdy0yMDIzYS0wMS9hcGkvdXNlcnMvMSIsInN1YiI6ImFsZWpvQG1pc3RlcmZsb3Jlcy5jb20iLCJpYXQiOjE3MDY3MTk1MzMsImV4cCI6MTcwNjcyMDEzM30.lj53LaO6g6oGfY0dz9pFC31kZpnvMSUAsmWtgV1MA4AuWiTh3ykduVY52ljJXCR2Acgb3BjgAa1PhhvaH5OBmA",
-                                "x-menumate-refreshtoken": "eyJhbGciOiJIUzUxMiJ9.eyJ0b2tlblR5cGUiOiJNT0NLIFJFRlJFU0giLCJzdWIiOiJhbGVqb0BtaXN0ZXJmbG9yZXMuY29tIiwiaWF0IjoxNzA2NzE5NTMzLCJleHAiOjE3MDczMjQzMzN9.FUcyHdDNSm3brBW-QVPuA45nHVACPzQ6Q46gzAk7Z82bIhIFhxKkZe27nVcMaJSxlQWufZpUtx5a8ydoMUu16A"
+                                "x-menumate-authtoken": DUMMY_AUTH_TOKEN,
+                                "x-menumate-refreshtoken": DUMMY_REFRESH_TOKEN
                             }
                             :
                             {}

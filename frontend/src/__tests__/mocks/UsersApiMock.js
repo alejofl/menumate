@@ -1,7 +1,6 @@
 import {http, HttpResponse} from "msw";
 import {apiUrl} from "../setup/utils.js";
 import {
-    RESTAURANT_EMPLOYEES_CONTENT_TYPE,
     USER_ADDRESS_CONTENT_TYPE,
     USER_CONTENT_TYPE,
     USER_PASSWORD_CONTENT_TYPE,
@@ -146,24 +145,6 @@ export const usersHandlers = [
 
     http.delete(apiUrl("/users/:id/addresses/:addressId"), () => {
         return new HttpResponse(null, {status: 204});
-    }),
-
-    http.get(apiUrl("restaurants/:restaurantId/employees/:userId"), ({request}) => {
-        if (request.headers.get("Accept") === RESTAURANT_EMPLOYEES_CONTENT_TYPE) {
-            return HttpResponse.json(
-                {
-                    "email": "alejo@misterflores.com",
-                    "name": "Alejo Flores",
-                    "restaurantUrl": "http://localhost:8080/paw-2023a-01/api/restaurants/2",
-                    "role": "admin",
-                    "selfUrl": "http://localhost:8080/paw-2023a-01/api/restaurants/2/employees/1",
-                    "userId": 1,
-                    "userUrl": "http://localhost:8080/paw-2023a-01/api/users/1"
-                }
-            );
-        } else {
-            return new HttpResponse(null, {status: 406});
-        }
     }),
 
     http.delete(apiUrl("/users/:id"), () => {

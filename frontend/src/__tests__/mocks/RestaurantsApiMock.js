@@ -434,7 +434,7 @@ export const restaurantsHandlers = [
                     "email": "alejo.flores@sabf.org.ar",
                     "name": "alejo.flores",
                     "restaurantUrl": "http://localhost:8080/paw-2023a-01/api/restaurants/3",
-                    "role": "orderhandler",
+                    "role": "admin",
                     "selfUrl": "http://localhost:8080/paw-2023a-01/api/restaurants/3/employees/13",
                     "userId": 13,
                     "userUrl": "http://localhost:8080/paw-2023a-01/api/users/13"
