@@ -33,11 +33,12 @@ public class ValidDurationValidator implements ConstraintValidator<ValidDuration
             minutesField.setAccessible(true);
             typeField.setAccessible(true);
 
-            int days = (int) daysField.get(o);
-            int hours = (int) hoursField.get(o);
-            int minutes = (int) minutesField.get(o);
-            PromotionType type = PromotionType.fromOrdinal((int) typeField.get(o));
-            return type == PromotionType.SCHEDULED || (type == PromotionType.INSTANT && (days > 0 || hours > 0 || minutes > 0));
+            Integer days = (Integer) daysField.get(o);
+            Integer hours = (Integer) hoursField.get(o);
+            Integer minutes = (Integer) minutesField.get(o);
+
+            PromotionType type = PromotionType.fromCode((String) typeField.get(o));
+            return type == PromotionType.SCHEDULED || (type == PromotionType.INSTANT && ((days == null || days > 0) || (hours == null || hours > 0) || (minutes == null || minutes > 0)));
         } catch (NoSuchFieldException | IllegalAccessException e) {
             return false;
         }

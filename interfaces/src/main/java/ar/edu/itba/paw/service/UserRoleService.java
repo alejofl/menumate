@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.service;
 
-import ar.edu.itba.paw.model.UserRole;
+import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.model.UserRoleLevel;
 
 import java.util.List;
@@ -31,5 +31,5 @@ public interface UserRoleService {
     /**
      * Gets the users with certain role level
      */
-    List<UserRole> getByRole(UserRoleLevel roleLevel);
+    List<User> getByRole(UserRoleLevel roleLevel);
 }

@@ -19,6 +19,9 @@ import org.thymeleaf.context.Context;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -44,8 +47,8 @@ public class EmailServiceImpl implements EmailService {
 
     private void sendHtmlMessage(String to, String subject, String htmlBody) {
         try {
-            MimeMessage message = emailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, "UTF-8");
+            final MimeMessage message = emailSender.createMimeMessage();
+            final MimeMessageHelper helper = new MimeMessageHelper(message, "UTF-8");
             helper.setTo(to);
             helper.setFrom(environment.getProperty("email.address"));
             helper.setSubject(subject);
@@ -61,25 +64,25 @@ public class EmailServiceImpl implements EmailService {
     // This method will concatenate the baseUrl.
     // Only one link should be served for each email.
     private void sendMessageUsingThymeleafTemplate(String template, String to, String subject, Locale locale, Map<String, Object> params) {
-        Context thymeleafContext = new Context(locale);
+        final Context thymeleafContext = new Context(locale);
         final String baseUrl = environment.getProperty("email.base_url");
         if (params.containsKey("link")) {
             params.put("link", baseUrl + params.get("link"));
         }
         thymeleafContext.setVariables(params);
-        String htmlBody = thymeleafTemplateEngine.process(template, thymeleafContext);
+        final String htmlBody = thymeleafTemplateEngine.process(template, thymeleafContext);
         sendHtmlMessage(to, subject, htmlBody);
     }
 
     @Async
     @Override
     public void sendOrderReceivalForUser(Order order) {
-        Locale locale = new Locale(order.getUser().getPreferredLanguage());
+        final Locale locale = new Locale(order.getUser().getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
         params.put("recipientName", order.getUser().getName());
         params.put("orderId", order.getOrderId());
         params.put("restaurantName", order.getRestaurant().getName());
-        params.put("link", "/orders/" + order.getOrderId());
+        params.put("link", "/user/orders/" + order.getOrderId());
         params.put("price", order.getPrice());
         this.sendMessageUsingThymeleafTemplate(
                 "user_order_received",
@@ -93,8 +96,8 @@ public class EmailServiceImpl implements EmailService {
     @Async
     @Override
     public void sendOrderReceivalForRestaurant(Order order) {
-        Restaurant restaurant = order.getRestaurant();
-        Locale locale = new Locale(restaurant.getOwner().getPreferredLanguage());
+        final Restaurant restaurant = order.getRestaurant();
+        final Locale locale = new Locale(restaurant.getOwner().getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
         params.put("userName", order.getUser().getName());
         params.put("orderId", order.getOrderId());
@@ -113,11 +116,11 @@ public class EmailServiceImpl implements EmailService {
     @Async
     @Override
     public void sendOrderConfirmation(Order order) {
-        Locale locale = new Locale(order.getUser().getPreferredLanguage());
+        final Locale locale = new Locale(order.getUser().getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
         params.put("recipientName", order.getUser().getName());
         params.put("orderId", order.getOrderId());
-        params.put("link", "/orders/" + order.getOrderId());
+        params.put("link", "/user/orders/" + order.getOrderId());
         params.put("restaurantName", order.getRestaurant().getName());
         this.sendMessageUsingThymeleafTemplate(
                 "user_order_confirmed",
@@ -131,11 +134,11 @@ public class EmailServiceImpl implements EmailService {
     @Async
     @Override
     public void sendOrderReady(Order order) {
-        Locale locale = new Locale(order.getUser().getPreferredLanguage());
+        final Locale locale = new Locale(order.getUser().getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
         params.put("recipientName", order.getUser().getName());
         params.put("orderId", order.getOrderId());
-        params.put("link", "/orders/" + order.getOrderId());
+        params.put("link", "/user/orders/" + order.getOrderId());
         params.put("restaurantName", order.getRestaurant().getName());
         this.sendMessageUsingThymeleafTemplate(
                 "user_order_ready",
@@ -149,11 +152,11 @@ public class EmailServiceImpl implements EmailService {
     @Async
     @Override
     public void sendOrderDelivered(Order order) {
-        Locale locale = new Locale(order.getUser().getPreferredLanguage());
+        final Locale locale = new Locale(order.getUser().getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
         params.put("recipientName", order.getUser().getName());
         params.put("orderId", order.getOrderId());
-        params.put("link", "/orders/" + order.getOrderId());
+        params.put("link", "/user/orders/" + order.getOrderId());
         params.put("restaurantName", order.getRestaurant().getName());
         this.sendMessageUsingThymeleafTemplate(
                 "user_order_delivered",
@@ -167,7 +170,7 @@ public class EmailServiceImpl implements EmailService {
     @Async
     @Override
     public void sendOrderCancelled(Order order) {
-        Locale locale = new Locale(order.getUser().getPreferredLanguage());
+        final Locale locale = new Locale(order.getUser().getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
         params.put("recipientName", order.getUser().getName());
         params.put("orderId", order.getOrderId());
@@ -185,9 +188,13 @@ public class EmailServiceImpl implements EmailService {
     @Async
     @Override
     public void sendUserVerificationEmail(User user, String token) {
-        Locale locale = new Locale(user.getPreferredLanguage());
+        final Locale locale = new Locale(user.getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
-        params.put("link", "/auth/verify?token=" + token);
+        try {
+            params.put("link", String.format("/auth/verify?email=%s&token=%s", URLEncoder.encode(user.getEmail(), StandardCharsets.UTF_8.name()), URLEncoder.encode(token, StandardCharsets.UTF_8.name())));
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalStateException(e);
+        }
         params.put("username", user.getName());
         this.sendMessageUsingThymeleafTemplate(
                 "user_verification",
@@ -201,9 +208,13 @@ public class EmailServiceImpl implements EmailService {
     @Async
     @Override
     public void sendResetPasswordEmail(User user, String token) {
-        Locale locale = new Locale(user.getPreferredLanguage());
+        final Locale locale = new Locale(user.getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
-        params.put("link", "/auth/reset-password?token=" + token);
+        try {
+            params.put("link", String.format("/auth/reset-password?email=%s&token=%s", URLEncoder.encode(user.getEmail(), StandardCharsets.UTF_8.name()), URLEncoder.encode(token, StandardCharsets.UTF_8.name())));
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalStateException(e);
+        }
         params.put("username", user.getName());
         this.sendMessageUsingThymeleafTemplate(
                 "user_reset_password",
@@ -217,9 +228,13 @@ public class EmailServiceImpl implements EmailService {
     @Async
     @Override
     public void sendInvitationToRestaurantStaff(User user, Restaurant restaurant) {
-        Locale locale = new Locale(user.getPreferredLanguage());
+        final Locale locale = new Locale(user.getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
-        params.put("link", "/auth/register?email=" + user.getEmail());
+        try {
+            params.put("link", "/auth/register?email=" + URLEncoder.encode(user.getEmail(), StandardCharsets.UTF_8.name()));
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalStateException(e);
+        }
         params.put("restaurant", restaurant.getName());
         this.sendMessageUsingThymeleafTemplate(
                 "user_restaurant_invitation",
@@ -233,14 +248,49 @@ public class EmailServiceImpl implements EmailService {
     @Async
     @Override
     public void sendInvitationToUser(User user, String role) {
-        Locale locale = new Locale(user.getPreferredLanguage());
+        final Locale locale = new Locale(user.getPreferredLanguage());
         final Map<String, Object> params = new HashMap<>();
-        params.put("link", "/auth/register?email=" + user.getEmail());
+        try {
+            params.put("link", "/auth/register?email=" + URLEncoder.encode(user.getEmail(), StandardCharsets.UTF_8.name()));
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalStateException(e);
+        }
         final String roleLocale = messageSource.getMessage("email.userrole." + role, new Object[]{}, locale);
         this.sendMessageUsingThymeleafTemplate(
                 "user_invitation",
                 user.getEmail(),
                 messageSource.getMessage("email.userroleinvitation.subject", new Object[]{roleLocale}, locale),
+                locale,
+                params
+        );
+    }
+
+    @Async
+    @Override
+    public void sendRestaurantDeactivationEmail(Restaurant restaurant) {
+        final Locale locale = new Locale(restaurant.getOwner().getPreferredLanguage());
+        final Map<String, Object> params = new HashMap<>();
+        params.put("recipientName", restaurant.getOwner().getName());
+        params.put("restaurantName", restaurant.getName());
+        this.sendMessageUsingThymeleafTemplate(
+                "restaurant_deactivated",
+                restaurant.getOwner().getEmail(),
+                messageSource.getMessage("email.restaurantdeactivation.subject", new Object[]{restaurant.getName()}, locale),
+                locale,
+                params
+        );
+    }
+
+    @Override
+    public void sendRestaurantDeletionEmail(Restaurant restaurant) {
+        final Locale locale = new Locale(restaurant.getOwner().getPreferredLanguage());
+        final Map<String, Object> params = new HashMap<>();
+        params.put("recipientName", restaurant.getOwner().getName());
+        params.put("restaurantName", restaurant.getName());
+        this.sendMessageUsingThymeleafTemplate(
+                "restaurant_deleted",
+                restaurant.getOwner().getEmail(),
+                messageSource.getMessage("email.restaurantdeleted.subject", new Object[]{restaurant.getName()}, locale),
                 locale,
                 params
         );

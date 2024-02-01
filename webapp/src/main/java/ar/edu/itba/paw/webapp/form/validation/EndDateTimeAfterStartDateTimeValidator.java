@@ -32,7 +32,7 @@ public class EndDateTimeAfterStartDateTimeValidator implements ConstraintValidat
 
             LocalDateTime startDateTime = (LocalDateTime) startDateTimeField.get(o);
             LocalDateTime endDateTime = (LocalDateTime) endDateTimeField.get(o);
-            PromotionType type = PromotionType.fromOrdinal((int) typeField.get(o));
+            PromotionType type = PromotionType.fromCode((String) typeField.get(o));
             return type == PromotionType.INSTANT || (type == PromotionType.SCHEDULED && startDateTime != null && endDateTime != null && endDateTime.isAfter(startDateTime));
         } catch (NoSuchFieldException | IllegalAccessException e) {
             return false;

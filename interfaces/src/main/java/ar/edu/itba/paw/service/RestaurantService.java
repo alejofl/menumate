@@ -4,7 +4,6 @@ import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.util.PaginatedResult;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,7 +11,7 @@ public interface RestaurantService {
 
     Optional<Restaurant> getById(long restaurantId);
 
-    Restaurant create(String name, String email, RestaurantSpecialty specialty, long ownerUserId, String address, String description, int maxTables, byte[] logo, byte[] portrait1, byte[] portrait2, boolean isActive, List<RestaurantTags> tags);
+    Restaurant create(String name, String email, RestaurantSpecialty specialty, long ownerUserId, String address, String description, int maxTables, Long logoId, Long portrait1Id, Long portrait2Id, boolean isActive, List<RestaurantTags> tags);
 
 
     /**
@@ -33,11 +32,13 @@ public interface RestaurantService {
 
     List<Promotion> getLivingPromotions(long restaurantId);
 
+    Optional<RestaurantDetails> getRestaurantDetails(long restaurantId);
+
     Optional<Duration> getAverageOrderCompletionTime(long restaurantId, OrderType orderType);
 
-    Restaurant update(long restaurantId, String name, RestaurantSpecialty specialty, String address, String description, List<RestaurantTags> tags);
-
-    void updateImages(long restaurantId, byte[] logo, byte[] portrait1, byte[] portrait2);
+    Restaurant update(long restaurantId, String name, RestaurantSpecialty specialty, String address, int maxTables, String description, List<RestaurantTags> tags, Long logoId, Long portrait1Id, Long portrait2Id);
 
     void delete(long restaurantId);
+
+    void handleActivation(long restaurantId, boolean activate);
 }

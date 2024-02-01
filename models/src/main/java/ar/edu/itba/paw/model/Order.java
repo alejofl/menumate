@@ -3,8 +3,8 @@ package ar.edu.itba.paw.model;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.ZoneId;
+import java.util.*;
 
 @Entity
 @Table(name = "orders")
@@ -57,6 +57,7 @@ public class Order {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "order_id")
+    @OrderBy("lineNumber asc")
     private List<OrderItem> items;
 
     Order() {
@@ -163,8 +164,8 @@ public class Order {
         return address;
     }
 
-    public int getTableNumber() {
-        return (tableNumber == null) ? 0 : tableNumber;
+    public Integer getTableNumber() {
+        return tableNumber;
     }
 
     public BigDecimal getPrice() {
@@ -202,5 +203,11 @@ public class Order {
         if (dateConfirmed != null)
             return OrderStatus.CONFIRMED;
         return OrderStatus.PENDING;
+    }
+
+    public Date getOrderLastUpdate() {
+        List<LocalDateTime> dates = Arrays.asList(dateCancelled, dateOrdered, dateConfirmed, dateReady, dateDelivered);
+        LocalDateTime ldt = Collections.max(dates, Comparator.nullsFirst(Comparator.naturalOrder()));
+        return Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());
     }
 }

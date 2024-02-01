@@ -5,21 +5,24 @@ import ar.edu.itba.paw.model.Promotion;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface ProductService {
 
     Optional<Product> getById(long productId);
 
-    Product create(long categoryId, String name, String description, byte[] image, BigDecimal price);
+    Product getByIdChecked(long restaurantId, long categoryId, long productId, boolean allowDeleted);
 
-    Product update(long productId, String name, BigDecimal price, String description);
+    Promotion getPromotionById(long restaurantId, long promotionId);
 
-    void updateImage(long productId, byte[] image);
+    Product create(long restaurantId, long categoryId, String name, String description, Long imageId, BigDecimal price);
 
-    void delete(long productId);
+    Product update(long restaurantId, long categoryId, long productId, String name, BigDecimal price, String description, Long imageId);
 
-    Promotion createPromotion(long sourceProductId, LocalDateTime startDate, LocalDateTime endDate, int discountPercentage);
+    void delete(long restaurantId, long categoryId, long productId);
+
+    Promotion createPromotion(long restaurantId, long sourceProductId, LocalDateTime startDate, LocalDateTime endDate, BigDecimal discountPercentage);
 
     /**
      * Gets whether a product has any promotions whose active time range intersects with the specified time range.
@@ -28,5 +31,7 @@ public interface ProductService {
      */
     Optional<Promotion> hasPromotionInRange(long sourceProductId, LocalDateTime startDate, LocalDateTime endDate);
 
-    void stopPromotionByDestination(long destinationProductId);
+    void stopPromotion(long restaurantId, long promotionId);
+
+    boolean areAllProductsFromRestaurant(long restaurantId, List<Long> productIds);
 }

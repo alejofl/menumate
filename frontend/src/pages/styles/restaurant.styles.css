@@ -1,0 +1,112 @@
+main.restaurant {
+    margin: 0;
+    display: block;
+}
+
+.restaurant .header {
+    height: 12rem;
+}
+
+.restaurant .header img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+
+.restaurant .btn-link {
+    padding-top: 0;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.restaurant .information {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    width: 70%;
+    position: relative;
+    bottom: 50px;
+    background-color: white;
+    padding: 2rem;
+}
+
+.restaurant .logo {
+    border-radius: 50%;
+    max-width: 10rem;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+}
+
+.restaurant .content {
+    display: flex;
+    margin: 8px;
+}
+
+.restaurant .content .categories {
+    flex: 0 0 10%;
+}
+
+.restaurant .content .menu {
+    flex-grow: 1;
+}
+
+.restaurant .content .cart {
+    flex: 0 0 20%;
+}
+
+.restaurant .content .sticky {
+    display: inline-block;
+    align-self: start;
+    position: sticky;
+    top: 80px;
+}
+
+.restaurant .content .categories button {
+    text-align: start;
+    color: unset;
+    padding: 4px 8px;
+    margin-bottom: 2px;
+}
+
+.restaurant .content .categories button.active {
+    background-color: rgba(237, 122, 87, 0.25) !important;
+    color: unset !important;
+}
+
+.restaurant .content .categories button:hover {
+    color: unset;
+    background-color: rgba(237, 122, 87, 0.25) !important;
+}
+
+.restaurant .content .menu .product-container {
+    display: flex;
+    justify-content: start;
+    flex-direction: row;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
+}
+
+.restaurant .content .menu .add-button {
+    background-color: transparent;
+    border: 5px dashed var(--gray);
+}
+
+.restaurant .content .menu .add-button i {
+    font-size: 2rem;
+    color: var(--gray);
+}
+
+.restaurant .content .menu .add-button span {
+    font-weight: 900;
+    text-transform: uppercase;
+    color: var(--gray);
+    text-align: center;
+}
+
+.restaurant .content .menu .product-container .add-button {
+    width: 200px;
+    min-height: 200px;
+    height: 100%;
+}

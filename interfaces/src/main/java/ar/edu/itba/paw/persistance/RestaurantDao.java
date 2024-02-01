@@ -22,5 +22,7 @@ public interface RestaurantDao {
 
     Optional<Duration> getAverageOrderCompletionTime(long restaurantId, OrderType orderType, LocalDateTime since);
 
+    Optional<RestaurantDetails> getRestaurantDetails(long restaurantId);
+
     void delete(long restaurantId);
 }

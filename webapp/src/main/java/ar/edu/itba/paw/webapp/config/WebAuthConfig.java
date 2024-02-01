@@ -1,7 +1,10 @@
 package ar.edu.itba.paw.webapp.config;
 
 import ar.edu.itba.paw.webapp.auth.AccessValidator;
-import ar.edu.itba.paw.webapp.auth.CustomAuthenticationEntryPoint;
+import ar.edu.itba.paw.webapp.auth.filters.AuthAnywhereFilter;
+import ar.edu.itba.paw.webapp.auth.filters.JwtTokenFilter;
+import ar.edu.itba.paw.webapp.auth.JwtTokenUtil;
+import ar.edu.itba.paw.webapp.utils.UriUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -9,20 +12,29 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.util.FileCopyUtils;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
-import java.io.InputStreamReader;
-import java.util.concurrent.TimeUnit;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 @ComponentScan("ar.edu.itba.paw.webapp.auth")
 @Configuration
 public class WebAuthConfig extends WebSecurityConfigurerAdapter {
@@ -30,14 +42,14 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserDetailsService userDetailsService;
 
-    @Value("classpath:remembermekey.txt")
-    private Resource remembermeKey;
-
     @Autowired
     private AccessValidator accessValidator;
 
     @Autowired
-    private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    private JwtTokenFilter jwtTokenFilter;
+
+    @Autowired
+    private AuthAnywhereFilter authAnywhereFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -52,83 +64,108 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(final HttpSecurity http) throws Exception {
         http.sessionManagement()
-                // Login logic
-                .and().formLogin().failureHandler(customAuthenticationEntryPoint)
-                .loginPage("/auth/login")
-                .usernameParameter("email").passwordParameter("password")
-                .defaultSuccessUrl("/", false)
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
-                // Logout logic
-                .and().logout()
-                .logoutUrl("/auth/logout")
-                .logoutSuccessUrl("/")
-
-                // Remember me logic
-                .and().rememberMe()
-                .rememberMeParameter("rememberme")
-                .userDetailsService(userDetailsService)
-                .key(FileCopyUtils.copyToString(new InputStreamReader(remembermeKey.getInputStream())))
-                .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(30))
-
-                // Request authorization
                 .and().authorizeRequests()
+                .antMatchers(HttpMethod.GET, UriUtils.IMAGES_URL + "/{imageId:\\d+}").permitAll()
+                .antMatchers(HttpMethod.POST, UriUtils.IMAGES_URL + "/{imageId:\\d+}").authenticated()
 
-                // Static content & images
-                .antMatchers("/static/**").permitAll()
-                .antMatchers("/images/{id:\\d+}").permitAll()
+                .antMatchers(HttpMethod.GET, UriUtils.RESTAURANTS_URL).permitAll() // Checked with @PreAuthorize
+                .antMatchers(HttpMethod.POST, UriUtils.RESTAURANTS_URL).authenticated()
+                .antMatchers(HttpMethod.GET, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}").permitAll()
+                .antMatchers(HttpMethod.PATCH, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}").permitAll() // Checked with @PreAuthorize
+                .antMatchers(HttpMethod.DELETE, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}").access("@accessValidator.checkRestaurantOwner(#restaurantId) or hasRole('MODERATOR')")
 
-                // General public pages
-                .antMatchers("/").permitAll()
-                .antMatchers("/403").permitAll()
-                .antMatchers(HttpMethod.GET, "/restaurants").permitAll()
+                .antMatchers(HttpMethod.GET, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/categories").permitAll()
+                .antMatchers(HttpMethod.POST, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/categories").access("@accessValidator.checkRestaurantAdmin(#restaurantId)")
+                .antMatchers(HttpMethod.GET, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/categories/{categoryId:\\d+}").permitAll()
+                .antMatchers(HttpMethod.PATCH, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/categories/{categoryId:\\d+}").access("@accessValidator.checkRestaurantAdmin(#restaurantId)")
+                .antMatchers(HttpMethod.DELETE, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/categories/{categoryId:\\d+}").access("@accessValidator.checkRestaurantAdmin(#restaurantId)")
+                .antMatchers(HttpMethod.GET, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/categories/{categoryId:\\d+}/products").permitAll()
+                .antMatchers(HttpMethod.POST, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/categories/{categoryId:\\d+}/products").access("@accessValidator.checkRestaurantAdmin(#restaurantId)")
+                .antMatchers(HttpMethod.GET, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/categories/{categoryId:\\d+}/products/{productId:\\d+}").permitAll()
+                .antMatchers(HttpMethod.PATCH, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/categories/{categoryId:\\d+}/products/{productId:\\d+}").access("@accessValidator.checkRestaurantAdmin(#restaurantId)")
+                .antMatchers(HttpMethod.DELETE, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/categories/{categoryId:\\d+}/products/{productId:\\d+}").access("@accessValidator.checkRestaurantAdmin(#restaurantId)")
 
-                // Authentication pages
-                .antMatchers("/auth/**").permitAll()
+                .antMatchers(HttpMethod.GET, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/promotions").permitAll() // Checked with @PreAuthorize
+                .antMatchers(HttpMethod.POST, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/promotions").access("@accessValidator.checkRestaurantAdmin(#restaurantId)")
+                .antMatchers(HttpMethod.GET, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/promotions/{promotionId:\\d+}").permitAll()
+                .antMatchers(HttpMethod.DELETE, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/promotions/{promotionId:\\d+}").access("@accessValidator.checkRestaurantAdmin(#restaurantId)")
 
-                // User pages
-                .antMatchers(HttpMethod.GET, "/user/**").authenticated()
-                .antMatchers(HttpMethod.POST, "/user/addresses/**").authenticated()
+                .antMatchers(HttpMethod.GET, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/employees").access("hasRole('MODERATOR') or @accessValidator.checkRestaurantOwner(#restaurantId)")
+                .antMatchers(HttpMethod.POST, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/employees").access("@accessValidator.checkRestaurantOwner(#restaurantId)")
+                .antMatchers(HttpMethod.GET, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/employees/{userId:\\d+}").access("hasRole('MODERATOR') or @accessValidator.checkRestaurantOwner(#restaurantId) or @accessValidator.checkIsUser(#userId)")
+                .antMatchers(HttpMethod.PUT, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/employees/{userId:\\d+}").access("@accessValidator.checkRestaurantOwner(#restaurantId)")
+                .antMatchers(HttpMethod.DELETE, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/employees/{userId:\\d+}").access("hasRole('MODERATOR') or @accessValidator.checkRestaurantOwner(#restaurantId)")
 
-                // Restaurant public pages
-                .antMatchers(HttpMethod.GET, "/restaurants/{restaurant_id:\\d+}").permitAll()
-                .antMatchers(HttpMethod.POST, "/restaurants/{restaurant_id:\\d+}/orders").permitAll()
+                .antMatchers(HttpMethod.GET, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/reports").access("hasRole('MODERATOR')")
+                .antMatchers(HttpMethod.POST, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/reports").permitAll()
+                .antMatchers(HttpMethod.GET, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/reports/{reportId:\\d+}").access("hasRole('MODERATOR')")
+                .antMatchers(HttpMethod.PATCH, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/reports/{reportId:\\d+}").access("hasRole('MODERATOR')")
+                .antMatchers(HttpMethod.DELETE, UriUtils.RESTAURANTS_URL + "/{restaurantId:\\d+}/reports/{reportId:\\d+}").access("hasRole('MODERATOR')")
 
-                // Delete restaurant
-                .antMatchers(HttpMethod.POST, "/restaurants/{restaurant_id:\\d+}/delete").access("hasRole('MODERATOR') or @accessValidator.checkRestaurantOwner(#restaurant_id)")
+                .antMatchers(HttpMethod.POST, UriUtils.USERS_URL).permitAll()
+                .antMatchers(HttpMethod.DELETE, UriUtils.USERS_URL + "/{userId:\\d+}").access("hasRole('MODERATOR')")
+                .antMatchers(UriUtils.USERS_URL + "/{userId:\\d+}/**").access("@accessValidator.checkIsUser(#userId)")
+                .antMatchers(HttpMethod.GET, UriUtils.USERS_URL + "/{userId:\\d+}/addresses").access("@accessValidator.checkIsUser(#userId)")
+                .antMatchers(HttpMethod.POST, UriUtils.USERS_URL + "/{userId:\\d+}/addresses").access("@accessValidator.checkIsUser(#userId)")
+                .antMatchers(HttpMethod.GET, UriUtils.USERS_URL + "/{userId:\\d+}/addresses/{addressId:\\d+}").access("@accessValidator.checkIsUser(#userId)")
+                .antMatchers(HttpMethod.PATCH, UriUtils.USERS_URL + "/{userId:\\d+}/addresses/{addressId:\\d+}").access("@accessValidator.checkIsUser(#userId)")
+                .antMatchers(HttpMethod.DELETE, UriUtils.USERS_URL + "/{userId:\\d+}/addresses/{addressId:\\d+}").access("@accessValidator.checkIsUser(#userId)")
 
-                // Delete review
-                .antMatchers(HttpMethod.POST, "/restaurants/{restaurant_id:\\d+}/reviews/{review_id:\\d+}/delete").access("hasRole('MODERATOR') or @accessValidator.checkRestaurantOwner(#restaurant_id)")
+                .antMatchers(HttpMethod.GET, UriUtils.ORDERS_URL).authenticated() // Checked with @PreAuthorize
+                .antMatchers(HttpMethod.POST, UriUtils.ORDERS_URL).permitAll()
+                .antMatchers(HttpMethod.GET, UriUtils.ORDERS_URL + "/{orderId:\\d+}").access("@accessValidator.checkOrderOwnerOrHandler(#orderId)")
+                .antMatchers(HttpMethod.GET, UriUtils.ORDERS_URL + "/{orderId:\\d+}/items").access("@accessValidator.checkOrderOwnerOrHandler(#orderId)")
+                .antMatchers(HttpMethod.PATCH, UriUtils.ORDERS_URL + "/{orderId:\\d+}").access("@accessValidator.checkOrderHandler(#orderId) ")
 
-                // Restaurants edit pages
-                .antMatchers("/restaurants/{restaurant_id:\\d+}/edit/**").access("@accessValidator.checkRestaurantAdmin(#restaurant_id)")
-                .antMatchers(HttpMethod.POST, "/restaurants/{restaurant_id:\\d+}/employees/**").access("@accessValidator.checkRestaurantOwner(#restaurant_id)")
-                .antMatchers(HttpMethod.POST, "/restaurants/{restaurant_id:\\d+}/categories/**").access("@accessValidator.checkRestaurantAdmin(#restaurant_id)")
-                .antMatchers(HttpMethod.POST, "/restaurants/{restaurant_id:\\d+}/products/**").access("@accessValidator.checkRestaurantAdmin(#restaurant_id)")
-                .antMatchers(HttpMethod.POST, "/restaurants/{restaurant_id:\\d+}/promotions/**").access("@accessValidator.checkRestaurantAdmin(#restaurant_id)")
-                .antMatchers("/restaurants/{restaurant_id:\\d+}/reviews").access("hasRole('MODERATOR') or @accessValidator.checkRestaurantAdmin(#restaurant_id)")
+                .antMatchers(HttpMethod.GET, UriUtils.REVIEWS_URL).permitAll()
+                .antMatchers(HttpMethod.GET, UriUtils.REVIEWS_URL + "/{orderId:\\d+}").permitAll()
+                .antMatchers(HttpMethod.POST, UriUtils.REVIEWS_URL).authenticated() // Checked with @PreAuthorize
+                .antMatchers(HttpMethod.PUT, UriUtils.REVIEWS_URL + "/{orderId:\\d+}").access("@accessValidator.checkOrderOwner(#orderId)")
+                .antMatchers(HttpMethod.PATCH, UriUtils.REVIEWS_URL + "/{orderId:\\d+}").access("@accessValidator.checkOrderHandler(#orderId)")
+                .antMatchers(HttpMethod.DELETE, UriUtils.REVIEWS_URL + "/{orderId:\\d+}").access("@accessValidator.checkOrderOwner(#orderId)")
 
-                // Restaurant orders pages
-                .antMatchers(HttpMethod.GET, "/restaurants/{restaurant_id:\\d+}/orders/**").access("@accessValidator.checkRestaurantOrderHandler(#restaurant_id)")
+                .antMatchers("/**").permitAll()
 
-                // Create restaurant pages
-                .antMatchers("/restaurants/create").authenticated()
+                .and().exceptionHandling().
+                authenticationEntryPoint((request, response, ex) -> {
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.getMessage());
+                })
 
-                // Orders pages
-                .antMatchers(HttpMethod.GET, "/orders/{order_id:\\d+}").access("hasRole('MODERATOR') or @accessValidator.checkOrderOwner(#order_id)")
-                .antMatchers(HttpMethod.POST, "/orders/{order_id:\\d+}/{status:confirm|ready|deliver|cancel}").access("@accessValidator.checkOrderHandler(#order_id)")
-                .antMatchers(HttpMethod.POST, "/orders/{order_id:\\d+}/review").access("@accessValidator.checkOrderOwner(#order_id)")
+                .and()
+                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(authAnywhereFilter, UsernamePasswordAuthenticationFilter.class)
 
-                .antMatchers("/moderators/**").hasRole("MODERATOR")
-
-                .and().exceptionHandling()
-                .accessDeniedPage("/403")
-
-                // Disable csrf rules
-                .and().csrf().disable();
+                // Enable CORS and disable csrf rules
+                .cors().and().csrf().disable();
     }
 
     @Override
     public void configure(final WebSecurity web) {
         web.ignoring().antMatchers("/static/**");
+    }
+
+    @Bean
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(Collections.singletonList("*")); // TODO: Remove before going to production
+        config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "OPTIONS", "DELETE", "PUT", "PATCH"));
+        config.setExposedHeaders(Arrays.asList("X-MenuMate-AuthToken", "X-MenuMate-RefreshToken", "X-MenuMate-EmployeeUserCreated", "Content-Disposition", "Content-Language", "Location", "ETag", "Last-Modified", "Link", "WWW-Authenticate"));
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
+    }
+
+    @Override
+    @Bean
+    public AuthenticationManager authenticationManager() throws Exception {
+        return super.authenticationManager();
+    }
+
+    @Bean
+    public JwtTokenUtil jwtTokenUtil(@Value("classpath:jwtSecret.key") Resource jwtKeyRes) throws IOException {
+        return new JwtTokenUtil(jwtKeyRes);
     }
 }

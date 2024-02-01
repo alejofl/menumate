@@ -5,6 +5,7 @@ import ar.edu.itba.paw.model.OrderItem;
 import ar.edu.itba.paw.model.OrderStatus;
 import ar.edu.itba.paw.util.PaginatedResult;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface OrderDao {
@@ -18,11 +19,9 @@ public interface OrderDao {
 
     Optional<Order> getById(long orderId);
 
-    PaginatedResult<Order> getByUser(long userId, int pageNumber, int pageSize, boolean onlyInProgress, boolean descending);
+    Optional<List<OrderItem>> getOrderItemsById(long orderId);
 
-    /**
-     * Gets a restaurant's orders, optionally by status, ordered by date descending. orderStatus may be null to bring
-     * all orders.
-     */
-    PaginatedResult<Order> getByRestaurant(long restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus, boolean descending);
+    PaginatedResult<Order> get(Long userId, Long restaurantId, OrderStatus orderStatus, boolean onlyInProgress, boolean descending, int pageNumber, int pageSize);
+
+    List<Long> cancelNonDeliveredOrders(long restaurantId);
 }

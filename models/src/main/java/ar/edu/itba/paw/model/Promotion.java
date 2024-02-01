@@ -4,6 +4,7 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = "promotions")
@@ -68,8 +69,9 @@ public class Promotion {
         this.endDate = endDate;
     }
 
-    public int getDiscountPercentage() {
-        return 100 - destination.getPrice().multiply(BigDecimal.valueOf(100)).divide(source.getPrice(), 0, RoundingMode.CEILING).intValue();
+    public BigDecimal getDiscountPercentage() {
+        BigDecimal hundred = BigDecimal.valueOf(100);
+        return hundred.subtract(destination.getPrice().multiply(hundred).divide(source.getPrice(), 2, RoundingMode.CEILING));
     }
 
     public boolean isActive() {
@@ -83,5 +85,10 @@ public class Promotion {
 
     public boolean hasEnded() {
         return endDate != null && !endDate.isAfter(LocalDateTime.now());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(promotionId, source.getProductId(), destination.getProductId(), startDate, endDate, getDiscountPercentage());
     }
 }

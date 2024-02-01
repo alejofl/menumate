@@ -36,5 +36,6 @@ public final class ReviewConstants {
             .collect(Collectors.toList());
 
     private ReviewConstants() {
+        throw new AssertionError();
     }
 }

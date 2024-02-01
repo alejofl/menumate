@@ -1,14 +1,18 @@
 package ar.edu.itba.paw.persistance;
 
+import ar.edu.itba.paw.model.Image;
+
 import java.util.Optional;
 
 public interface ImageDao {
 
-    Optional<byte[]> getById(long imageId);
+    Optional<Image> getById(long imageId);
 
-    long create(byte[] bytes);
+    Image create(byte[] bytes);
 
     void update(long imageId, byte[] bytes);
 
     void delete(long imageId);
+
+    boolean exists(long imageId);
 }

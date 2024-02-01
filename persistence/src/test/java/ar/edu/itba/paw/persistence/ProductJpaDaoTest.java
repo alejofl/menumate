@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
-
+import ar.edu.itba.paw.exception.InvalidUserArgumentException;
 import ar.edu.itba.paw.exception.ProductNotFoundException;
 import ar.edu.itba.paw.exception.PromotionNotFoundException;
 import ar.edu.itba.paw.model.Product;
@@ -8,8 +8,9 @@ import ar.edu.itba.paw.model.Promotion;
 import ar.edu.itba.paw.persistance.ProductDao;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import ar.edu.itba.paw.persistence.constants.CategoryConstants;
+import ar.edu.itba.paw.persistence.constants.ImageConstants;
 import ar.edu.itba.paw.persistence.constants.ProductConstants;
-import org.junit.Assert;
+import ar.edu.itba.paw.persistence.constants.RestaurantConstants;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,12 +30,15 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import static org.junit.Assert.*;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
 @Transactional
 public class ProductJpaDaoTest {
 
     private static final long NON_EXISTENT_PRODUCT_ID = 9999L;
+    private static final long NON_EXISTENT_PROMOTION_ID = 51247891L;
 
     @Autowired
     private DataSource ds;
@@ -64,33 +68,45 @@ public class ProductJpaDaoTest {
         );
         em.flush();
 
-        Assert.assertNotNull(product);
-        Assert.assertEquals(ProductConstants.DEFAULT_PRODUCT_NAME, product.getName());
-        Assert.assertEquals(ProductConstants.DEFAULT_PRODUCT_DESCRIPTION, product.getDescription());
-        Assert.assertEquals(ProductConstants.DEFAULT_PRODUCT_PRICE, product.getPrice());
-        Assert.assertEquals(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_1[0], product.getCategoryId());
-        Assert.assertTrue(product.getAvailable());
-        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "products", "product_id = " + product.getProductId()));
+        assertNotNull(product);
+        assertEquals(ProductConstants.DEFAULT_PRODUCT_NAME, product.getName());
+        assertEquals(ProductConstants.DEFAULT_PRODUCT_DESCRIPTION, product.getDescription());
+        assertEquals(ProductConstants.DEFAULT_PRODUCT_PRICE, product.getPrice());
+        assertEquals(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_1[0], product.getCategoryId());
+        assertTrue(product.getAvailable());
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "products", "product_id = " + product.getProductId()));
     }
 
     @Test
-    public void testFindProductById() {
+    public void testFindDeletedProductById() {
         final Optional<Product> product = productDao.getById(ProductConstants.PRODUCT_DELETED_FROM_CATEGORY_RESTAURANT_0);
 
-        Assert.assertTrue(product.isPresent());
-        Assert.assertEquals(ProductConstants.PRODUCT_DELETED_FROM_CATEGORY_RESTAURANT_0, product.get().getProductId().longValue());
-        Assert.assertEquals(ProductConstants.DEFAULT_PRODUCT_NAME, product.get().getName());
-        Assert.assertEquals(ProductConstants.DEFAULT_PRODUCT_PRICE, product.get().getPrice());
-        Assert.assertEquals(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[0], product.get().getCategoryId());
-        Assert.assertEquals(ProductConstants.DEFAULT_PRODUCT_DESCRIPTION, product.get().getDescription());
-        Assert.assertTrue(product.get().getAvailable());
-        Assert.assertTrue(product.get().getDeleted());
+        assertTrue(product.isPresent());
+        assertEquals(ProductConstants.PRODUCT_DELETED_FROM_CATEGORY_RESTAURANT_0, product.get().getProductId().longValue());
+        assertEquals(ProductConstants.DEFAULT_PRODUCT_NAME, product.get().getName());
+        assertEquals(ProductConstants.DEFAULT_PRODUCT_PRICE, product.get().getPrice());
+        assertEquals(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[0], product.get().getCategoryId());
+        assertEquals(ProductConstants.DEFAULT_PRODUCT_DESCRIPTION, product.get().getDescription());
+        assertTrue(product.get().getDeleted());
+    }
+
+    @Test
+    public void testFindAvailableProductById() {
+        final Optional<Product> product = productDao.getById(ProductConstants.PRODUCT_FROM_CATEGORY_RESTAURANT_0[0]);
+
+        assertTrue(product.isPresent());
+        assertEquals(ProductConstants.PRODUCT_FROM_CATEGORY_RESTAURANT_0[0], product.get().getProductId().longValue());
+        assertEquals(ProductConstants.DEFAULT_PRODUCT_NAME, product.get().getName());
+        assertEquals(CategoryConstants.CATEGORY_IDS_FOR_RESTAURANT_0[0], product.get().getCategoryId());
+        assertEquals(ProductConstants.DEFAULT_PRODUCT_DESCRIPTION, product.get().getDescription());
+        assertTrue(product.get().getAvailable());
+        assertFalse(product.get().getDeleted());
     }
 
     @Test
     public void testFindProductByIdNotFound() {
         final Optional<Product> product = productDao.getById(NON_EXISTENT_PRODUCT_ID);
-        Assert.assertFalse(product.isPresent());
+        assertFalse(product.isPresent());
     }
 
     @Test
@@ -99,7 +115,7 @@ public class ProductJpaDaoTest {
         productDao.delete(ProductConstants.PRODUCT_FROM_CATEGORY_RESTAURANT_0[0]);
         em.flush();
 
-        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "products", "product_id = " + ProductConstants.PRODUCT_FROM_CATEGORY_RESTAURANT_0[0] + " AND deleted = true"));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "products", "product_id = " + ProductConstants.PRODUCT_FROM_CATEGORY_RESTAURANT_0[0] + " AND deleted = true"));
     }
 
     @Test(expected = ProductNotFoundException.class)
@@ -114,30 +130,56 @@ public class ProductJpaDaoTest {
         final Product product = em.find(Product.class, ProductConstants.PRODUCT_FROM_CATEGORY_RESTAURANT_0[0]);
         final String oldName = product.getName();
         final String oldDescription = product.getDescription();
+        final Long oldImageId = product.getImageId();
 
-        productDao.updateNameAndDescription(product, ProductConstants.DEFAULT_STRING, ProductConstants.DEFAULT_STRING);
+        productDao.updateNameDescriptionAndImage(product, ProductConstants.DEFAULT_STRING, ProductConstants.DEFAULT_STRING, ImageConstants.EXISTING_IMAGE_ID);
         em.flush();
 
-        Assert.assertNotEquals(oldDescription, product.getDescription());
-        Assert.assertNotEquals(oldName, product.getName());
-        Assert.assertEquals(ProductConstants.DEFAULT_STRING, product.getName());
-        Assert.assertEquals(ProductConstants.DEFAULT_STRING, product.getDescription());
+        assertNotEquals(oldDescription, product.getDescription());
+        assertNotEquals(oldName, product.getName());
+        assertNotEquals(oldImageId, product.getImageId());
+        assertEquals(ProductConstants.DEFAULT_STRING, product.getName());
+        assertEquals(ProductConstants.DEFAULT_STRING, product.getDescription());
+        assertEquals(ImageConstants.EXISTING_IMAGE_ID, product.getImageId().longValue());
     }
 
     @Test
     @Rollback
     public void updateProductAndPromotions() {
         final Product product = em.find(Product.class, ProductConstants.PROMOTION_DESTINATION_ID);
-        final Promotion promotion = em.find(Promotion.class, ProductConstants.PROMOTION_PRODUCT_ID);
+        final Promotion promotion = em.find(Promotion.class, ProductConstants.PROMOTION_ID);
         final String oldName = product.getName();
         final String oldDescription = product.getDescription();
+        final Long oldImageId = product.getImageId();
 
-        productDao.updateNameAndDescription(product, ProductConstants.DEFAULT_STRING, ProductConstants.DEFAULT_STRING);
+        productDao.updateNameDescriptionAndImage(product, ProductConstants.DEFAULT_STRING, ProductConstants.DEFAULT_STRING, ImageConstants.EXISTING_IMAGE_ID);
         em.flush();
-        Assert.assertNotEquals(oldDescription, promotion.getDestination().getDescription());
-        Assert.assertNotEquals(oldName, promotion.getDestination().getName());
-        Assert.assertEquals(ProductConstants.DEFAULT_STRING, promotion.getDestination().getDescription());
-        Assert.assertEquals(ProductConstants.DEFAULT_STRING, promotion.getDestination().getName());
+        assertNotEquals(oldDescription, promotion.getDestination().getDescription());
+        assertNotEquals(oldName, promotion.getDestination().getName());
+        assertNotEquals(oldImageId, product.getImageId());
+        assertEquals(ProductConstants.DEFAULT_STRING, promotion.getDestination().getDescription());
+        assertEquals(ProductConstants.DEFAULT_STRING, promotion.getDestination().getName());
+        assertEquals(ImageConstants.EXISTING_IMAGE_ID, promotion.getDestination().getImageId().longValue());
+    }
+
+    @Test
+    @Rollback
+    public void updateProductAndPromotionsNoImageUpdate() {
+        final Product product = em.find(Product.class, ProductConstants.PROMOTION_DESTINATION_ID);
+        final Promotion promotion = em.find(Promotion.class, ProductConstants.PROMOTION_ID);
+        final String oldName = product.getName();
+        final String oldDescription = product.getDescription();
+        final Long oldImageId = ImageConstants.EXISTING_IMAGE_ID;
+        product.setImageId(oldImageId);
+        em.flush();
+
+        productDao.updateNameDescriptionAndImage(product, ProductConstants.DEFAULT_STRING, ProductConstants.DEFAULT_STRING, null);
+        em.flush();
+        assertNotEquals(oldDescription, promotion.getDestination().getDescription());
+        assertNotEquals(oldName, promotion.getDestination().getName());
+        assertEquals(ProductConstants.DEFAULT_STRING, promotion.getDestination().getDescription());
+        assertEquals(ProductConstants.DEFAULT_STRING, promotion.getDestination().getName());
+        assertEquals(ImageConstants.EXISTING_IMAGE_ID, promotion.getDestination().getImageId().longValue());
     }
 
     @Test
@@ -151,13 +193,13 @@ public class ProductJpaDaoTest {
         );
         em.flush();
 
-        Assert.assertNotNull(promotion);
-        Assert.assertEquals(ProductConstants.DEFAULT_PROMOTION_START_DATE, promotion.getStartDate());
-        Assert.assertEquals(ProductConstants.DEFAULT_PROMOTION_END_DATE, promotion.getEndDate());
-        Assert.assertEquals(product.getProductId(), promotion.getSource().getProductId());
-        Assert.assertEquals(product.getPrice().multiply(BigDecimal.valueOf(ProductConstants.DEFAULT_PROMOTION_DISCOUNT)).divide(BigDecimal.valueOf(100), 2, RoundingMode.FLOOR), promotion.getDestination().getPrice());
-        Assert.assertTrue(promotion.getDestination().getAvailable());
-        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "promotions", "promotion_id = " + promotion.getPromotionId()));
+        assertNotNull(promotion);
+        assertEquals(ProductConstants.DEFAULT_PROMOTION_START_DATE, promotion.getStartDate());
+        assertEquals(ProductConstants.DEFAULT_PROMOTION_END_DATE, promotion.getEndDate());
+        assertEquals(product.getProductId(), promotion.getSource().getProductId());
+        assertEquals(product.getPrice().multiply(ProductConstants.DEFAULT_PROMOTION_DISCOUNT).divide(BigDecimal.valueOf(100), 2, RoundingMode.FLOOR), promotion.getDestination().getPrice());
+        assertTrue(promotion.getDestination().getAvailable());
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "promotions", "promotion_id = " + promotion.getPromotionId()));
     }
 
     @Test
@@ -171,34 +213,34 @@ public class ProductJpaDaoTest {
                 ProductConstants.DEFAULT_PROMOTION_DISCOUNT
         );
         em.flush();
-        Assert.assertNotNull(promotion);
-        Assert.assertEquals(2, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "promotions", "source_id = " + product.getProductId()));
+        assertNotNull(promotion);
+        assertEquals(2, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "promotions", "source_id = " + product.getProductId()));
     }
 
     @Test
     @Rollback
     public void testStopPromotionByDestination() {
-        Product destination = em.find(Product.class, ProductConstants.PROMOTION_DESTINATION_ID);
-        Product source = em.find(Product.class, ProductConstants.PROMOTION_SOURCE_ID);
+        final Product destination = em.find(Product.class, ProductConstants.PROMOTION_DESTINATION_ID);
+        final Product source = em.find(Product.class, ProductConstants.PROMOTION_SOURCE_ID);
 
-        productDao.stopPromotionByDestination(ProductConstants.PROMOTION_DESTINATION_ID);
+        productDao.stopPromotion(RestaurantConstants.RESTAURANT_IDS[3], ProductConstants.PROMOTION_ID);
         em.flush();
 
-        Assert.assertFalse(destination.getAvailable());
-        Assert.assertTrue(source.getAvailable());
+        assertFalse(destination.getAvailable());
+        assertTrue(source.getAvailable());
     }
 
     @Test
     @Rollback
     public void testStopPromotionBySource() {
-        Product destination = em.find(Product.class, ProductConstants.PROMOTION_DESTINATION_ID);
-        Product source = em.find(Product.class, ProductConstants.PROMOTION_SOURCE_ID);
+        final Product destination = em.find(Product.class, ProductConstants.PROMOTION_DESTINATION_ID);
+        final Product source = em.find(Product.class, ProductConstants.PROMOTION_SOURCE_ID);
 
         productDao.stopPromotionsBySource(ProductConstants.PROMOTION_SOURCE_ID);
         em.flush();
 
-        Assert.assertFalse(destination.getAvailable());
-        Assert.assertTrue(source.getAvailable());
+        assertFalse(destination.getAvailable());
+        assertTrue(source.getAvailable());
     }
 
     @Test(expected = PromotionNotFoundException.class)
@@ -209,46 +251,81 @@ public class ProductJpaDaoTest {
 
     @Test(expected = PromotionNotFoundException.class)
     public void testStopPromotionByDestinationInvalidId() {
-        productDao.stopPromotionByDestination(NON_EXISTENT_PRODUCT_ID);
+        productDao.stopPromotion(RestaurantConstants.RESTAURANT_IDS[3], NON_EXISTENT_PROMOTION_ID);
         em.flush();
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = InvalidUserArgumentException.class)
     @Rollback
     public void testStopPromotionByDestinationAlreadyEnded() {
-        Promotion promotion = em.find(Promotion.class, ProductConstants.PROMOTION_PRODUCT_ID);
+        final Promotion promotion = em.find(Promotion.class, ProductConstants.PROMOTION_ID);
         promotion.setEndDate(LocalDateTime.now().minusDays(1));
 
-        productDao.stopPromotionByDestination(ProductConstants.PROMOTION_DESTINATION_ID);
+        productDao.stopPromotion(RestaurantConstants.RESTAURANT_IDS[3], ProductConstants.PROMOTION_ID);
         em.flush();
     }
 
     @Test
     @Rollback
     public void testStartActivePromotions() {
-        Product destination = em.find(Product.class, ProductConstants.PROMOTION_DESTINATION_ID);
-        Product source = em.find(Product.class, ProductConstants.PROMOTION_SOURCE_ID);
+        final Product destination = em.find(Product.class, ProductConstants.PROMOTION_DESTINATION_ID);
+        final Product source = em.find(Product.class, ProductConstants.PROMOTION_SOURCE_ID);
         destination.setAvailable(false);
         source.setAvailable(true);
 
         productDao.startActivePromotions();
         em.flush();
 
-        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "products", "product_id = " + destination.getProductId() + " AND available = true"));
-        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "products", "product_id = " + source.getProductId() + " AND available = false"));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "products", "product_id = " + destination.getProductId() + " AND available = true"));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "products", "product_id = " + source.getProductId() + " AND available = false"));
     }
 
     @Test
     @Rollback
     public void testStopActivePromotions() {
-        Promotion promotion = em.find(Promotion.class, ProductConstants.PROMOTION_PRODUCT_ID);
+        final Promotion promotion = em.find(Promotion.class, ProductConstants.PROMOTION_ID);
         promotion.setEndDate(LocalDateTime.now().minusDays(1));
 
         productDao.closeInactivePromotions();
         em.flush();
 
-        Assert.assertFalse(promotion.getDestination().getAvailable());
-        Assert.assertTrue(promotion.getSource().getAvailable());
+        assertFalse(promotion.getDestination().getAvailable());
+        assertTrue(promotion.getSource().getAvailable());
     }
 
+    @Test
+    public void testGetPromotionById() {
+        final Optional<Promotion> promotion = productDao.getPromotionById(ProductConstants.PROMOTION_ID);
+        assertTrue(promotion.isPresent());
+        assertEquals(ProductConstants.PROMOTION_ID, promotion.get().getPromotionId().longValue());
+        assertEquals(ProductConstants.PROMOTION_SOURCE_ID, promotion.get().getSource().getProductId().longValue());
+        assertEquals(ProductConstants.PROMOTION_DESTINATION_ID, promotion.get().getDestination().getProductId().longValue());
+    }
+
+    @Test
+    public void testGetNoPromotionById() {
+        final Optional<Promotion> promotion = productDao.getPromotionById(ProductConstants.NO_PROMOTION_ID);
+        assertFalse(promotion.isPresent());
+    }
+
+    @Test
+    @Rollback
+    public void testGetDeletedProduct() {
+        final Product product = em.find(Product.class, ProductConstants.PRODUCT_FROM_CATEGORY_RESTAURANT_0[0]);
+        product.setDeleted(true);
+        em.flush();
+        final Optional<Product> maybeProduct = productDao.getById(product.getProductId());
+        assertTrue(maybeProduct.isPresent());
+        assertEquals(product.getProductId(), maybeProduct.get().getProductId());
+        assertTrue(maybeProduct.get().getDeleted());
+    }
+
+    @Test
+    @Rollback
+    public void testGetProduct() {
+        final Optional<Product> maybeProduct = productDao.getById(ProductConstants.PRODUCT_FROM_CATEGORY_RESTAURANT_0[0]);
+        assertTrue(maybeProduct.isPresent());
+        assertEquals(ProductConstants.PRODUCT_FROM_CATEGORY_RESTAURANT_0[0], maybeProduct.get().getProductId().longValue());
+        assertFalse(maybeProduct.get().getDeleted());
+    }
 }

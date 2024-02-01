@@ -1,8 +1,9 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.exception.ImageNotFoundException;
 import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.persistence.config.TestConfig;
-import org.junit.Assert;
+import ar.edu.itba.paw.persistence.constants.ImageConstants;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,6 +19,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 import java.util.Optional;
+
+import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
@@ -35,10 +38,6 @@ public class ImageJpaDaoTest {
     @PersistenceContext
     private EntityManager em;
 
-    private static final byte[] NON_EXISTING_IMAGE_INFO = {4, 5, 6};
-    private static final long EXISTING_IMAGE_ID = 623;
-    private static final byte[] EXISTING_IMAGE_INFO = {33, 18, 86};
-
     @Before
     public void setup() {
         jdbcTemplate = new JdbcTemplate(ds);
@@ -46,34 +45,56 @@ public class ImageJpaDaoTest {
 
     @Test
     @Rollback
-    public void testCreateImg() {
-        final long image = imageDao.create(NON_EXISTING_IMAGE_INFO);
+    public void testCreateImage() {
+        final Image image = imageDao.create(ImageConstants.NON_EXISTING_IMAGE_INFO);
         em.flush();
-        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "images", "image_id = " + image));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "images", "image_id = " + ImageConstants.EXISTING_IMAGE_ID));
     }
 
     @Test
     @Rollback
-    public void testUpdateImg() {
-        imageDao.update(EXISTING_IMAGE_ID, NON_EXISTING_IMAGE_INFO);
+    public void testUpdateImage() {
+        imageDao.update(ImageConstants.EXISTING_IMAGE_ID, ImageConstants.NON_EXISTING_IMAGE_INFO);
         em.flush();
 
-        Image image = em.find(Image.class, EXISTING_IMAGE_ID);
-        Assert.assertArrayEquals(NON_EXISTING_IMAGE_INFO, image.getBytes());
+        final Image image = em.find(Image.class, ImageConstants.EXISTING_IMAGE_ID);
+        assertArrayEquals(ImageConstants.NON_EXISTING_IMAGE_INFO, image.getBytes());
     }
 
     @Test
     @Rollback
-    public void testDeleteImg() {
-        imageDao.delete(EXISTING_IMAGE_ID);
+    public void testDeleteExistingImage() {
+        imageDao.delete(ImageConstants.EXISTING_IMAGE_ID);
         em.flush();
-        Assert.assertEquals(0, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "images", "image_id = " + EXISTING_IMAGE_ID));
+        assertEquals(0, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "images", "image_id = " + ImageConstants.EXISTING_IMAGE_ID));
     }
 
     @Test
-    public void testGetImageById() {
-        Optional<byte[]> image = imageDao.getById(EXISTING_IMAGE_ID);
-        Assert.assertTrue(image.isPresent());
-        Assert.assertArrayEquals(EXISTING_IMAGE_INFO, image.get());
+    public void testGetExistingImageById() {
+        final Optional<Image> image = imageDao.getById(ImageConstants.EXISTING_IMAGE_ID);
+        assertTrue(image.isPresent());
+        assertArrayEquals(ImageConstants.EXISTING_IMAGE_INFO, image.get().getBytes());
+        assertEquals(Optional.of(ImageConstants.EXISTING_IMAGE_ID).get(), image.get().getImageId());
+    }
+
+    @Test
+    public void testGetNonExistingImageById() {
+        final Optional<Image> image = imageDao.getById(ImageConstants.NON_EXISTING_IMAGE_ID);
+        assertFalse(image.isPresent());
+    }
+
+    @Test(expected = ImageNotFoundException.class)
+    public void testDeleteNonExistingImage() {
+        imageDao.delete(ImageConstants.NON_EXISTING_IMAGE_ID);
+    }
+
+    @Test
+    public void testImageExists() {
+        assertTrue(imageDao.exists(ImageConstants.EXISTING_IMAGE_ID));
+    }
+
+    @Test
+    public void testImageNotExists() {
+        assertFalse(imageDao.exists(ImageConstants.NON_EXISTING_IMAGE_ID));
     }
 }

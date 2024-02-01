@@ -3,6 +3,7 @@ package ar.edu.itba.paw.model;
 import org.hibernate.annotations.Immutable;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "restaurant_details")
@@ -38,8 +39,8 @@ public class RestaurantDetails {
         return restaurant;
     }
 
-    public int getAverageRating() {
-        return Math.round(averageRating);
+    public float getAverageRating() {
+        return averageRating;
     }
 
     public int getReviewCount() {
@@ -48,5 +49,10 @@ public class RestaurantDetails {
 
     public float getAverageProductPrice() {
         return averageProductPrice;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(restaurantId, averageRating, averageProductPrice, reviewCount);
     }
 }

@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.exception.UserRoleNotFoundException;
+import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.model.UserRole;
 import ar.edu.itba.paw.model.UserRoleLevel;
 import ar.edu.itba.paw.persistance.UserRoleDao;
@@ -8,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import java.util.List;
@@ -36,18 +39,24 @@ public class UserRoleJpaDao implements UserRoleDao {
 
     @Override
     public void delete(long userId) {
-        final UserRole userRole = em.getReference(UserRole.class, userId);
-        em.remove(userRole);
-        LOGGER.info("Deleted user role for user {}", userId);
+        try {
+            final UserRole userRole = em.getReference(UserRole.class, userId);
+            em.remove(userRole);
+            em.flush();
+            LOGGER.info("Deleted user role for user {}", userId);
+        } catch (EntityNotFoundException e) {
+            LOGGER.warn("Failed to delete user role for user id {}", userId, e);
+            throw new UserRoleNotFoundException();
+        }
     }
 
     @Override
-    public List<UserRole> getByRole(UserRoleLevel roleLevel) {
-        final TypedQuery<UserRole> query = em.createQuery(
-                "FROM UserRole ORDER BY userId DESC",
-                UserRole.class
+    public List<User> getByRole(UserRoleLevel roleLevel) {
+        final TypedQuery<User> query = em.createQuery(
+                "SELECT ur.user FROM UserRole ur WHERE ur.level = :roleLevel ORDER BY ur.userId DESC",
+                User.class
         );
-
+        query.setParameter("roleLevel", roleLevel);
         return query.getResultList();
     }
 }

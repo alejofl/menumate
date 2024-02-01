@@ -1,34 +1,25 @@
 package ar.edu.itba.paw.services;
 
+import ar.edu.itba.paw.exception.UserNotFoundException;
+import ar.edu.itba.paw.model.Token;
 import ar.edu.itba.paw.model.User;
-import ar.edu.itba.paw.model.UserResetpasswordToken;
-import ar.edu.itba.paw.model.UserVerificationToken;
+import ar.edu.itba.paw.model.UserAddress;
 import ar.edu.itba.paw.persistance.UserDao;
-import ar.edu.itba.paw.persistance.UserResetpasswordTokenDao;
-import ar.edu.itba.paw.persistance.UserVerificationTokenDao;
 import ar.edu.itba.paw.service.EmailService;
+import ar.edu.itba.paw.service.TokenService;
 import ar.edu.itba.paw.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService {
-    private static final Integer TOKEN_DURATION_DAYS = 1;
 
     private final static Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
@@ -39,24 +30,10 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private UserVerificationTokenDao verificationTokenDao;
-
-    @Autowired
-    private UserResetpasswordTokenDao resetpasswordTokenDao;
+    private TokenService tokenService;
 
     @Autowired
     private EmailService emailService;
-
-    @Autowired
-    private UserDetailsService userDetailsService;
-
-    private static String generateRandomToken() {
-        return UUID.randomUUID().toString().substring(0, 32);
-    }
-
-    private static LocalDateTime generateTokenExpirationDate() {
-        return LocalDateTime.now().plusDays(TOKEN_DURATION_DAYS);
-    }
 
     @Override
     public Optional<User> getById(long userId) {
@@ -68,31 +45,40 @@ public class UserServiceImpl implements UserService {
         return userDao.getByEmail(email);
     }
 
+    @Override
+    public Optional<UserAddress> getAddressById(long userId, long addressId) {
+        return userDao.getAddressById(userId, addressId);
+    }
+
     @Transactional
     @Override
     public User createOrConsolidate(String email, String password, String name) {
         password = password == null ? null : passwordEncoder.encode(password);
 
         final Optional<User> maybeUser = userDao.getByEmail(email);
-        if (!maybeUser.isPresent())
-            return userDao.create(email, password, name, LocaleContextHolder.getLocale().getLanguage());
+        User user;
 
-        final User user = maybeUser.get();
-        if (password == null) {
-            LOGGER.error("Attempted to createOrConsolidate existing user id {} with a null password", user.getUserId());
-            throw new IllegalArgumentException("Cannot createOrConsolidate an existing user with a null password");
+        if (!maybeUser.isPresent()) {
+            user = userDao.create(email, password, name, LocaleContextHolder.getLocale().getLanguage());
+        } else {
+            user = maybeUser.get();
+            if (password == null) {
+                LOGGER.error("Attempted to createOrConsolidate existing user id {} with a null password", user.getUserId());
+                throw new IllegalArgumentException("exception.IllegalArgumentException.createOrConsolidate.nullPassword");
+            }
+
+            if (user.getPassword() != null) {
+                LOGGER.error("Attempted to createOrConsolidate an existing and consolidated user id {}", user.getUserId());
+                throw new IllegalStateException("exception.IllegalArgumentException.createOrConsolidate.consolidated");
+            }
+
+            user.setPassword(password);
+            user.setName(name);
+            LOGGER.info("Consolidated user with id {}", user.getUserId());
         }
 
-        if (user.getPassword() != null) {
-            LOGGER.error("Attempted to createOrConsolidate an existing and consolidated user id {}", user.getUserId());
-            throw new IllegalStateException("Cannot createOrConsolidate an already consolidated user");
-        }
+        final Token token = tokenService.manageUserToken(user);
 
-        user.setPassword(password);
-        user.setName(name);
-        LOGGER.info("Consolidated user with id {}", user.getUserId());
-
-        UserVerificationToken token = verificationTokenDao.create(user, generateRandomToken(), generateTokenExpirationDate());
         emailService.sendUserVerificationEmail(user, token.getToken());
         return user;
     }
@@ -100,159 +86,117 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public User createIfNotExists(String email, String name) {
-        Optional<User> maybeUser = userDao.getByEmail(email);
+        final Optional<User> maybeUser = userDao.getByEmail(email);
         return maybeUser.orElseGet(() -> userDao.create(email, null, name, LocaleContextHolder.getLocale().getLanguage()));
     }
 
     @Override
     public boolean isUserEmailRegisteredAndConsolidated(String email) {
-        Optional<User> maybeUser = userDao.getByEmail(email);
+        final Optional<User> maybeUser = userDao.getByEmail(email);
         return maybeUser.isPresent() && maybeUser.get().getPassword() != null;
     }
 
     @Transactional
     @Override
-    public void registerAddress(long userId, String address, String name) {
-        name = name == null ? null : name.trim();
-        if (name == null || name.isEmpty()) {
-            LOGGER.error("Attempted to register an address without a name for user id {}", userId);
-            throw new IllegalArgumentException("Cannot register an address with null or blank name");
-        }
-        userDao.registerAddress(userId, address, name);
+    public User updateUser(long userId, String name, String preferredLanguage) {
+        final User user = userDao.getById(userId).orElseThrow(UserNotFoundException::new);
+        if (name != null)
+            user.setName(name);
+        if (preferredLanguage != null)
+            user.setPreferredLanguage(preferredLanguage);
+        return user;
     }
 
     @Transactional
     @Override
-    public void deleteAddress(long userId, String address) {
-        userDao.deleteAddress(userId, address);
+    public UserAddress registerAddress(long userId, String address, String name) {
+        return userDao.registerAddress(userId, address, name);
     }
 
     @Transactional
     @Override
-    public void sendUserVerificationToken(final User user) {
-        if (user.getIsActive()) {
-            LOGGER.info("Ignored creating verification token for already active user id {}", user.getUserId());
+    public UserAddress updateAddress(long userId, long addressId, String address, String name) {
+        return userDao.updateAddress(userId, addressId, address, name);
+    }
+
+    @Transactional
+    @Override
+    public void deleteAddress(long userId, long addressId) {
+        userDao.deleteAddress(userId, addressId);
+    }
+
+    @Transactional
+    @Override
+    public void sendVerificationToken(String email) {
+        final User user = userDao.getByEmail(email).orElse(null);
+        if (user == null) {
+            LOGGER.info("Ignored send verification token request for unknown email");
             return;
         }
 
-        Optional<UserVerificationToken> maybeToken = verificationTokenDao.getByUserId(user.getUserId());
-        UserVerificationToken token;
-        if (maybeToken.isPresent()) {
-            token = maybeToken.get();
-            if (token.isExpired()) {
-                token.setToken(generateRandomToken());
-                token.setExpires(generateTokenExpirationDate());
-                LOGGER.info("Refreshed user verification token for user id {}", user.getUserId());
-            }
-        } else {
-            token = verificationTokenDao.create(user, generateRandomToken(), generateTokenExpirationDate());
+        if (user.getIsActive()) {
+            LOGGER.info("Ignored send verification token for already active user id {}", user.getUserId());
+            return;
         }
 
+        final Token token = tokenService.manageUserToken(user);
         emailService.sendUserVerificationEmail(user, token.getToken());
     }
 
     @Transactional
     @Override
-    public void sendPasswordResetToken(User user) {
-        if (!user.getIsActive()) {
-            LOGGER.info("Ignored creating password reset token for inactive user id {}", user.getUserId());
+    public void sendPasswordResetToken(String email) {
+        final User user = userDao.getByEmail(email).orElse(null);
+
+        if (user == null) {
+            LOGGER.info("Ignored sending password reset token request for unknown email");
             return;
         }
-
-        Optional<UserResetpasswordToken> maybeToken = resetpasswordTokenDao.getByUserId(user.getUserId());
-        UserResetpasswordToken token;
-        if (maybeToken.isPresent()) {
-            token = maybeToken.get();
-            if (token.isExpired()) {
-                token.setToken(generateRandomToken());
-                token.setExpires(generateTokenExpirationDate());
-                LOGGER.info("Refreshed password reset token for user id {}", user.getUserId());
-            }
-        } else {
-            token = resetpasswordTokenDao.create(user, generateRandomToken(), generateTokenExpirationDate());
-        }
-
+        final Token token = tokenService.manageUserToken(user);
         emailService.sendResetPasswordEmail(user, token.getToken());
     }
 
     @Transactional
     @Override
-    public boolean verifyUserAndDeleteVerificationToken(final String token) {
-        Optional<UserVerificationToken> maybeToken = verificationTokenDao.getByToken(token);
+    public Optional<User> verifyUser(String token) {
+        final Optional<Token> maybeToken = tokenService.getByToken(token);
         if (!maybeToken.isPresent()) {
-            LOGGER.info("Ignored verifyAndDeleteVerificationToken call due to token not found");
-            return false;
+            LOGGER.info("Ignored verifyUser call due to token not found or stale");
+            return Optional.empty();
         }
 
-        UserVerificationToken uvt = maybeToken.get();
-        if (uvt.isExpired()) {
-            LOGGER.info("Ignored verifyAndDeleteVerificationToken call for user id {} due to expired token", uvt.getUserId());
-            return false;
-        }
+        final Token tkn = maybeToken.get();
+        final User user = tkn.getUser();
 
-        verificationTokenDao.delete(uvt);
+        tokenService.delete(tkn);
 
-        User user = uvt.getUser();
         if (user.getIsActive()) {
-            LOGGER.error("Failed to activate user id {} after successful verification because user is already active", uvt.getUserId());
-            return false;
+            LOGGER.error("Failed to activate user id {} after successful verification because user is already active", user.getUserId());
+            return Optional.empty();
         }
 
         user.setIsActive(true);
-        LOGGER.info("Activating user id {} after successful verification", uvt.getUserId());
-
-        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetailsService.loadUserByUsername(user.getEmail()), null, AuthorityUtils.NO_AUTHORITIES);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        return true;
+        LOGGER.info("Activating user id {} after successful verification", user.getUserId());
+        return Optional.of(user);
     }
 
     @Transactional
     @Override
-    public boolean updatePasswordAndDeleteResetPasswordToken(String token, String newPassword) {
+    public boolean updatePassword(long userId, String newPassword) {
         if (newPassword == null) {
-            LOGGER.info("Attempted to updatePasswordAndDeleteResetPasswordToken with null newPassword");
-            throw new IllegalArgumentException("newPassword must not be null");
+            LOGGER.info("Attempted to update password with null newPassword");
+            throw new IllegalArgumentException("exception.IllegalArgumentException.updatePassword");
         }
 
-        Optional<UserResetpasswordToken> maybeToken = resetpasswordTokenDao.getByToken(token);
-        if (!maybeToken.isPresent()) {
-            LOGGER.info("Ignored updatePasswordAndDeleteResetPasswordToken call due to token not found");
+        final Optional<User> maybeUser = userDao.getById(userId);
+        if (!maybeUser.isPresent()) {
+            LOGGER.info("Ignored updating password due to unknown email");
             return false;
         }
-
-        UserResetpasswordToken urt = maybeToken.get();
-        if (urt.isExpired()) {
-            LOGGER.info("Ignored updatePasswordAndDeleteResetPasswordToken call for user id {} due to expired token", urt.getUserId());
-            return false;
-        }
-
-        resetpasswordTokenDao.delete(urt);
-
-        User user = urt.getUser();
+        final User user = maybeUser.get();
         user.setPassword(passwordEncoder.encode(newPassword));
-        LOGGER.info("Updated password for user id {}", urt.getUserId());
+        LOGGER.info("Updated password for user id {}", user.getUserId());
         return true;
     }
 
-    @Override
-    public boolean hasActiveVerificationToken(final long userId) {
-        Optional<UserVerificationToken> maybeToken = verificationTokenDao.getByUserId(userId);
-        return maybeToken.isPresent() && maybeToken.get().isFresh();
-    }
-
-    @Override
-    public boolean isValidResetPasswordToken(String token) {
-        Optional<UserResetpasswordToken> maybeToken = resetpasswordTokenDao.getByToken(token);
-        return maybeToken.isPresent() && maybeToken.get().isFresh();
-    }
-
-    @Scheduled(cron = "0 0 0 * * ?")
-    public void deleteStaledVerificationTokens() {
-        verificationTokenDao.deleteStaledTokens();
-    }
-
-    @Scheduled(cron = "0 0 0 * * ?")
-    public void deletedStaledResetPasswordTokens() {
-        resetpasswordTokenDao.deleteStaledTokens();
-    }
 }

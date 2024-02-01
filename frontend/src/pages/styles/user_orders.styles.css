@@ -1,0 +1,26 @@
+main.user_orders {
+    flex-direction: column;
+    align-items: center;
+}
+
+.user_orders .orders-feed {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: stretch;
+    align-content: start;
+    gap: 20px;
+    flex-wrap: wrap;
+    padding: 24px 24px 12px 24px;
+}
+
+.user_orders .empty-results {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #b6b6b6;
+}
+
+.user_orders .nav {
+    min-width: 30%;
+}

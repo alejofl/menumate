@@ -1,26 +1,23 @@
+import ar.edu.itba.paw.model.Token;
 import ar.edu.itba.paw.model.User;
-import ar.edu.itba.paw.model.UserVerificationToken;
 import ar.edu.itba.paw.persistance.UserDao;
-import ar.edu.itba.paw.persistance.UserVerificationTokenDao;
 import ar.edu.itba.paw.service.EmailService;
+import ar.edu.itba.paw.service.TokenService;
 import ar.edu.itba.paw.services.UserServiceImpl;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceImplTest {
@@ -32,7 +29,7 @@ public class UserServiceImplTest {
     private EmailService emailService;
 
     @Mock
-    private UserVerificationTokenDao verificationTokenDao;
+    private TokenService tokenService;
 
     @Mock
     private UserDetailsService userDetailsService;
@@ -53,123 +50,169 @@ public class UserServiceImplTest {
 
     @Before
     public void setUp() {
-        Mockito.when(passwordEncoder.encode(PASSWORD)).thenReturn(PASSWORD);
+        when(passwordEncoder.encode(PASSWORD)).thenReturn(PASSWORD);
     }
 
     @Test
     public void testCreateOrConsolidateNewUser() {
         final User user = mock(User.class);
-        Mockito.when(user.getEmail()).thenReturn(EMAIL);
-        Mockito.when(user.getPassword()).thenReturn(PASSWORD);
-        Mockito.when(user.getName()).thenReturn(USERNAME);
+        when(user.getEmail()).thenReturn(EMAIL);
+        when(user.getPassword()).thenReturn(PASSWORD);
+        when(user.getName()).thenReturn(USERNAME);
 
-        Mockito.when(userDao.getByEmail(EMAIL)).thenReturn(Optional.empty());
-        Mockito.when(userDao.create(EMAIL, PASSWORD, USERNAME, LocaleContextHolder.getLocale().getLanguage())).thenReturn(user);
+        final Token userVerificationToken = mock(Token.class);
+
+        when(userDao.getByEmail(EMAIL)).thenReturn(Optional.empty());
+        when(userDao.create(eq(EMAIL), eq(PASSWORD), eq(USERNAME), anyString())).thenReturn(user);
+        when(tokenService.manageUserToken(eq(user))).thenReturn(userVerificationToken);
 
         final User result = userServiceImpl.createOrConsolidate(EMAIL, PASSWORD, USERNAME);
 
-        Assert.assertEquals(EMAIL, result.getEmail());
-        Assert.assertEquals(PASSWORD, result.getPassword());
-        Assert.assertEquals(USERNAME, result.getName());
+        assertEquals(EMAIL, result.getEmail());
+        assertEquals(PASSWORD, result.getPassword());
+        assertEquals(USERNAME, result.getName());
     }
 
     @Test
     public void testConsolidate() {
-        final User user = Mockito.spy(User.class);
+        final User user = spy(User.class);
         user.setName(null);
         user.setPassword(null);
         user.setEmail(EMAIL);
         when(userDao.getByEmail(EMAIL)).thenReturn(Optional.of(user));
 
-        UserVerificationToken token = mock(UserVerificationToken.class);
-        Mockito.when(verificationTokenDao.create(Mockito.eq(user), Mockito.anyString(), Mockito.any(LocalDateTime.class))).thenReturn(token);
-        Mockito.when(token.getToken()).thenReturn(TOKEN);
+        final Token token = mock(Token.class);
+        when(tokenService.manageUserToken(eq(user))).thenReturn(token);
+        when(token.getToken()).thenReturn(TOKEN);
 
         final User result = userServiceImpl.createOrConsolidate(EMAIL, PASSWORD, USERNAME);
 
-        Assert.assertEquals(PASSWORD, result.getPassword());
-        Assert.assertEquals(USERNAME, result.getName());
-        Assert.assertEquals(EMAIL, result.getEmail());
+        assertEquals(PASSWORD, result.getPassword());
+        assertEquals(USERNAME, result.getName());
+        assertEquals(EMAIL, result.getEmail());
     }
 
     @Test(expected = IllegalStateException.class)
     public void testConsolidateExistingUser() {
         final User existingUser = mock(User.class);
-        Mockito.when(existingUser.getPassword()).thenReturn(PASSWORD);
-        Mockito.when(userDao.getByEmail(EMAIL)).thenReturn(Optional.of(existingUser));
+        when(existingUser.getPassword()).thenReturn(PASSWORD);
+        when(userDao.getByEmail(EMAIL)).thenReturn(Optional.of(existingUser));
 
         userServiceImpl.createOrConsolidate(EMAIL, PASSWORD, USERNAME);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testConsolidateExistingUserWithNullPassword() {
-        final User consolidated = Mockito.spy(User.class);
-        Mockito.when(userDao.getByEmail(EMAIL)).thenReturn(Optional.of(consolidated));
+        final User consolidated = spy(User.class);
+        when(userDao.getByEmail(EMAIL)).thenReturn(Optional.of(consolidated));
 
         userServiceImpl.createOrConsolidate(EMAIL, null, USERNAME);
     }
 
     @Test
     public void testCreateIfNotExistsUserExists() {
-        final User existingUser = Mockito.spy(User.class);
+        final User existingUser = spy(User.class);
         existingUser.setEmail(EMAIL);
-        Mockito.when(userDao.getByEmail(EMAIL)).thenReturn(Optional.of(existingUser));
+        when(userDao.getByEmail(EMAIL)).thenReturn(Optional.of(existingUser));
 
         final User result = userServiceImpl.createIfNotExists(EMAIL, USERNAME);
-        Assert.assertEquals(existingUser, result);
+        assertEquals(existingUser, result);
     }
 
     @Test
     public void testCreateIfNotExistsUserDoesNotExist() {
         final User createdUser = mock(User.class);
-        Mockito.when(userDao.create(EMAIL, null, USERNAME, LocaleContextHolder.getLocale().getLanguage())).thenReturn(createdUser);
-        Mockito.when(createdUser.getEmail()).thenReturn(EMAIL);
-        Mockito.when(createdUser.getName()).thenReturn(USERNAME);
-        Mockito.when(createdUser.getPassword()).thenReturn(PASSWORD);
-        Mockito.when(userDao.getByEmail(EMAIL)).thenReturn(Optional.empty());
+        when(userDao.create(eq(EMAIL), eq(null), eq(USERNAME), anyString())).thenReturn(createdUser);
+        when(createdUser.getEmail()).thenReturn(EMAIL);
+        when(createdUser.getName()).thenReturn(USERNAME);
+        when(createdUser.getPassword()).thenReturn(PASSWORD);
+        when(userDao.getByEmail(EMAIL)).thenReturn(Optional.empty());
 
         final User result = userServiceImpl.createIfNotExists(EMAIL, USERNAME);
 
-        Assert.assertEquals(EMAIL, result.getEmail());
-        Assert.assertEquals(USERNAME, result.getName());
-        Assert.assertEquals(PASSWORD, result.getPassword());
+        assertEquals(EMAIL, result.getEmail());
+        assertEquals(USERNAME, result.getName());
+        assertEquals(PASSWORD, result.getPassword());
     }
 
     @Test
     public void testIsUserEmailRegisteredAndConsolidatedUserExistsConsolidated() {
         final User user = mock(User.class);
-        Mockito.when(user.getPassword()).thenReturn(PASSWORD);
+        when(user.getPassword()).thenReturn(PASSWORD);
 
-        Mockito.when(userDao.getByEmail(EMAIL)).thenReturn(Optional.of(user));
+        when(userDao.getByEmail(EMAIL)).thenReturn(Optional.of(user));
 
-        Assert.assertTrue(userServiceImpl.isUserEmailRegisteredAndConsolidated(EMAIL));
+        assertTrue(userServiceImpl.isUserEmailRegisteredAndConsolidated(EMAIL));
     }
 
     @Test
     public void testIsUserEmailRegisteredAndConsolidatedUserExistsNotConsolidated() {
         final User user = mock(User.class);
-        Mockito.when(user.getPassword()).thenReturn(null);
+        when(user.getPassword()).thenReturn(null);
 
-        Mockito.when(userDao.getByEmail(EMAIL)).thenReturn(Optional.of(user));
+        when(userDao.getByEmail(EMAIL)).thenReturn(Optional.of(user));
 
-        Assert.assertFalse(userServiceImpl.isUserEmailRegisteredAndConsolidated(EMAIL));
+        assertFalse(userServiceImpl.isUserEmailRegisteredAndConsolidated(EMAIL));
     }
 
     @Test
     public void testIsUserEmailRegisteredAndConsolidatedUserDoesNotExist() {
-        Mockito.when(userDao.getByEmail(EMAIL)).thenReturn(Optional.empty());
+        when(userDao.getByEmail(EMAIL)).thenReturn(Optional.empty());
 
-        Assert.assertFalse(userServiceImpl.isUserEmailRegisteredAndConsolidated(EMAIL));
+        assertFalse(userServiceImpl.isUserEmailRegisteredAndConsolidated(EMAIL));
+    }
+
+    @Test
+    public void testVerifyUserAndDeleteVerificationToken() {
+        final Token userToken = mock(Token.class);
+        when(tokenService.getByToken(TOKEN)).thenReturn(Optional.of(userToken));
+
+        final User user = mock(User.class);
+        when(user.getIsActive()).thenReturn(false);
+
+        when(userToken.getUser()).thenReturn(user);
+
+        assertTrue(userServiceImpl.verifyUser(TOKEN).isPresent());
+    }
+
+    @Test
+    public void testVerifyUserAndDeleteVerificationTokenTokenNotFound() {
+        when(tokenService.getByToken(TOKEN)).thenReturn(Optional.empty());
+        assertFalse(userServiceImpl.verifyUser(TOKEN).isPresent());
+    }
+
+    @Test
+    public void testVerifyUserAndDeleteVerificationTokenUserAlreadyActive() {
+        final Token userToken = spy(Token.class);
+        final User user = mock(User.class);
+        userToken.setUser(user);
+
+        when(tokenService.getByToken(TOKEN)).thenReturn(Optional.of(userToken));
+        when(user.getIsActive()).thenReturn(true);
+
+        assertFalse(userServiceImpl.verifyUser(TOKEN).isPresent());
+    }
+
+    @Test
+    public void testUpdatePassword() {
+        final Token userToken = spy(Token.class);
+        final User user = mock(User.class);
+        userToken.setUser(user);
+
+        when(userDao.getById(USER_ID)).thenReturn(Optional.of(user));
+        when(passwordEncoder.encode(PASSWORD)).thenReturn(PASSWORD);
+        doNothing().when(user).setPassword(anyString());
+
+        assertTrue(userServiceImpl.updatePassword(USER_ID, PASSWORD));
+    }
+
+    @Test
+    public void testUpdatePasswordUserNotFound() {
+        assertFalse(userServiceImpl.updatePassword(USER_ID, PASSWORD));
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testRegisterAddressNullName() {
-        userServiceImpl.registerAddress(USER_ID, ADDRESS, null);
+    public void testUpdatePasswordNullNewPassword() {
+        userServiceImpl.updatePassword(USER_ID, null);
     }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testRegisterAddressEmptyName() {
-        userServiceImpl.registerAddress(USER_ID, ADDRESS, "");
-    }
-
 }

@@ -1,9 +1,10 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.exception.InvalidUserArgumentException;
+import ar.edu.itba.paw.exception.UserAddressNotFoundException;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import ar.edu.itba.paw.persistence.constants.UserConstants;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,6 +23,8 @@ import javax.sql.DataSource;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import static org.junit.Assert.*;
+
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
@@ -30,6 +33,7 @@ public class UserJpaDaoTest {
     private static final long NON_EXISTENT_USER_ID = 5000;
     private static final String NON_EXISTENT_USER_EMAIL = "nonexistent@localhost";
     private static final String NON_EXISTENT_ADDRESS = "NON_EXISTENT_ADDRESS";
+    private static final long NON_EXISTENT_ADDRESS_ID = 1421414;
     private static final String NON_EXISTENT_NAME = "NON_EXISTENT_NAME";
 
     @Autowired
@@ -50,65 +54,65 @@ public class UserJpaDaoTest {
 
     @Test
     public void testFindActiveUserById() {
-        Optional<User> maybeUser = userDao.getById(UserConstants.ACTIVE_USER_ID);
+        final Optional<User> maybeUser = userDao.getById(UserConstants.ACTIVE_USER_ID);
 
-        Assert.assertTrue(maybeUser.isPresent());
-        Assert.assertEquals(UserConstants.ACTIVE_USER_ID, maybeUser.get().getUserId().longValue());
-        Assert.assertEquals(UserConstants.ACTIVE_USER_EMAIL, maybeUser.get().getEmail());
-        Assert.assertEquals(UserConstants.USERNAME, maybeUser.get().getName());
-        Assert.assertTrue(maybeUser.get().getIsActive());
-        Assert.assertEquals(UserConstants.PREFERRED_LANGUAGE, maybeUser.get().getPreferredLanguage());
+        assertTrue(maybeUser.isPresent());
+        assertEquals(UserConstants.ACTIVE_USER_ID, maybeUser.get().getUserId().longValue());
+        assertEquals(UserConstants.ACTIVE_USER_EMAIL, maybeUser.get().getEmail());
+        assertEquals(UserConstants.USERNAME, maybeUser.get().getName());
+        assertTrue(maybeUser.get().getIsActive());
+        assertEquals(UserConstants.PREFERRED_LANGUAGE, maybeUser.get().getPreferredLanguage());
     }
 
     @Test
     public void testFindNonActiveUserById() {
-        Optional<User> maybeUser = userDao.getById(UserConstants.INACTIVE_USER_ID);
+        final Optional<User> maybeUser = userDao.getById(UserConstants.INACTIVE_USER_ID);
 
-        Assert.assertTrue(maybeUser.isPresent());
-        Assert.assertEquals(UserConstants.INACTIVE_USER_ID, maybeUser.get().getUserId().longValue());
-        Assert.assertEquals(UserConstants.INACTIVE_USER_EMAIL, maybeUser.get().getEmail());
-        Assert.assertEquals(UserConstants.USERNAME, maybeUser.get().getName());
-        Assert.assertFalse(maybeUser.get().getIsActive());
-        Assert.assertEquals(UserConstants.PREFERRED_LANGUAGE, maybeUser.get().getPreferredLanguage());
+        assertTrue(maybeUser.isPresent());
+        assertEquals(UserConstants.INACTIVE_USER_ID, maybeUser.get().getUserId().longValue());
+        assertEquals(UserConstants.INACTIVE_USER_EMAIL, maybeUser.get().getEmail());
+        assertEquals(UserConstants.USERNAME, maybeUser.get().getName());
+        assertFalse(maybeUser.get().getIsActive());
+        assertEquals(UserConstants.PREFERRED_LANGUAGE, maybeUser.get().getPreferredLanguage());
     }
 
     @Test
     public void testFindActiveUserByEmail() {
-        Optional<User> maybeUser = userDao.getByEmail(UserConstants.ACTIVE_USER_EMAIL);
+        final Optional<User> maybeUser = userDao.getByEmail(UserConstants.ACTIVE_USER_EMAIL);
 
-        Assert.assertTrue(maybeUser.isPresent());
-        Assert.assertEquals(UserConstants.ACTIVE_USER_ID, maybeUser.get().getUserId().longValue());
-        Assert.assertEquals(UserConstants.ACTIVE_USER_EMAIL, maybeUser.get().getEmail());
-        Assert.assertEquals(UserConstants.USERNAME, maybeUser.get().getName());
-        Assert.assertTrue(maybeUser.get().getIsActive());
-        Assert.assertEquals(UserConstants.PREFERRED_LANGUAGE, maybeUser.get().getPreferredLanguage());
-        Assert.assertEquals(LocalDateTime.now().getDayOfYear(), maybeUser.get().getDateJoined().getDayOfYear());
+        assertTrue(maybeUser.isPresent());
+        assertEquals(UserConstants.ACTIVE_USER_ID, maybeUser.get().getUserId().longValue());
+        assertEquals(UserConstants.ACTIVE_USER_EMAIL, maybeUser.get().getEmail());
+        assertEquals(UserConstants.USERNAME, maybeUser.get().getName());
+        assertTrue(maybeUser.get().getIsActive());
+        assertEquals(UserConstants.PREFERRED_LANGUAGE, maybeUser.get().getPreferredLanguage());
+        assertEquals(LocalDateTime.now().getDayOfYear(), maybeUser.get().getDateJoined().getDayOfYear());
     }
 
     @Test
     public void testFindByIdDoesNotExist() {
-        Optional<User> maybeUser = userDao.getById(NON_EXISTENT_USER_ID);
-        Assert.assertFalse(maybeUser.isPresent());
+        final Optional<User> maybeUser = userDao.getById(NON_EXISTENT_USER_ID);
+        assertFalse(maybeUser.isPresent());
     }
 
     @Test
     public void testFindByEmailDoesNotExist() {
-        Optional<User> maybeUser = userDao.getByEmail(NON_EXISTENT_USER_EMAIL);
-        Assert.assertFalse(maybeUser.isPresent());
+        final Optional<User> maybeUser = userDao.getByEmail(NON_EXISTENT_USER_EMAIL);
+        assertFalse(maybeUser.isPresent());
     }
 
     @Test
     @Rollback
     public void testCreate() {
-        User user = userDao.create(NON_EXISTENT_USER_EMAIL, UserConstants.PASSWORD, UserConstants.USERNAME, UserConstants.PREFERRED_LANGUAGE);
+        final User user = userDao.create(NON_EXISTENT_USER_EMAIL, UserConstants.PASSWORD, UserConstants.USERNAME, UserConstants.PREFERRED_LANGUAGE);
         em.flush();
 
-        Assert.assertNotNull(user);
-        Assert.assertEquals(NON_EXISTENT_USER_EMAIL, user.getEmail());
-        Assert.assertEquals(UserConstants.PASSWORD, user.getPassword());
-        Assert.assertEquals(UserConstants.USERNAME, user.getName());
-        Assert.assertEquals(UserConstants.PREFERRED_LANGUAGE, user.getPreferredLanguage());
-        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "users", "user_id=" + user.getUserId() + " AND email='" + NON_EXISTENT_USER_EMAIL + "' AND password='" + UserConstants.PASSWORD + "' AND name='" + UserConstants.USERNAME + "' AND preferred_language='" + UserConstants.PREFERRED_LANGUAGE + "'"));
+        assertNotNull(user);
+        assertEquals(NON_EXISTENT_USER_EMAIL, user.getEmail());
+        assertEquals(UserConstants.PASSWORD, user.getPassword());
+        assertEquals(UserConstants.USERNAME, user.getName());
+        assertEquals(UserConstants.PREFERRED_LANGUAGE, user.getPreferredLanguage());
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "users", "user_id=" + user.getUserId() + " AND email='" + NON_EXISTENT_USER_EMAIL + "' AND password='" + UserConstants.PASSWORD + "' AND name='" + UserConstants.USERNAME + "' AND preferred_language='" + UserConstants.PREFERRED_LANGUAGE + "'"));
     }
 
     @Test(expected = PersistenceException.class)
@@ -123,42 +127,50 @@ public class UserJpaDaoTest {
         userDao.registerAddress(UserConstants.ACTIVE_USER_ID, NON_EXISTENT_ADDRESS, NON_EXISTENT_NAME);
         em.flush();
 
-        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "user_addresses", "user_id=" + UserConstants.ACTIVE_USER_ID + " AND address='" + NON_EXISTENT_ADDRESS + "' AND name='" + NON_EXISTENT_NAME + "'"));
-        Assert.assertEquals(UserConstants.ADDRESSES_COUNT + 1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "user_addresses", "user_id=" + UserConstants.ACTIVE_USER_ID));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "user_addresses", "user_id=" + UserConstants.ACTIVE_USER_ID + " AND address='" + NON_EXISTENT_ADDRESS + "' AND name='" + NON_EXISTENT_NAME + "'"));
+        assertEquals(UserConstants.ADDRESSES_COUNT + 1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "user_addresses", "user_id=" + UserConstants.ACTIVE_USER_ID));
+    }
+
+    @Test(expected = InvalidUserArgumentException.class)
+    @Rollback
+    public void testRegisterExistingUserAddressWithOtherName() {
+        userDao.registerAddress(UserConstants.ACTIVE_USER_ID, UserConstants.LAST_USED_ADDRESS, NON_EXISTENT_NAME);
+
+        em.flush();
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "user_addresses", "user_id=" + UserConstants.ACTIVE_USER_ID + " AND address='" + UserConstants.LAST_USED_ADDRESS + "' AND name='" + NON_EXISTENT_NAME + "'"));
     }
 
     @Test
     @Rollback
     public void testUpdateExistingUserAddressWithOtherName() {
-        userDao.registerAddress(UserConstants.ACTIVE_USER_ID, UserConstants.LAST_USED_ADDRESS, NON_EXISTENT_NAME);
+        userDao.updateAddress(UserConstants.ACTIVE_USER_ID, UserConstants.LAST_USED_ADDRESS_ID, UserConstants.LAST_USED_ADDRESS, NON_EXISTENT_NAME);
 
-        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "user_addresses", "user_id=" + UserConstants.ACTIVE_USER_ID + " AND address='" + UserConstants.LAST_USED_ADDRESS + "' AND name='" + UserConstants.LAST_USED_ADDRESS_NAME + "'"));
         em.flush();
-        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "user_addresses", "user_id=" + UserConstants.ACTIVE_USER_ID + " AND address='" + UserConstants.LAST_USED_ADDRESS + "' AND name='" + NON_EXISTENT_NAME + "'"));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "user_addresses", "user_id=" + UserConstants.ACTIVE_USER_ID + " AND address='" + UserConstants.LAST_USED_ADDRESS + "' AND name='" + NON_EXISTENT_NAME + "'"));
     }
 
     @Test
     @Rollback
     public void testCreateExistingUserAddressWithNoName() {
         userDao.refreshAddress(UserConstants.ACTIVE_USER_ID, NON_EXISTENT_ADDRESS);
-        Assert.assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "user_addresses", "user_id=" + UserConstants.ACTIVE_USER_ID + " AND address='" + NON_EXISTENT_ADDRESS + "' AND name IS NULL"));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "user_addresses", "user_id=" + UserConstants.ACTIVE_USER_ID + " AND address='" + NON_EXISTENT_ADDRESS + "' AND name IS NULL"));
     }
 
     @Test
     @Rollback
     public void testDeleteExistingUserAddress() {
-        userDao.deleteAddress(UserConstants.ACTIVE_USER_ID, UserConstants.LAST_USED_ADDRESS);
+        userDao.deleteAddress(UserConstants.ACTIVE_USER_ID, UserConstants.LAST_USED_ADDRESS_ID);
         em.flush();
 
-        Assert.assertEquals(UserConstants.ADDRESSES_COUNT - 1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "user_addresses", "user_id=" + UserConstants.ACTIVE_USER_ID));
+        assertEquals(UserConstants.ADDRESSES_COUNT - 1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "user_addresses", "user_id=" + UserConstants.ACTIVE_USER_ID));
     }
 
-    @Test
-    public void testDeleteUnExistingUserAddress() {
-        userDao.deleteAddress(UserConstants.ACTIVE_USER_ID, NON_EXISTENT_ADDRESS);
+    @Test(expected = UserAddressNotFoundException.class)
+    public void testDeleteNonExistingUserAddress() {
+        userDao.deleteAddress(UserConstants.ACTIVE_USER_ID, NON_EXISTENT_ADDRESS_ID);
         em.flush();
 
-        Assert.assertEquals(UserConstants.ADDRESSES_COUNT, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "user_addresses", "user_id=" + UserConstants.ACTIVE_USER_ID));
+        assertEquals(UserConstants.ADDRESSES_COUNT, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "user_addresses", "user_id=" + UserConstants.ACTIVE_USER_ID));
     }
 
     @Test
@@ -168,7 +180,7 @@ public class UserJpaDaoTest {
         em.flush();
 
         // Get the tuple with max date
-        Assert.assertEquals(UserConstants.PREVIOUS_USED_ADDRESS, jdbcTemplate.queryForObject("SELECT address FROM user_addresses WHERE user_id=" + UserConstants.ACTIVE_USER_ID + " AND last_used=(SELECT MAX(last_used) FROM user_addresses WHERE user_id=" + UserConstants.ACTIVE_USER_ID + ")", String.class));
+        assertEquals(UserConstants.PREVIOUS_USED_ADDRESS, jdbcTemplate.queryForObject("SELECT address FROM user_addresses WHERE user_id=" + UserConstants.ACTIVE_USER_ID + " AND last_used=(SELECT MAX(last_used) FROM user_addresses WHERE user_id=" + UserConstants.ACTIVE_USER_ID + ")", String.class));
     }
 
 }

@@ -1,8 +1,13 @@
 package ar.edu.itba.paw.services;
 
+import ar.edu.itba.paw.exception.CategoryDeletedException;
 import ar.edu.itba.paw.exception.CategoryNotFoundException;
+import ar.edu.itba.paw.exception.RestaurantDeletedException;
+import ar.edu.itba.paw.exception.RestaurantNotFoundException;
 import ar.edu.itba.paw.model.Category;
+import ar.edu.itba.paw.model.Restaurant;
 import ar.edu.itba.paw.persistance.CategoryDao;
+import ar.edu.itba.paw.persistance.RestaurantDao;
 import ar.edu.itba.paw.service.CategoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,10 +26,32 @@ public class CategoryServiceImpl implements CategoryService {
     @Autowired
     private CategoryDao categoryDao;
 
+    @Autowired
+    private RestaurantDao restaurantDao;
+
     @Override
     public Optional<Category> getById(long categoryId) {
         return categoryDao.getById(categoryId);
     }
+
+    @Override
+    public Category getByIdChecked(long restaurantId, long categoryId, boolean allowDeleted) {
+        final Optional<Category> maybeCategory = categoryDao.getById(categoryId);
+        if (!maybeCategory.isPresent()) {
+            if (!restaurantDao.getById(restaurantId).isPresent())
+                throw new RestaurantNotFoundException();
+            throw new CategoryNotFoundException();
+        }
+
+        final Category category = maybeCategory.get();
+        if (category.getRestaurantId() != restaurantId)
+            throw new CategoryNotFoundException();
+        if (!allowDeleted && category.getDeleted())
+            throw new CategoryDeletedException();
+
+        return category;
+    }
+
 
     @Transactional
     @Override
@@ -34,19 +61,36 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<Category> getByRestaurantSortedByOrder(long restaurantId) {
-        return categoryDao.getByRestaurantSortedByOrder(restaurantId);
+        final List<Category> categories = categoryDao.getByRestaurantSortedByOrder(restaurantId);
+
+        if (categories.isEmpty()) {
+            final Optional<Restaurant> restaurant = restaurantDao.getById(restaurantId);
+            if (!restaurant.isPresent())
+                throw new RestaurantNotFoundException();
+            else if (restaurant.get().getDeleted())
+                throw new RestaurantDeletedException();
+        }
+
+        return categories;
     }
 
     @Transactional
     @Override
-    public Category updateName(long categoryId, String name) {
-        final Optional<Category> maybeCategory = categoryDao.getById(categoryId);
-        if (!maybeCategory.isPresent()) {
-            LOGGER.error("Attempted to update name of non-existing category id {}", categoryId);
-            throw new CategoryNotFoundException();
+    public Category updateCategory(long restaurantId, long categoryId, String name, Integer orderNum) {
+        final Category category = (name == null) ? getByIdChecked(restaurantId, categoryId, false) :
+                                                   updateName(restaurantId, categoryId, name);
+
+        if (orderNum != null) {
+            setOrder(category, orderNum);
         }
 
-        final Category category = maybeCategory.get();
+        return category;
+    }
+
+    @Transactional
+    @Override
+    public Category updateName(long restaurantId, long categoryId, String name) {
+        final Category category = getByIdChecked(restaurantId, categoryId, false);
         category.setName(name);
         LOGGER.error("Updated name of category id {}", categoryId);
         return category;
@@ -54,19 +98,20 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Transactional
     @Override
-    public void delete(long categoryId) {
+    public void delete(long restaurantId, long categoryId) {
+        getByIdChecked(restaurantId, categoryId, false);
         categoryDao.delete(categoryId);
     }
 
     @Transactional
     @Override
-    public void swapOrder(long restaurantId, int orderNum1, int orderNum2) {
-        if (orderNum1 == orderNum2) {
-            LOGGER.warn("Attempted to swapOrder between categories of restaurant id {} with the same order {}", restaurantId, orderNum1);
+    public void setOrder(Category category, int orderNum) {
+        if (category.getOrderNum() == orderNum) {
+            LOGGER.warn("Attempted to setOrder to category {} with the same orderNum {}", category.getCategoryId(), orderNum);
             return;
         }
 
-        categoryDao.swapOrder(restaurantId, orderNum1, orderNum2);
+        categoryDao.setOrder(category, orderNum);
     }
 
     @Transactional

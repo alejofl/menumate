@@ -29,6 +29,23 @@ public class ReportServiceImpl implements ReportService {
         return reportDao.getById(reportId);
     }
 
+    @Override
+    public Report getByIdChecked(long reportId, long restaurantId) {
+        final Optional<Report> maybeReport = reportDao.getById(reportId);
+        if(!maybeReport.isPresent()) {
+            LOGGER.error("Report id {} not found", reportId);
+            throw new ReportNotFoundException();
+        }
+
+        final Report report = maybeReport.get();
+        if(report.getRestaurantId() != restaurantId) {
+            LOGGER.error("Report id {} is not associated with restaurant id {}", report.getReportId(), restaurantId);
+            throw new ReportNotFoundException();
+        }
+
+        return report;
+    }
+
     @Transactional
     @Override
     public Report create(long restaurantId, Long reporterUserId, String comment) {
@@ -37,11 +54,19 @@ public class ReportServiceImpl implements ReportService {
 
     @Transactional
     @Override
-    public Report markHandled(long reportId, long handlerUserId) {
-        Report report = reportDao.getById(reportId).orElseThrow(ReportNotFoundException::new);
+    public void delete(long reportId, long restaurantId) {
+        final Report report = getByIdChecked(reportId, restaurantId);
+        reportDao.delete(report.getReportId());
+    }
+
+    @Transactional
+    @Override
+    public Report markHandled(long reportId, long restaurantId, long handlerUserId) {
+        final Report report = getByIdChecked(reportId, restaurantId);
+
         if (report.getIsHandled()) {
             LOGGER.warn("Attempted to mark report id {} as handled, but report is already handled", report.getReportId());
-            throw new IllegalStateException("Report is already handled");
+            throw new IllegalStateException("exception.IllegalStateException.markHandled");
         }
 
         report.setHandlerUserId(handlerUserId);

@@ -18,27 +18,24 @@ CREATE TABLE IF NOT EXISTS users
 
 CREATE TABLE IF NOT EXISTS user_addresses
 (
-    user_id   INT NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
-    address   VARCHAR(200) NOT NULL,
-    name      VARCHAR(20),
-    last_used TIMESTAMP NOT NULL DEFAULT now(),
+    address_id SERIAL PRIMARY KEY,
+    user_id    INT NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
+    address    VARCHAR(200) NOT NULL,
+    name       VARCHAR(20),
+    last_used  TIMESTAMP NOT NULL DEFAULT now(),
 
-    PRIMARY KEY (user_id, address),
+    UNIQUE (user_id, address),
     UNIQUE (user_id, name)
 );
 
-CREATE TABLE IF NOT EXISTS user_verification_tokens
+CREATE TABLE IF NOT EXISTS tokens
 (
-    user_id INT PRIMARY KEY REFERENCES users (user_id) ON DELETE CASCADE,
-    token   VARCHAR(32) UNIQUE NOT NULL,
-    expires TIMESTAMP NOT NULL
-);
+    token_id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
+    token   VARCHAR(32) UNIQUE,
+    expiryDate TIMESTAMP NOT NULL,
 
-CREATE TABLE IF NOT EXISTS user_resetpassword_tokens
-(
-    user_id INT PRIMARY KEY REFERENCES users (user_id) ON DELETE CASCADE,
-    token   VARCHAR(32) UNIQUE NOT NULL,
-    expires TIMESTAMP NOT NULL
+    UNIQUE(user_id)
 );
 
 CREATE TABLE IF NOT EXISTS restaurants
@@ -176,7 +173,6 @@ CREATE VIEW restaurant_details AS
     ) AS average_price
     FROM restaurants LEFT OUTER JOIN (orders JOIN order_reviews ON orders.order_id = order_reviews.order_id)
         ON restaurants.restaurant_id = orders.restaurant_id
-    WHERE restaurants.deleted = false AND restaurants.is_active = true
     GROUP BY restaurants.restaurant_id
 );
 
@@ -189,8 +185,16 @@ CREATE VIEW restaurant_role_details AS
             AND date_delivered IS NULL AND date_cancelled IS NULL
     ) AS inprogress_order_count
     FROM (
-        (SELECT user_id, restaurant_id, role_level FROM restaurant_roles)
+        (
+            SELECT user_id, restaurant_id, role_level
+            FROM restaurant_roles NATURAL JOIN restaurants
+            WHERE deleted = false
+        )
         UNION
-        (SELECT owner_user_id AS user_id, restaurant_id, 0 AS role_level FROM restaurants)
+        (
+            SELECT owner_user_id AS user_id, restaurant_id, 0 AS role_level
+            FROM restaurants
+            WHERE deleted = false
+        )
     ) AS roles_grouped
 );

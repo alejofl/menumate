@@ -1,16 +1,16 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.exception.InvalidUserArgumentException;
+import ar.edu.itba.paw.exception.UserAddressNotFoundException;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.model.UserAddress;
 import ar.edu.itba.paw.persistance.UserDao;
+import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,8 +32,19 @@ public class UserJpaDao implements UserDao {
 
     @Override
     public Optional<User> getByEmail(String email) {
-        TypedQuery<User> query = em.createQuery("FROM User WHERE email = :email", User.class);
+        final TypedQuery<User> query = em.createQuery("FROM User WHERE email = :email", User.class);
         query.setParameter("email", email);
+        return query.getResultList().stream().findFirst();
+    }
+
+    @Override
+    public Optional<UserAddress> getAddressById(long userId, long addressId) {
+        final TypedQuery<UserAddress> query = em.createQuery(
+                "FROM UserAddress WHERE userId = :userId AND addressId = :addressId",
+                UserAddress.class
+        );
+        query.setParameter("userId", userId);
+        query.setParameter("addressId", addressId);
         return query.getResultList().stream().findFirst();
     }
 
@@ -47,61 +58,93 @@ public class UserJpaDao implements UserDao {
 
     private static final String GET_LASTUSED_TO_DELETE_SQL = "SELECT last_used FROM user_addresses WHERE name IS NULL ORDER BY last_used DESC LIMIT 1 OFFSET " + MAX_USER_ADDRESSES_REMEMBERED;
 
+    private int deleteExcessUnnamedAddresses(long userId) {
+        final Query timestampQuery = em.createNativeQuery(GET_LASTUSED_TO_DELETE_SQL);
+        final List<?> resultList = timestampQuery.getResultList();
+
+        if (resultList.isEmpty())
+            return 0;
+
+        final LocalDateTime minLastUsed = ((Timestamp) resultList.get(0)).toLocalDateTime();
+        final Query deleteQuery = em.createQuery("DELETE FROM UserAddress WHERE name IS NULL AND lastUsed <= :timestamp");
+        deleteQuery.setParameter("timestamp", minLastUsed);
+        return deleteQuery.executeUpdate();
+    }
+
     @Override
-    public void registerAddress(long userId, String address, String name) {
-        // We need to get addresses for the user that might have the same address or name, as to handle a specific
-        // side case where an UserAddress with the same userId and name but different address exists, as well as
-        // another UserAddress with the same userId and address, but different name.
-        // The way we handle this side case is to merge the two entities into a single one.
-        // NOTE: Due to schema constraints this query will return at most 2 results.
-        TypedQuery<UserAddress> query = em.createQuery(
-                "FROM UserAddress WHERE userId = :userId AND (address = :address OR name = :name)",
+    public UserAddress registerAddress(long userId, String address, String name) {
+        try {
+            // Create and persist the address
+            final UserAddress ua = new UserAddress(userId, address, name, LocalDateTime.now());
+            em.persist(ua);
+            em.flush(); // Flush so any constraint validation exceptions are raised now
+
+            // If the address is unnamed, we must enforce the maximum limit of unnamed addresses per user.
+            int rows = name == null ? deleteExcessUnnamedAddresses(userId) : 0;
+
+            LOGGER.info("Registered {} named address for user id {} with address id {}, {} old rows deleted", name == null ? "un" : "", userId, ua.getAddressId(), rows);
+            return ua;
+        } catch (PersistenceException e) {
+            final Throwable cause = e.getCause();
+            if (cause instanceof ConstraintViolationException) {
+                final ConstraintViolationException c = (ConstraintViolationException) cause;
+                final String constraintName = c.getConstraintName();
+                final String problematicParam = constraintName == null ? null :
+                        constraintName.contains("user_id_address") ? "address" :
+                                constraintName.contains("user_id_name") ? "name" : "address or name";
+
+                LOGGER.warn("Failed to register address for user id {} due to constraint violation on {}", userId, problematicParam == null ? "unknown field" : problematicParam, e);
+                if (problematicParam != null)
+                    throw new InvalidUserArgumentException("exception.InvalidUserArgumentException.registerAddress");
+            }
+            throw e;
+        }
+    }
+
+    @Override
+    public UserAddress updateAddress(long userId, long addressId, String address, String name) {
+        final UserAddress ua = getAddressById(userId, addressId).orElseThrow(UserAddressNotFoundException::new);
+        try {
+            if (address != null)
+                ua.setAddress(address);
+            if (name != null)
+                ua.setName(name);
+            em.flush();
+            LOGGER.info("Updated user id {} address id {}, set address{}", userId, addressId, name == null ? "" : " and name");
+            return ua;
+        } catch (PersistenceException e) {
+            final Throwable cause = e.getCause();
+            if (cause instanceof ConstraintViolationException) {
+                final ConstraintViolationException c = (ConstraintViolationException) cause;
+                final String constraintName = c.getConstraintName();
+                final String problematicParam = constraintName == null ? null :
+                        constraintName.contains("user_id_address") ? "address" :
+                        constraintName.contains("user_id_name") ? "name" : null;
+
+                LOGGER.warn("Failed to update address for user id {} due to constraint violation on {}", userId, problematicParam == null ? "unknown field" : problematicParam, e);
+                if (problematicParam != null)
+                    throw new InvalidUserArgumentException("exception.InvalidUserArgumentException.updateAddress");
+            }
+            throw e;
+        }
+    }
+
+    @Override
+    public UserAddress refreshAddress(long userId, String address) {
+        // Update the UserAddress if it exists
+        final TypedQuery<UserAddress> query = em.createQuery(
+                "FROM UserAddress WHERE userId = :userId AND address = :address",
                 UserAddress.class
         );
         query.setParameter("userId", userId);
         query.setParameter("address", address);
-        query.setParameter("name", name);
-        List<UserAddress> addresses = query.getResultList();
-
-        if (addresses.isEmpty()) {
-            // If there are no such addresses for this user, we can register it without issues.
-            final UserAddress ua = new UserAddress(userId, address, name, LocalDateTime.now());
-            em.persist(ua);
-            return;
-        }
-
-        // If there is already an UserAddress with this (userId, address) (the primary key), we'll update that one
-        // instead of inserting. Either way, we need to delete the other addresses to prevent conflicts
-        // delete the other UserAddress (if there is another).
-        UserAddress mainAddress = addresses.stream().filter(u -> u.getAddress().equals(address)).findFirst().orElse(null);
-        for (UserAddress lua : addresses)
-            if (lua != mainAddress)
-                em.remove(lua);
-        em.flush(); // Required because Hibernate's flush order would otherwise conflict with schema constraints
-
-        if (mainAddress == null) {
-            final UserAddress ua = new UserAddress(userId, address, name, LocalDateTime.now());
-            em.persist(ua);
-        } else {
-            mainAddress.setName(name);
-            mainAddress.setLastUsed(LocalDateTime.now());
-        }
-
-        LOGGER.info("Registered named address for user id {}", userId);
-    }
-
-    @Override
-    public void refreshAddress(long userId, String address) {
-        // Update the UserAddress if it exists
-        Query updateQuery = em.createQuery("UPDATE UserAddress SET lastUsed = now() WHERE userId = :userId AND address = :address");
-        updateQuery.setParameter("userId", userId);
-        updateQuery.setParameter("address", address);
-        int rows = updateQuery.executeUpdate();
+        final Optional<UserAddress> maybeAddress = query.getResultList().stream().findFirst();
 
         // If the UserAddress exists and was updated, that's it; it's been refreshed.
-        if (rows != 0) {
+        if (maybeAddress.isPresent()) {
+            maybeAddress.get().setLastUsed(LocalDateTime.now());
             LOGGER.info("Refreshed address for user id {}", userId);
-            return;
+            return maybeAddress.get();
         }
 
         // Otherwise, it doesn't exist, so we need to create it
@@ -111,30 +154,24 @@ public class UserJpaDao implements UserDao {
         // And since we created an unnamed address, we need to enforce the maximum limit of unnamed addresses.
         // We make a query to delete old addresses, if necessary.
         em.flush();
-        Query timestampQuery = em.createNativeQuery(GET_LASTUSED_TO_DELETE_SQL);
-        List<?> resultList = timestampQuery.getResultList();
 
-        if (!resultList.isEmpty()) {
-            LocalDateTime minLastUsed = ((Timestamp) resultList.get(0)).toLocalDateTime();
-            Query deleteQuery = em.createQuery("DELETE FROM UserAddress WHERE name IS NULL AND lastUsed <= :timestamp");
-            deleteQuery.setParameter("timestamp", minLastUsed);
-            rows = deleteQuery.executeUpdate();
-        }
-
+        int rows = deleteExcessUnnamedAddresses(userId);
         LOGGER.info("Registered unnamed address for user id {}, {} old deleted", userId, rows);
+        return ua;
     }
 
     @Override
-    public void deleteAddress(long userId, String address) {
-        Query addressQuery = em.createQuery("DELETE FROM UserAddress WHERE userId = :userId AND address = :address");
+    public void deleteAddress(long userId, long addressId) {
+        final Query addressQuery = em.createQuery("DELETE FROM UserAddress WHERE userId = :userId AND addressId = :addressId");
         addressQuery.setParameter("userId", userId);
-        addressQuery.setParameter("address", address);
+        addressQuery.setParameter("addressId", addressId);
         int rows = addressQuery.executeUpdate();
 
         if (rows == 0) {
-            LOGGER.warn("Attempted to delete user address for user id {}, but no such address found", userId);
+            LOGGER.warn("Attempted to delete user address {} for user id {}, but no such address found", addressId, userId);
+            throw new UserAddressNotFoundException();
         } else {
-            LOGGER.info("Deleted an user address for user id {}", userId);
+            LOGGER.info("Deleted an user address {} for user id {}", addressId, userId);
         }
     }
 }

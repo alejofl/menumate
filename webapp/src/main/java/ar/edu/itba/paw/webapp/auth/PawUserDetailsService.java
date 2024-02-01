@@ -27,19 +27,19 @@ public class PawUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(final String email) throws UsernameNotFoundException, UserNotVerifiedException {
-        final User user = userService.getByEmail(email).orElseThrow(() -> new UsernameNotFoundException("No user for email " + email));
+        final User user = userService.getByEmail(email).orElseThrow(() -> new UsernameNotFoundException("exception.UserNotFoundException.email"));
 
         if (!user.getIsActive())
-            throw new UserNotVerifiedException("User exists but is not verified", user);
+            throw new UserNotVerifiedException(user);
 
         if (user.getPassword() == null)
-            throw new UsernameNotFoundException("User exists but is not consolidated");
+            throw new UsernameNotFoundException("exception.UserNotFoundException.user");
 
         final Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
         final Optional<UserRoleLevel> userRole = userRoleService.getRole(user.getUserId());
 
         if (userRole.isPresent()) {
-            authorities.add(new SimpleGrantedAuthority(userRole.get().getLevelName()));
+            authorities.add(new SimpleGrantedAuthority(userRole.get().getMessageCode()));
         }
         return new PawAuthUserDetails(user.getUserId(), user.getEmail(), user.getPassword(), authorities);
     }

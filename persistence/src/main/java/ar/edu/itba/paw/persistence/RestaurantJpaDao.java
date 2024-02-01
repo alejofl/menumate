@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.exception.RestaurantDeletedException;
 import ar.edu.itba.paw.exception.RestaurantNotFoundException;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.persistance.RestaurantDao;
@@ -56,7 +57,7 @@ public class RestaurantJpaDao implements RestaurantDao {
             case PRICE:
                 return "r.average_price";
             default:
-                throw new IllegalArgumentException("Invalid or not implemented RestaurantOrderBy: " + orderBy);
+                throw new IllegalArgumentException("exception.IllegalArgumentException.getOrderByColumn");
         }
     }
 
@@ -74,7 +75,7 @@ public class RestaurantJpaDao implements RestaurantDao {
             case PRICE:
                 return "averageProductPrice " + direction + ", restaurantId";
             default:
-                throw new IllegalArgumentException("Invalid or not implemented RestaurantOrderBy: " + orderBy);
+                throw new IllegalArgumentException("exception.IllegalArgumentException.getOrderByColumnHql");
         }
     }
 
@@ -127,8 +128,8 @@ public class RestaurantJpaDao implements RestaurantDao {
             return "%";
 
         query = query.replaceAll("_", "\\\\_").replaceAll("%", "\\\\%");
-        String[] tokens = query.trim().toLowerCase().split(" +");
-        StringBuilder searchParam = new StringBuilder("%");
+        final String[] tokens = query.trim().toLowerCase().split(" +");
+        final StringBuilder searchParam = new StringBuilder("%");
         for (String token : tokens) {
             String trimmed = token.trim();
             if (!trimmed.isEmpty())
@@ -142,12 +143,12 @@ public class RestaurantJpaDao implements RestaurantDao {
         Utils.validatePaginationParams(pageNumber, pageSize);
         int pageIdx = pageNumber - 1;
 
-        String orderByColumn = getOrderByColumn(orderBy);
-        String orderByDirection = descending ? "DESC" : "ASC";
-        String search = generateSearchParam(query);
+        final String orderByColumn = getOrderByColumn(orderBy);
+        final String orderByDirection = descending ? "DESC" : "ASC";
+        final String search = generateSearchParam(query);
 
-        StringBuilder sqlBuilder = new StringBuilder();
-        sqlBuilder.append("SELECT restaurant_id FROM restaurant_details AS r WHERE");
+        final StringBuilder sqlBuilder = new StringBuilder();
+        sqlBuilder.append("SELECT restaurant_id FROM restaurant_details AS r WHERE is_active = true AND deleted = false AND");
         sqlBuilder.append(NAME_SEARCH_CONDITION_SQL);
         appendSpecialtiesCondition(sqlBuilder, specialties);
         appendTagsCondition(sqlBuilder, tags);
@@ -156,7 +157,7 @@ public class RestaurantJpaDao implements RestaurantDao {
             sqlBuilder.append(", r.restaurant_id");
         sqlBuilder.append(" LIMIT ? OFFSET ?");
 
-        Query nativeQuery = em.createNativeQuery(sqlBuilder.toString());
+        final Query nativeQuery = em.createNativeQuery(sqlBuilder.toString());
         nativeQuery.setParameter(1, search);
         nativeQuery.setParameter(2, search);
         nativeQuery.setParameter(3, search);
@@ -171,7 +172,7 @@ public class RestaurantJpaDao implements RestaurantDao {
         appendSpecialtiesCondition(sqlBuilder, specialties);
         appendTagsCondition(sqlBuilder, tags);
 
-        Query countQuery = em.createNativeQuery(sqlBuilder.toString());
+        final Query countQuery = em.createNativeQuery(sqlBuilder.toString());
         countQuery.setParameter(1, search);
         countQuery.setParameter(2, search);
         countQuery.setParameter(3, search);
@@ -180,7 +181,7 @@ public class RestaurantJpaDao implements RestaurantDao {
         if (idList.isEmpty())
             return new PaginatedResult<>(Collections.emptyList(), pageNumber, pageSize, count);
 
-        TypedQuery<RestaurantDetails> resultsQuery = em.createQuery(
+        final TypedQuery<RestaurantDetails> resultsQuery = em.createQuery(
                 "FROM RestaurantDetails WHERE restaurantId IN :ids ORDER BY " + getOrderByColumnHql(orderBy, orderByDirection),
                 RestaurantDetails.class
         );
@@ -192,35 +193,61 @@ public class RestaurantJpaDao implements RestaurantDao {
 
     @Override
     public List<Promotion> getActivePromotions(long restaurantId) {
-        TypedQuery<Promotion> query = em.createQuery(
+        final TypedQuery<Promotion> query = em.createQuery(
                 "FROM Promotion WHERE destination.deleted = false AND destination.available = true AND destination.categoryId IN (SELECT categoryId FROM Category WHERE restaurantId = :restaurantId) ORDER BY (destination.price / source.price) ASC",
                 Promotion.class
         );
         query.setParameter("restaurantId", restaurantId);
-        return query.getResultList();
+
+        final List<Promotion> result = query.getResultList();
+        if (result.isEmpty()) {
+            Query existsQuery = em.createNativeQuery("SELECT EXISTS(SELECT * FROM restaurants WHERE restaurant_id = ?)");
+            existsQuery.setParameter(1, restaurantId);
+
+            if (!((Boolean) existsQuery.getSingleResult()))
+                throw new RestaurantNotFoundException();
+        }
+
+        return result;
     }
 
     @Override
     public List<Promotion> getLivingPromotions(long restaurantId) {
-        TypedQuery<Promotion> query = em.createQuery(
+        final TypedQuery<Promotion> query = em.createQuery(
                 "FROM Promotion WHERE destination.deleted = false AND destination.categoryId IN (SELECT categoryId FROM Category WHERE restaurantId = :restaurantId) ORDER BY startDate ASC",
                 Promotion.class
         );
         query.setParameter("restaurantId", restaurantId);
-        return query.getResultList();
+
+        final List<Promotion> result = query.getResultList();
+        if (result.isEmpty()) {
+            Query existsQuery = em.createNativeQuery("SELECT EXISTS(SELECT * FROM restaurants WHERE restaurant_id = ?)");
+            existsQuery.setParameter(1, restaurantId);
+
+            if (!((Boolean) existsQuery.getSingleResult()))
+                throw new RestaurantNotFoundException();
+        }
+
+        return result;
     }
 
     @Override
     public Optional<Duration> getAverageOrderCompletionTime(long restaurantId, OrderType orderType, LocalDateTime since) {
-        Query query = em.createNativeQuery("SELECT EXTRACT(EPOCH FROM AVG(date_delivered - date_ordered)) FROM orders WHERE restaurant_id = :restaurantId AND order_type = :orderType AND date_delivered IS NOT NULL AND date_ordered >= :since");
+        final Query query = em.createNativeQuery("SELECT EXTRACT(EPOCH FROM AVG(date_delivered - date_ordered)) FROM orders WHERE restaurant_id = :restaurantId AND order_type = :orderType AND date_delivered IS NOT NULL AND date_ordered >= :since");
         query.setParameter("restaurantId", restaurantId);
         query.setParameter("orderType", orderType.ordinal());
         query.setParameter("since", since);
 
-        List<?> resultList = query.getResultList();
+        final List<?> resultList = query.getResultList();
         if (resultList.isEmpty() || resultList.get(0) == null)
             return Optional.empty();
         return Optional.of(Duration.ofSeconds(((Number) resultList.get(0)).longValue()));
+    }
+
+    @Override
+    public Optional<RestaurantDetails> getRestaurantDetails(long restaurantId) {
+        final RestaurantDetails restaurantDetails = em.find(RestaurantDetails.class, restaurantId);
+        return restaurantDetails == null? Optional.empty() : Optional.of(restaurantDetails);
     }
 
     @Override
@@ -233,27 +260,28 @@ public class RestaurantJpaDao implements RestaurantDao {
 
         if (restaurant.getDeleted()) {
             LOGGER.error("Attempted to delete already-deleted restaurant id {}", restaurant.getRestaurantId());
-            throw new IllegalStateException("Restaurant is already deleted");
+            throw new RestaurantDeletedException();
         }
 
         restaurant.setDeleted(true);
+        restaurant.setIsActive(false);
         em.persist(restaurant);
 
-        Query categoryQuery = em.createQuery("UPDATE Category SET deleted = true WHERE deleted = false AND restaurantId = :restaurantId");
+        final Query categoryQuery = em.createQuery("UPDATE Category SET deleted = true WHERE deleted = false AND restaurantId = :restaurantId");
         categoryQuery.setParameter("restaurantId", restaurantId);
         int categoryCount = categoryQuery.executeUpdate();
 
-        Query productQuery = em.createQuery("UPDATE Product p SET p.deleted = true WHERE p.deleted = false AND EXISTS (SELECT c FROM Category c WHERE p.categoryId = c.categoryId AND c.restaurantId = :restaurantId)");
+        final Query productQuery = em.createQuery("UPDATE Product p SET p.deleted = true, p.available = false WHERE p.deleted = false AND EXISTS (SELECT c FROM Category c WHERE p.categoryId = c.categoryId AND c.restaurantId = :restaurantId)");
         productQuery.setParameter("restaurantId", restaurantId);
         int productCount = productQuery.executeUpdate();
 
         // Close any promotions from this restaurant
-        Query promoQuery = em.createQuery("UPDATE Promotion p SET p.endDate = now() WHERE (p.endDate IS NULL OR p.endDate > now()) AND EXISTS(FROM Category c WHERE c.categoryId = p.source.categoryId AND c.restaurantId = :restaurantId)");
+        final Query promoQuery = em.createQuery("UPDATE Promotion p SET p.endDate = now() WHERE (p.endDate IS NULL OR p.endDate > now()) AND EXISTS(FROM Category c WHERE c.categoryId = p.source.categoryId AND c.restaurantId = :restaurantId)");
         promoQuery.setParameter("restaurantId", restaurantId);
         int promoRows = promoQuery.executeUpdate();
 
         // Close any waiting reports for this restaurant
-        Query reportQuery = em.createQuery("UPDATE Report SET dateHandled = now() WHERE dateHandled IS NULL AND restaurantId = :restaurantId");
+        final Query reportQuery = em.createQuery("UPDATE Report SET dateHandled = now() WHERE dateHandled IS NULL AND restaurantId = :restaurantId");
         reportQuery.setParameter("restaurantId", restaurantId);
         int reportRows = reportQuery.executeUpdate();
 

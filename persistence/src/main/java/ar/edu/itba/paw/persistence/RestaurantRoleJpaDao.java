@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.exception.RoleNotFoundException;
 import ar.edu.itba.paw.model.RestaurantRole;
 import ar.edu.itba.paw.model.RestaurantRoleDetails;
 import ar.edu.itba.paw.model.RestaurantRoleLevel;
@@ -10,10 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -43,14 +41,20 @@ public class RestaurantRoleJpaDao implements RestaurantRoleDao {
 
     @Override
     public void delete(long userId, long restaurantId) {
-        final RestaurantRole restaurantRole = em.getReference(RestaurantRole.class, new RestaurantRole.RestaurantRoleId(userId, restaurantId));
-        em.remove(restaurantRole);
-        LOGGER.info("Deleted restaurant role for user {} restaurant {}", userId, restaurantId);
+        try {
+            final RestaurantRole restaurantRole = em.getReference(RestaurantRole.class, new RestaurantRole.RestaurantRoleId(userId, restaurantId));
+            em.remove(restaurantRole);
+            em.flush();
+            LOGGER.info("Deleted restaurant role for user {} restaurant {}", userId, restaurantId);
+        } catch (EntityNotFoundException e) {
+            LOGGER.warn("Failed to delete restaurant role for user {} restaurant {}", userId, restaurantId, e);
+            throw new RoleNotFoundException();
+        }
     }
 
     @Override
     public List<RestaurantRole> getByRestaurant(long restaurantId) {
-        TypedQuery<RestaurantRole> query = em.createQuery(
+        final TypedQuery<RestaurantRole> query = em.createQuery(
                 "FROM RestaurantRole WHERE restaurantId = :restaurantId ORDER BY level",
                 RestaurantRole.class
         );
@@ -62,14 +66,14 @@ public class RestaurantRoleJpaDao implements RestaurantRoleDao {
     public PaginatedResult<RestaurantRoleDetails> getByUser(long userId, int pageNumber, int pageSize) {
         Utils.validatePaginationParams(pageNumber, pageSize);
 
-        Query nativeQuery = em.createNativeQuery("SELECT restaurant_id FROM restaurant_role_details WHERE user_id = ? ORDER BY inprogress_order_count DESC, restaurant_id");
+        final Query nativeQuery = em.createNativeQuery("SELECT restaurant_id FROM restaurant_role_details WHERE user_id = ? ORDER BY inprogress_order_count DESC, restaurant_id");
         nativeQuery.setParameter(1, userId);
         nativeQuery.setMaxResults(pageSize);
         nativeQuery.setFirstResult((pageNumber - 1) * pageSize);
 
         final List<Long> idList = nativeQuery.getResultList().stream().mapToLong(n -> ((Number) n).longValue()).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
 
-        Query countQuery = em.createNativeQuery("SELECT COUNT(*) FROM restaurant_role_details WHERE user_id = ?");
+        final Query countQuery = em.createNativeQuery("SELECT COUNT(*) FROM restaurant_role_details WHERE user_id = ?");
         countQuery.setParameter(1, userId);
         int count = ((Number) countQuery.getSingleResult()).intValue();
 
@@ -83,7 +87,7 @@ public class RestaurantRoleJpaDao implements RestaurantRoleDao {
         query.setParameter("userId", userId);
         query.setParameter("idList", idList);
 
-        List<RestaurantRoleDetails> roles = query.getResultList();
+        final List<RestaurantRoleDetails> roles = query.getResultList();
         return new PaginatedResult<>(roles, pageNumber, pageSize, count);
     }
 }

@@ -1,13 +1,17 @@
 package ar.edu.itba.paw.service;
 
+import ar.edu.itba.paw.model.Image;
+
 import java.util.Optional;
 
 public interface ImageService {
-    long create(byte[] bytes);
+    Image create(byte[] bytes);
 
-    Optional<byte[]> getById(long imageId);
+    Optional<Image> getById(long imageId);
 
     void update(long imageId, byte[] bytes);
 
     void delete(long imageId);
+
+    boolean exists(long imageId);
 }

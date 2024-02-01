@@ -5,19 +5,9 @@ import org.hibernate.validator.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 public class ReportRestaurantForm {
-    private Long userId;
-
-    @NotBlank
-    @Size(max = 500)
+    @NotBlank(message = "{NotBlank.ReportRestaurantForm.comment}")
+    @Size(max = 500, message = "{Size.ReportRestaurantForm.comment}")
     private String comment;
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
 
     public String getComment() {
         return comment;

@@ -1,10 +1,12 @@
 package ar.edu.itba.paw.webapp.form;
 
 import javax.validation.constraints.Size;
+import javax.ws.rs.QueryParam;
 
 public class SearchForm extends PagingForm {
 
-    @Size(max = 120)
+    @Size(max = 120, message = "{Size.SearchForm.search}")
+    @QueryParam("search")
     private String search;
 
     public String getSearch() {

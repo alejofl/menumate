@@ -13,7 +13,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Constraint(validatedBy = ImageValidatorConstraint.class)
 public @interface Image {
 
-    String message() default "Invalid image";
+    String message() default "{Image.ProductForm.imageId}";
 
     Class<?>[] groups() default {};
 

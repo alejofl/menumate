@@ -1,9 +1,12 @@
 package ar.edu.itba.paw.services;
 
+import ar.edu.itba.paw.exception.RestaurantDeletedException;
 import ar.edu.itba.paw.exception.RestaurantNotFoundException;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.persistance.ImageDao;
 import ar.edu.itba.paw.persistance.RestaurantDao;
+import ar.edu.itba.paw.service.EmailService;
+import ar.edu.itba.paw.service.OrderService;
 import ar.edu.itba.paw.service.RestaurantService;
 import ar.edu.itba.paw.util.PaginatedResult;
 import org.slf4j.Logger;
@@ -21,8 +24,7 @@ import java.util.Optional;
 public class RestaurantServiceImpl implements RestaurantService {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(RestaurantServiceImpl.class);
-
-    static final LocalDateTime MINIMUM_DATETIME = LocalDateTime.of(1970, 1, 1, 0, 0);
+    private static final int DAYS = 15;
 
     @Autowired
     private RestaurantDao restaurantDao;
@@ -30,14 +32,19 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Autowired
     private ImageDao imageDao;
 
+    @Autowired
+    private EmailService emailService;
+
+    @Autowired
+    private OrderService orderService;
+
     @Transactional
     @Override
-    public Restaurant create(String name, String email, RestaurantSpecialty specialty, long ownerUserId, String address, String description, int maxTables, byte[] logo, byte[] portrait1, byte[] portrait2, boolean isActive, List<RestaurantTags> tags) {
-        long logoId = imageDao.create(logo);
-        long portrait1Id = imageDao.create(portrait1);
-        long portrait2Id = imageDao.create(portrait2);
-
-        return restaurantDao.create(name, email, specialty, ownerUserId, address, description, maxTables, logoId, portrait1Id, portrait2Id, isActive, tags);
+    public Restaurant create(String name, String email, RestaurantSpecialty specialty, long ownerUserId, String address, String description, int maxTables, Long logoId, Long portrait1Id, Long portrait2Id, boolean isActive, List<RestaurantTags> tags) {
+        final Optional<Image> logo = logoId == null ? Optional.empty() : imageDao.getById(logoId);
+        final Optional<Image> portrait1 = portrait1Id == null ? Optional.empty() : imageDao.getById(portrait1Id);
+        final Optional<Image> portrait2 = portrait2Id == null ? Optional.empty() : imageDao.getById(portrait2Id);
+        return restaurantDao.create(name, email, specialty, ownerUserId, address, description, maxTables, logo.map(Image::getImageId).orElse(null), portrait1.map(Image::getImageId).orElse(null), portrait2.map(Image::getImageId).orElse(null), isActive, tags);
     }
 
     @Override
@@ -47,8 +54,6 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public PaginatedResult<RestaurantDetails> search(String query, int pageNumber, int pageSize, RestaurantOrderBy orderBy, boolean descending, List<RestaurantTags> tags, List<RestaurantSpecialty> specialties) {
-        // NOTE: If we want for queries to "pizza" to include the tag for PIZZA, we can process the query and add the
-        // tag in here.
         return restaurantDao.search(query, pageNumber, pageSize, orderBy, descending, tags, specialties);
     }
 
@@ -63,8 +68,13 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
+    public Optional<RestaurantDetails> getRestaurantDetails(long restaurantId) {
+        return restaurantDao.getRestaurantDetails(restaurantId);
+    }
+
+    @Override
     public Optional<Duration> getAverageOrderCompletionTime(long restaurantId, OrderType orderType) {
-        LocalDateTime since = LocalDateTime.now().minusDays(15);
+        final LocalDateTime since = LocalDateTime.now().minusDays(DAYS);
         return restaurantDao.getAverageOrderCompletionTime(restaurantId, orderType, since);
     }
 
@@ -77,7 +87,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
         if (restaurant.getDeleted()) {
             LOGGER.error("Attempted to update deleted restaurant id {}", restaurant.getRestaurantId());
-            throw new IllegalStateException("Cannot update deleted restaurant");
+            throw new RestaurantDeletedException();
         }
 
         return restaurant;
@@ -85,38 +95,42 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Transactional
     @Override
-    public Restaurant update(long restaurantId, String name, RestaurantSpecialty specialty, String address, String description, List<RestaurantTags> tags) {
+    public Restaurant update(long restaurantId, String name, RestaurantSpecialty specialty, String address, int maxTables, String description, List<RestaurantTags> tags, Long logoId, Long portrait1Id, Long portrait2Id) {
         final Restaurant restaurant = getAndVerifyForUpdate(restaurantId);
         restaurant.setName(name);
         restaurant.setSpecialty(specialty);
         restaurant.setAddress(address);
+        restaurant.setMaxTables(maxTables);
         restaurant.setDescription(description);
         restaurant.getTags().clear();
         restaurant.getTags().addAll(tags);
-        LOGGER.info("Updated name, specialty, address, description and tags of restaurant id {}", restaurant.getRestaurantId());
+
+        Optional.ofNullable(logoId).ifPresent(restaurant::setLogoId);
+        Optional.ofNullable(portrait1Id).ifPresent(restaurant::setPortrait1Id);
+        Optional.ofNullable(portrait2Id).ifPresent(restaurant::setPortrait2Id);
+        LOGGER.info("Updated name, specialty, address, description, max tables, logo, portraits and tags of restaurant id {}", restaurant.getRestaurantId());
         return restaurant;
-    }
-
-    @Transactional
-    @Override
-    public void updateImages(long restaurantId, byte[] logo, byte[] portrait1, byte[] portrait2) {
-        if ((logo == null || logo.length == 0) && (portrait1 == null || portrait1.length == 0) && (portrait2 == null || portrait2.length == 0))
-            return;
-
-        final Restaurant restaurant = getAndVerifyForUpdate(restaurantId);
-        if (logo != null && logo.length != 0)
-            imageDao.update(restaurant.getLogoId(), logo);
-        if (portrait1 != null && portrait1.length != 0)
-            imageDao.update(restaurant.getPortrait1Id(), portrait1);
-        if (portrait2 != null && portrait2.length != 0)
-            imageDao.update(restaurant.getPortrait2Id(), portrait2);
-
-        LOGGER.info("Updated images of restaurant id {}", restaurant.getRestaurantId());
     }
 
     @Transactional
     @Override
     public void delete(long restaurantId) {
         restaurantDao.delete(restaurantId);
+        orderService.cancelNonDeliveredOrders(restaurantId);
+    }
+
+    @Transactional
+    @Override
+    public void handleActivation(long restaurantId, boolean activate) {
+        final Restaurant restaurant = getAndVerifyForUpdate(restaurantId);
+        if (restaurant.getIsActive() == activate) {
+            return;
+        }
+
+        restaurant.setIsActive(activate);
+        LOGGER.info("Updated restaurant {} isActive field to {}", restaurantId, activate);
+        if (!activate) {
+            emailService.sendRestaurantDeactivationEmail(restaurant);
+        }
     }
 }

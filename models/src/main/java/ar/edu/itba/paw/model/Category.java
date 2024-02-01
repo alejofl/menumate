@@ -4,6 +4,7 @@ import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "categories")
@@ -56,6 +57,10 @@ public class Category {
         return restaurantId;
     }
 
+    public void setRestaurantId(long restaurantId) {
+        this.restaurantId = restaurantId;
+    }
+
     public Restaurant getRestaurant() {
         return restaurant;
     }
@@ -86,5 +91,10 @@ public class Category {
 
     public List<Product> getProducts() {
         return products;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(categoryId, name, orderNum, deleted);
     }
 }

@@ -56,10 +56,10 @@ public class OrderJpaDao implements OrderDao {
         if (product == null)
             throw new ProductNotFoundException();
         if (product.getDeleted() || !product.getAvailable())
-            throw new IllegalStateException("The product is unavailable or has been deleted");
+            throw new IllegalStateException("exception.IllegalStateException.createOrderItem.productActiveOrDeleted");
         final Category category = em.find(Category.class, product.getCategoryId());
         if (category.getRestaurantId() != restaurantId)
-            throw new IllegalStateException("Product does not belong to the restaurant");
+            throw new IllegalStateException("exception.IllegalStateException.createOrderItem.productDoesNotBelongToRestaurant");
 
         return new OrderItem(product, lineNumber, quantity, comment);
     }
@@ -69,76 +69,95 @@ public class OrderJpaDao implements OrderDao {
         return Optional.ofNullable(em.find(Order.class, orderId));
     }
 
-    private static String getConditionString(boolean onlyInProgress) {
-        return onlyInProgress ? " AND date_delivered IS NULL AND date_cancelled IS NULL" : "";
-    }
-
     @Override
-    public PaginatedResult<Order> getByUser(long userId, int pageNumber, int pageSize, boolean onlyInProgress, boolean descending) {
-        Utils.validatePaginationParams(pageNumber, pageSize);
-
-        String orderDir = descending ? "DESC" : "ASC";
-        String condString = getConditionString(onlyInProgress);
-
-        Query nativeQuery = em.createNativeQuery("SELECT order_id FROM orders WHERE user_id = ?" + condString + " ORDER BY date_ordered " + orderDir);
-        nativeQuery.setParameter(1, userId);
-        nativeQuery.setMaxResults(pageSize);
-        nativeQuery.setFirstResult((pageNumber - 1) * pageSize);
-
-        final List<Long> idList = nativeQuery.getResultList().stream().mapToLong(n -> ((Number) n).longValue()).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
-
-        Query countQuery = em.createNativeQuery("SELECT COUNT(*) FROM orders WHERE user_id = ?" + condString);
-        countQuery.setParameter(1, userId);
-        int count = ((Number) countQuery.getSingleResult()).intValue();
-
-        if (idList.isEmpty())
-            return new PaginatedResult<>(Collections.emptyList(), pageNumber, pageSize, count);
-
-        final TypedQuery<Order> query = em.createQuery(
-                "FROM Order WHERE orderId IN :idList ORDER BY dateOrdered " + orderDir,
-                Order.class
+    public Optional<List<OrderItem>> getOrderItemsById(long orderId) {
+        final TypedQuery<OrderItem> query = em.createQuery(
+                "FROM OrderItem WHERE orderId = :orderId ORDER BY lineNumber",
+                OrderItem.class
         );
-        query.setParameter("idList", idList);
+        query.setParameter("orderId", orderId);
 
-        List<Order> orders = query.getResultList();
-
-        return new PaginatedResult<>(orders, pageNumber, pageSize, count);
+        // Note: orders must always have at least one item, so if we don't get any items, the order doesn't exist.
+        final List<OrderItem> items = query.getResultList();
+        return items.isEmpty() ? Optional.empty() : Optional.of(items);
     }
 
-    private static String getConditionString(OrderStatus orderStatus) {
+    private static String getInProgressConditionString(boolean onlyInProgress) {
+        return onlyInProgress ? "date_delivered IS NULL AND date_cancelled IS NULL" : null;
+    }
+
+    private static String getOrderStatusConditionString(OrderStatus orderStatus) {
         if (orderStatus == null)
-            return "";
+            return null;
 
         switch (orderStatus) {
             case PENDING:
-                return " AND (date_confirmed IS NULL AND date_cancelled IS NULL)";
+                return "(date_confirmed IS NULL AND date_cancelled IS NULL)";
             case CONFIRMED:
-                return " AND (date_confirmed IS NOT NULL AND date_ready IS NULL AND date_cancelled IS NULL)";
+                return "(date_confirmed IS NOT NULL AND date_ready IS NULL AND date_cancelled IS NULL)";
             case READY:
-                return " AND (date_ready IS NOT NULL AND date_delivered IS NULL AND date_cancelled IS NULL)";
+                return "(date_ready IS NOT NULL AND date_delivered IS NULL AND date_cancelled IS NULL)";
             case DELIVERED:
-                return " AND date_delivered IS NOT NULL";
+                return "date_delivered IS NOT NULL";
             default:
-                return " AND date_cancelled IS NOT NULL";
+                return "date_cancelled IS NOT NULL";
         }
     }
 
     @Override
-    public PaginatedResult<Order> getByRestaurant(long restaurantId, int pageNumber, int pageSize, OrderStatus orderStatus, boolean descending) {
+    public PaginatedResult<Order> get(Long userId, Long restaurantId, OrderStatus orderStatus, boolean onlyInProgress, boolean descending, int pageNumber, int pageSize) {
         Utils.validatePaginationParams(pageNumber, pageSize);
 
-        String condString = getConditionString(orderStatus);
-        String orderDir = descending ? "DESC" : "ASC";
+        final String orderDir = descending ? "DESC" : "ASC";
+        final String statusCondString = getOrderStatusConditionString(orderStatus);
+        final String inProgressCondString = getInProgressConditionString(onlyInProgress);
 
-        Query nativeQuery = em.createNativeQuery("SELECT order_id FROM orders WHERE restaurant_id = ?" + condString + " ORDER BY date_ordered " + orderDir);
-        nativeQuery.setParameter(1, restaurantId);
+        final StringBuilder queryBuilder = new StringBuilder("SELECT order_id FROM orders");
+        final StringBuilder countQueryBuilder = new StringBuilder("SELECT COUNT(*) FROM orders");
+        String andToken = " WHERE";
+
+        if (userId != null) {
+            queryBuilder.append(andToken).append(" user_id = :userId");
+            countQueryBuilder.append(andToken).append(" user_id = :userId");
+            andToken = " AND";
+        }
+
+        if (restaurantId != null) {
+            queryBuilder.append(andToken).append(" restaurant_id = :restaurantId");
+            countQueryBuilder.append(andToken).append(" restaurant_id = :restaurantId");
+            andToken = " AND";
+        }
+
+        if (statusCondString != null) {
+            queryBuilder.append(andToken).append(' ').append(statusCondString);
+            countQueryBuilder.append(andToken).append(' ').append(statusCondString);
+            andToken = " AND";
+        }
+
+        if (inProgressCondString != null) {
+            queryBuilder.append(andToken).append(' ').append(inProgressCondString);
+            countQueryBuilder.append(andToken).append(' ').append(inProgressCondString);
+            andToken = " AND";
+        }
+
+        queryBuilder.append(" ORDER BY date_ordered ").append(orderDir);
+
+        final Query nativeQuery = em.createNativeQuery(queryBuilder.toString());
+        final Query countQuery = em.createNativeQuery(countQueryBuilder.toString());
         nativeQuery.setMaxResults(pageSize);
         nativeQuery.setFirstResult((pageNumber - 1) * pageSize);
 
-        final List<Long> idList = nativeQuery.getResultList().stream().mapToLong(n -> ((Number) n).longValue()).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
+        if (userId != null) {
+            nativeQuery.setParameter("userId", userId);
+            countQuery.setParameter("userId", userId);
+        }
 
-        Query countQuery = em.createNativeQuery("SELECT COUNT(*) FROM orders WHERE restaurant_id = ?" + condString);
-        countQuery.setParameter(1, restaurantId);
+        if (restaurantId != null) {
+            nativeQuery.setParameter("restaurantId", restaurantId);
+            countQuery.setParameter("restaurantId", restaurantId);
+        }
+
+        final List<Long> idList = nativeQuery.getResultList().stream().mapToLong(n -> ((Number) n).longValue()).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
         int count = ((Number) countQuery.getSingleResult()).intValue();
 
         if (idList.isEmpty())
@@ -150,8 +169,25 @@ public class OrderJpaDao implements OrderDao {
         );
         query.setParameter("idList", idList);
 
-        List<Order> orders = query.getResultList();
+        final List<Order> orders = query.getResultList();
 
         return new PaginatedResult<>(orders, pageNumber, pageSize, count);
+    }
+
+    @Override
+    public List<Long> cancelNonDeliveredOrders(long restaurantId) {
+        final Query nativeQuery = em.createQuery("SELECT orderId FROM Order WHERE restaurantId = :restaurantId AND dateDelivered IS NULL AND dateCancelled IS NULL");
+        nativeQuery.setParameter("restaurantId", restaurantId);
+        final List<Long> idList = nativeQuery.getResultList().stream().mapToLong(n -> ((Number) n).longValue()).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
+
+        if (!idList.isEmpty()) {
+            final Query updateQuery = em.createQuery("UPDATE Order SET dateCancelled = CURRENT_TIMESTAMP WHERE orderId IN :idList");
+            updateQuery.setParameter("idList", idList);
+            int count = updateQuery.executeUpdate();
+            LOGGER.info("Cancelled {} pending orders of restaurant {}", count, restaurantId);
+        } else {
+            LOGGER.info("No pending orders to cancel for restaurant {}", restaurantId);
+        }
+        return idList;
     }
 }

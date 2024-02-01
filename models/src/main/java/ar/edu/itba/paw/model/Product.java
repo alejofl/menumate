@@ -2,6 +2,7 @@ package ar.edu.itba.paw.model;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Entity
 @Table(name = "products")
@@ -15,6 +16,10 @@ public class Product {
 
     @Column(name = "category_id", nullable = false, updatable = false)
     private long categoryId;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "category_id", referencedColumnName = "category_id", insertable = false, updatable = false)
+    private Category category;
 
     @Column(nullable = false)
     private String name;
@@ -36,6 +41,16 @@ public class Product {
 
     Product() {
 
+    }
+
+    public Product(Category category, String name, String description, Long imageId, BigDecimal price, boolean available) {
+        this.categoryId = category.getCategoryId();
+        this.category = category;
+        this.name = name;
+        this.description = description;
+        this.imageId = imageId;
+        this.price = price;
+        this.available = available;
     }
 
     public Product(long categoryId, String name, String description, Long imageId, BigDecimal price, boolean available) {
@@ -61,6 +76,15 @@ public class Product {
 
     public void setCategoryId(long categoryId) {
         this.categoryId = categoryId;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+        this.categoryId = category.getCategoryId();
     }
 
     public String getName() {
@@ -109,5 +133,10 @@ public class Product {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(productId, categoryId, imageId, name, description, price, available, deleted);
     }
 }

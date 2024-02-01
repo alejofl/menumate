@@ -14,7 +14,7 @@ public final class ProductConstants {
     public static final long PRODUCT_DELETED_FROM_CATEGORY_RESTAURANT_1 = 400L;
     public static final String DEFAULT_PRODUCT_NAME = "product";
     public static final String DEFAULT_PRODUCT_DESCRIPTION = "description";
-    public static final BigDecimal DEFAULT_PRODUCT_PRICE = BigDecimal.valueOf(535.55);
+    public static final BigDecimal DEFAULT_PRODUCT_PRICE = new BigDecimal("535.55");
 
     public static final List<List<Double>> VALUES = Arrays.asList(
             Arrays.asList(100.0, 200.0, 300.0, 400.0, 500.0, 600.0),
@@ -36,13 +36,15 @@ public final class ProductConstants {
     public static final String DEFAULT_ORDER_ITEM_COMMENT = "comment";
     public static final String DEFAULT_STRING = "new";
     public static final int DEFAULT_ORDER_ITEM_QUANTITY = 10;
-    public static final long PROMOTION_PRODUCT_ID = 100L;
+    public static final long PROMOTION_ID = 100L;
+    public static final long NO_PROMOTION_ID = 50000L;
     public static final long PROMOTION_SOURCE_ID = 501L;
     public static final long PROMOTION_DESTINATION_ID = 500L;
-    public static final int DEFAULT_PROMOTION_DISCOUNT = 50;
+    public static final BigDecimal DEFAULT_PROMOTION_DISCOUNT = BigDecimal.valueOf(50);
     public static final LocalDateTime DEFAULT_PROMOTION_START_DATE = LocalDateTime.now();
     public static final LocalDateTime DEFAULT_PROMOTION_END_DATE = LocalDateTime.now().plusDays(4);
 
     private ProductConstants() {
+        throw new AssertionError();
     }
 }

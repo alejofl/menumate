@@ -16,17 +16,17 @@ INSERT INTO user_roles (user_id, role_level)
 VALUES (3500, 0);
 
 -- Tokens for user 2000
-INSERT INTO user_resetpassword_tokens (user_id, token, expires)
-VALUES (2000, '8ac27001-c568-4190-b6da-1a80478c', CURRENT_TIMESTAMP + INTERVAL '1' DAY);
+INSERT INTO tokens (token_id, user_id, token, expiryDate)
+VALUES (1500, 2000, '8ac27000-c568-4070-b6da-1a80478c', CURRENT_TIMESTAMP + INTERVAL '1' DAY);
 
-INSERT INTO user_verification_tokens (user_id, token, expires)
-VALUES (2000, '8ac27001-d605-4190-abcd-1a80478c', CURRENT_TIMESTAMP + INTERVAL '1' DAY);
+INSERT INTO tokens (token_id, user_id, token, expiryDate)
+VALUES (2500, 3000, '3ab27010-c538-4180-a6pa-1b80581c', CURRENT_TIMESTAMP + INTERVAL '1' DAY);
 
 -- Addresses for user 420
-INSERT INTO user_addresses(user_id, address, name, last_used)
-VALUES (420, 'address1', 'home', now()),
-       (420, 'address2', 'work', CURRENT_TIMESTAMP - INTERVAL '1' DAY),
-       (420, 'address3', 'university', CURRENT_TIMESTAMP - INTERVAL '1' DAY);
+INSERT INTO user_addresses(address_id, user_id, address, name, last_used)
+VALUES (99990, 420, 'address1', 'home', now()),
+       (99991, 420, 'address2', 'work', CURRENT_TIMESTAMP - INTERVAL '1' DAY),
+       (99992, 420, 'address3', 'university', CURRENT_TIMESTAMP - INTERVAL '1' DAY);
 
 -- Restaurants for user 1500
 INSERT INTO restaurants (restaurant_id, name, email, max_tables, specialty, owner_user_id, address, description,

@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.webapp.config;
 
-import ar.edu.itba.paw.webapp.interceptor.LoggerInterceptor;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -52,21 +52,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Value("classpath:schema.sql")
     private Resource schemaSql;
-
-    @Bean
-    public ViewResolver viewResolver() {
-        final InternalResourceViewResolver vr = new InternalResourceViewResolver();
-        vr.setViewClass(JstlView.class);
-        vr.setPrefix("/WEB-INF/jsp/");
-        vr.setSuffix(".jsp");
-        return vr;
-    }
-
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        super.addResourceHandlers(registry);
-        registry.addResourceHandler("/static/**").addResourceLocations("/static/");
-    }
 
     @Bean
     public DataSource dataSource() {
@@ -123,15 +108,5 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         ms.setBasename("classpath:i18n/messages");
         ms.setDefaultEncoding(StandardCharsets.UTF_8.name());
         return ms;
-    }
-
-    @Bean
-    public CommonsMultipartResolver multipartResolver() {
-        return new CommonsMultipartResolver();
-    }
-
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new LoggerInterceptor());
     }
 }

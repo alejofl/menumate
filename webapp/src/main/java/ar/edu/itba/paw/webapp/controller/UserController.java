@@ -1,672 +1,182 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import ar.edu.itba.paw.exception.OrderNotFoundException;
-import ar.edu.itba.paw.exception.ProductNotFoundException;
-import ar.edu.itba.paw.exception.RestaurantNotFoundException;
-import ar.edu.itba.paw.model.*;
-import ar.edu.itba.paw.service.*;
-import ar.edu.itba.paw.util.MyBoolean;
-import ar.edu.itba.paw.util.PaginatedResult;
-import ar.edu.itba.paw.util.Pair;
-import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
+import ar.edu.itba.paw.exception.UserAddressNotFoundException;
+import ar.edu.itba.paw.exception.UserNotFoundException;
+import ar.edu.itba.paw.model.User;
+import ar.edu.itba.paw.model.UserAddress;
+import ar.edu.itba.paw.service.UserRoleService;
+import ar.edu.itba.paw.service.UserService;
+import ar.edu.itba.paw.webapp.CustomMediaType;
+import ar.edu.itba.paw.webapp.auth.JwtTokenUtil;
+import ar.edu.itba.paw.webapp.dto.UserAddressDto;
+import ar.edu.itba.paw.webapp.dto.UserDto;
 import ar.edu.itba.paw.webapp.form.*;
+import ar.edu.itba.paw.webapp.utils.ControllerUtils;
+import ar.edu.itba.paw.webapp.utils.UriUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Component;
 
 import javax.validation.Valid;
-import java.io.IOException;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.*;
+import javax.ws.rs.core.*;
 import java.util.List;
-import java.util.stream.Collectors;
 
-@Controller
+@Path(UriUtils.USERS_URL)
+@Component
 public class UserController {
-    @Autowired
-    private OrderService orderService;
+
+    private final UserService userService;
+    private final JwtTokenUtil jwtTokenUtil;
+    private final UserRoleService userRoleService;
+
+    @Context
+    private UriInfo uriInfo;
 
     @Autowired
-    private RestaurantRoleService restaurantRoleService;
+    public UserController(final UserService userService, final JwtTokenUtil jwtTokenUtil, final UserRoleService userRoleService) {
+        this.userService = userService;
+        this.jwtTokenUtil = jwtTokenUtil;
+        this.userRoleService = userRoleService;
+    }
 
-    @Autowired
-    private RestaurantService restaurantService;
+    @GET
+    @Path("/{userId:\\d+}")
+    @Produces(CustomMediaType.APPLICATION_USER)
+    public Response getUser(@PathParam("userId") final long userId, @Context Request request) {
+        final User user = userService.getById(userId).orElseThrow(UserNotFoundException::new);
+        return ControllerUtils.buildResponseUsingEtag(request, user.hashCode(), () -> UserDto.fromUser(uriInfo, user));
+    }
 
-    @Autowired
-    private CategoryService categoryService;
+    @POST
+    @Consumes({CustomMediaType.APPLICATION_USER})
+    public Response registerUser(
+            @Valid @NotNull final RegisterForm registerForm) {
+        final User user = userService.createOrConsolidate(registerForm.getEmail(), registerForm.getPassword(), registerForm.getName());
+        return Response.created(UriUtils.getUserUri(uriInfo, user.getUserId())).build();
+    }
 
-    @Autowired
-    private ProductService productService;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private ReviewService reviewService;
-
-    @RequestMapping(value = "/user/restaurants", method = RequestMethod.GET)
-    public ModelAndView myRestaurants(
-            @Valid final PagingForm paging,
-            final BindingResult errors
+    @PATCH
+    @Path("/{userId:\\d+}")
+    @Consumes(CustomMediaType.APPLICATION_USER)
+    public Response updateUser(
+            @PathParam("userId") final long userId,
+            @Valid @NotNull final UpdateUserForm updateUserForm
     ) {
-        ModelAndView mav = new ModelAndView("user/myrestaurants");
-
-        if (errors.hasErrors()) {
-            mav.addObject("error", Boolean.TRUE);
-            paging.clear();
-        }
-
-        PaginatedResult<RestaurantRoleDetails> restaurants = restaurantRoleService.getByUser(ControllerUtils.getCurrentUserIdOrThrow(), paging.getPageOrDefault(), paging.getSizeOrDefault(ControllerUtils.DEFAULT_MYRESTAURANTS_PAGE_SIZE));
-
-        mav.addObject("restaurants", restaurants.getResult());
-        mav.addObject("restaurantCount", restaurants.getTotalCount());
-        mav.addObject("pageCount", restaurants.getTotalPageCount());
-
-        return mav;
-    }
-
-    @RequestMapping(value = "/user/orders", method = RequestMethod.GET)
-    public ModelAndView myOrders() {
-        return new ModelAndView("redirect:/user/orders/inprogress");
-    }
-
-    @RequestMapping(value = "/user/orders/{status:all|inprogress}", method = RequestMethod.GET)
-    public ModelAndView myOrdersByStatus(
-            @Valid final PagingForm paging,
-            final BindingResult errors,
-            @PathVariable final String status
-    ) {
-        ModelAndView mav = new ModelAndView("user/myorders");
-
-        if (errors.hasErrors()) {
-            mav.addObject("error", Boolean.TRUE);
-            paging.clear();
-        }
-
-        final boolean inProgress = status.equals("inprogress");
-        PaginatedResult<Order> orders = orderService.getByUser(ControllerUtils.getCurrentUserIdOrThrow(), paging.getPageOrDefault(), paging.getSizeOrDefault(ControllerUtils.DEFAULT_ORDERS_PAGE_SIZE), inProgress, true);
-
-        mav.addObject("orders", orders.getResult());
-        mav.addObject("orderCount", orders.getTotalCount());
-        mav.addObject("pageCount", orders.getTotalPageCount());
-
-        mav.addObject("status", status);
-
-        return mav;
-    }
-
-    @RequestMapping(value = "/orders/{id:\\d+}", method = RequestMethod.GET)
-    public ModelAndView order(
-            @PathVariable final int id,
-            @ModelAttribute("reviewForm") final ReviewForm reviewForm,
-            final Boolean error
-    ) {
-        ModelAndView mav = new ModelAndView("user/order");
-        mav.addObject("order", orderService.getById(id).orElseThrow(OrderNotFoundException::new));
-        mav.addObject("review", reviewService.getByOrder(id).orElse(null));
-        mav.addObject("error", error);
-        return mav;
-    }
-
-    @RequestMapping(value = "/orders/{id:\\d+}/review", method = RequestMethod.POST)
-    public ModelAndView review(
-            @PathVariable final int id,
-            @Valid @ModelAttribute("reviewForm") final ReviewForm reviewForm,
-            final BindingResult errors
-    ) {
-        if (errors.hasErrors()) {
-            return order(id, reviewForm, true);
-        }
-
-        reviewService.create(id, reviewForm.getRating(), reviewForm.getComment());
-
-        return new ModelAndView(String.format("redirect:/orders/%d", id));
-    }
-
-    @RequestMapping(value = "/restaurants/create", method = RequestMethod.GET)
-    public ModelAndView createRestaurant(
-            @ModelAttribute("createRestaurantForm") final CreateRestaurantForm form
-    ) {
-        final ModelAndView mav = new ModelAndView("user/create_restaurant");
-        mav.addObject("specialties", RestaurantSpecialty.values());
-        mav.addObject("tags", RestaurantTags.values());
-        return mav;
-    }
-
-    @RequestMapping(value = "/restaurants/create", method = RequestMethod.POST)
-    public ModelAndView createRestaurantForm(
-            @Valid @ModelAttribute("createRestaurantForm") final CreateRestaurantForm form,
-            final BindingResult errors
-    ) throws IOException {
-        if (errors.hasErrors()) {
-            return createRestaurant(form);
-        }
-
-        PawAuthUserDetails userDetails = ControllerUtils.getCurrentUserDetailsOrThrow();
-        Restaurant restaurant = restaurantService.create(
-                form.getName(),
-                userDetails.getUsername(),
-                form.getSpecialtyAsEnum(),
-                userDetails.getUserId(),
-                form.getAddress(),
-                form.getDescription(),
-                form.getMaxTables(),
-                form.getLogo().getBytes(),
-                form.getPortrait1().getBytes(),
-                form.getPortrait2().getBytes(),
-                true,
-                form.getTagsAsEnum()
+        userService.updateUser(
+                userId,
+                updateUserForm.getNameTrimmedOrNull(),
+                updateUserForm.getPreferredLanguage()
         );
-
-        return new ModelAndView(String.format("redirect:/restaurants/%d/edit", restaurant.getRestaurantId()));
+        return Response.noContent().build();
     }
 
-    @RequestMapping(value = "/restaurants/{id:\\d+}/edit", method = RequestMethod.GET)
-    public ModelAndView editRestaurant(
-            @PathVariable final int id,
+    @GET
+    @Path("/{userId:\\d+}/addresses")
+    @Produces(CustomMediaType.APPLICATION_USER_ADDRESS)
+    public Response getUserAddresses(@PathParam("userId") final long userId) {
+        final User user = userService.getById(userId).orElseThrow(UserNotFoundException::new);
+        final List<UserAddressDto> dtoList = UserAddressDto.fromUserAddressCollection(uriInfo, user.getAddresses());
+        return Response.ok(new GenericEntity<List<UserAddressDto>>(dtoList) {}).build();
+    }
 
-            @ModelAttribute("editRestaurantForm") final EditRestaurantForm editRestaurantForm,
-            final Boolean editRestaurantErrors,
-
-            @ModelAttribute("addProductForm") final AddProductForm addProductForm,
-            final Boolean addProductErrors,
-            @ModelAttribute("editProductForm") final EditProductForm editProductForm,
-            final Boolean editProductErrors,
-            @ModelAttribute("deleteProductForm") final DeleteProductForm deleteProductForm,
-
-            @ModelAttribute("createPromotionForm") final CreatePromotionForm createPromotionForm,
-            final Boolean createPromotionErrors,
-
-            @ModelAttribute("addCategoryForm") final AddCategoryForm addCategoryForm,
-            final Boolean addCategoryErrors,
-            @ModelAttribute("editCategoryForm") final EditCategoryForm editCategoryForm,
-            final Boolean editCategoryErrors,
-            @ModelAttribute("editCategoryOrderForm") final EditCategoryOrderForm editCategoryOrderForm,
-            @ModelAttribute("deleteCategoryForm") final DeleteCategoryForm deleteCategoryForm,
-
-            @ModelAttribute("addEmployeeForm") final AddEmployeeForm addEmployeeForm,
-            @ModelAttribute("addEmployeeErrors") final MyBoolean addEmployeeErrors,
-            @ModelAttribute("deleteEmployeeForm") final DeleteEmployeeForm deleteEmployeeForm
+    @GET
+    @Path("/{userId:\\d+}/addresses/{addressId:\\d+}")
+    @Produces(CustomMediaType.APPLICATION_USER_ADDRESS)
+    public Response getUserAddress(
+            @PathParam("userId") final long userId,
+            @PathParam("addressId") final long addressId,
+            @Context Request request
     ) {
-        ModelAndView mav = new ModelAndView("user/edit_menu");
-
-        final Restaurant restaurant = restaurantService.getById(id).orElseThrow(RestaurantNotFoundException::new);
-        mav.addObject("restaurant", restaurant);
-
-        final List<Category> menu = categoryService.getByRestaurantSortedByOrder(id);
-        mav.addObject("menu", menu);
-        final List<Promotion> promotions = restaurantService.getLivingPromotions(id);
-        mav.addObject("promotions", promotions);
-
-        final List<Pair<User, RestaurantRoleLevel>> employees = restaurantRoleService.getByRestaurant(id);
-        mav.addObject("employees", employees);
-
-        mav.addObject("roles", RestaurantRoleLevel.VALUES_EXCEPT_OWNER);
-        mav.addObject("is_owner", restaurant.getOwnerUserId() == ControllerUtils.getCurrentUserIdOrThrow());
-
-        mav.addObject("specialties", RestaurantSpecialty.values());
-        mav.addObject("tags", RestaurantTags.values());
-
-        editRestaurantForm.setRestaurantId(id);
-        editRestaurantForm.setName(restaurant.getName());
-        editRestaurantForm.setAddress(restaurant.getAddress());
-        editRestaurantForm.setSpecialty(restaurant.getSpecialty().ordinal());
-        editRestaurantForm.setDescription(restaurant.getDescription());
-        editRestaurantForm.setMaxTables(restaurant.getMaxTables());
-        editRestaurantForm.setTags(restaurant.getTags().stream().map(Enum::ordinal).collect(Collectors.toList()));
-
-        /* NOTE:
-         * This is a workaround to avoid IllegalStateException.
-         * The problem is that when this method is called from another method (i.e. when there's an error on a form)
-         * the ModelAttributes are not added to the model automatically, thus all the forms on the page but the faulty
-         * one do not exist.
-         * The solution to this involves using FlashAttributes and adding BindingResults manually for each form. This
-         * solution also fixes the Reload Requested problem when reloading page after error on a form.
-         * However, this method is not compatible with ModelAndView.
-         */
-        mav.addObject("editRestaurantForm", editRestaurantForm);
-        mav.addObject("addProductForm", addProductForm);
-        mav.addObject("editProductForm", editProductForm);
-        mav.addObject("deleteProductForm", deleteProductForm);
-        mav.addObject("createPromotionForm", createPromotionForm);
-        mav.addObject("addCategoryForm", addCategoryForm);
-        mav.addObject("editCategoryForm", editCategoryForm);
-        mav.addObject("editCategoryOrderForm", editCategoryOrderForm);
-        mav.addObject("deleteCategoryForm", deleteCategoryForm);
-        mav.addObject("addEmployeeForm", addEmployeeForm);
-        mav.addObject("deleteEmployeeForm", deleteEmployeeForm);
-
-        mav.addObject("editRestaurantErrors", editRestaurantErrors);
-        mav.addObject("addProductErrors", addProductErrors);
-        mav.addObject("editProductErrors", editProductErrors);
-        mav.addObject("createPromotionErrors", createPromotionErrors);
-        mav.addObject("addCategoryErrors", addCategoryErrors);
-        mav.addObject("editCategoryErrors", editCategoryErrors);
-        mav.addObject("addEmployeeErrors", addEmployeeErrors.get());
-
-        return mav;
+        final UserAddress address = userService.getAddressById(userId, addressId).orElseThrow(UserAddressNotFoundException::new);
+        return ControllerUtils.buildResponseUsingEtag(request, address.hashCode(), () -> UserAddressDto.fromUserAddress(uriInfo, address));
     }
 
-    @RequestMapping(value = "/restaurants/{id:\\d+}/edit", method = RequestMethod.POST)
-    public ModelAndView editRestaurantInformation(
-            @PathVariable final int id,
-            @Valid @ModelAttribute("editRestaurantForm") final EditRestaurantForm editRestaurantForm,
-            final BindingResult errors
-    ) throws IOException {
-        if (errors.hasErrors()) {
-            return editRestaurant(
-                    id,
-                    editRestaurantForm,
-                    true,
-                    new AddProductForm(),
-                    false,
-                    new EditProductForm(),
-                    false,
-                    new DeleteProductForm(),
-                    new CreatePromotionForm(),
-                    false,
-                    new AddCategoryForm(),
-                    false,
-                    new EditCategoryForm(),
-                    false,
-                    new EditCategoryOrderForm(),
-                    new DeleteCategoryForm(),
-                    new AddEmployeeForm(),
-                    new MyBoolean(false),
-                    new DeleteEmployeeForm()
-            );
-        }
-
-        restaurantService.update(
-                editRestaurantForm.getRestaurantId(),
-                editRestaurantForm.getName(),
-                editRestaurantForm.getSpecialtyAsEnum(),
-                editRestaurantForm.getAddress(),
-                editRestaurantForm.getDescription(),
-                editRestaurantForm.getTagsAsEnum()
-        );
-        restaurantService.updateImages(
-                editRestaurantForm.getRestaurantId(),
-                editRestaurantForm.getLogo().getBytes(),
-                editRestaurantForm.getPortrait1().getBytes(),
-                editRestaurantForm.getPortrait2().getBytes()
-        );
-
-        return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
-    }
-
-    @RequestMapping(value = "/restaurants/{id:\\d+}/products/add", method = RequestMethod.POST)
-    public ModelAndView addProductToRestaurant(
-            @PathVariable final int id,
-            @Valid @ModelAttribute("addProductForm") final AddProductForm addProductForm,
-            final BindingResult errors
-    ) throws IOException {
-        if (errors.hasErrors()) {
-            return editRestaurant(
-                    id,
-                    new EditRestaurantForm(),
-                    false,
-                    addProductForm,
-                    true,
-                    new EditProductForm(),
-                    false,
-                    new DeleteProductForm(),
-                    new CreatePromotionForm(),
-                    false,
-                    new AddCategoryForm(),
-                    false,
-                    new EditCategoryForm(),
-                    false,
-                    new EditCategoryOrderForm(),
-                    new DeleteCategoryForm(),
-                    new AddEmployeeForm(),
-                    new MyBoolean(false),
-                    new DeleteEmployeeForm()
-            );
-        }
-
-        productService.create(
-                addProductForm.getCategoryId(),
-                addProductForm.getProductName(),
-                addProductForm.getDescription(),
-                addProductForm.getImage().isEmpty() ? null : addProductForm.getImage().getBytes(),
-                addProductForm.getPrice()
-        );
-
-        return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
-    }
-
-    @RequestMapping(value = "/restaurants/{id:\\d+}/products/edit", method = RequestMethod.POST)
-    public ModelAndView editProduct(
-            @PathVariable final int id,
-            @Valid @ModelAttribute("editProductForm") final EditProductForm editProductForm,
-            final BindingResult errors
-    ) throws IOException {
-        if (errors.hasErrors()) {
-            return editRestaurant(
-                    id,
-                    new EditRestaurantForm(),
-                    false,
-                    new AddProductForm(),
-                    false,
-                    editProductForm,
-                    true,
-                    new DeleteProductForm(),
-                    new CreatePromotionForm(),
-                    false,
-                    new AddCategoryForm(),
-                    false,
-                    new EditCategoryForm(),
-                    false,
-                    new EditCategoryOrderForm(),
-                    new DeleteCategoryForm(),
-                    new AddEmployeeForm(),
-                    new MyBoolean(false),
-                    new DeleteEmployeeForm()
-            );
-        }
-
-        Product product = productService.getById(editProductForm.getProductId()).orElseThrow(ProductNotFoundException::new);
-        productService.update(editProductForm.getProductId(), editProductForm.getProductName(), editProductForm.getPrice(), editProductForm.getDescription());
-        productService.updateImage(editProductForm.getProductId(), editProductForm.getImage().getBytes());
-        if (product.getCategoryId() != editProductForm.getCategoryId()) {
-            categoryService.moveProduct(editProductForm.getProductId(), editProductForm.getCategoryId());
-        }
-
-        return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
-    }
-
-    @RequestMapping(value = "/restaurants/{id:\\d+}/products/delete", method = RequestMethod.POST)
-    public ModelAndView deleteProductForRestaurant(
-            @PathVariable final int id,
-            @Valid @ModelAttribute("deleteProductForm") final DeleteProductForm deleteProductForm,
-            final BindingResult errors
+    @POST
+    @Path("/{userId:\\d+}/addresses")
+    @Produces(CustomMediaType.APPLICATION_USER_ADDRESS)
+    public Response registerUserAddress(
+            @PathParam("userId") final long userId,
+            @Valid @NotNull final AddUserAddressForm addUserAddressForm
     ) {
-        if (errors.hasErrors()) {
-            throw new IllegalStateException();
-        }
-
-        productService.delete(deleteProductForm.getProductId());
-
-        return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
+        final UserAddress address = userService.registerAddress(userId, addUserAddressForm.getAddressTrimmedOrNull(), addUserAddressForm.getName());
+        return Response.created(UriUtils.getUserAddressUri(uriInfo, address)).build();
     }
 
-    @RequestMapping(value = "/restaurants/{id:\\d+}/promotions/stop", method = RequestMethod.POST)
-    public ModelAndView stopPromotionForProduct(
-            @PathVariable final int id,
-            @Valid @ModelAttribute("deleteProductForm") final DeleteProductForm deleteProductForm,
-            final BindingResult errors
+    @PATCH
+    @Path("/{userId:\\d+}/addresses/{addressId:\\d+}")
+    @Produces(CustomMediaType.APPLICATION_USER_ADDRESS)
+    public Response updateUserAddress(
+            @PathParam("userId") final long userId,
+            @PathParam("addressId") final long addressId,
+            @Valid @NotNull final UpdateUserAddressForm updateUserAddressForm
+
     ) {
-        if (errors.hasErrors()) {
-            throw new IllegalStateException();
-        }
-
-        productService.stopPromotionByDestination(deleteProductForm.getProductId());
-
-        return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
+        userService.updateAddress(userId, addressId, updateUserAddressForm.getAddress(), updateUserAddressForm.getName());
+        return Response.noContent().build();
     }
 
-    @RequestMapping(value = "/restaurants/{id:\\d+}/promotions/add", method = RequestMethod.POST)
-    public ModelAndView createPromotionForProduct(
-            @PathVariable final int id,
-            @Valid @ModelAttribute("createPromotionForm") final CreatePromotionForm createPromotionForm,
-            final BindingResult errors
+    @DELETE
+    @Path("/{userId:\\d+}/addresses/{addressId:\\d+}")
+    public Response deleteUserAddress(
+            @PathParam("userId") final long userId,
+            @PathParam("addressId") final long addressId
     ) {
-        if (errors.hasErrors()) {
-            return editRestaurant(
-                    id,
-                    new EditRestaurantForm(),
-                    false,
-                    new AddProductForm(),
-                    false,
-                    new EditProductForm(),
-                    false,
-                    new DeleteProductForm(),
-                    createPromotionForm,
-                    true,
-                    new AddCategoryForm(),
-                    false,
-                    new EditCategoryForm(),
-                    false,
-                    new EditCategoryOrderForm(),
-                    new DeleteCategoryForm(),
-                    new AddEmployeeForm(),
-                    new MyBoolean(false),
-                    new DeleteEmployeeForm()
-            );
-        }
-
-        productService.createPromotion(
-                createPromotionForm.getSourceProductId(),
-                createPromotionForm.getPromotionStartDate(),
-                createPromotionForm.getPromotionEndDate(),
-                createPromotionForm.getPercentage()
-        );
-
-        return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
+        userService.deleteAddress(userId, addressId);
+        return Response.noContent().build();
     }
 
-    @RequestMapping(value = "/restaurants/{id:\\d+}/categories/add", method = RequestMethod.POST)
-    public ModelAndView addCategoryToRestaurant(
-            @PathVariable final int id,
-            @Valid @ModelAttribute("addCategoryForm") final AddCategoryForm addCategoryForm,
-            final BindingResult errors
-    ) {
-        if (errors.hasErrors()) {
-            return editRestaurant(
-                    id,
-                    new EditRestaurantForm(),
-                    false,
-                    new AddProductForm(),
-                    false,
-                    new EditProductForm(),
-                    false,
-                    new DeleteProductForm(),
-                    new CreatePromotionForm(),
-                    false,
-                    addCategoryForm,
-                    true,
-                    new EditCategoryForm(),
-                    false,
-                    new EditCategoryOrderForm(),
-                    new DeleteCategoryForm(),
-                    new AddEmployeeForm(),
-                    new MyBoolean(false),
-                    new DeleteEmployeeForm()
-            );
-        }
-
-        categoryService.create(addCategoryForm.getRestaurantId(), addCategoryForm.getName());
-
-        return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
+    @GET
+    @Produces(CustomMediaType.APPLICATION_USER_ROLE)
+    @PreAuthorize("#getUserRoleLevelForm.role != null and hasRole('MODERATOR')")
+    public Response getUsersWithRoleLevel(@Valid @BeanParam final GetUserRoleLevelForm getUserRoleLevelForm) {
+        final List<User> users = userRoleService.getByRole(getUserRoleLevelForm.getRoleAsEnum());
+        final List<UserDto> userDtos = UserDto.fromUserCollection(uriInfo, users);
+        return Response.ok((new GenericEntity<List<UserDto>>(userDtos) {})).build();
     }
 
-    @RequestMapping(value = "/restaurants/{id:\\d+}/categories/edit", method = RequestMethod.POST)
-    public ModelAndView editCategory(
-            @PathVariable final int id,
-            @Valid @ModelAttribute("editCategoryForm") final EditCategoryForm editCategoryForm,
-            final BindingResult errors
+    @PATCH
+    @Path("/{userId:\\d+}")
+    @Consumes(CustomMediaType.APPLICATION_USER_ROLE)
+    public Response updateUserRoleLevel(
+            @PathParam("userId") final long userId,
+            @Valid @NotNull final PatchUserRoleLevelForm patchUserRoleLevelForm
     ) {
-        if (errors.hasErrors()) {
-            return editRestaurant(
-                    id,
-                    new EditRestaurantForm(),
-                    false,
-                    new AddProductForm(),
-                    false,
-                    new EditProductForm(),
-                    false,
-                    new DeleteProductForm(),
-                    new CreatePromotionForm(),
-                    false,
-                    new AddCategoryForm(),
-                    false,
-                    editCategoryForm,
-                    true,
-                    new EditCategoryOrderForm(),
-                    new DeleteCategoryForm(),
-                    new AddEmployeeForm(),
-                    new MyBoolean(false),
-                    new DeleteEmployeeForm()
-            );
-        }
-
-        categoryService.updateName(editCategoryForm.getCategoryId(), editCategoryForm.getName());
-
-        return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
+        final User user = userService.getById(userId).orElseThrow(UserNotFoundException::new);
+        userRoleService.setRole(user.getEmail(), patchUserRoleLevelForm.getRoleAsEnum());
+        return Response.noContent().build();
     }
 
-    @RequestMapping(value = "/restaurants/{id:\\d+}/categories/move", method = RequestMethod.POST)
-    public ModelAndView editCategoryOrder(
-            @PathVariable final int id,
-            @Valid @ModelAttribute("editCategoryOrderForm") final EditCategoryOrderForm editCategoryOrderForm,
-            final BindingResult errors
-    ) {
-        if (errors.hasErrors()) {
-            throw new IllegalStateException();
-        }
-
-        categoryService.swapOrder(id, editCategoryOrderForm.getCurrentOrder(), editCategoryOrderForm.getNewOrder());
-
-        return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
+    @POST
+    @Consumes(CustomMediaType.APPLICATION_USER_ROLE)
+    public Response createUserRole(@Valid @NotNull final PostUserRoleLevelForm addUserRoleForm) {
+        userRoleService.setRole(addUserRoleForm.getEmail(), addUserRoleForm.getRoleAsEnum());
+        return Response.noContent().build();
     }
 
-    @RequestMapping(value = "/restaurants/{id:\\d+}/categories/delete", method = RequestMethod.POST)
-    public ModelAndView deleteCategoryForRestaurant(
-            @PathVariable final int id,
-            @Valid @ModelAttribute("deleteCategoryForm") final DeleteCategoryForm deleteCategoryForm,
-            final BindingResult errors
-    ) {
-        if (errors.hasErrors()) {
-            throw new IllegalStateException();
-        }
-
-        categoryService.delete(deleteCategoryForm.getCategoryId());
-
-        return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
+    @DELETE
+    @Path("/{userId:\\d+}")
+    public Response deleteUserRole(@PathParam("userId") final long userId) {
+        userRoleService.deleteRole(userId);
+        return Response.noContent().build();
     }
 
-    @RequestMapping(value = "/restaurants/{id:\\d+}/employees/add", method = RequestMethod.POST)
-    public ModelAndView addEmployeeForRestaurant(
-            @PathVariable final int id,
-            @Valid @ModelAttribute("addEmployeeForm") final AddEmployeeForm addEmployeeForm,
-            final BindingResult errors,
-            RedirectAttributes redirectAttributes
-    ) {
-        if (errors.hasErrors()) {
-            return editRestaurant(
-                    id,
-                    new EditRestaurantForm(),
-                    false,
-                    new AddProductForm(),
-                    false,
-                    new EditProductForm(),
-                    false,
-                    new DeleteProductForm(),
-                    new CreatePromotionForm(),
-                    false,
-                    new AddCategoryForm(),
-                    false,
-                    new EditCategoryForm(),
-                    false,
-                    new EditCategoryOrderForm(),
-                    new DeleteCategoryForm(),
-                    addEmployeeForm,
-                    new MyBoolean(true),
-                    new DeleteEmployeeForm()
-            );
-        }
-
-        restaurantRoleService.setRole(addEmployeeForm.getEmail(), id, addEmployeeForm.getRoleAsEnum());
-
-        redirectAttributes.addFlashAttribute("addEmployeeErrors", new MyBoolean(true));
-        return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
+    @POST
+    @Consumes(CustomMediaType.APPLICATION_USER_PASSWORD)
+    public Response createPasswordResetToken(@Valid @NotNull final ResetPasswordForm resetPasswordForm) {
+        userService.sendPasswordResetToken(resetPasswordForm.getEmail());
+        return Response.noContent().build();
     }
 
-    @RequestMapping(value = "/restaurants/{id:\\d+}/employees/delete", method = RequestMethod.POST)
-    public ModelAndView deleteEmployeeForRestaurant(
-            @PathVariable final int id,
-            @Valid @ModelAttribute("deleteEmployeeForm") final DeleteEmployeeForm deleteEmployeeForm,
-            final BindingResult errors,
-            RedirectAttributes redirectAttributes
+    @PATCH
+    @Path("/{userId:\\d+}")
+    @Consumes(CustomMediaType.APPLICATION_USER_PASSWORD)
+    public Response editUserPasswordWithToken(
+            @PathParam("userId") long userId,
+            @Valid @NotNull NewPasswordForm newPasswordForm
     ) {
-        if (errors.hasErrors()) {
-            throw new IllegalStateException();
-        }
-
-        restaurantRoleService.deleteRole(deleteEmployeeForm.getUserId(), id);
-
-        redirectAttributes.addFlashAttribute("addEmployeeErrors", new MyBoolean(true));
-        return new ModelAndView(String.format("redirect:/restaurants/%d/edit", id));
-    }
-
-    @RequestMapping(value = "/user", method = RequestMethod.GET)
-    public ModelAndView myProfile(
-            @ModelAttribute("deleteAddressForm") final DeleteAddressForm deleteAddressForm,
-            @ModelAttribute("addAddressForm") final AddAddressForm addAddressForm,
-            @Valid final PagingForm paging,
-            final BindingResult errors,
-            final Boolean addAddressFormError
-    ) {
-
-        ModelAndView mav = new ModelAndView("user/myprofile");
-
-        if (errors.hasErrors()) {
-            mav.addObject("error", Boolean.TRUE);
-            paging.clear();
-        }
-
-        PaginatedResult<Review> reviews = reviewService.getByUser(ControllerUtils.getCurrentUserIdOrThrow(), paging.getPageOrDefault(), paging.getSizeOrDefault(ControllerUtils.DEFAULT_ORDERS_PAGE_SIZE));
-
-        mav.addObject("reviews", reviews.getResult());
-        mav.addObject("reviewCount", reviews.getTotalCount());
-        mav.addObject("pageCount", reviews.getTotalPageCount());
-
-        mav.addObject("addAddressFormError", addAddressFormError);
-        return mav;
-    }
-
-    @RequestMapping(value = "/user/addresses/delete", method = RequestMethod.POST)
-    public ModelAndView deleteAddress(
-            @Valid @ModelAttribute("deleteAddressForm") final DeleteAddressForm deleteAddressForm,
-            final BindingResult errors
-    ) {
-        if (errors.hasErrors()) {
-            throw new IllegalStateException("Something went wrong");
-        }
-
-        userService.deleteAddress(deleteAddressForm.getUserId(), deleteAddressForm.getAddress());
-
-        return new ModelAndView("redirect:/user");
-    }
-
-    @RequestMapping(value = "/user/addresses/add", method = RequestMethod.POST)
-    public ModelAndView addAddress(
-            @Valid @ModelAttribute("addAddressForm") final AddAddressForm addAddressForm,
-            final BindingResult errors
-    ) {
-        if (errors.hasErrors()) {
-            PagingForm pagingForm = new PagingForm();
-            return myProfile(
-                    new DeleteAddressForm(),
-                    addAddressForm,
-                    pagingForm,
-                    new BeanPropertyBindingResult(pagingForm, "pagingForm"),
-                    true
-            );
-        }
-
-        userService.registerAddress(
-                addAddressForm.getUserId(),
-                addAddressForm.getAddress(),
-                addAddressForm.getName()
-        );
-
-        return new ModelAndView("redirect:/user");
+        userService.updatePassword(userId, newPasswordForm.getPassword());
+        return Response.noContent().build();
     }
 }

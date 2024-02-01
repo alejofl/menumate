@@ -14,6 +14,6 @@ public final class ReportConstants {
     public static final long[] REPORT_IDS_FROM_FIRST_RESTAURANT = {7711};
 
     private ReportConstants() {
-
+        throw new AssertionError();
     }
 }
