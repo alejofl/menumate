@@ -47,6 +47,15 @@ public class UserDto {
         return dto;
     }
 
+    public static UserDto publicProfileFromUser(final UriInfo uriInfo, final User user) {
+        final UserDto dto = new UserDto();
+        dto.userId = user.getUserId();
+        dto.name = user.getName();
+        dto.email = user.getEmail();
+        dto.selfUrl = UriUtils.getUserUri(uriInfo, user.getUserId());
+        return dto;
+    }
+
     public static List<UserDto> fromUserCollection(final UriInfo uriInfo, final Collection<User> users) {
         return users.stream().map(u -> fromUser(uriInfo, u)).collect(Collectors.toList());
     }

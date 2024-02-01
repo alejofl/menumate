@@ -44,9 +44,18 @@ public class UserController {
     @GET
     @Path("/{userId:\\d+}")
     @Produces(CustomMediaType.APPLICATION_USER)
+    @PreAuthorize("@accessValidator.checkIsUser(#userId)")
     public Response getUser(@PathParam("userId") final long userId, @Context Request request) {
         final User user = userService.getById(userId).orElseThrow(UserNotFoundException::new);
         return ControllerUtils.buildResponseUsingEtag(request, user.hashCode(), () -> UserDto.fromUser(uriInfo, user));
+    }
+
+    @GET
+    @Path("/{userId:\\d+}")
+    @Produces(CustomMediaType.APPLICATION_USER_PUBLIC_PROFILE)
+    public Response getUserPublicProfile(@PathParam("userId") final long userId, @Context Request request) {
+        final User user = userService.getById(userId).orElseThrow(UserNotFoundException::new);
+        return ControllerUtils.buildResponseUsingEtag(request, user.hashCode(), () -> UserDto.publicProfileFromUser(uriInfo, user));
     }
 
     @POST
