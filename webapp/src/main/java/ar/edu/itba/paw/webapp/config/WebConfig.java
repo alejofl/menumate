@@ -101,7 +101,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         return populator;
     }
 
-    // TODO: This may be deleted later
     @Bean
     public MessageSource messageSource() {
         final ReloadableResourceBundleMessageSource ms = new ReloadableResourceBundleMessageSource();
@@ -109,11 +108,5 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         ms.setBasename("classpath:i18n/messages");
         ms.setDefaultEncoding(StandardCharsets.UTF_8.name());
         return ms;
-    }
-
-    // TODO: This may be deleted later, I think
-    @Bean
-    public CommonsMultipartResolver multipartResolver() {
-        return new CommonsMultipartResolver();
     }
 }
