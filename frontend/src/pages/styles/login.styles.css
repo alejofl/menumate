@@ -1,0 +1,22 @@
+main.login {
+    background-color: var(--dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+}
+
+.login .card {
+    width: 25rem;
+    padding: 1rem;
+}
+
+.login .btn-primary, .login .btn-secondary {
+    width: 100%;
+}
+
+.login .more-actions button, .login .more-actions span {
+    min-width: 0;
+    text-align: center;
+    font-size: 10px;
+}

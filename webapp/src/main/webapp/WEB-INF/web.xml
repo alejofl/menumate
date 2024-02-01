@@ -49,7 +49,7 @@ http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
     </filter>
     <filter-mapping>
         <filter-name>springSecurityFilterChain</filter-name>
-        <url-pattern>/*</url-pattern>
+        <url-pattern>/api/*</url-pattern>
     </filter-mapping>
 
     <!-- Entity manager persistence context -->
@@ -59,7 +59,7 @@ http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
     </filter>
     <filter-mapping>
         <filter-name>openEntityManagerInView</filter-name>
-        <url-pattern>/*</url-pattern>
+        <url-pattern>/api/*</url-pattern>
     </filter-mapping>
 
     <!-- Jersey -->
@@ -90,9 +90,11 @@ http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
     </filter>
     <filter-mapping>
         <filter-name>jersey</filter-name>
-        <url-pattern>/*</url-pattern>
+        <url-pattern>/api/*</url-pattern>
     </filter-mapping>
 
+    <!-- https://stackoverflow.com/questions/5750484/tomcat-is-setting-no-cache-for-js-and-css-file -->
+    <!-- Unconditional Cache Filter -->
     <filter>
         <filter-name>UnconditionalCacheFilter</filter-name>
         <filter-class>ar.edu.itba.paw.webapp.filter.UnconditionalCacheFilter</filter-class>
@@ -105,4 +107,23 @@ http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
         <filter-name>UnconditionalCacheFilter</filter-name>
         <url-pattern>/assets/*</url-pattern>
     </filter-mapping>
+
+    <!-- Redirect all requests to index.html so that React Router handles routes -->
+    <!-- Exclude JS, CSS, and other non-HTML files stored in /assets from forwarding -->
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>/assets/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>/static/*</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>index</servlet-name>
+        <jsp-file>/index.html</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>index</servlet-name>
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping>
 </web-app>

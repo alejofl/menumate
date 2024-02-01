@@ -1,0 +1,23 @@
+main.user_restaurants {
+    flex-direction: column;
+    align-items: center;
+}
+
+.user_restaurants .restaurant-feed {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: stretch;
+    align-content: start;
+    column-gap: 20px;
+    row-gap: 28px;
+    flex-wrap: wrap;
+    padding: 24px 24px 12px 24px;
+}
+
+.user_restaurants .empty-results {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #b6b6b6;
+}

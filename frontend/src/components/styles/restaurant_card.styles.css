@@ -1,0 +1,33 @@
+.restaurant_card .clickable-object {
+    height: 100%;
+}
+
+.restaurant_card .card {
+    transition: all .2s ease-in-out;
+    width: 18rem;
+    height: 100%;
+}
+
+.restaurant_card .card-img {
+    background-size: cover !important;
+    height: 200px;
+    background: var(--main_image);
+}
+
+.restaurant_card .card:hover{
+    transform: scale(1.02);
+}
+
+.restaurant_card .card:hover .card-img {
+    background: var(--hover_image);
+}
+
+.restaurant_card .card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.restaurant_card .card-body p:not(.m-0) {
+    margin-bottom: 8px !important;
+}

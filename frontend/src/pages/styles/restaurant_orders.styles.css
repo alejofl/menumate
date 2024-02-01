@@ -1,0 +1,21 @@
+.restaurant_orders {
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.restaurant-orders-table tr {
+    height: 50px;
+    vertical-align: middle;
+}
+
+.restaurant-orders-table tbody tr {
+    cursor: pointer;
+}
+
+.restaurant_orders .empty-results {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #b6b6b6;
+}

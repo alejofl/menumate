@@ -1,0 +1,32 @@
+.error-number {
+    position: absolute;
+    left: 50%;
+    top: 40%;
+    transform: translate(-50%, -50%);
+    font-size: 25rem;
+    font-weight: 900;
+    color: #e5e5e5;
+    width: max-content;
+}
+
+.error-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    height: 100%;
+    flex-grow: 1;
+    z-index: 1;
+}
+
+.error-image {
+    margin: 1em;
+}
+
+.error-message {
+    display: flex;
+    justify-content: center;
+    margin: 0.5em;
+    color: var(--dark);
+}

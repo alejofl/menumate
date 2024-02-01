@@ -1,0 +1,566 @@
+{
+    "home": {
+        "call_to_action": "¡Ordená lo que quieras, cuando quieras y como quieras!",
+        "restaurants_title": "Restaurantes con mejor calificación",
+        "restaurants_button": "Más restaurantes"
+    },
+    "paging": {
+        "load_more": "Cargar más contenido",
+        "no": "No",
+        "yes": "Sí"
+    },
+    "copyright": "© 2023 MenuMate FLAN Inc. Todos los derechos reservados.",
+    "navbar": {
+        "explore": "Explorar",
+        "moderator_pane": "Panel de moderador",
+        "my_profile": "Mi perfil",
+        "my_orders": "Mis órdenes",
+        "create_restaurant": "Crear restaurante",
+        "my_restaurants": "Mis restaurantes",
+        "logout": "Cerrar sesión",
+        "login": "Iniciar sesión",
+        "signup": "Regístrate"
+    },
+    "titles": {
+        "home": "Inicio",
+        "error": "Error {{number}}",
+        "restaurants": "Restaurantes",
+        "user_profile": "Mi Perfil",
+        "login": "Iniciar sesión",
+        "reset_password": "Restablecer contraseña",
+        "signup": "Regístrate",
+        "loading": "Cargando...",
+        "order_placed": "¡Gracias por tu pedido!",
+        "create_restaurant": "Crear restaurante",
+        "user_restaurants": "Mis restaurantes",
+        "moderators_panel": "Panel de moderadores",
+        "user_orders": "Mis órdenes",
+        "edit_restaurant": "Editar {{name}}",
+        "restaurant_orders": "Órdenes de {{name}}"
+    },
+    "error": {
+        "modal": {
+            "title": "¡Ups! Algo salió mal",
+            "description": "Ocurrió un error al conectarse al servidor. Por favor, intente nuevamente más tarde.",
+            "button": "Recargar página"
+        },
+        "back_to_home": "Volver al inicio",
+        "401": {
+            "title": "¡Ups! ¡Acceso no autorizado!",
+            "description": "Parece que no tienes acceso a la página pedida. Intenta iniciando sesión con otra cuenta."
+        },
+        "403": {
+            "title": "¡Ups! ¡Acceso denegado!",
+            "description": "Parece que no tienes acceso a la página pedida. Intenta iniciando sesión con otra cuenta."
+        },
+        "404": {
+            "title": "¡Ups! ¡Página no encontrada!",
+            "description": "Parece que la página que estás buscando no existe o no está disponible."
+        },
+        "410": {
+            "title": "¡Ups! ¡No disponible!",
+            "description": "Parece que la página que estás buscando ya no está disponible."
+        },
+        "500": {
+            "title": "¡Ups! ¡Algo salió mal!",
+            "description": "Lamentamos los inconvenientes ocasionados. Hubo un error inesperado. Por favor, intente nuevamente más tarde."
+        },
+        "api": {
+            "title": "¡Ups! ¡Algo salió mal!",
+            "description": "La API no responde. Revise su conexión a internet o intente más tarde."
+        }
+    },
+    "restaurant_tags": {
+        "elegant": "Elegante",
+        "casual": "Informal",
+        "cheap": "Barato",
+        "cosy": "Acogedor",
+        "family_friendly": "Familiar",
+        "kid_friendly": "Amigable con los niños",
+        "lgbt_friendly": "Amigable con la Comunidad LGBT",
+        "pet_friendly": "Apto para mascotas",
+        "healthy": "Saludable",
+        "sustainable": "Sostenible",
+        "locally_sourced": "De producción local",
+        "historic": "Histórico",
+        "trendy": "De moda",
+        "romantic": "Romántico",
+        "outdoor_dining": "Comedor al aire libre",
+        "fine_dining": "Alta cocina",
+        "international": "Internacional",
+        "wheelchair_accessible": "Accesible para sillas de ruedas",
+        "live_music": "Música en vivo",
+        "karaoke": "Karaoke",
+        "happy_hour": "Happy Hour",
+        "old_fashioned": "Tradicional"
+    },
+    "restaurant_specialties": {
+        "american": "Estilo americano",
+        "argentine": "Estilo argentino",
+        "asian": "Estilo asiático",
+        "barbecue": "Barbacoa",
+        "breakfast": "Desayuno",
+        "cafe": "Café",
+        "chinese": "Estilo chino",
+        "desserts": "Postres",
+        "european": "Estilo europeo",
+        "fast_food": "Comida rápida",
+        "french": "Estilo francés",
+        "gluten_free": "Sin gluten",
+        "grill": "Grill",
+        "greek": "Estilo griego",
+        "hamburgers": "Hamburguesas",
+        "ice_cream": "Helado",
+        "indian": "Estilo indio",
+        "italian": "Estilo italiano",
+        "japanese": "Estilo japonés",
+        "korean": "Estilo coreano",
+        "latin": "Estilo latino",
+        "mediterranean": "Estilo mediterráneo",
+        "mexican": "Estilo mexicano",
+        "middle_eastern": "Estilo del medio oriente",
+        "pizza": "Pizza",
+        "seafood": "Mariscos",
+        "sushi": "Sushi",
+        "steakhouse": "Parrilla",
+        "thai": "Estilo tailandés",
+        "turkish": "Estilo turco",
+        "vegan": "Vegano",
+        "vegetarian": "Vegetariano"
+    },
+    "restaurant_card": {
+        "rating_text_zero": "Sin reseñas",
+        "rating_text_one": "{{count}} reseña",
+        "rating_text_other": "{{count}} reseñas"
+    },
+    "restaurants": {
+        "search_placeholder": "Buscá tu restaurante favorito",
+        "search_button": "Buscar",
+        "clear_filters": "Borrar filtros",
+        "no_results": "No se encontraron resultados",
+        "specialties_placeholder": "Especialidades",
+        "tags_placeholder": "Tags",
+        "orderby_placeholder": "Ordenar por",
+        "no_options": "No hay opciones",
+        "options_order_by": {
+            "alphabetic": "Alfabético",
+            "rating": "Puntuación",
+            "price": "Precio",
+            "date": "Fecha"
+        }
+    },
+    "user_profile": {
+        "profile": "Mi perfil",
+        "name_label": "Nombre",
+        "email_label": "Correo electrónico",
+        "addresses": "Direcciones",
+        "reviews": "Reseñas",
+        "add_address": "Añadir dirección",
+        "address_label": "Dirección",
+        "delete_address_title": "¿Estás seguro que quieres eliminar la dirección?"
+    },
+    "login": {
+        "email_address": "Correo electrónico",
+        "password": "Contraseña",
+        "remember_me": "Recuérdame",
+        "login_button": "Iniciar sesión",
+        "forgot_password": "Olvidé mi contraseña",
+        "no_account": "¿No tienes una cuenta?",
+        "signup_here": "¡Regístrate aquí!",
+        "resend_verification": "Reenviar código de verificación",
+        "send_email": "Enviar correo",
+        "go_back": "Volver a Iniciar sesión",
+        "reset_password_email_sent": "Te hemos enviado un correo electrónico con un enlace para que recuperes tu contraseña.",
+        "mailer_error": "Ocurrió un error al enviar el correo electrónico. Por favor, intente de nuevo más tarde.",
+        "request_error": "Ocurrió un error al procesar tu solicitud. Por favor, intente de nuevo más tarde.",
+        "reset_password_error": "Ocurrió un error al restablecer tu contraseña. Por favor, intente de nuevo más tarde.",
+        "login_error": "Ocurrió un error al iniciar sesión. Por favor, chequea tus credenciales. Si no has activado tu cuenta, revisa tu bandeja de entrada.",
+        "register_success": "Hemos enviado un correo electrónico con un enlace para verificar tu cuenta. ¡Revisa tu bandeja de entrada!",
+        "verify_error": "Hubo un problema activando tu cuenta. Revisa tu bandeja de entrada para obtener un nuevo URL de verificación e intenta de nuevo más tarde."
+    },
+    "validation": {
+        "email": {
+            "required": "El correo electrónico es obligatorio",
+            "invalid": "El correo electrónico no es válido",
+            "already_in_use": "El correo electrónico ya está en uso"
+        },
+        "password": {
+            "required": "La contraseña es obligatoria",
+            "min": "La contraseña debe tener al menos {{min}} caracteres",
+            "max": "La contraseña debe tener como máximo {{max}} caracteres"
+        },
+        "repeat_password": {
+            "required": "Debes confirmar la contraseña",
+            "match": "Las contraseñas no coinciden"
+        },
+        "name": {
+            "required": "El nombre es obligatorio",
+            "min": "El nombre debe tener al menos {{min}} caracteres",
+            "max": "El nombre debe tener como máximo {{max}} caracteres"
+        },
+        "table_number": {
+            "required": "El número de mesa es obligatorio",
+            "min": "El número de mesa debe ser mayor o igual a {{min}}",
+            "max": "No existe una mesa cuyo número sea {{value}}"
+        },
+        "address": {
+            "required": "La dirección es obligatoria",
+            "min": "La dirección debe tener al menos {{min}} caracteres",
+            "max": "La dirección debe tener como máximo {{max}} caracteres"
+        },
+        "comment": {
+            "required": "Debe describir el problema",
+            "max": "El comentario debe tener como máximo {{max}} caracteres"
+        },
+        "my_profile": {
+            "register_address_name_max": "El nombre debe tener como máximo {{max}} caracteres",
+            "register_address_address_max": "La dirección debe tener como máximo {{max}} caracteres",
+            "address_exits": "La dirección ya existe"
+        },
+        "restaurant_name": {
+            "required": "El nombre del restaurante es obligatorio",
+            "max": "El nombre del restaurante debe tener como máximo {{max}} caracteres"
+        },
+        "restaurant_address": {
+            "required": "La dirección del restaurante es obligatoria",
+            "max": "La dirección del restaurante debe tener como máximo {{max}} caracteres"
+        },
+        "restaurant_specialty": {
+            "required": "La especialidad del restaurante es obligatoria",
+            "invalid": "La especialidad del restaurante es inválida"
+        },
+        "restaurant_tags": {
+            "required": "Las tags del restaurante son obligatorias",
+            "invalid": "Las tags del restaurante son inválidas"
+        },
+        "restaurant_description": {
+            "required": "La descripción del restaurante es obligatoria",
+            "max": "La descripción del restaurante debe tener como máximo {{max}} caracteres"
+        },
+        "restaurant_max_tables": {
+            "required": "La cantidad de mesas del restaurante es obligatoria",
+            "min": "La cantidad de mesas del restaurante debe ser al menos {{min}}"
+        },
+        "image": {
+            "required": "La imagen es obligatoria",
+            "size": "La imagen debe pesar como máximo 5 MB",
+            "type": "El archivo debe ser una imagen válida"
+        },
+        "review_reply": {
+            "required": "Debes escribir una respuesta",
+            "max": "La respuesta debe tener como máximo {{max}} caracteres"
+        },
+        "review_comment": {
+            "required": "Debes escribir un comentario",
+            "max": "El comentario debe tener como máximo {{max}} caracteres"
+        },
+        "category_name": {
+            "required": "El nombre de la categoría es obligatorio",
+            "min": "El nombre de la categoría debe tener al menos {{min}} caracteres",
+            "max": "El nombre de la categoría debe tener como máximo {{max}} caracteres"
+        },
+        "product_name": {
+            "required": "El nombre del producto es obligatorio",
+            "min": "El nombre del producto debe tener al menos {{min}} caracteres",
+            "max": "El nombre del producto debe tener como máximo {{max}} caracteres"
+        },
+        "product_description": {
+            "max": "La descripción del producto debe tener como máximo {{max}} caracteres"
+        },
+        "product_price": {
+            "required": "El precio del producto es obligatorio",
+            "min": "El precio del producto debe ser al menos ${{min}}",
+            "max": "El precio del producto debe ser como máximo ${{max}}"
+        },
+        "role": {
+            "required": "El rol del empleado es obligatorio",
+            "invalid": "El rol del empleado debe ser uno de la lista de opciones"
+        },
+        "percentage": {
+            "required": "El porcentaje de la promoción es obligatorio",
+            "min": "El porcentaje de la promoción debe ser al menos {{min}}",
+            "max": "El porcentaje de la promoción debe ser como máximo {{max}}"
+        },
+        "start_datetime": {
+            "required": "La fecha y hora de inicio de la promoción son obligatorias",
+            "min": "La fecha de inicio de la promoción debe ser una fecha futura"
+        },
+        "end_datetime": {
+            "required": "La fecha y hora de finalización de la promoción son obligatorias",
+            "min": "La fecha de finalización de la promoción debe ser después de la fecha de inicio"
+        },
+        "days": {
+            "required": "Los días de la promoción son obligatorios",
+            "min": "Los días de la promoción son inválidos"
+        },
+        "hours": {
+            "required": "Las horas de la promoción son obligatorias",
+            "min": "Las horas de la promoción son inválidas",
+            "max": "Las horas de la promoción son inválidas"
+        },
+        "minutes": {
+            "required": "Los minutos de la promoción son obligatorios",
+            "min": "Los minutos de la promoción son inválidos",
+            "max": "Los minutos de la promoción son inválidos"
+        },
+        "duration": {
+            "invalid": "La duración de la promoción es inválida"
+        },
+        "product_category": {
+            "required": "La categoría del producto es obligatoria",
+            "invalid": "La categoría del producto debe ser una de la lista de opciones"
+        }
+    },
+    "reset_password": {
+        "new_password": "Nueva contraseña",
+        "repeat_password": "Repita la nueva contraseña",
+        "button": "Restablecer contraseña"
+    },
+    "signup": {
+        "name": "Nombre",
+        "email_address": "Correo electrónico",
+        "password": "Contraseña",
+        "repeat_password": "Confirmar contraseña",
+        "button": "Regístrate",
+        "already_have_account": "¿Ya tienes una cuenta?",
+        "login_here": "¡Inicia sesión aquí!",
+        "error": "Ocurrió un error al crear tu cuenta. Por favor, intente de nuevo más tarde."
+    },
+    "restaurant": {
+        "no_description": "Este restaurante no tiene una descripción.",
+        "no_reviews": "Este restaurante no tiene reseñas aún.",
+        "view_reviews": "Ver reseñas",
+        "edit_menu": "Editar menú",
+        "see_orders": "Ver órdenes",
+        "delete_restaurant": "Eliminar restaurante",
+        "categories": "Categorías",
+        "my_order": "Mi orden",
+        "place_order": "Realizar pedido",
+        "product": {
+            "no_description": "Este producto no tiene una descripción.",
+            "add_to_cart": "Agregar al carrito (${{price}})",
+            "comments": "Comentarios"
+        },
+        "promotions": "Promociones activas",
+        "reviews": {
+            "title": "Reseñas",
+            "reply": "El restaurante respondió",
+            "show_order_button": "Mostrar orden",
+            "reply_button": "Responder",
+            "reply_placeholder": "Escribe tu respuesta aquí...",
+            "send_button": "Enviar",
+            "cancel_button": "Cancelar",
+            "error_alert": "Ocurrió un error al enviar tu respuesta. Por favor, intenta de nuevo más tarde."
+        },
+        "toasts": {
+            "dine_in": {
+                "text": "Estás ordenando para comer en el restaurante.",
+                "click": "para cambiar a delivery o take-away."
+            },
+            "delivery": {
+                "text": "Estás ordenando para delivery o take-away.",
+                "click": "para cambiar a comer en el restaurante."
+            },
+            "report": {
+                "text": "¿Hay algo mal con el restaurante?",
+                "click": "para reportarlo."
+            },
+            "click": "Haz click",
+            "here": "aquí"
+        },
+        "checkout": {
+            "title": "Finalizar compra",
+            "delivery": "Delivery",
+            "take_away": "Take-Away",
+            "dine_in": "Comer en el restaurante",
+            "welcome_back": "¡Bienvenido de vuelta, {{name}}!",
+            "name": "Nombre",
+            "email": "Correo electrónico",
+            "table_number": "Número de mesa",
+            "delivery_address": "Dirección de entrega",
+            "eta": "Tu comida estará lista en aproximadamente <strong>{{eta}} minutos</strong>.",
+            "address_disclaimer": "Solo se guardan las cinco direcciones sin nombre más recientemente utilizadas. Para agregar un nombre a una dirección, dirígete a la página Mi perfil.",
+            "payment_method": "Por ahora, solo aceptamos efectivo como forma de pago.",
+            "place_order": "Realizar pedido (${{price}})",
+            "error": "Ocurrió un error al procesar tu pedido. Por favor, intente de nuevo más tarde."
+        },
+        "report": {
+            "title": "Reportar restaurante",
+            "comment": "Describe el problema",
+            "button": "Enviar reporte",
+            "success": "¡Tu reporte fue enviado con éxito!",
+            "success_button": "Volver a la página del restaurante",
+            "error": "Ocurrió un error al enviar tu reporte. Por favor, intente de nuevo más tarde."
+        },
+        "disabled": "Este restaurante fue deshabilitado debido a reportes recibidos.",
+        "disabled_user": "No podrás crear un pedido hasta que sea habilitado nuevamente.",
+        "disabled_employee": "Arregla los problemas y responde el correo electrónico que te enviamos para habilitarlo nuevamente.",
+        "edit": {
+            "error": "Ocurrió un error al guardar los cambios. Por favor, intenta de nuevo más tarde.",
+            "done": "Listo",
+            "edit_information": "Editar información",
+            "edit_employees": "Editar empleados",
+            "add_product": "Añadir producto",
+            "add_category": "Añadir categoría",
+            "category_name": "Nombre de la categoría",
+            "product_name": "Nombre del producto",
+            "product_description": "Descripción del producto",
+            "product_price": "Precio del producto",
+            "product_image": "Imagen del producto",
+            "delete_restaurant": "¿Estás seguro de que quieres eliminar este restaurante? Esta acción es irreversible.",
+            "change_logo": "Cambiar logo del restaurante",
+            "change_portrait1": "Cambiar imagen de portada principal",
+            "change_portrait2": "Cambiar imagen de portada secundaria",
+            "edit_category": "Editar categoría",
+            "delete_category": "¿Estás seguro de que quieres eliminar esta categoría? Esta acción es irreversible.",
+            "add_employee": "Añadir empleado",
+            "employee_email": "Correo electrónico del empleado",
+            "employee_role": "Rol del empleado",
+            "employee_role_help_text": "Los miembros del staff solo pueden ver y manejar órdenes. Los administradores también pueden editar el menú del restaurante, pero no pueden editar empleados.",
+            "roles": {
+                "owner": "Dueño",
+                "admin": "Administrador",
+                "orderhandler": "Miembro del staff"
+            },
+            "restaurant_employees": "Empleados del restaurante",
+            "delete_employee": "¿Estás seguro de que quieres eliminar este empleado? Puedes agregarlo nuevamente más tarde.",
+            "promotion_from": "Desde",
+            "promotion_to": "Hasta",
+            "delete_product": "¿Estás seguro de que quieres eliminar este producto? Todas las promociones activas para este producto también serán eliminadas.",
+            "delete_promotion": "¿Estás seguro de que quieres detener esta promoción?",
+            "create_promotion": "Crear promoción",
+            "promotion_percentage": "Porcentaje",
+            "instant_promotion": "Promoción instantánea",
+            "scheduled_promotion": "Promoción programada",
+            "promotion_duration": {
+                "label": "Duración",
+                "days": "días",
+                "hours": "horas",
+                "minutes": "minutos"
+            },
+            "promotion_start": "Fecha y hora de inicio",
+            "promotion_end": "Fecha y hora de finalización",
+            "promotion_overlapping": "Ya existe una promoción para este producto en el rango de tiempo dado.",
+            "promotions": "Promociones",
+            "edit_product": "Editar producto",
+            "change_product_category": "Cambiar categoría del producto"
+        }
+    },
+    "order_placed": {
+        "title": "¡Tu pedido fue recibido!",
+        "description": "Estate atento a tu correo electrónico para más información.",
+        "button": "Ver detalles del pedido"
+    },
+    "create_restaurant": {
+        "title": "Crear restaurante",
+        "name": "Nombre del restaurante",
+        "address": "Dirección del restaurante",
+        "specialty": "Especialidad",
+        "specialty_placeholder": "Selecciona una especialidad...",
+        "tags": "Tags",
+        "tags_placeholder": "Selecciona una o más tags...",
+        "description": "Descripción",
+        "tables_quantity": "Cantidad de mesas",
+        "logo": "Logo del restaurante",
+        "portrait1": "Imagen de portada principal",
+        "portrait2": "Imagen de portada secundaria",
+        "preview": "Vista previa",
+        "error": "Ocurrió un error al crear el restaurante. Por favor, intente de nuevo más tarde."
+    },
+    "user_restaurants": {
+        "pending_orders_zero": "Sin órdenes pendientes",
+        "pending_orders_one": "{{count}} orden pendiente",
+        "pending_orders_other": "{{count}} órdenes pendientes"
+    },
+    "order": {
+        "title": "Orden #{{id}}",
+        "items": "Artículos de la orden",
+        "comments": "Comentarios",
+        "product": "Producto",
+        "quantity": "Cantidad",
+        "price": "Precio",
+        "details": "Detalles de la orden",
+        "customer": "Cliente",
+        "order_type": "Tipo de orden",
+        "table_number": "Número de mesa",
+        "address": "Dirección",
+        "total_price": "Precio total",
+        "dinein": "Comer en el restaurante",
+        "delivery": "Delivery",
+        "takeaway": "Take-Away",
+        "in_progress": "En progreso",
+        "all": "Todas",
+        "product_quantity_zero": "Sin productos",
+        "product_quantity_one": "{{count}} producto",
+        "product_quantity_other": "{{count}} productos",
+        "status": {
+            "pending": "Pendiente",
+            "rejected": "Rechazada",
+            "cancelled": "Cancelada",
+            "confirmed": "Confirmada",
+            "ready": "Lista",
+            "delivered": "Entregada",
+            "order_pending": "Orden pendiente",
+            "order_rejected": "Orden rechazada",
+            "order_cancelled": "Orden cancelada",
+            "order_confirmed": "Orden confirmada",
+            "order_ready": "Orden lista",
+            "order_delivered": "Orden entregada"
+        },
+        "order_again": "Pedir de nuevo",
+        "your_review": "Tu reseña",
+        "review": "Escribir una reseña",
+        "rating": "Puntuación",
+        "experience": "Cuéntanos tu experiencia",
+        "send_review": "Enviar reseña",
+        "cancel": "Cancelar",
+        "error": "Ocurrió un error al enviar tu reseña. Por favor, intente de nuevo más tarde."
+    },
+    "moderators_panel": {
+        "unhandled_reports_zero": "No hay reportes sin resolver",
+        "unhandled_reports_one": "{{count}} reporte sin resolver",
+        "unhandled_reports_other": "{{count}} reportes sin resolver",
+        "reports": {
+            "title": "{{restaurantName}} | Reportes",
+            "error_alert": "Ocurrió un error al guardar los cambios. Por favor, intenta de nuevo más tarde.",
+            "anonymous_user": "Usuario anónimo",
+            "mark_as_handled": "Marcar como resuelto",
+            "already_handled": "Ya marcado como resuelto",
+            "view_restaurant": "Ver restaurante",
+            "deactivate_restaurant": "Desactivar restaurante",
+            "activate_restaurant": "Activar restaurante",
+            "delete_restaurant": "Eliminar restaurante"
+        },
+        "edit": {
+            "title": "Editar moderadores",
+            "add": "Agregar moderador",
+            "email": "Correo electrónico",
+            "warning": "Agregar este usuario como moderador le da permiso para eliminar cualquier elemento del sitio.",
+            "moderators": "Moderadores",
+            "error": "Ocurrió un error al guardar los cambios. Por favor, intenta de nuevo más tarde.",
+            "delete": "¿Estás seguro de que quieres eliminar este moderador?"
+        }
+    },
+    "restaurant_orders": {
+        "title": "{{restaurantName}} | Órdenes",
+        "pending": "Pendientes",
+        "confirmed": "Confirmadas",
+        "ready": "Listas",
+        "delivered": "Entregadas",
+        "cancelled": "Canceladas",
+        "table": {
+            "order_id": "ID de la orden",
+            "order_type": "Tipo de order",
+            "table_number": "Numero de mesa",
+            "address": "Dirección",
+            "order_date": "Fecha de la orden",
+            "empty_results": "No hay nada aquí"
+        },
+        "order_detail_modal": {
+            "cancel_order": "Cancelar orden",
+            "confirm_order": "Confirmar orden",
+            "mark_as_ready": "Marcar como lista",
+            "mark_as_delivered": "Marcar como entregada"
+        }
+    }
+}
