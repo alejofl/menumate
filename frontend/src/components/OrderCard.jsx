@@ -218,9 +218,9 @@ function OrderCard({orderUrl, showCard = true, onError}) {
                                                 return (
                                                     <tr key={i}>
                                                         <th className="text-start" scope="row">{item.lineNumber}</th>
-                                                        <td className="text-start">{products[i].data.name}</td>
+                                                        <td className="text-start">{products[i]?.data?.name}</td>
                                                         <td className="text-center">{item.quantity}</td>
-                                                        <td className="text-end">${products[i].data.price}</td>
+                                                        <td className="text-end">${products[i]?.data?.price}</td>
                                                     </tr>
                                                 );
                                             })}
