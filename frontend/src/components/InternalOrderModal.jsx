@@ -94,7 +94,7 @@ function InternalOrderModal({orderUrl, showActions, onClose, onError}) {
     }
     return (
         <div className="internal_order_modal">
-            <div className="modal fade" tabIndex="-1" id="internal-order-modal">
+            <div className="modal fade" tabIndex="-1" data-testid="internal-order-modal">
                 <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
                     <div className="modal-content">
                         <div className="modal-header">
