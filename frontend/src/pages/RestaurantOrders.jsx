@@ -320,9 +320,9 @@ function RestaurantOrders() {
                     <InternalOrderModal
                         orderUrl={orderUrl}
                         showActions={status !== STATUS.DELIVERED && status !== STATUS.CANCELLED}
-                        onClose={() => handleOnCloseInternalOrderModal()}>
+                        onClose={() => handleOnCloseInternalOrderModal()}
                         onError={(e) => setError(e)}
-                    </InternalOrderModal>
+                    />
                 }
             </Page>
         </>

@@ -47,7 +47,8 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
         queryKey: ["restaurant", restaurant.restaurantId, "employees"],
         queryFn: async () => (
             await restaurantService.getEmployees(restaurant.employeesUriTemplate.fill({}))
-        )
+        ),
+        enabled: userRole.isOwner
     });
 
     const specialties = RestaurantSpecialties.map(specialty => ({
@@ -335,7 +336,7 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
         return (
             <Error errorNumber={employeesError.response.status}/>
         );
-    } else if (employeesIsPending) {
+    } else if (userRole.isOwner && employeesIsPending) {
         return (
             <>
                 <Page title={t("titles.loading")}>
@@ -886,87 +887,110 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
                     </div>
                 </div>
 
-                <div className="modal fade" id="edit-employees-modal" tabIndex="-1">
-                    <div className="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h1 className="modal-title fs-5">{t("restaurant.edit.edit_employees")}</h1>
-                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div className="modal-body">
-                                <h4>{t("restaurant.edit.add_employee")}</h4>
-                                {showAddEmployeeError &&
-                                    <div className="alert alert-danger" role="alert">{t("restaurant.edit.error")}</div>}
-                                <Formik
-                                    innerRef={addEmployeeFormRef}
-                                    initialValues={{
-                                        email: "",
-                                        role: ROLE_FOR_RESTAURANT.ORDER_HANDLER
-                                    }}
-                                    validationSchema={AddEmployeeSchema}
-                                    onSubmit={handleAddEmployee}
-                                >
-                                    {({isSubmitting}) => (
-                                        <Form>
-                                            <div className="mb-3">
-                                                <label htmlFor="email" className="form-label">{t("restaurant.edit.employee_email")}</label>
-                                                <Field name="email" type="email" className="form-control" id="email"/>
-                                                <ErrorMessage name="email" component="div" className="form-error"/>
-                                            </div>
-                                            <div className="mb-3">
-                                                <label htmlFor="role" className="form-label">{t("restaurant.edit.employee_role")}</label>
-                                                <Field as="select" name="role" className="form-select" aria-labelledby="role-help-text">
-                                                    <option value={ROLE_FOR_RESTAURANT.ADMIN}>{t(`restaurant.edit.roles.${ROLE_FOR_RESTAURANT.ADMIN}`)}</option>
-                                                    <option value={ROLE_FOR_RESTAURANT.ORDER_HANDLER}>{t(`restaurant.edit.roles.${ROLE_FOR_RESTAURANT.ORDER_HANDLER}`)}</option>
-                                                </Field>
-                                                <ErrorMessage name="role" component="div" className="form-error"/>
-                                                <div id="role-help-text" className="form-text">{t("restaurant.edit.employee_role_help_text")}</div>
-                                            </div>
-                                            <button type="submit" className="btn btn-primary" disabled={isSubmitting}>{t("restaurant.edit.add_employee")}</button>
-                                        </Form>
-                                    )}
-                                </Formik>
-                                <div className="mt-4">
-                                    <h4>{t("restaurant.edit.restaurant_employees")}</h4>
-                                    {showEditEmployeeRoleError &&
-                                        <div className="alert alert-danger" role="alert">{t("restaurant.edit.error")}</div>}
-                                    <ul className="list-group list-group-flush">
-                                        {
-                                            employees.map((employee, i) => (
-                                                <li className="list-group-item d-flex align-items-center" key={i}>
-                                                    <i className="bi bi-person me-3"></i>
-                                                    <div className="d-flex justify-content-between align-items-center w-100">
-                                                        <p className="mb-0">
-                                                            <span>{employee.name} </span>
-                                                            <a href={`mailto:${employee.email}`}>&lt;{employee.email}&gt;</a>
-                                                        </p>
-                                                        <div className="d-flex align-items-center">
-                                                            {
-                                                                (employee.role !== ROLE_FOR_RESTAURANT.OWNER && employee.userUrl !== authContext.selfUrl)
-                                                                    ?
-                                                                    <>
-                                                                        {
-                                                                            editEmployeeRoleUrl === employee.selfUrl
-                                                                                ?
-                                                                                <Formik
-                                                                                    innerRef={editEmployeeRoleFormRef}
-                                                                                    initialValues={{
-                                                                                        role: employee.role
-                                                                                    }}
-                                                                                    validationSchema={EditEmployeeRoleSchema}
-                                                                                    onSubmit={handleEditEmployeeRole}
-                                                                                >
-                                                                                    {({handleSubmit}) => (
-                                                                                        <Form>
+                {
+                    userRole.isOwner &&
+                    <>
+                        <div className="modal fade" id="edit-employees-modal" tabIndex="-1">
+                            <div className="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+                                <div className="modal-content">
+                                    <div className="modal-header">
+                                        <h1 className="modal-title fs-5">{t("restaurant.edit.edit_employees")}</h1>
+                                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div className="modal-body">
+                                        <h4>{t("restaurant.edit.add_employee")}</h4>
+                                        {showAddEmployeeError &&
+                                            <div className="alert alert-danger" role="alert">{t("restaurant.edit.error")}</div>}
+                                        <Formik
+                                            innerRef={addEmployeeFormRef}
+                                            initialValues={{
+                                                email: "",
+                                                role: ROLE_FOR_RESTAURANT.ORDER_HANDLER
+                                            }}
+                                            validationSchema={AddEmployeeSchema}
+                                            onSubmit={handleAddEmployee}
+                                        >
+                                            {({isSubmitting}) => (
+                                                <Form>
+                                                    <div className="mb-3">
+                                                        <label htmlFor="email" className="form-label">{t("restaurant.edit.employee_email")}</label>
+                                                        <Field name="email" type="email" className="form-control" id="email"/>
+                                                        <ErrorMessage name="email" component="div" className="form-error"/>
+                                                    </div>
+                                                    <div className="mb-3">
+                                                        <label htmlFor="role" className="form-label">{t("restaurant.edit.employee_role")}</label>
+                                                        <Field as="select" name="role" className="form-select" aria-labelledby="role-help-text">
+                                                            <option value={ROLE_FOR_RESTAURANT.ADMIN}>{t(`restaurant.edit.roles.${ROLE_FOR_RESTAURANT.ADMIN}`)}</option>
+                                                            <option value={ROLE_FOR_RESTAURANT.ORDER_HANDLER}>{t(`restaurant.edit.roles.${ROLE_FOR_RESTAURANT.ORDER_HANDLER}`)}</option>
+                                                        </Field>
+                                                        <ErrorMessage name="role" component="div" className="form-error"/>
+                                                        <div id="role-help-text" className="form-text">{t("restaurant.edit.employee_role_help_text")}</div>
+                                                    </div>
+                                                    <button type="submit" className="btn btn-primary" disabled={isSubmitting}>{t("restaurant.edit.add_employee")}</button>
+                                                </Form>
+                                            )}
+                                        </Formik>
+                                        <div className="mt-4">
+                                            <h4>{t("restaurant.edit.restaurant_employees")}</h4>
+                                            {showEditEmployeeRoleError &&
+                                                <div className="alert alert-danger" role="alert">{t("restaurant.edit.error")}</div>}
+                                            <ul className="list-group list-group-flush">
+                                                {
+                                                    employees.map((employee, i) => (
+                                                        <li className="list-group-item d-flex align-items-center" key={i}>
+                                                            <i className="bi bi-person me-3"></i>
+                                                            <div className="d-flex justify-content-between align-items-center w-100">
+                                                                <p className="mb-0">
+                                                                    <span>{employee.name} </span>
+                                                                    <a href={`mailto:${employee.email}`}>&lt;{employee.email}&gt;</a>
+                                                                </p>
+                                                                <div className="d-flex align-items-center">
+                                                                    {
+                                                                        (employee.role !== ROLE_FOR_RESTAURANT.OWNER && employee.userUrl !== authContext.selfUrl)
+                                                                            ?
+                                                                            <>
+                                                                                {
+                                                                                    editEmployeeRoleUrl === employee.selfUrl
+                                                                                        ?
+                                                                                        <Formik
+                                                                                            innerRef={editEmployeeRoleFormRef}
+                                                                                            initialValues={{
+                                                                                                role: employee.role
+                                                                                            }}
+                                                                                            validationSchema={EditEmployeeRoleSchema}
+                                                                                            onSubmit={handleEditEmployeeRole}
+                                                                                        >
+                                                                                            {({handleSubmit}) => (
+                                                                                                <Form>
+                                                                                                    <div className="d-flex align-items-center gap-3 ms-3">
+                                                                                                        <Field as="select" name="role" className="form-select">
+                                                                                                            <option value={ROLE_FOR_RESTAURANT.ADMIN}>{t(`restaurant.edit.roles.${ROLE_FOR_RESTAURANT.ADMIN}`)}</option>
+                                                                                                            <option value={ROLE_FOR_RESTAURANT.ORDER_HANDLER}>{t(`restaurant.edit.roles.${ROLE_FOR_RESTAURANT.ORDER_HANDLER}`)}</option>
+                                                                                                        </Field>
+                                                                                                        <ErrorMessage name="role" component="div" className="form-error d-none"/>
+                                                                                                        <i
+                                                                                                            className="bi bi-check-circle-fill text-success default clickable-object"
+                                                                                                            onClick={() => handleSubmit()}
+                                                                                                        >
+                                                                                                        </i>
+                                                                                                        <i
+                                                                                                            className="bi bi-trash-fill text-danger default clickable-object"
+                                                                                                            data-bs-toggle="modal"
+                                                                                                            data-bs-target="#delete-employee-modal"
+                                                                                                            onClick={() => setDeleteEmployeeUrl(employee.selfUrl)}
+                                                                                                        >
+                                                                                                        </i>
+                                                                                                    </div>
+                                                                                                </Form>
+                                                                                            )}
+                                                                                        </Formik>
+                                                                                        :
+                                                                                        <>
+                                                                                            <p className="mb-0">{t(`restaurant.edit.roles.${employee.role}`)}</p>
                                                                                             <div className="d-flex align-items-center gap-3 ms-3">
-                                                                                                <Field as="select" name="role" className="form-select">
-                                                                                                    <option value={ROLE_FOR_RESTAURANT.ADMIN}>{t(`restaurant.edit.roles.${ROLE_FOR_RESTAURANT.ADMIN}`)}</option>
-                                                                                                    <option value={ROLE_FOR_RESTAURANT.ORDER_HANDLER}>{t(`restaurant.edit.roles.${ROLE_FOR_RESTAURANT.ORDER_HANDLER}`)}</option>
-                                                                                                </Field>
-                                                                                                <ErrorMessage name="role" component="div" className="form-error d-none"/>
                                                                                                 <i
-                                                                                                    className="bi bi-check-circle-fill text-success default clickable-object"
-                                                                                                    onClick={() => handleSubmit()}
+                                                                                                    className="bi bi-pencil-fill clickable-object"
+                                                                                                    onClick={() => setEditEmployeeRoleUrl(employee.selfUrl)}
                                                                                                 >
                                                                                                 </i>
                                                                                                 <i
@@ -977,59 +1001,41 @@ function EditRestaurant({restaurant, categories, products, promotions, promotion
                                                                                                 >
                                                                                                 </i>
                                                                                             </div>
-                                                                                        </Form>
-                                                                                    )}
-                                                                                </Formik>
-                                                                                :
-                                                                                <>
-                                                                                    <p className="mb-0">{t(`restaurant.edit.roles.${employee.role}`)}</p>
-                                                                                    <div className="d-flex align-items-center gap-3 ms-3">
-                                                                                        <i
-                                                                                            className="bi bi-pencil-fill clickable-object"
-                                                                                            onClick={() => setEditEmployeeRoleUrl(employee.selfUrl)}
-                                                                                        >
-                                                                                        </i>
-                                                                                        <i
-                                                                                            className="bi bi-trash-fill text-danger default clickable-object"
-                                                                                            data-bs-toggle="modal"
-                                                                                            data-bs-target="#delete-employee-modal"
-                                                                                            onClick={() => setDeleteEmployeeUrl(employee.selfUrl)}
-                                                                                        >
-                                                                                        </i>
-                                                                                    </div>
-                                                                                </>
-                                                                        }
-                                                                    </>
-                                                                    :
-                                                                    <p className="mb-0">{t(`restaurant.edit.roles.${employee.role}`)}</p>
-                                                            }
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                            ))
-                                        }
-                                    </ul>
+                                                                                        </>
+                                                                                }
+                                                                            </>
+                                                                            :
+                                                                            <p className="mb-0">{t(`restaurant.edit.roles.${employee.role}`)}</p>
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    ))
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
 
-                <div className="modal fade" id="delete-employee-modal" tabIndex="-1">
-                    <div className="modal-dialog modal-dialog-centered">
-                        <div className="modal-content">
-                            <div className="modal-body">
-                                {showDeleteEmployeeError &&
-                                    <div className="alert alert-danger" role="alert">{t("restaurant.edit.error")}</div>}
-                                <h1 className="modal-title fs-5">{t("restaurant.edit.delete_employee")}</h1>
-                            </div>
-                            <div className="modal-footer">
-                                <button type="button" data-bs-toggle="modal" data-bs-target="#edit-employees-modal" className="btn btn-secondary">{t("paging.no")}</button>
-                                <button type="button" className="btn btn-danger" onClick={deleteEmployeeMutation.mutate}>{t("paging.yes")}</button>
+                        <div className="modal fade" id="delete-employee-modal" tabIndex="-1">
+                            <div className="modal-dialog modal-dialog-centered">
+                                <div className="modal-content">
+                                    <div className="modal-body">
+                                        {showDeleteEmployeeError &&
+                                            <div className="alert alert-danger" role="alert">{t("restaurant.edit.error")}</div>}
+                                        <h1 className="modal-title fs-5">{t("restaurant.edit.delete_employee")}</h1>
+                                    </div>
+                                    <div className="modal-footer">
+                                        <button type="button" data-bs-toggle="modal" data-bs-target="#edit-employees-modal" className="btn btn-secondary">{t("paging.no")}</button>
+                                        <button type="button" className="btn btn-danger" onClick={deleteEmployeeMutation.mutate}>{t("paging.yes")}</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </>
+                }
             </Page>
         </>
     );

@@ -17,6 +17,14 @@ import RestaurantTags from "../data/RestaurantTags.js";
 import {DEFAULT_RESTAURANT_COUNT} from "../utils.js";
 
 function Restaurants() {
+    const DEFAULT_QUERY = {
+        search: "",
+        specialties: [],
+        tags: [],
+        orderBy: "alphabetic",
+        descending: false
+    };
+
     const { t } = useTranslation();
     const api = useApi();
     const apiContext = useContext(ApiContext);
@@ -24,11 +32,11 @@ function Restaurants() {
 
     const [queryParams, setQueryParams] = useSearchParams();
     const [query, setQuery] = useState({
-        search: queryParams.get("search") || "",
-        specialties: queryParams.getAll("specialties") || [],
-        tags: queryParams.getAll("tags") || [],
-        orderBy: queryParams.get("orderBy") || "alphabetic",
-        descending: queryParams.get("descending") === "true" || false,
+        search: queryParams.get("search") || DEFAULT_QUERY.search,
+        specialties: queryParams.getAll("specialties") || DEFAULT_QUERY.specialties,
+        tags: queryParams.getAll("tags") || DEFAULT_QUERY.tags,
+        orderBy: queryParams.get("orderBy") || DEFAULT_QUERY.orderBy,
+        descending: queryParams.get("descending") === "true" || DEFAULT_QUERY.descending,
         ...(queryParams.get("size") ? {size: queryParams.get("size")} : {})
     });
     const [queryKey, setQueryKey] = useState(query);
@@ -66,15 +74,9 @@ function Restaurants() {
     };
 
     const handleClearFilters = () => {
-        setQuery({
-            search: "",
-            specialties: [],
-            tags: [],
-            orderBy: "alphabetic",
-            descending: false
-        });
-        setQueryParams({...query});
-        setQueryKey(query);
+        setQuery({...DEFAULT_QUERY});
+        setQueryParams({...DEFAULT_QUERY});
+        setQueryKey({...DEFAULT_QUERY});
     };
 
     const handleLoadMoreContent = async () => {

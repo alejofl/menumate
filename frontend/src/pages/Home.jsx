@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import Page from "../components/Page.jsx";
 import RestaurantCard from "../components/RestaurantCard.jsx";
-import { Link } from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import "./styles/home.styles.css";
 import { useApi } from "../hooks/useApi.js";
 import {useContext} from "react";
@@ -13,6 +13,7 @@ import ContentLoader from "react-content-loader";
 function Home() {
     const MOST_RATED_RESTAURANTS_COUNT = 4;
     const { t } = useTranslation();
+    const navigate = useNavigate();
     const api = useApi();
     const apiContext = useContext(ApiContext);
     const restaurantService = useRestaurantService(api);
@@ -31,12 +32,18 @@ function Home() {
         )
     });
 
+    const handleSearch = (event) => {
+        event.preventDefault();
+        const search = event.target.search.value;
+        navigate(`/restaurants?search=${search}`);
+    };
+
     return (
         <>
             <Page title={t("titles.home")} className="home">
                 <div className="landing-container">
                     <p className="landing-title">{t("home.call_to_action")}</p>
-                    <form method="get" action="/restaurants">
+                    <form onSubmit={handleSearch}>
                         <div className="search-form-container">
                             <div>
                                 <div className="input-group flex-nowrap">

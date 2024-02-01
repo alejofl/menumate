@@ -165,7 +165,7 @@ function OrderCard({orderUrl, showCard = true, onError}) {
                                 </li>
                                 <li className="list-group-item">
                                     <i className="bi bi-cash-stack me-2"></i>
-                                    ${orderItems.reduce((total, item, i) => total + item.quantity * products[i].data.price, 0).toFixed(PRICE_DECIMAL_DIGITS)}
+                                    ${orderItems.reduce((total, item, i) => total + item.quantity * products[i]?.data?.price, 0).toFixed(PRICE_DECIMAL_DIGITS)}
                                 </li>
                             </ul>
                             <div className="card-footer">
@@ -228,7 +228,7 @@ function OrderCard({orderUrl, showCard = true, onError}) {
                                         <tfoot>
                                             <tr>
                                                 <th colSpan="3">{t("order.total_price")}</th>
-                                                <th className="text-end">${orderItems.reduce((total, item, i) => total + item.quantity * products[i].data.price, 0).toFixed(PRICE_DECIMAL_DIGITS)}</th>
+                                                <th className="text-end">${orderItems.reduce((total, item, i) => total + item.quantity * products[i]?.data?.price, 0).toFixed(PRICE_DECIMAL_DIGITS)}</th>
                                             </tr>
                                         </tfoot>
                                     </table>
