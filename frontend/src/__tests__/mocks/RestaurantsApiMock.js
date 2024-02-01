@@ -201,7 +201,7 @@ export const restaurantsHandlers = [
     }),
 
     http.get(apiUrl("/restaurants/:id"), ({request}) => {
-        if (request.headers.get("Accept") === RESTAURANT_DETAILS_CONTENT_TYPE) {
+        if (request.headers.get("Accept") === RESTAURANT_DETAILS_CONTENT_TYPE || request.headers.get("Accept") === RESTAURANTS_CONTENT_TYPE) {
             return HttpResponse.json(
                 {
                     "type": "restaurantDetailsDto",
