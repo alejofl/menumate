@@ -1,4 +1,4 @@
-![MenuMate](webapp/src/main/webapp/static/pictures/logo.png)
+![MenuMate](frontend/public/static/noscript/logo.png)
 
 | Student               | ID    |
 |-----------------------|-------|
@@ -9,7 +9,7 @@
 
 ## Description
 
-MenuMate is a web application developed with Spring MVC. It is a unified order handler designed to facilitate seamless interactions between restaurants and users. This application streamlines the entire order process, making it more efficient and user-friendly.
+MenuMate is a web application developed with Spring, Jersey and React. It is a unified order handler designed to facilitate seamless interactions between restaurants and users. This application streamlines the entire order process, making it more efficient and user-friendly.
 
 The webapp can be accessed [here](http://pawserver.it.itba.edu.ar/paw-2023a-01/)
 
