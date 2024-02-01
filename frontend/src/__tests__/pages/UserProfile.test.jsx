@@ -6,7 +6,7 @@ import AuthContext from "../../contexts/AuthContext.jsx";
 import {waitFor} from "@testing-library/react";
 
 describe("UserProfile", () => {
-    it("should open the Order modal when the row is clicked", async () => {
+    it("should open the address modal when the button is clicked", async () => {
         const {container} = render(<AuthContext.Provider value={{
             isAuthenticated: true,
             jwt: "jsonwebtoken",
