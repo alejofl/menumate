@@ -4,7 +4,7 @@ import {
     ROLES,
     USER_ADDRESS_CONTENT_TYPE,
     USER_CONTENT_TYPE,
-    USER_PASSWORD_CONTENT_TYPE,
+    USER_PASSWORD_CONTENT_TYPE, USER_PROFILE_CONTENT_TYPE,
     USER_ROLE_CONTENT_TYPE
 } from "../../utils.js";
 import User from "../../data/model/User.js";
@@ -74,12 +74,12 @@ export function useUserService(api) {
         );
     };
 
-    const getUser = async (url) => {
+    const getUser = async (url, onlyPublic = false) => {
         const response = await api.get(
             url,
             {
                 headers: {
-                    "Accept": USER_CONTENT_TYPE
+                    "Accept": onlyPublic ? USER_PROFILE_CONTENT_TYPE : USER_CONTENT_TYPE
                 }
             }
         );

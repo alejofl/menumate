@@ -3,7 +3,7 @@ import {apiUrl} from "../setup/utils.js";
 import {
     USER_ADDRESS_CONTENT_TYPE,
     USER_CONTENT_TYPE,
-    USER_PASSWORD_CONTENT_TYPE,
+    USER_PASSWORD_CONTENT_TYPE, USER_PROFILE_CONTENT_TYPE,
     USER_ROLE_CONTENT_TYPE
 } from "../../utils.js";
 
@@ -41,7 +41,7 @@ export const usersHandlers = [
     }),
 
     http.get(apiUrl("/users/:id"), ({request, params}) => {
-        if (request.headers.get("Accept") === USER_CONTENT_TYPE) {
+        if (request.headers.get("Accept") === USER_CONTENT_TYPE || request.headers.get("Accept") === USER_PROFILE_CONTENT_TYPE) {
             return HttpResponse.json(
                 {
                     "addressesUrl": "http://localhost:8080/paw-2023a-01/api/users/1/addresses",

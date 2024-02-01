@@ -20,6 +20,7 @@ export const UNHANDLED_REPORTS_CONTENT_TYPE = "application/vnd.menumate.restaura
 export const REVIEW_CONTENT_TYPE = "application/vnd.menumate.reviews.v1+json";
 export const REVIEW_REPLY_CONTENT_TYPE = "application/vnd.menumate.reply.review.v1+json";
 export const USER_CONTENT_TYPE = "application/vnd.menumate.user.v1+json";
+export const USER_PROFILE_CONTENT_TYPE = "application/vnd.menumate.user.profile.v1+json";
 export const USER_ADDRESS_CONTENT_TYPE = "application/vnd.menumate.user.address.v1+json";
 export const USER_ROLE_CONTENT_TYPE = "application/vnd.menumate.userRole.v1+json";
 export const USER_PASSWORD_CONTENT_TYPE = "application/vnd.menumate.userPassword.v1+json";

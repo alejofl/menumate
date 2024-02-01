@@ -39,7 +39,7 @@ function InternalOrderModal({orderUrl, showActions, onClose, onError}) {
     const { isPending: userIsPending, isError: userIsError, data: user, error: userError} = useQuery({
         queryKey: ["order", orderUrl, "user"],
         queryFn: async () => (
-            await userService.getUser(order.userUrl)
+            await userService.getUser(order.userUrl, true)
         ),
         enabled: !!order
     });

@@ -15,7 +15,7 @@ public class UserDto {
     private String email;
     private String name;
     private LocalDateTime dateJoined;
-    private boolean isActive;
+    private Boolean isActive;
     private String preferredLanguage;
     private String role;
 
@@ -92,11 +92,11 @@ public class UserDto {
         this.dateJoined = dateJoined;
     }
 
-    public boolean getIsActive() {
+    public Boolean getIsActive() {
         return isActive;
     }
 
-    public void setIsActive(boolean active) {
+    public void setIsActive(Boolean active) {
         isActive = active;
     }
 
