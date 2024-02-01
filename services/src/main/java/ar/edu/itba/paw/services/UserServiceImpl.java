@@ -148,7 +148,7 @@ public class UserServiceImpl implements UserService {
     public void sendPasswordResetToken(String email) {
         final User user = userDao.getByEmail(email).orElse(null);
 
-        if (user == null) {
+        if (user == null || user.getPassword() == null) {
             LOGGER.info("Ignored sending password reset token request for unknown email");
             return;
         }
