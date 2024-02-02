@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build-tomcat": "vite build && echo '<%@ page session=\"false\" %>' | cat - ./dist/index.html > temp && mv temp ./dist/index.html",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0 --fix",
     "preview": "vite preview",
     "prepare": "cd .. && husky install frontend/.husky",
