@@ -129,8 +129,9 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
                 .antMatchers("/**").permitAll()
 
-                .and().exceptionHandling().
-                authenticationEntryPoint((request, response, ex) -> {
+                .and()
+                .exceptionHandling()
+                .authenticationEntryPoint((request, response, ex) -> {
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.getMessage());
                 })
 

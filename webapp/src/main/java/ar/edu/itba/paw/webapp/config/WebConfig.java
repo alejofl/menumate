@@ -41,11 +41,10 @@ import java.util.concurrent.TimeUnit;
 @EnableScheduling
 @EnableAsync(proxyTargetClass = true)
 @EnableTransactionManagement
-@EnableWebMvc
 @ComponentScan({"ar.edu.itba.paw.webapp.controller", "ar.edu.itba.paw.services", "ar.edu.itba.paw.persistence"})
 @PropertySource("classpath:application.properties")
 @Configuration
-public class WebConfig extends WebMvcConfigurerAdapter {
+public class WebConfig {
 
     @Autowired
     private Environment environment;
