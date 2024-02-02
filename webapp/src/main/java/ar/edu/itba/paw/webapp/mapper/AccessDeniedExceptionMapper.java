@@ -17,11 +17,16 @@ public class AccessDeniedExceptionMapper implements ExceptionMapper<AccessDenied
     public Response toResponse(AccessDeniedException exception) {
         final Response.Status status = ControllerUtils.getCurrentUserIdOrNull() == null ? Response.Status.UNAUTHORIZED : Response.Status.FORBIDDEN;
 
+        Response.ResponseBuilder response = Response.status(status).entity(exception.getMessage());
+        if (status == Response.Status.UNAUTHORIZED) {
+            response = response.header("WWW-Authenticate", "Basic realm=\"MenuMate\", Bearer realm=\"MenuMate\"");
+        }
+
         LOGGER.error("AccessDeniedException: {} - Message: {} - Status code: {}",
                 exception.getClass(),
                 exception.getMessage(),
                 status.getStatusCode());
 
-        return Response.status(status).entity(exception.getMessage()).build();
+        return response.build();
     }
 }

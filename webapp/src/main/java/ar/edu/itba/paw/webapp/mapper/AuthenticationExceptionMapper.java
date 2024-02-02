@@ -37,6 +37,10 @@ public class AuthenticationExceptionMapper implements ExceptionMapper<Authentica
             message = exception.getMessage();
         }
 
-        return Response.status(status).entity(message).build();
+        return Response
+                .status(status)
+                .header("WWW-Authenticate", "Basic realm=\"MenuMate\", Bearer realm=\"MenuMate\"")
+                .entity(message)
+                .build();
     }
 }
