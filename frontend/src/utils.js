@@ -31,6 +31,7 @@ export const JSON_CONTENT_TYPE = "application/json";
 export const EMAIL_ALREADY_IN_USE_ERROR = "registerUser.arg0.email";
 export const OVERLAPPING_PROMOTIONS_ERROR = "createPromotion.arg1";
 export const IMAGE_MAX_SIZE = 1024 * 1024 * 5; // 1024 B = 1 KB && 1024 B * 1024 = 1 MB ==> MAX_SIZE = 5 MB
+export const MAX_INT = 2147483647;
 
 export const PRICE_DECIMAL_DIGITS = 2;
 export const DEFAULT_RESTAURANT_COUNT = 12;

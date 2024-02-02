@@ -2,7 +2,7 @@
 
 import * as Yup from "yup";
 import i18n from "../i18n";
-import {IMAGE_MAX_SIZE, ORDER_TYPE, ROLE_FOR_RESTAURANT} from "../utils.js";
+import {IMAGE_MAX_SIZE, MAX_INT, ORDER_TYPE, ROLE_FOR_RESTAURANT} from "../utils.js";
 import RestaurantTags from "./RestaurantTags.js";
 import RestaurantSpecialties from "./RestaurantSpecialties.js";
 
@@ -123,7 +123,8 @@ export const CreateRestaurantSchema = (edit) => Yup.object().shape({
 
     maxTables: Yup.number()
         .required(i18n.t("validation.restaurant_max_tables.required"))
-        .min(1, ({ min }) => i18n.t("validation.restaurant_max_tables.min", {min: min})),
+        .min(1, ({ min }) => i18n.t("validation.restaurant_max_tables.min", {min: min}))
+        .max(MAX_INT, ({ max }) => i18n.t("validation.restaurant_max_tables.max", {max: max})),
 
     logo: (edit ? Yup.mixed().notRequired() : Yup.mixed().required(i18n.t("validation.image.required")))
         .test("fileSize", i18n.t("validation.image.size"), (value) => (edit && !value) || (value && value.size <= IMAGE_MAX_SIZE))

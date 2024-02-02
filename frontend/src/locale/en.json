@@ -240,7 +240,8 @@
         },
         "restaurant_max_tables": {
             "required": "The restaurant tables quantity is required",
-            "min": "The restaurant tables quantity must be at least {{min}}"
+            "min": "The restaurant tables quantity must be at least {{min}}",
+            "max": "The restaurant tables quantity must be at most {{max}}"
         },
         "image": {
             "required": "The image is required",

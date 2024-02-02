@@ -239,7 +239,8 @@
         },
         "restaurant_max_tables": {
             "required": "La cantidad de mesas del restaurante es obligatoria",
-            "min": "La cantidad de mesas del restaurante debe ser al menos {{min}}"
+            "min": "La cantidad de mesas del restaurante debe ser al menos {{min}}",
+            "max": "La cantidad de mesas del restaurante debe ser como máximo {{max}}"
         },
         "image": {
             "required": "La imagen es obligatoria",
