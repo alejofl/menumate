@@ -40,7 +40,7 @@ export function useUserService(api) {
     };
 
     const login = async (url, email, password) => {
-        const response = await api.get(url, {
+        const response = await api.head(url, {
             headers: {
                 "Accept": USER_CONTENT_TYPE,
                 "Authorization": `Basic ${btoa(`${email}:${password}`)}`
