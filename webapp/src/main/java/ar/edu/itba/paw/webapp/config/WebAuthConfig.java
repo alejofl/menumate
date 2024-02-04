@@ -152,6 +152,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(Collections.singletonList("*"));
         config.setAllowedHeaders(Collections.singletonList("*"));
         config.setAllowedMethods(Arrays.asList("GET", "HEAD", "POST", "OPTIONS", "DELETE", "PUT", "PATCH"));
         config.setExposedHeaders(Arrays.asList("X-MenuMate-AuthToken", "X-MenuMate-RefreshToken", "X-MenuMate-EmployeeUserCreated", "Content-Disposition", "Content-Language", "Location", "ETag", "Last-Modified", "Link", "WWW-Authenticate"));

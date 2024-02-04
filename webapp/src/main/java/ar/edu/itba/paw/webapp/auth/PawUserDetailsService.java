@@ -38,9 +38,8 @@ public class PawUserDetailsService implements UserDetailsService {
         final Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
         final Optional<UserRoleLevel> userRole = userRoleService.getRole(user.getUserId());
 
-        if (userRole.isPresent()) {
-            authorities.add(new SimpleGrantedAuthority(userRole.get().getMessageCode()));
-        }
+        userRole.ifPresent(userRoleLevel -> authorities.add(new SimpleGrantedAuthority(userRoleLevel.getMessageCode())));
+
         return new PawAuthUserDetails(user.getUserId(), user.getEmail(), user.getPassword(), authorities);
     }
 }

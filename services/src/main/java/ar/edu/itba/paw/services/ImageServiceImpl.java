@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.services;
 
-import ar.edu.itba.paw.exception.ImageNotFoundException;
 import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.persistance.ImageDao;
 import ar.edu.itba.paw.service.ImageService;

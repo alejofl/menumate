@@ -44,7 +44,7 @@ public final class CustomMediaType {
     public static final String APPLICATION_USER_PUBLIC_PROFILE = "application/vnd.menumate.user.profile.v1+json";
     public static final String APPLICATION_USER_ADDRESS = "application/vnd.menumate.user.address.v1+json";
     public static final String APPLICATION_USER_ROLE = "application/vnd.menumate.userRole.v1+json";
-    public static final String APPLICATION_USER_PASSWORD = "application/vnd.menumate.userPassword.v1+json";;
+    public static final String APPLICATION_USER_PASSWORD = "application/vnd.menumate.userPassword.v1+json";
 
     private CustomMediaType() {
         throw new AssertionError();
