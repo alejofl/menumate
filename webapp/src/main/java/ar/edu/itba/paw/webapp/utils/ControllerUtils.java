@@ -23,7 +23,7 @@ public final class ControllerUtils {
     public static final int IMAGE_MAX_AGE = 2592000;
 
     private ControllerUtils() {
-
+        throw new AssertionError();
     }
 
     /**

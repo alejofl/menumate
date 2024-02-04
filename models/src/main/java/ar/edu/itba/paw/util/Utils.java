@@ -4,7 +4,7 @@ public final class Utils {
     private static final int MAX_PAGINATION_PAGE_SIZE = 100;
 
     private Utils() {
-        // Not instantiable
+        throw new AssertionError();
     }
 
     public static void validatePaginationParams(int pageNumber, int pageSize) {

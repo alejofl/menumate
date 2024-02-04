@@ -18,7 +18,7 @@ public final class UriUtils {
     public static final String IMAGES_URL = API_BASE_URL + "/images";
 
     private UriUtils() {
-
+        throw new AssertionError();
     }
 
     public static URI getRestaurantsUri(final UriInfo uriInfo) {
