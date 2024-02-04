@@ -50,7 +50,7 @@ public final class ControllerUtils {
      * Returns the currently logged-in user's email, or null of no user is logged in.
      */
     public static String getCurrentUserEmailOrNull() {
-        PawAuthUserDetails details = getCurrentUserDetailsOrNull();
+        final PawAuthUserDetails details = getCurrentUserDetailsOrNull();
         return details == null ? null : details.getUsername();
     }
 
@@ -58,7 +58,7 @@ public final class ControllerUtils {
      * Returns the currently logged-in user's userId, or null of no user is logged in.
      */
     public static Long getCurrentUserIdOrNull() {
-        PawAuthUserDetails details = getCurrentUserDetailsOrNull();
+        final PawAuthUserDetails details = getCurrentUserDetailsOrNull();
         return details == null ? null : details.getUserId();
     }
 
@@ -66,7 +66,7 @@ public final class ControllerUtils {
      * Returns the currently logged-in user's userId, or throws an UserNotFoundException if there's no such user.
      */
     public static long getCurrentUserIdOrThrow() {
-        PawAuthUserDetails details = getCurrentUserDetailsOrNull();
+        final PawAuthUserDetails details = getCurrentUserDetailsOrNull();
         if (details == null)
             throw new UserNotFoundException();
         return details.getUserId();
@@ -78,7 +78,7 @@ public final class ControllerUtils {
      * @param userService The UserService instance to get the user from.
      */
     public static User getCurrentUserOrNull(UserService userService) {
-        PawAuthUserDetails details = getCurrentUserDetailsOrNull();
+        final PawAuthUserDetails details = getCurrentUserDetailsOrNull();
         return details == null ? null : userService.getById(details.getUserId()).orElse(null);
     }
 
@@ -88,7 +88,7 @@ public final class ControllerUtils {
      * @param userService The UserService instance to get the user from.
      */
     public static User getCurrentUserOrThrow(UserService userService) {
-        PawAuthUserDetails details = getCurrentUserDetailsOrThrow();
+        final PawAuthUserDetails details = getCurrentUserDetailsOrThrow();
         return userService.getById(details.getUserId()).orElseThrow(UserNotFoundException::new);
     }
 
@@ -104,15 +104,18 @@ public final class ControllerUtils {
         return response;
     }
 
-    public static Response.ResponseBuilder setUnconditionalCache(Response.ResponseBuilder responseBuilder, int maxAge) {
+    /**
+     * Cache control
+     * https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control
+     */
+
+    public static Response.ResponseBuilder setMaxAge(Response.ResponseBuilder responseBuilder, int maxAge) {
         final CacheControl cacheControl = new CacheControl();
         cacheControl.setMaxAge(maxAge);
-        responseBuilder.cacheControl(cacheControl);
-        return responseBuilder;
+        return responseBuilder.cacheControl(cacheControl);
     }
 
     // https://howtodoinjava.com/resteasy/jax-rs-resteasy-cache-control-with-etag-example/
-    // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control
     public static <T> Response buildResponseUsingEtag(Request request, int hashCode, Supplier<T> getDto) {
         final CacheControl cacheControl = new CacheControl();
         cacheControl.setNoCache(true);

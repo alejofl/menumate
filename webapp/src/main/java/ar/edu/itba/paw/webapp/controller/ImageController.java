@@ -36,7 +36,7 @@ public class ImageController {
         final Image image = imageService.getById(imageId).orElseThrow(ImageNotFoundException::new);
         final Response.ResponseBuilder responseBuilder = Response.ok(image.getBytes())
                 .header(HttpHeaders.CONTENT_DISPOSITION, String.format("inline; filename=\"menumate_%d.jpg\"", imageId));
-        return ControllerUtils.setUnconditionalCache(responseBuilder, ControllerUtils.IMAGE_MAX_AGE).build();
+        return ControllerUtils.setMaxAge(responseBuilder, ControllerUtils.IMAGE_MAX_AGE).build();
     }
 
     @POST
