@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.model;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "user_roles")
@@ -49,5 +50,10 @@ public class UserRole {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(userId, level);
     }
 }

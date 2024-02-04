@@ -207,8 +207,15 @@ public class Restaurant {
         this.tags = tags;
     }
 
+    private int getRestaurantTagsHashCode() {
+        return tags == null ? 0 :
+                tags.stream()
+                        .mapToInt(RestaurantTags::ordinal)
+                        .sum();
+    }
+
     @Override
     public int hashCode() {
-        return Objects.hash(restaurantId, name, email, specialty, address, description, isActive, maxTables, deleted, portrait1Id, portrait2Id, logoId);
+        return Objects.hash(restaurantId, name, email, specialty, address, description, isActive, maxTables, deleted, portrait1Id, portrait2Id, logoId, getRestaurantTagsHashCode());
     }
 }

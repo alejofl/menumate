@@ -133,8 +133,15 @@ public class User {
         return role != null;
     }
 
+    private int getAddressesListHashCode() {
+        return addresses == null ? 0 :
+                addresses.stream()
+                        .mapToInt(UserAddress::hashCode)
+                        .sum();
+    }
+
     @Override
     public int hashCode() {
-        return Objects.hash(userId, email, name, imageId, isActive, preferredLanguage, role, addresses);
+        return Objects.hash(userId, email, name, imageId, isActive, preferredLanguage, (hasRole())? role.hashCode() : null, getAddressesListHashCode());
     }
 }

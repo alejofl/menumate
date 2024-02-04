@@ -93,8 +93,15 @@ public class Category {
         return products;
     }
 
+    private int getProductListHashCode() {
+        return products == null ? 0 :
+                products.stream()
+                        .mapToInt(Product::hashCode)
+                        .sum();
+    }
+
     @Override
     public int hashCode() {
-        return Objects.hash(categoryId, name, orderNum, deleted);
+        return Objects.hash(categoryId, name, orderNum, deleted, getProductListHashCode());
     }
 }
