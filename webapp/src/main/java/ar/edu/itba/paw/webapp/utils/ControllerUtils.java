@@ -112,38 +112,32 @@ public final class ControllerUtils {
     }
 
     // https://howtodoinjava.com/resteasy/jax-rs-resteasy-cache-control-with-etag-example/
-    public static Response.ResponseBuilder evaluateEtag(Request request, EntityTag eTag) {
-        Response.ResponseBuilder response = request.evaluatePreconditions(eTag);
-        if (response != null) {
-            final CacheControl cacheControl = new CacheControl();
-            cacheControl.setNoCache(true);
-        }
-        return response;
-    }
-
+    // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control
     public static <T> Response buildResponseUsingEtag(Request request, int hashCode, Supplier<T> getDto) {
-        EntityTag eTag = new EntityTag(String.valueOf(hashCode));
-        Response.ResponseBuilder responseBuilder = evaluateEtag(request, eTag);
-        if(responseBuilder == null) {
-            return Response.ok(getDto.get()).tag(eTag).build();
-        }
-        return responseBuilder.build();
-    }
+        final CacheControl cacheControl = new CacheControl();
+        cacheControl.setNoCache(true);
 
-    public static Response.ResponseBuilder evaluateLastModified(Request request, Date lastModified) {
-        Response.ResponseBuilder response = request.evaluatePreconditions(lastModified);
-        if (response != null) {
-            final CacheControl cacheControl = new CacheControl();
-            cacheControl.setNoCache(true);
+        final EntityTag eTag = new EntityTag(String.valueOf(hashCode));
+        Response.ResponseBuilder response = request.evaluatePreconditions(eTag);
+
+        if (response == null) {
+            response = Response.ok(getDto.get()).tag(eTag);
+            cacheControl.setNoStore(false);
         }
-        return response;
+
+        return response.cacheControl(cacheControl).build();
     }
 
     public static <T> Response buildResponseUsingLastModified(Request request, Date lastModified, Supplier<T> getDto) {
-        Response.ResponseBuilder responseBuilder = evaluateLastModified(request, lastModified);
-        if (responseBuilder == null) {
-            return Response.ok(getDto.get()).lastModified(lastModified).build();
+        final CacheControl cacheControl = new CacheControl();
+        cacheControl.setNoCache(true);
+
+        Response.ResponseBuilder response = request.evaluatePreconditions(lastModified);
+        if (response == null) {
+            response = Response.ok(getDto.get()).lastModified(lastModified);
+            cacheControl.setNoStore(false);
         }
-        return responseBuilder.build();
+
+        return response.cacheControl(cacheControl).build();
     }
 }
