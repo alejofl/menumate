@@ -55,7 +55,7 @@ public class UserController {
     @Produces(CustomMediaType.APPLICATION_USER_PUBLIC_PROFILE)
     public Response getUserPublicProfile(@PathParam("userId") final long userId, @Context Request request) {
         final User user = userService.getById(userId).orElseThrow(UserNotFoundException::new);
-        return ControllerUtils.buildResponseUsingEtag(request, user.publicProfileHashcode(), () -> UserDto.publicProfileFromUser(uriInfo, user));
+        return ControllerUtils.buildResponseUsingEtag(request, user.publicProfileHashCode(), () -> UserDto.publicProfileFromUser(uriInfo, user));
     }
 
     @POST
