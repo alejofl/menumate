@@ -101,7 +101,7 @@ function RestaurantOrders() {
         ),
         getNextPageParam: (lastPage) => lastPage.nextPage?.page || undefined,
         keepPreviousData: true,
-        enabled: !!restaurant
+        enabled: !userRoleIsError && !!restaurant
     });
 
     const handleLoadMoreContent = async () => {
