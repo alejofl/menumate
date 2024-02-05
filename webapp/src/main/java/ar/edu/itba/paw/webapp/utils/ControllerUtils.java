@@ -128,7 +128,7 @@ public final class ControllerUtils {
             cacheControl.setNoStore(false);
         }
 
-        return response.cacheControl(cacheControl).build();
+        return response.header(HttpHeaders.VARY, "Accept, Content-Type").cacheControl(cacheControl).build();
     }
 
     public static <T> Response buildResponseUsingLastModified(Request request, Date lastModified, Supplier<T> dto) {
@@ -141,6 +141,6 @@ public final class ControllerUtils {
             cacheControl.setNoStore(false);
         }
 
-        return response.cacheControl(cacheControl).build();
+        return response.header(HttpHeaders.VARY, "Accept, Content-Type").cacheControl(cacheControl).build();
     }
 }
