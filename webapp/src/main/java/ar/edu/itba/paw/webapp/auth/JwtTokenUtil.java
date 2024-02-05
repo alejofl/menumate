@@ -43,7 +43,7 @@ public class JwtTokenUtil {
     }
 
     private Claims buildClaims(ServletUriComponentsBuilder uriBuilder, User user, JwtTokenType type) {
-        Claims claims = Jwts.claims();
+        final Claims claims = Jwts.claims();
         claims.put(TOKEN_TYPE_CLAIM, type);
 
         if (!type.isRefreshToken()) {
@@ -53,7 +53,7 @@ public class JwtTokenUtil {
                 claims.put(ROLE_CLAIM, user.getRole().getLevel());
             }
 
-            String selfUrl = uriBuilder
+            final String selfUrl = uriBuilder
                     .path(UriUtils.USERS_URL + "/")
                     .path(String.valueOf(user.getUserId()))
                     .build().toString();
@@ -73,8 +73,8 @@ public class JwtTokenUtil {
 
     public JwtTokenDetails validate(String token) {
         try {
-            Jws<Claims> parsed = Jwts.parserBuilder().setSigningKey(jwtSecretKey).build().parseClaimsJws(token);
-            Claims claims = parsed.getBody();
+            final Jws<Claims> parsed = Jwts.parserBuilder().setSigningKey(jwtSecretKey).build().parseClaimsJws(token);
+            final Claims claims = parsed.getBody();
 
             if (claims.getExpiration().before(new Date(System.currentTimeMillis()))) {
                 throw new ExpiredJwtException(parsed.getHeader(), claims, "JWT token expired");

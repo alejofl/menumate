@@ -58,29 +58,27 @@ public class AuthAnywhereFilter extends OncePerRequestFilter {
         }
 
         try {
-            String credsBase64 = authHeader.substring(AUTH_HEADER_TYPE.length() + 1).trim();
-            byte[] credsBytes = Base64.decode(credsBase64.getBytes(StandardCharsets.UTF_8));
-            String credsDecoded = new String(credsBytes, StandardCharsets.UTF_8);
+            final String credsBase64 = authHeader.substring(AUTH_HEADER_TYPE.length() + 1).trim();
+            final byte[] credsBytes = Base64.decode(credsBase64.getBytes(StandardCharsets.UTF_8));
+            final String credsDecoded = new String(credsBytes, StandardCharsets.UTF_8);
 
             int indexOfColon = credsDecoded.indexOf(':');
-            String email = credsDecoded.substring(0, indexOfColon);
-            String credentials = credsDecoded.substring(indexOfColon + 1);
+            final String email = credsDecoded.substring(0, indexOfColon);
+            final String credentials = credsDecoded.substring(indexOfColon + 1);
 
-            Optional<User> maybeUser = userService.getByEmail(email);
+            final Optional<User> maybeUser = userService.getByEmail(email);
             if (maybeUser.isPresent()) {
-                User user = maybeUser.get();
-
-                Optional<Token> maybeToken = tokenService.getByToken(credentials);
-
+                final User user = maybeUser.get();
+                final Optional<Token> maybeToken = tokenService.getByToken(credentials);
                 if (maybeToken.isPresent()) {
-                    Token tkn = maybeToken.get();
+                    final Token tkn = maybeToken.get();
                     if (tkn.getUser().getUserId().longValue() != user.getUserId()) {
                         throw new BadCredentialsException("exception.BadCredentialsException.token");
                     }
                     userService.verifyUser(tkn.getToken());
 
-                    UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
-                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    final UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
+                    final UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 } else if (!user.getIsActive()) {
@@ -92,7 +90,7 @@ public class AuthAnywhereFilter extends OncePerRequestFilter {
                     );
                     SecurityContextHolder.getContext().setAuthentication(auth);
                 }
-                ServletUriComponentsBuilder uriBuilder = ServletUriComponentsBuilder.fromContextPath(request);
+                final ServletUriComponentsBuilder uriBuilder = ServletUriComponentsBuilder.fromContextPath(request);
                 response.setHeader("X-MenuMate-AuthToken", jwtTokenUtil.generateAccessToken(uriBuilder, user));
                 response.setHeader("X-MenuMate-RefreshToken", jwtTokenUtil.generateRefreshToken(uriBuilder, user));
             }

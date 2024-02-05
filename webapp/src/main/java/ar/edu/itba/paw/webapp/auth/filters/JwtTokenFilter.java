@@ -49,14 +49,14 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         // Get jwt token and validate
         final String token = header.substring(AUTH_HEADER_TYPE.length() + 1).trim();
-        JwtTokenDetails jwtDetails = jwtTokenUtil.validate(token);
+        final JwtTokenDetails jwtDetails = jwtTokenUtil.validate(token);
         if (jwtDetails == null) {
             response.addHeader("WWW-Authenticate", "Bearer realm=\"MenuMate\"");
             chain.doFilter(request, response);
             return;
         }
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(jwtDetails.getEmail());
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(jwtDetails.getEmail());
         if (userDetails == null) {
             response.addHeader("WWW-Authenticate", "Bearer realm=\"MenuMate\"");
             chain.doFilter(request, response);
@@ -65,17 +65,17 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         // Check if refresh token was sent to refresh tokens
         if (jwtDetails.getTokenType().isRefreshToken()) {
-            Optional<User> maybeUser = userService.getByEmail(userDetails.getUsername());
+            final Optional<User> maybeUser = userService.getByEmail(userDetails.getUsername());
             if (maybeUser.isPresent()) {
-                User user = maybeUser.get();
-                ServletUriComponentsBuilder uriBuilder = ServletUriComponentsBuilder.fromContextPath(request);
+                final User user = maybeUser.get();
+                final ServletUriComponentsBuilder uriBuilder = ServletUriComponentsBuilder.fromContextPath(request);
                 response.setHeader("X-MenuMate-AuthToken", jwtTokenUtil.generateAccessToken(uriBuilder, user));
                 response.setHeader("X-MenuMate-RefreshToken", jwtTokenUtil.generateRefreshToken(uriBuilder, user));
             }
         }
 
         // Get user identity and set it on the spring security context
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        final UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);

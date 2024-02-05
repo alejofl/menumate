@@ -18,12 +18,12 @@ public class AccessValidator {
     private RestaurantRoleService restaurantRoleService;
 
     public boolean checkIsUser(long userId) {
-        Long currentUserId = ControllerUtils.getCurrentUserIdOrNull();
+        final Long currentUserId = ControllerUtils.getCurrentUserIdOrNull();
         return currentUserId != null && currentUserId == userId;
     }
 
     public boolean checkRestaurantRole(long restaurantId, RestaurantRoleLevel minimumRoleLevel) {
-        Long currentUserId = ControllerUtils.getCurrentUserIdOrNull();
+        final Long currentUserId = ControllerUtils.getCurrentUserIdOrNull();
         if (currentUserId == null)
             return false;
 
@@ -43,24 +43,24 @@ public class AccessValidator {
     }
 
     public boolean checkOrderOwner(long orderId) {
-        Order order = orderService.getById(orderId).orElse(null);
-        PawAuthUserDetails currentUserDetails = ControllerUtils.getCurrentUserDetailsOrNull();
+        final Order order = orderService.getById(orderId).orElse(null);
+        final PawAuthUserDetails currentUserDetails = ControllerUtils.getCurrentUserDetailsOrNull();
         return order != null && currentUserDetails != null && order.getUserId() == currentUserDetails.getUserId();
     }
 
     public boolean checkOrderHandler(long orderId) {
-        Order order = orderService.getById(orderId).orElse(null);
+        final Order order = orderService.getById(orderId).orElse(null);
         return order != null && checkRestaurantOrderHandler(order.getRestaurantId());
     }
 
     public boolean checkOrderOwnerOrHandler(long orderId) {
-        Order order = orderService.getById(orderId).orElse(null);
-        PawAuthUserDetails currentUserDetails = ControllerUtils.getCurrentUserDetailsOrNull();
+        final Order order = orderService.getById(orderId).orElse(null);
+        final PawAuthUserDetails currentUserDetails = ControllerUtils.getCurrentUserDetailsOrNull();
         return order != null && currentUserDetails != null && (order.getUserId() == currentUserDetails.getUserId() || checkRestaurantOrderHandler(order.getRestaurantId()));
     }
 
     public boolean checkCanListOrders(Long userId, Long restaurantId) {
-        Long currentUserId = ControllerUtils.getCurrentUserIdOrNull();
+        final Long currentUserId = ControllerUtils.getCurrentUserIdOrNull();
         if (currentUserId == null)
             return false;
 

@@ -32,14 +32,14 @@ public class EmailConfig {
     // Retrieved from: https://howtodoinjava.com/spring-core/send-email-with-spring-javamailsenderimpl-example/
     @Bean
     public JavaMailSender getJavaMailSender() {
-        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+        final JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost(environment.getProperty("mailer.host"));
         mailSender.setPort(Integer.parseInt(environment.getProperty("mailer.port")));
 
         mailSender.setUsername(environment.getProperty("mailer.email"));
         mailSender.setPassword(environment.getProperty("mailer.password"));
 
-        Properties props = mailSender.getJavaMailProperties();
+        final Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
@@ -50,7 +50,7 @@ public class EmailConfig {
     // Retrieved from: https://www.baeldung.com/spring-email-templates
     @Bean
     public ITemplateResolver thymeleafTemplateResolver() {
-        ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
+        final ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
         templateResolver.setPrefix("/mail/templates/");
         templateResolver.setSuffix(".html");
         templateResolver.setTemplateMode(TemplateMode.HTML);
@@ -62,7 +62,7 @@ public class EmailConfig {
     // Retrieved from: https://www.baeldung.com/spring-email-templates
     @Bean
     public TemplateEngine thymeleafTemplateEngine(ITemplateResolver templateResolver) {
-        SpringTemplateEngine templateEngine = new SpringTemplateEngine();
+        final SpringTemplateEngine templateEngine = new SpringTemplateEngine();
         templateEngine.setTemplateResolver(templateResolver);
 
         templateEngine.setTemplateEngineMessageSource(messageSource);
