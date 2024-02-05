@@ -116,7 +116,7 @@ public final class ControllerUtils {
     }
 
     // https://howtodoinjava.com/resteasy/jax-rs-resteasy-cache-control-with-etag-example/
-    public static <T> Response buildResponseUsingEtag(Request request, int hashCode, Supplier<T> getDto) {
+    public static <T> Response buildResponseUsingEtag(Request request, int hashCode, Supplier<T> dto) {
         final CacheControl cacheControl = new CacheControl();
         cacheControl.setNoCache(true);
 
@@ -124,20 +124,20 @@ public final class ControllerUtils {
         Response.ResponseBuilder response = request.evaluatePreconditions(eTag);
 
         if (response == null) {
-            response = Response.ok(getDto.get()).tag(eTag);
+            response = Response.ok(dto.get()).tag(eTag);
             cacheControl.setNoStore(false);
         }
 
         return response.cacheControl(cacheControl).build();
     }
 
-    public static <T> Response buildResponseUsingLastModified(Request request, Date lastModified, Supplier<T> getDto) {
+    public static <T> Response buildResponseUsingLastModified(Request request, Date lastModified, Supplier<T> dto) {
         final CacheControl cacheControl = new CacheControl();
         cacheControl.setNoCache(true);
 
         Response.ResponseBuilder response = request.evaluatePreconditions(lastModified);
         if (response == null) {
-            response = Response.ok(getDto.get()).lastModified(lastModified);
+            response = Response.ok(dto.get()).lastModified(lastModified);
             cacheControl.setNoStore(false);
         }
 
