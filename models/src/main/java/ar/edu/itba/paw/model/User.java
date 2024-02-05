@@ -144,4 +144,8 @@ public class User {
     public int hashCode() {
         return Objects.hash(userId, email, name, imageId, isActive, preferredLanguage, (hasRole())? role.hashCode() : null, getAddressesListHashCode());
     }
+
+    public int publicProfileHashCode() {
+        return Objects.hash(userId, name, email);
+    }
 }
