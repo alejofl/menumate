@@ -135,6 +135,9 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.getMessage());
                 })
 
+                // Disable client-side cache handling
+                .and().headers().cacheControl().disable()
+
                 .and()
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(authAnywhereFilter, UsernamePasswordAuthenticationFilter.class)

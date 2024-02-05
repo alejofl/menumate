@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.webapp.form.validation;
 
-import ar.edu.itba.paw.model.PromotionType;
 import ar.edu.itba.paw.service.ProductService;
 import ar.edu.itba.paw.webapp.form.PromotionForm;
 import org.springframework.beans.factory.annotation.Autowired;

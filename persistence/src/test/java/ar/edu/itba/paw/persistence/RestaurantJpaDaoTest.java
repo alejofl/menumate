@@ -7,7 +7,6 @@ import ar.edu.itba.paw.persistence.constants.RestaurantConstants;
 import ar.edu.itba.paw.persistence.constants.ReviewConstants;
 import ar.edu.itba.paw.persistence.constants.UserConstants;
 import ar.edu.itba.paw.util.PaginatedResult;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
