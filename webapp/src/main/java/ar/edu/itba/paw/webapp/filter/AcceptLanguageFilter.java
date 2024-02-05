@@ -5,6 +5,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.ext.Provider;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -26,12 +27,10 @@ public class AcceptLanguageFilter implements ContainerRequestFilter {
         final List<Locale> acceptableLanguages = requestContext.getAcceptableLanguages();
 
         final Locale selectedOrDefaultLocale = acceptableLanguages.stream()
-                .filter(locale -> {
-                    String language = locale.getLanguage().toLowerCase();
-                    return language.equals(ES_LOCALE) || language.equals(EN_LOCALE) || language.equals(ANY_LANGUAGE);
-                })
-                .findFirst()
-                .orElseGet(() -> new Locale(EN_LOCALE));
+                .filter(locale -> Arrays.asList(ES_LOCALE, EN_LOCALE, ANY_LANGUAGE)
+                        .contains(locale.getLanguage().toLowerCase()))
+                .findAny()
+                .orElse(new Locale(EN_LOCALE));
 
         // Associate the given Locale with the current thread
         LocaleContextHolder.setLocale(selectedOrDefaultLocale);
