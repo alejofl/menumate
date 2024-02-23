@@ -1,12 +1,5 @@
 ![MenuMate](frontend/public/static/noscript/logo.png)
 
-| Student               | ID    |
-|-----------------------|-------|
-| Alejo Flores Lucey    | 62622 |
-| Iván Chayer           | 61630 |
-| Nehuén Gabriel Llanos | 62511 |
-| Thomas Mizrahi        | 60154 |
-
 ## Description
 
 MenuMate is a web application developed with Spring, Jersey and React. It is a unified order handler designed to facilitate seamless interactions between restaurants and users. This application streamlines the entire order process, making it more efficient and user-friendly.
@@ -47,3 +40,20 @@ Since all of these go to the same Gmail account, we have set up filters to work 
 * Email: `menumateapp.user@gmail.com`
 * Password: `***REMOVED***`
 
+## Final Remarks
+
+This project was done in an academic environment, as part of the curriculum of Web Applications Project from Instituto Tecnológico de Buenos Aires (ITBA)
+
+The project was carried out by:
+
+* Alejo Flores Lucey
+* Ivan Chayer
+* Nehuén Gabriel Llanos
+* Thomas Mizrahi
+
+### Final Exam Correction
+
+* Incluyeron un catálogo de la API en la raíz, pero el mismo está incompleto, por ejemplo, no incluye ningún query param. Del mismo modo no se incluye ninguna entidad que no viva en la raíz.
+* Aunque cambiar los filtros de búsqueda impacta en la URL del browser, el navegar hacía atrás / adelante por la historia no tiene efecto. No actualiza los filtros ni los resultados de búsqueda.
+
+Nota final: 9
