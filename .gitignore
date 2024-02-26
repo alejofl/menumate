@@ -51,3 +51,7 @@ atlassian-ide-plugin.xml
 
 # VS Code
 .vscode/
+
+# App-Specific files
+application.properties
+jwtSecret.key
