@@ -6,8 +6,19 @@ MenuMate is a web application developed with Spring, Jersey and React. It is a u
 
 The webapp can be accessed [here](http://pawserver.it.itba.edu.ar/paw-2023a-01/)
 
+## Build and run
+
+The project was built using Maven and Java 8. Simply package the application and serve the built web archive file (`.war`) with Tomcat.
+
+```Bash
+mvn clean package
+```
+
+> [!IMPORTANT]  
+> MenuMate was only tested with Tomcat v7.X.X and v8.X.X. Usage and correct operation in other versions is not guaranteed.
 
 ## Users in prod
+
 We have six users set up in our production database, using the following emails:
 
 * `menumateapp.user+draco@gmail.com`
